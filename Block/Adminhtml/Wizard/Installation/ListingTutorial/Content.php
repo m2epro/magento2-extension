@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\Installation\ListingTutorial;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class Content
+ * @package Ess\M2ePro\Block\Adminhtml\Wizard\Installation\ListingTutorial
+ */
 abstract class Content extends AbstractBlock
 {
 }

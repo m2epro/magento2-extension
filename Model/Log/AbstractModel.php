@@ -9,6 +9,10 @@ namespace Ess\M2ePro\Model\Log;
 
 use Ess\M2ePro\Model\Exception;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Log
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     /**
@@ -26,7 +30,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\AbstractMode
     const PRIORITY_MEDIUM  = 2;
     const PRIORITY_LOW     = 3;
 
-    protected $componentMode = NULL;
+    protected $componentMode = null;
 
     protected $parentFactory;
     protected $resourceConnection;
@@ -44,8 +48,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\AbstractMode
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->parentFactory = $parentFactory;
         $this->resourceConnection = $resourceConnection;
         parent::__construct(

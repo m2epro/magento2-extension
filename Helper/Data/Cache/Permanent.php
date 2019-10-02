@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Helper\Data\Cache;
 
 use Ess\M2ePro\Model\Exception;
 
+/**
+ * Class Permanent
+ * @package Ess\M2ePro\Helper\Data\Cache
+ */
 class Permanent extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
 {
     /**
@@ -27,8 +31,7 @@ class Permanent extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
         \Magento\Framework\App\CacheInterface $cache,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->cache = $cache;
         parent::__construct($helperFactory, $context);
     }
@@ -39,27 +42,36 @@ class Permanent extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
     {
         $cacheKey = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$key;
         $value = $this->cache->load($cacheKey);
-        return $value === false ? NULL : unserialize($value);
+        return $value === false ? null : $this->getHelper('Data')->unserialize($value);
     }
 
-    public function setValue($key, $value, array $tags = array(), $lifeTime = NULL)
+    public function setValue($key, $value, array $tags = [], $lifeTime = null)
     {
-        if ($value === NULL) {
+        if ($value === null) {
             throw new Exception('Can\'t store NULL value');
         }
 
-        if (is_null($lifeTime) || (int)$lifeTime <= 0) {
+        if (is_object($value)) {
+            throw new Exception('Can\'t store a php object');
+        }
+
+        if ($lifeTime === null || (int)$lifeTime <= 0) {
             $lifeTime = 60*60*24*365*5;
         }
 
         $cacheKey = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$key;
 
-        $preparedTags = array(\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_main');
+        $preparedTags = [\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_main'];
         foreach ($tags as $tag) {
             $preparedTags[] = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$tag;
         }
 
-        $this->cache->save(serialize($value), $cacheKey, $preparedTags, (int)$lifeTime);
+        $this->cache->save(
+            $this->getHelper('Data')->serialize($value),
+            $cacheKey,
+            $preparedTags,
+            (int)$lifeTime
+        );
     }
 
     //########################################
@@ -72,7 +84,7 @@ class Permanent extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
 
     public function removeTagValues($tag)
     {
-        $tags = array(\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$tag);
+        $tags = [\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$tag];
         $this->cache->clean($tags);
     }
 

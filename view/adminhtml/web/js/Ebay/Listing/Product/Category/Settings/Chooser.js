@@ -597,9 +597,9 @@ define([
                             if ($('category_type').value == M2ePro.php.constant('\\Ess\\M2ePro\\Helper\\Component\\Ebay\\Category::TYPE_EBAY_MAIN') ||
                                 $('category_type').value == M2ePro.php.constant('\\Ess\\M2ePro\\Helper\\Component\\Ebay\\Category::TYPE_EBAY_SECONDARY')
                             ) {
-                                refreshMessage = M2ePro.translator.translate('Try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshEbayCategories()">update Marketplaces Data</a> and repeate the Search.');
+                                refreshMessage = M2ePro.translator.translate('Try to update Marketplaces Data and repeat the Search.');
                             } else {
-                                refreshMessage = M2ePro.translator.translate('Try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshStoreCategories()">refresh eBay Store Data</a> and repeate the Search.');
+                                refreshMessage = M2ePro.translator.translate('Try to refresh eBay Store Data and repeat the Search.');
                             }
                         }
 

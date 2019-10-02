@@ -10,14 +10,18 @@ namespace Ess\M2ePro\Model\Wizard;
 
 use Ess\M2ePro\Model\Wizard;
 
+/**
+ * Class InstallationWalmart
+ * @package Ess\M2ePro\Model\Wizard
+ */
 class InstallationWalmart extends Wizard
 {
-    protected $steps = array(
+    protected $steps = [
         'registration',
         'account',
         'settings',
         'listingTutorial'
-    );
+    ];
 
     //########################################
 

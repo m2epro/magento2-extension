@@ -32,31 +32,61 @@
                 type="Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\TotalsCollectorList" />
     </type>
 
+    <type name="Magento\Quote\Model\QuoteRepository\LoadHandler">
+        <plugin name="m2epro_plugin_order_magento_quote_model_quoteRepository_loadHandler"
+                type="Ess\M2ePro\Plugin\Order\Magento\Quote\Model\QuoteRepository\LoadHandler" />
+    </type>
+
     <!-- MSI -->
 
-    <type name="Magento\Inventory\Model\SourceItem\Command\Handler\SourceItemsSaveHandler">
-        <plugin name="m2epro_plugin_msi_magento_inventory_model_sourceitem_command_handler_sourceitemsavehandler"
-                type="Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command\Handler\SourceItemsSaveHandler" />
+    <type name="Magento\Inventory\Model\Source\Command\SaveInterface">
+        <plugin name="m2epro_plugin_msi_magento_inventory_model_source_command_save"
+                type="Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\Source\Command\Save" />
     </type>
 
-    <type name="Magento\Inventory\Model\SourceItem\Command\SourceItemsDelete">
-        <plugin name="m2epro_plugin_msi_magento_inventory_model_sourceitem_command_sourceitemdelete"
-                type="Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command\SourceItemsDelete" />
+    <type name="Magento\InventoryApi\Api\SourceItemsSaveInterface">
+        <plugin name="m2epro_plugin_msi_magento_inventory_model_sourceitem_command_save"
+                type="Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command\Save" />
     </type>
 
-    <type name="Magento\InventorySales\Model\PlaceReservationsForSalesEvent">
+    <type name="Magento\InventoryApi\Api\SourceItemsDeleteInterface">
+        <plugin name="m2epro_plugin_msi_magento_inventory_model_sourceitem_command_delete"
+                type="Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command\Delete" />
+    </type>
+
+    <type name="Magento\InventoryApi\Api\StockSourceLinksSaveInterface">
+        <plugin name="m2epro_plugin_msi_magento_inventory_model_stocksourcelink_command_save"
+                type="Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\StockSourceLink\Command\Save" />
+    </type>
+
+    <type name="Magento\InventoryApi\Api\StockSourceLinksDeleteInterface">
+        <plugin name="m2epro_plugin_msi_magento_inventory_model_stocksourcelink_command_delete"
+                type="Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\StockSourceLink\Command\Delete" />
+    </type>
+
+    <type name="Magento\InventorySalesApi\Model\ReplaceSalesChannelsForStockInterface">
+        <plugin name="m2epro_plugin_msi_magento_inventorysales_model_resourcemodel_replacesaleschannelsdataforstock"
+                type="Ess\M2ePro\Plugin\MSI\Magento\InventorySales\Model\ResourceModel\ReplaceSalesChannelsDataForStock" />
+    </type>
+
+    <type name="Magento\InventorySalesApi\Api\PlaceReservationsForSalesEventInterface">
         <plugin name="m2epro_plugin_msi_magento_inventorysales_model_placereservationforsalesevent"
                 type="Ess\M2ePro\Plugin\MSI\Magento\InventorySales\Model\PlaceReservationsForSalesEvent" />
     </type>
 
-    <type name="Magento\Inventory\Model\StockSourceLink\Command\StockSourceLinksSave">
-        <plugin name="m2epro_plugin_msi_magento_inventoryapi_api_stocksourcelinkssave"
-                type="Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command\StockSourceLinksSave" />
+    <type name="Magento\InventoryCatalog\Model\ResourceModel\SetDataToLegacyStockItem">
+        <plugin name="m2epro_plugin_msi_magento_inventorycatalog_model_resourcemodel_setdatatolegacestockitem"
+                type="Ess\M2ePro\Plugin\MSI\Magento\InventoryCatalog\Model\ResourceModel\SetDataToLegacyStockItem" />
     </type>
 
-    <type name="Magento\InventorySales\Model\ResourceModel\ReplaceSalesChannelsDataForStock">
-        <plugin name="m2epro_plugin_msi_magento_inventorysales_model_resourcemodel_replacesaleschannelsdataforstock"
-                type="Ess\M2ePro\Plugin\MSI\Magento\InventorySales\Model\ResourceModel\ReplaceSalesChannelsDataForStock" />
+    <type name="Magento\InventoryShipping\Observer\SourceDeductionProcessor">
+        <plugin name="m2epro_plugin_msi_magento_inventoryshipping_observer_sourcedeductionprocessor"
+                type="Ess\M2ePro\Plugin\MSI\Magento\InventoryShipping\Observer\SourceDeductionProcessor" />
+    </type>
+
+    <type name="Magento\CatalogInventory\Model\Indexer\Stock\Processor">
+        <plugin name="m2epro_plugin_msi_magento_cataloginventory_model_indexer_stock_processor"
+                type="Ess\M2ePro\Plugin\MSI\Magento\CatalogInventory\Model\Indexer\Stock\Processor" />
     </type>
 
     <!-- func_get_args() fix - see detailed explanation into the Plugin -->

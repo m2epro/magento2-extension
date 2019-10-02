@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
+/**
+ * Class GeneralIdOwner
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub
+ */
 class GeneralIdOwner extends AbstractModel
 {
     //########################################

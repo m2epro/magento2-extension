@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model;
 
 use \Ess\M2ePro\Helper\Data as Helper;
 
+/**
+ * Class OperationHistory
+ * @package Ess\M2ePro\Model
+ */
 class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     const MAX_LIFETIME_INTERVAL = 864000; // 10 days
@@ -17,7 +21,7 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     /**
      * @var OperationHistory
      */
-    private $object = NULL;
+    private $object = null;
 
     //########################################
 
@@ -35,7 +39,7 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             $this->object = $value;
         } else {
             $this->object = $this->activeRecordFactory->getObject('OperationHistory')->load($value);
-            !$this->object->getId() && $this->object = NULL;
+            !$this->object->getId() && $this->object = null;
         }
 
         return $this;
@@ -55,23 +59,23 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      * @param $nick string
      * @return \Ess\M2ePro\Model\OperationHistory
      */
-    public function getParentObject($nick = NULL)
+    public function getParentObject($nick = null)
     {
-        if (is_null($this->getObject()->getData('parent_id'))) {
-            return NULL;
+        if ($this->getObject()->getData('parent_id') === null) {
+            return null;
         }
 
         $parentId = (int)$this->getObject()->getData('parent_id');
         $parentObject = $this->activeRecordFactory->getObjectLoaded('OperationHistory', $parentId);
 
-        if (is_null($nick)) {
+        if ($nick === null) {
             return $parentObject;
         }
 
         while ($parentObject->getData('nick') != $nick) {
             $parentId = $parentObject->getData('parent_id');
-            if (is_null($parentId)) {
-                return NULL;
+            if ($parentId === null) {
+                return null;
             }
 
             $parentObject = $this->activeRecordFactory->getObjectLoaded('OperationHistory', $parentId);
@@ -82,15 +86,15 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     //########################################
 
-    public function start($nick, $parentId = NULL, $initiator = Helper::INITIATOR_UNKNOWN, array $data = [])
+    public function start($nick, $parentId = null, $initiator = Helper::INITIATOR_UNKNOWN, array $data = [])
     {
-        $data = array(
+        $data = [
             'nick' => $nick,
             'parent_id'  => $parentId,
             'data'       => $this->getHelper('Data')->jsonEncode($data),
             'initiator'  => $initiator,
             'start_date' => $this->getHelper('Data')->getCurrentGmtDate()
-        );
+        ];
 
         $this->object = $this->activeRecordFactory
                              ->getObject('OperationHistory')
@@ -102,12 +106,13 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function stop()
     {
-        if (is_null($this->object) || $this->object->getData('end_date')) {
+        if ($this->object === null || $this->object->getData('end_date')) {
             return false;
         }
 
         $this->object->setData(
-            'end_date', $this->getHelper('Data')->getCurrentGmtDate()
+            'end_date',
+            $this->getHelper('Data')->getCurrentGmtDate()
         )->save();
 
         return true;
@@ -117,18 +122,19 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function setContentData($key, $value)
     {
-        if (is_null($this->object)) {
+        if ($this->object === null) {
             return false;
         }
 
-        $data = array();
+        $data = [];
         if ($this->object->getData('data') != '') {
             $data = $this->getHelper('Data')->jsonDecode($this->object->getData('data'));
         }
 
         $data[$key] = $value;
         $this->object->setData(
-            'data', $this->getHelper('Data')->jsonEncode($data)
+            'data',
+            $this->getHelper('Data')->jsonEncode($data)
         )->save();
 
         return true;
@@ -138,9 +144,8 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     {
         $existedData = $this->getContentData($key);
 
-        if (is_null($existedData)) {
-
-            is_array($value) ? $existedData = array($value) : $existedData = $value;
+        if ($existedData === null) {
+            is_array($value) ? $existedData = [$value] : $existedData = $value;
             return $this->setContentData($key, $existedData);
         }
 
@@ -150,12 +155,12 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function getContentData($key)
     {
-        if (is_null($this->object)) {
-            return NULL;
+        if ($this->object === null) {
+            return null;
         }
 
         if ($this->object->getData('data') == '') {
-            return NULL;
+            return null;
         }
 
         $data = $this->getHelper('Data')->jsonDecode($this->object->getData('data'));
@@ -164,7 +169,7 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return $data[$key];
         }
 
-        return NULL;
+        return null;
     }
 
     //########################################
@@ -182,15 +187,14 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function makeShutdownFunction()
     {
-        if (is_null($this->object)) {
+        if ($this->object === null) {
             return false;
         }
 
         $objectId = $this->object->getId();
-        register_shutdown_function(function() use($objectId)
-        {
+        register_shutdown_function(function () use ($objectId) {
             $error = error_get_last();
-            if (is_null($error) || !in_array((int)$error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR])) {
+            if ($error === null || !in_array((int)$error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR])) {
                 return;
             }
 
@@ -223,8 +227,8 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function getDataInfo($nestingLevel = 0)
     {
-        if (is_null($this->object)) {
-            return NULL;
+        if ($this->object === null) {
+            return null;
         }
 
         $offset = str_repeat(' ', $nestingLevel * 7);
@@ -250,8 +254,8 @@ INFO;
 
     public function getFullDataInfo($nestingLevel = 0)
     {
-        if (is_null($this->object)) {
-            return NULL;
+        if ($this->object === null) {
+            return null;
         }
 
         $dataInfo = $this->getDataInfo($nestingLevel);
@@ -278,8 +282,8 @@ INFO;
 
     public function getExecutionInfo($nestingLevel = 0)
     {
-        if (is_null($this->object)) {
-            return NULL;
+        if ($this->object === null) {
+            return null;
         }
 
         $offset = str_repeat(' ', $nestingLevel * 5);
@@ -295,15 +299,14 @@ INFO;
 
     public function getExecutionTreeUpInfo()
     {
-        if (is_null($this->object)) {
-            return NULL;
+        if ($this->object === null) {
+            return null;
         }
 
         $extraParent = $this->getObject();
         $executionTree[] = $extraParent;
 
         while ($parentId = $extraParent->getData('parent_id')) {
-
             $extraParent = $this->activeRecordFactory->getObject('OperationHistory')->load($parentId);
             $executionTree[] = $extraParent;
         }
@@ -312,7 +315,6 @@ INFO;
         $executionTree = array_reverse($executionTree);
 
         foreach ($executionTree as $nestingLevel => $item) {
-
             $object = $this->activeRecordFactory->getObject('OperationHistory');
             $object->setObject($item);
 
@@ -324,8 +326,8 @@ INFO;
 
     public function getExecutionTreeDownInfo($nestingLevel = 0)
     {
-        if (is_null($this->object)) {
-            return NULL;
+        if ($this->object === null) {
+            return null;
         }
 
         $info = $this->getExecutionInfo($nestingLevel);
@@ -337,7 +339,6 @@ INFO;
         $childObjects->getSize() > 0 && $nestingLevel++;
 
         foreach ($childObjects as $item) {
-
             $object = $this->activeRecordFactory->getObject('OperationHistory');
             $object->setObject($item);
 

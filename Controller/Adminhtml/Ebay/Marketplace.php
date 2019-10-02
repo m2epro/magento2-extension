@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
+/**
+ * Class Marketplace
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay
+ */
 abstract class Marketplace extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 {
     //########################################

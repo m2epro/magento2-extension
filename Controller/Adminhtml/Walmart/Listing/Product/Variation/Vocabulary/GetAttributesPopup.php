@@ -10,11 +10,15 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Voca
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
+/**
+ * Class GetAttributesPopup
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Vocabulary
+ */
 class GetAttributesPopup extends Main
 {
     public function execute()
     {
-        $block = $this->createBlock('Walmart\Listing\Product\Variation\VocabularyAttributesPopup');
+        $block = $this->createBlock('Walmart_Listing_Product_Variation_VocabularyAttributesPopup');
 
         $this->setAjaxContent($block);
 

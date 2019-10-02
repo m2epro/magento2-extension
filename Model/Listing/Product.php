@@ -10,7 +10,8 @@ namespace Ess\M2ePro\Model\Listing;
 
 /**
  * @method \Ess\M2ePro\Model\ResourceModel\Listing\Product getResource()
- * @method \Ess\M2ePro\Model\Ebay\Listing\Product|\Ess\M2ePro\Model\Amazon\Listing\Product|\Ess\M2ePro\Model\Walmart\Listing\Product getChildObject()
+ * @method \Ess\M2ePro\Model\Ebay\Listing\Product|\Ess\M2ePro\Model\Amazon\Listing\Product|
+ *         \Ess\M2ePro\Model\Walmart\Listing\Product getChildObject()
  * @method \Ess\M2ePro\Model\Listing\Product\Action\Configurator|NULL getActionConfigurator()
  *
  * @method setActionConfigurator(\Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator)
@@ -47,12 +48,12 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     /**
      * @var \Ess\M2ePro\Model\Listing
      */
-    protected $listingModel = NULL;
+    protected $listingModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Magento\Product\Cache
      */
-    protected $magentoProductModel = NULL;
+    protected $magentoProductModel = null;
 
     //########################################
 
@@ -98,20 +99,22 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
         $tempLog->setComponentMode($this->getComponentMode());
-        $tempLog->addProductMessage($this->getListingId(),
-                                    $this->getProductId(),
-                                    $this->getId(),
-                                    \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
-                                    NULL,
-                                    \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_LISTING,
-                                    // M2ePro\TRANSLATIONS
+        $tempLog->addProductMessage(
+            $this->getListingId(),
+            $this->getProductId(),
+            $this->getId(),
+            \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
+            null,
+            \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_LISTING,
+            // M2ePro\TRANSLATIONS
                                     // Product was successfully Deleted
                                     'Product was successfully Deleted',
-                                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-                                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM);
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+        );
 
-        $this->listingModel = NULL;
-        $this->magentoProductModel = NULL;
+        $this->listingModel = null;
+        $this->magentoProductModel = null;
 
         $this->deleteChildInstance();
 
@@ -125,9 +128,11 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
      */
     public function getListing()
     {
-        if (is_null($this->listingModel)) {
+        if ($this->listingModel === null) {
             $this->listingModel = $this->parentFactory->getCachedObjectLoaded(
-                $this->getComponentMode(),'Listing',$this->getData('listing_id')
+                $this->getComponentMode(),
+                'Listing',
+                $this->getData('listing_id')
             );
         }
 
@@ -149,8 +154,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
      */
     public function getMagentoProduct()
     {
-        if (is_null($this->magentoProductModel)) {
-            $this->magentoProductModel = $this->modelFactory->getObject('Magento\Product\Cache');
+        if ($this->magentoProductModel === null) {
+            $this->magentoProductModel = $this->modelFactory->getObject('Magento_Product_Cache');
             $this->magentoProductModel->setProductId($this->getProductId());
         }
 
@@ -203,17 +208,20 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
      * @param bool $tryToGetFromStorage
      * @return \Ess\M2ePro\Model\Listing\Product\Variation[]
      */
-    public function getVariations($asObjects = false, array $filters = array(), $tryToGetFromStorage = true)
+    public function getVariations($asObjects = false, array $filters = [], $tryToGetFromStorage = true)
     {
         $storageKey = "listing_product_{$this->getId()}_variations_" .
-            md5((string)$asObjects . $this->getHelper('Data')->jsonEncode($filters));
+                       sha1((string)$asObjects . $this->getHelper('Data')->jsonEncode($filters));
 
-        if ($tryToGetFromStorage && ($cacheData = $this->getHelper('Data\Cache\Runtime')->getValue($storageKey))) {
+        if ($tryToGetFromStorage && ($cacheData = $this->getHelper('Data_Cache_Runtime')->getValue($storageKey))) {
             return $cacheData;
         }
 
         $variations = $this->getRelatedComponentItems(
-            'Listing\Product\Variation','listing_product_id',$asObjects,$filters
+            'Listing_Product_Variation',
+            'listing_product_id',
+            $asObjects,
+            $filters
         );
 
         if ($asObjects) {
@@ -223,11 +231,11 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             }
         }
 
-        $this->getHelper('Data\Cache\Runtime')->setValue($storageKey, $variations, array(
+        $this->getHelper('Data_Cache_Runtime')->setValue($storageKey, $variations, [
             'listing_product',
             "listing_product_{$this->getId()}",
             "listing_product_{$this->getId()}_variations"
-        ));
+        ]);
 
         return $variations;
     }
@@ -339,7 +347,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     public function getSynchReasons()
     {
         $reasons = $this->getData('synch_reasons');
-        $reasons = explode(',',$reasons);
+        $reasons = explode(',', $reasons);
 
         return array_unique(array_filter($reasons));
     }
@@ -455,27 +463,27 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     //########################################
 
-    public function listAction(array $params = array())
+    public function listAction(array $params = [])
     {
         return $this->getChildObject()->listAction($params);
     }
 
-    public function relistAction(array $params = array())
+    public function relistAction(array $params = [])
     {
         return $this->getChildObject()->relistAction($params);
     }
 
-    public function reviseAction(array $params = array())
+    public function reviseAction(array $params = [])
     {
         return $this->getChildObject()->reviseAction($params);
     }
 
-    public function stopAction(array $params = array())
+    public function stopAction(array $params = [])
     {
         return $this->getChildObject()->stopAction($params);
     }
 
-    public function deleteAction(array $params = array())
+    public function deleteAction(array $params = [])
     {
         return $this->getChildObject()->deleteAction($params);
     }
@@ -509,14 +517,14 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         $oldStatus = (int)$this->getOrigData('status');
         $newStatus = (int)$this->getData('status');
 
-        $trackedStatuses = array(
+        $trackedStatuses = [
             \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
             \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
             \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED,
             \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD,
-        );
+        ];
 
-        if ($oldStatus == $newStatus || !in_array($newStatus, $trackedStatuses)){
+        if ($oldStatus == $newStatus || !in_array($newStatus, $trackedStatuses)) {
             return;
         }
 

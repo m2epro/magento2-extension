@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database;
 
+/**
+ * Class AddTableRow
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database
+ */
 class AddTableRow extends Table
 {
     public function execute()

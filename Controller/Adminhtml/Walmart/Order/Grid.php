@@ -10,11 +10,15 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Order
+ */
 class Grid extends Order
 {
     public function execute()
     {
-        $this->setAjaxContent($this->createBlock('Walmart\Order\Grid'));
+        $this->setAjaxContent($this->createBlock('Walmart_Order_Grid'));
 
         return $this->getResult();
     }

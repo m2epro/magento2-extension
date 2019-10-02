@@ -12,6 +12,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation;
 
+/**
+ * Class Option
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation
+ */
 class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     //########################################
@@ -29,7 +33,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abst
         $listingProductId = $this->getListingProduct()->getId();
         $variationId = $this->getListingProductVariation()->getId();
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues(
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues(
             "listing_product_{$listingProductId}_variation_{$variationId}_options"
         );
 
@@ -41,7 +45,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abst
         $listingProductId = $this->getListingProduct()->getId();
         $variationId = $this->getListingProductVariation()->getId();
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues(
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues(
             "listing_product_{$listingProductId}_variation_{$variationId}_options"
         );
 
@@ -214,7 +218,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abst
      */
     public function getSku()
     {
-        $helper = $this->getHelper('Component\Walmart\Configuration');
+        $helper = $this->getHelper('Component_Walmart_Configuration');
 
         if ($helper->isSkuModeProductId()) {
             return (string)$this->getParentObject()->getProductId();
@@ -233,12 +237,11 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abst
         $simpleAttributes = $this->getListingProduct()->getMagentoProduct()->getProduct()->getOptions();
 
         foreach ($simpleAttributes as $tempAttribute) {
-
             if (!(bool)(int)$tempAttribute->getData('is_require')) {
                 continue;
             }
 
-            if (!in_array($tempAttribute->getType(), array('drop_down', 'radio', 'multiple', 'checkbox'))) {
+            if (!in_array($tempAttribute->getType(), ['drop_down', 'radio', 'multiple', 'checkbox'])) {
                 continue;
             }
 
@@ -251,7 +254,6 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abst
             }
 
             foreach ($tempAttribute->getValues() as $tempOption) {
-
                 $option = strtolower($this->getParentObject()->getOption());
 
                 if (strtolower($tempOption->getData('default_title')) != $option &&
@@ -260,7 +262,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abst
                     continue;
                 }
 
-                if (!is_null($tempOption->getData('sku')) &&
+                if ($tempOption->getData('sku') !== null &&
                     $tempOption->getData('sku') !== false) {
                     $tempSku = $tempOption->getData('sku');
                 }

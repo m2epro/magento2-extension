@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Template\SellingFormat;
 
+/**
+ * Class Messages
+ * @package Ess\M2ePro\Block\Adminhtml\Template\SellingFormat
+ */
 class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 {
     const TYPE_CURRENCY_CONVERSION = 'currency_conversion';
@@ -16,16 +20,16 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 
     public function getCurrencyConversionMessage($marketplaceCurrency = null)
     {
-        if (is_null($this->getMarketplace())) {
-            return NULL;
+        if ($this->getMarketplace() === null) {
+            return null;
         }
 
-        if (is_null($marketplaceCurrency)) {
+        if ($marketplaceCurrency === null) {
             $marketplaceCurrency = $this->getMarketplace()->getChildObject()->getCurrency();
         }
 
         if (!$this->canDisplayCurrencyConversionMessage($marketplaceCurrency)) {
-            return NULL;
+            return null;
         }
 
         $storePath = $this->getHelper('Magento\Store')->getStorePath($this->getStore()->getId());
@@ -38,26 +42,24 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
         if (!$allowed) {
             $currencySetupUrl = $this->getUrl(
                 'admin/system_config/edit',
-                array(
+                [
                     'section' => 'currency',
                     'website' => $this->getStore()->getId() != \Magento\Store\Model\Store::DEFAULT_STORE_ID ?
                         $this->getStore()->getWebsite()->getId() : null,
                     'store'   => $this->getStore()->getId() != \Magento\Store\Model\Store::DEFAULT_STORE_ID ?
                         $this->getStore()->getId() : null
-                )
+                ]
             );
 
-            // M2ePro_TRANSLATIONS
-            // Currency "%currency_code%" is not allowed in <a href="%url%" target="_blank">Currency Setup</a> for Store View "%store_path%" of your Magento. Currency conversion will not be performed.
             return
                 $this->__(
                     'Currency "%currency_code%" is not allowed in <a href="%url%" target="_blank">Currency Setup</a> '
                     . 'for Store View "%store_path%" of your Magento. '
                     . 'Currency conversion will not be performed.',
-                $marketplaceCurrency,
-                $currencySetupUrl,
-                $this->escapeHtml($storePath)
-            );
+                    $marketplaceCurrency,
+                    $currencySetupUrl,
+                    $this->escapeHtml($storePath)
+                );
         }
 
         $rate = $this->modelFactory->getObject('Currency')
@@ -67,33 +69,28 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
                 4
             );
 
-        // M2ePro_TRANSLATIONS
-        // There is no rate for "%currency_from%-%currency_to%" in <a href="%url%" target="_blank">Manage Currency Rates</a> of your Magento. Currency conversion will not be performed.
         if ($rate == 0) {
             return
                 $this->__(
                     'There is no rate for "%currency_from%-%currency_to%" in'
                     . ' <a href="%url%" target="_blank">Manage Currency Rates</a> of your Magento.'
                     . ' Currency conversion will not be performed.',
-                $this->getStore()->getBaseCurrencyCode(),
-                $marketplaceCurrency,
-                $this->getUrl('adminhtml/system_currency')
-            );
+                    $this->getStore()->getBaseCurrencyCode(),
+                    $marketplaceCurrency,
+                    $this->getUrl('adminhtml/system_currency')
+                );
         }
 
-        // M2ePro_TRANSLATIONS
-        // There is a rate %value% for "%currency_from%-%currency_to%" in <a href="%url%" target="_blank">Manage Currency Rates</a> of your Magento. Currency conversion will be performed automatically.
         $message =
             $this->__(
                 'There is a rate %value% for "%currency_from%-%currency_to%" in'
                 . ' <a href="%url%" target="_blank">Manage Currency Rates</a> of your Magento.'
-                . ' Currency conversion will be performed automatically.'
-            ,
-            $rate,
-            $this->getStore()->getBaseCurrencyCode(),
-            $marketplaceCurrency,
-            $this->getUrl('adminhtml/system_currency')
-        );
+                . ' Currency conversion will be performed automatically.',
+                $rate,
+                $this->getStore()->getBaseCurrencyCode(),
+                $marketplaceCurrency,
+                $this->getUrl('adminhtml/system_currency')
+            );
 
         return '<span style="color: #3D6611 !important;">' . $message . '</span>';
     }
@@ -102,10 +99,12 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 
     public function getMessages()
     {
-        $messages = array();
+        $messages = [];
 
         // ---------------------------------------
-        if (!is_null($message = $this->getCurrencyConversionMessage())) {
+        $message = $this->getCurrencyConversionMessage();
+
+        if ($message !== null) {
             $messages[self::TYPE_CURRENCY_CONVERSION] = $message;
         }
         // ---------------------------------------
@@ -119,7 +118,7 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 
     protected function canDisplayCurrencyConversionMessage($marketplaceCurrency)
     {
-        if (is_null($this->getStore())) {
+        if ($this->getStore() === null) {
             return false;
         }
 
@@ -145,14 +144,17 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 
         switch ($this->getComponentMode()) {
             case \Ess\M2ePro\Helper\Component\Ebay::NICK:
-                $model = $this->activeRecordFactory->getObject('Ebay\Template\SellingFormat');
+                $model = $this->activeRecordFactory->getObject('Ebay_Template_SellingFormat');
                 break;
             case \Ess\M2ePro\Helper\Component\Amazon::NICK:
-                $model = $this->activeRecordFactory->getObject('Amazon\Template\SellingFormat');
+                $model = $this->activeRecordFactory->getObject('Amazon_Template_SellingFormat');
+                break;
+            case \Ess\M2ePro\Helper\Component\Walmart::NICK:
+                $model = $this->activeRecordFactory->getObject('Walmart_Template_SellingFormat');
                 break;
         }
 
-        if (is_null($model)) {
+        if ($model === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Policy model is unknown.');
         }
 

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
 
 use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
+/**
+ * Class StepTwoSaveToSession
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
+ */
 class StepTwoSaveToSession extends Settings
 {
 
@@ -23,16 +27,15 @@ class StepTwoSaveToSession extends Settings
 
         $listing = $this->getListing();
 
-        $this->addCategoriesPath($templateData,$listing);
+        $this->addCategoriesPath($templateData, $listing);
 
         $key = $this->getSessionDataKey();
         $sessionData = $this->getSessionValue($key);
 
         if ($this->getSessionValue('mode') == 'category') {
-
             foreach ($ids as $categoryId) {
                 $sessionData[$categoryId]['listing_products_ids'] = $this->getSelectedListingProductsIdsByCategoriesIds(
-                    array($categoryId)
+                    [$categoryId]
                 );
             }
         }

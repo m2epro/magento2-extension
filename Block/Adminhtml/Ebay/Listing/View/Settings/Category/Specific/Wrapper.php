@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Category\Specific;
 
+/**
+ * Class Wrapper
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Category\Specific
+ */
 class Wrapper extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     //########################################
@@ -29,11 +33,11 @@ class Wrapper extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         parent::_beforeToHtml();
 
         // ---------------------------------------
-        $data = array(
+        $data = [
             'id'      => 'done_button',
             'class'   => 'save done primary',
             'label'   => $this->__('Save'),
-        );
+        ];
         $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
         $this->setChild('done', $buttonBlock);
         // ---------------------------------------
@@ -41,7 +45,7 @@ class Wrapper extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     protected function _toHtml()
     {
-        $breadcrumb = $this->createBlock('Ebay\Listing\View\Settings\Category\Breadcrumb');
+        $breadcrumb = $this->createBlock('Ebay_Listing_View_Settings_Category_Breadcrumb');
         $breadcrumb->setSelectedStep(2);
 
         return $breadcrumb->toHtml() . parent::_toHtml();

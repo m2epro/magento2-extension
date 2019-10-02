@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing;
 
+/**
+ * Class Log
+ * @package Ess\M2ePro\Model\Amazon\Listing
+ */
 class Log extends \Ess\M2ePro\Model\Listing\Log
 {
     //########################################
@@ -34,33 +38,38 @@ class Log extends \Ess\M2ePro\Model\Listing\Log
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function addProductMessage($listingId,
-                                      $productId,
-                                      $listingProductId,
-                                      $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
-                                      $actionId = NULL,
-                                      $action = NULL,
-                                      $description = NULL,
-                                      $type = NULL,
-                                      $priority = NULL,
-                                      array $additionalData = array())
-    {
-        $dataForAdd = $this->makeDataForAdd($listingId,
-                                            $initiator,
-                                            $productId,
-                                            $listingProductId,
-                                            $actionId,
-                                            $action,
-                                            $description,
-                                            $type,
-                                            $priority,
-                                            $additionalData);
+    public function addProductMessage(
+        $listingId,
+        $productId,
+        $listingProductId,
+        $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
+        $actionId = null,
+        $action = null,
+        $description = null,
+        $type = null,
+        $priority = null,
+        array $additionalData = []
+    ) {
+        $dataForAdd = $this->makeDataForAdd(
+            $listingId,
+            $initiator,
+            $productId,
+            $listingProductId,
+            $actionId,
+            $action,
+            $description,
+            $type,
+            $priority,
+            $additionalData
+        );
 
         if (!empty($listingProductId)) {
 
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->parentFactory->getObjectLoaded(
-                \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Product', $listingProductId
+                \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                'Listing\Product',
+                $listingProductId
             );
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager $variationManager */

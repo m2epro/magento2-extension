@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request;
 
 use \Ess\M2ePro\Model\Magento\Product as MagentoProduct;
 
+/**
+ * Class Selling
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request
+ */
 class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\AbstractModel
 {
     const LISTING_TYPE_AUCTION  = 'Chinese';
@@ -22,7 +26,7 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
     /**
      * @var \Ess\M2ePro\Model\Template\SellingFormat
      */
-    private $sellingFormatTemplate = NULL;
+    private $sellingFormatTemplate = null;
 
     //########################################
 
@@ -31,10 +35,9 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
      */
     public function getRequestData()
     {
-        $data = array();
+        $data = [];
 
         if ($this->getConfigurator()->isGeneralAllowed()) {
-
             $data = array_merge(
                 $this->getGeneralData(),
                 $this->getVatTaxData(),
@@ -59,11 +62,11 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
      */
     public function getGeneralData()
     {
-        $data = array(
+        $data = [
             'duration' => $this->getSellingFormatSource()->getDuration(),
             'is_private' => $this->getEbaySellingFormatTemplate()->isPrivateListing(),
             'currency' => $this->getEbayMarketplace()->getCurrency()
-        );
+        ];
 
         if ($this->getEbayListingProduct()->isListingTypeFixed()) {
             $data['listing_type'] = self::LISTING_TYPE_FIXED;
@@ -79,9 +82,9 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
      */
     public function getVatTaxData()
     {
-        $data = array(
+        $data = [
             'tax_category' => $this->getSellingFormatSource()->getTaxCategory()
-        );
+        ];
 
         if ($this->getEbayMarketplace()->isVatEnabled()) {
             $data['vat_percent'] = $this->getEbaySellingFormatTemplate()->getVatPercent();
@@ -99,7 +102,7 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
      */
     public function getRestrictedToBusinessData()
     {
-        $data = array();
+        $data = [];
 
         if ($this->getEbaySellingFormatTemplate()->isRestrictedToBusinessEnabled()) {
             $data['restricted_to_business'] = $this->getEbaySellingFormatTemplate()
@@ -117,13 +120,13 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
         $charity = $this->getEbaySellingFormatTemplate()->getCharity();
 
         if (empty($charity[$this->getMarketplace()->getId()])) {
-            return array();
+            return [];
         }
 
-        return array(
+        return [
             'charity_id' => $charity[$this->getMarketplace()->getId()]['organization_id'],
             'charity_percent' => $charity[$this->getMarketplace()->getId()]['percentage']
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -135,12 +138,12 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
     {
         if (!$this->getConfigurator()->isQtyAllowed() ||
             $this->getIsVariationItem()) {
-            return array();
+            return [];
         }
 
-        $data = array(
+        $data = [
             'qty' => $this->getEbayListingProduct()->getQty()
-        );
+        ];
 
         $this->getConfigurator()->tryToIncreasePriority(
             \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::PRIORITY_QTY
@@ -158,13 +161,12 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
     {
         if (!$this->getConfigurator()->isPriceAllowed() ||
             $this->getIsVariationItem()) {
-            return array();
+            return [];
         }
 
-        $data = array();
+        $data = [];
 
         if ($this->getEbayListingProduct()->isListingTypeFixed()) {
-
             $data['price_fixed'] = $this->getEbayListingProduct()->getFixedPrice();
 
             $data['bestoffer_mode'] = $this->getEbaySellingFormatTemplate()->isBestOfferEnabled();
@@ -173,7 +175,6 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
                 $data['bestoffer_accept_price'] = $this->getEbayListingProduct()->getBestOfferAcceptPrice();
                 $data['bestoffer_reject_price'] = $this->getEbayListingProduct()->getBestOfferRejectPrice();
             }
-
         } else {
             $data['price_start'] = $this->getEbayListingProduct()->getStartPrice();
             $data['price_reserve'] = $this->getEbayListingProduct()->getReservePrice();
@@ -194,17 +195,17 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
     {
         if (!$this->getConfigurator()->isPriceAllowed() ||
             $this->getIsVariationItem()) {
-            return array();
+            return [];
         }
 
         if (!$this->getEbayListingProduct()->isListingTypeFixed() ||
             !$this->getEbayListingProduct()->isPriceDiscountStp()) {
-            return array();
+            return [];
         }
 
-        $data = array(
+        $data = [
             'original_retail_price' => $this->getEbayListingProduct()->getPriceDiscountStp()
-        );
+        ];
 
         if ($this->getEbayMarketplace()->isStpAdvancedEnabled()) {
             $data = array_merge(
@@ -213,7 +214,7 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
             );
         }
 
-        return array('price_discount_stp' => $data);
+        return ['price_discount_stp' => $data];
     }
 
     /**
@@ -223,24 +224,24 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
     {
         if (!$this->getConfigurator()->isPriceAllowed() ||
             $this->getIsVariationItem()) {
-            return array();
+            return [];
         }
 
         if (!$this->getEbayListingProduct()->isListingTypeFixed() ||
             !$this->getEbayListingProduct()->isPriceDiscountMap()) {
-            return array();
+            return [];
         }
 
-        $data = array(
+        $data = [
             'minimum_advertised_price' => $this->getEbayListingProduct()->getPriceDiscountMap(),
-        );
+        ];
 
         $exposure = $this->getEbaySellingFormatTemplate()->getPriceDiscountMapExposureType();
         $data['minimum_advertised_price_exposure'] =
             \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Selling::
                 getPriceDiscountMapExposureType($exposure);
 
-        return array('price_discount_map' => $data);
+        return ['price_discount_map' => $data];
     }
 
     public static function getPriceDiscountMapExposureType($type)
@@ -267,7 +268,7 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
      */
     private function getSellingFormatTemplate()
     {
-        if (is_null($this->sellingFormatTemplate)) {
+        if ($this->sellingFormatTemplate === null) {
             $this->sellingFormatTemplate = $this->getListingProduct()
                                                 ->getChildObject()
                                                 ->getSellingFormatTemplate();
@@ -298,13 +299,11 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
         $qtyMode = $this->getEbaySellingFormatTemplate()->getQtyMode();
         if ($qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED ||
             $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT) {
-
             $listingProductId = $this->getListingProduct()->getId();
             $productId = $this->getListingProduct()->getProductId();
             $storeId = $this->getListingProduct()->getListing()->getStoreId();
 
             if (!empty(MagentoProduct::$statistics[$listingProductId][$productId][$storeId]['qty'])) {
-
                 $qtys = MagentoProduct::$statistics[$listingProductId][$productId][$storeId]['qty'];
                 foreach ($qtys as $type => $override) {
                     $this->addQtyWarnings($type);

@@ -8,8 +8,11 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks;
 
-abstract class AbstractModel
-    extends \Ess\M2ePro\Model\Ebay\Synchronization\General\AbstractModel
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks
+ */
+abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Synchronization\General\AbstractModel
 {
     protected $resourceConnection;
 
@@ -21,8 +24,7 @@ abstract class AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         parent::__construct($ebayFactory, $activeRecordFactory, $helperFactory, $modelFactory);
     }

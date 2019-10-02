@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Renderer;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class Description
+ * @package Ess\M2ePro\Block\Adminhtml\Renderer
+ */
 abstract class Description extends AbstractBlock
 {
     //########################################

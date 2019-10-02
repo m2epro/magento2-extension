@@ -8,14 +8,18 @@
 
 namespace Ess\M2ePro\Model;
 
+/**
+ * Class Exception
+ * @package Ess\M2ePro\Model
+ */
 class Exception extends \Exception
 {
-    protected $additionalData = array();
-    protected $sendToServer = NULL;
+    protected $additionalData = [];
+    protected $sendToServer = null;
 
     //########################################
 
-    public function __construct($message = "", $additionalData = array(), $code = 0, $sendToServer = true)
+    public function __construct($message = "", $additionalData = [], $code = 0, $sendToServer = true)
     {
         $this->additionalData = $additionalData;
         $this->sendToServer = $sendToServer;

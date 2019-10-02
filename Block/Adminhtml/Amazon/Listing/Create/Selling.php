@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create;
 
+/**
+ * Class Selling
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create
+ */
 class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     //########################################
@@ -39,26 +43,26 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/amazon_listing_create/index', array(
+        $url = $this->getUrl('*/amazon_listing_create/index', [
             '_current' => true,
             'step' => '1'
-        ));
-        $this->addButton('back', array(
+        ]);
+        $this->addButton('back', [
             'label'     => $this->__('Previous Step'),
             'onclick'   => 'AmazonListingSettingsObj.backClick(\'' . $url . '\')',
             'class'     => 'action-primary back'
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/amazon_listing_create/index', array(
+        $url = $this->getUrl('*/amazon_listing_create/index', [
             '_current' => true
-        ));
-        $this->addButton('save_and_next', array(
+        ]);
+        $this->addButton('save_and_next', [
             'label'     => $this->__('Next Step'),
             'onclick'   => 'AmazonListingSettingsObj.saveClick(\'' . $url . '\')',
             'class'     => 'action-primary forward'
-        ));
+        ]);
         // ---------------------------------------
     }
 
@@ -66,7 +70,7 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
     protected function _toHtml()
     {
-        $breadcrumb = $this->createBlock('Amazon\Listing\Create\Breadcrumb')
+        $breadcrumb = $this->createBlock('Amazon_Listing_Create_Breadcrumb')
             ->setSelectedStep((int)$this->getRequest()->getParam('step', 1));
 
         $helpBlock = $this->createBlock('HelpBlock')->setData([

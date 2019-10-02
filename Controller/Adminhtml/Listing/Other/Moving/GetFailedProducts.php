@@ -10,14 +10,19 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving;
 
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 
+/**
+ * Class GetFailedProducts
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving
+ */
 class GetFailedProducts extends Listing
 {
     public function execute()
     {
         $block = $this->createBlock(
-            'Listing\Moving\FailedProducts','',
+            'Listing_Moving_FailedProducts',
+            '',
             ['data' => [
-                'grid_url' => $this->getUrl('*/listing_other_moving/getFailedProductsGrid',array('_current'=>true))
+                'grid_url' => $this->getUrl('*/listing_other_moving/getFailedProductsGrid', ['_current'=>true])
             ]]
         );
 

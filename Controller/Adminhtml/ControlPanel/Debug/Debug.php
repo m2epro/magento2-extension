@@ -10,11 +10,15 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Debug;
 
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
+/**
+ * Class Debug
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Debug
+ */
 class Debug extends Command
 {
     public function __construct(
         \Ess\M2ePro\Controller\Adminhtml\Context $context
-    ){
+    ) {
         parent::__construct($context);
     }
 
@@ -24,7 +28,7 @@ class Debug extends Command
      */
     public function firstTestAction()
     {
-
+        return null;
     }
 
     /**
@@ -33,6 +37,6 @@ class Debug extends Command
      */
     public function secondTestAction()
     {
-
+        return null;
     }
 }

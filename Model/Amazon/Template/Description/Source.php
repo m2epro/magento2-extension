@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\Description;
 
+/**
+ * Class Source
+ * @package Ess\M2ePro\Model\Amazon\Template\Description
+ */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
@@ -79,7 +83,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $src = $this->getAmazonDescriptionTemplate()->getWorldwideIdSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Template\Description::WORLDWIDE_ID_MODE_NONE) {
-            $result = NULL;
+            $result = null;
         }
 
         if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Template\Description::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE) {

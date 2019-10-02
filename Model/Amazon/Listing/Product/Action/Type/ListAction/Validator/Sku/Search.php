@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku;
 
+/**
+ * Class Search
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku
+ */
 class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
 {
-    private $skusInProcessing = NULL;
+    private $skusInProcessing = null;
 
     //########################################
 
@@ -85,7 +89,7 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
 
     private function getRandomSku()
     {
-        $hash = sha1(rand(0,10000).microtime(1));
+        $hash = sha1(rand(0, 10000).microtime(1));
         return $this->getUnifiedSku().'_'.substr($hash, 0, 10);
     }
 
@@ -93,7 +97,8 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
 
     private function checkSkuRequirements($sku)
     {
-        if ($sku>\Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General::SKU_MAX_LENGTH){
+        if ($sku>\Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General::SKU_MAX_LENGTH
+        ) {
             return false;
         }
 
@@ -109,16 +114,12 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
     private function isExistInM2ePro($sku, $addMessages = false)
     {
         if ($this->isAlreadyInProcessing($sku)) {
-// M2ePro\TRANSLATIONS
-// Another Product with the same SKU is being Listed simultaneously with this one. Please change the SKU or enable the Option Generate Merchant SKU.
             $addMessages && $this->addMessage('Another Product with the same SKU is being Listed simultaneously
                                 with this one. Please change the SKU or enable the Option Generate Merchant SKU.');
             return true;
         }
 
         if ($this->isExistInM2eProListings($sku)) {
-// M2ePro\TRANSLATIONS
-// Product with the same SKU is found in other M2E Pro Listing that is created from the same Merchant ID for the same Marketplace.
             $addMessages && $this->addMessage(
                 'Product with the same SKU is found in other M2E Pro Listing that is created
                  from the same Merchant ID for the same Marketplace.'
@@ -127,8 +128,6 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         }
 
         if ($this->isExistInOtherListings($sku)) {
-// M2ePro\TRANSLATIONS
-// Product with the same SKU is found in M2E Pro 3rd Party Listing. Please change the SKU or enable the Option Generate Merchant SKU.
             $addMessages && $this->addMessage('Product with the same SKU is found in M2E Pro 3rd Party Listing.
                                             Please change the SKU or enable the Option Generate Merchant SKU.');
             return true;
@@ -151,13 +150,13 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $collection->getSelect()->join(
-            array('l'=>$listingTable),
+            ['l'=>$listingTable],
             '`main_table`.`listing_id` = `l`.`id`',
-            array()
+            []
         );
 
-        $collection->addFieldToFilter('sku',$sku);
-        $collection->addFieldToFilter('account_id',$this->getListingProduct()->getAccount()->getId());
+        $collection->addFieldToFilter('sku', $sku);
+        $collection->addFieldToFilter('account_id', $this->getListingProduct()->getAccount()->getId());
 
         return $collection->getSize() > 0;
     }
@@ -167,8 +166,8 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection $collection */
         $collection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
 
-        $collection->addFieldToFilter('sku',$sku);
-        $collection->addFieldToFilter('account_id',$this->getListingProduct()->getAccount()->getId());
+        $collection->addFieldToFilter('sku', $sku);
+        $collection->addFieldToFilter('account_id', $this->getListingProduct()->getAccount()->getId());
 
         return $collection->getSize() > 0;
     }
@@ -177,12 +176,12 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
 
     private function getSkusInProcessing()
     {
-        if (!is_null($this->skusInProcessing)) {
+        if ($this->skusInProcessing !== null) {
             return $this->skusInProcessing;
         }
 
         $processingActionListSkuCollection = $this->activeRecordFactory
-                                                  ->getObject('Amazon\Processing\Action\ListAction\Sku')
+                                                  ->getObject('Amazon_Processing_Action_ListAction_Sku')
                                                   ->getCollection();
         $processingActionListSkuCollection->addFieldToFilter('account_id', $this->getListing()->getAccountId());
 

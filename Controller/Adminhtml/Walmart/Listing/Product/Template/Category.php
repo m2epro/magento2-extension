@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template
+ */
 abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template
 {
     protected $transactionFactory;
@@ -20,8 +24,7 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         Context $context
-    )
-    {
+    ) {
         $this->transactionFactory = $transactionFactory;
         parent::__construct($walmartFactory, $context);
     }
@@ -35,7 +38,7 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
         }
 
         $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
-        $collection->addFieldToFilter('id', array('in' => $productsIds));
+        $collection->addFieldToFilter('id', ['in' => $productsIds]);
         // ---------------------------------------
 
         if ($collection->getSize() == 0) {
@@ -44,14 +47,15 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 
         /** @var \Magento\Framework\DB\Transaction $transaction */
         $transaction = $this->transactionFactory->create();
-        $oldSnapshots = array();
+        $oldSnapshots = [];
 
         try {
             foreach ($collection->getItems() as $listingProduct) {
                 /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
                 $oldSnapshots[$listingProduct->getId()] = array_merge(
-                    $listingProduct->getDataSnapshot(), $listingProduct->getChildObject()->getDataSnapshot()
+                    $listingProduct->getDataSnapshot(),
+                    $listingProduct->getChildObject()->getDataSnapshot()
                 );
 
                 $listingProduct->getChildObject()->setData('template_category_id', $templateId);
@@ -73,7 +77,8 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 
             $listingProduct->getChildObject()->setSynchStatusNeed(
                 array_merge(
-                    $listingProduct->getDataSnapshot(), $listingProduct->getChildObject()->getDataSnapshot()
+                    $listingProduct->getDataSnapshot(),
+                    $listingProduct->getChildObject()->getDataSnapshot()
                 ),
                 $oldSnapshots[$listingProduct->getId()]
             );

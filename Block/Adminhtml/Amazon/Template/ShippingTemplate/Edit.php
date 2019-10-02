@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingTemplate;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingTemplate
+ */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 {
     //########################################
@@ -35,11 +39,11 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 
         // ---------------------------------------
         $url = $this->getHelper('Data')->getBackUrl('list');
-        $this->addButton('back', array(
+        $this->addButton('back', [
             'label'     => $this->__('Back'),
             'onclick'   => 'AmazonTemplateShippingTemplateObj.backClick(\'' . $url . '\')',
             'class'     => 'back'
-        ));
+        ]);
         // ---------------------------------------
 
         $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
@@ -49,20 +53,20 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
             && $this->getHelper('Data\GlobalData')->getValue('tmp_template')->getId()
         ) {
             // ---------------------------------------
-            $this->addButton('duplicate', array(
+            $this->addButton('duplicate', [
                 'label'   => $this->__('Duplicate'),
                 'onclick' => 'AmazonTemplateShippingTemplateObj.duplicateClick'
                     .'(\'amazon-template-shippingTemplate\')',
                 'class'   => 'action-primary M2ePro_duplicate_button'
-            ));
+            ]);
             // ---------------------------------------
 
             // ---------------------------------------
-            $this->addButton('delete', array(
+            $this->addButton('delete', [
                 'label'     => $this->__('Delete'),
                 'onclick'   => 'AmazonTemplateShippingTemplateObj.deleteClick()',
                 'class'     => 'action-primary delete M2ePro_delete_button'
-            ));
+            ]);
             // ---------------------------------------
         }
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping;
 
+/**
+ * Class ViewGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
+ */
 class ViewGrid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
 {
     public function execute()
@@ -36,8 +40,8 @@ class ViewGrid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
         }
 
         $blockName = ($shippingMode == \Ess\M2ePro\Model\Amazon\Account::SHIPPING_MODE_OVERRIDE)
-            ? 'Amazon\Listing\Product\Template\ShippingOverride\Grid'
-            : 'Amazon\Listing\Product\Template\ShippingTemplate\Grid';
+            ? 'Amazon_Listing_Product_Template_ShippingOverride_Grid'
+            : 'Amazon_Listing_Product_Template_ShippingTemplate_Grid';
 
         $grid = $this->createBlock($blockName);
         $grid->setMarketplaceId($marketplaceId);

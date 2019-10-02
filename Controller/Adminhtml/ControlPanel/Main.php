@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel;
 
+/**
+ * Class Main
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel
+ */
 abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
     //########################################
@@ -46,7 +50,6 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Base
         if ($request->isGet() &&
             !$request->isPost() &&
             !$request->isXmlHttpRequest()) {
-
             $this->addDevelopmentNotification();
         }
 
@@ -62,7 +65,7 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Base
             return false;
         }
 
-        $enabledMods = array();
+        $enabledMods = [];
         $this->getHelper('Magento')->isDeveloper() && $enabledMods[] = 'Magento';
         $this->getHelper('Module')->isDevelopmentMode() && $enabledMods[] = 'M2ePro';
 

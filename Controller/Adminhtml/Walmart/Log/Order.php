@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Log;
 
+/**
+ * Class Order
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Log
+ */
 abstract class Order extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {
     //########################################

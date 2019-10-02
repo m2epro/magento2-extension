@@ -8,28 +8,32 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type
+ */
 abstract class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request
 {
     /**
      * @var array
      */
-    protected $validatorsData = array();
+    protected $validatorsData = [];
 
     /**
      * @var array
      */
-    private $requestsTypes = array(
+    private $requestsTypes = [
         'details',
         'images',
         'price',
         'qty',
         'shippingOverride'
-    );
+    ];
 
     /**
      * @var array[\Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Abstract]
      */
-    private $requests = array();
+    private $requests = [];
 
     //########################################
 
@@ -64,7 +68,10 @@ abstract class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
 
     //########################################
 
-    protected function beforeBuildDataEvent() {}
+    protected function beforeBuildDataEvent()
+    {
+        return null;
+    }
 
     abstract protected function getActionData();
 
@@ -78,7 +85,6 @@ abstract class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
     protected function collectRequestsWarningMessages()
     {
         foreach ($this->requestsTypes as $requestType) {
-
             $messages = $this->getRequest($requestType)->getWarningMessages();
 
             foreach ($messages as $message) {

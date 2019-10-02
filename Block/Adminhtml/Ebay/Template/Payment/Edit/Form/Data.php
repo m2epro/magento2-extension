@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Payment\Edit\Form;
 
+/**
+ * Class Data
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Payment\Edit\Form
+ */
 class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $paypalConfigFactory;
@@ -23,8 +27,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->paypalConfigFactory = $paypalConfigFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -54,17 +57,20 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'payment[id]',
                 'value' => (!$this->isCustom() && isset($this->formData['id']))
                             ? (int)$this->formData['id'] : ''
-            ]
-        );
+            ]);
 
-        $form->addField('payment_title', 'hidden',
+        $form->addField(
+            'payment_title',
+            'hidden',
             [
                 'name' => 'payment[title]',
                 'value' => $this->getTitle()
             ]
         );
 
-        $form->addField('hidden_marketplace_id_'.$this->marketplaceData['id'], 'hidden',
+        $form->addField(
+            'hidden_marketplace_id_'.$this->marketplaceData['id'],
+            'hidden',
             [
                 'name' => 'payment[marketplace_id]',
                 'value' => $this->marketplaceData['id']
@@ -74,14 +80,16 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $form->addField('is_custom_template', 'hidden', [
                 'name' => 'payment[is_custom_template]',
                 'value' => $this->isCustom() ? 1 : 0
-            ]
-        );
+            ]);
 
-        $fieldSet = $form->addFieldset('magento_block_ebay_template_payment_form_data_paypal',
+        $fieldSet = $form->addFieldset(
+            'magento_block_ebay_template_payment_form_data_paypal',
             ['legend' => $this->__('PayPal'), 'collapsable' => false]
         );
 
-        $fieldSet->addField('pay_pal_mode', 'checkbox',
+        $fieldSet->addField(
+            'pay_pal_mode',
+            'checkbox',
             [
                 'name' => 'payment[pay_pal_mode]',
                 'label' => $this->__('Accepted'),
@@ -92,7 +100,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('pay_pal_email_address', 'text',
+        $fieldSet->addField(
+            'pay_pal_email_address',
+            'text',
             [
                 'name' => 'payment[pay_pal_email_address]',
                 'label' => $this->__('Email'),
@@ -103,7 +113,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('pay_pal_immediate_payment', 'checkbox',
+        $fieldSet->addField(
+            'pay_pal_immediate_payment',
+            'checkbox',
             [
                 'name' => 'payment[pay_pal_immediate_payment]',
                 'label' => $this->__('Immediate Payment Required'),
@@ -120,11 +132,14 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         if (!empty($this->marketplaceData['services'])) {
-            $fieldSet = $form->addFieldset('magento_block_ebay_template_payment_form_data_additional_service',
+            $fieldSet = $form->addFieldset(
+                'magento_block_ebay_template_payment_form_data_additional_service',
                 ['legend' => $this->__('Additional Payment Methods'), 'collapsable' => false]
             );
 
-            $fieldSet->addField('payment_methods', 'checkboxes',
+            $fieldSet->addField(
+                'payment_methods',
+                'checkboxes',
                 [
                     'label' => $this->__('Payment Methods'),
                     'name' => 'payment[services][]',
@@ -184,7 +199,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_payment');
 
-        if (is_null($template)) {
+        if ($template === null) {
             return '';
         }
 
@@ -198,12 +213,12 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_payment');
 
         $default = $this->getDefault();
-        if (is_null($template)) {
+        if ($template === null) {
             return $default;
         }
 
         $data = $template->getData();
-        $data['services'] = $this->activeRecordFactory->getObject('Ebay\Template\Payment\Service')
+        $data['services'] = $this->activeRecordFactory->getObject('Ebay_Template_Payment_Service')
             ->getCollection()
             ->addFieldToFilter('template_payment_id', $template->getId())
             ->getColumnValues('code_name');
@@ -213,13 +228,13 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     public function getDefault()
     {
-        $default = $this->activeRecordFactory->getObject('Ebay\Template\Payment')->getDefaultSettingsAdvancedMode();
+        $default = $this->activeRecordFactory->getObject('Ebay_Template_Payment')->getDefaultSettingsAdvancedMode();
 
         // populate payment fields with the data from magento configuration
         // ---------------------------------------
         $store = $this->getHelper('Data\GlobalData')->getValue('ebay_store');
 
-        $payPalConfig = $this->paypalConfigFactory->create('Magento\Paypal\Model\Config');
+        $payPalConfig = $this->paypalConfigFactory->create(\Magento\Paypal\Model\Config::class);
         $payPalConfig->setStoreId($store->getId());
 
         if ($businessAccount = $payPalConfig->getValue('business_account')) {
@@ -239,10 +254,10 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             throw new \Ess\M2ePro\Model\Exception\Logic('Marketplace is required for editing Payment Policy.');
         }
 
-        $data = array(
+        $data = [
             'id' => $marketplace->getId(),
             'services' => $marketplace->getChildObject()->getPaymentInfo()
-        );
+        ];
 
         $policyLocalization = $this->getData('policy_localization');
 

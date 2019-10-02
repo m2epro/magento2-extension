@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\View;
 
+/**
+ * Class Walmart
+ * @package Ess\M2ePro\Helper\View
+ */
 class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 {
     // M2ePro_TRANSLATIONS
@@ -32,8 +36,7 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Backend\Model\Auth\Session $authSession,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->walmartFactory = $walmartFactory;
         $this->urlBuilder = $urlBuilder;
         $this->activeRecordFactory = $activeRecordFactory;
@@ -60,7 +63,8 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
     public function getAutocompleteMaxItems()
     {
         $temp = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/view/walmart/autocomplete/','max_records_quantity'
+            '/view/walmart/autocomplete/',
+            'max_records_quantity'
         );
         return $temp <= 0 ? 100 : $temp;
     }
@@ -84,9 +88,9 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
     public function isResetFilterShouldBeShown($listingId, $isVariation = false)
     {
         $sessionKey = 'is_reset_filter_should_be_shown_' . (int)$listingId . '_' . (int)$isVariation;
-        $sessionCache = $this->getHelper('Data\Cache\Permanent');
+        $sessionCache = $this->getHelper('Data_Cache_Runtime');
 
-        if (is_null($sessionCache->getValue($sessionKey))) {
+        if ($sessionCache->getValue($sessionKey) === null) {
 
             /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
             $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection();

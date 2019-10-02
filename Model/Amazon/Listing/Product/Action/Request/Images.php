@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request;
 
+/**
+ * Class Images
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request
+ */
 class Images extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\AbstractModel
 {
     //########################################
@@ -17,7 +21,7 @@ class Images extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Abs
      */
     public function getRequestData()
     {
-        $data = array();
+        $data = [];
 
         if (!$this->getConfigurator()->isImagesAllowed()) {
             return $data;
@@ -25,29 +29,26 @@ class Images extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Abs
 
         $this->searchNotFoundAttributes();
 
-        $links = array();
+        $links = [];
         foreach ($this->getAmazonListingProduct()->getListingSource()->getGalleryImages() as $image) {
-
             if (!$image->getUrl()) {
                 continue;
             }
             $links[] = $image->getUrl();
         }
 
-        $images = array(
+        $images = [
             'offer' => $links,
-        );
+        ];
 
         if ($this->getAmazonListingProduct()->isExistDescriptionTemplate()) {
-
             $amazonDescriptionTemplate = $this->getAmazonListingProduct()->getAmazonDescriptionTemplate();
             $definitionSource = $amazonDescriptionTemplate->getDefinitionTemplate()->getSource(
                 $this->getAmazonListingProduct()->getActualMagentoProduct()
             );
 
-            $links = array();
+            $links = [];
             foreach ($definitionSource->getGalleryImages() as $image) {
-
                 if (!$image->getUrl()) {
                     continue;
                 }
@@ -56,10 +57,8 @@ class Images extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Abs
             $images['product'] = $links;
 
             if ($this->getVariationManager()->isRelationChildType()) {
-
-                $links = array();
+                $links = [];
                 foreach ($definitionSource->getVariationDifferenceImages() as $image) {
-
                     if (!$image->getUrl()) {
                         continue;
                     }

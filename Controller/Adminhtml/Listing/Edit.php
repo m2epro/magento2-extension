@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing
+ */
 class Edit extends Listing
 {
     public function execute()
@@ -24,7 +28,6 @@ class Edit extends Listing
         $listing = $this->activeRecordFactory->getObjectLoaded('Listing', $params['id']);
 
         if ($this->getRequest()->isPost()) {
-
             $listing->addData($params)->save();
 
             return $this->getResult();
@@ -35,7 +38,7 @@ class Edit extends Listing
         $global->setValue('edit_listing', $listing);
 
         $this->setAjaxContent(
-            $this->getLayout()->createBlock('Ess\M2ePro\Block\Adminhtml\Listing\Edit')
+            $this->createBlock('Listing\Edit')
         );
         return $this->getResult();
     }

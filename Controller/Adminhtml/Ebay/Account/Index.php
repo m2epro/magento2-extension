@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account
+ */
 class Index extends Account
 {
     public function execute()

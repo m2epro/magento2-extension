@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form;
 use \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm as Form;
 use \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride;
 
+/**
+ * Class ShippingOverrideRules
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form
+ */
 class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     private $elementFactory;
@@ -19,7 +23,7 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
 
     private $parentForm;
     private $renderer;
-    public  $generalFromAllAttributeSets = [];
+    public $generalFromAllAttributeSets = [];
 
     //########################################
 
@@ -65,10 +69,10 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
 
         $addShippingOverrideRuleButton = $this
             ->createBlock('Magento\Button')
-            ->setData(array(
+            ->setData([
                 'onclick' => 'WalmartTemplateSellingFormatObj.addRow();',
                 'class'   => 'add add_shipping_override_rule_button primary'
-            ));
+            ]);
         $this->setData('add_shipping_override_rule_button', $addShippingOverrideRuleButton);
 
         // ---------------------------------------
@@ -220,11 +224,11 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
 
         $removeButton = $this
             ->createBlock('Magento\Button')
-            ->addData(array(
+            ->addData([
                 'label'   => $this->__('Remove'),
                 'onclick' => 'WalmartTemplateSellingFormatObj.removeRow(this);',
                 'class'   => 'delete icon-btn remove_shipping_override_rule_button'
-            ));
+            ]);
         $this->setData('remove_shipping_override_rule_button', $removeButton);
 
         // ---------------------------------------
@@ -311,7 +315,6 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         $optionsResult = [];
 
         foreach ($this->generalFromAllAttributeSets as $attribute) {
-
             $optionsResult[] = [
                 'value' => $attribute['code'],
                 'label' => $this->escapeHtml($attribute['label'])
@@ -336,7 +339,7 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         $element->setForm($this->parentForm);
 
         if ($this->renderer === null) {
-            $this->renderer = $this->createBlock('Magento\Form\Renderer\Element');
+            $this->renderer = $this->createBlock('Magento_Form_Renderer_Element');
         }
 
         $element->setRenderer($this->renderer);
@@ -347,7 +350,7 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
 
     public function getShippingOverrideRegionsUs()
     {
-        return array(
+        return [
             'STREET_48_STATES'        => 'Street 48 States',
             'PO_BOX_48_STATES'        => 'PO Box 48 States',
             'STREET_AK_AND_HI'        => 'Street AK and HI',
@@ -355,26 +358,26 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
             'STREET_US_PROTECTORATES' => 'Street US Protectorates',
             'PO_BOX_US_PROTECTORATES' => 'PO Box US Protectorates',
             'APO_FPO'                 => 'APO FPO'
-        );
+        ];
     }
 
     public function getShippingOverrideMethodsUs()
     {
-        return array(
+        return [
             'VALUE'                    => 'Value',
             'STANDARD'                 => 'Standard',
             'EXPEDITED'                => 'Expedited',
             'FREIGHT'                  => 'Freight',
             'ONE_DAY'                  => 'One day',
             'FREIGHT_WITH_WHITE_GLOVE' => 'Freight with white glove'
-        );
+        ];
     }
 
     //########################################
 
     public function getShippingOverrideRegionsCanada()
     {
-        return array(
+        return [
             'STREET_URBAN_ONTEAST' => 'Street Urban Ontario East',
             'POBOX_URBAN_ONTEAST'  => 'PO Box Urban Ontario East',
             'STREET_URBAN_QUEBEC'  => 'Street Urban Quebec',
@@ -385,15 +388,15 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
             'POBOX_REMOTE_QUEBEC'  => 'PO Box Remote Quebec',
             'STREET_REMOTE_CANADA' => 'Street Remote Canada',
             'POBOX_REMOTE_CANADA'  => 'PO Box Remote Canada',
-        );
+        ];
     }
 
     public function getShippingOverrideMethodsCanada()
     {
-        return array(
+        return [
             'STANDARD'  => 'Standard',
             'EXPEDITED' => 'Expedited',
-        );
+        ];
     }
 
     //########################################

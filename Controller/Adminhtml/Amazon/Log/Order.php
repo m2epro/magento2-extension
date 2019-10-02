@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Log;
 
+/**
+ * Class Order
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Log
+ */
 abstract class Order extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
     //########################################

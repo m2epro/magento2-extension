@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\PickupStore;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\PickupStore
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     //########################################

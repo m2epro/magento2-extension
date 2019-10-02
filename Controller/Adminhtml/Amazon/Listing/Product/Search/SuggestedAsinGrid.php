@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class SuggestedAsinGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search
+ */
 class SuggestedAsinGrid extends Main
 {
     public function execute()
@@ -23,17 +27,17 @@ class SuggestedAsinGrid extends Main
         }
 
         /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
-        $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product',$productId);
+        $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
 
         $marketplaceId = $listingProduct->getListing()->getMarketplaceId();
 
         $searchSettingsData = $listingProduct->getChildObject()->getSettings('search_settings_data');
         if (!empty($searchSettingsData['data'])) {
-            $this->getHelper('Data\GlobalData')->setValue('product_id',$productId);
-            $this->getHelper('Data\GlobalData')->setValue('marketplace_id',$marketplaceId);
-            $this->getHelper('Data\GlobalData')->setValue('search_data',$searchSettingsData);
+            $this->getHelper('Data\GlobalData')->setValue('product_id', $productId);
+            $this->getHelper('Data\GlobalData')->setValue('marketplace_id', $marketplaceId);
+            $this->getHelper('Data\GlobalData')->setValue('search_data', $searchSettingsData);
 
-            $this->setAjaxContent($this->createBlock('Amazon\Listing\Product\Search\Grid'));
+            $this->setAjaxContent($this->createBlock('Amazon_Listing_Product_Search_Grid'));
         } else {
             $this->setAjaxContent($this->__('NO DATA'), false);
         }

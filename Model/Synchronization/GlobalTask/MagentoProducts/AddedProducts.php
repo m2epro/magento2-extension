@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts;
 
+/**
+ * Class AddedProducts
+ * @package Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts
+ */
 class AddedProducts extends AbstractModel
 {
     private $productFactory;
@@ -19,8 +23,7 @@ class AddedProducts extends AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->productFactory = $productFactory;
         parent::__construct($activeRecordFactory, $helperFactory, $modelFactory);
     }
@@ -65,7 +68,7 @@ class AddedProducts extends AbstractModel
 
     protected function performActions()
     {
-        if (is_null($this->getLastProcessedProductId())) {
+        if ($this->getLastProcessedProductId() === null) {
             $this->setLastProcessedProductId($this->getLastProductId());
         }
 
@@ -77,7 +80,6 @@ class AddedProducts extends AbstractModel
         $totalItems = count($products);
 
         foreach ($products as $product) {
-
             $this->processCategoriesActions($product);
             $this->processGlobalActions($product);
             $this->processWebsiteActions($product);
@@ -99,16 +101,16 @@ class AddedProducts extends AbstractModel
     {
         $productCategories = $product->getCategoryIds();
 
-        $categoriesByWebsite = array(
+        $categoriesByWebsite = [
             0 => $productCategories // website for admin values
-        );
+        ];
 
         foreach ($product->getWebsiteIds() as $websiteId) {
             $categoriesByWebsite[$websiteId] = $productCategories;
         }
 
         /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Category $autoActionsCategory */
-        $autoActionsCategory = $this->modelFactory->getObject('Listing\Auto\Actions\Mode\Category');
+        $autoActionsCategory = $this->modelFactory->getObject('Listing_Auto_Actions_Mode_Category');
         $autoActionsCategory->setProduct($product);
 
         foreach ($categoriesByWebsite as $websiteId => $categoryIds) {
@@ -121,7 +123,7 @@ class AddedProducts extends AbstractModel
     private function processGlobalActions(\Magento\Catalog\Model\Product $product)
     {
         /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\GlobalMode $object */
-        $object = $this->modelFactory->getObject('Listing\Auto\Actions\Mode\GlobalMode');
+        $object = $this->modelFactory->getObject('Listing_Auto_Actions_Mode_GlobalMode');
         $object->setProduct($product);
         $object->synch();
     }
@@ -129,7 +131,7 @@ class AddedProducts extends AbstractModel
     private function processWebsiteActions(\Magento\Catalog\Model\Product $product)
     {
         /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Website $object */
-        $object = $this->modelFactory->getObject('Listing\Auto\Actions\Mode\Website');
+        $object = $this->modelFactory->getObject('Listing_Auto_Actions_Mode_Website');
         $object->setProduct($product);
 
         // website for admin values
@@ -154,9 +156,9 @@ class AddedProducts extends AbstractModel
     {
         $collection = $this->productFactory->create()->getCollection();
 
-        $collection->addFieldToFilter('entity_id', array('gt' => (int)$this->getLastProcessedProductId()));
+        $collection->addFieldToFilter('entity_id', ['gt' => (int)$this->getLastProcessedProductId()]);
         $collection->addAttributeToSelect('visibility');
-        $collection->setOrder('entity_id','asc');
+        $collection->setOrder('entity_id', 'asc');
         $collection->getSelect()->limit(100);
 
         return $collection->getItems();
@@ -166,12 +168,12 @@ class AddedProducts extends AbstractModel
 
     private function getLastProcessedProductId()
     {
-        return $this->getConfigValue($this->getFullSettingsPath(),'last_magento_product_id');
+        return $this->getConfigValue($this->getFullSettingsPath(), 'last_magento_product_id');
     }
 
     private function setLastProcessedProductId($magentoProductId)
     {
-        $this->setConfigValue($this->getFullSettingsPath(),'last_magento_product_id',(int)$magentoProductId);
+        $this->setConfigValue($this->getFullSettingsPath(), 'last_magento_product_id', (int)$magentoProductId);
     }
 
     //########################################

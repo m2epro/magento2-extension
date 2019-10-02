@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Task;
 
+/**
+ * Class LogsClearing
+ * @package Ess\M2ePro\Model\Cron\Task
+ */
 class LogsClearing extends AbstractModel
 {
     const NICK = 'logs_clearing';
@@ -57,12 +61,12 @@ class LogsClearing extends AbstractModel
 
     private function clearSystemLogByAmount()
     {
-        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_system_log');
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_system_log');
 
         $connection = $this->resource->getConnection();
 
         $counts = (int)$connection->select()
-                                      ->from($tableName, array(new \Zend_Db_Expr('COUNT(*)')))
+                                      ->from($tableName, [new \Zend_Db_Expr('COUNT(*)')])
                                       ->query()
                                       ->fetchColumn();
 
@@ -73,16 +77,16 @@ class LogsClearing extends AbstractModel
         $ids = $connection->select()
                               ->from($tableName, 'id')
                               ->limit($counts - self::SYSTEM_LOG_MAX_RECORDS)
-                              ->order(array('id ASC'))
+                              ->order(['id ASC'])
                               ->query()
                               ->fetchAll(\Zend_Db::FETCH_COLUMN);
 
-        $connection->delete($tableName, 'id IN ('.implode(',',$ids).')');
+        $connection->delete($tableName, 'id IN ('.implode(',', $ids).')');
     }
 
     private function clearSystemLogByTime()
     {
-        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_system_log');
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_system_log');
         $connection = $this->resource->getConnection();
 
         $currentDate = $this->getHelper('Data')->getCurrentGmtDate();
@@ -90,7 +94,7 @@ class LogsClearing extends AbstractModel
         $dateTime->modify('-'.self::SYSTEM_LOG_MAX_DAYS.' days');
         $minDate = $dateTime->format('Y-m-d 00:00:00');
 
-        $connection->delete($tableName,"create_date < '{$minDate}'");
+        $connection->delete($tableName, "create_date < '{$minDate}'");
     }
 
     //########################################

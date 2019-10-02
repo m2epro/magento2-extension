@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Observer\Product\Attribute\Update;
 
+/**
+ * Class Before
+ * @package Ess\M2ePro\Observer\Product\Attribute\Update
+ */
 class Before extends \Ess\M2ePro\Observer\AbstractModel
 {
     protected $objectManager;
@@ -19,7 +23,7 @@ class Before extends \Ess\M2ePro\Observer\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Framework\ObjectManagerInterface $objectManager
-    ){
+    ) {
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
         $this->objectManager = $objectManager;
     }
@@ -41,16 +45,17 @@ class Before extends \Ess\M2ePro\Observer\AbstractModel
         $affectedProductsIds = $this->getAffectedProducts($changedProductsIds);
 
         foreach ($changedProductsIds as $productId) {
-
             if (!in_array((int)$productId, $affectedProductsIds)) {
                 continue;
             }
 
             foreach ($attributesData as $attributeName => $attributeValue) {
-
                 $changesModel->markProductAttributeChanged(
-                    $productId, $attributeName, $storeId,
-                    $this->getHelper('Module\Translation')->__('Unknown'), $attributeValue
+                    $productId,
+                    $attributeName,
+                    $storeId,
+                    $this->getHelper('Module\Translation')->__('Unknown'),
+                    $attributeValue
                 );
             }
         }
@@ -63,7 +68,7 @@ class Before extends \Ess\M2ePro\Observer\AbstractModel
     private function getAffectedProducts(array $changedProductsIds)
     {
         $collection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
-        $collection->addFieldToFilter('product_id', array('in' => $changedProductsIds));
+        $collection->addFieldToFilter('product_id', ['in' => $changedProductsIds]);
 
         $collection->getSelect()->distinct(true);
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);

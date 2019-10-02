@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Account;
 
+/**
+ * Class Feedback
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs
+ */
 class Feedback extends AbstractForm
 {
 
@@ -19,14 +23,14 @@ class Feedback extends AbstractForm
     protected function _prepareForm()
     {
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
-        $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
-        $defaults = array(
+        $defaults = [
             'feedbacks_receive' => \Ess\M2ePro\Model\Ebay\Account::FEEDBACKS_RECEIVE_NO,
             'feedbacks_auto_response' => \Ess\M2ePro\Model\Ebay\Account::FEEDBACKS_AUTO_RESPONSE_NONE,
             'feedbacks_auto_response_only_positive' =>
                 \Ess\M2ePro\Model\Ebay\Account::FEEDBACKS_AUTO_RESPONSE_ONLY_POSITIVE_NO
-        );
+        ];
         $formData = array_merge($defaults, $formData);
         $this->setData('form_data', $formData);
 
@@ -40,12 +44,13 @@ class Feedback extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
-    'Choose how you want to deal with Feedback from your eBay Buyers.<br /><br />
+                    'Choose how you want to deal with Feedback from your eBay Buyers.<br /><br />
      If you enable Import Feedback from Buyers option, you can also choose whether to set up automatic responses.
      <br /><br />
      More detailed information about ability to work with this Page you can find
      <a href="%url%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/fQA0AQ'))
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/fQA0AQ')
+                )
             ]
         );
 
@@ -113,7 +118,8 @@ class Feedback extends AbstractForm
                 ],
                 'value' => $formData['feedbacks_auto_response_only_positive'],
                 'tooltip' => $this->__(
-    'Choose whether to respond to <b>All</b> Feedback (positive, neutral or negative) or <b>Positive</b> Feedback only.'
+                    'Choose whether to respond to <b>All</b> Feedback (positive, neutral or negative) or
+                    <b>Positive</b> Feedback only.'
                 ),
                 'field_extra_attributes' => 'id="feedbacks_auto_response_only_positive_container" ' .
                     (($formData['feedbacks_receive'] == Account::FEEDBACKS_RECEIVE_NO ||
@@ -192,16 +198,16 @@ CSS
         );
 
         $addBtn = $this->createBlock('Magento\Button')
-            ->setData(array(
+            ->setData([
                 'onclick' => 'EbayAccountObj.openFeedbackTemplatePopup();',
                 'label' => $this->__('Add Template'),
                 'class' => 'add_feedback_template_button primary'
-            ))->toHtml();
+            ])->toHtml();
 
         $formData = $this->getData('form_data');
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback\Template\Grid $grid */
-        $grid = $this->createBlock('Ebay\Account\Edit\Tabs\Feedback\Template\Grid');
+        $grid = $this->createBlock('Ebay_Account_Edit_Tabs_Feedback_Template_Grid');
         $gridHtml = $grid->toHtml();
 
         $showTemplates = (

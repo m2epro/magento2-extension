@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Category;
 
+/**
+ * Class Tree
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\Category
+ */
 class Tree extends \Ess\M2ePro\Block\Adminhtml\Magento\Category\AbstractCategory
 {
     protected $_template = 'listing/category/tree.phtml';
 
-    protected $_selectedCategories = array();
+    protected $_selectedCategories = [];
 
-    protected $_highlightedCategories = array();
+    protected $_highlightedCategories = [];
 
     protected $_callback = null;
 
@@ -74,10 +78,10 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Magento\Category\AbstractCategory
         return $this->escapeHtml($node->getName());
     }
 
-    public function getTreeJson($parentNodeCategory=null)
+    public function getTreeJson($parentNodeCategory = null)
     {
         $rootArray = $this->_getNodeJson($this->getRoot($parentNodeCategory, 0));
-        $json = \Zend_Json::encode(isset($rootArray['children']) ? $rootArray['children'] : array());
+        $json = \Zend_Json::encode(isset($rootArray['children']) ? $rootArray['children'] : []);
         return $json;
     }
 
@@ -87,18 +91,18 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Magento\Category\AbstractCategory
             $node = new \Magento\Framework\Data\Tree\Node($node, 'entity_id', new \Magento\Framework\Data\Tree);
         }
 
-        $item = array();
+        $item = [];
         $item['text'] = $this->buildNodeName($node);
         $item['id']  = $node->getId();
         $item['allowDrop'] = false;
 
         if ((int)$node->getChildrenCount()>0) {
-            $item['children'] = array();
+            $item['children'] = [];
         }
 
         $isParent = false;
         if ($node->hasChildren()) {
-            $item['children'] = array();
+            $item['children'] = [];
             if (!($this->getUseAjax() && $node->getLevel() > 1 && !$isParent)) {
                 foreach ($node->getChildren() as $child) {
                     $item['children'][] = $this->_getNodeJson($child, $level+1);

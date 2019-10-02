@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Marketplaces;
 
+/**
+ * Class Details
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\Marketplaces
+ */
 class Details extends AbstractModel
 {
     //########################################
@@ -47,16 +51,18 @@ class Details extends AbstractModel
 
         $this->getActualLockItem()->setPercents($this->getPercentsStart());
 
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__.'get'.$marketplace->getId(),
-                                                         'Get details from Amazon');
+        $this->getActualOperationHistory()->addTimePoint(
+            __METHOD__.'get'.$marketplace->getId(),
+            'Get details from Amazon'
+        );
         $details = $this->receiveFromAmazon($marketplace);
         $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$marketplace->getId());
 
         $this->getActualLockItem()->setPercents($this->getPercentsStart() + $this->getPercentsInterval()/2);
         $this->getActualLockItem()->activate();
 
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__.'save'.$marketplace->getId(),'Save details to DB');
-        $this->saveDetailsToDb($marketplace,$details);
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__.'save'.$marketplace->getId(), 'Save details to DB');
+        $this->saveDetailsToDb($marketplace, $details);
         $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'save'.$marketplace->getId());
 
         $this->getActualLockItem()->setPercents($this->getPercentsEnd());
@@ -69,20 +75,23 @@ class Details extends AbstractModel
 
     protected function receiveFromAmazon(\Ess\M2ePro\Model\Marketplace $marketplace)
     {
-        $dispatcherObj = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+        $dispatcherObj = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
         $connectorObj  = $dispatcherObj->getVirtualConnector(
-            'marketplace','get','info',
-            array(
+            'marketplace',
+            'get',
+            'info',
+            [
                 'include_details' => true, 'marketplace' => $marketplace->getNativeId()
-            ),
-            'info',NULL
+            ],
+            'info',
+            null
         );
 
         $dispatcherObj->process($connectorObj);
         $details = $connectorObj->getResponseData();
 
-        if (is_null($details)) {
-            return array();
+        if ($details === null) {
+            return [];
         }
 
         $details['details']['last_update'] = $details['last_update'];
@@ -92,34 +101,34 @@ class Details extends AbstractModel
     protected function saveDetailsToDb(\Ess\M2ePro\Model\Marketplace $marketplace, array $details)
     {
         $connection = $this->resourceConnection->getConnection();
-        $tableMarketplaces = $this->getHelper('Module\Database\Structure')
+        $tableMarketplaces = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_amazon_dictionary_marketplace');
-        $tableShippingOverride = $this->getHelper('Module\Database\Structure')
+        $tableShippingOverride = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_amazon_dictionary_shipping_override');
 
-        $connection->delete($tableMarketplaces,array('marketplace_id = ?' => $marketplace->getId()));
+        $connection->delete($tableMarketplaces, ['marketplace_id = ?' => $marketplace->getId()]);
 
-        $data = array(
+        $data = [
             'marketplace_id' => $marketplace->getId(),
-            'client_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : NULL,
-            'server_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : NULL,
+            'client_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : null,
+            'server_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : null,
             'product_data'   =>
-                isset($details['product_data']) ? $this->getHelper('Data')->jsonEncode($details['product_data']) : NULL,
-        );
+                isset($details['product_data']) ? $this->getHelper('Data')->jsonEncode($details['product_data']) : null,
+        ];
 
         $connection->insert($tableMarketplaces, $data);
 
-        $this->getHelper('Component\Amazon\Vocabulary')->setServerData($details['vocabulary']);
+        $this->getHelper('Component_Amazon_Vocabulary')->setServerData($details['vocabulary']);
 
-        $connection->delete($tableShippingOverride, array('marketplace_id = ?' => $marketplace->getId()));
+        $connection->delete($tableShippingOverride, ['marketplace_id = ?' => $marketplace->getId()]);
 
         foreach ($details['shipping_overrides'] as $data) {
-            $insertData = array(
+            $insertData = [
                 'marketplace_id'   => $marketplace->getId(),
                 'location'         => $data['location'],
                 'service'          => $data['service'],
                 'option'           => $data['option']
-            );
+            ];
             $connection->insert($tableShippingOverride, $insertData);
         }
     }
@@ -131,13 +140,15 @@ class Details extends AbstractModel
 
         $tempString = $this->getHelper('Module\Log')->encodeDescription(
             'The "Details" Action for %amazon% Marketplace: "%mrk%" has been successfully completed.',
-            array('!amazon' => $this->getHelper('Component\Amazon')->getTitle(),
-                  'mrk'     => $marketplace->getTitle())
+            ['!amazon' => $this->getHelper('Component\Amazon')->getTitle(),
+                  'mrk'     => $marketplace->getTitle()]
         );
 
-        $this->getLog()->addMessage($tempString,
-                                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
-                                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW);
+        $this->getLog()->addMessage(
+            $tempString,
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+        );
     }
 
     //########################################

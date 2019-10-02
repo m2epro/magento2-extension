@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Marketplace;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Marketplace;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Marketplace
+ */
 class Index extends Marketplace
 {
     //########################################

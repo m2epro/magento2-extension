@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Search\ByIdentifier;
 
+/**
+ * Class ItemsResponser
+ * @package Ess\M2ePro\Model\Amazon\Connector\Search\ByIdentifier
+ */
 abstract class ItemsResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
 {
     // ########################################
@@ -33,35 +37,34 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command
             return;
         }
 
-        $result = array();
+        $result = [];
 
         foreach ($responseData['items'] as $item) {
-
-            $product = array(
+            $product = [
                 'general_id' => $item['product_id'],
                 'brand' => isset($item['brand']) ? $item['brand'] : '',
                 'title' => $item['title'],
                 'image_url' => $item['image_url'],
                 'is_variation_product' => $item['is_variation_product'],
-            );
+            ];
 
             if ($product['is_variation_product']) {
-                if(empty($item['bad_parent'])) {
-                    $product += array(
+                if (empty($item['bad_parent'])) {
+                    $product += [
                         'parentage' => $item['parentage'],
                         'variations' => $item['variations'],
                         'bad_parent' => false
-                    );
+                    ];
                 } else {
                     $product['bad_parent'] = (bool)$item['bad_parent'];
                 }
             }
 
             if (!empty($item['list_price'])) {
-                $product['list_price'] = array(
+                $product['list_price'] = [
                     'amount' => $item['list_price']['amount'],
                     'currency' => $item['list_price']['currency'],
-                );
+                ];
             }
 
             if (!empty($item['requested_child_id'])) {

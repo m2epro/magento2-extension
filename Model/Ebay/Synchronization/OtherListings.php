@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization;
 
+/**
+ * Class OtherListings
+ * @package Ess\M2ePro\Model\Ebay\Synchronization
+ */
 class OtherListings extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
 {
     //########################################
@@ -25,7 +29,7 @@ class OtherListings extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
      */
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     /**

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Synchronization\Task;
 
+/**
+ * Class AbstractGlobal
+ * @package Ess\M2ePro\Model\Synchronization\Task
+ */
 abstract class AbstractGlobal extends \Ess\M2ePro\Model\Synchronization\AbstractTask
 {
     const PROCESSING       = 'processing';

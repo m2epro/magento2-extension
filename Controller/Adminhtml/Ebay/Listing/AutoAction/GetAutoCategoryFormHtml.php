@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction;
 
+/**
+ * Class GetAutoCategoryFormHtml
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
+ */
 class GetAutoCategoryFormHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
 {
     //########################################
@@ -20,7 +24,7 @@ class GetAutoCategoryFormHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
         $this->getHelper('Data\GlobalData')->setValue('ebay_listing', $listing);
         // ---------------------------------------
 
-        $block = $this->createBlock('Ebay\Listing\AutoAction\Mode\Category\Form');
+        $block = $this->createBlock('Ebay_Listing_AutoAction_Mode_Category_Form');
 
         $this->setAjaxContent($block);
         return $this->getResult();

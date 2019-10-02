@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Account;
 
+/**
+ * Class Repricing
+ * @package Ess\M2ePro\Model\ResourceModel\Amazon\Account
+ */
 class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
@@ -28,17 +32,17 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMod
             return;
         }
 
-        $listingsProductsIds = array();
+        $listingsProductsIds = [];
         foreach ($listingsProducts as $listingProduct) {
             $listingsProductsIds[] = $listingProduct['id'];
         }
 
-        if (!$this->isDifferent($newData,$oldData)) {
+        if (!$this->isDifferent($newData, $oldData)) {
             return;
         }
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Repricing $resource */
-        $resource = $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')->getResource();
+        $resource = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')->getResource();
         $resource->markAsProcessRequired($listingsProductsIds);
     }
 
@@ -46,17 +50,17 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMod
 
     public function isDifferent($newData, $oldData)
     {
-        $ignoreFields = array(
+        $ignoreFields = [
             $this->getIdFieldName(),
             'account_id', 'email', 'token',
             'total_products', 'create_date', 'update_date',
-        );
+        ];
 
         foreach ($ignoreFields as $ignoreField) {
             unset($newData[$ignoreField], $oldData[$ignoreField]);
         }
 
-        return (count(array_diff_assoc($newData, $oldData)) > 0);
+        return !empty(array_diff_assoc($newData, $oldData));
     }
 
     //########################################

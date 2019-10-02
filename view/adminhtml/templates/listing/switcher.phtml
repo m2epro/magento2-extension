@@ -1,3 +1,14 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
 <style type="text/css">
     #listing_switcher_add_new_drop_down ul li {
         padding: 2px 5px 2px 10px !important;
@@ -9,8 +20,8 @@
 <div id="listing-switcher-add-new" style="display: none;">
     <ul>
         <li style="background: #eaeaea;">
-            <a href="<?php echo $this->getUrl($this->getAddListingUrl()) ?>">
-                <span style="font-weight: bold; font-size: 12px; font-style: italic; color: #ea7601;">+ <?php echo $this->__('Add New Listing') ?></span>
+            <a href="<?php echo $block->getUrl($block->getAddListingUrl()) ?>">
+                <span style="font-weight: bold; font-size: 12px; font-style: italic; color: #ea7601;">+ <?php echo $block->__('Add New Listing') ?></span>
             </a>
         </li>
     </ul>

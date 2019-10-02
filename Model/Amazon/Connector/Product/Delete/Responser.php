@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Product\Delete;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Amazon\Connector\Product\Delete
+ */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $parentForProcessing */
-    protected $parentForProcessing = NULL;
+    protected $parentForProcessing = null;
 
     // ########################################
 
@@ -73,13 +77,13 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 
         $configurator = $this->getConfigurator();
         if (!empty($responseData['start_processing_date'])) {
-            $configurator->setParams(array('start_processing_date' => $responseData['start_processing_date']));
+            $configurator->setParams(['start_processing_date' => $responseData['start_processing_date']]);
         }
 
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Product\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Product_Dispatcher');
         $dispatcherObject->process(
             \Ess\M2ePro\Model\Listing\Product::ACTION_DELETE,
-            array($this->listingProduct->getId()),
+            [$this->listingProduct->getId()],
             $this->params['params']
         );
     }
@@ -91,7 +95,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
             return;
         }
 
-        if (is_null($this->parentForProcessing)) {
+        if ($this->parentForProcessing === null) {
             return;
         }
 

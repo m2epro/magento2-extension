@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other
+ */
 class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     protected $amazonFactory;
@@ -18,8 +22,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         parent::__construct($context, $data);
     }
@@ -49,25 +52,24 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $accountId = $this->getRequest()->getParam('account');
         $marketplaceId = $this->getRequest()->getParam('marketplace');
 
-        $this->addButton('view_logs', array(
+        $this->addButton('view_logs', [
             'label'   => $this->__('View Log'),
             'onclick' => 'window.open(\''.$this->getUrl('*/amazon_log_listing_other/index', [
                 'amazonAccount' => $accountId,
                 'amazonMarketplace' => $marketplaceId,
                 'listings' => true
             ]) . '\');',
-        ));
+        ]);
 
-        if (!is_null($this->getRequest()->getParam('back'))) {
+        if ($this->getRequest()->getParam('back') !== null) {
             $url = $this->getHelper('Data')->getBackUrl();
-            $this->buttonList->add('back', array(
+            $this->buttonList->add('back', [
                 'label'   => $this->__('Back'),
                 'onclick' => 'CommonObj.backClick(\'' . $url . '\')',
                 'class'   => 'back'
-            ));
+            ]);
         }
         // ---------------------------------------
-
     }
 
     protected function _prepareLayout()
@@ -97,7 +99,8 @@ HTML
 
         // ---------------------------------------
         $viewHeaderBlock = $this->createBlock(
-            'Listing\Other\View\Header','',
+            'Listing_Other_View_Header',
+            '',
             ['data' => [
                 'account' => $this->amazonFactory->getCachedObjectLoaded('Account', $accountId),
                 'marketplace' => $this->amazonFactory->getCachedObjectLoaded('Marketplace', $marketplaceId)
@@ -106,7 +109,7 @@ HTML
         // ---------------------------------------
 
         $mapToProductBlock = $this->createBlock(
-            'Listing\Other\Mapping'
+            'Listing_Other_Mapping'
         );
 
         return $viewHeaderBlock->toHtml() . $mapToProductBlock->toHtml() . parent::getGridHtml();
@@ -245,10 +248,10 @@ HTML
             AmazonListingOtherGridObj.afterInitPage();
         });
 JS
-);
+        );
 
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(
-            '\Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid'
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid::class
         ));
 
         return '<div id="listing_other_progress_bar"></div>' .

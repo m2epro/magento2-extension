@@ -1,22 +1,32 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
 <table class="form-list" cellspacing="0" cellpadding="0">
 
     <tr>
         <td class="label" style="width:300px;">
-            <strong><?php echo $this->__('Module'); ?></strong>
+            <strong><?php echo $block->__('Module'); ?></strong>
         </td>
         <td class="value" style="width:150px;">
-            <strong><?php echo $this->__('Version'); ?></strong>
+            <strong><?php echo $block->__('Version'); ?></strong>
         </td>
     </tr>
 
-    <?php foreach ($this->getHelper('Magento')->getConflictedModules() as $module => $data) : ?>
-
+    <?php foreach ($block->getHelper('Magento')->getConflictedModules() as $module => $data) : ?>
         <tr>
             <td class="label">
                 <label><?php echo $module; ?>: </label>
                 <?php if (!empty($data['description'])) { ?>
                     <p class="note" style="color: grey">
-                        <span><?php echo $this->__($data['description']); ?></span>
+                        <span><?php echo $block->__($data['description']); ?></span>
                     </p>
                 <?php } ?>
             </td>

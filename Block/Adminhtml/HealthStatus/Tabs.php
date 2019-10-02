@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\HealthStatus;
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\InfoType;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\HealthStatus
+ */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 {
     const TAB_ID_DASHBOARD     = 'dashboard';
@@ -27,7 +31,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
         \Magento\Backend\Model\Auth\Session $authSession,
         array $data = []
-    ){
+    ) {
         parent::__construct($context, $jsonEncoder, $authSession, $data);
         $this->resultSet = $resultSet;
     }
@@ -53,15 +57,15 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $resultSet->fill($this->resultSet->getByType(InfoType::TYPE));
 
         /** @var \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Dashboard $tabObj */
-        $tabObj = $this->createBlock('HealthStatus\Tabs\Dashboard', '', [
+        $tabObj = $this->createBlock('HealthStatus_Tabs_Dashboard', '', [
             'resultSet' => $resultSet
         ]);
 
-        $this->addTab(self::TAB_ID_DASHBOARD,  array(
+        $this->addTab(self::TAB_ID_DASHBOARD, [
             'label'   => $this->__('Dashboard'),
             'title'   => $this->__('Dashboard'),
             'content' => $tabObj->toHtml()
-        ));
+        ]);
         // ---------------------------------------
 
         // -- Dynamic Tabs for Issues
@@ -69,7 +73,6 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $createdTabs = [];
 
         foreach ($this->resultSet->getByType(IssueType::TYPE) as $result) {
-
             if (in_array($result->getTabName(), $createdTabs)) {
                 continue;
             }
@@ -84,21 +87,21 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
             ));
 
             /** @var \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\IssueGroup $tabObj */
-            $tabObj = $this->createBlock('HealthStatus\Tabs\IssueGroup', '', [
+            $tabObj = $this->createBlock('HealthStatus_Tabs_IssueGroup', '', [
                 'resultSet' => $resultSet
             ]);
 
             $tabClass = '';
             $resultSet->isCritical() && $tabClass = 'health-status-tab-critical';
-            $resultSet->isWaring()   && $tabClass = 'health-status-tab-warning';
-            $resultSet->isNotice()   && $tabClass = 'health-status-tab-notice';
+            $resultSet->isWaring() && $tabClass = 'health-status-tab-warning';
+            $resultSet->isNotice() && $tabClass = 'health-status-tab-notice';
 
-            $this->addTab('issue_tab_' . $resultSet->getTabKey($result), array(
+            $this->addTab('issue_tab_' . $resultSet->getTabKey($result), [
                 'label'   => $this->__($result->getTabName()),
                 'title'   => $this->__($result->getTabName()),
                 'content' => $tabObj->toHtml(),
                 'class'   => $tabClass
-            ));
+            ]);
 
             $createdTabs[] = $result->getTabName();
         }
@@ -106,13 +109,13 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 
         // ---------------------------------------
         /** @var \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Notifications $tabObj */
-        $tabObj = $this->createBlock('HealthStatus\Tabs\Notifications');
+        $tabObj = $this->createBlock('HealthStatus_Tabs_Notifications');
 
-        $this->addTab(self::TAB_ID_NOTIFICATIONS, array(
+        $this->addTab(self::TAB_ID_NOTIFICATIONS, [
             'label'   => $this->__('Notification Settings'),
             'title'   => $this->__('Notification Settings'),
             'content' => $tabObj->toHtml()
-        ));
+        ]);
         // ---------------------------------------
 
         $this->setActiveTab($this->getRequest()->getParam('tab', self::TAB_ID_DASHBOARD));
@@ -124,7 +127,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 
     public function getActiveTabById($id)
     {
-        return isset($this->_tabs[$id]) ? $this->_tabs[$id] : NULL;
+        return isset($this->_tabs[$id]) ? $this->_tabs[$id] : null;
     }
 
     //########################################

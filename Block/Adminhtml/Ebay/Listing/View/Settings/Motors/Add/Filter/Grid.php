@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     private $motorsType;
@@ -21,8 +25,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
 
         parent::__construct($context, $backendHelper, $data);
@@ -50,7 +53,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareCollection()
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Filter\Collection $collection */
-        $collection = $this->activeRecordFactory->getObject('Ebay\Motor\Filter')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Ebay_Motor_Filter')->getCollection();
         $collection->addFieldToFilter('type', ['=' => $this->getMotorsType()]);
 
         $this->setCollection($collection);
@@ -152,7 +155,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         /** @var \Ess\M2ePro\Model\Ebay\Motor\Filter $row */
         $conditions = $row->getConditions();
-        $helper = $this->getHelper('Component\Ebay\Motors');
+        $helper = $this->getHelper('Component_Ebay_Motors');
 
         $select = $this->resourceConnection->getConnection()
             ->select()
@@ -163,14 +166,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         foreach ($conditions as $key => $value) {
-
             if ($key != 'year') {
                 $select->where('`'.$key.'` LIKE ?', '%'.$value.'%');
                 continue;
             }
 
             if ($row->isTypeEpid()) {
-
                 if (!empty($value['from'])) {
                     $select->where('`year` >= ?', $value['from']);
                 }
@@ -179,7 +180,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     $select->where('`year` <= ?', $value['to']);
                 }
             } else {
-
                 if (!empty($value)) {
                     $select->where('from_year <= ?', $value);
                     $select->where('to_year >= ?', $value);
@@ -206,10 +206,9 @@ HTML;
     {
         $conditions = $this->getHelper('Data')->jsonDecode($row->getData('conditions'));
 
-        if ($this->getHelper('Component\Ebay\Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
-
+        if ($this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
             if (!empty($conditions['year'])) {
-                $yearIndex = array_search("year",array_keys($conditions));
+                $yearIndex = array_search("year", array_keys($conditions));
 
                 !empty($conditions['year']['to']) && $conditions = array_merge(
                     array_slice($conditions, 0, $yearIndex),
@@ -227,8 +226,7 @@ HTML;
             }
 
             if (isset($conditions['product_type']) && $conditions['product_type'] != '') {
-
-                switch($conditions['product_type']) {
+                switch ($conditions['product_type']) {
                     case \Ess\M2ePro\Helper\Component\Ebay\Motors::PRODUCT_TYPE_VEHICLE:
                         $conditions['product_type'] = $this->__('Car / Truck');
                         break;
@@ -247,14 +245,13 @@ HTML;
         $html = '<div class="product-options-main" style="font-size: 11px; color: grey; margin-left: 7px">';
 
         foreach ($conditions as $key => $value) {
-
             if ($key == 'epid') {
                 $key = $this->getHelper('Data')->escapeHtml('ePID');
-            } else if ($key == 'ktype') {
+            } elseif ($key == 'ktype') {
                 $key = $this->getHelper('Data')->escapeHtml('kType');
-            } else if ($key == 'body_style') {
+            } elseif ($key == 'body_style') {
                 $key = $this->getHelper('Data')->escapeHtml('Body Style');
-            } else if ($key == 'product_type') {
+            } elseif ($key == 'product_type') {
                 $key = $this->getHelper('Data')->escapeHtml('Type');
             } else {
                 $key = $this->getHelper('Data')->escapeHtml(ucfirst($key));
@@ -296,7 +293,6 @@ HTML;
     protected function _toHtml()
     {
         if (!$this->canDisplayContainer()) {
-
             $this->js->add(<<<JS
         EbayListingViewSettingsMotorsAddFilterGridObj.afterInitPage();
         EbayListingViewSettingsMotorsAddFilterGridObj
@@ -349,7 +345,7 @@ JS
 
     public function getMotorsType()
     {
-        if (is_null($this->motorsType)) {
+        if ($this->motorsType === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Motors type not set.');
         }
 
@@ -360,7 +356,7 @@ JS
 
     public function getItemsColumnTitle()
     {
-        if ($this->getHelper('Component\Ebay\Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
+        if ($this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
             return $this->__('ePID(s)');
         }
 

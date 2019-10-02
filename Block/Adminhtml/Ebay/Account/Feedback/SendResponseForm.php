@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Feedback;
 
+/**
+ * Class SendResponseForm
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\Feedback
+ */
 class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected function _prepareForm()
@@ -53,7 +57,7 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
             ]
         );
 
-        $url = $this->getUrl('*/*/goToItem', array('feedback_id' => $feedback->getId()));
+        $url = $this->getUrl('*/*/goToItem', ['feedback_id' => $feedback->getId()]);
 
         $fieldset->addField(
             'item_id',
@@ -76,10 +80,11 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
             ]
         );
 
-        $templates = $this->activeRecordFactory->getObject('Ebay\Feedback\Template')->getCollection()
+        $templates = $this->activeRecordFactory->getObject('Ebay_Feedback_Template')->getCollection()
             ->addFieldToFilter('main_table.account_id', $feedback->getData('account_id'));
 
-        $fieldset->addField('feedback_template_type',
+        $fieldset->addField(
+            'feedback_template_type',
             self::SELECT,
             [
                 'html_id' => 'feedback_template_type',
@@ -125,7 +130,8 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
             ];
         }
 
-        $fieldset->addField('feedback_template',
+        $fieldset->addField(
+            'feedback_template',
             self::SELECT,
             [
                 'html_id' => 'feedback_template',
@@ -139,7 +145,8 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
             ]
         );
 
-        $fieldset->addField('feedback_text',
+        $fieldset->addField(
+            'feedback_text',
             'textarea',
             [
                 'html_id' => 'feedback_text',

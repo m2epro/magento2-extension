@@ -10,13 +10,17 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
+/**
+ * Class GoToOrder
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback
+ */
 class GoToOrder extends Account
 {
     public function execute()
     {
         $feedbackId = $this->getRequest()->getParam('feedback_id');
 
-        if (is_null($feedbackId)) {
+        if ($feedbackId === null) {
             $this->getMessageManager()->addError($this->__('Feedback is not defined.'));
             return $this->_redirect('*/ebay_order/index');
         }
@@ -25,11 +29,11 @@ class GoToOrder extends Account
         $feedback = $this->activeRecordFactory->getObjectLoaded('Ebay\Feedback', $feedbackId);
         $order = $feedback->getOrder();
 
-        if (is_null($order)) {
+        if ($order === null) {
             $this->getMessageManager()->addError($this->__('Requested Order was not found.'));
             return $this->_redirect('*/ebay_order/index');
         }
 
-        return $this->_redirect('*/ebay_order/view', array('id' => $order->getId()));
+        return $this->_redirect('*/ebay_order/view', ['id' => $order->getId()]);
     }
 }

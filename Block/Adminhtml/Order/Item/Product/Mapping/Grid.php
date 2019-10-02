@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Mapping;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Mapping
+ */
 class Grid extends AbstractGrid
 {
     //########################################
@@ -25,8 +29,7 @@ class Grid extends AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->cacheConfig = $cacheConfig;
         $this->productTypeModel = $productTypeModel;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
@@ -59,11 +62,11 @@ class Grid extends AbstractGrid
         $orderItem = $this->activeRecordFactory->getObjectLoaded('Order\Item', $itemId);
 
         $storeId = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
-        if (!is_null($orderItem->getId())) {
+        if ($orderItem->getId() !== null) {
             $storeId = $orderItem->getStoreId();
         }
 
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->setStoreId($storeId);
 
@@ -71,7 +74,7 @@ class Grid extends AbstractGrid
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('type_id')
-            ->joinStockItem(array('qty' => 'qty', 'is_in_stock' => 'is_in_stock'));
+            ->joinStockItem();
 
         $this->setCollection($collection);
 
@@ -80,17 +83,17 @@ class Grid extends AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('product_id', array(
+        $this->addColumn('product_id', [
             'header'       => $this->__('Product ID'),
             'align'        => 'right',
             'type'         => 'number',
             'width'        => '60px',
             'index'        => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => array($this, 'callbackColumnProductId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductId']
+        ]);
 
-        $this->addColumn('title', array(
+        $this->addColumn('title', [
             'header'       => $this->__('Product Title / Product SKU'),
             'align'        => 'left',
             'type'         => 'text',
@@ -98,53 +101,54 @@ class Grid extends AbstractGrid
             'index'        => 'name',
             'filter_index' => 'name',
             'escape'       => false,
-            'frame_callback' => array($this, 'callbackColumnTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+        ]);
 
-        $this->addColumn('type_id',array(
+        $this->addColumn('type_id', [
             'header'=> $this->__('Type'),
             'width' => '60px',
             'index' => 'type_id',
             'sortable'  => false,
             'type'  => 'options',
             'options' => $this->productTypeModel->getOptionArray()
-        ));
+        ]);
 
-        $this->addColumn('stock_availability', array(
+        $this->addColumn('stock_availability', [
             'header'=> $this->__('Stock Availability'),
             'width' => '100px',
             'index' => 'is_in_stock',
             'filter_index' => 'is_in_stock',
             'type'  => 'options',
             'sortable'  => false,
-            'options' => array(
+            'options' => [
                 1 => $this->__('In Stock'),
                 0 => $this->__('Out of Stock')
-            ),
-            'frame_callback' => array($this, 'callbackColumnStockAvailability')
-        ));
+            ],
+            'frame_callback' => [$this, 'callbackColumnIsInStock']
+        ]);
 
-        $this->addColumn('actions', array(
+        $this->addColumn('actions', [
             'header'       => $this->__('Actions'),
             'align'        => 'left',
             'type'         => 'text',
             'width'        => '125px',
             'filter'       => false,
             'sortable'     => false,
-            'frame_callback' => array($this, 'callbackColumnActions'),
-        ));
+            'frame_callback' => [$this, 'callbackColumnActions'],
+        ]);
     }
 
     //########################################
 
     public function callbackColumnProductId($productId, $product, $column, $isExport)
     {
-        $url = $this->getUrl('catalog/product/edit', array('id' => $productId));
+        $url = $this->getUrl('catalog/product/edit', ['id' => $productId]);
         $withoutImageHtml = '<a href="'.$url.'" target="_blank">'.$productId.'</a>&nbsp;';
 
         $showProductsThumbnails = (bool)(int)$this->cacheConfig->getGroupValue(
-            '/view/','show_products_thumbnails'
+            '/view/',
+            'show_products_thumbnails'
         );
         if (!$showProductsThumbnails) {
             return $withoutImageHtml;
@@ -155,7 +159,7 @@ class Grid extends AbstractGrid
         $magentoProduct->setProduct($product);
 
         $imageResized = $magentoProduct->getThumbnailImage();
-        if (is_null($imageResized)) {
+        if ($imageResized === null) {
             return $withoutImageHtml;
         }
 
@@ -163,7 +167,7 @@ class Grid extends AbstractGrid
 
         $imageHtml = $productId.'<div style="margin-top: 5px">'.
             '<img style="max-width: 100px; max-height: 100px;" src="' .$imageResizedUrl. '" /></div>';
-        $withImageHtml = str_replace('>'.$productId.'<','>'.$imageHtml.'<',$withoutImageHtml);
+        $withImageHtml = str_replace('>'.$productId.'<', '>'.$imageHtml.'<', $withoutImageHtml);
 
         return $withImageHtml;
     }
@@ -173,7 +177,7 @@ class Grid extends AbstractGrid
         $value = '<div style="margin-left: 3px">'.$this->getHelper('Data')->escapeHtml($value);
 
         $sku = $row->getData('sku');
-        if (is_null($sku)) {
+        if ($sku === null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
                 ->setProductId($row->getData('entity_id'))->getSku();
         }
@@ -189,10 +193,14 @@ class Grid extends AbstractGrid
         return '<div style="margin-left: 3px">'.$this->getHelper('Data')->escapeHtml($value).'</div>';
     }
 
-    public function callbackColumnStockAvailability($value, $row, $column, $isExport)
+    public function callbackColumnIsInStock($value, $row, $column, $isExport)
     {
+        if ($row->getData('is_in_stock') === null) {
+            return $this->__('N/A');
+        }
+
         if ((int)$row->getData('is_in_stock') <= 0) {
-            return '<span style="color: red;">'.$value.'</span>';
+            return '<span style="color: red;">'.$this->__('Out of Stock').'</span>';
         }
 
         return $value;
@@ -224,10 +232,10 @@ HTML;
         }
 
         $collection->addFieldToFilter(
-            array(
-                array('attribute'=>'sku','like'=>'%'.$value.'%'),
-                array('attribute'=>'name', 'like'=>'%'.$value.'%')
-            )
+            [
+                ['attribute'=>'sku','like'=>'%'.$value.'%'],
+                ['attribute'=>'name', 'like'=>'%'.$value.'%']
+            ]
         );
     }
 
@@ -235,7 +243,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/order/productMappingGrid', array('_current'=>true));
+        return $this->getUrl('*/order/productMappingGrid', ['_current'=>true]);
     }
 
     public function getRowUrl($row)

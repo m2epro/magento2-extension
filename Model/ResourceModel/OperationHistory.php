@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel;
 
+/**
+ * Class OperationHistory
+ * @package Ess\M2ePro\Model\ResourceModel
+ */
 class OperationHistory extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################

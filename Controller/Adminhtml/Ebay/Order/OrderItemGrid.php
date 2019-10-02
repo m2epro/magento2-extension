@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
+/**
+ * Class OrderItemGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Order
+ */
 class OrderItemGrid extends Order
 {
     public function execute()
@@ -20,7 +24,7 @@ class OrderItemGrid extends Order
 
         $this->getHelper('Data\GlobalData')->setValue('order', $order);
 
-        $this->setAjaxContent($this->createBlock('Ebay\Order\View\Item')->toHtml());
+        $this->setAjaxContent($this->createBlock('Ebay_Order_View_Item')->toHtml());
 
         return $this->getResult();
     }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Order;
 
+/**
+ * Class ExternalTransaction
+ * @package Ess\M2ePro\Model\Ebay\Order
+ */
 class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     const NOT_PAYPAL_TRANSACTION = 'SIS';
@@ -15,7 +19,7 @@ class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     private $ebayFactory;
 
     /** @var $order \Ess\M2ePro\Model\Order */
-    private $order = NULL;
+    private $order = null;
 
     //########################################
 
@@ -29,8 +33,7 @@ class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct(
             $modelFactory,
@@ -69,7 +72,7 @@ class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getOrder()
     {
-        if (is_null($this->order)) {
+        if ($this->order === null) {
             $this->order = $this->ebayFactory->getObjectLoaded('Order', $this->getData('order_id'));
         }
 
@@ -124,10 +127,10 @@ class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return '';
         }
 
-        $params = array(
+        $params = [
             'cmd' => '_view-a-trans',
             'id'  => $this->getData('transaction_id')
-        );
+        ];
 
         $modePrefix = $this->getOrder()->getAccount()->getChildObject()->isModeSandbox() ? 'sandbox.' : '';
         $baseUrl = $this->getHelper('Module')->getConfig()->getGroupValue('/other/paypal/', 'url');

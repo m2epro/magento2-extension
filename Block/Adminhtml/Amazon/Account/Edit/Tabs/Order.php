@@ -12,6 +12,10 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 use Ess\M2ePro\Model\Amazon\Account;
 
+/**
+ * Class Order
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs
+ */
 class Order extends AbstractForm
 {
     protected $orderConfig;
@@ -26,8 +30,7 @@ class Order extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->orderConfig = $orderConfig;
         $this->customerGroup = $customerGroup;
         $this->taxClass = $taxClass;
@@ -38,11 +41,11 @@ class Order extends AbstractForm
     protected function _prepareForm()
     {
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
-        $ordersSettings = !is_null($account) ? $account->getChildObject()->getData('magento_orders_settings') : [];
-        $ordersSettings = !empty($ordersSettings) ? $this->getHelper('Data')->jsonDecode($ordersSettings) : array();
+        $ordersSettings = $account !== null ? $account->getChildObject()->getData('magento_orders_settings') : [];
+        $ordersSettings = !empty($ordersSettings) ? $this->getHelper('Data')->jsonDecode($ordersSettings) : [];
 
         // ---------------------------------------
-        $websites = $this->getHelper('Magento\Store\Website')->getWebsites(true);
+        $websites = $this->getHelper('Magento_Store_Website')->getWebsites(true);
         // ---------------------------------------
 
         // ---------------------------------------
@@ -51,86 +54,73 @@ class Order extends AbstractForm
         // ---------------------------------------
 
         // ---------------------------------------
-//        $selectedStore = !empty($ordersSettings['listing_other']['store_id'])
-//            ? $ordersSettings['listing_other']['store_id'] : '';
-//        $blockStoreSwitcher = $this->getLayout()->createBlock('M2ePro/adminhtml_storeSwitcher', '', array(
-//            'id' => 'magento_orders_listings_other_store_id',
-//            'name' => 'magento_orders_settings[listing_other][store_id]',
-//            'selected' => $selectedStore
-//        ));
-//        $blockStoreSwitcher->hasDefaultOption(false);
-//        $this->setChild('magento_orders_listings_other_store_id', $blockStoreSwitcher);
-        // ---------------------------------------
-
-        // ---------------------------------------
-
         $productTaxClasses = $this->taxClass->getCollection()
             ->addFieldToFilter('class_type', \Magento\Tax\Model\ClassModel::TAX_CLASS_TYPE_PRODUCT)
             ->toOptionArray();
-        $none = array('value' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE, 'label' => $this->__('None'));
+        $none = ['value' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE, 'label' => $this->__('None')];
         array_unshift($productTaxClasses, $none);
 
-        $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
         $formData['magento_orders_settings'] = !empty($formData['magento_orders_settings'])
-            ? $this->getHelper('Data')->jsonDecode($formData['magento_orders_settings']) : array();
+            ? $this->getHelper('Data')->jsonDecode($formData['magento_orders_settings']) : [];
 
         $billingAddressTheSame = Account::MAGENTO_ORDERS_BILLING_ADDRESS_MODE_SHIPPING_IF_SAME_CUSTOMER_AND_RECIPIENT;
 
-        $defaults = array(
-            'magento_orders_settings' => array(
-                'listing' => array(
+        $defaults = [
+            'magento_orders_settings' => [
+                'listing' => [
                     'mode' => Account::MAGENTO_ORDERS_LISTINGS_MODE_YES,
                     'store_mode' => Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
-                    'store_id' => NULL
-                ),
-                'listing_other' => array(
+                    'store_id' => null
+                ],
+                'listing_other' => [
                     'mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES,
                     'product_mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
                     'store_id' => $this->getHelper('Magento\Store')->getDefaultStoreId(),
-                ),
-                'number' => array(
+                ],
+                'number' => [
                     'source' => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
-                    'prefix' => array(
+                    'prefix' => [
                         'mode'   => Account::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_NO,
                         'prefix' => '',
-                    ),
-                ),
-                'tax' => array(
+                    ],
+                ],
+                'tax' => [
                     'mode' => Account::MAGENTO_ORDERS_TAX_MODE_MIXED
-                ),
-                'customer' => array(
+                ],
+                'customer' => [
                     'mode' => Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,
-                    'id' => NULL,
-                    'website_id' => NULL,
-                    'group_id' => NULL,
+                    'id' => null,
+                    'website_id' => null,
+                    'group_id' => null,
 //                'subscription_mode' => Account::MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_NO,
-                    'notifications' => array(
+                    'notifications' => [
 //                    'customer_created' => false,
                         'invoice_created' => false,
                         'order_created' => false
-                    ),
+                    ],
                     'billing_address_mode' => $billingAddressTheSame
-                ),
-                'status_mapping' => array(
+                ],
+                'status_mapping' => [
                     'mode' => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
                     'processing' => Account::MAGENTO_ORDERS_STATUS_MAPPING_PROCESSING,
                     'shipped' => Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED,
-                ),
-                'qty_reservation' => array(
+                ],
+                'qty_reservation' => [
                     'days' => 1
-                ),
-                'refund_and_cancellation' => array(
+                ],
+                'refund_and_cancellation' => [
                     'refund_mode' => 1,
-                ),
-                'fba' => array(
+                ],
+                'fba' => [
                     'mode' => Account::MAGENTO_ORDERS_FBA_MODE_YES,
                     'stock_mode' => Account::MAGENTO_ORDERS_FBA_STOCK_MODE_NO
-                ),
+                ],
                 'invoice_mode' => Account::MAGENTO_ORDERS_INVOICE_MODE_YES,
                 'shipment_mode' => Account::MAGENTO_ORDERS_SHIPMENT_MODE_YES
-            )
-        );
+            ]
+        ];
 
         $isEdit = !!$this->getRequest()->getParam('id');
 
@@ -140,10 +130,12 @@ class Order extends AbstractForm
 
         $form = $this->_formFactory->create();
 
-        $form->addField('amazon_accounts_orders',
+        $form->addField(
+            'amazon_accounts_orders',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(<<<HTML
+                'content' => $this->__(
+                    <<<HTML
 <p>Specify how M2E Pro should manage the Orders imported from Amazon.</p><br/>
 <p>You are able to configure the different rules of <strong>Magento Order Creation</strong> considering whether the
 Item was listed via M2E Pro or by some other software.</p><br/>
@@ -163,14 +155,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('listed_by_m2e',
+        $fieldset = $form->addFieldset(
+            'listed_by_m2e',
             [
                 'legend' => $this->__('Product Is Listed By M2E Pro'),
                 'collapsable' => false
             ]
         );
 
-        $fieldset->addField('magento_orders_listings_mode',
+        $fieldset->addField(
+            'magento_orders_listings_mode',
             'select',
             [
                 'name' => 'magento_orders_settings[listing][mode]',
@@ -186,7 +180,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_listings_store_mode',
+        $fieldset->addField(
+            'magento_orders_listings_store_mode',
             'select',
             [
                 'container_id' => 'magento_orders_listings_store_mode_container',
@@ -204,7 +199,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_listings_store_id',
+        $fieldset->addField(
+            'magento_orders_listings_store_id',
             self::STORE_SWITCHER,
             [
                 'container_id' => 'magento_orders_listings_store_id_container',
@@ -219,14 +215,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_amazon_accounts_magento_orders_listings_other',
+        $fieldset = $form->addFieldset(
+            'magento_block_amazon_accounts_magento_orders_listings_other',
             [
                 'legend' => $this->__('Product Is Listed By Any Other Software'),
                 'collapsable' => false
             ]
         );
 
-        $fieldset->addField('magento_orders_listings_other_mode',
+        $fieldset->addField(
+            'magento_orders_listings_other_mode',
             'select',
             [
                 'name' => 'magento_orders_settings[listing_other][mode]',
@@ -243,7 +241,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_listings_other_store_id',
+        $fieldset->addField(
+            'magento_orders_listings_other_store_id',
             self::STORE_SWITCHER,
             [
                 'container_id' => 'magento_orders_listings_other_store_id_container',
@@ -258,7 +257,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_listings_other_product_mode',
+        $fieldset->addField(
+            'magento_orders_listings_other_product_mode',
             'select',
             [
                 'container_id' => 'magento_orders_listings_other_product_mode_container',
@@ -285,7 +285,8 @@ HTML
             $values[$taxClass['value']] = $taxClass['label'];
         }
 
-        $fieldset->addField('magento_orders_listings_other_product_tax_class_id',
+        $fieldset->addField(
+            'magento_orders_listings_other_product_tax_class_id',
             'select',
             [
                 'container_id' => 'magento_orders_listings_other_product_tax_class_id_container',
@@ -297,14 +298,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_amazon_accounts_magento_orders_number',
+        $fieldset = $form->addFieldset(
+            'magento_block_amazon_accounts_magento_orders_number',
             [
                 'legend' => $this->__('Magento Order Number'),
                 'collapsable' => true
             ]
         );
 
-        $fieldset->addField('magento_orders_number_source',
+        $fieldset->addField(
+            'magento_orders_number_source',
             'select',
             [
                 'name' => 'magento_orders_settings[number][source]',
@@ -321,7 +324,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_number_prefix_mode',
+        $fieldset->addField(
+            'magento_orders_number_prefix_mode',
             'select',
             [
                 'name' => 'magento_orders_settings[number][prefix][mode]',
@@ -335,7 +339,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_number_prefix_prefix',
+        $fieldset->addField(
+            'magento_orders_number_prefix_prefix',
             'text',
             [
                 'container_id' => 'magento_orders_number_prefix_container',
@@ -348,21 +353,24 @@ HTML
             ]
         );
 
-        $fieldset->addField('sample_magento_order_id',
+        $fieldset->addField(
+            'sample_magento_order_id',
             'hidden',
             [
                 'value' => $this->getHelper('Magento')->getNextMagentoOrderId()
             ]
         );
 
-        $fieldset->addField('sample_amazon_order_id',
+        $fieldset->addField(
+            'sample_amazon_order_id',
             'hidden',
             [
                 'value' => '141-4423723-6495633'
             ]
         );
 
-        $fieldset->addField('order_number_example',
+        $fieldset->addField(
+            'order_number_example',
             'label',
             [
                 'label' => '',
@@ -370,7 +378,8 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_amazon_accounts_magento_orders_rules',
+        $fieldset = $form->addFieldset(
+            'magento_block_amazon_accounts_magento_orders_rules',
             [
                 'legend' => $this->__('Quantity Reservation'),
                 'collapsable' => true,
@@ -393,7 +402,8 @@ HTML
             }
         }
 
-        $fieldset->addField('magento_orders_qty_reservation_days',
+        $fieldset->addField(
+            'magento_orders_qty_reservation_days',
             'select',
             [
                 'container_id' => 'magento_orders_qty_reservation_days_container',
@@ -404,7 +414,8 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_amazon_accounts_magento_orders_refund_and_cancellation',
+        $fieldset = $form->addFieldset(
+            'magento_block_amazon_accounts_magento_orders_refund_and_cancellation',
             [
                 'legend' => $this->__('Refund & Cancellation'),
                 'collapsable' => true,
@@ -424,7 +435,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_refund',
+        $fieldset->addField(
+            'magento_orders_refund',
             'select',
             [
                 'container_id' => 'magento_orders_refund_container',
@@ -438,7 +450,8 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_amazon_accounts_magento_orders_fba',
+        $fieldset = $form->addFieldset(
+            'magento_block_amazon_accounts_magento_orders_fba',
             [
                 'legend' => $this->__('FBA Orders Settings'),
                 'collapsable' => true,
@@ -448,11 +461,13 @@ HTML
 
                 <li><b>Yes</b> - after Magento Order Creation of FBA Order, Quantity of Product reduces in Magento.</li>
                 <li><b>No</b> - Magento Order Creation of FBA Order does not affect Quantity of Magento Product.</li>
-                </ul>')
+                </ul>'
+                )
             ]
         );
 
-        $fieldset->addField('magento_orders_fba_mode',
+        $fieldset->addField(
+            'magento_orders_fba_mode',
             'select',
             [
                 'name' => 'magento_orders_settings[fba][mode]',
@@ -468,7 +483,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_fba_stock_mode',
+        $fieldset->addField(
+            'magento_orders_fba_stock_mode',
             'select',
             [
                 'container_id' => 'magento_orders_fba_stock_mode_container',
@@ -483,14 +499,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_amazon_accounts_magento_orders_customer',
+        $fieldset = $form->addFieldset(
+            'magento_block_amazon_accounts_magento_orders_customer',
             [
                 'legend' => $this->__('Customer Settings'),
                 'collapsable' => true
             ]
         );
 
-        $fieldset->addField('magento_orders_customer_mode',
+        $fieldset->addField(
+            'magento_orders_customer_mode',
             'select',
             [
                 'name' => 'magento_orders_settings[customer][mode]',
@@ -519,11 +537,13 @@ HTML
                      If the one already exists among Magento Customers e-mails,
                      the System uses this Customer as owner of Order and links Order to him.
                       A new Customer will not be created. <br/>
-                ')
+                '
+                )
             ]
         );
 
-        $fieldset->addField('magento_orders_customer_id',
+        $fieldset->addField(
+            'magento_orders_customer_id',
             'text',
             [
                 'container_id' => 'magento_orders_customer_id_container',
@@ -540,7 +560,8 @@ HTML
             $values[$website['website_id']] = $website['name'];
         }
 
-        $fieldset->addField('magento_orders_customer_new_website_id',
+        $fieldset->addField(
+            'magento_orders_customer_new_website_id',
             'select',
             [
                 'container_id' => 'magento_orders_customer_new_website_id_container',
@@ -557,7 +578,8 @@ HTML
             $values[$group['customer_group_id']] = $group['customer_group_code'];
         }
 
-        $fieldset->addField('magento_orders_customer_new_group_id',
+        $fieldset->addField(
+            'magento_orders_customer_new_group_id',
             'select',
             [
                 'container_id' => 'magento_orders_customer_new_group_id_container',
@@ -575,7 +597,8 @@ HTML
         $formData['magento_orders_settings']['customer']['notifications']['invoice_created']
             && $value[] = 'invoice_created';
 
-        $fieldset->addField('magento_orders_customer_new_notifications',
+        $fieldset->addField(
+            'magento_orders_customer_new_notifications',
             'multiselect',
             [
                 'container_id' => 'magento_orders_customer_new_notifications_container',
@@ -594,7 +617,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_customer_billing_address_mode',
+        $fieldset->addField(
+            'magento_orders_customer_billing_address_mode',
             'select',
             [
                 'name' => 'magento_orders_settings[customer][billing_address_mode]',
@@ -620,14 +644,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_amazon_accounts_magento_orders_tax',
+        $fieldset = $form->addFieldset(
+            'magento_block_amazon_accounts_magento_orders_tax',
             [
                 'legend' => $this->__('Order Tax Settings'),
                 'collapsable' => true
             ]
         );
 
-        $fieldset->addField('magento_orders_tax_mode',
+        $fieldset->addField(
+            'magento_orders_tax_mode',
             'select',
             [
                 'name' => 'magento_orders_settings[tax][mode]',
@@ -646,19 +672,20 @@ HTML
                         <li><b>Amazon & Magento</b> - if there are Tax Settings in Amazon Order,
                         they are used in Magento Order(s), otherwise, Magento Tax Settings are used.</li>
                         <li><b>None</b> - Amazon and Magento Tax Settings are ignored.</li>
-                    </ul>'
-                )
+                    </ul>')
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_amazon_accounts_magento_orders_status_mapping',
+        $fieldset = $form->addFieldset(
+            'magento_block_amazon_accounts_magento_orders_status_mapping',
             [
                 'legend' => $this->__('Order Status Mapping'),
                 'collapsable' => true
             ]
         );
 
-        $fieldset->addField('magento_orders_status_mapping_mode',
+        $fieldset->addField(
+            'magento_orders_status_mapping_mode',
             'select',
             [
                 'name' => 'magento_orders_settings[status_mapping][mode]',
@@ -704,7 +731,8 @@ HTML
                                              == Account::MAGENTO_ORDERS_INVOICE_MODE_YES
             ? 'checked="checked"' : '';
 
-        $fieldset->addField('magento_orders_status_mapping_processing',
+        $fieldset->addField(
+            'magento_orders_status_mapping_processing',
             'select',
             [
                 'container_id' => 'magento_orders_status_mapping_processing_container',
@@ -729,7 +757,8 @@ HTML
                                     == Account::MAGENTO_ORDERS_SHIPMENT_MODE_YES
             ? 'checked="checked"' : '';
 
-        $fieldset->addField('magento_orders_status_mapping_shipped',
+        $fieldset->addField(
+            'magento_orders_status_mapping_shipped',
             'select',
             [
                 'container_id' => 'magento_orders_status_mapping_shipped_container',
@@ -811,7 +840,7 @@ HTML
                              = "{$formData['magento_orders_settings']['customer']['group_id']}";
 
 JS
-);
+        );
 
         return parent::_prepareForm();
     }

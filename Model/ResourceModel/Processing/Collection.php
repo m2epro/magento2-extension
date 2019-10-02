@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Processing;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Processing
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     // ########################################
@@ -25,7 +29,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     public function setOnlyExpiredItemsFilter()
     {
         $this->addFieldToFilter(
-            'expiration_date', array('lt' => $this->helperFactory->getObject('Data')->getCurrentGmtDate())
+            'expiration_date',
+            ['lt' => $this->helperFactory->getObject('Data')->getCurrentGmtDate()]
         );
         return $this;
     }

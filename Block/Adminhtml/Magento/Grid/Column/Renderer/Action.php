@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
+/**
+ * Class Action
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer
+ */
 class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
 {
     use Traits\RendererTrait;
@@ -24,8 +28,7 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
         array $data = []
-    )
-    {
+    ) {
         $this->css = $css;
         $this->jsPhp = $jsPhp;
         $this->js = $js;
@@ -72,7 +75,7 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
         }
     };
 JS
-);
+        );
 
         return parent::_prepareLayout();
     }
@@ -113,14 +116,13 @@ JS
 
     protected function sortActionsByGroupsOrder(array $groupOrder, array $actions)
     {
-        $sorted = array();
+        $sorted = [];
 
         foreach ($groupOrder as $groupId => $groupLabel) {
-
-            $sorted[$groupId] = array(
+            $sorted[$groupId] = [
                 'label' => $groupLabel,
-                'actions' => array()
-            );
+                'actions' => []
+            ];
 
             foreach ($actions as $actionId => $actionData) {
                 if (isset($actionData['group']) && ($actionData['group'] == $groupId)) {
@@ -201,7 +203,6 @@ JS
     {
         if (!empty($action['url']['params']) && is_array($action['url']['params'])) {
             foreach ($action['url']['params'] as $paramKey => $paramValue) {
-
                 if (strpos($paramValue, '$') === 0) {
                     $paramValue = str_replace('$', '', $paramValue);
                     $action['url']['params'][$paramKey] = $row->getData($paramValue);

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action;
 
 use Ess\M2ePro\Model\Exception\Logic;
 
+/**
+ * Class Configurator
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action
+ */
 class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
 {
     const DATA_TYPE_GENERAL           = 'general';
@@ -43,7 +47,7 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
      */
     public function getAllDataTypes()
     {
-        return array(
+        return [
             self::DATA_TYPE_GENERAL,
             self::DATA_TYPE_QTY,
             self::DATA_TYPE_PRICE,
@@ -54,7 +58,7 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
             self::DATA_TYPE_SPECIFICS,
             self::DATA_TYPE_SHIPPING_SERVICES,
             self::DATA_TYPE_VARIATIONS,
-        );
+        ];
     }
 
     //########################################

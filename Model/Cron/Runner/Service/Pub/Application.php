@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Runner\Service\Pub;
 
+/**
+ * Class Application
+ * @package Ess\M2ePro\Model\Cron\Runner\Service\Pub
+ */
 class Application implements \Magento\Framework\AppInterface
 {
     const ACTION_PARAM        = 'action';
@@ -83,7 +87,6 @@ class Application implements \Magento\Framework\AppInterface
         );
 
         switch ($this->request->getParam(self::ACTION_PARAM)) {
-
             case self::ACTION_TEST:
                 return $this->test();
 
@@ -100,7 +103,7 @@ class Application implements \Magento\Framework\AppInterface
 
     protected function process()
     {
-        $runner = $this->modelFactory->getObject('Cron\Runner\Service\Pub');
+        $runner = $this->modelFactory->getObject('Cron_Runner_Service_Pub');
 
         $authKey = $this->request->getParam(self::AUTH_KEY_PARAM, false);
         $authKey && $runner->setRequestAuthKey($authKey);
@@ -126,7 +129,7 @@ class Application implements \Magento\Framework\AppInterface
 
     protected function reset()
     {
-        $runner = $this->modelFactory->getObject('Cron\Runner\Service\Pub');
+        $runner = $this->modelFactory->getObject('Cron_Runner_Service_Pub');
         $runner->resetTasksStartFrom();
 
         /** @var \Ess\M2ePro\Model\Magento\Framework\Http\NotCacheableResponse $response */

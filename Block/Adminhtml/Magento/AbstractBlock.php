@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento;
 use Magento\Backend\Block\Widget;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
+/**
+ * Class AbstractBlock
+ * @package Ess\M2ePro\Block\Adminhtml\Magento
+ */
 abstract class AbstractBlock extends Widget
 {
     use Traits\BlockTrait;

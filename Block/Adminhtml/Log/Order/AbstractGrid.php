@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Log\Order;
 
+/**
+ * Class AbstractGrid
+ * @package Ess\M2ePro\Block\Adminhtml\Log\Order
+ */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 {
     //#######################################
@@ -42,9 +46,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         $collection = $this->activeRecordFactory->getObject('Order\Log')->getCollection();
 
         $collection->getSelect()->joinLeft(
-            array('mo' => $this->activeRecordFactory->getObject('Order')->getResource()->getMainTable()),
+            ['mo' => $this->activeRecordFactory->getObject('Order')->getResource()->getMainTable()],
             '(mo.id = `main_table`.order_id)',
-            array('magento_order_id')
+            ['magento_order_id']
         );
 
         $accountId = (int)$this->getRequest()->getParam($this->getComponentMode() . 'Account', false);
@@ -80,9 +84,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         }
 
         $collection->getSelect()->joinLeft(
-            array('so' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('sales_order')),
+            ['so' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('sales_order')],
             '(so.entity_id = `mo`.magento_order_id)',
-            array('magento_order_number' => 'increment_id')
+            ['magento_order_number' => 'increment_id']
         );
 
         $orderId = $this->getRequest()->getParam('id', false);
@@ -93,12 +97,6 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
         $collection->getSelect()->where('main_table.component_mode = ?', $this->getComponentMode());
 
-        // ---------------------------------------
-        if ($this->getRequest()->getParam('sort', 'create_date') == 'create_date') {
-            $collection->setOrder('id', $this->getRequest()->getParam('dir', 'DESC'));
-        }
-        // ---------------------------------------
-
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
@@ -106,7 +104,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('create_date', array(
+        $this->addColumn('create_date', [
             'header'    => $this->__('Creation Date'),
             'align'     => 'left',
             'type'      => 'datetime',
@@ -114,7 +112,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             'filter_time' => true,
             'index'     => 'create_date',
             'filter_index' => 'main_table.create_date'
-        ));
+        ]);
 
         $orderId = $this->getRequest()->getParam('id', false);
 
@@ -123,50 +121,50 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
                 $this->getComponentMode()
             );
 
-            $this->addColumn('channel_order_id', array(
+            $this->addColumn('channel_order_id', [
                 'header'    => $this->__('%1% Order #', $componentNick),
                 'align'     => 'left',
                 'sortable'  => false,
                 'index'     => 'channel_order_id',
-                'frame_callback' => array($this, 'callbackColumnChannelOrderId'),
-                'filter_condition_callback' => array($this, 'callbackFilterChannelOrderId')
-            ));
+                'frame_callback' => [$this, 'callbackColumnChannelOrderId'],
+                'filter_condition_callback' => [$this, 'callbackFilterChannelOrderId']
+            ]);
         }
 
-        $this->addColumn('magento_order_number', array(
+        $this->addColumn('magento_order_number', [
             'header'    => $this->__('Magento Order #'),
             'align'     => 'left',
             'index'     => 'so.increment_id',
             'sortable'      => false,
-            'frame_callback' => array($this, 'callbackColumnMagentoOrderNumber')
-        ));
+            'frame_callback' => [$this, 'callbackColumnMagentoOrderNumber']
+        ]);
 
-        $this->addColumn('description', array(
+        $this->addColumn('description', [
             'header'    => $this->__('Message'),
             'align'     => 'left',
             'index'     => 'description',
-            'frame_callback' => array($this, 'callbackDescription')
-        ));
+            'frame_callback' => [$this, 'callbackDescription']
+        ]);
 
-        $this->addColumn('initiator', array(
+        $this->addColumn('initiator', [
             'header'    => $this->__('Run Mode'),
             'align'     => 'right',
             'index'     => 'initiator',
             'sortable'  => false,
             'type'      => 'options',
             'options'   => $this->_getLogInitiatorList(),
-            'frame_callback' => array($this, 'callbackColumnInitiator')
-        ));
+            'frame_callback' => [$this, 'callbackColumnInitiator']
+        ]);
 
-        $this->addColumn('type', array(
+        $this->addColumn('type', [
             'header'    => $this->__('Type'),
             'align'     => 'right',
             'index'     => 'type',
             'type'      => 'options',
             'sortable'  => false,
             'options'   => $this->_getLogTypeList(),
-            'frame_callback' => array($this, 'callbackColumnType')
-        ));
+            'frame_callback' => [$this, 'callbackColumnType']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -176,9 +174,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
     public function callbackColumnChannelOrderId($value, $row, $column, $isExport)
     {
         $order = $this->parentFactory
-            ->getObjectLoaded($row['component_mode'], 'Order', $row->getData('order_id'), NULL, false);
+            ->getObjectLoaded($row['component_mode'], 'Order', $row->getData('order_id'), null, false);
 
-        if (is_null($order) || is_null($order->getChildObject()->getId())) {
+        if ($order === null || $order->getChildObject()->getId() === null) {
             return $this->__('N/A');
         }
 
@@ -186,17 +184,17 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             case \Ess\M2ePro\Helper\Component\Ebay::NICK:
                 $channelOrderId = $order
                     ->getChildObject()->getData('ebay_order_id');
-                $url = $this->getUrl('*/ebay_order/view', array('id' => $row->getData('order_id')));
+                $url = $this->getUrl('*/ebay_order/view', ['id' => $row->getData('order_id')]);
                 break;
             case \Ess\M2ePro\Helper\Component\Amazon::NICK:
                 $channelOrderId = $order
                     ->getChildObject()->getData('amazon_order_id');
-                $url = $this->getUrl('*/amazon_order/view', array('id' => $row->getData('order_id')));
+                $url = $this->getUrl('*/amazon_order/view', ['id' => $row->getData('order_id')]);
                 break;
             case \Ess\M2ePro\Helper\Component\Walmart::NICK:
                 $channelOrderId = $order
                     ->getChildObject()->getData('walmart_order_id');
-                $url = $this->getUrl('*/walmart_order/view', array('id' => $row->getData('order_id')));
+                $url = $this->getUrl('*/walmart_order/view', ['id' => $row->getData('order_id')]);
                 break;
             default:
                 $channelOrderId = $this->__('N/A');
@@ -214,7 +212,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         if (!$magentoOrderId) {
             $result = $this->__('N/A');
         } else {
-            $url = $this->getUrl('sales/order/view', array('order_id' => $magentoOrderId));
+            $url = $this->getUrl('sales/order/view', ['order_id' => $magentoOrderId]);
             $result = '<a href="'.$url.'" target="_blank">'
                         .$this->getHelper('Data')->escapeHtml($magentoOrderNumber).'</a>';
         }
@@ -229,12 +227,12 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             return;
         }
 
-        $ordersIds = array();
+        $ordersIds = [];
 
         if ($this->getHelper('Component\Ebay')->isEnabled()) {
             $tempOrdersIds = $this->activeRecordFactory->getObject('Ebay\Order')
                 ->getCollection()
-                ->addFieldToFilter('ebay_order_id', array('like' => '%'.$value.'%'))
+                ->addFieldToFilter('ebay_order_id', ['like' => '%'.$value.'%'])
                 ->getColumnValues('order_id');
             $ordersIds = array_merge($ordersIds, $tempOrdersIds);
         }
@@ -242,14 +240,14 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         if ($this->getHelper('Component\Amazon')->isEnabled()) {
             $tempOrdersIds = $this->activeRecordFactory->getObject('Amazon\Order')
                 ->getCollection()
-                ->addFieldToFilter('amazon_order_id', array('like' => '%'.$value.'%'))
+                ->addFieldToFilter('amazon_order_id', ['like' => '%'.$value.'%'])
                 ->getColumnValues('order_id');
             $ordersIds = array_merge($ordersIds, $tempOrdersIds);
         }
 
         $ordersIds = array_unique($ordersIds);
 
-        $collection->addFieldToFilter('main_table.order_id', array('in' => $ordersIds));
+        $collection->addFieldToFilter('main_table.order_id', ['in' => $ordersIds]);
     }
 
     //########################################

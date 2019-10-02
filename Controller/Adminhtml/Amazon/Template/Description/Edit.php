@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description
+ */
 class Edit extends Description
 {
     //########################################
@@ -33,12 +37,13 @@ class Edit extends Description
 
         $this->getHelper('Data\GlobalData')->setValue('tmp_template', $templateModel);
 
-        $this->addContent($this->createBlock('Amazon\Template\Description\Edit'));
+        $this->addContent($this->createBlock('Amazon_Template_Description_Edit'));
 
         if ($templateModel->getId()) {
             $headerText = $this->__("Edit Description Policy");
             $headerText .= ' "'.$this->getHelper('Data')->escapeHtml(
-                                $templateModel->getTitle()).'"';
+                $templateModel->getTitle()
+            ).'"';
         } else {
             $headerText = $this->__("Add Description Policy");
         }

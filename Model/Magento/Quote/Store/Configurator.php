@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Quote\Store;
 
+/**
+ * Class Configurator
+ * @package Ess\M2ePro\Model\Magento\Quote\Store
+ */
 class Configurator extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $taxHelper;
@@ -43,13 +47,12 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\App\Config\ReinitableConfigInterface $storeConfig,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Quote\Model\Quote $quote,
-        \Ess\M2ePro\Model\Order\Proxy $proxyOrder,
+        \Ess\M2ePro\Model\Order\ProxyObject $proxyOrder,
         \Magento\Tax\Model\Config $taxConfig,
         \Magento\Tax\Model\Calculation $calculation,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->mutableConfig = $mutableConfig;
         $this->taxHelper     = $taxHelper;
         $this->storeConfig   = $storeConfig;
@@ -59,7 +62,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         $this->storeManager  = $storeManager;
 
         // We need to use newly created instances, because magento caches tax rates in private properties
-        $this->calculation = $objectManager->create('Magento\Tax\Model\Calculation', [
+        $this->calculation = $objectManager->create(\Magento\Tax\Model\Calculation::class, [
             'resource' => $objectManager->create($calculation->getResourceName())
         ]);
 
@@ -78,7 +81,8 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         $isProductPriceIncludesTax = $this->isPriceIncludesTax();
         $this->taxConfig->setPriceIncludesTax($isProductPriceIncludesTax);
         $this->setStoreConfig(
-            \Magento\Tax\Model\Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX, $isProductPriceIncludesTax
+            \Magento\Tax\Model\Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX,
+            $isProductPriceIncludesTax
         );
         // ---------------------------------------
 
@@ -87,7 +91,8 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         $isShippingPriceIncludesTax = $this->isShippingPriceIncludesTax();
         $this->taxConfig->setShippingPriceIncludeTax($isShippingPriceIncludesTax);
         $this->setStoreConfig(
-            \Magento\Tax\Model\Config::CONFIG_XML_PATH_SHIPPING_INCLUDES_TAX, $isShippingPriceIncludesTax
+            \Magento\Tax\Model\Config::CONFIG_XML_PATH_SHIPPING_INCLUDES_TAX,
+            $isShippingPriceIncludesTax
         );
         // ---------------------------------------
 
@@ -110,7 +115,8 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
         // ---------------------------------------
         $this->setStoreConfig(
-            \Magento\Customer\Model\GroupManagement::XML_PATH_DEFAULT_ID, $this->getDefaultCustomerGroupId()
+            \Magento\Customer\Model\GroupManagement::XML_PATH_DEFAULT_ID,
+            $this->getDefaultCustomerGroupId()
         );
         $this->setStoreConfig(\Magento\Tax\Model\Config::CONFIG_XML_PATH_BASED_ON, $this->getTaxCalculationBasedOn());
         // ---------------------------------------
@@ -118,7 +124,8 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         // store shipping tax class
         // ---------------------------------------
         $this->setStoreConfig(
-            \Magento\Tax\Model\Config::CONFIG_XML_PATH_SHIPPING_TAX_CLASS, $this->getShippingTaxClassId()
+            \Magento\Tax\Model\Config::CONFIG_XML_PATH_SHIPPING_TAX_CLASS,
+            $this->getShippingTaxClassId()
         );
         // ---------------------------------------
 
@@ -133,9 +140,11 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
     {
         $this->helperFactory->getObject('Data\GlobalData')->unsetValue('use_mutable_config');
         foreach ($this->originalStoreConfig as $key => $value) {
-
             $this->mutableConfig->unsetValue(
-                $key, $value, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->getStore()->getCode()
+                $key,
+                $value,
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                $this->getStore()->getCode()
             );
         }
 
@@ -171,7 +180,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     public function isPriceIncludesTax()
     {
-        if (!is_null($this->proxyOrder->isProductPriceIncludeTax())) {
+        if ($this->proxyOrder->isProductPriceIncludeTax() !== null) {
             return $this->proxyOrder->isProductPriceIncludeTax();
         }
 
@@ -180,7 +189,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     public function isShippingPriceIncludesTax()
     {
-        if (!is_null($this->proxyOrder->isShippingPriceIncludeTax())) {
+        if ($this->proxyOrder->isShippingPriceIncludeTax() !== null) {
             return $this->proxyOrder->isShippingPriceIncludeTax();
         }
 
@@ -217,7 +226,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         // Create tax rule according to channel tax rate
         // ---------------------------------------
         /** @var $taxRuleBuilder \Ess\M2ePro\Model\Magento\Tax\Rule\Builder */
-        $taxRuleBuilder = $this->modelFactory->getObject('Magento\Tax\Rule\Builder');
+        $taxRuleBuilder = $this->modelFactory->getObject('Magento_Tax_Rule_Builder');
         $taxRuleBuilder->buildShippingTaxRule(
             $shippingPriceTaxRate,
             $this->quote->getShippingAddress()->getCountryId(),
@@ -365,14 +374,19 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
     private function setStoreConfig($key, $value)
     {
         $this->mutableConfig->setValue(
-            $key, $value, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->getStore()->getCode()
+            $key,
+            $value,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $this->getStore()->getCode()
         );
     }
 
     private function getStoreConfig($key)
     {
         return $this->storeConfig->getValue(
-            $key, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->getStore()->getCode()
+            $key,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $this->getStore()->getCode()
         );
     }
 

@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Model\Servicing;
 
+/**
+ * Class Dispatcher
+ * @package Ess\M2ePro\Model\Servicing
+ */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
     const DEFAULT_INTERVAL = 3600;
     const MAX_MEMORY_LIMIT = 256;
 
-    private $params = array();
+    private $params = [];
     private $forceTasksRunning = false;
     private $initiator;
 
@@ -25,8 +29,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->cacheConfig = $cacheConfig;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -69,19 +72,19 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param array $params
      */
-    public function setParams(array $params = array())
+    public function setParams(array $params = [])
     {
         $this->params = $params;
     }
 
     //########################################
 
-    public function process($minInterval = NULL, $taskCodes = NULL)
+    public function process($minInterval = null, $taskCodes = null)
     {
         $timeLastUpdate = $this->getLastUpdateTimestamp();
 
         if ($this->getInitiator() !== \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER &&
-            !is_null($minInterval) &&
+            $minInterval !== null &&
             $timeLastUpdate + (int)$minInterval > $this->getHelper('Data')->getCurrentGmtDate(true)) {
             return false;
         }
@@ -96,7 +99,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     public function processTask($taskCode)
     {
-        return $this->processTasks(array($taskCode));
+        return $this->processTasks([$taskCode]);
     }
 
     public function processTasks(array $taskCodes)
@@ -105,8 +108,12 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         $this->getHelper('Module\Exception')->setFatalErrorHandler();
 
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('servicing','update','data',
-                                                               $this->getRequestData($taskCodes));
+        $connectorObj = $dispatcherObject->getVirtualConnector(
+            'servicing',
+            'update',
+            'data',
+            $this->getRequestData($taskCodes)
+        );
 
         $dispatcherObject->process($connectorObj);
         $responseData = $connectorObj->getResponseData();
@@ -115,7 +122,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        $this->dispatchResponseData($responseData,$taskCodes);
+        $this->dispatchResponseData($responseData, $taskCodes);
 
         return true;
     }
@@ -124,11 +131,10 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     private function getRequestData(array $taskCodes)
     {
-        $requestData = array();
+        $requestData = [];
 
         foreach ($this->getRegisteredTasks() as $taskName) {
-
-            if (!in_array($taskName,$taskCodes)) {
+            if (!in_array($taskName, $taskCodes)) {
                 continue;
             }
 
@@ -147,8 +153,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     private function dispatchResponseData(array $responseData, array $taskCodes)
     {
         foreach ($this->getRegisteredTasks() as $taskName) {
-
-            if (!in_array($taskName,$taskCodes)) {
+            if (!in_array($taskName, $taskCodes)) {
                 continue;
             }
 
@@ -167,7 +172,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     private function getTaskModel($taskName)
     {
-        $taskName = preg_replace_callback('/_([a-z])/i', function($matches) {
+        $taskName = preg_replace_callback('/_([a-z])/i', function ($matches) {
             return ucfirst($matches[1]);
         }, $taskName);
 
@@ -186,7 +191,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getRegisteredTasks()
     {
-        return array(
+        return [
             'license',
             'messages',
             'settings',
@@ -195,7 +200,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             'cron',
             'statistic',
             'changed_sources'
-        );
+        ];
     }
 
     /**
@@ -203,11 +208,11 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getSlowTasks()
     {
-        return array(
+        return [
             'exceptions',
             'statistic',
             'changed_sources'
-        );
+        ];
     }
 
     /**
@@ -222,20 +227,23 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     private function getLastUpdateTimestamp()
     {
-        $lastUpdateDate = $this->cacheConfig->getGroupValue('/servicing/','last_update_time');
+        $lastUpdateDate = $this->cacheConfig->getGroupValue('/servicing/', 'last_update_time');
 
-        if (is_null($lastUpdateDate)) {
+        if ($lastUpdateDate === null) {
             return $this->getHelper('Data')->getCurrentGmtDate(true) - 3600*24*30;
         }
 
-        return $this->getHelper('Data')->getDate($lastUpdateDate,true);
+        return $this->getHelper('Data')->getDate($lastUpdateDate, true);
     }
 
     private function setLastUpdateDateTime()
     {
         $this->cacheConfig
-            ->setGroupValue('/servicing/', 'last_update_time',
-                            $this->getHelper('Data')->getCurrentGmtDate());
+            ->setGroupValue(
+                '/servicing/',
+                'last_update_time',
+                $this->getHelper('Data')->getCurrentGmtDate()
+            );
     }
 
     //########################################

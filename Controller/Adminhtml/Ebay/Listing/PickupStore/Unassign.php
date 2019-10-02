@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore;
 
+/**
+ * Class Unassign
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
+ */
 class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
 {
     //########################################
@@ -28,9 +32,10 @@ class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
         $this->markInventoryForDelete($listingProductPickupStoreIds);
 
         $tableEbayListingProductPickupStore = $this->activeRecordFactory->getObject(
-            'Ebay\Listing\Product\PickupStore'
+            'Ebay_Listing_Product_PickupStore'
         )->getResource()->getMainTable();
-        $this->resourceConnection->getConnection()->delete($tableEbayListingProductPickupStore,
+        $this->resourceConnection->getConnection()->delete(
+            $tableEbayListingProductPickupStore,
             '`id` IN ('.implode(',', $listingProductPickupStoreIds).')'
         );
 
@@ -46,27 +51,27 @@ class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
             return false;
         }
 
-        $collection = $this->activeRecordFactory->getObject('Ebay\Listing\Product\PickupStore')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Ebay_Listing_Product_PickupStore')->getCollection();
         $collection->addFieldToFilter('main_table.id', ['in' => $listingProductPickupStoreIds]);
         $collection->getSelect()->join(
-            ['elp' => $this->activeRecordFactory->getObject('Ebay\Listing\Product')->getResource()->getMainTable()],
+            ['elp' => $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable()],
             'elp.listing_product_id=main_table.listing_product_id',
             ['online_sku' => 'online_sku']
         );
         $collection->getSelect()->joinLeft(
-            ['lpv' => $this->activeRecordFactory->getObject('Listing\Product\Variation')
+            ['lpv' => $this->activeRecordFactory->getObject('Listing_Product_Variation')
                                                 ->getResource()->getMainTable()],
             'lpv.listing_product_id=elp.listing_product_id',
             ['id']
         );
         $collection->getSelect()->joinLeft(
-            ['elpv' => $this->activeRecordFactory->getObject('Ebay\Listing\Product\Variation')
+            ['elpv' => $this->activeRecordFactory->getObject('Ebay_Listing_Product_Variation')
                                                  ->getResource()->getMainTable()],
             'elpv.listing_product_variation_id=lpv.id',
             ['variation_online_sku' => 'online_sku']
         );
         $collection->getSelect()->joinLeft(
-            ['meapss' => $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\State')
+            ['meapss' => $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')
                                                    ->getResource()->getMainTable()],
             'meapss.account_pickup_store_id = main_table.account_pickup_store_id
                  AND (meapss.sku = elp.online_sku OR meapss.sku = elpv.online_sku)',
@@ -85,7 +90,7 @@ class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
         }
 
         $this->resourceConnection->getConnection()->update(
-            $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\State')->getResource()->getMainTable(),
+            $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')->getResource()->getMainTable(),
             ['is_deleted' => 1],
             '`id` IN ('.implode(',', $idsForDelete).')'
         );

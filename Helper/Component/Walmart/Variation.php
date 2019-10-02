@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Component\Walmart;
 
+/**
+ * Class Variation
+ * @package Ess\M2ePro\Helper\Component\Walmart
+ */
 class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const DATA_REGISTRY_KEY  = 'walmart_variation_themes_usage';
@@ -24,8 +28,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->modelFactory = $modelFactory;
         $this->resourceConnection = $resourceConnection;
@@ -50,11 +53,11 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     public function filterProductsByGeneralId($productsIds)
     {
         $connRead = $this->resourceConnection->getConnection();
-        $table = $this->getHelper('Module\Database\Structure')
+        $table = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_walmart_listing_product');
 
         $select = $connRead->select();
-        $select->from(array('alp' => $table), array('listing_product_id'))
+        $select->from(['alp' => $table], ['listing_product_id'])
             ->where('listing_product_id IN (?)', $productsIds)
             ->where('general_id IS NULL');
 
@@ -65,11 +68,11 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     public function filterProductsByGeneralIdOwner($productsIds)
     {
         $connRead = $this->resourceConnection->getConnection();
-        $table = $this->getHelper('Module\Database\Structure')
+        $table = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_walmart_listing_product');
 
         $select = $connRead->select();
-        $select->from(array('alp' => $table), array('listing_product_id'))
+        $select->from(['alp' => $table], ['listing_product_id'])
             ->where('listing_product_id IN (?)', $productsIds)
             ->where('is_general_id_owner = 0');
 
@@ -80,11 +83,11 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     public function filterProductsByStatus($productsIds)
     {
         $connRead = $this->resourceConnection->getConnection();
-        $table = $this->getHelper('Module\Database\Structure')
+        $table = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_listing_product');
 
         $select = $connRead->select();
-        $select->from(array('lp' => $table), array('id'))
+        $select->from(['lp' => $table], ['id'])
             ->where('id IN (?)', $productsIds)
             ->where('status = ?', \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED);
 
@@ -95,10 +98,10 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     public function filterLockedProducts($productsIds)
     {
         $connRead = $this->resourceConnection->getConnection();
-        $table = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_processing_lock');
+        $table = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_processing_lock');
 
         $select = $connRead->select();
-        $select->from(array('lo' => $table), array('object_id'))
+        $select->from(['lo' => $table], ['object_id'])
             ->where('model_name = "M2ePro/Listing\Product"')
             ->where('object_id IN (?)', $productsIds)
             ->where('tag IS NULL');
@@ -118,33 +121,32 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     public function filterProductsByMagentoProductType($listingProductsIds)
     {
         $connRead = $this->resourceConnection->getConnection();
-        $tableListingProduct = $this->getHelper('Module\Database\Structure')
+        $tableListingProduct = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_listing_product');
-        $tableProductEntity = $this->getHelper('Module\Database\Structure')
+        $tableProductEntity = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('catalog_product_entity');
-        $tableProductOption = $this->getHelper('Module\Database\Structure')
+        $tableProductOption = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('catalog_product_option');
 
         $productsIdsChunks = array_chunk($listingProductsIds, 1000);
-        $listingProductsIds = array();
+        $listingProductsIds = [];
 
         foreach ($productsIdsChunks as $productsIdsChunk) {
-
             $select = $connRead->select();
-            $select->from(array('alp' => $tableListingProduct), array('id', 'product_id'))
+            $select->from(['alp' => $tableListingProduct], ['id', 'product_id'])
                 ->where('id IN (?)', $productsIdsChunk);
 
             $listingProductToProductIds = $this->resourceConnection->getConnection()
                                                                                ->fetchPairs($select);
 
             $select = $connRead->select();
-            $select->from(array('cpe' => $tableProductEntity), array('entity_id', 'type_id'))
+            $select->from(['cpe' => $tableProductEntity], ['entity_id', 'type_id'])
                 ->where('entity_id IN (?)', $listingProductToProductIds);
 
             $select->joinLeft(
-                array('cpo' => $tableProductOption),
+                ['cpo' => $tableProductOption],
                 'cpe.entity_id=cpo.product_id',
-                array('option_id')
+                ['option_id']
             );
 
             $select->group('entity_id');
@@ -190,24 +192,23 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     public function filterProductsByDescriptionTemplate($productsIds)
     {
         $productsIdsChunks = array_chunk($productsIds, 1000);
-        $productsIds = array();
+        $productsIds = [];
 
         $connRead = $this->resourceConnection->getConnection();
-        $tableWalmartListingProduct = $this->getHelper('Module\Database\Structure')
+        $tableWalmartListingProduct = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_walmart_listing_product');
-        $tableWalmartTemplateDescription = $this->getHelper('Module\Database\Structure')
+        $tableWalmartTemplateDescription = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_walmart_template_description');
 
         foreach ($productsIdsChunks as $productsIdsChunk) {
-
             $select = $connRead->select();
-            $select->from(array('alp' => $tableWalmartListingProduct), array('listing_product_id'))
+            $select->from(['alp' => $tableWalmartListingProduct], ['listing_product_id'])
                 ->where('listing_product_id IN (?)', $productsIdsChunk);
 
             $select->join(
-                array('atd' => $tableWalmartTemplateDescription),
+                ['atd' => $tableWalmartTemplateDescription],
                 'alp.template_description_id=atd.template_description_id',
-                array()
+                []
             )->where('atd.is_new_asin_accepted = 1');
 
             $productsIds = array_merge(
@@ -221,7 +222,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function filterParentProductsByVariationTheme($productsIds)
     {
-        $detailsModel = $this->modelFactory->getObject('Walmart\Marketplace\Details');
+        $detailsModel = $this->modelFactory->getObject('Walmart_Marketplace_Details');
 
         foreach ($productsIds as $key => $productId) {
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -255,7 +256,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
         /** @var $registry \Ess\M2ePro\Model\Registry */
         $registry = $this->activeRecordFactory->getObjectLoaded('Registry', self::DATA_REGISTRY_KEY, 'key', false);
 
-        if (is_null($registry)) {
+        if ($registry === null) {
             $registry = $this->activeRecordFactory->getObject('Registry');
         }
 
@@ -285,7 +286,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
         /** @var \Ess\M2ePro\Model\Registry $registry */
         $registry = $this->activeRecordFactory->getObjectLoaded('Registry', self::DATA_REGISTRY_KEY, 'key', false);
-        if (is_null($registry)) {
+        if ($registry === null) {
             $registry = $this->activeRecordFactory->getObject('Registry');
         }
 
@@ -301,7 +302,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     private function getThemeUsageDataCache()
     {
         $cacheKey = __CLASS__.self::DATA_REGISTRY_KEY;
-        return $this->getHelper('Data\Cache\Permanent')->getValue($cacheKey);
+        return $this->getHelper('Data_Cache_Permanent')->getValue($cacheKey);
     }
 
     // ---------------------------------------
@@ -309,7 +310,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     private function setThemeUsageDataCache(array $data)
     {
         $cacheKey = __CLASS__.self::DATA_REGISTRY_KEY;
-        $this->getHelper('Data\Cache\Permanent')->setValue($cacheKey, $data);
+        $this->getHelper('Data_Cache_Permanent')->setValue($cacheKey, $data);
     }
 
     // ---------------------------------------
@@ -317,7 +318,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     private function removeThemeUsageDataCache()
     {
         $cacheKey = __CLASS__.self::DATA_REGISTRY_KEY;
-        $this->getHelper('Data\Cache\Permanent')->removeValue($cacheKey);
+        $this->getHelper('Data_Cache_Permanent')->removeValue($cacheKey);
     }
 
     //########################################

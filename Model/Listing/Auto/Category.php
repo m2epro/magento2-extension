@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Model\Listing\Auto;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Model\Listing\Auto
+ */
 class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Listing\Auto\Category\Group $group */
-    private $group = NULL;
+    private $group = null;
 
     //########################################
 
@@ -51,12 +55,13 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             throw new \Ess\M2ePro\Model\Exception\Logic('Group ID was not set.');
         }
 
-        if (!is_null($this->group)) {
+        if ($this->group !== null) {
             return $this->group;
         }
 
         return $this->group = $this->activeRecordFactory->getObjectLoaded(
-            'Listing\Auto\Category\Group', $this->getGroupId()
+            'Listing_Auto_Category_Group',
+            $this->getGroupId()
         );
     }
 

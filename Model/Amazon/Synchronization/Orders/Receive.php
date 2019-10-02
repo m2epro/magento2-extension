@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders;
 
+/**
+ * Class Receive
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders
+ */
 class Receive extends AbstractModel
 {
     protected $orderBuilderFactory;
@@ -19,7 +23,7 @@ class Receive extends AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    ){
+    ) {
         $this->orderBuilderFactory = $orderBuilderFactory;
         parent::__construct($amazonFactory, $activeRecordFactory, $helperFactory, $modelFactory);
     }
@@ -65,7 +69,8 @@ class Receive extends AbstractModel
 
             // ---------------------------------------
             $this->getActualOperationHistory()->addText('Starting Account "'.$merchantId.'"');
-            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'process'.$merchantId,'Get Orders from Amazon');
+            $this->getActualOperationHistory()
+                ->addTimePoint(__METHOD__.'process'.$merchantId, 'Get Orders from Amazon');
 
             $status = 'The "Receive" Action for Amazon Account Merchant "%merchant_id%" is started. Please wait...';
             $this->getActualLockItem()->setStatus(
@@ -74,11 +79,8 @@ class Receive extends AbstractModel
             // ---------------------------------------
 
             try {
-
                 $this->processAccounts($merchantId, $accounts);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Receive" Action for Amazon Account Merchant "%merchant_id%" was completed with error.',
                     $merchantId
@@ -109,13 +111,13 @@ class Receive extends AbstractModel
     {
         $accountsCollection = $this->amazonFactory->getObject('Account')->getCollection();
 
-        $accounts = array();
+        $accounts = [];
         foreach ($accountsCollection->getItems() as $accountItem) {
             /** @var $accountItem \Ess\M2ePro\Model\Account */
 
             $merchantId = $accountItem->getChildObject()->getMerchantId();
             if (!isset($accounts[$merchantId])) {
-                $accounts[$merchantId] = array();
+                $accounts[$merchantId] = [];
             }
 
             $accounts[$merchantId][] = $accountItem;
@@ -128,7 +130,7 @@ class Receive extends AbstractModel
 
     private function processAccounts($merchantId, array $accounts)
     {
-        $accountsByServerHash = array();
+        $accountsByServerHash = [];
         foreach ($accounts as $account) {
             $accountsByServerHash[$account->getChildObject()->getServerHash()] = $account;
         }
@@ -136,26 +138,29 @@ class Receive extends AbstractModel
         $preparedResponseData = $this->receiveAmazonOrdersData($merchantId, $accountsByServerHash);
 
         if (empty($preparedResponseData)) {
-            return NULL;
+            return null;
         }
 
         if (!empty($preparedResponseData['job_token'])) {
-            $this->modelFactory->getObject('Config\Manager\Synchronization')->setGroupValue(
-                "/amazon/orders/receive/{$merchantId}/", "job_token", $preparedResponseData['job_token']
+            $this->modelFactory->getObject('Config_Manager_Synchronization')->setGroupValue(
+                "/amazon/orders/receive/{$merchantId}/",
+                "job_token",
+                $preparedResponseData['job_token']
             );
         } else {
-            $this->modelFactory->getObject('Config\Manager\Synchronization')->deleteGroupValue(
-                "/amazon/orders/receive/{$merchantId}/", "job_token"
+            $this->modelFactory->getObject('Config_Manager_Synchronization')->deleteGroupValue(
+                "/amazon/orders/receive/{$merchantId}/",
+                "job_token"
             );
         }
 
         $this->getActualOperationHistory()->addTimePoint(
-            __METHOD__.'create_magento_orders'.$merchantId, 'Create Magento Orders'
+            __METHOD__.'create_magento_orders'.$merchantId,
+            'Create Magento Orders'
         );
 
-        $processedAmazonOrders = array();
+        $processedAmazonOrders = [];
         foreach ($preparedResponseData['items'] as $accountAccessToken => $ordersData) {
-
             $amazonOrders = $this->processAmazonOrders($ordersData, $accountsByServerHash[$accountAccessToken]);
 
             if (empty($amazonOrders)) {
@@ -168,13 +173,9 @@ class Receive extends AbstractModel
         }
 
         foreach ($processedAmazonOrders as $amazonOrders) {
-
             try {
-
                 $this->createMagentoOrders($amazonOrders);
-
             } catch (\Exception $exception) {
-
                 $this->getLog()->addMessage(
                     $this->getHelper('Module\Translation')->__($exception->getMessage()),
                     \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
@@ -185,8 +186,10 @@ class Receive extends AbstractModel
             }
         }
 
-        $this->modelFactory->getObject('Config\Manager\Synchronization')->setGroupValue(
-            "/amazon/orders/receive/{$merchantId}/", "from_update_date", $preparedResponseData['to_update_date']
+        $this->modelFactory->getObject('Config_Manager_Synchronization')->setGroupValue(
+            "/amazon/orders/receive/{$merchantId}/",
+            "from_update_date",
+            $preparedResponseData['to_update_date']
         );
     }
 
@@ -194,8 +197,9 @@ class Receive extends AbstractModel
 
     private function receiveAmazonOrdersData($merchantId, $accounts)
     {
-        $updateSinceTime = $this->modelFactory->getObject('Config\Manager\Synchronization')->getGroupValue(
-            "/amazon/orders/receive/{$merchantId}/", "from_update_date"
+        $updateSinceTime = $this->modelFactory->getObject('Config_Manager_Synchronization')->getGroupValue(
+            "/amazon/orders/receive/{$merchantId}/",
+            "from_update_date"
         );
 
         $fromDate = $this->prepareFromDate($updateSinceTime);
@@ -208,14 +212,15 @@ class Receive extends AbstractModel
             $fromDate = $fromDate->format('Y-m-d H:i:s');
         }
 
-        $params = array(
+        $params = [
             'accounts'         => $accounts,
             'from_update_date' => $fromDate,
             'to_update_date'   => $toDate
-        );
+        ];
 
-        $jobToken = $this->modelFactory->getObject('Config\Manager\Synchronization')->getGroupValue(
-            "/amazon/orders/receive/{$merchantId}/", "job_token"
+        $jobToken = $this->modelFactory->getObject('Config_Manager_Synchronization')->getGroupValue(
+            "/amazon/orders/receive/{$merchantId}/",
+            "job_token"
         );
 
         if (!empty($jobToken)) {
@@ -223,9 +228,10 @@ class Receive extends AbstractModel
         }
 
         /** @var \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Items $connectorObj */
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
         $connectorObj = $dispatcherObject->getCustomConnector(
-            'Amazon\Connector\Orders\Get\Items', $params
+            'Amazon_Connector_Orders_Get_Items',
+            $params
         );
         $dispatcherObject->process($connectorObj);
 
@@ -235,33 +241,31 @@ class Receive extends AbstractModel
         $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$merchantId);
 
         if (!isset($responseData['items']) || !isset($responseData['to_update_date'])) {
-
             $this->helperFactory->getObject('Module\Logger')->process(
-                array(
+                [
                     'from_update_date'  => $fromDate,
                     'to_update_date'    => $toDate,
                     'jobToken'          => $jobToken,
                     'account_id'        => $merchantId,
                     'response_data'     => $responseData,
                     'response_messages' => $connectorObj->getResponseMessages()
-                ),
+                ],
                 'Amazon orders receive task - empty response'
             );
 
-            return array();
+            return [];
         }
 
         return $responseData;
     }
 
-    private function processResponseMessages(array $messages = array())
+    private function processResponseMessages(array $messages = [])
     {
         /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messagesSet */
-        $messagesSet = $this->modelFactory->getObject('Connector\Connection\Response\Message\Set');
+        $messagesSet = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
         $messagesSet->init($messages);
 
         foreach ($messagesSet->getEntities() as $message) {
-
             if (!$message->isError() && !$message->isWarning()) {
                 continue;
             }
@@ -281,14 +285,12 @@ class Receive extends AbstractModel
 
     private function processAmazonOrders(array $ordersData, \Ess\M2ePro\Model\Account $account)
     {
-        $orders = array();
+        $orders = [];
 
         try {
-
             $accountCreateDate = new \DateTime($account->getData('create_date'), new \DateTimeZone('UTC'));
 
             foreach ($ordersData as $orderData) {
-
                 $orderCreateDate = new \DateTime($orderData['purchase_create_date'], new \DateTimeZone('UTC'));
                 if ($orderCreateDate < $accountCreateDate) {
                     continue;
@@ -310,9 +312,7 @@ class Receive extends AbstractModel
 
                 $orders[] = $order;
             }
-
         } catch (\Exception $e) {
-
             $this->getLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($exception->getMessage()),
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
@@ -404,7 +404,7 @@ class Receive extends AbstractModel
 
         // Get min date for synch
         // ---------------------------------------
-        $minDate = new \DateTime('now',new \DateTimeZone('UTC'));
+        $minDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $minDate->modify('-30 days');
         // ---------------------------------------
 
@@ -421,7 +421,7 @@ class Receive extends AbstractModel
     private function prepareToDate()
     {
         $operationHistory = $this->getActualOperationHistory()->getParentObject('synchronization');
-        if (!is_null($operationHistory)) {
+        if ($operationHistory !== null) {
             $toDate = $operationHistory->getData('start_date');
         } else {
             $toDate = new \DateTime('now', new \DateTimeZone('UTC'));

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Shipping;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
+/**
+ * Class UpdateDiscountProfiles
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Shipping
+ */
 class UpdateDiscountProfiles extends Template
 {
     //########################################
@@ -25,15 +29,15 @@ class UpdateDiscountProfiles extends Template
 
         $accountProfiles = $this->getHelper('Data')->jsonDecode($account->getData('ebay_shipping_discount_profiles'));
 
-        $profiles = array();
+        $profiles = [];
         if (is_array($accountProfiles) && isset($accountProfiles[$marketplaceId]['profiles'])) {
             $helper = $this->getHelper('Data');
             foreach ($accountProfiles[$marketplaceId]['profiles'] as $profile) {
-                $profiles[] = array(
+                $profiles[] = [
                     'type' => $helper->escapeHtml($profile['type']),
                     'profile_id' => $helper->escapeHtml($profile['profile_id']),
                     'profile_name' => $helper->escapeHtml($profile['profile_name'])
-                );
+                ];
             }
         }
 

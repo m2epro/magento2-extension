@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay
+ */
 abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 {
     //########################################
@@ -21,7 +25,7 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 
     protected function getSpecificsFromPost($post)
     {
-        $itemSpecifics = array();
+        $itemSpecifics = [];
         for ($i=0; true; $i++) {
             if (!isset($post['item_specifics_mode_'.$i])) {
                 break;
@@ -29,11 +33,11 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
             if (!isset($post['custom_item_specifics_value_mode_'.$i])) {
                 continue;
             }
-            $ebayRecommendedTemp = array();
+            $ebayRecommendedTemp = [];
             if (isset($post['item_specifics_value_ebay_recommended_'.$i])) {
                 $ebayRecommendedTemp = (array)$post['item_specifics_value_ebay_recommended_'.$i];
             }
-            foreach ($ebayRecommendedTemp as $key=>$temp) {
+            foreach ($ebayRecommendedTemp as $key => $temp) {
                 $ebayRecommendedTemp[$key] = base64_decode($temp);
             }
 
@@ -42,7 +46,6 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 
             if ($post['item_specifics_mode_'.$i] ==
                 \Ess\M2ePro\Model\Ebay\Template\Category\Specific::MODE_ITEM_SPECIFICS) {
-
                 $temp = \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_CUSTOM_VALUE;
                 if ((int)$post['item_specifics_value_mode_' . $i] == $temp) {
                     $attributeValue = (array)$post['item_specifics_value_custom_value_'.$i];
@@ -70,7 +73,7 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
                     $ebayRecommendedTemp = '';
                 }
 
-                $itemSpecifics[] = array(
+                $itemSpecifics[] = [
                     'mode'                   => (int)$post['item_specifics_mode_'.$i],
                     'attribute_title'        => $post['item_specifics_attribute_title_'.$i],
                     'value_mode'             => (int)$post['item_specifics_value_mode_'.$i],
@@ -79,12 +82,11 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
                     'value_custom_value'     => !empty($attributeValue)
                         ? $this->getHelper('Data')->jsonEncode($attributeValue)      : '',
                     'value_custom_attribute' => $customAttribute
-                );
+                ];
             }
 
             if ($post['item_specifics_mode_'.$i] ==
                 \Ess\M2ePro\Model\Ebay\Template\Category\Specific::MODE_CUSTOM_ITEM_SPECIFICS) {
-
                 $attributeTitle = '';
                 $temp = \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_CUSTOM_VALUE;
                 if ((int)$post['custom_item_specifics_value_mode_' . $i] == $temp) {
@@ -107,7 +109,7 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
                     $customAttribute = $post['item_specifics_value_custom_attribute_'.$i];
                 }
 
-                $itemSpecifics[] = array(
+                $itemSpecifics[] = [
                     'mode'                      => (int)$post['item_specifics_mode_' . $i],
                     'attribute_title'           => $attributeTitle,
                     'value_mode'                => (int)$post['custom_item_specifics_value_mode_' . $i],
@@ -115,7 +117,7 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
                     'value_custom_value'        => !empty($attributeValue)
                         ? $this->getHelper('Data')->jsonEncode($attributeValue) : '',
                     'value_custom_attribute'    => $customAttribute
-                );
+                ];
             }
         }
 

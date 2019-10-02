@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Traits;
 
+/**
+ * Trait RendererTrait
+ * @package Ess\M2ePro\Block\Adminhtml\Traits
+ */
 trait RendererTrait
 {
     /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Renderer\JsPhpRenderer  */

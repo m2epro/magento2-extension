@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class General
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs
+ */
 class General extends AbstractForm
 {
     protected $WalmartFactory;
@@ -20,8 +24,7 @@ class General extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->WalmartFactory = $WalmartFactory;
 
         parent::__construct($context, $registry, $formFactory, $data);
@@ -31,22 +34,23 @@ class General extends AbstractForm
     {
         /** @var $account \Ess\M2ePro\Model\Account */
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
-        $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         if (isset($formData['other_listings_mapping_settings'])) {
             $formData['other_listings_mapping_settings'] = (array)$this->getHelper('Data')->jsonDecode(
-                $formData['other_listings_mapping_settings'],true
+                $formData['other_listings_mapping_settings'],
+                true
             );
         }
 
-        $defaults = array(
+        $defaults = [
             'title'           => '',
             'marketplace_id'  => 0,
             'consumer_id'     => '',
             'old_private_key' => '',
             'client_id'       => '',
             'client_secret'   => ''
-        );
+        ];
 
         $formData = array_merge($defaults, $formData);
 
@@ -60,72 +64,20 @@ class General extends AbstractForm
 
         $form = $this->_formFactory->create();
 
-        $USMarketplace = \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US;
-        $CAMarketplace = \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA;
-
-        $USHelpHtml = $this->__(<<<HTML
-<div class="marketplace-required-field marketplace-required-field-id{$USMarketplace}">
-Under this section, you need to connect M2E Pro with your Walmart account. Please complete the following steps:<br>
-<ul class="list">
-    <li>Select Walmart marketplace.</li>
-    <li>Click <b>Get Access Data</b>. You will be redirected to the Walmart Developer Center.</li>
-    <li>Log in using your Walmart Seller credentials.</li>
-    <li>Under <i>Username > API Keys > Digital Signature</i>, copy your <i>Consumer ID</i> and paste it into the
-    current M2E Pro page. </li>
-    <li>Under <i>Username > Delegate Access</i>, provide M2E Pro with the full access permissions to all API sections.
-    Click <b>API Keys</b> to generate <i>Client ID</i> and <i>Client Secret</i>.</li>
-    <li>Copy your <i>Client ID</i> and <i>Client Secret</i> and paste the keys into the current M2E Pro page.</li>
-    <li>Click <b>Save and Continue Edit</b>. Extension will be granted access to your Walmart account data.</li>
-</ul>
-
-<b>Important note:</b> Your <i>Consumer ID</i> must not be changed once it is obtain.
-<i>Consumer ID</i> is unique seller
-identifier M2E Pro requires to act on your behalf. <br>
-If you need to reauthorize Extension, please generate new <i>Client ID</i> and <i>Client Secret</i> for M2E Pro under
-<i>Username > Delegate Access</i> in Developer Center. <br><br>
-
-The detailed information can be found <a href="%url%" target="_blank">here</a>.
-</div>
-HTML
-            ,
-            $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XgBhAQ')
-        );
-
-        $CAHelpHtml = $this->__(<<<HTML
-<div class="marketplace-required-field marketplace-required-field-id{$CAMarketplace}">
-Under this section, you need to connect M2E Pro with your Walmart account. Please complete the following steps:<br/>
-<ul class="list">
-    <li>Click Get Access Data. You will be redirected to the Walmart website.</li>
-    <li>Log in to your Seller Center Account.</li>
-    <li>In admin panel, navigate to <i>Settings > API > Consumer IDs & Private Keys</i>.</li>
-    <li>Copy the generated Consumer ID and Private Key to the corresponding fields on the current page.</li>
-    <li>Click Save and Continue Edit. Extension will be granted access to your Walmart Account data.</li>
-</ul>
-
-<b>Note:</b> Make sure that you copy the valid API credentials, i.e. <b>Consumer ID</b> and <b>Private Key</b>.<br><br>
-
-<b>Important note:</b> The Private Key is common for all applications you are using. Regeneration of the Key will
-deactivate your previous Private Key.
-This may cause the apps to no longer function properly.<br><br>
-
-The detailed information can be found <a href="%url%" target="_blank">here</a>.
-</div>
-HTML
-            ,
-            $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XgBhAQ')
-        );
-
         $form->addField(
             'walmart_accounts_general',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(<<<HTML
-                    {$USHelpHtml}
-
-                    {$CAHelpHtml}
+                'content' =>  $this->__(
+                    <<<HTML
+<div>
+    Under this section, you can link your Walmart account to M2E Pro.
+    Read how to <a href="%url%" target="_blank">get the API credentials</a>.
+</div>
 HTML
-                ),
-                'class' => 'marketplace-required-field marketplace-required-field-id-not-null'
+                    ,
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XgBhAQ')
+                )
             ]
         );
 
@@ -290,16 +242,20 @@ HTML
             ]
         );
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Walmart\Account'));
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Walmart'));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Model\Walmart\Account::class));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class));
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Account', ['_current' => true]));
         $this->jsUrl->addUrls([
             'formSubmit' => $this->getUrl(
-                '*/walmart_account/save', array('_current' => true, 'id' => $this->getRequest()->getParam('id'))
+                '*/walmart_account/save',
+                ['_current' => true, 'id' => $this->getRequest()->getParam('id')]
             ),
             'deleteAction' => $this->getUrl(
-                '*/walmart_account/delete', array('id' => $this->getRequest()->getParam('id'))
+                '*/walmart_account/delete',
+                ['id' => $this->getRequest()->getParam('id')]
             )
         ]);
 
@@ -310,7 +266,9 @@ HTML
             . 'This will cause inappropriate work of all Accounts\' copies.',
             $this->__(
                 'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
-                . 'This will cause inappropriate work of all Accounts\' copies.'));
+                . 'This will cause inappropriate work of all Accounts\' copies.'
+            )
+        );
 
         $this->jsTranslator->addTranslations([
             'Coefficient is not valid.' => $this->__('Coefficient is not valid.'),
@@ -319,9 +277,10 @@ HTML
             ),
             'You must choose Marketplace first.' => $this->__('You must choose Marketplace first.'),
             'M2E Pro was not able to get access to the Walmart Account' => $this->__(
-                'M2E Pro could not get access to your Walmart account. Please ensure that you provide M2E Pro with full
-                access permissions to all API sections, enter the valid Consumer ID, Private Key (US), Client ID (CA)
-                and Client Secret (CA).'
+                'M2E Pro could not get access to your Walmart account. <br>
+                 For Walmart CA, please check if you entered valid Consumer ID and Private Key. <br>
+                 For Walmart US, please ensure to provide M2E Pro with full access permissions
+                 to all API sections and enter valid Consumer ID, Client ID, and Client Secret.'
             ),
             'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%' => $this->__(
                 'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%'

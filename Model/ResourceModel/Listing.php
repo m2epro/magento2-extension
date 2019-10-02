@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel;
 
+/**
+ * Class Listing
+ * @package Ess\M2ePro\Model\ResourceModel
+ */
 class Listing extends ActiveRecord\Component\Parent\AbstractModel
 {
     //########################################
@@ -25,20 +29,20 @@ class Listing extends ActiveRecord\Component\Parent\AbstractModel
 
         $totalCountSelect = $this->getConnection()
                                  ->select()
-                                 ->from($listingProductTable,new \Zend_Db_Expr('COUNT(*)'))
+                                 ->from($listingProductTable, new \Zend_Db_Expr('COUNT(*)'))
                                  ->where("`listing_id` = `{$this->getMainTable()}`.`id`");
 
         $activeCountSelect = $this->getConnection()
                                   ->select()
-                                  ->from($listingProductTable,new \Zend_Db_Expr('COUNT(*)'))
+                                  ->from($listingProductTable, new \Zend_Db_Expr('COUNT(*)'))
                                   ->where("`listing_id` = `{$this->getMainTable()}`.`id`")
-                                  ->where("`status` = ?",(int)\Ess\M2ePro\Model\Listing\Product::STATUS_LISTED);
+                                  ->where("`status` = ?", (int)\Ess\M2ePro\Model\Listing\Product::STATUS_LISTED);
 
         $inactiveCountSelect = $this->getConnection()
                                     ->select()
-                                    ->from($listingProductTable,new \Zend_Db_Expr('COUNT(*)'))
+                                    ->from($listingProductTable, new \Zend_Db_Expr('COUNT(*)'))
                                     ->where("`listing_id` = `{$this->getMainTable()}`.`id`")
-                                    ->where("`status` != ?",(int)\Ess\M2ePro\Model\Listing\Product::STATUS_LISTED);
+                                    ->where("`status` != ?", (int)\Ess\M2ePro\Model\Listing\Product::STATUS_LISTED);
 
         $query = "UPDATE `{$this->getMainTable()}`
                   SET `products_total_count` = (".$totalCountSelect->__toString()."),

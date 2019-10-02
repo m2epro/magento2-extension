@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Observer\Indexes;
 
+/**
+ * Class Enable
+ * @package Ess\M2ePro\Observer\Indexes
+ */
 class Enable extends \Ess\M2ePro\Observer\AbstractModel
 {
     protected $productIndex;
@@ -19,8 +23,7 @@ class Enable extends \Ess\M2ePro\Observer\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->productIndex = $productIndex;
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
     }
@@ -30,12 +33,6 @@ class Enable extends \Ess\M2ePro\Observer\AbstractModel
     public function process()
     {
         if ($this->getHelper('Magento')->isMSISupportingVersion()) {
-            foreach ($this->productIndex->getIndexes() as $code) {
-                if ($this->productIndex->isEnabledIndex($code) && $this->productIndex->disableReindex($code)) {
-                    $this->productIndex->forgetEnabledIndex($code);
-                }
-            }
-
             return;
         }
 
@@ -43,7 +40,7 @@ class Enable extends \Ess\M2ePro\Observer\AbstractModel
             return;
         }
 
-        $enabledIndexes = array();
+        $enabledIndexes = [];
 
         foreach ($this->productIndex->getIndexes() as $code) {
             if ($this->productIndex->isDisabledIndex($code) && $this->productIndex->enableReindex($code)) {
@@ -52,7 +49,7 @@ class Enable extends \Ess\M2ePro\Observer\AbstractModel
             }
         }
 
-        $executedIndexes = array();
+        $executedIndexes = [];
 
         foreach ($enabledIndexes as $code) {
             if ($this->productIndex->requireReindex($code) && $this->productIndex->executeReindex($code)) {

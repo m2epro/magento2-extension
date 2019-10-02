@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback\Template;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback\Template
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     //########################################
@@ -38,7 +42,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $accountData = $this->getHelper('Data\GlobalData')->getValue('edit_account');
 
         // Get collection of synchronizations
-        $collection = $this->activeRecordFactory->getObject('Ebay\Feedback\Template')->getCollection()
+        $collection = $this->activeRecordFactory->getObject('Ebay_Feedback_Template')->getCollection()
             ->addFieldToFilter('main_table.account_id', $accountData->getId());
 
         $this->setCollection($collection);
@@ -48,7 +52,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('ft_title', array(
+        $this->addColumn('ft_title', [
             'header'    => $this->__('Message'),
             'align'     => 'left',
             'type'      => 'text',
@@ -56,10 +60,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter'    => false,
             'escape'    => true,
             'filter_index' => 'main_table.body',
-            'frame_callback' => array($this, 'callbackBody')
-        ));
+            'frame_callback' => [$this, 'callbackBody']
+        ]);
 
-        $this->addColumn('ft_create_date', array(
+        $this->addColumn('ft_create_date', [
             'header'    => $this->__('Creation Date'),
             'align'     => 'left',
             'width'     => '150px',
@@ -69,9 +73,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_time' => true,
             'index'     => 'create_date',
             'filter_index' => 'main_table.create_date'
-        ));
+        ]);
 
-        $this->addColumn('ft_update_date', array(
+        $this->addColumn('ft_update_date', [
             'header'    => $this->__('Update Date'),
             'align'     => 'left',
             'width'     => '150px',
@@ -81,9 +85,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_time' => true,
             'index'     => 'update_date',
             'filter_index' => 'main_table.update_date'
-        ));
+        ]);
 
-        $this->addColumn('ft_action_delete', array(
+        $this->addColumn('ft_action_delete', [
             'header'    => $this->__('Delete'),
             'align'     => 'left',
             'width'     => '50px',
@@ -92,8 +96,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter'    => false,
             'sortable'  => false,
             'getter'    => 'getId',
-            'frame_callback' => array($this, 'callbackActionDelete')
-        ));
+            'frame_callback' => [$this, 'callbackActionDelete']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -110,19 +114,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         >{$this->__('Edit')}</a>
 </div>
 HTML;
-
     }
 
     public function callbackActionDelete($value, $row, $column, $isExport)
     {
         return $this
             ->createBlock('Magento\Button')
-            ->setData(array(
+            ->setData([
                 'onclick' => 'EbayAccountObj.feedbacksDeleteAction(\''.$row->getData('id').'\');',
                 'label' => $this->__('Delete'),
                 'class' => 'action-default scalable delete icon-btn'
-            ))->toHtml();
-
+            ])->toHtml();
     }
 
     //########################################

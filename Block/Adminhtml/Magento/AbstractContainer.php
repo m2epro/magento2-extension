@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento;
 use Magento\Backend\Block\Widget\Container;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
+/**
+ * Class AbstractContainer
+ * @package Ess\M2ePro\Block\Adminhtml\Magento
+ */
 abstract class AbstractContainer extends Container
 {
     use Traits\BlockTrait;

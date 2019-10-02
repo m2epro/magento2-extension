@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Requirements\Checks;
 
+/**
+ * Class MemoryLimit
+ * @package Ess\M2ePro\Model\Requirements\Checks
+ */
 class MemoryLimit extends AbstractCheck
 {
     //########################################

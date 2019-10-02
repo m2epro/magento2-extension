@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database;
 
+/**
+ * Class UpdateTableCells
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database
+ */
 class UpdateTableCells extends Table
 {
     public function execute()

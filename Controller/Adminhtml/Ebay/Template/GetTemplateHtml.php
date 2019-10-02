@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 use \Magento\Backend\App\Action;
 
+/**
+ * Class GetTemplateHtml
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template
+ */
 class GetTemplateHtml extends Template
 {
     //########################################
@@ -18,10 +22,9 @@ class GetTemplateHtml extends Template
     public function execute()
     {
         try {
-
             // ---------------------------------------
             /** @var \Ess\M2ePro\Helper\Component\Ebay\Template\Switcher\DataLoader $dataLoader */
-            $dataLoader = $this->getHelper('Component\Ebay\Template\Switcher\DataLoader');
+            $dataLoader = $this->getHelper('Component_Ebay_Template_Switcher_DataLoader');
             $dataLoader->load($this->getRequest());
             // ---------------------------------------
 
@@ -30,12 +33,11 @@ class GetTemplateHtml extends Template
             $templateDataForce = (bool)$this->getRequest()->getParam('data_force', false);
 
             /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher $switcherBlock */
-            $switcherBlock = $this->createBlock('Ebay\Listing\Template\Switcher');
+            $switcherBlock = $this->createBlock('Ebay_Listing_Template_Switcher');
             $switcherBlock->setData(['template_nick' => $templateNick]);
             // ---------------------------------------
 
             $this->setAjaxContent($switcherBlock->getFormDataBlockHtml($templateDataForce));
-
         } catch (\Exception $e) {
             $this->setJsonContent(['error' => $e->getMessage()]);
         }

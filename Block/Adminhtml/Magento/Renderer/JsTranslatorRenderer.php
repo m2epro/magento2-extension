@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
+/**
+ * Class JsTranslatorRenderer
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Renderer
+ */
 class JsTranslatorRenderer extends AbstractRenderer
 {
     protected $jsTranslations = [];
@@ -34,5 +38,4 @@ class JsTranslatorRenderer extends AbstractRenderer
 
         return "M2ePro.translator.add({$translations});";
     }
-
 }

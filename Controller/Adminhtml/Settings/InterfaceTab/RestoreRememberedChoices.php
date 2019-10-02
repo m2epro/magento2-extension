@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Settings\InterfaceTab;
 
+/**
+ * Class RestoreRememberedChoices
+ * @package Ess\M2ePro\Controller\Adminhtml\Settings\InterfaceTab
+ */
 class RestoreRememberedChoices extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
     //########################################

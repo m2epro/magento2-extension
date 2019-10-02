@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
+/**
+ * Class Delete
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template
+ */
 class Delete extends Template
 {
     //########################################

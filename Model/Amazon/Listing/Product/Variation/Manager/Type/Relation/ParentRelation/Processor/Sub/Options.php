@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relatio
 
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
 
+/**
+ * Class Options
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub
+ */
 class Options extends AbstractModel
 {
     //########################################
@@ -21,7 +25,7 @@ class Options extends AbstractModel
 
     protected function check()
     {
-        if (count($this->getProcessor()->getTypeModel()->getChildListingsProducts()) <= 0) {
+        if (empty($this->getProcessor()->getTypeModel()->getChildListingsProducts())) {
             return;
         }
 
@@ -186,12 +190,14 @@ class Options extends AbstractModel
 
         foreach ($productOptions as $productOption) {
             $generalId = $matcher->getMatchedOptionGeneralId($productOption);
-            if (is_null($generalId)) {
+            if ($generalId === null) {
                 continue;
             }
 
             $this->getProcessor()->getTypeModel()->createChildListingProduct(
-                $productOption, $channelOptions[$generalId], $generalId
+                $productOption,
+                $channelOptions[$generalId],
+                $generalId
             );
         }
     }
@@ -201,7 +207,7 @@ class Options extends AbstractModel
         $channelOptions = $this->getProcessor()->getTypeModel()->getUnusedChannelOptions();
         $productOptions = $this->getProcessor()->getTypeModel()->getNotRemovedUnusedProductOptions();
 
-        if (!$this->getProcessor()->isGeneralIdOwner() || count($channelOptions) > 0 || count($productOptions) <= 0) {
+        if (!$this->getProcessor()->isGeneralIdOwner() || !empty($channelOptions) || empty($productOptions)) {
             return false;
         }
 
@@ -264,17 +270,17 @@ class Options extends AbstractModel
         );
 
         $matcher = $this->getOptionMatcher();
-        $matcher->setDestinationOptions(array($amazonListingProduct->getGeneralId() => $channelOptions));
+        $matcher->setDestinationOptions([$amazonListingProduct->getGeneralId() => $channelOptions]);
 
         foreach ($productOptions as $productOption) {
             $generalId = $matcher->getMatchedOptionGeneralId($productOption);
 
-            if (is_null($generalId)) {
+            if ($generalId === null) {
                 continue;
             }
 
             $existChild = $this->findChildByProductOptions($productOption);
-            if (!is_null($existChild)) {
+            if ($existChild !== null) {
                 $this->getProcessor()->tryToRemoveChildListingProduct($existChild);
             }
 
@@ -312,12 +318,12 @@ class Options extends AbstractModel
         $matcher->setDestinationOptions($channelOptions);
 
         $generalId = $matcher->getMatchedOptionGeneralId($typeModel->getProductOptions());
-        if (is_null($generalId)) {
+        if ($generalId === null) {
             return;
         }
 
         $existChild = $this->findChildByChannelOptions($channelOptions[$generalId]);
-        if (!is_null($existChild)) {
+        if ($existChild !== null) {
             $this->getProcessor()->tryToRemoveChildListingProduct($existChild);
         }
 
@@ -367,11 +373,11 @@ class Options extends AbstractModel
 
     private function getOptionMatcher()
     {
-        if (!is_null($this->optionMatcher)) {
+        if ($this->optionMatcher !== null) {
             return $this->optionMatcher;
         }
 
-        $this->optionMatcher = $this->modelFactory->getObject('Amazon\Listing\Product\Variation\Matcher\Option');
+        $this->optionMatcher = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Matcher_Option');
         $this->optionMatcher->setMagentoProduct($this->getProcessor()->getListingProduct()->getMagentoProduct());
         $this->optionMatcher->setMatchedAttributes($this->getProcessor()->getTypeModel()->getMatchedAttributes());
 

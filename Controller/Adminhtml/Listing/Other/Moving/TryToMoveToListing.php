@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving;
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class TryToMoveToListing
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving
+ */
 class TryToMoveToListing extends Listing
 {
     public function execute()
@@ -22,19 +26,26 @@ class TryToMoveToListing extends Listing
         $listingId = (int)$this->getRequest()->getParam('listingId');
 
         $listingInstance = $this->parentFactory->getCachedObjectLoaded(
-            $componentMode, 'Listing' ,$listingId
+            $componentMode,
+            'Listing',
+            $listingId
         );
 
-        $failedProducts = array();
+        $failedProducts = [];
         foreach ($selectedProducts as $selectedProduct) {
             $otherListingProductInstance = $this->parentFactory->getObjectLoaded(
-                $componentMode, 'Listing\Other' ,$selectedProduct
+                $componentMode,
+                'Listing\Other',
+                $selectedProduct
             );
 
             $listingProduct = $listingInstance
                 ->getChildObject()
                 ->addProductFromOther(
-                    $otherListingProductInstance, \Ess\M2ePro\Helper\Data::INITIATOR_USER, true, false
+                    $otherListingProductInstance,
+                    \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+                    true,
+                    false
                 );
 
             if (!$listingProduct) {

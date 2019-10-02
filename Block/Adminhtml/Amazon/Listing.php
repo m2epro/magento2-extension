@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon;
 
+/**
+ * Class Listing
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon
+ */
 class Listing extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -19,15 +23,15 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->_controller = 'adminhtml_amazon_listing';
 
         // ---------------------------------------
-        $url = $this->getUrl('*/amazon_listing_create/index', array(
+        $url = $this->getUrl('*/amazon_listing_create/index', [
             'step' => '1',
             'clear' => 'yes'
-        ));
-        $this->addButton('add', array(
+        ]);
+        $this->addButton('add', [
             'label'     => $this->__('Add Listing'),
             'onclick'   => 'setLocation(\'' . $url . '\')',
             'class'     => 'action-primary'
-        ));
+        ]);
         // ---------------------------------------
     }
 

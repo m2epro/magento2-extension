@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Fulfillment;
 
+/**
+ * Class SwitchToAFN
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Fulfillment
+ */
 class SwitchToAFN extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Fulfillment
 {
     public function execute()
@@ -22,14 +26,14 @@ class SwitchToAFN extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Produc
             $productsIds = explode(',', $productsIds);
         }
 
-        $listingProducts = array();
+        $listingProducts = [];
         foreach ($productsIds as $listingProductId) {
 
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $listingProductId);
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator */
-            $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
+            $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
             $configurator->reset();
             $configurator->allowQty();
 
@@ -41,11 +45,11 @@ class SwitchToAFN extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Produc
         $params['switch_to'] = \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Qty::FULFILLMENT_MODE_AFN;
         $action = \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE;
 
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Product\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Product_Dispatcher');
         $result = (int)$dispatcherObject->process($action, $listingProducts, $params);
 
         $this->setJsonContent([
-            'messages' => array($this->getSwitchFulfillmentResultMessage($result))
+            'messages' => [$this->getSwitchFulfillmentResultMessage($result)]
         ]);
 
         return $this->getResult();

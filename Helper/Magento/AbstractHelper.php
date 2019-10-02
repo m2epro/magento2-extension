@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Magento;
 
+/**
+ * Class AbstractHelper
+ * @package Ess\M2ePro\Helper\Magento
+ */
 abstract class AbstractHelper extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const RETURN_TYPE_IDS = 1;
@@ -22,8 +26,7 @@ abstract class AbstractHelper extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->objectManager = $objectManager;
         parent::__construct($helperFactory, $context);
     }
@@ -33,10 +36,10 @@ abstract class AbstractHelper extends \Ess\M2ePro\Helper\AbstractHelper
     protected function _getIdsFromInput($input, $idKey = 'id')
     {
         if (!is_array($input) || empty($input)) {
-            return array();
+            return [];
         }
 
-        $ids = array();
+        $ids = [];
         foreach ($input as $entity) {
             if (is_numeric($entity)) {
                 $ids[] = (int)$entity;
@@ -84,10 +87,10 @@ abstract class AbstractHelper extends \Ess\M2ePro\Helper\AbstractHelper
     protected function _convertFetchNumArrayToReturnType(array $fetchArray, $returnType, $modelName)
     {
         if (empty($fetchArray)) {
-            return array();
+            return [];
         }
 
-        $result = array();
+        $result = [];
         foreach ($fetchArray as $fetchItem) {
             $item = array_shift($fetchItem);
 

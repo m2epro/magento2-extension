@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel;
 
+/**
+ * Class Wizard
+ * @package Ess\M2ePro\Model\ResourceModel
+ */
 class Wizard extends ActiveRecord\AbstractModel
 {
     //########################################

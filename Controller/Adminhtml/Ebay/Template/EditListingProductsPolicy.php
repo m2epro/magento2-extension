@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
+/**
+ * Class EditListingProductsPolicy
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template
+ */
 class EditListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
 {
     //########################################
@@ -34,13 +38,13 @@ class EditListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
 
         // ---------------------------------------
         /** @var \Ess\M2ePro\Helper\Component\Ebay\Template\Switcher\DataLoader $dataLoader */
-        $dataLoader = $this->getHelper('Component\Ebay\Template\Switcher\DataLoader');
+        $dataLoader = $this->getHelper('Component_Ebay_Template_Switcher_DataLoader');
         $dataLoader->load($collection);
         // ---------------------------------------
 
-        $initialization = $this->createBlock('Ebay\Listing\Template\Switcher\Initialization');
+        $initialization = $this->createBlock('Ebay_Listing_Template_Switcher_Initialization');
         $initialization->setMode(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher::MODE_LISTING_PRODUCT);
-        $content = $this->createBlock('Ebay\Listing\View\Settings\Edit\Policy');
+        $content = $this->createBlock('Ebay_Listing_View_Settings_Edit_Policy');
 
         $this->setAjaxContent($initialization->toHtml() . $content->toHtml());
         return $this->getResult();

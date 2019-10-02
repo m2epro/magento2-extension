@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Shipping;
 
+/**
+ * Class Source
+ * @package Ess\M2ePro\Model\Ebay\Template\Shipping
+ */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**

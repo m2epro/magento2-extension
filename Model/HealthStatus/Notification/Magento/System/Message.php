@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\HealthStatus\Notification\Magento\System;
 use Magento\Framework\Notification\MessageInterface;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
+/**
+ * Class Message
+ * @package Ess\M2ePro\Model\HealthStatus\Notification\Magento\System
+ */
 class Message extends \Ess\M2ePro\Model\AbstractModel implements MessageInterface
 {
     //########################################
@@ -26,11 +30,11 @@ class Message extends \Ess\M2ePro\Model\AbstractModel implements MessageInterfac
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory);
 
         $this->currentStatus        = $this->modelFactory->getObject('HealthStatus\CurrentStatus');
-        $this->notificationSettings = $this->modelFactory->getObject('HealthStatus\Notification\Settings');
+        $this->notificationSettings = $this->modelFactory->getObject('HealthStatus_Notification_Settings');
     }
 
     //########################################
@@ -41,7 +45,7 @@ class Message extends \Ess\M2ePro\Model\AbstractModel implements MessageInterfac
             return 'm2epro-health-status-notification';
         }
 
-        return md5('m2epro-health-status-' . $this->notificationSettings->getLevel());
+        return sha1('m2epro-health-status-' . $this->notificationSettings->getLevel());
     }
 
     public function isDisplayed()
@@ -63,7 +67,7 @@ class Message extends \Ess\M2ePro\Model\AbstractModel implements MessageInterfac
 
     public function getText()
     {
-        $messageBuilder = $this->modelFactory->getObject('HealthStatus\Notification\MessageBuilder');
+        $messageBuilder = $this->modelFactory->getObject('HealthStatus_Notification_MessageBuilder');
         return $messageBuilder->build();
     }
 

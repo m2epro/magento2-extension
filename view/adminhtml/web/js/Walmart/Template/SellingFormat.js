@@ -48,7 +48,7 @@ define([
                 value = Math.ceil(value);
 
                 return value > 0 && value <= 30;
-            }, M2ePro.translator.translate('Wrong value. Must be no more than 30. Max applicable length is 6 characters, including the decimal (e.g., 12.345).'));
+            }, M2ePro.translator.translate('wrong_value_more_than_30'));
 
             jQuery.validator.addMethod('M2ePro-validation-walmart-tax-code', function(value, el)
             {

@@ -8,17 +8,21 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization\Templates;
 
+/**
+ * Class Synchronization
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\Templates
+ */
 class Synchronization extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner
      */
-    private $runner = NULL;
+    private $runner = null;
 
     /**
      * @var \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization\Inspector
      */
-    private $inspector = NULL;
+    private $inspector = null;
 
     private $pendingListingProducts = [];
 
@@ -57,7 +61,7 @@ class Synchronization extends \Ess\M2ePro\Model\Walmart\Synchronization\Template
 
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     protected function getTitle()
@@ -83,17 +87,17 @@ class Synchronization extends \Ess\M2ePro\Model\Walmart\Synchronization\Template
     {
         parent::beforeStart();
 
-        $this->runner = $this->modelFactory->getObject('Synchronization\Templates\Synchronization\Runner');
+        $this->runner = $this->modelFactory->getObject('Synchronization_Templates_Synchronization_Runner');
 
-        $this->runner->setConnectorModel('Walmart\Connector\Product\Dispatcher');
+        $this->runner->setConnectorModel('Walmart_Connector_Product_Dispatcher');
         $this->runner->setMaxProductsPerStep(100);
 
         $this->runner->setLockItem($this->getActualLockItem());
         $this->runner->setPercentsStart($this->getPercentsStart() + $this->getPercentsInterval()/2);
         $this->runner->setPercentsEnd($this->getPercentsEnd());
 
-        $this->inspector = $this->modelFactory
-            ->getObject('Walmart\Synchronization\Templates\Synchronization\Inspector');
+        $this->inspector =
+            $this->modelFactory->getObject('Walmart_Synchronization_Templates_Synchronization_Inspector');
 
         $this->pendingListingProducts = $this->getPendingListingProductsItems();
     }
@@ -134,7 +138,7 @@ class Synchronization extends \Ess\M2ePro\Model\Walmart\Synchronization\Template
 
     private function executeRunner()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Apply Products changes on Walmart');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Apply Products changes on Walmart');
 
         $this->getRunner()->execute();
 

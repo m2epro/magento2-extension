@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Attribute;
 
+/**
+ * Class Relation
+ * @package Ess\M2ePro\Model\Magento\Attribute
+ */
 class Relation extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $productFactory;
@@ -28,7 +32,7 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
 
     protected $entityTypeId;
 
-    protected $params = array();
+    protected $params = [];
 
     //########################################
 
@@ -39,8 +43,7 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Eav\Model\Entity\Attribute\GroupFactory $attributeGroupFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->productFactory = $productFactory;
         $this->attributeFactory = $attributeFactory;
         $this->attributeSetFactory = $attributeSetFactory;
@@ -60,18 +63,16 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
 
     private function init()
     {
-        if (is_null($this->entityTypeId)) {
+        if ($this->entityTypeId === null) {
             $this->entityTypeId = $this->productFactory->create()->getResource()->getTypeId();
         }
 
         if (!($this->attributeObj instanceof \Magento\Eav\Model\Entity\Attribute)) {
-
             $attribute = $this->attributeFactory->create()->loadByCode($this->entityTypeId, $this->code);
             $attribute->getId() && $this->attributeObj = $attribute;
         }
 
         if (!($this->attributeSetObj instanceof \Magento\Eav\Model\Entity\Attribute\Set)) {
-
             $attributeSet = $this->attributeSetFactory->create()->load($this->setId);
             $attributeSet->getId() && $this->attributeSetObj = $attributeSet;
         }
@@ -80,15 +81,15 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
     private function saveRelation()
     {
         if (!$this->attributeObj) {
-            return array('result' => false, 'error' => "Attribute '{$this->code}' is not found.");
+            return ['result' => false, 'error' => "Attribute '{$this->code}' is not found."];
         }
 
         if (!$this->attributeSetObj) {
-            return array('result' => false, 'error' => "Attribute Set '{$this->setId}' is not found.");
+            return ['result' => false, 'error' => "Attribute Set '{$this->setId}' is not found."];
         }
 
         if ($this->checkIsAlreadyInSet()) {
-            return array('result' => true);
+            return ['result' => true];
         }
 
         $groupId = $this->getGroupId();
@@ -97,7 +98,7 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
 
         !empty($this->params['sorder_ofset']) && $sortOrder += $this->params['sorder_ofset'];
 
-        /* @var $collection \Magento\Eav\Model\ResourceModel\Entity\Attribute */
+        /** @var $collection \Magento\Eav\Model\ResourceModel\Entity\Attribute */
         $relation = $this->attributeFactory->create();
         $relation->setEntityTypeId($this->attributeSetObj->getEntityTypeId())
                  ->setAttributeSetId($this->attributeSetObj->getId())
@@ -106,21 +107,19 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
                  ->setSortOrder($sortOrder);
 
         try {
-
             $relation->save();
-
         } catch (\Exception $e) {
-            return array('result' => false, 'error' => $e->getMessage());
+            return ['result' => false, 'error' => $e->getMessage()];
         }
 
-        return array('result' => true, 'obj' => $relation);
+        return ['result' => true, 'obj' => $relation];
     }
 
     //########################################
 
     private function checkIsAlreadyInSet()
     {
-        /* @var $collection \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection */
+        /** @var $collection \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection */
         $collection = $this->attributeFactory->create()->getResourceCollection()
               ->setAttributeSetFilter($this->setId)
               ->addFieldToFilter('entity_attribute.attribute_id', $this->attributeObj->getId());
@@ -134,7 +133,7 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
             return $this->attributeSetObj->getDefaultGroupId();
         }
 
-        /* @var $collection \Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection */
+        /** @var $collection \Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection */
         $collection = $this->attributeGroupFactory->create()->getCollection();
         $collection->addFieldToFilter('attribute_group_name', $this->groupName);
         $collection->addFieldToFilter('attribute_set_id', $this->setId);
@@ -150,7 +149,7 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
 
     private function getMaxSortOrderByGroup($groupId)
     {
-        /* @var $collection \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection */
+        /** @var $collection \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection */
         $collection = $this->attributeFactory->create()->getResourceCollection();
         $collection->setAttributeSetFilter($this->setId);
         $collection->setAttributeGroupFilter($groupId);
@@ -183,7 +182,7 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    public function setParams(array $value = array())
+    public function setParams(array $value = [])
     {
         $this->params = $value;
         return $this;

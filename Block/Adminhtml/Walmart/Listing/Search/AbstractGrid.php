@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search;
 
+/**
+ * Class AbstractGrid
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search
+ */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $magentoProductCollectionFactory;
@@ -25,8 +29,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->localeCurrency = $localeCurrency;
         $this->walmartFactory = $walmartFactory;
@@ -55,91 +58,92 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
     protected function _prepareColumns()
     {
-        $this->addColumn('entity_id', array(
+        $this->addColumn('entity_id', [
             'header'    => $this->__('Product ID'),
             'align'     => 'right',
             'width'     => '100px',
             'type'      => 'number',
             'index'     => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => array($this, 'callbackColumnProductId'),
-            'filter_condition_callback' => array($this, 'callbackFilterProductId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductId'],
+            'filter_condition_callback' => [$this, 'callbackFilterProductId']
+        ]);
 
-        $this->addColumn('name', array(
+        $this->addColumn('name', [
             'header'    => $this->__('Product Title / Listing / Product SKU'),
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'name',
             'filter_index' => 'name',
             'escape'       => false,
-            'frame_callback' => array($this, 'callbackColumnProductTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+        ]);
 
-        $this->addColumn('online_sku', array(
+        $this->addColumn('online_sku', [
             'header' => $this->__('SKU'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'text',
             'index' => 'online_sku',
             'filter_index' => 'online_sku',
-            'frame_callback' => array($this, 'callbackColumnWalmartSku'),
-            'filter_condition_callback' => array($this, 'callbackFilterOnlineSku')
-        ));
+            'frame_callback' => [$this, 'callbackColumnWalmartSku'],
+            'filter_condition_callback' => [$this, 'callbackFilterOnlineSku']
+        ]);
 
-        $this->addColumn('gtin', array(
+        $this->addColumn('gtin', [
             'header' => $this->__('GTIN'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'text',
             'index' => 'gtin',
             'filter_index' => 'gtin',
-            'frame_callback' => array($this, 'callbackColumnGtin'),
-            'filter_condition_callback' => array($this, 'callbackFilterGtin')
-        ));
+            'frame_callback' => [$this, 'callbackColumnGtin'],
+            'filter_condition_callback' => [$this, 'callbackFilterGtin']
+        ]);
 
-        $this->addColumn('online_qty', array(
+        $this->addColumn('online_qty', [
             'header' => $this->__('QTY'),
             'align' => 'right',
             'width' => '70px',
             'type' => 'number',
             'index' => 'online_qty',
             'filter_index' => 'online_qty',
-            'frame_callback' => array($this, 'callbackColumnAvailableQty'),
-            'filter_condition_callback' => array($this, 'callbackFilterQty')
-        ));
+            'frame_callback' => [$this, 'callbackColumnAvailableQty'],
+            'filter_condition_callback' => [$this, 'callbackFilterQty']
+        ]);
 
-        $this->addColumn('online_price', array(
+        $this->addColumn('online_price', [
             'header' => $this->__('Price'),
             'align' => 'right',
             'width' => '110px',
             'type' => 'number',
             'index' => 'online_price',
             'filter_index' => 'online_price',
-            'frame_callback' => array($this, 'callbackColumnPrice'),
-            'filter_condition_callback' => array($this, 'callbackFilterPrice')
-        ));
+            'frame_callback' => [$this, 'callbackColumnPrice'],
+            'filter_condition_callback' => [$this, 'callbackFilterPrice']
+        ]);
 
-        $statusColumn = array(
+        $statusColumn = [
             'header' => $this->__('Status'),
             'width' => '125px',
             'index' => 'status',
             'filter_index' => 'status',
             'type' => 'options',
             'sortable' => false,
-            'options' => array(
+            'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Inactive (Blocked)')
-            ),
-            'frame_callback' => array($this, 'callbackColumnStatus'),
-            'filter_condition_callback' => array($this, 'callbackFilterStatus')
-        );
+            ],
+            'frame_callback' => [$this, 'callbackColumnStatus'],
+            'filter_condition_callback' => [$this, 'callbackFilterStatus']
+        ];
 
         $listingType = $this->getRequest()->getParam(
-            'listing_type', \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_M2E_PRO
+            'listing_type',
+            \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_M2E_PRO
         );
 
         if ($listingType == \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_LISTING_OTHER) {
@@ -148,15 +152,15 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
         $this->addColumn('status', $statusColumn);
 
-        $this->addColumn('goto_listing_item', array(
+        $this->addColumn('goto_listing_item', [
             'header'    => $this->__('Manage'),
             'align'     => 'center',
             'width'     => '50px',
             'type'      => 'text',
             'filter'    => false,
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnActions')
-        ));
+            'frame_callback' => [$this, 'callbackColumnActions']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -165,14 +169,14 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
     public function callbackColumnProductId($value, $row, $column, $isExport)
     {
-        if (is_null($row->getData('entity_id'))) {
+        if ($row->getData('entity_id') === null) {
             return $this->__('N/A');
         }
 
         $productId = (int)$row->getData('entity_id');
         $storeId = (int)$row->getData('store_id');
 
-        $url = $this->getUrl('catalog/product/edit', array('id' => $productId));
+        $url = $this->getUrl('catalog/product/edit', ['id' => $productId]);
         $withoutImageHtml = '<a href="'.$url.'" target="_blank">'.$productId.'</a>';
 
         $showProductsThumbnails = (bool)(int)$this->getHelper('Module')
@@ -189,7 +193,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         $magentoProduct->setStoreId($storeId);
 
         $imageUrlResized = $magentoProduct->getThumbnailImage();
-        if (is_null($imageUrlResized)) {
+        if ($imageUrlResized === null) {
             return $withoutImageHtml;
         }
 
@@ -197,14 +201,14 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
         $imageHtml = $productId.'<div style="margin-top: 5px;">'.
            '<img style="max-width: 100px; max-height: 100px;" src="' .$imageUrlResizedUrl. '" /></div>';
-        $withImageHtml = str_replace('>'.$productId.'<','>'.$imageHtml.'<',$withoutImageHtml);
+        $withImageHtml = str_replace('>'.$productId.'<', '>'.$imageHtml.'<', $withoutImageHtml);
 
         return $withImageHtml;
     }
 
     public function callbackColumnWalmartSku($value, $row, $column, $isExport)
     {
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -230,13 +234,13 @@ HTML;
 <div class="walmart-identifiers-gtin">{$gtinHtml}</div>
 HTML;
 
-        $identifiers = array(
+        $identifiers = [
             'UPC'        => $row->getData('upc'),
             'EAN'        => $row->getData('ean'),
             'ISBN'       => $row->getData('isbn'),
             'Walmart ID' => $row->getData('wpid'),
             'Item ID'    => $row->getData('item_id')
-        );
+        ];
 
         $htmlAdditional = '';
         foreach ($identifiers as $title => $value) {
@@ -245,8 +249,7 @@ HTML;
             }
 
             if (($row->getData('upc') || $row->getData('ean') || $row->getData('isbn')) &&
-                ($row->getData('wpid') || $row->getData('item_id')) && $title == 'Walmart ID')
-            {
+                ($row->getData('wpid') || $row->getData('item_id')) && $title == 'Walmart ID') {
                 $htmlAdditional .= "<div class='separator-line'></div>";
             }
             $identifierCode  = $this->__($title);
@@ -279,15 +282,13 @@ HTML;
     public function callbackColumnAvailableQty($value, $row, $column, $isExport)
     {
         if (!$row->getData('is_variation_parent')) {
-
             if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
                 return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
             }
 
-            if (is_null($value) || $value === '' ||
+            if ($value === null || $value === '' ||
                 ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
-                 !$row->getData('is_online_price_invalid')))
-            {
+                 !$row->getData('is_online_price_invalid'))) {
                 return $this->__('N/A');
             }
 
@@ -312,7 +313,7 @@ HTML;
             $activeChildrenCount += (int)$count;
         }
 
-        if ($activeChildrenCount == 0 || is_null($value) || $value === '') {
+        if ($activeChildrenCount == 0 || $value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -324,7 +325,6 @@ HTML;
     protected function getProductStatus($status)
     {
         switch ($status) {
-
             case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
                 return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
 
@@ -340,17 +340,6 @@ HTML;
         }
 
         return '';
-    }
-
-    //########################################
-
-    public function callbackColumnIsInStock($value, $row, $column, $isExport)
-    {
-        if ((int)$row->getData('is_in_stock') <= 0) {
-            return '<span style="color: red;">'.$value.'</span>';
-        }
-
-        return $value;
     }
 
     //########################################
@@ -376,7 +365,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/walmart_listing_search/index', array('_current'=>true));
+        return $this->getUrl('*/walmart_listing_search/index', ['_current'=>true]);
     }
 
     public function getRowUrl($row)

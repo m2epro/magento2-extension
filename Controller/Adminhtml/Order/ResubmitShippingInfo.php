@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
+/**
+ * Class ResubmitShippingInfo
+ * @package Ess\M2ePro\Controller\Adminhtml\Order
+ */
 class ResubmitShippingInfo extends Order
 {
     protected $orderShipmentCollection;
@@ -18,8 +22,7 @@ class ResubmitShippingInfo extends Order
     public function __construct(
         \Magento\Sales\Model\ResourceModel\Order\Shipment\Collection $orderShipmentCollection,
         Context $context
-    )
-    {
+    ) {
         $this->orderShipmentCollection = $orderShipmentCollection;
 
         parent::__construct($context);
@@ -45,7 +48,7 @@ class ResubmitShippingInfo extends Order
                 }
 
                 /** @var \Ess\M2ePro\Model\Order\Shipment\Handler $handler */
-                $handler = $this->modelFactory->getObject('Order\Shipment\Handler')->factory(
+                $handler = $this->modelFactory->getObject('Order_Shipment_Handler')->factory(
                     $order->getComponentMode()
                 );
                 $result  = $handler->handle($order, $shipment);

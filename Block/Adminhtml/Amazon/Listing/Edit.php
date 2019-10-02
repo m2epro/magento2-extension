@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing
+ */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     /** @var \Ess\M2ePro\Model\Listing */
@@ -38,25 +42,25 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->removeButton('edit');
         // ---------------------------------------
 
-        if (!is_null($this->getRequest()->getParam('back'))) {
+        if ($this->getRequest()->getParam('back') !== null) {
             // ---------------------------------------
             $url = $this->getHelper('Data')->getBackUrl(
                 '*/amazon_listing/index'
             );
-            $this->addButton('back', array(
+            $this->addButton('back', [
                 'label'     => $this->__('Back'),
                 'onclick'   => 'AmazonListingSettingsObj.backClick(\''.$url.'\')',
                 'class'     => 'back'
-            ));
+            ]);
             // ---------------------------------------
         }
 
         // ---------------------------------------
-        $this->addButton('auto_action', array(
+        $this->addButton('auto_action', [
             'label'     => $this->__('Auto Add/Remove Rules'),
             'onclick'   => 'ListingAutoActionObj.loadAutoActionHtml();',
             'class'     => 'action-primary'
-        ));
+        ]);
         // ---------------------------------------
 
         $backUrl = $this->getHelper('Data')->getBackUrlParam('list');
@@ -64,10 +68,10 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         // ---------------------------------------
         $url = $this->getUrl(
             '*/amazon_listing/save',
-            array(
+            [
                 'id'    => $this->listing['id'],
                 'back'  => $backUrl
-            )
+            ]
         );
         $saveButtonsProps = ['save' => [
             'label'     => $this->__('Save And Back'),
@@ -108,7 +112,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         parent::_beforeToHtml();
 
         // ---------------------------------------
-        $tabs = $this->createBlock('Amazon\Listing\Edit\Tabs');
+        $tabs = $this->createBlock('Amazon_Listing_Edit_Tabs');
         $this->setChild('tabs', $tabs);
         // ---------------------------------------
 
@@ -119,14 +123,14 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
     public function getFormHtml()
     {
-        $viewHeaderBlock = $this->createBlock('Listing\View\Header','', [
+        $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
             'data' => ['listing' => $this->listing]
         ]);
 
         $tabs = $this->getChildBlock('tabs');
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
-            'Amazon\Listing\AutoAction',
+            'Amazon_Listing_AutoAction',
             ['id' => $this->getRequest()->getParam('id')]
         ));
 
@@ -147,11 +151,11 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         ]);
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
 
         $this->js->addOnReadyJs(
-<<<JS
+            <<<JS
     require([
         'M2ePro/Amazon/Listing/AutoAction'
     ], function(){
@@ -160,7 +164,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
     });
 JS
-    );
+        );
 
         return $viewHeaderBlock->toHtml() . $tabs->toHtml() . parent::getFormHtml();
     }

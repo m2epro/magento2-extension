@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License;
 
+/**
+ * Class Create
+ * @package Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License
+ */
 class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $country;
@@ -24,8 +28,7 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->country = $country;
         $this->authSession = $authSession;
         $this->user = $user;
@@ -65,7 +68,8 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $fieldSet = $form->addFieldset('create_new_license', ['legend' => '', 'collapsable' => false]);
 
-        $fieldSet->addField('create_new_license_email',
+        $fieldSet->addField(
+            'create_new_license_email',
             'text',
             [
                 'name' => 'email',
@@ -77,7 +81,8 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('create_new_license_firstname',
+        $fieldSet->addField(
+            'create_new_license_firstname',
             'text',
             [
                 'name' => 'firstname',
@@ -88,7 +93,8 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('create_new_license_lastname',
+        $fieldSet->addField(
+            'create_new_license_lastname',
             'text',
             [
                 'name' => 'lastname',
@@ -99,7 +105,8 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('create_new_license_phone',
+        $fieldSet->addField(
+            'create_new_license_phone',
             'text',
             [
                 'name' => 'phone',
@@ -110,7 +117,8 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('create_new_license_country',
+        $fieldSet->addField(
+            'create_new_license_country',
             self::SELECT,
             [
                 'name' => 'country',
@@ -122,7 +130,8 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('create_new_license_city',
+        $fieldSet->addField(
+            'create_new_license_city',
             'text',
             [
                 'name' => 'city',
@@ -133,7 +142,8 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('create_new_license_postal_code',
+        $fieldSet->addField(
+            'create_new_license_postal_code',
             'text',
             [
                 'name' => 'postal_code',

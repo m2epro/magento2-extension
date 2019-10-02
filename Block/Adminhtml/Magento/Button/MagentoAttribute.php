@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Button;
 
+/**
+ * Class MagentoAttribute
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Button
+ */
 class MagentoAttribute extends \Ess\M2ePro\Block\Adminhtml\Magento\Button
 {
     //########################################
@@ -16,7 +20,7 @@ class MagentoAttribute extends \Ess\M2ePro\Block\Adminhtml\Magento\Button
     {
         $magentoAttributes = $this->helperFactory->getObject('Data')->jsonEncode($this->getMagentoAttributes());
         $selectCustomAttributes = json_encode(
-            !is_null($this->getSelectCustomAttributes()) ? $this->getSelectCustomAttributes() : [],
+            $this->getSelectCustomAttributes() !== null ? $this->getSelectCustomAttributes() : [],
             JSON_FORCE_OBJECT
         );
 

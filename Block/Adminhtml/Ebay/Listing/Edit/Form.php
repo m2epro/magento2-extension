@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     //########################################
@@ -44,8 +48,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _toHtml()
     {
         if ($this->getRequest()->getParam('step')) {
-            $breadcrumb = $this->createBlock('Ebay\Listing\Create\Breadcrumb');
-            $breadcrumb->setSelectedStep((int)$this->getRequest()->getParam('step',2));
+            $breadcrumb = $this->createBlock('Ebay_Listing_Create_Breadcrumb');
+            $breadcrumb->setSelectedStep((int)$this->getRequest()->getParam('step', 2));
 
             return $breadcrumb->_toHtml() . parent::_toHtml();
         }

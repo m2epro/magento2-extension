@@ -8,15 +8,19 @@
 
 namespace Ess\M2ePro\Model\Cron\Runner;
 
+/**
+ * Class Developer
+ * @package Ess\M2ePro\Model\Cron\Runner
+ */
 class Developer extends AbstractModel
 {
-    private $allowedTasks = NULL;
+    private $allowedTasks = null;
 
     //########################################
 
     public function getNick()
     {
-        return NULL;
+        return null;
     }
 
     public function getInitiator()
@@ -32,7 +36,7 @@ class Developer extends AbstractModel
     protected function getStrategyObject()
     {
         /** @var \Ess\M2ePro\Model\Cron\Strategy\AbstractModel $strategyObject */
-        $strategyObject = $this->modelFactory->getObject('Cron\Strategy\Serial');
+        $strategyObject = $this->modelFactory->getObject('Cron_Strategy_Serial');
 
         if (!empty($this->allowedTasks)) {
             $strategyObject->setAllowedTasks($this->allowedTasks);

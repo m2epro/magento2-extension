@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Auto\Category;
 
+/**
+ * Class Group
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Auto\Category
+ */
 class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     //########################################

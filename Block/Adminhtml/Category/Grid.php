@@ -7,6 +7,10 @@
  */
 namespace Ess\M2ePro\Block\Adminhtml\Category;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Category
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $categoryCollectionFactory;
@@ -18,8 +22,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->categoryCollectionFactory = $categoryCollectionFactory;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -28,13 +31,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function getStoreId()
     {
-        return !is_null($this->getData('store_id'))
+        return $this->getData('store_id') !== null
             ? $this->getData('store_id') : \Magento\Store\Model\Store::DISTRO_STORE_ID;
     }
 
     public function setStoreId($storeId)
     {
-        $this->setData('store_id',$storeId);
+        $this->setData('store_id', $storeId);
         return $this;
     }
 
@@ -53,9 +56,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $stmt = $collection->getSelect()->query();
 
-        $ids = array();
+        $ids = [];
         foreach ($stmt as $item) {
-            $ids = array_merge($ids,array_map('intval',explode('/',$item['path'])));
+            $ids = array_merge($ids, array_map('intval', explode('/', $item['path'])));
         }
         $ids = array_unique($ids);
 
@@ -66,13 +69,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Category\Collection $collection */
         $collection = $this->categoryCollectionFactory->create();
         $collection->joinAttribute(
-            'name', 'catalog_category/name', 'entity_id', NULL, 'inner', $this->getStoreId()
+            'name',
+            'catalog_category/name',
+            'entity_id',
+            null,
+            'inner',
+            $this->getStoreId()
         );
         $collection->addFieldToFilter([
             ['attribute' => 'entity_id', 'in' => $ids]
         ]);
 
-        $cacheData = array();
+        $cacheData = [];
         foreach ($collection->getItems() as $item) {
             /** @var \Magento\Catalog\Model\Category $item */
             $cacheData[$item->getData('entity_id')] = $item->getData('name');
@@ -84,7 +92,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnMagentoCategory($value, $row, $column, $isExport)
     {
-        $ids = explode('/',$row->getPath());
+        $ids = explode('/', $row->getPath());
 
         $categoriesCache = $this->getData('categories_cache');
         $path = '';

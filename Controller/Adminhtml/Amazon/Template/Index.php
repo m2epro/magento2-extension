@@ -10,14 +10,18 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template
+ */
 class Index extends Template
 {
     //########################################
 
     public function execute()
     {
-        $content = $this->getLayout()->createBlock(
-            'Ess\\M2ePro\\Block\\Adminhtml\\Amazon\\Template'
+        $content = $this->createBlock(
+            'Amazon\\Template'
         );
 
         $this->getResultPage()->getConfig()->getTitle()->prepend('Policies');

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
+/**
+ * Class RemoveGroup
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ */
 class RemoveGroup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -21,8 +25,8 @@ class RemoveGroup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Group\Collection $groups */
-        $groups = $this->activeRecordFactory->getObject('Ebay\Motor\Group')->getCollection()
-            ->addFieldToFilter('id', array('in' => $groupsIds));
+        $groups = $this->activeRecordFactory->getObject('Ebay_Motor_Group')->getCollection()
+            ->addFieldToFilter('id', ['in' => $groupsIds]);
 
         foreach ($groups->getItems() as $group) {
             $group->delete();

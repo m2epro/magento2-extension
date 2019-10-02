@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\Renderer;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
+/**
+ * Class Editable
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\Renderer
+ */
 class Editable extends AbstractBlock implements \Magento\Framework\Data\Form\Element\Renderer\RendererInterface
 {
     protected $translateInline;
@@ -21,8 +25,7 @@ class Editable extends AbstractBlock implements \Magento\Framework\Data\Form\Ele
         \Magento\Framework\Translate\Inline $translateInline,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
-    )
-    {
+    ) {
         $this->translateInline = $translateInline;
         parent::__construct($context, $data);
     }

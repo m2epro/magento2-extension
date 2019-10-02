@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter;
 
+/**
+ * Class OrderId
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter
+ */
 class OrderId extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Text
 {
     //########################################
@@ -19,8 +23,7 @@ class OrderId extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Text
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\DB\Helper $resourceHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
 
         parent::__construct($context, $resourceHelper, $data);
@@ -35,9 +38,9 @@ class OrderId extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Text
 
     public function getValue($index = null)
     {
-        if (is_null($index)) {
+        if ($index === null) {
             $value = $this->getData('value');
-            return is_array($value) ? $value : array('value' => $value);
+            return is_array($value) ? $value : ['value' => $value];
         }
 
         return $this->getData('value', $index);
@@ -46,7 +49,7 @@ class OrderId extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Text
     public function getEscapedValue($index = null)
     {
         $value = $this->getValue($index);
-        if (is_null($index)) {
+        if ($index === null) {
             $value = $value['value'];
         }
 
@@ -57,7 +60,7 @@ class OrderId extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Text
 
     public function getHtml()
     {
-        if (!$this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
+        if (!$this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
             return parent::getHtml();
         }
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Stop;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Stop
+ */
 class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Request
 {
     //########################################
@@ -15,14 +19,14 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
     protected function getActionData()
     {
         $data = array_merge(
-            array(
+            [
                 'sku'  => $this->getWalmartListingProduct()->getSku(),
                 'wpid' => $this->getWalmartListingProduct()->getWpid(),
-            ),
-            $this->getQtyData()
+                'qty' => 0
+            ],
+            // Only for CA marketplace
+            $this->getLagTimeData()
         );
-
-        $data['qty'] = 0;
 
         return $data;
     }

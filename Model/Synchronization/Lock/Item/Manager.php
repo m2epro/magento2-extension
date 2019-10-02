@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Synchronization\Lock\Item;
 
+/**
+ * Class Manager
+ * @package Ess\M2ePro\Model\Synchronization\Lock\Item
+ */
 class Manager extends \Ess\M2ePro\Model\Lock\Item\Manager
 {
     //########################################
@@ -17,8 +21,7 @@ class Manager extends \Ess\M2ePro\Model\Lock\Item\Manager
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->setNick('synchronization');
         parent::__construct($activeRecordFactory, $helperFactory, $modelFactory, $data);
     }

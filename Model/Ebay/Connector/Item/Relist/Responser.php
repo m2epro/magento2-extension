@@ -24,21 +24,22 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
     //########################################
 
-    protected function processCompleted(array $data = array(), array $params = array())
+    protected function processCompleted(array $data = [], array $params = [])
     {
         if (!empty($data['already_active'])) {
             $this->getResponseObject()->processAlreadyActive($data, $params);
 
             // M2ePro\TRANSLATIONS
             // Item was already started on eBay
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 'Item was already started on eBay',
                 \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
             );
 
             $this->getLogger()->logListingProductMessage(
-                $this->listingProduct, $message
+                $this->listingProduct,
+                $message
             );
 
             return;
@@ -53,10 +54,9 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
         if (!$this->listingProduct->getAccount()->getChildObject()->isModeSandbox() &&
             $this->isEbayApplicationErrorAppeared($responseMessages)) {
-
             $this->markAsPotentialDuplicate();
 
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 'An error occurred while Listing the Item. The Item has been blocked.
                  The next M2E Pro Synchronization will resolve the problem.',
@@ -67,8 +67,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         }
 
         if ($this->isConditionErrorAppeared($responseMessages)) {
-
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 $this->getHelper('Module\Translation')->__(
                     'M2E Pro was not able to send Condition on eBay. Please try to perform the Relist Action once more.'
@@ -88,13 +87,12 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
         if ($this->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH &&
             $this->isItemCanNotBeAccessed($responseMessages)) {
-
             $itemId = null;
             if (isset($this->params['product']['request']['item_id'])) {
                 $itemId = $this->params['product']['request']['item_id'];
             }
 
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 $this->getHelper('Module\Translation')->__(
                     "This Item {$itemId} cannot be accessed on eBay, so the Relist action cannot be executed for it.
@@ -106,18 +104,18 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
             $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
 
-            $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+            $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
             $this->processAdditionalAction(
-                \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator,
-                array('skip_check_the_same_product_already_listed_ids' => array($this->listingProduct->getId()))
+                \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                $configurator,
+                ['skip_check_the_same_product_already_listed_ids' => [$this->listingProduct->getId()]]
             );
         }
 
         if ($this->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH &&
             !$this->getConfigurator()->isDefaultMode() &&
             $this->isNewRequiredSpecificNeeded($responseMessages)) {
-
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 $this->getHelper('Module\Translation')->__(
                     'It has been detected that the Category you are using is going to require the Product Identifiers
@@ -130,7 +128,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
             $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
 
-            $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+            $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
             $this->processAdditionalAction($this->getActionType(), $configurator);
         }
 

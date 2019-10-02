@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class General
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs
+ */
 class General extends AbstractForm
 {
     protected $amazonFactory;
@@ -20,8 +24,7 @@ class General extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
 
         parent::__construct($context, $registry, $formFactory, $data);
@@ -31,20 +34,21 @@ class General extends AbstractForm
     {
         /** @var $account \Ess\M2ePro\Model\Account */
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
-        $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         if (isset($formData['other_listings_mapping_settings'])) {
             $formData['other_listings_mapping_settings'] = (array)$this->getHelper('Data')->jsonDecode(
-                $formData['other_listings_mapping_settings'],true
+                $formData['other_listings_mapping_settings'],
+                true
             );
         }
 
-        $defaults = array(
+        $defaults = [
             'title'          => '',
             'marketplace_id' => 0,
             'merchant_id'    => '',
             'token'          => ''
-        );
+        ];
 
         $formData = array_merge($defaults, $formData);
 
@@ -71,13 +75,13 @@ class General extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(<<<HTML
-<p><strong>Important note:</strong> to be eligible to sell on Amazon, seller must have at
-least one of the following Amazon accounts: <br>
-Non-individual Amazon seller, Amazon Payments, Amazon Fresh, Amazon Business, Amazon Prime Now,
-Amazon Webstore, Amazon Product Ads, Amazon Supply.</p>
+<p><strong>Important note:</strong> to be eligible to sell on Amazon, seller must have at least one of the following
+Amazon accounts: <br>
+Non-individual Amazon seller, Amazon Payments, Amazon Fresh, Amazon Business, Amazon Prime Now, Amazon Webstore, Amazon
+Product Ads, Amazon Supply.</p>
 <p>Individual sellers may upgrade to a Pro Merchant seller account.</p> <br>
-<p>Specify an Account Title, select an Amazon Marketplace, click <strong>Get Access Data</strong>
-and proceed with the following steps to grant M2E Pro access to your Amazon data:</p>
+<p>Specify an Account Title, select an Amazon Marketplace, click <strong>Get Access Data</strong> and proceed with the
+following steps to grant M2E Pro access to your Amazon data:</p>
 <ul>
 <li>sign in to your Seller Central account;</li>
 <li>confirm you allow M2E Pro to access your Amazon selling account;</li>
@@ -258,16 +262,20 @@ HTML
             $field->setFieldExtraAttributes('style="display: none"');
         }
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Account'));
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Amazon'));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Model\Amazon\Account::class));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class));
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Account', ['_current' => true]));
         $this->jsUrl->addUrls([
             'formSubmit' => $this->getUrl(
-                '*/amazon_account/save', array('_current' => true, 'id' => $this->getRequest()->getParam('id'))
+                '*/amazon_account/save',
+                ['_current' => true, 'id' => $this->getRequest()->getParam('id')]
             ),
             'deleteAction' => $this->getUrl(
-                '*/amazon_account/delete', array('id' => $this->getRequest()->getParam('id'))
+                '*/amazon_account/delete',
+                ['id' => $this->getRequest()->getParam('id')]
             )
         ]);
 
@@ -278,7 +286,9 @@ HTML
             . 'This will cause inappropriate work of all Accounts\' copies.',
             $this->__(
                 'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
-                . 'This will cause inappropriate work of all Accounts\' copies.'));
+                . 'This will cause inappropriate work of all Accounts\' copies.'
+            )
+        );
 
         $id = $this->getRequest()->getParam('id');
         $this->js->add("M2ePro.formData.id = '$id';");
@@ -311,9 +321,10 @@ JS
             'You must choose Marketplace first.' => $this->__('You must choose Marketplace first.'),
             'M2E Pro was not able to get access to the Amazon Account. Please, make sure, that you choose correct ' .
              'Option on MWS Authorization Page and enter correct Merchant ID.' => $this->__(
-                'M2E Pro was not able to get access to the Amazon Account.' .
-                ' Please, make sure, that you choose correct Option on MWS Authorization Page
-                and enter correct Merchant ID / MWS Auth Token'),
+                 'M2E Pro was not able to get access to the Amazon Account.' .
+                 ' Please, make sure, that you choose correct Option on MWS Authorization Page
+                and enter correct Merchant ID / MWS Auth Token'
+             ),
             'M2E Pro was not able to get access to the Amazon Account. Reason: %error_message%' => $this->__(
                 'M2E Pro was not able to get access to the Amazon Account. Reason: %error_message%'
             )

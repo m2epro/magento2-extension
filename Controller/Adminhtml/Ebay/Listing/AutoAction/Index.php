@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
 {
     public function execute()
@@ -25,10 +29,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
         }
 
         $autoModes = [
-            \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL => 'Ebay\Listing\AutoAction\Mode\GlobalMode',
-            \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE => 'Ebay\Listing\AutoAction\Mode\Website',
-            \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY => 'Ebay\Listing\AutoAction\Mode\Category',
-            \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE => 'Ebay\Listing\AutoAction\Mode'
+            \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL => 'Ebay_Listing_AutoAction_Mode_GlobalMode',
+            \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE => 'Ebay_Listing_AutoAction_Mode_Website',
+            \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY => 'Ebay_Listing_AutoAction_Mode_Category',
+            \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE => 'Ebay_Listing_AutoAction_Mode'
         ];
 
         if (isset($autoModes[$autoMode])) {

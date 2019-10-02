@@ -14,6 +14,10 @@ use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Escaper;
 use Magento\Framework\Message\MessageInterface;
 
+/**
+ * Class Messages
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Form\Element
+ */
 class Messages extends AbstractElement
 {
     protected $layout;
@@ -24,8 +28,7 @@ class Messages extends AbstractElement
         CollectionFactory $factoryCollection,
         Escaper $escaper,
         array $data = []
-    )
-    {
+    ) {
         $this->layout = $layout;
 
         $this->setType('hidden');
@@ -40,7 +43,7 @@ class Messages extends AbstractElement
             return '';
         }
 
-        $block = $this->layout->createBlock('Magento\Framework\View\Element\Messages');
+        $block = $this->layout->createBlock(\Magento\Framework\View\Element\Messages::class);
 
         foreach ($messages as $message) {
             switch ($message['type']) {

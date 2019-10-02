@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Description;
 
+/**
+ * Class Renderer
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Description
+ */
 class Renderer extends \Ess\M2ePro\Model\AbstractModel
 {
     const MODE_FULL = 1;
@@ -15,8 +19,8 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
 
     protected $renderMode = self::MODE_FULL;
 
-    /* @var \Ess\M2ePro\Model\Ebay\Listing\Product */
-    protected $listingProduct = NULL;
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product */
+    protected $listingProduct = null;
 
     protected $resourceConnection;
 
@@ -30,8 +34,7 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\Pricing\Helper\Data $priceHelper,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->priceHelper = $priceHelper;
         parent::__construct($helperFactory, $modelFactory);
@@ -85,29 +88,27 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
     {
         preg_match_all("/#value\[(.+?)\]#/", $text, $matches);
 
-        if (!count($matches[0])) {
+        if (empty($matches[0])) {
             return $text;
         }
 
-        $replaces = array();
+        $replaces = [];
         foreach ($matches[1] as $i => $attributeCode) {
-            $method = 'get'.implode(array_map('ucfirst',explode('_', $attributeCode)));
+            $method = 'get'.implode(array_map('ucfirst', explode('_', $attributeCode)));
 
-            $arg = NULL;
-            if (preg_match('/(?<=\[)(\d+?)(?=\])/',$method,$tempMatch)) {
+            $arg = null;
+            if (preg_match('/(?<=\[)(\d+?)(?=\])/', $method, $tempMatch)) {
                 $arg = $tempMatch[0];
-                $method = str_replace('['.$arg.']','',$method);
+                $method = str_replace('['.$arg.']', '', $method);
             }
 
             $value = '';
-            method_exists($this,$method) && $value = $this->$method($arg);
+            method_exists($this, $method) && $value = $this->$method($arg);
 
-            if (in_array($attributeCode, array('fixed_price', 'start_price', 'reserve_price', 'buyitnow_price'))) {
+            if (in_array($attributeCode, ['fixed_price', 'start_price', 'reserve_price', 'buyitnow_price'])) {
                 $value = round($value, 2);
                 $value = $this->priceHelper->currency($value, true, false);
-            }
-
-            ($value !== '') && $replaces[$matches[0][$i]] = $value;
+            }($value !== '') && $replaces[$matches[0][$i]] = $value;
         }
 
         $text = str_replace(array_keys($replaces), array_values($replaces), $text);
@@ -138,16 +139,14 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->listingProduct->isVariationsReady()) {
-
-            $pricesList = array();
+            $pricesList = [];
 
             foreach ($this->listingProduct->getVariations(true) as $variation) {
                 /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
                 $pricesList[] = $variation->getChildObject()->getPrice();
             }
 
-            $price = count($pricesList) > 0 ? min($pricesList) : 0;
-
+            $price = !empty($pricesList) ? min($pricesList) : 0;
         } else {
             $price = $this->listingProduct->getFixedPrice();
         }
@@ -222,10 +221,10 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
     {
         $helper = $this->getHelper('Module\Translation');
 
-        $types = array(
+        $types = [
            \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_FIXED => $helper->__('Fixed Price'),
            \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_AUCTION => $helper->__('Auction'),
-        );
+        ];
 
         $type = $this->listingProduct->getSellingFormatTemplateSource()->getListingType();
 
@@ -273,7 +272,7 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
     protected function getCondition()
     {
         $conditions = array_combine(
-            array(
+            [
                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW,
                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_OTHER,
                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_WITH_DEFECT,
@@ -284,8 +283,8 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_GOOD,
                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_ACCEPTABLE,
                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NOT_WORKING,
-            ),
-            array(
+            ],
+            [
                 $this->getHelper('Module\Translation')->__('New'),
                 $this->getHelper('Module\Translation')->__('New Other'),
                 $this->getHelper('Module\Translation')->__('New With Defects'),
@@ -296,7 +295,7 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
                 $this->getHelper('Module\Translation')->__('Good'),
                 $this->getHelper('Module\Translation')->__('Acceptable'),
                 $this->getHelper('Module\Translation')->__('For Parts or Not Working'),
-            )
+            ]
         );
 
         $condition = $this->listingProduct->getDescriptionTemplateSource()->getCondition();
@@ -409,15 +408,15 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
 
         $connection = $this->resourceConnection->getConnection();
 
-        $tableDictShipping = $this->getHelper('Module\Database\Structure')
+        $tableDictShipping = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_shipping');
 
         // table m2epro_ebay_dictionary_marketplace
         $dbSelect = $connection
             ->select()
-            ->from($tableDictShipping,'title')
-            ->where('`ebay_id` = ?',$service->getShippingValue())
-            ->where('`marketplace_id` = ?',(int)$this->listingProduct->getMarketplace()->getId());
+            ->from($tableDictShipping, 'title')
+            ->where('`ebay_id` = ?', $service->getShippingValue())
+            ->where('`marketplace_id` = ?', (int)$this->listingProduct->getMarketplace()->getId());
 
         $shippingMethod = $dbSelect->query()->fetchColumn();
 
@@ -479,7 +478,7 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
         $connection = $this->resourceConnection->getConnection();
 
         // ---------------------------------------
-        $tableDictShipping = $this->getHelper('Module\Database\Structure')
+        $tableDictShipping = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_shipping');
         // ---------------------------------------
 
@@ -487,9 +486,9 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
         // ---------------------------------------
         $dbSelect = $connection
             ->select()
-            ->from($tableDictShipping,'title')
-            ->where('`ebay_id` = ?',$service->getShippingValue())
-            ->where('`marketplace_id` = ?',(int)$this->listingProduct->getMarketplace()->getId());
+            ->from($tableDictShipping, 'title')
+            ->where('`ebay_id` = ?', $service->getShippingValue())
+            ->where('`marketplace_id` = ?', (int)$this->listingProduct->getMarketplace()->getId());
 
         $shippingMethod = $dbSelect->query()->fetchColumn();
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Orders;
 
+/**
+ * Class Receive
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\Orders
+ */
 class Receive extends AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Ebay\Order\BuilderFactory  */
@@ -24,8 +28,7 @@ class Receive extends AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->orderBuilderFactory = $orderBuilderFactory;
         parent::__construct($ebayFactory, $activeRecordFactory, $helperFactory, $modelFactory);
     }
@@ -84,7 +87,6 @@ class Receive extends AbstractModel
             try {
                 $this->processAccount($account, $iteration);
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Receive" Action for eBay Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -118,22 +120,21 @@ class Receive extends AbstractModel
     {
         $this->setDataReceivingState($account);
 
+        /** @var \Ess\M2ePro\Model\Ebay\Account $ebayAccount */
+        $ebayAccount = $account->getChildObject();
         $ebayData = $this->receiveEbayOrdersData($account);
+        $this->updateJobToken($ebayAccount, $ebayData);
 
         if (empty($ebayData['items'])) {
             return;
         }
 
-        /** @var \Ess\M2ePro\Model\Ebay\Account $ebayAccount */
-        $ebayAccount = $account->getChildObject();
         $this->getActualLockItem()->activate();
-        $this->updateJobToken($ebayAccount, $ebayData);
-
         $processedEbayOrders = $this->processEbayOrders($account, $ebayData['items']);
 
         $this->setOrderCreationState($account, $iteration);
 
-        if (count($processedEbayOrders) > 0) {
+        if (!empty($processedEbayOrders)) {
             $percentsForOneOrder = (int)(($this->getPercentsStart() + $iteration * $this->percentForOneAccount * 0.7)
                 / count($processedEbayOrders));
 
@@ -155,10 +156,13 @@ class Receive extends AbstractModel
         $params = $this->prepareConnectorParams($account);
 
         /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
-        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+        $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         /** @var \Ess\M2ePro\Model\Ebay\Connector\Order\Receive\Items $connectorObj */
         $connectorObj = $dispatcherObj->getCustomConnector(
-            'Ebay\Connector\Order\Receive\Items', $params, NULL, $account
+            'Ebay_Connector_Order_Receive_Items',
+            $params,
+            null,
+            $account
         );
 
         $dispatcherObj->process($connectorObj);
@@ -169,12 +173,12 @@ class Receive extends AbstractModel
         $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$account->getId());
 
         if (!isset($responseData['items']) || !isset($responseData['to_update_date'])) {
-            $logData = array(
+            $logData = [
                 'params'            => $params,
                 'account_id'        => $account->getId(),
                 'response_data'     => $responseData,
                 'response_messages' => $connectorObj->getResponseMessages()
-            );
+            ];
             $this->getHelper('Module\Logger')->process($logData, 'eBay orders receive task - empty response');
 
             return [];
@@ -214,7 +218,7 @@ class Receive extends AbstractModel
         if (!empty($ebayData['job_token'])) {
             $ebayAccount->setData('job_token', $ebayData['job_token']);
         } else {
-            $ebayAccount->setData('job_token', NULL);
+            $ebayAccount->setData('job_token', null);
         }
 
         $ebayAccount->save();
@@ -231,10 +235,9 @@ class Receive extends AbstractModel
     {
         $accountCreateDate = new \DateTime($account->getData('create_date'), new \DateTimeZone('UTC'));
 
-        $orders = array();
+        $orders = [];
 
         foreach ($ordersData as $ebayOrderData) {
-
             $orderCreateDate = new \DateTime($ebayOrderData['purchase_create_date'], new \DateTimeZone('UTC'));
             if ($orderCreateDate < $accountCreateDate) {
                 continue;
@@ -257,11 +260,10 @@ class Receive extends AbstractModel
     private function processResponseMessages(array $messages)
     {
         /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messagesSet */
-        $messagesSet = $this->modelFactory->getObject('Connector\Connection\Response\Message\Set');
+        $messagesSet = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
         $messagesSet->init($messages);
 
         foreach ($messagesSet->getEntities() as $message) {
-
             if (!$message->isError() && !$message->isWarning()) {
                 continue;
             }
@@ -360,7 +362,7 @@ class Receive extends AbstractModel
     {
         $lastSynchronizationDate = $account->getChildObject()->getData('orders_last_synchronization');
 
-        if (is_null($lastSynchronizationDate)) {
+        if ($lastSynchronizationDate === null) {
             $sinceTime = new \DateTime('now', new \DateTimeZone('UTC'));
         } else {
             $sinceTime = new \DateTime($lastSynchronizationDate, new \DateTimeZone('UTC'));
@@ -394,7 +396,7 @@ class Receive extends AbstractModel
     {
         $operationHistory = $this->getActualOperationHistory()->getParentObject('synchronization');
 
-        if (!is_null($operationHistory)) {
+        if ($operationHistory !== null) {
             $synchStartDate = $operationHistory->getData('start_date');
             $toTime         = new \DateTime($synchStartDate, new \DateTimeZone('UTC'));
         } else {
@@ -436,7 +438,7 @@ class Receive extends AbstractModel
     private function setDataReceivingState(\Ess\M2ePro\Model\Account $account)
     {
         $this->getActualOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__.'get'.$account->getId(),'Get Orders from eBay');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__.'get'.$account->getId(), 'Get Orders from eBay');
 
         // M2ePro\TRANSLATIONS
         // The "Receive" Action for eBay Account "%account_title%" is in data receiving state...

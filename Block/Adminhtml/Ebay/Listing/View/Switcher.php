@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View
+ */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
 {
     const VIEW_MODE_EBAY        = 'ebay';
@@ -24,7 +28,8 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
 
     public function getTooltip()
     {
-        return $this->__(<<<HTML
+        return $this->__(
+            <<<HTML
             <p>There are several <strong>View Modes</strong> available to you:</p>
             <ul>
             <li><p><strong>eBay</strong> - displays Product details with respect to eBay Item information.

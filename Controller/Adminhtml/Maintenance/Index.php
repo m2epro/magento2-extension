@@ -9,23 +9,27 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Maintenance;
 
 use \Magento\Backend\App\Action;
-use \Magento\Framework\View\Result\PageFactory;
+use \Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Maintenance
+ */
 class Index extends Action
 {
+    private $helperFactory;
+    private $resourceConnection;
     private $pageFactory;
-
-    private $maintenanceHelper;
 
     //########################################
 
     public function __construct(
-        PageFactory $pageFactory,
-        \Ess\M2ePro\Helper\Module\Maintenance $maintenanceHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $controllerContext,
         Action\Context $context
     ) {
-        $this->pageFactory = $pageFactory;
-        $this->maintenanceHelper = $maintenanceHelper;
+        $this->helperFactory = $controllerContext->getHelperFactory();
+        $this->resourceConnection = $controllerContext->getResourceConnection();
+        $this->pageFactory = $controllerContext->getResultPageFactory();
         parent::__construct($context);
     }
 
@@ -33,7 +37,7 @@ class Index extends Action
 
     public function execute()
     {
-        if (!$this->maintenanceHelper->isEnabled()) {
+        if (!$this->helperFactory->getObject('Module\Maintenance')->isEnabled()) {
             return $this->_redirect('admin');
         }
 
@@ -45,12 +49,35 @@ class Index extends Action
         $this->_setActiveMenu('Ess_M2ePro::m2epro_maintenance');
 
         /** @var \Magento\Framework\View\Element\Template $block */
-        $block = $result->getLayout()->createBlock('\Magento\Framework\View\Element\Template');
+        $block = $result->getLayout()->createBlock(\Magento\Framework\View\Element\Template::class);
+        $block->setData('is_migration', $this->isMigration());
         $block->setTemplate('Ess_M2ePro::maintenance.phtml');
 
         $this->_addContent($block);
 
         return $result;
+    }
+
+    private function isMigration()
+    {
+        $tableName = $this->helperFactory->getObject('Module_Database_Structure')
+                                         ->getTableNameWithPrefix('core_config_data');
+        $select = $this->resourceConnection->getConnection()
+                                           ->select()
+                                           ->from($tableName, 'value')
+                                           ->where('scope = ?', 'default')
+                                           ->where('scope_id = ?', 0)
+                                           ->where('path = ?', BaseMigrationFromMagento1::WIZARD_STATUS_CONFIG_PATH);
+
+        $currentWizardStep = $this->resourceConnection->getConnection()->fetchOne($select);
+
+        if ($currentWizardStep === BaseMigrationFromMagento1::WIZARD_STATUS_PREPARED ||
+            $currentWizardStep === BaseMigrationFromMagento1::WIZARD_STATUS_IN_PROGRESS
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     //########################################

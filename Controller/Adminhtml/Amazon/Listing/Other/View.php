@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
+ */
 class View extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
 {
     public function execute()
@@ -23,7 +27,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('3rd Party Listings'));
 
-        $this->addContent($this->createBlock('Amazon\Listing\Other\View'));
+        $this->addContent($this->createBlock('Amazon_Listing_Other_View'));
 
         return $this->getResult();
     }

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
+/**
+ * Class Delete
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback\Template
+ */
 class Delete extends Account
 {
     public function execute()
@@ -17,9 +21,9 @@ class Delete extends Account
         $id = $this->getRequest()->getParam('id');
 
         /** @var \Ess\M2ePro\Model\Ebay\Feedback\Template $model */
-        $model = $this->activeRecordFactory->getObjectLoaded('Ebay\Feedback\Template', $id, NULL, false);
+        $model = $this->activeRecordFactory->getObjectLoaded('Ebay_Feedback_Template', $id, null, false);
 
-        if (!is_null($model)) {
+        if ($model !== null) {
             $model->delete();
         }
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction;
 
+/**
+ * Class Response
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction
+ */
 class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Response
 {
     const INSTRUCTION_INITIATOR = 'list_action_response';
@@ -20,11 +24,12 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
 
     /**
      * @param array $params
+     * @throws \Ess\M2ePro\Model\Exception
      */
-    public function processSuccess($params = array())
+    public function processSuccess($params = [])
     {
         // list action include 2 steps (list details and relist with qty)
-        $data = array(
+        $data = [
             'status'     => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
             'sku'        => $this->getRequestData()->getSku(),
             'wpid'       => $params['wpid'],
@@ -32,7 +37,7 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
             'gtin'       => $params['identifiers']['GTIN'],
             'online_qty' => 0,
             'list_date'  => $this->getHelper('Data')->getCurrentGmtDate()
-        );
+        ];
 
         $data = $this->appendStatusChangerValue($data);
         $data = $this->appendPriceValues($data);
@@ -46,9 +51,17 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
         $recheckDate->modify('+ 24 hours');
 
         $this->getListingProduct()->setSetting(
-            'additional_data', 'recheck_after_list_date', $recheckDate->format('Y-m-d H:i:s')
+            'additional_data',
+            'recheck_after_list_date',
+            $recheckDate->format('Y-m-d H:i:s')
         );
         $this->getListingProduct()->save();
+
+        /** @var Linking $linkingObject */
+        $linkingObject = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Type_ListAction_Linking');
+        $linkingObject->setListingProduct($this->getListingProduct());
+        $linkingObject->setSku($this->getRequestData()->getSku());
+        $linkingObject->createWalmartItem();
     }
 
     //########################################

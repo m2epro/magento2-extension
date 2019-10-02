@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Settings\LogsClearing;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Settings\LogsClearing
+ */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
     //########################################
@@ -19,7 +23,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
         // Save settings
         // ---------------------------------------
         if ($post) {
-
             $this->modelFactory->getObject('Log\Clearing')->saveSettings(
                 \Ess\M2ePro\Model\Log\Clearing::LOG_LISTINGS,
                 $post['listings_log_mode'],
@@ -41,7 +44,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
                 90
             );
 
-            if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
+            if ($this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
                 $this->modelFactory->getObject('Log\Clearing')->saveSettings(
                     \Ess\M2ePro\Model\Log\Clearing::LOG_EBAY_PICKUP_STORE,
                     $post['ebay_pickup_store_log_mode'],
@@ -57,8 +60,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
         $log = $this->getRequest()->getParam('log');
 
         $messages = [];
-        if (!is_null($task)) {
-
+        if ($task !== null) {
             $title = ucwords(str_replace('_', ' ', $log));
             if ($log == \Ess\M2ePro\Model\Log\Clearing::LOG_EBAY_PICKUP_STORE) {
                 $title = 'eBay In-Store Pickup';

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization;
 
+/**
+ * Class General
+ * @package Ess\M2ePro\Model\Amazon\Synchronization
+ */
 class General extends AbstractModel
 {
     //########################################
@@ -25,7 +29,7 @@ class General extends AbstractModel
      */
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------

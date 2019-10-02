@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Produc
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode;
 
+/**
+ * Class ViewPopup
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode
+ */
 class ViewPopup extends ProductTaxCode
 {
     public function execute()
@@ -25,16 +29,16 @@ class ViewPopup extends ProductTaxCode
             $productsIds = explode(',', $productsIds);
         }
 
-        $messages = array();
+        $messages = [];
         $productsIdsLocked = $this->filterLockedProducts($productsIds);
 
         if (count($productsIdsLocked) < count($productsIds)) {
-            $messages[] = array(
+            $messages[] = [
                 'type' => 'warning',
                 'text' => '<p>' . $this->__(
-                        'The Product Tax Code Policy was not assigned because the Products have In Action Status.'
-                    ). '</p>'
-            );
+                    'The Product Tax Code Policy was not assigned because the Products have In Action Status.'
+                ). '</p>'
+            ];
         }
 
         if (empty($productsIdsLocked)) {
@@ -44,7 +48,7 @@ class ViewPopup extends ProductTaxCode
             return $this->getResult();
         }
 
-        $mainBlock = $this->createBlock('Amazon\Listing\Product\Template\ProductTaxCode');
+        $mainBlock = $this->createBlock('Amazon_Listing_Product_Template_ProductTaxCode');
 
         if (!empty($messages)) {
             $mainBlock->setMessages($messages);

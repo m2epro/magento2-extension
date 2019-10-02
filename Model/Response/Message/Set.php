@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Model\Response\Message;
 
+/**
+ * Class Set
+ * @package Ess\M2ePro\Model\Response\Message
+ */
 class Set extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Response\Message[] $entities */
-    protected $entities = array();
+    protected $entities = [];
 
     //########################################
 
@@ -20,7 +24,6 @@ class Set extends \Ess\M2ePro\Model\AbstractModel
         $this->clearEntities();
 
         foreach ($responseData as $messageData) {
-
             $message = $this->getEntityModel();
             $message->initFromResponseData($messageData);
 
@@ -43,7 +46,7 @@ class Set extends \Ess\M2ePro\Model\AbstractModel
 
     public function clearEntities()
     {
-        $this->entities = array();
+        $this->entities = [];
     }
 
     //########################################
@@ -55,7 +58,7 @@ class Set extends \Ess\M2ePro\Model\AbstractModel
 
     public function getEntitiesAsArrays()
     {
-        $result = array();
+        $result = [];
 
         foreach ($this->getEntities() as $message) {
             $result[] = $message->asArray();
@@ -71,7 +74,7 @@ class Set extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getErrorEntities()
     {
-        $messages = array();
+        $messages = [];
 
         foreach ($this->getEntities() as $message) {
             $message->isError() && $messages[] = $message;
@@ -85,7 +88,7 @@ class Set extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getWarningEntities()
     {
-        $messages = array();
+        $messages = [];
 
         foreach ($this->getEntities() as $message) {
             $message->isWarning() && $messages[] = $message;
@@ -99,7 +102,7 @@ class Set extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getSuccessEntities()
     {
-        $messages = array();
+        $messages = [];
 
         foreach ($this->getEntities() as $message) {
             $message->isSuccess() && $messages[] = $message;
@@ -113,7 +116,7 @@ class Set extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getNoticeEntities()
     {
-        $messages = array();
+        $messages = [];
 
         foreach ($this->getEntities() as $message) {
             $message->isNotice() && $messages[] = $message;
@@ -126,29 +129,29 @@ class Set extends \Ess\M2ePro\Model\AbstractModel
 
     public function hasErrorEntities()
     {
-        return count($this->getErrorEntities()) > 0;
+        return !empty($this->getErrorEntities());
     }
 
     public function hasWarningEntities()
     {
-        return count($this->getWarningEntities()) > 0;
+        return !empty($this->getWarningEntities());
     }
 
     public function hasSuccessEntities()
     {
-        return count($this->getSuccessEntities()) > 0;
+        return !empty($this->getSuccessEntities());
     }
 
     public function hasNoticeEntities()
     {
-        return count($this->getNoticeEntities()) > 0;
+        return !empty($this->getNoticeEntities());
     }
 
     // ########################################
 
     public function getCombinedErrorsString()
     {
-        $messages = array();
+        $messages = [];
 
         foreach ($this->getErrorEntities() as $message) {
             $messages[] = $message->getText();

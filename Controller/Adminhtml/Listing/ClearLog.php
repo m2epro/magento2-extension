@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 
+/**
+ * Class ClearLog
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing
+ */
 class ClearLog extends Listing
 {
     public function execute()

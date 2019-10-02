@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description;
 
+/**
+ * Class Assign
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description
+ */
 class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description
 {
     public function execute()
@@ -26,10 +30,10 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
         }
 
         /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper */
-        $variationHelper = $this->getHelper('Component\Amazon\Variation');
+        $variationHelper = $this->getHelper('Component_Amazon_Variation');
 
         $msgType = 'success';
-        $messages = array();
+        $messages = [];
 
         $productsIdsTemp = $this->filterProductsForMapOrUnmapDescriptionTemplate($productsIds);
 
@@ -37,7 +41,8 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
             $msgType = 'warning';
             $messages[] = $this->__(
                 'Description Policy cannot be assigned because %count% Item(s) are Ready or in Process
-                of New ASIN(s)/ISBN(s) creation.', count($productsIds) - count($productsIdsTemp)
+                of New ASIN(s)/ISBN(s) creation.',
+                count($productsIds) - count($productsIdsTemp)
             );
         }
 
@@ -48,7 +53,8 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
             $messages[] = $this->__(
                 'Description Policy cannot be assigned because %count% Items are Simple
                  with Custom Options or Bundle Magento Products.',
-                count($productsIdsTemp) - count($filteredProductsIdsByType));
+                count($productsIdsTemp) - count($filteredProductsIdsByType)
+            );
         }
 
         if (empty($filteredProductsIdsByType)) {
@@ -64,8 +70,8 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
         $this->runProcessorForParents($filteredProductsIdsByType);
 
         /** @var \Ess\M2ePro\Model\Amazon\Template\Description $template */
-        $template = $this->activeRecordFactory->getObjectLoaded('Amazon\Template\Description', $templateId);
-        $template->setSynchStatusNeed($template->getDataSnapshot(),array());
+        $template = $this->activeRecordFactory->getObjectLoaded('Amazon_Template_Description', $templateId);
+        $template->setSynchStatusNeed($template->getDataSnapshot(), []);
 
         $messages[] = $this->__(
             'Description Policy was successfully assigned to %count% Products',

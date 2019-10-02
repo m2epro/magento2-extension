@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Model\Listing\Auto\Actions\Mode;
 
+/**
+ * Class AbstractMode
+ * @package Ess\M2ePro\Model\Listing\Auto\Actions\Mode
+ */
 abstract class AbstractMode extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
      * @var null|\Magento\Catalog\Model\Product
      */
-    private $product = NULL;
+    private $product = null;
 
     protected $activeRecordFactory;
     protected $parentFactory;
@@ -27,8 +31,7 @@ abstract class AbstractMode extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->parentFactory = $parentFactory;
         $this->storeManager = $storeManager;

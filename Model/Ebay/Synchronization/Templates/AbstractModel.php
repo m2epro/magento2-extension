@@ -10,12 +10,16 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\Templates;
 
 use Ess\M2ePro\Model\Synchronization\Templates\ProductChanges\Manager;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\Templates
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
 {
     /**
      * @var Manager
      */
-    protected $productChangesManager = NULL;
+    protected $productChangesManager = null;
 
     protected $resourceConnection;
 
@@ -27,8 +31,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Synchronization\Abst
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         parent::__construct($ebayFactory, $activeRecordFactory, $helperFactory, $modelFactory);
     }
@@ -66,12 +69,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Synchronization\Abst
 
     //########################################
 
-    protected function logError(\Ess\M2ePro\Model\Listing\Product $listingProduct,
-                                \Exception $exception,
-                                $sendToServer = true)
-    {
+    protected function logError(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        \Exception $exception,
+        $sendToServer = true
+    ) {
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Log $logModel */
-        $logModel = $this->activeRecordFactory->getObject('Ebay\Listing\Log');
+        $logModel = $this->activeRecordFactory->getObject('Ebay_Listing_Log');
 
         $logModel->addProductMessage(
             $listingProduct->getListingId(),

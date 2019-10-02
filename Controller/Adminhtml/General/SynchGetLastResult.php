@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\General;
 
 use Ess\M2ePro\Controller\Adminhtml\General;
 
+/**
+ * Class SynchGetLastResult
+ * @package Ess\M2ePro\Controller\Adminhtml\General
+ */
 class SynchGetLastResult extends General
 {
     //########################################
@@ -26,7 +30,7 @@ class SynchGetLastResult extends General
 
         $logCollection = $this->activeRecordFactory->getObject('Synchronization\Log')->getCollection();
         $logCollection->addFieldToFilter('operation_history_id', (int)$operationHistory->getId());
-        $logCollection->addFieldToFilter('type', array('in' => array(\Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR)));
+        $logCollection->addFieldToFilter('type', ['in' => [\Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR]]);
 
         if ($logCollection->getSize() > 0) {
             $this->setAjaxContent('error', false);
@@ -35,8 +39,9 @@ class SynchGetLastResult extends General
 
         $logCollection = $this->activeRecordFactory->getObject('Synchronization\Log')->getCollection();
         $logCollection->addFieldToFilter('operation_history_id', (int)$operationHistory->getId());
-        $logCollection->addFieldToFilter('type',
-            array('in' => array(\Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING))
+        $logCollection->addFieldToFilter(
+            'type',
+            ['in' => [\Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING]]
         );
 
         if ($logCollection->getSize() > 0) {

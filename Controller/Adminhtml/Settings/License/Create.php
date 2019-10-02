@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Settings\License;
 
+/**
+ * Class Create
+ * @package Ess\M2ePro\Controller\Adminhtml\Settings\License
+ */
 class Create extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
     //########################################
@@ -17,7 +21,7 @@ class Create extends \Ess\M2ePro\Controller\Adminhtml\Base
         if ($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPostValue();
 
-            $requiredKeys = array(
+            $requiredKeys = [
                 'email',
                 'firstname',
                 'lastname',
@@ -25,11 +29,10 @@ class Create extends \Ess\M2ePro\Controller\Adminhtml\Base
                 'country',
                 'city',
                 'postal_code',
-            );
+            ];
 
-            $licenseData = array();
+            $licenseData = [];
             foreach ($requiredKeys as $key) {
-
                 if (!empty($post[$key])) {
                     $licenseData[$key] = $post[$key];
                     continue;
@@ -47,18 +50,23 @@ class Create extends \Ess\M2ePro\Controller\Adminhtml\Base
 
             $licenseResult = $this->getHelper('Module\License')->obtainRecord(
                 $licenseData['email'],
-                $licenseData['firstname'], $licenseData['lastname'],
-                $licenseData['country'], $licenseData['city'],
-                $licenseData['postal_code'], $licenseData['phone']
+                $licenseData['firstname'],
+                $licenseData['lastname'],
+                $licenseData['country'],
+                $licenseData['city'],
+                $licenseData['postal_code'],
+                $licenseData['phone']
             );
 
             if ($licenseResult) {
-
                 $registry = $this->activeRecordFactory->getObjectLoaded(
-                    'Registry', '/wizard/license_form_data/', 'key', false
+                    'Registry',
+                    '/wizard/license_form_data/',
+                    'key',
+                    false
                 );
 
-                if (is_null($registry)) {
+                if ($registry === null) {
                     $registry = $this->activeRecordFactory->getObject('Registry');
                 }
 
@@ -67,24 +75,24 @@ class Create extends \Ess\M2ePro\Controller\Adminhtml\Base
                 $registry->save();
 
                 $licenseKey = $this->getHelper('Primary')->getConfig()->getGroupValue('/license/', 'key');
-                $this->setJsonContent(array(
+                $this->setJsonContent([
                     'success' => true,
                     'message' => $this->__('The License Key has been successfully created.'),
                     'license_key' => $licenseKey
-                ));
+                ]);
             } else {
-                $primaryConfig->setGroupValue('/license/','key', $oldLicenseKey);
+                $primaryConfig->setGroupValue('/license/', 'key', $oldLicenseKey);
 
-                $this->setJsonContent(array(
+                $this->setJsonContent([
                     'success' => false,
                     'message' => $this->__('Internal Server Error')
-                ));
+                ]);
             }
 
             return $this->getResult();
         }
 
-        $this->setAjaxContent($this->createBlock('Settings\Tabs\License\Create'));
+        $this->setAjaxContent($this->createBlock('Settings_Tabs_License_Create'));
         return $this->getResult();
     }
 

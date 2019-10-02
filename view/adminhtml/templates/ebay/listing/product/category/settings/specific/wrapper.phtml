@@ -1,3 +1,16 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Specific\Wrapper $block */
+
+?>
+
 <style type="text/css">
     li.categories {
         text-align: left;
@@ -47,7 +60,9 @@
                     <h3 style="text-decoration: underline"><?php echo $block->__('eBay Categories') ?></h3>
                 </div>
 
-                <div style="<?php if (count($block->getData('categories')) == 1) echo 'display: none;'; ?> padding-bottom: 10px; text-align: center ; border-bottom: 1px solid #D6D6D6 !important;">
+                <div style="<?php if (count($block->getData('categories')) == 1) {
+                    echo 'display: none;';
+                            } ?> padding-bottom: 10px; text-align: center ; border-bottom: 1px solid #D6D6D6 !important;">
                     <input type="checkbox" name="skip_optional_specifics" id="skip_optional_specifics" class="admin__control-checkbox">
                     &nbsp;
                     <label for="skip_optional_specifics" class="admin__field-label"><span><?php echo $block->__('Skip Optional Specifics') ?></span></label>
@@ -66,7 +81,7 @@
                             $title = $categoryData['category_main_path'] . ' ('.$category.')';
                         } else {
                             $category = $categoryData['category_main_attribute'];
-                            $title = $block->__('Magento Attribute > %attribute_label%', $this->getHelper('Magento\Attribute')->getAttributeLabel(
+                            $title = $block->__('Magento Attribute > %attribute_label%', $block->getHelper('Magento\Attribute')->getAttributeLabel(
                                 $category,
                                 $block->getData('store_id')
                             ));
@@ -92,7 +107,8 @@
         <?php echo $block->__(
             '<br/>All selected eBay Categories were checked for required Item Specifics.
             <br/><br/>
-            Now you can proceed further (use Continue Button) or close this window and review Item Specifics if neccessary (use Cancel Button).'); ?>
+            Now you can proceed further (use Continue Button) or close this window and review Item Specifics if neccessary (use Cancel Button).'
+        ); ?>
 
     </div>
 

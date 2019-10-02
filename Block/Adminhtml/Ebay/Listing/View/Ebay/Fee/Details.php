@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee;
 
+/**
+ * Class Details
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee
+ */
 class Details extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     protected $localeCurrency;
@@ -18,8 +22,7 @@ class Details extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
-    )
-    {
+    ) {
         $this->localeCurrency = $localeCurrency;
         parent::__construct($context, $data);
     }
@@ -44,7 +47,7 @@ class Details extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             throw new \Ess\M2ePro\Model\Exception\Logic('Fees are not set.');
         }
 
-        $preparedData = array();
+        $preparedData = [];
 
         foreach ($this->_data['fees'] as $feeName => $feeData) {
             if ($feeData['fee'] <= 0 && $feeName != 'listing_fee') {
@@ -54,10 +57,10 @@ class Details extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             $camelCasedFeeName = str_replace('_', ' ', $feeName);
             $camelCasedFeeName = ucwords($camelCasedFeeName);
 
-            $preparedData[$feeName] = array(
+            $preparedData[$feeName] = [
                 'label' => $camelCasedFeeName,
                 'value' => $this->localeCurrency->getCurrency($feeData['currency'])->toCurrency($feeData['fee'])
-            );
+            ];
         }
 
         return $preparedData;

@@ -453,6 +453,7 @@ define([
                 $('magento_orders_customer_id').addClassName('M2ePro-account-product-id');
             } else {  // M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::ORDERS_CUSTOMER_MODE_GUEST') || M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::ORDERS_CUSTOMER_MODE_NEW')
                 $('magento_orders_customer_id_container').hide();
+                $('magento_orders_customer_id').value = '';
                 $('magento_orders_customer_id').removeClassName('M2ePro-account-product-id');
             }
 
@@ -461,10 +462,11 @@ define([
             $('magento_orders_customer_new_group_id_container')[action]();
             $('magento_orders_customer_new_notifications_container')[action]();
 
-            $('magento_orders_customer_id').value = '';
-            $('magento_orders_customer_new_website_id').value = '';
-            $('magento_orders_customer_new_group_id').value = '';
-            $('magento_orders_customer_new_notifications').value = '';
+            if(action == 'hide') {
+                $('magento_orders_customer_new_website_id').value = '';
+                $('magento_orders_customer_new_group_id').value = '';
+                $('magento_orders_customer_new_notifications').value = '';
+            }
 //        $('magento_orders_customer_new_newsletter_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_NO');
         },
 

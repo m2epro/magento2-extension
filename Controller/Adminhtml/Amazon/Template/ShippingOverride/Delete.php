@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ShippingOverride;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
+/**
+ * Class Delete
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ShippingOverride
+ */
 class Delete extends Template
 {
     public function execute()
@@ -25,10 +29,13 @@ class Delete extends Template
         foreach ($ids as $id) {
             /** @var \Ess\M2ePro\Model\Amazon\Template\ShippingOverride $template */
             $template = $this->activeRecordFactory->getObjectLoaded(
-                'Amazon\Template\ShippingOverride', $id, NULL, false
+                'Amazon_Template_ShippingOverride',
+                $id,
+                null,
+                false
             );
 
-            if (is_null($template)) {
+            if ($template === null) {
                 continue;
             }
 

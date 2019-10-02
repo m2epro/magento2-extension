@@ -12,6 +12,10 @@
  */
 namespace Ess\M2ePro\Model\Ebay\Template;
 
+/**
+ * Class Synchronization
+ * @package Ess\M2ePro\Model\Ebay\Template
+ */
 class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
     const LIST_MODE_NONE = 0;
@@ -145,14 +149,18 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
 
         return (bool)$this->activeRecordFactory->getObject('Ebay\Listing')
                             ->getCollection()
-                            ->addFieldToFilter('template_synchronization_mode',
-                                               \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE)
+                            ->addFieldToFilter(
+                                'template_synchronization_mode',
+                                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                            )
                             ->addFieldToFilter('template_synchronization_id', $this->getId())
                             ->getSize() ||
-               (bool)$this->activeRecordFactory->getObject('Ebay\Listing\Product')
+               (bool)$this->activeRecordFactory->getObject('Ebay_Listing_Product')
                             ->getCollection()
-                            ->addFieldToFilter('template_synchronization_mode',
-                                               \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE)
+                            ->addFieldToFilter(
+                                'template_synchronization_mode',
+                                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                            )
                             ->addFieldToFilter('template_synchronization_id', $this->getId())
                             ->getSize();
     }
@@ -161,13 +169,13 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_synchronization');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_synchronization');
         return parent::save();
     }
 
     public function delete()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_synchronization');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_synchronization');
         return parent::delete();
     }
 
@@ -663,7 +671,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
      */
     public function getListDefaultSettings()
     {
-        return array(
+        return [
             'list_mode'           => self::LIST_MODE_YES,
             'list_status_enabled' => self::LIST_STATUS_ENABLED_YES,
             'list_is_in_stock'    => self::LIST_IS_IN_STOCK_YES,
@@ -678,7 +686,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
 
             'list_advanced_rules_mode'    => self::ADVANCED_RULES_MODE_NONE,
             'list_advanced_rules_filters' => null
-        );
+        ];
     }
 
     /**
@@ -686,7 +694,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
      */
     public function getReviseDefaultSettings()
     {
-        return array(
+        return [
             'revise_update_qty'                              => self::REVISE_UPDATE_QTY_YES,
             'revise_update_qty_max_applied_value_mode'       => self::REVISE_MAX_AFFECTED_QTY_MODE_ON,
             'revise_update_qty_max_applied_value'            => self::REVISE_UPDATE_QTY_MAX_APPLIED_VALUE_DEFAULT,
@@ -707,7 +715,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
             'revise_change_payment_template'                 => self::REVISE_CHANGE_PAYMENT_TEMPLATE_YES,
             'revise_change_shipping_template'                => self::REVISE_CHANGE_SHIPPING_TEMPLATE_YES,
             'revise_change_return_policy_template'           => self::REVISE_CHANGE_RETURN_TEMPLATE_YES
-        );
+        ];
     }
 
     /**
@@ -715,7 +723,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
      */
     public function getRelistDefaultSettings()
     {
-        return array(
+        return [
             'relist_mode'             => self::RELIST_MODE_YES,
             'relist_filter_user_lock' => self::RELIST_FILTER_USER_LOCK_YES,
             'relist_send_data'        => self::RELIST_SEND_DATA_NONE,
@@ -732,7 +740,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
 
             'relist_advanced_rules_mode'    => self::ADVANCED_RULES_MODE_NONE,
             'relist_advanced_rules_filters' => null
-        );
+        ];
     }
 
     /**
@@ -740,7 +748,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
      */
     public function getStopDefaultSettings()
     {
-        return array(
+        return [
             'stop_status_disabled' => self::STOP_STATUS_DISABLED_YES,
             'stop_out_off_stock'   => self::STOP_OUT_OFF_STOCK_YES,
 
@@ -754,7 +762,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
 
             'stop_advanced_rules_mode'    => self::ADVANCED_RULES_MODE_NONE,
             'stop_advanced_rules_filters' => null
-        );
+        ];
     }
 
     //########################################
@@ -766,23 +774,28 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
      */
     public function getAffectedListingsProducts($asArrays = true, $columns = '*')
     {
-        $templateManager = $this->modelFactory->getObject('Ebay\Template\Manager');
+        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
         $templateManager->setTemplate(\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION);
 
         $listingsProducts = $templateManager->getAffectedOwnerObjects(
-           \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING_PRODUCT, $this->getId(), $asArrays, $columns
+            \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING_PRODUCT,
+            $this->getId(),
+            $asArrays,
+            $columns
         );
 
         $listings = $templateManager->getAffectedOwnerObjects(
-           \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING, $this->getId(), false
+            \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING,
+            $this->getId(),
+            false
         );
 
         foreach ($listings as $listing) {
-
             $tempListingsProducts = $listing->getChildObject()
                                             ->getAffectedListingsProductsByTemplate(
                                                 \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION,
-                                                $asArrays, $columns
+                                                $asArrays,
+                                                $columns
                                             );
 
             foreach ($tempListingsProducts as $listingProduct) {
@@ -797,12 +810,12 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id', 'synch_status', 'synch_reasons'));
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id', 'synch_status', 'synch_reasons']);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

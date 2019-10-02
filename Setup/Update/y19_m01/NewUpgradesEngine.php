@@ -13,6 +13,10 @@ use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
 use Magento\Framework\Module\Setup;
 use \Magento\Framework\App\Filesystem\DirectoryList;
 
+/**
+ * Class NewUpgradesEngine
+ * @package Ess\M2ePro\Setup\Update\y19_m01
+ */
 class NewUpgradesEngine extends AbstractFeature
 {
     /** @var \Magento\Framework\Filesystem */
@@ -25,7 +29,7 @@ class NewUpgradesEngine extends AbstractFeature
         ModelFactory $modelFactory,
         Setup $installer,
         \Magento\Framework\Filesystem $filesystem
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory, $installer);
         $this->filesystem = $filesystem;
     }
@@ -35,7 +39,8 @@ class NewUpgradesEngine extends AbstractFeature
     public function execute()
     {
         $this->filesystem->getDirectoryWrite(DirectoryList::VAR_DIR)->writeFile(
-            'M2ePro/development/installed_upgrades.json', '[]'
+            'M2ePro/development/installed_upgrades.json',
+            '[]'
         );
     }
 

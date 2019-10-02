@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\View\Amazon;
 
+/**
+ * Class Controller
+ * @package Ess\M2ePro\Helper\View\Amazon
+ */
 class Controller extends \Ess\M2ePro\Helper\AbstractHelper
 {
     //########################################
@@ -20,8 +24,7 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->amazonFactory = $amazonFactory;
 
@@ -38,43 +41,44 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
     //########################################
 
     private function addMarketplacesNotUpdatedNotificationMessage(
-                                \Ess\M2ePro\Controller\Adminhtml\Base $controller)
-    {
-        $outdatedMarketplaces = $this->getHelper('Data\Cache\Permanent')->getValue(__METHOD__);
+        \Ess\M2ePro\Controller\Adminhtml\Base $controller
+    ) {
+        $outdatedMarketplaces = $this->getHelper('Data_Cache_Permanent')->getValue(__METHOD__);
 
-        if ($outdatedMarketplaces === NULL) {
-
+        if ($outdatedMarketplaces === null) {
             $readConn = $this->resourceConnection->getConnection();
 
-            $dictionaryTable = $this->getHelper('Module\Database\Structure')
+            $dictionaryTable = $this->getHelper('Module_Database_Structure')
                 ->getTableNameWithPrefix('m2epro_amazon_dictionary_marketplace');
 
-            $rows = $readConn->select()->from($dictionaryTable,'marketplace_id')
+            $rows = $readConn->select()->from($dictionaryTable, 'marketplace_id')
                              ->where('client_details_last_update_date IS NOT NULL')
                              ->where('server_details_last_update_date IS NOT NULL')
                              ->where('client_details_last_update_date < server_details_last_update_date')
                              ->query();
 
-            $ids = array();
+            $ids = [];
             foreach ($rows as $row) {
                 $ids[] = $row['marketplace_id'];
             }
 
             $marketplacesCollection = $this->amazonFactory->getObject('Marketplace')->getCollection()
                 ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
-                ->addFieldToFilter('id',array('in' => $ids))
-                ->setOrder('sorder','ASC');
+                ->addFieldToFilter('id', ['in' => $ids])
+                ->setOrder('sorder', 'ASC');
 
-            $outdatedMarketplaces = array();
-            /* @var $marketplace \Ess\M2ePro\Model\Marketplace */
+            $outdatedMarketplaces = [];
+            /** @var $marketplace \Ess\M2ePro\Model\Marketplace */
             foreach ($marketplacesCollection as $marketplace) {
                 $outdatedMarketplaces[] = $marketplace->getTitle();
             }
 
-            $this->getHelper('Data\Cache\Permanent')->setValue(__METHOD__,
-                                                               $outdatedMarketplaces,
-                                                               array('amazon','marketplace'),
-                                                               60*60*24);
+            $this->getHelper('Data_Cache_Permanent')->setValue(
+                __METHOD__,
+                $outdatedMarketplaces,
+                ['amazon','marketplace'],
+                60*60*24
+            );
         }
 
         if (count($outdatedMarketplaces) <= 0) {
@@ -87,7 +91,7 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
 
         $controller->getMessageManager()->addNotice($this->getHelper('Module\Translation')->__(
             $message,
-            implode(', ',$outdatedMarketplaces),
+            implode(', ', $outdatedMarketplaces),
             $controller->getUrl('*/amazon_marketplace')
         ), \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP);
     }

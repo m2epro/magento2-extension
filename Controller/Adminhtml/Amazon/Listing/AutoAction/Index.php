@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
 {
     public function execute()
@@ -25,10 +29,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
         }
 
         $autoModes = [
-            \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL => 'Amazon\Listing\AutoAction\Mode\GlobalMode',
-            \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE => 'Amazon\Listing\AutoAction\Mode\Website',
-            \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY => 'Amazon\Listing\AutoAction\Mode\Category',
-            \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE => 'Amazon\Listing\AutoAction\Mode'
+            \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL => 'Amazon_Listing_AutoAction_Mode_GlobalMode',
+            \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE => 'Amazon_Listing_AutoAction_Mode_Website',
+            \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY => 'Amazon_Listing_AutoAction_Mode_Category',
+            \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE => 'Amazon_Listing_AutoAction_Mode'
         ];
 
         if (isset($autoModes[$autoMode])) {

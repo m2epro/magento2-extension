@@ -11,15 +11,19 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Template\Synchronization;
 
+/**
+ * Class ListRules
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs
+ */
 class ListRules extends AbstractForm
 {
     protected function _prepareForm()
     {
         $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
-        $formData = !is_null($template)
+        $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $defaults = array(
+        $defaults = [
             'title'               => '',
             'list_mode'           => Synchronization::LIST_MODE_YES,
             'list_status_enabled' => Synchronization::LIST_STATUS_ENABLED_YES,
@@ -35,7 +39,7 @@ class ListRules extends AbstractForm
 
             'list_advanced_rules_mode'    => Synchronization::ADVANCED_RULES_MODE_NONE,
             'list_advanced_rules_filters' => null
-        );
+        ];
         $formData = array_merge($defaults, $formData);
 
         $isEdit = !!$this->getRequest()->getParam('id');
@@ -57,8 +61,8 @@ class ListRules extends AbstractForm
                     <p>More detailed information about how to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
-                ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/RQItAQ')
+                    ,
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/RQItAQ')
                 )
             ]
         );
@@ -71,7 +75,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('list_mode',
+        $fieldset->addField(
+            'list_mode',
             self::SELECT,
             [
                 'name' => 'list_mode',
@@ -96,7 +101,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('list_status_enabled',
+        $fieldset->addField(
+            'list_status_enabled',
             self::SELECT,
             [
                 'name' => 'list_status_enabled',
@@ -114,7 +120,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('list_is_in_stock',
+        $fieldset->addField(
+            'list_is_in_stock',
             self::SELECT,
             [
                 'name' => 'list_is_in_stock',
@@ -132,7 +139,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('list_qty_magento',
+        $fieldset->addField(
+            'list_qty_magento',
             self::SELECT,
             [
                 'name' => 'list_qty_magento',
@@ -179,7 +187,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('list_qty_calculated',
+        $fieldset->addField(
+            'list_qty_calculated',
             self::SELECT,
             [
                 'name' => 'list_qty_calculated',
@@ -227,20 +236,20 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_amazon_template_synchronization_list_advanced_filters',
+        $fieldset = $form->addFieldset(
+            'magento_block_amazon_template_synchronization_list_advanced_filters',
             [
                 'legend' => $this->__('Advanced Conditions'),
                 'collapsable' => false,
                 'tooltip' => $this->__(
-                    '<p>You can provide flexible Advanced Conditions to manage when the List action should be
-                    run basing on the Attributes’ values of the Magento Product.<br> So, when all the Conditions
-                    (both general List Conditions and Advanced Conditions) are met,
-                    the Product will be listed on Channel.</p>'
+                    '<p>Define Magento Attribute value(s) based on which a product must be listed on the Channel.<br>
+                    Once both List Conditions and Advanced Conditions are met, the product will be listed.</p>'
                 )
             ]
         );
 
-        $fieldset->addField('list_advanced_rules_filters_warning',
+        $fieldset->addField(
+            'list_advanced_rules_filters_warning',
             self::MESSAGES,
             [
                 'messages' => [[
@@ -254,7 +263,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('list_advanced_rules_mode',
+        $fieldset->addField(
+            'list_advanced_rules_mode',
             self::SELECT,
             [
                 'name' => 'list_advanced_rules_mode',
@@ -267,7 +277,7 @@ HTML
             ]
         );
 
-        $ruleModel = $this->activeRecordFactory->getObject('Magento\Product\Rule')->setData(
+        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
             ['prefix' => Synchronization::LIST_ADVANCED_RULES_PREFIX]
         );
 
@@ -275,9 +285,10 @@ HTML
             $ruleModel->loadFromSerialized($formData['list_advanced_rules_filters']);
         }
 
-        $ruleBlock = $this->createBlock('Magento\Product\Rule')->setData(['rule_model' => $ruleModel]);
+        $ruleBlock = $this->createBlock('Magento_Product_Rule')->setData(['rule_model' => $ruleModel]);
 
-        $fieldset->addField('advanced_filter',
+        $fieldset->addField(
+            'advanced_filter',
             self::CUSTOM_CONTAINER,
             [
                 'container_id' => 'list_advanced_rules_filters_container',
@@ -287,17 +298,20 @@ HTML
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Template\Synchronization')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\Synchronization::class)
         );
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Amazon'));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class));
 
         $this->jsUrl->addUrls([
             'formSubmit'    => $this->getUrl(
-                '*/amazon_template_synchronization/save', array('_current' => true)
+                '*/amazon_template_synchronization/save',
+                ['_current' => true]
             ),
             'formSubmitNew' => $this->getUrl('m2epro/amazon_template_synchronization/save'),
             'deleteAction'  => $this->getUrl(
-                '*/amazon_template_synchronization/delete', array('_current' => true)
+                '*/amazon_template_synchronization/delete',
+                ['_current' => true]
             )
         ]);
 

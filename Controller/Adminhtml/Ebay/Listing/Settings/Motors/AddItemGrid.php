@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
+/**
+ * Class AddItemGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ */
 class AddItemGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -15,7 +19,7 @@ class AddItemGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     public function execute()
     {
         $motorsType = $this->getRequest()->getParam('motors_type');
-        $identifierType = $this->getHelper('Component\Ebay\Motors')->getIdentifierKey($motorsType);
+        $identifierType = $this->getHelper('Component_Ebay_Motors')->getIdentifierKey($motorsType);
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\Grid $block */
         $block = $this->createBlock(

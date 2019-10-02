@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore;
 
+/**
+ * Class StoresStep
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
+ */
 class StoresStep extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
 {
     //########################################
@@ -15,7 +19,7 @@ class StoresStep extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupSto
     public function execute()
     {
         $this->initListing();
-        $this->setAjaxContent($this->createBlock('Ebay\Listing\PickupStore\Step\Stores\Wrapper'));
+        $this->setAjaxContent($this->createBlock('Ebay_Listing_PickupStore_Step_Stores_Wrapper'));
         return $this->getResult();
     }
 

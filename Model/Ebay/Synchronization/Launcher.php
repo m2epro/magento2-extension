@@ -8,18 +8,22 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization;
 
+/**
+ * Class Launcher
+ * @package Ess\M2ePro\Model\Ebay\Synchronization
+ */
 class Launcher extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
 {
     //########################################
 
     protected function getType()
     {
-        return NULL;
+        return null;
     }
 
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------

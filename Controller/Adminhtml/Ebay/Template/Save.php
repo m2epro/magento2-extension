@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 use Magento\Backend\App\Action;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template
+ */
 class Save extends Template
 {
     //########################################
@@ -67,7 +71,9 @@ class Save extends Template
         }
 
         return $this->_redirect($this->getHelper('Data')->getBackUrl(
-            'list', [], $extendedRoutersParams
+            'list',
+            [],
+            $extendedRoutersParams
         ));
     }
 
@@ -81,7 +87,7 @@ class Save extends Template
 
         $requestedTemplateNick = $this->getRequest()->getPost('nick');
 
-        if (is_null($requestedTemplateNick)) {
+        if ($requestedTemplateNick === null) {
             return true;
         }
 
@@ -96,15 +102,15 @@ class Save extends Template
     {
         $data = $this->getRequest()->getPost($nick);
 
-        if (is_null($data)) {
-            return NULL;
+        if ($data === null) {
+            return null;
         }
 
         $templateManager = $this->templateManager->setTemplate($nick);
         $templateModel = $templateManager->getTemplateModel();
 
         if (empty($data['id'])) {
-            $oldData = array();
+            $oldData = [];
         } else {
             $templateModel->load($data['id']);
             $templateManager->isHorizontalTemplate() && $templateModel = $templateModel->getChildObject();
@@ -116,9 +122,9 @@ class Save extends Template
         $newData = $template->getDataSnapshot();
 
         if ($templateManager->isHorizontalTemplate()) {
-            $template->getChildObject()->setSynchStatusNeed($newData,$oldData);
+            $template->getChildObject()->setSynchStatusNeed($newData, $oldData);
         } else {
-            $template->setSynchStatusNeed($newData,$oldData);
+            $template->setSynchStatusNeed($newData, $oldData);
         }
 
         return $template;

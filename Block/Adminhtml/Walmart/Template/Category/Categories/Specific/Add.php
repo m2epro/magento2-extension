@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Specific;
 
+/**
+ * Class Add
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Specific
+ */
 class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     protected $_template = 'walmart/template/category/categories/specific/add.phtml';

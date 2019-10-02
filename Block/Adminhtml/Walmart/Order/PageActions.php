@@ -10,17 +10,21 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Order;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class PageActions
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Order
+ */
 class PageActions extends AbstractBlock
 {
     protected function _toHtml()
     {
         // ---------------------------------------
-        $marketplaceSwitcherBlock = $this->createBlock('Walmart\Marketplace\Switcher')->setData([
+        $marketplaceSwitcherBlock = $this->createBlock('Walmart_Marketplace_Switcher')->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
             'controller_name' => 'walmart_order'
         ]);
 
-        $accountSwitcherBlock = $this->createBlock('Walmart\Account\Switcher')->setData([
+        $accountSwitcherBlock = $this->createBlock('Walmart_Account_Switcher')->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
             'controller_name' => 'walmart_order'
         ]);

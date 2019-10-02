@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\OtherListings;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\OtherListings
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Synchronization\AbstractModel
 {
     protected $resourceConnection;
@@ -20,8 +24,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Synchronization\Ab
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         parent::__construct($amazonFactory, $activeRecordFactory, $helperFactory, $modelFactory);
     }

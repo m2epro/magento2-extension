@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Lock;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Model\ResourceModel\Lock
+ */
 class Item extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################

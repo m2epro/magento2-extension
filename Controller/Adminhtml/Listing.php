@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml;
 
+/**
+ * Class Listing
+ * @package Ess\M2ePro\Controller\Adminhtml
+ */
 abstract class Listing extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
     //########################################

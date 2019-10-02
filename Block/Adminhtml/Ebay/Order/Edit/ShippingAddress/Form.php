@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Order\Edit\ShippingAddress;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Order\Edit\ShippingAddress
+ */
 class Form extends AbstractForm
 {
     protected function _prepareForm()
@@ -152,14 +156,15 @@ class Form extends AbstractForm
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Order'));
         $this->jsUrl->add(
             $this->getUrl(
-                '*/ebay_order/saveShippingAddress', array('order_id' => $this->getRequest()->getParam('id'))
+                '*/ebay_order/saveShippingAddress',
+                ['order_id' => $this->getRequest()->getParam('id')]
             ),
             'formSubmit'
         );
 
         $this->js->add("M2ePro.formData.region = '" . $this->getHelper('Data')->escapeJs($regionCode) . "';");
 
-        $this->js->add( <<<JS
+        $this->js->add(<<<JS
     require([
         'M2ePro/Order/Edit/ShippingAddress',
     ], function(){

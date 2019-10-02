@@ -14,6 +14,10 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product;
 
 use Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion as Promotion;
 
+/**
+ * Class Variation
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product
+ */
 class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     //########################################
@@ -28,7 +32,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
 
     protected function _afterSave()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues(
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues(
             "listing_product_{$this->getListingProduct()->getId()}_variations"
         );
         return parent::_afterSave();
@@ -36,7 +40,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
 
     protected function _beforeDelete()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues(
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues(
             "listing_product_{$this->getListingProduct()->getId()}_variations"
         );
         return parent::_beforeDelete();
@@ -176,7 +180,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
      * @param bool $tryToGetFromStorage
      * @return array
      */
-    public function getOptions($asObjects = false, array $filters = array(), $tryToGetFromStorage = true)
+    public function getOptions($asObjects = false, array $filters = [], $tryToGetFromStorage = true)
     {
         return $this->getParentObject()->getOptions($asObjects, $filters, $tryToGetFromStorage);
     }
@@ -197,7 +201,6 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
         // Configurable, Grouped product
         if ($this->getListingProduct()->getMagentoProduct()->isConfigurableType() ||
             $this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
-
             foreach ($options as $option) {
                 /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
                 $sku = $option->getChildObject()->getSku();
@@ -207,7 +210,6 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
             // Bundle product
         } else {
             if ($this->getListingProduct()->getMagentoProduct()->isBundleType()) {
-
                 foreach ($options as $option) {
                     /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
 
@@ -222,7 +224,6 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
                 // Simple with options product
             } else {
                 if ($this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions()) {
-
                     foreach ($options as $option) {
                         /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
                         $sku != '' && $sku .= '-';
@@ -256,7 +257,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
     public function getQty($magentoMode = false)
     {
         /** @var $calculator \Ess\M2ePro\Model\Walmart\Listing\Product\QtyCalculator */
-        $calculator = $this->modelFactory->getObject('Walmart\Listing\Product\QtyCalculator');
+        $calculator = $this->modelFactory->getObject('Walmart_Listing_Product_QtyCalculator');
         $calculator->setProduct($this->getListingProduct());
         $calculator->setIsMagentoMode($magentoMode);
 
@@ -270,7 +271,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
         $src = $this->getWalmartSellingFormatTemplate()->getPriceSource();
 
         /** @var $calculator \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator */
-        $calculator = $this->modelFactory->getObject('Walmart\Listing\Product\PriceCalculator');
+        $calculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getListingProduct());
         $calculator->setCoefficient($this->getWalmartSellingFormatTemplate()->getPriceCoefficient());
         $calculator->setVatPercent($this->getWalmartSellingFormatTemplate()->getPriceVatPercent());
@@ -284,7 +285,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
         $src = $this->getWalmartSellingFormatTemplate()->getMapPriceSource();
 
         /** @var $calculator \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator */
-        $calculator = $this->modelFactory->getObject('Walmart\Listing\Product\PriceCalculator');
+        $calculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getListingProduct());
         $calculator->setPriceVariationMode($this->getWalmartSellingFormatTemplate()->getPriceVariationMode());
 
@@ -301,27 +302,27 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
     public function getPromotions()
     {
         if ($this->getWalmartSellingFormatTemplate()->isPromotionsModeNo()) {
-            return array();
+            return [];
         }
 
         /** @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion[] $promotions */
         $promotions = $this->getWalmartSellingFormatTemplate()->getPromotions(true);
         if (empty($promotions)) {
-            return array();
+            return [];
         }
 
-        $resultPromotions = array();
+        $resultPromotions = [];
 
         foreach ($promotions as $promotion) {
 
             /** @var $priceCalculator \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator */
-            $priceCalculator = $this->modelFactory->getObject('Walmart\Listing\Product\PriceCalculator');
+            $priceCalculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
             $priceCalculator->setSource($promotion->getPriceSource())->setProduct($this->getListingProduct());
-            $priceCalculator->setSourceModeMapping(array(
+            $priceCalculator->setSourceModeMapping([
                 PriceCalculator::MODE_PRODUCT   => Promotion::PRICE_MODE_PRODUCT,
                 PriceCalculator::MODE_SPECIAL   => Promotion::PRICE_MODE_SPECIAL,
                 PriceCalculator::MODE_ATTRIBUTE => Promotion::PRICE_MODE_ATTRIBUTE,
-            ));
+            ]);
             $priceCalculator->setCoefficient($promotion->getPriceCoefficient());
             $priceCalculator->setVatPercent($this->getWalmartSellingFormatTemplate()->getPriceVatPercent());
             $priceCalculator->setPriceVariationMode(
@@ -329,15 +330,15 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
             );
 
             /** @var $comparisonPriceCalculator \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator */
-            $comparisonPriceCalculator = $this->modelFactory->getObject('Walmart\Listing\Product\PriceCalculator');
+            $comparisonPriceCalculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
             $comparisonPriceCalculator->setSource(
-                $promotion->getComparisonPriceSource())->setProduct($this->getListingProduct()
-            );
-            $comparisonPriceCalculator->setSourceModeMapping(array(
+                $promotion->getComparisonPriceSource()
+            )->setProduct($this->getListingProduct());
+            $comparisonPriceCalculator->setSourceModeMapping([
                 PriceCalculator::MODE_PRODUCT   => Promotion::COMPARISON_PRICE_MODE_PRODUCT,
                 PriceCalculator::MODE_SPECIAL   => Promotion::COMPARISON_PRICE_MODE_SPECIAL,
                 PriceCalculator::MODE_ATTRIBUTE => Promotion::COMPARISON_PRICE_MODE_ATTRIBUTE,
-            ));
+            ]);
             $comparisonPriceCalculator->setCoefficient($promotion->getComparisonPriceCoefficient());
             $comparisonPriceCalculator->setVatPercent($this->getWalmartSellingFormatTemplate()->getPriceVatPercent());
             $comparisonPriceCalculator->setPriceVariationMode(
@@ -346,13 +347,13 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
 
             $promotionSource = $promotion->getSource($this->getWalmartListingProduct()->getActualMagentoProduct());
 
-            $resultPromotions[] = array(
+            $resultPromotions[] = [
                 'start_date'       => $promotionSource->getStartDate(),
                 'end_date'         => $promotionSource->getEndDate(),
                 'price'            => $priceCalculator->getVariationValue($this->getParentObject()),
                 'comparison_price' => $comparisonPriceCalculator->getVariationValue($this->getParentObject()),
                 'type'             => strtoupper($promotion->getType())
-            );
+            ];
 
             if (count($resultPromotions) >= \Ess\M2ePro\Model\Walmart\Listing\Product::PROMOTIONS_MAX_ALLOWED_COUNT) {
                 break;

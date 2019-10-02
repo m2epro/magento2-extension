@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Log\Listing\View;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Block\Adminhtml\Log\Listing\View
+ */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
 {
     const VIEW_MODE_SEPARATED = 'separated';
@@ -39,7 +43,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
             "{$this->getComponentMode()}_log_listing_view_mode"
         );
 
-        if (is_null($sessionViewMode)) {
+        if ($sessionViewMode === null) {
             return self::VIEW_MODE_SEPARATED;
         }
 
@@ -48,14 +52,15 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
 
     public function getSelectedParam()
     {
-        if (!is_null($this->viewMode)) {
+        if ($this->viewMode !== null) {
             return $this->viewMode;
         }
 
         $selectedViewMode = parent::getSelectedParam();
 
         $this->getHelper('Data\Session')->setValue(
-            "{$this->getComponentMode()}_log_listing_view_mode", $selectedViewMode
+            "{$this->getComponentMode()}_log_listing_view_mode",
+            $selectedViewMode
         );
 
         $this->viewMode = $selectedViewMode;

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Order\Shipment;
 
+/**
+ * Class Handler
+ * @package Ess\M2ePro\Model\Amazon\Order\Shipment
+ */
 class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
 {
     //########################################
@@ -51,11 +55,11 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
         $shipmentItems = $shipment->getAllItems();
         $orderItemDataIdentifier = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER;
 
-        $items = array();
+        $items = [];
 
         foreach ($shipmentItems as $shipmentItem) {
-            $additionalData = $shipmentItem->getOrderItem()->getAdditionalData();
-            $additionalData = is_string($additionalData) ? @unserialize($additionalData) : array();
+            $additionalData = $this->getHelper('Data')
+                ->unserialize($shipmentItem->getOrderItem()->getAdditionalData());
 
             if (!isset($additionalData[$orderItemDataIdentifier]['items'])) {
                 continue;
@@ -78,10 +82,12 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
 
                 /** @var \Ess\M2ePro\Model\Amazon\Order\Item $item */
                 $item = $this->activeRecordFactory->getObjectLoaded(
-                    'Amazon\Order\Item', $data['order_item_id'], 'amazon_order_item_id'
+                    'Amazon_Order_Item',
+                    $data['order_item_id'],
+                    'amazon_order_item_id'
                 );
 
-                if (is_null($item)) {
+                if ($item === null) {
                     continue;
                 }
 
@@ -91,10 +97,10 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
                     $qty = $qtyAvailable;
                 }
 
-                $items[] = array(
+                $items[] = [
                     'qty' => $qty,
                     'amazon_order_item_id' => $data['order_item_id']
-                );
+                ];
 
                 $qtyAvailable -= $qty;
             }

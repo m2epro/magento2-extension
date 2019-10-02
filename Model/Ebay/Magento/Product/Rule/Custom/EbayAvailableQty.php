@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom;
 
+/**
+ * Class EbayAvailableQty
+ * @package Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom
+ */
 class EbayAvailableQty extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
     //########################################

@@ -10,16 +10,20 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Synchronization;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Settings;
 
+/**
+ * Class SynchCheckProcessingNow
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Synchronization
+ */
 class SynchCheckProcessingNow extends Settings
 {
     //########################################
 
     public function execute()
     {
-        $warningMessages = array();
+        $warningMessages = [];
 
         $Processing = $this->activeRecordFactory->getObject('Lock\Item')->getCollection()
-            ->addFieldToFilter('nick', array('like' => 'synchronization_amazon%'))
+            ->addFieldToFilter('nick', ['like' => 'synchronization_amazon%'])
             ->getSize();
 
         if ($Processing > 0) {
@@ -28,9 +32,9 @@ class SynchCheckProcessingNow extends Settings
             );
         }
 
-        $this->setJsonContent(array(
+        $this->setJsonContent([
             'messages' => $warningMessages
-        ));
+        ]);
 
         return $this->getResponse();
     }

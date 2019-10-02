@@ -19,7 +19,7 @@ class ProductTaxCode extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMo
     /**
      * @var \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode\Source[]
      */
-    private $productTaxCodeSourceModels = array();
+    private $productTaxCodeSourceModels = [];
 
     protected $amazonFactory;
 
@@ -35,8 +35,7 @@ class ProductTaxCode extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMo
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
 
         parent::__construct(
@@ -71,7 +70,7 @@ class ProductTaxCode extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMo
             return true;
         }
 
-        return (bool)$this->activeRecordFactory->getObject('Amazon\Listing\Product')
+        return (bool)$this->activeRecordFactory->getObject('Amazon_Listing_Product')
             ->getCollection()
             ->addFieldToFilter('template_product_tax_code_id', $this->getId())
             ->getSize();
@@ -102,7 +101,7 @@ class ProductTaxCode extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMo
         }
 
         $this->productTaxCodeSourceModels[$id] = $this->modelFactory->getObject(
-            'Amazon\Template\ProductTaxCode\Source'
+            'Amazon_Template_ProductTaxCode_Source'
         );
 
         $this->productTaxCodeSourceModels[$id]->setMagentoProduct($magentoProduct);
@@ -163,7 +162,7 @@ class ProductTaxCode extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMo
 
     public function getProductTaxCodeAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         if ($this->isProductTaxCodeModeAttribute()) {
             $attributes[] = $this->getProductTaxCodeAttribute();
@@ -220,12 +219,12 @@ class ProductTaxCode extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMo
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'), true);
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id'], true);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

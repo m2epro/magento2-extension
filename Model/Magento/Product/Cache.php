@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Product;
 
+/**
+ * Class Cache
+ * @package Ess\M2ePro\Model\Magento\Product
+ */
 class Cache extends \Ess\M2ePro\Model\Magento\Product
 {
     private $isCacheEnabled = false;
@@ -25,7 +29,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
             . $this->getHelper('Data')->jsonEncode($key)
         );
 
-        return $this->getHelper('Data\Cache\Runtime')->getValue($key);
+        return $this->getHelper('Data_Cache_Runtime')->getValue($key);
     }
 
     public function setCacheValue($key, $value)
@@ -39,17 +43,17 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
             . $this->getHelper('Data')->jsonEncode($key)
         );
 
-        $tags = array(
+        $tags = [
             'magento_product',
             'magento_product_'.$this->getProductId().'_'.$this->getStoreId()
-        );
+        ];
 
-        return $this->getHelper('Data\Cache\Runtime')->setValue($key, $value, $tags);
+        return $this->getHelper('Data_Cache_Runtime')->setValue($key, $value, $tags);
     }
 
     public function clearCache()
     {
-        return $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+        return $this->getHelper('Data_Cache_Runtime')->removeTagValues(
             'magento_product_'.$this->getProductId().'_'.$this->getStoreId()
         );
     }
@@ -202,12 +206,12 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
 
     public function getVariationInstance()
     {
-        if (!is_null($this->_variationInstance)) {
+        if ($this->_variationInstance !== null) {
             return $this->_variationInstance;
         }
 
         $this->_variationInstance = $this->modelFactory
-            ->getObject('Magento\Product\Variation\Cache')->setMagentoProduct($this);
+            ->getObject('Magento_Product_Variation_Cache')->setMagentoProduct($this);
         return $this->_variationInstance;
     }
 
@@ -215,25 +219,25 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
 
     protected function getMethodData($methodName, $params = null)
     {
-        $cacheKey = array(
+        $cacheKey = [
             __CLASS__,
             $methodName,
-        );
+        ];
 
-        if (!is_null($params)) {
+        if ($params !== null) {
             $cacheKey[] = $params;
         }
 
         $cacheResult = $this->getCacheValue($cacheKey);
 
-        if ($this->isCacheEnabled() && !is_null($cacheResult)) {
+        if ($this->isCacheEnabled() && $cacheResult !== null) {
             return $cacheResult;
         }
 
-        if (!is_null($params)) {
-            $data = call_user_func_array(array('parent', $methodName), $params);
+        if ($params !== null) {
+            $data = call_user_func_array(['parent', $methodName], $params);
         } else {
-            $data = call_user_func(array('parent', $methodName));
+            $data = call_user_func(['parent', $methodName]);
         }
 
         if (!$this->isCacheEnabled()) {

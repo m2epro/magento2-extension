@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks;
 
+/**
+ * Class Response
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks
+ */
 class Response extends \Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks\AbstractModel
 {
     //########################################
@@ -63,7 +67,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks\
         $feedbacks = $this->getLastUnanswered(5);
         $feedbacks = $this->filterLastAnswered($feedbacks);
 
-        if (count($feedbacks) <= 0) {
+        if (empty($feedbacks)) {
             return;
         }
 
@@ -71,7 +75,6 @@ class Response extends \Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks\
         $percentsForOneStep = $this->getPercentsInterval() / count($feedbacks);
 
         foreach ($feedbacks as $feedback) {
-
             $this->processFeedback($feedback);
 
             $this->getActualLockItem()->setPercents($this->getPercentsStart() + $iteration * $percentsForOneStep);
@@ -89,19 +92,19 @@ class Response extends \Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks\
 
         $collection = $this->activeRecordFactory->getObject('Ebay\Feedback')->getCollection();
         $collection->getSelect()
-            ->join(array('a'=>$tableAccounts),'`a`.`id` = `main_table`.`account_id`',array())
+            ->join(['a'=>$tableAccounts], '`a`.`id` = `main_table`.`account_id`', [])
             ->where('`main_table`.`seller_feedback_id` = 0 OR `main_table`.`seller_feedback_id` IS NULL')
-            ->where('`main_table`.`buyer_feedback_date` > DATE_SUB(NOW(), INTERVAL ? DAY)',(int)$daysAgo)
-            ->order(array('buyer_feedback_date ASC'));
+            ->where('`main_table`.`buyer_feedback_date` > DATE_SUB(NOW(), INTERVAL ? DAY)', (int)$daysAgo)
+            ->order(['buyer_feedback_date ASC']);
 
         return $collection->getItems();
     }
 
     private function filterLastAnswered(array $feedbacks)
     {
-        $result = array();
+        $result = [];
 
-        $responseInterval = (int)$this->getConfigValue($this->getFullSettingsPath(),'attempt_interval');
+        $responseInterval = (int)$this->getConfigValue($this->getFullSettingsPath(), 'attempt_interval');
 
         foreach ($feedbacks as $feedback) {
 
@@ -109,7 +112,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks\
             $lastResponseAttemptDate = $feedback->getData('last_response_attempt_date');
             $currentGmtDate = $this->getHelper('Data')->getCurrentGmtDate(true);
 
-            if (!is_null($lastResponseAttemptDate) &&
+            if ($lastResponseAttemptDate !== null &&
                 strtotime($lastResponseAttemptDate) + $responseInterval > $currentGmtDate) {
                 continue;
             }
@@ -145,7 +148,8 @@ class Response extends \Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks\
         if ($account->getChildObject()->isFeedbacksAutoResponseCycled()) {
             // Load is needed to get correct feedbacks_last_used_id
             $account = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Account', $feedback->getData('account_id')
+                'Account',
+                $feedback->getData('account_id')
             );
         }
 
@@ -168,23 +172,22 @@ class Response extends \Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks\
     private function getResponseBody(\Ess\M2ePro\Model\Account $account)
     {
         if ($account->getChildObject()->isFeedbacksAutoResponseCycled()) {
-
             $lastUsedId = 0;
             if ($account->getChildObject()->getFeedbacksLastUsedId() != null) {
                 $lastUsedId = (int)$account->getChildObject()->getFeedbacksLastUsedId();
             }
 
-            $feedbackTemplatesIds = $this->activeRecordFactory->getObject('Ebay\Feedback\Template')
+            $feedbackTemplatesIds = $this->activeRecordFactory->getObject('Ebay_Feedback_Template')
                 ->getCollection()
                 ->addFieldToFilter('account_id', $account->getId())
-                ->setOrder('id','ASC')
+                ->setOrder('id', 'ASC')
                 ->getAllIds();
 
-            if (!count($feedbackTemplatesIds)) {
+            if (empty($feedbackTemplatesIds)) {
                 return '';
             }
 
-            $feedbackTemplate = $this->activeRecordFactory->getObject('Ebay\Feedback\Template');
+            $feedbackTemplate = $this->activeRecordFactory->getObject('Ebay_Feedback_Template');
 
             if (max($feedbackTemplatesIds) > $lastUsedId) {
                 foreach ($feedbackTemplatesIds as $templateId) {
@@ -209,18 +212,17 @@ class Response extends \Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks\
         }
 
         if ($account->getChildObject()->isFeedbacksAutoResponseRandom()) {
-
-            $feedbackTemplatesIds = $this->activeRecordFactory->getObject('Ebay\Feedback\Template')
+            $feedbackTemplatesIds = $this->activeRecordFactory->getObject('Ebay_Feedback_Template')
                 ->getCollection()
                 ->addFieldToFilter('account_id', $account->getId())
                 ->getAllIds();
 
-            if (!count($feedbackTemplatesIds)) {
+            if (empty($feedbackTemplatesIds)) {
                 return '';
             }
 
             $index = rand(0, count($feedbackTemplatesIds) - 1);
-            $feedbackTemplate = $this->activeRecordFactory->getObject('Ebay\Feedback\Template')->load(
+            $feedbackTemplate = $this->activeRecordFactory->getObject('Ebay_Feedback_Template')->load(
                 $feedbackTemplatesIds[$index]
             );
 

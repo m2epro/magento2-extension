@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat;
 
+/**
+ * Class ShippingOverride
+ * @package Ess\M2ePro\Model\Walmart\Template\SellingFormat
+ */
 class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     const COST_MODE_FREE = 0;
@@ -41,7 +45,7 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
     {
         $temp = parent::delete();
         $temp && $this->sellingFormatTemplateModel = null;
-        $temp && $this->sellingFormatShippingOverrideSourceModels = array();
+        $temp && $this->sellingFormatShippingOverrideSourceModels = [];
         return $temp;
     }
 
@@ -52,9 +56,10 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
      */
     public function getSellingFormatTemplate()
     {
-        if (is_null($this->sellingFormatTemplateModel)) {
+        if ($this->sellingFormatTemplateModel === null) {
             $this->sellingFormatTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Walmart\Template\SellingFormat', $this->getTemplateSellingFormatId()
+                'Walmart_Template_SellingFormat',
+                $this->getTemplateSellingFormatId()
             );
         }
 
@@ -84,7 +89,7 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
         }
 
         $this->sellingFormatShippingOverrideSourceModels[$id] = $this->modelFactory->getObject(
-            'Walmart\Template\SellingFormat\ShippingOverride\Source'
+            'Walmart_Template_SellingFormat_ShippingOverride_Source'
         );
 
         $this->sellingFormatShippingOverrideSourceModels[$id]->setMagentoProduct($magentoProduct);
@@ -191,7 +196,7 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
 
     public function getCostAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         if ($this->isCostModeCustomAttribute()) {
             $attributes[] = $this->getCostAttribute();

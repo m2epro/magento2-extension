@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Order;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class PageActions
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Order
+ */
 class PageActions extends AbstractBlock
 {
     protected function _toHtml()

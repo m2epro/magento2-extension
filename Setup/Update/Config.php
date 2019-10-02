@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Setup\Update;
 
 use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractConfig;
 
+/**
+ * Class Config
+ * @package Ess\M2ePro\Setup\Update
+ */
 class Config extends AbstractConfig
 {
     //########################################
@@ -28,7 +32,14 @@ class Config extends AbstractConfig
                 'Maintenance',
                 'WalmartAuthenticationForCA',
                 'WalmartOptionImagesURL',
-                'WalmartOrdersReceiveOn'
+                'WalmartOrdersReceiveOn',
+                'MigrationFromMagento1'
+            ],
+            'y19_m05' => [
+                'WalmartAddMissingColumn'
+            ],
+            'y19_m07' => [
+                'WalmartSynchAdvancedConditions'
             ]
         ];
     }

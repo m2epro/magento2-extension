@@ -1,13 +1,21 @@
 <?php
-    /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser\Tabs\Browse $block */
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
 
-    $categoryType = $block->getHelper('Data\GlobalData')->getValue('chooser_category_type');
-    $ebayCategoryTypes =  $block->getHelper('Component\Ebay\Category')->getEbayCategoryTypes();
-    $isWizard = !$block->getHelper('View\Ebay')->isInstallationWizardFinished();
+// @codingStandardsIgnoreFile
 
-    $block->jsUrl->add($this->getUrl('*/general/getChildCategories'), 'general/getChildCategories');
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser\Tabs\Browse $block */
 
-    $block->js->add("
+$categoryType = $block->getHelper('Data\GlobalData')->getValue('chooser_category_type');
+$ebayCategoryTypes =  $block->getHelper('Component\Ebay\Category')->getEbayCategoryTypes();
+$isWizard = !$block->getHelper('View\Ebay')->isInstallationWizardFinished();
+
+$block->jsUrl->add($block->getUrl('*/general/getChildCategories'), 'general/getChildCategories');
+
+$block->js->add("
 require([
     'M2ePro/Ebay/Listing/Product/Category/Settings/Chooser/Tabs/Browse'
 ], function(){
@@ -24,7 +32,6 @@ require([
 });
 
 ");
-
 ?>
 
 <style>
@@ -36,23 +43,23 @@ require([
 
 <?php
 
-    if (!$block->isWizardActive()) {
-        $helpBlock = $this->createBlock('HelpBlock');
+if (!$block->isWizardActive()) {
+    $helpBlock = $block->createBlock('HelpBlock');
 
-        if (in_array($categoryType, $ebayCategoryTypes)) {
-            $helpBlock->setData([
-                'no_collapse' => true,
-                'content' => $block->__('If you cannot find necessary Category, try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshEbayCategories()">update Marketplaces Data</a>.')
-            ]);
-        } else {
-            $helpBlock->setData([
-                'no_collapse' => true,
-                'content' => $block->__('If you cannot find necessary Store Category, try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshStoreCategories()">refresh eBay Store Data</a>.')
-            ]);
-        }
-
-        echo $helpBlock->toHtml();
+    if (in_array($categoryType, $ebayCategoryTypes)) {
+        $helpBlock->setData([
+            'no_collapse' => true,
+            'content' => $block->__('If you cannot find necessary Category, try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshEbayCategories()">update Marketplaces Data</a>.')
+        ]);
+    } else {
+        $helpBlock->setData([
+            'no_collapse' => true,
+            'content' => $block->__('If you cannot find necessary Store Category, try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshStoreCategories()">refresh eBay Store Data</a>.')
+        ]);
     }
+
+    echo $helpBlock->toHtml();
+}
 
 ?>
 

@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving;
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class MoveToListing
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving
+ */
 class MoveToListing extends Listing
 {
     public function execute()
@@ -23,10 +27,12 @@ class MoveToListing extends Listing
         $listingId = (int)$this->getRequest()->getParam('listingId');
 
         $listingInstance = $this->parentFactory->getCachedObjectLoaded(
-            $componentMode,'Listing',$listingId
+            $componentMode,
+            'Listing',
+            $listingId
         );
 
-        $otherLogModel = $this->activeRecordFactory->getObject('Listing\Other\Log');
+        $otherLogModel = $this->activeRecordFactory->getObject('Listing_Other_Log');
         $otherLogModel->setComponentMode($componentMode);
 
         $listingLogModel = $this->activeRecordFactory->getObject('Listing\Log');
@@ -34,22 +40,23 @@ class MoveToListing extends Listing
 
         $errors = 0;
         foreach ($selectedProducts as $otherListingProduct) {
-
             $otherListingProductInstance = $this->parentFactory
-                ->getObjectLoaded($componentMode,'Listing\Other',$otherListingProduct);
+                ->getObjectLoaded($componentMode, 'Listing\Other', $otherListingProduct);
 
             $listingProductInstance = $listingInstance
                 ->getChildObject()
                 ->addProductFromOther(
-                    $otherListingProductInstance, \Ess\M2ePro\Helper\Data::INITIATOR_USER, false, false
+                    $otherListingProductInstance,
+                    \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+                    false,
+                    false
                 );
 
             if (!($listingProductInstance instanceof \Ess\M2ePro\Model\Listing\Product)) {
-
                 $otherLogModel->addProductMessage(
                     $otherListingProductInstance->getId(),
                     \Ess\M2ePro\Helper\Data::INITIATOR_USER,
-                    NULL,
+                    null,
                     \Ess\M2ePro\Model\Listing\Other\Log::ACTION_MOVE_ITEM,
                     // M2ePro_TRANSLATIONS
                     // Product already exists in M2E listing(s).
@@ -65,7 +72,7 @@ class MoveToListing extends Listing
             $otherLogModel->addProductMessage(
                 $otherListingProductInstance->getId(),
                 \Ess\M2ePro\Helper\Data::INITIATOR_USER,
-                NULL,
+                null,
                 \Ess\M2ePro\Model\Listing\Other\Log::ACTION_MOVE_ITEM,
                 // M2ePro_TRANSLATIONS
                 // Item was successfully Moved
@@ -79,7 +86,7 @@ class MoveToListing extends Listing
                 $otherListingProductInstance->getProductId(),
                 $listingProductInstance->getId(),
                 \Ess\M2ePro\Helper\Data::INITIATOR_USER,
-                NULL,
+                null,
                 \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_FROM_OTHER_LISTING,
                 // M2ePro_TRANSLATIONS
                 // Item was successfully Moved

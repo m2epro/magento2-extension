@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manag
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class CreateNewChild
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manage
+ */
 class CreateNewChild extends Main
 {
     public function execute()
@@ -41,7 +45,7 @@ class CreateNewChild extends Main
             $parentTypeModel->restoreRemovedProductOptions($productOptions);
         }
 
-        $channelOptions = array();
+        $channelOptions = [];
         $generalId = null;
 
         if (!$createNewAsin) {
@@ -54,15 +58,17 @@ class CreateNewChild extends Main
         }
 
         $parentTypeModel->createChildListingProduct(
-            $productOptions, $channelOptions, $generalId
+            $productOptions,
+            $channelOptions,
+            $generalId
         );
 
         $parentTypeModel->getProcessor()->process();
 
-        $result = array(
+        $result = [
             'type' => 'success',
             'msg'  => $this->__('New Amazon Child Product was successfully created.')
-        );
+        ];
 
         if ($createNewAsin) {
             $this->setJsonContent($result);
@@ -71,7 +77,7 @@ class CreateNewChild extends Main
         }
 
         /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper */
-        $vocabularyHelper = $this->getHelper('Component\Amazon\Vocabulary');
+        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
 
         if ($vocabularyHelper->isOptionAutoActionDisabled()) {
             $this->setJsonContent($result);
@@ -81,7 +87,7 @@ class CreateNewChild extends Main
 
         $matchedAttributes = $parentTypeModel->getMatchedAttributes();
 
-        $optionsForAddingToVocabulary = array();
+        $optionsForAddingToVocabulary = [];
 
         foreach ($matchedAttributes as $productAttribute => $channelAttribute) {
             $productOption = $productOptions[$productAttribute];
@@ -99,7 +105,7 @@ class CreateNewChild extends Main
                 continue;
             }
 
-            $optionsForAddingToVocabulary[$channelAttribute] = array($productOption => $channelOption);
+            $optionsForAddingToVocabulary[$channelAttribute] = [$productOption => $channelOption];
         }
 
         if ($vocabularyHelper->isOptionAutoActionNotSet()) {

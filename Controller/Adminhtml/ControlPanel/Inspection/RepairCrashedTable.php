@@ -12,6 +12,10 @@ use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main;
 use Ess\M2ePro\Helper\Module;
 use Magento\Backend\App\Action;
 
+/**
+ * Class RepairCrashedTable
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Inspection
+ */
 class RepairCrashedTable extends Main
 {
     public function execute()
@@ -21,7 +25,7 @@ class RepairCrashedTable extends Main
             return $this->_redirect($this->getHelper('View\ControlPanel')->getPageInspectionTabUrl());
         }
 
-        $this->getHelper('Module\Database\Repair')->repairCrashedTable($tableName)
+        $this->getHelper('Module_Database_Repair')->repairCrashedTable($tableName)
             ? $this->getMessageManager()->addSuccess('Successfully repaired.')
             : $this->getMessageManager()->addError('Error.');
 

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tab
 
 use Ess\M2ePro\Helper\Component\Amazon\Vocabulary;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Vocabulary
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -19,7 +23,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected function _prepareForm()
     {
-        $vocabularyHelper = $this->getHelper('Component\Amazon\Vocabulary');
+        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
 
         $form = $this->_formFactory->create(
             [
@@ -39,7 +43,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('attribute_auto_action',
+        $fieldset->addField(
+            'attribute_auto_action',
             'select',
             [
                 'name' => 'attribute_auto_action',
@@ -56,7 +61,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('option_auto_action',
+        $fieldset->addField(
+            'option_auto_action',
             'select',
             [
                 'name' => 'option_auto_action',
@@ -72,7 +78,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('save_button',
+        $fieldset->addField(
+            'save_button',
             'button',
             [
                 'label' => '',

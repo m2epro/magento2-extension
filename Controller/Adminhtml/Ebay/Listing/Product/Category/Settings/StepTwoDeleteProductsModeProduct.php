@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
 
 use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
+/**
+ * Class StepTwoDeleteProductsModeProduct
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
+ */
 class StepTwoDeleteProductsModeProduct extends Settings
 {
 
@@ -18,7 +22,7 @@ class StepTwoDeleteProductsModeProduct extends Settings
     public function execute()
     {
         $ids = $this->getRequestIds('products_id');
-        $ids = array_map('intval',$ids);
+        $ids = array_map('intval', $ids);
 
         $sessionData = $this->getSessionValue('mode_product');
         foreach ($ids as $id) {
@@ -27,7 +31,7 @@ class StepTwoDeleteProductsModeProduct extends Settings
         $this->setSessionValue('mode_product', $sessionData);
 
         $collection = $this->ebayFactory->getObject('Listing\Product')->getCollection()
-            ->addFieldToFilter('id',array('in' => $ids));
+            ->addFieldToFilter('id', ['in' => $ids]);
 
         foreach ($collection->getItems() as $listingProduct) {
             $listingProduct->delete();
@@ -40,10 +44,11 @@ class StepTwoDeleteProductsModeProduct extends Settings
             return $this->getResult();
         }
         $listingProductAddIds = array_map('intval', $listingProductAddIds);
-        $listingProductAddIds = array_diff($listingProductAddIds,$ids);
+        $listingProductAddIds = array_diff($listingProductAddIds, $ids);
 
         $listing->getChildObject()->setData(
-            'product_add_ids', $this->getHelper('Data')->jsonEncode($listingProductAddIds)
+            'product_add_ids',
+            $this->getHelper('Data')->jsonEncode($listingProductAddIds)
         )->save();
 
         return $this->getResult();

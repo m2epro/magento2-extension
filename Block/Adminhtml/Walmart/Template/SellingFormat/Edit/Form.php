@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Walmart\Template\SellingFormat;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit
+ */
 class Form extends AbstractForm
 {
     private $resourceConnection;
@@ -30,8 +34,7 @@ class Form extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -55,17 +58,17 @@ class Form extends AbstractForm
         $allAttributes           = $magentoAttributeHelper->getAll();
 
         $this->generalAttributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
-        $this->generalAttributesByInputTypes = array(
+        $this->generalAttributesByInputTypes = [
             'text'        => $magentoAttributeHelper->filterByInputTypes($this->generalAttributes, ['text']),
             'text_select' => $magentoAttributeHelper->filterByInputTypes($this->generalAttributes, ['text', 'select']),
             'text_price'  => $magentoAttributeHelper->filterByInputTypes($this->generalAttributes, ['text', 'price']),
             'text_date'   => $magentoAttributeHelper->filterByInputTypes($this->generalAttributes, ['text', 'date']),
             'text_weight' => $magentoAttributeHelper->filterByInputTypes($this->generalAttributes, ['text', 'weight']),
             'boolean'     => $magentoAttributeHelper->filterByInputTypes($this->generalAttributes, ['boolean']),
-        );
-        $this->allAttributesByInputTypes = array(
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($allAttributes, array('text', 'select')),
-        );
+        ];
+        $this->allAttributesByInputTypes = [
+            'text_select' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'select']),
+        ];
     }
 
     //########################################
@@ -85,24 +88,19 @@ class Form extends AbstractForm
             [
                 'content' => $this->__(
                     <<<HTML
-                    <p>Selling Policy contains conditions based on which you are going to sell your Item on
-                    the Channel, e.g. Item Price, Quantity, Shipping and Product Tax Code settings, etc.</p><br>
-                    <p>Take Magento Price and Quantity values as they are or use the Price Change box and
-                    Conditional/Percentage Quantity options to modify the related Magento data.</p><br>
-                    <p>By creating Promotion rules, you can price your Items at reduced
-                    values during the specified period.</p><br>
-                    <p>Use the Shipping Overrides option when you need to override the global shipping setting.</p><br>
-                    <p>If you would like to limit your Item availability on Walmart
-                    to the certain period, define Start/End Dates.</p><br>
-                    <p><strong>Note:</strong> Selling Policy is created per marketplace that cannot
-                    be changed after the Policy is assigned to M2E Pro Listing.</p><br>
+                    <p>Selling Policy contains conditions based on which you are going to sell your Item on the
+                    Channel, e.g. Item Price, Quantity, Shipping and Product Tax Code settings, etc.
+                    Take Magento Price and Quantity values as they are or use the Price Change box and
+                    Conditional/Percentage Quantity options to modify the related Magento data.
+                    By creating Promotion rules, you can price your Items at reduced values during the
+                    specified period. Use the Shipping Overrides option when you need to override the
+                    global shipping setting. If you would like to limit your Item availability on Walmart to the
+                    certain period, define Start/End Dates.</p><br>
+                    <p><strong>Note:</strong> Selling Policy is created per marketplace that cannot be changed
+                    after the Policy is assigned to M2E Pro Listing.</p><br>
                     <p><strong>Note:</strong> Selling Policy is required when you create a
                     new offer on Walmart.</p><br>
-                    <p>The detailed information can be found
-                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
-                    ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/SgBhAQ')
                 )
             ]
         );
@@ -116,21 +114,24 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset->addField('title',
+        $fieldset->addField(
+            'title',
             'text',
             [
-                'name' => 'title',
-                'label' => $this->__('Title'),
-                'title' => $this->__('Title'),
-                'value' => $this->formData['title'],
-                'class' => 'input-text M2ePro-price-tpl-title',
-                'required' => true
+                'name'     => 'title',
+                'label'    => $this->__('Title'),
+                'title'    => $this->__('Title'),
+                'value'    => $this->formData['title'],
+                'class'    => 'input-text M2ePro-price-tpl-title',
+                'required' => true,
+                'tooltip'  => $this->__('Policy Title for your internal use.')
             ]
         );
 
         // ---------------------------------------
 
-        $fieldset->addField('marketplace_id',
+        $fieldset->addField(
+            'marketplace_id',
             'select',
             [
                 'name' => 'marketplace_id',
@@ -145,7 +146,8 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset = $form->addFieldset('magento_block_walmart_template_selling_format_qty',
+        $fieldset = $form->addFieldset(
+            'magento_block_walmart_template_selling_format_qty',
             [
                 'legend' => $this->__('Quantity'),
                 'class' => 'm2epro-marketplace-depended-block',
@@ -163,7 +165,8 @@ HTML
             $defaultValue = $this->formData['qty_mode'];
         }
 
-        $fieldset->addField('qty_mode',
+        $fieldset->addField(
+            'qty_mode',
             self::SELECT,
             [
                 'name'                     => 'qty_mode',
@@ -176,7 +179,8 @@ HTML
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
-        $fieldset->addField('qty_custom_attribute',
+        $fieldset->addField(
+            'qty_custom_attribute',
             'hidden',
             [
                 'name' => 'qty_custom_attribute',
@@ -184,7 +188,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('qty_custom_value',
+        $fieldset->addField(
+            'qty_custom_value',
             'text',
             [
                 'name'         => 'qty_custom_value',
@@ -207,7 +212,8 @@ HTML
             ];
         }
 
-        $fieldset->addField('qty_percentage',
+        $fieldset->addField(
+            'qty_percentage',
             self::SELECT,
             [
                 'name' => 'qty_percentage',
@@ -219,13 +225,15 @@ HTML
                     'Specify what percentage of Magento Product Quantity has to be submitted to Walmart.<br>
                     <strong>For example</strong>, if QTY Percentage is set to 10% and
                     Magento Product Quantity is 100,<br>
-                    the Item Quantity available on Walmart will be calculated as 100 * 10% = 10.')
+                    the Item Quantity available on Walmart will be calculated as 100 * 10% = 10.'
+                )
             ]
         );
 
         // ---------------------------------------
 
-        $fieldset->addField('qty_modification_mode',
+        $fieldset->addField(
+            'qty_modification_mode',
             self::SELECT,
             [
                 'name' => 'qty_modification_mode',
@@ -241,7 +249,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('qty_min_posted_value',
+        $fieldset->addField(
+            'qty_min_posted_value',
             'text',
             [
                 'name' => 'qty_min_posted_value',
@@ -260,7 +269,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('qty_max_posted_value',
+        $fieldset->addField(
+            'qty_max_posted_value',
             'text',
             [
                 'name' => 'qty_max_posted_value',
@@ -281,7 +291,8 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset = $form->addFieldset('magento_block_walmart_template_selling_format_prices',
+        $fieldset = $form->addFieldset(
+            'magento_block_walmart_template_selling_format_prices',
             [
                 'legend' => $this->__('Price'),
                 'class' => 'm2epro-marketplace-depended-block',
@@ -316,7 +327,8 @@ HTML
             $this->__('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)')
         );
 
-        $fieldset->addField('price_mode',
+        $fieldset->addField(
+            'price_mode',
             self::SELECT,
             [
                 'name' => 'price_mode',
@@ -332,7 +344,8 @@ HTML
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
-        $fieldset->addField('price_custom_attribute',
+        $fieldset->addField(
+            'price_custom_attribute',
             'hidden',
             [
                 'name' => 'price_custom_attribute',
@@ -342,7 +355,8 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset->addField('price_variation_mode',
+        $fieldset->addField(
+            'price_variation_mode',
             self::SELECT,
             [
                 'name' => 'price_variation_mode',
@@ -369,7 +383,8 @@ HTML
             $defaultValue = $this->formData['map_price_mode'];
         }
 
-        $fieldset->addField('map_price_mode',
+        $fieldset->addField(
+            'map_price_mode',
             self::SELECT,
             [
                 'name' => 'map_price_mode',
@@ -387,7 +402,8 @@ HTML
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
-        $fieldset->addField('map_price_custom_attribute',
+        $fieldset->addField(
+            'map_price_custom_attribute',
             'hidden',
             [
                 'name' => 'map_price_custom_attribute',
@@ -397,7 +413,8 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset->addField('promotions_mode',
+        $fieldset->addField(
+            'promotions_mode',
             self::SELECT,
             [
                 'name' => 'promotions_mode',
@@ -419,7 +436,9 @@ HTML
             ]
         );
 
-        $fieldset->addField('promotions_container', self::CUSTOM_CONTAINER,
+        $fieldset->addField(
+            'promotions_container',
+            self::CUSTOM_CONTAINER,
             [
                 'text' => $this->getPromotionsHtml($form),
                 'css_class' => 'm2epro-fieldset-table',
@@ -429,7 +448,8 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset->addField('price_increase_vat_percent',
+        $fieldset->addField(
+            'price_increase_vat_percent',
             self::SELECT,
             [
                 'name' => 'price_increase_vat_percent',
@@ -454,7 +474,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('price_vat_percent',
+        $fieldset->addField(
+            'price_vat_percent',
             'text',
             [
                 'name' => 'price_vat_percent',
@@ -469,7 +490,8 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset = $form->addFieldset('magento_block_walmart_template_selling_format_details',
+        $fieldset = $form->addFieldset(
+            'magento_block_walmart_template_selling_format_details',
             [
                 'legend' => $this->__('Details'),
                 'class' => 'm2epro-marketplace-depended-block',
@@ -479,21 +501,26 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset->addField('lag_time_custom_attribute', 'hidden',
+        $fieldset->addField(
+            'lag_time_custom_attribute',
+            'hidden',
             [
                 'name' => 'lag_time_custom_attribute',
                 'value' => $this->formData['lag_time_custom_attribute']
             ]
         );
 
-        $fieldset->addField('lag_time_value', 'hidden',
+        $fieldset->addField(
+            'lag_time_value',
+            'hidden',
             [
                 'name' => 'lag_time_value',
                 'value' => $this->formData['lag_time_value']
             ]
         );
 
-        $fieldset->addField('lag_time_mode',
+        $fieldset->addField(
+            'lag_time_mode',
             self::SELECT,
             [
                 'name' => 'lag_time_mode',
@@ -517,7 +544,9 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset->addField('product_tax_code_custom_attribute', 'hidden',
+        $fieldset->addField(
+            'product_tax_code_custom_attribute',
+            'hidden',
             [
                 'name' => 'product_tax_code_custom_attribute',
                 'value' => $this->formData['product_tax_code_custom_attribute']
@@ -529,7 +558,9 @@ HTML
             $defaultValue = $this->formData['product_tax_code_mode'];
         }
 
-        $fieldset->addField('product_tax_code_mode', self::SELECT,
+        $fieldset->addField(
+            'product_tax_code_mode',
+            self::SELECT,
             [
                 'name' => 'product_tax_code_mode',
                 'label' => $this->__('Product Tax Code'),
@@ -539,7 +570,8 @@ HTML
                 'class' => 'select',
                 'required' => true,
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('
+                'tooltip' => $this->__(
+                    '
                     A tax code assigned to the taxable Item. The PTC is used by Walmart to automatically<br>
                     calculate the taxes on each sale based on the Item sold and delivery location.<br><br>
                     <strong>Note:</strong> The current Sales Tax Codes can be found
@@ -549,7 +581,8 @@ HTML
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
-        $fieldset->addField('product_tax_code_custom_value',
+        $fieldset->addField(
+            'product_tax_code_custom_value',
             'text',
             [
                 'name' => 'product_tax_code_custom_value',
@@ -557,19 +590,21 @@ HTML
                 'label' => $this->__('Product Tax Code Value'),
                 'value' => $this->formData['product_tax_code_custom_value'],
                 'class' => 'M2ePro-required-when-visible M2ePro-validation-int M2ePro-validation-walmart-tax-code',
+                'style' => 'width: 65%',
                 'field_extra_attributes' => 'style="display: none;"',
                 'after_element_html' => '<span id="tax_codes">' . $this->createBlock('Magento\Button')
                                      ->setData('label', $this->__('Show Sales Tax Codes'))
-                                     ->addData(array(
+                                     ->addData([
                                          'onclick' => 'WalmartTemplateSellingFormatObj.openTaxCodePopup(false)',
                                          'class'   => 'add bt_tax_codes primary'
-                                     ))->toHtml() . '</span>'
+                                     ])->toHtml() . '</span>'
             ]
         );
 
         // ---------------------------------------
 
-        $fieldset = $form->addFieldset('magento_block_walmart_template_selling_format_shipping',
+        $fieldset = $form->addFieldset(
+            'magento_block_walmart_template_selling_format_shipping',
             [
                 'legend' => $this->__('Shipping'),
                 'class' => 'm2epro-marketplace-depended-block',
@@ -579,7 +614,9 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset->addField('item_weight_custom_attribute', 'hidden',
+        $fieldset->addField(
+            'item_weight_custom_attribute',
+            'hidden',
             [
                 'name' => 'item_weight_custom_attribute',
                 'value' => $this->formData['item_weight_custom_attribute']
@@ -591,7 +628,8 @@ HTML
             $defaultValue = $this->formData['item_weight_mode'];
         }
 
-        $fieldset->addField('item_weight_mode',
+        $fieldset->addField(
+            'item_weight_mode',
             self::SELECT,
             [
                 'name' => 'item_weight_mode',
@@ -606,7 +644,8 @@ HTML
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
-        $fieldset->addField('item_weight_custom_value',
+        $fieldset->addField(
+            'item_weight_custom_value',
             'text',
             [
                 'name' => 'item_weight_custom_value',
@@ -621,7 +660,9 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset->addField('must_ship_alone_custom_attribute', 'hidden',
+        $fieldset->addField(
+            'must_ship_alone_custom_attribute',
+            'hidden',
             [
                 'name' => 'must_ship_alone_custom_attribute',
                 'value' => $this->formData['must_ship_alone_custom_attribute']
@@ -633,7 +674,8 @@ HTML
             $defaultValue = $this->formData['must_ship_alone_mode'];
         }
 
-        $fieldset->addField('must_ship_alone_mode',
+        $fieldset->addField(
+            'must_ship_alone_mode',
             self::SELECT,
             [
                 'name' => 'must_ship_alone_mode',
@@ -643,13 +685,22 @@ HTML
                 'value' => $defaultValue,
                 'class' => 'select',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('Specify whether the Item must be shipped alone or not.')
+                'tooltip' => $this->__(
+                    'Specify whether the Item must be shipped alone or not. <br><br>
+                     <strong>Note:</strong> If the option is enabled, Walmart order will be created for each
+                     ordered item. It is because Walmart will recognize each item as a different shipment. For example,
+                     if a buyer orders one product with a quantity of 3,
+                     there will be 3 separate Walmart orders for each item.
+                    '
+                )
             ]
         )->addCustomAttribute('allowed_attribute_types', 'boolean');
 
         // ---------------------------------------
 
-        $fieldset->addField('ships_in_original_packaging_custom_attribute', 'hidden',
+        $fieldset->addField(
+            'ships_in_original_packaging_custom_attribute',
+            'hidden',
             [
                 'name' => 'ships_in_original_packaging_custom_attribute',
                 'value' => $this->formData['ships_in_original_packaging_custom_attribute']
@@ -662,7 +713,8 @@ HTML
             $defaultValue = $this->formData['ships_in_original_packaging_mode'];
         }
 
-        $fieldset->addField('ships_in_original_packaging_mode',
+        $fieldset->addField(
+            'ships_in_original_packaging_mode',
             self::SELECT,
             [
                 'name' => 'ships_in_original_packaging_mode',
@@ -679,7 +731,8 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset->addField('shipping_override_rule_mode',
+        $fieldset->addField(
+            'shipping_override_rule_mode',
             self::SELECT,
             [
                 'name' => 'shipping_override_rule_mode',
@@ -699,7 +752,9 @@ HTML
             ]
         );
 
-        $fieldset->addField('shipping_override_rule_container', self::CUSTOM_CONTAINER,
+        $fieldset->addField(
+            'shipping_override_rule_container',
+            self::CUSTOM_CONTAINER,
             [
                 'text' => $this->getShippingOverrideRuleHtml($form),
                 'css_class' => 'm2epro-fieldset-table',
@@ -709,12 +764,14 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset = $form->addFieldset('magento_block_walmart_template_selling_format_sale_time',
+        $fieldset = $form->addFieldset(
+            'magento_block_walmart_template_selling_format_sale_time',
             [
                 'legend' => $this->__('Offer Start/End Date'),
                 'class' => 'm2epro-marketplace-depended-block',
                 'collapsable' => false,
-                'tooltip' => $this->__('
+                'tooltip' => $this->__(
+                    '
                         It is highly recommended to keep the default Offer Start/End Date values, i.e.
                         Immediate and Endless. Your offer will become visible on
                         Walmart as soon as it is in stock.<br><br>
@@ -724,14 +781,16 @@ HTML
                         20th November and stop selling on 30th November. <br><br>
 
                         Read more details <a href="%url%" target="_blank">here</a>.',
-                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/SgBhAQ')
-                    )
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/SgBhAQ')
+                )
             ]
         );
 
         // ---------------------------------------
 
-        $fieldset->addField('sale_time_start_date_custom_attribute', 'hidden',
+        $fieldset->addField(
+            'sale_time_start_date_custom_attribute',
+            'hidden',
             [
                 'name' => 'sale_time_start_date_custom_attribute',
                 'value' => $this->formData['sale_time_start_date_custom_attribute']
@@ -745,7 +804,8 @@ HTML
             $defaultValue = $this->formData['sale_time_start_date_mode'];
         }
 
-        $fieldset->addField('sale_time_start_date_mode',
+        $fieldset->addField(
+            'sale_time_start_date_mode',
             self::SELECT,
             [
                 'name' => 'sale_time_start_date_mode',
@@ -758,7 +818,8 @@ HTML
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,date');
 
-        $fieldset->addField('sale_time_start_date_value',
+        $fieldset->addField(
+            'sale_time_start_date_value',
             'date',
             [
                 'name' => 'sale_time_start_date_value',
@@ -772,7 +833,9 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset->addField('sale_time_end_date_custom_attribute', 'hidden',
+        $fieldset->addField(
+            'sale_time_end_date_custom_attribute',
+            'hidden',
             [
                 'name' => 'sale_time_end_date_custom_attribute',
                 'value' => $this->formData['sale_time_end_date_custom_attribute']
@@ -786,7 +849,8 @@ HTML
             $defaultValue = $this->formData['sale_time_end_date_mode'];
         }
 
-        $fieldset->addField('sale_time_end_date_mode',
+        $fieldset->addField(
+            'sale_time_end_date_mode',
             self::SELECT,
             [
                 'name' => 'sale_time_end_date_mode',
@@ -799,7 +863,8 @@ HTML
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,date');
 
-        $fieldset->addField('sale_time_end_date_value',
+        $fieldset->addField(
+            'sale_time_end_date_value',
             'date',
             [
                 'name' => 'sale_time_end_date_value',
@@ -813,7 +878,8 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset = $form->addFieldset('magento_block_walmart_template_selling_format_attributes',
+        $fieldset = $form->addFieldset(
+            'magento_block_walmart_template_selling_format_attributes',
             [
                 'legend' => $this->__('Attributes'),
                 'class' => 'm2epro-marketplace-depended-block',
@@ -823,7 +889,9 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset->addField('attributes_mode', self::SELECT,
+        $fieldset->addField(
+            'attributes_mode',
+            self::SELECT,
             [
                 'name' => 'attributes_mode',
                 'label' => $this->__('Attributes'),
@@ -894,7 +962,6 @@ HTML
         ];
 
         if ($this->formData['qty_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED) {
-
             $tmpOption['attrs']['selected'] = 'selected';
         }
 
@@ -1134,7 +1201,7 @@ HTML
 
     public function getPromotionsHtml($form)
     {
-        return $this->createBlock('Walmart\Template\SellingFormat\Edit\Form\Promotions')
+        return $this->createBlock('Walmart_Template_SellingFormat_Edit_Form_Promotions')
                     ->setParentForm($form)
                     ->setAttributesByInputType('text_date', $this->generalAttributesByInputTypes['text_date'])
                     ->setAttributesByInputType('text_price', $this->generalAttributesByInputTypes['text_price'])
@@ -1143,7 +1210,7 @@ HTML
 
     public function getShippingOverrideRuleHtml($form)
     {
-        return $this->createBlock('Walmart\Template\SellingFormat\Edit\Form\ShippingOverrideRules')
+        return $this->createBlock('Walmart_Template_SellingFormat_Edit_Form_ShippingOverrideRules')
                      ->setParentForm($form)
                      ->setGeneralFromAllAttributeSets($this->generalAttributes)
                      ->toHtml();
@@ -1151,17 +1218,18 @@ HTML
 
     public function appendAttributesFields(
         \Magento\Framework\Data\Form\Element\Fieldset $fieldSet,
-        $fieldCount, $name
-    ){
+        $fieldCount,
+        $name
+    ) {
         $helper = $this->getHelper('Data');
         for ($i = 0; $i < $fieldCount; $i++) {
-
             $value = '';
             if (!empty($this->formData[$name][$i]['name'])) {
                 $value = $helper->escapeHtml($this->formData[$name][$i]['name']);
             }
 
-            $nameBlock = $this->elementFactory->create('text',
+            $nameBlock = $this->elementFactory->create(
+                'text',
                 [
                     'data' => [
                         'name'  => $name.'_name[]',
@@ -1181,7 +1249,8 @@ HTML
                 $value = $helper->escapeHtml($this->formData[$name][$i]['value']);
             }
 
-            $valueBlock = $this->elementFactory->create('text',
+            $valueBlock = $this->elementFactory->create(
+                'text',
                 [
                     'data' => [
                         'name' => $name.'_value[]',
@@ -1197,7 +1266,7 @@ HTML
             $valueBlock->setId($name.'_value_'.$i);
             $valueBlock->setForm($fieldSet->getForm());
 
-            $button = $this->createBlock('Magento\Button\MagentoAttribute')->addData([
+            $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
                 'label' => $this->__('Insert Attribute'),
                 'destination_id' => $name.'_value_'.$i,
                 'magento_attributes' => $this->getClearAttributesByInputTypesOptions(),
@@ -1212,7 +1281,8 @@ HTML
                 ]
             ]);
 
-            $fieldSet->addField('attributes_container_'.$i,
+            $fieldSet->addField(
+                'attributes_container_'.$i,
                 self::CUSTOM_CONTAINER,
                 [
                     'label' => $this->__('Attributes (name / value) #%number%', $i + 1),
@@ -1226,7 +1296,8 @@ HTML
             );
         }
 
-        $fieldSet->addField($name.'_actions',
+        $fieldSet->addField(
+            $name.'_actions',
             self::CUSTOM_CONTAINER,
             [
                 'label' => '',
@@ -1254,27 +1325,28 @@ HTML
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Template\SellingFormat')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Template\SellingFormat::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Walmart\Template\SellingFormat')
-        );
-
-        $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\SellingFormat::class)
         );
 
         $this->jsPhp->addConstants(
             $this->getHelper('Data')
-                 ->getClassConstants('\Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride')
+                ->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Walmart')
+            $this->getHelper('Data')
+                 ->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride::class)
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Template\SellingFormat'));
+        $this->jsPhp->addConstants(
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class)
+        );
+
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart_Template_SellingFormat'));
         $this->jsUrl->addUrls([
             'formSubmit'    => $this->getUrl(
                 '*/walmart_template_sellingFormat/save',
@@ -1289,22 +1361,18 @@ HTML
             'm2epro_skin_url' => $this->getViewFileUrl('Ess_M2ePro')
         ]);
 
-        $thePriceText = 'The Price, at which you want to sell your Product(s) at specific time.';
-        $thePriceText .= '<br/><b>Note:</b> The Final Price is only used for Simple Products.';
-
-        $wrongValue = 'Wrong value. Must be no more than 30.';
-        $wrongValue .= ' Max applicable length is 6 characters, including the decimal (e.g., 12.345).';
-
-        $text = 'You should specify a unique pair of Magento';
-        $text .= ' Attribute and Price Change value for each Discount Rule.';
-
         $this->jsTranslator->addTranslations([
             'QTY' => $this->__('QTY'),
             'Price' => $this->__('Price'),
 
             'The Price, at which you want to sell your Product(s) at specific time.' =>
                 $this->__('The Price, at which you want to sell your Product(s) at specific time.'),
-            $thePriceText => $this->__($thePriceText),
+            'The Price, at which you want to sell your Product(s) at specific time.<br/>
+            <b>Note:</b> The Final Price is only used for Simple Products.' =>
+                $this->__(
+                    'The Price, at which you want to sell your Product(s) at specific time.<br/>
+                    <b>Note:</b> The Final Price is only used for Simple Products.'
+                ),
 
             'Add Selling Policy' => $this->__('Add Selling Policy'),
             'The specified Title is already used for other Policy. Policy Title must be unique.' =>
@@ -1315,10 +1383,17 @@ HTML
             'Date range is not valid.' => $this->__('Incorrect Promotion Dates.'),
 
             'Wrong value. Only integer numbers.' => $this->__('Wrong value. Only integer numbers.'),
-            $wrongValue => $this->__($wrongValue),
+            'wrong_value_more_than_30' => $this->__(
+                'Wrong value. Must be no more than 30. Max applicable length is 6 characters,
+                including the decimal (e.g., 12.345).'
+            ),
             'At least one Selling Type should be enabled.' => $this->__('At least one Selling Type should be enabled.'),
             'The Quantity value should be unique.' => $this->__('The Quantity value should be unique.'),
-            $text => $this->__($text),
+            'You should specify a unique pair of Magento Attribute and Price Change value for each Discount Rule.' =>
+                $this->__(
+                    'You should specify a unique pair of Magento Attribute
+                    and Price Change value for each Discount Rule.'
+                ),
             'You should add at least one Discount Rule.' => $this->__('You should add at least one Discount Rule.'),
             'Any' => $this->__('Any'),
             'Add Shipping Override Policy.' => $this->__('Add Shipping Override Policy.'),
@@ -1386,9 +1461,9 @@ JS
 
         $queryStmt = $connRead->select()
                               ->from(
-                                  $this->getHelper('Module\\Database\\Structure')
+                                  $this->getHelper('Module_Database_Structure')
                                       ->getTableNameWithPrefix('m2epro_walmart_dictionary_marketplace'),
-                                  array('marketplace_id')
+                                  ['marketplace_id']
                               )
                               ->where('`tax_codes` IS NOT NULL')
                               ->query();
@@ -1422,7 +1497,7 @@ JS
             'price_variation_mode' => SellingFormat::PRICE_VARIATION_MODE_PARENT,
 
             'promotions_mode' => SellingFormat::PROMOTIONS_MODE_NO,
-            'promotions' => array(),
+            'promotions' => [],
 
             'sale_time_start_date_mode' => SellingFormat::DATE_NONE,
             'sale_time_end_date_mode' => SellingFormat::DATE_NONE,
@@ -1498,7 +1573,7 @@ JS
             'value' => $this->getAttributesByInputTypesOptions(
                 $attributeMode,
                 $attributeType,
-                function($attribute) use ($attributeName) {
+                function ($attribute) use ($attributeName) {
                     return $attribute['code'] == $this->formData[$attributeName];
                 }
             ),
@@ -1521,7 +1596,7 @@ JS
 
         $result = ['value' => $value, 'label' => $attributeLabel];
 
-        if (is_null($value)) {
+        if ($value === null) {
             return $result;
         }
 
@@ -1538,7 +1613,7 @@ JS
         $optionsResult = [];
         $helper = $this->getHelper('Data');
 
-        foreach($this->generalAttributesByInputTypes[$attributeType] as $attribute) {
+        foreach ($this->generalAttributesByInputTypes[$attributeType] as $attribute) {
             $tmpOption = [
                 'value' => $value,
                 'label' => $helper->escapeHtml($attribute['label']),
@@ -1560,7 +1635,7 @@ JS
         $optionsResult = [];
         $helper = $this->getHelper('Data');
 
-        foreach($this->allAttributesByInputTypes['text_select'] as $attribute) {
+        foreach ($this->allAttributesByInputTypes['text_select'] as $attribute) {
             $optionsResult[] = [
                 'value' => $attribute['code'],
                 'label' => $helper->escapeHtml($attribute['label']),

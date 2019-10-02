@@ -12,6 +12,10 @@ use Ess\M2ePro\Model\Listing\Product;
 use Ess\M2ePro\Model\ResourceModel\Walmart\Template as WalmartTemplate;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator;
 
+/**
+ * Class Revise
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization
+ */
 class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization\AbstractModel
 {
     //########################################
@@ -43,6 +47,7 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
     protected function performActions()
     {
         $this->executeQtyChanged();
+        $this->executeLagTimeChanged();
 
         $this->executePriceChanged();
         $this->executePromotionsPriceChanged();
@@ -57,21 +62,20 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
 
     private function executeQtyChanged()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update Quantity');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Update Quantity');
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstances(
-            array(\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE)
+            [\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE]
         );
 
         $changedListingsProducts = array_merge($changedListingsProducts, $this->getPendingListingProducts());
 
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
-
                 $isExistInRunner = $this->getRunner()->isExistProductWithAction(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                 );
 
                 if ($isExistInRunner) {
@@ -79,12 +83,14 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
                 }
 
                 /** @var $configurator \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Walmart\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
                 $configurator->reset();
                 $configurator->allowQty();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -96,10 +102,66 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
             } catch (\Exception $exception) {
+                $this->logError($listingProduct, $exception, false);
+                continue;
+            }
+        }
 
+        $this->getActualOperationHistory()->saveTimePoint(__METHOD__);
+    }
+
+    private function executeLagTimeChanged()
+    {
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Update Lag Time');
+
+        /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
+        $changedListingsProducts = $this->getProductChangesManager()->getInstances(
+            [\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE]
+        );
+
+        $changedListingsProducts = array_merge($changedListingsProducts, $this->getPendingListingProducts());
+
+        foreach ($changedListingsProducts as $listingProduct) {
+            try {
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
+                /** @var $configurator \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator */
+                $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
+                $configurator->reset();
+                $configurator->allowLagTime();
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
+                if (!$this->getInspector()->isMeetReviseLagTimeRequirements($listingProduct)) {
+                    continue;
+                }
+
+                $this->getRunner()->addProduct(
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
+                );
+            } catch (\Exception $exception) {
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -110,21 +172,20 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
 
     private function executePriceChanged()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update Price');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Update Price');
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstances(
-            array(\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE)
+            [\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE]
         );
 
         $changedListingsProducts = array_merge($changedListingsProducts, $this->getPendingListingProducts());
 
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
-
                 $isExistInRunner = $this->getRunner()->isExistProductWithAction(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                 );
 
                 if ($isExistInRunner) {
@@ -132,12 +193,14 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
                 }
 
                 /** @var $configurator \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Walmart\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
                 $configurator->reset();
                 $configurator->allowPrice();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -149,11 +212,11 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
-
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception);
                 continue;
             }
@@ -164,26 +227,27 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
 
     private function executePromotionsPriceChanged()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update Price');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Update Price');
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstances(
-            array(\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE)
+            [\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE]
         );
 
         $changedListingsProducts = array_merge($changedListingsProducts, $this->getPendingListingProducts());
 
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
 
                 /** @var $configurator \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Walmart\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
                 $configurator->reset();
                 $configurator->allowPromotions();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -195,10 +259,11 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -211,9 +276,9 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
 
     private function executeDetailsChanged()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update details');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Update details');
 
-        $attributesForProductChange = array();
+        $attributesForProductChange = [];
 
         //--
         $descriptionTemplateCollection = $this->walmartFactory
@@ -237,7 +302,7 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
 
         //--
         $categoriesTemplatesCollection = $this->activeRecordFactory
-                                            ->getObject('Walmart\Template\Category')
+                                            ->getObject('Walmart_Template_Category')
                                             ->getCollection();
 
         /** @var \Ess\M2ePro\Model\Walmart\Template\Category[] $categoryTemplates */
@@ -250,7 +315,7 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
 
         //--
         $shippingTemplatesCollection = $this->activeRecordFactory
-                                            ->getObject('Walmart\Template\SellingFormat')
+                                            ->getObject('Walmart_Template_SellingFormat')
                                             ->getCollection();
 
         /** @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat[] $sellingFormatTemplates */
@@ -262,11 +327,10 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
         //--
 
         foreach ($this->getChangedListingsProducts($attributesForProductChange) as $listingProduct) {
-
             try {
-
                 $isExistInRunner = $this->getRunner()->isExistProductWithAction(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                 );
 
                 if ($isExistInRunner) {
@@ -303,9 +367,7 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
 
                 !$walmartListingProduct->isDetailsDataChanged() &&
                 $walmartListingProduct->setData('is_details_data_changed', true)->save();
-
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -318,18 +380,19 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
 
     private function executeNeedSynchronize()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Execute is need synchronize');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Execute is need synchronize');
 
         $listingProductCollection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
         $listingProductCollection->addFieldToFilter(
             'status',
-            array('in' => array(
+            ['in' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
                 \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN,
-            ))
+            ]]
         );
         $listingProductCollection->addFieldToFilter(
-            'synch_status',\Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_NEED
+            'synch_status',
+            \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_NEED
         );
         $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
 
@@ -338,24 +401,24 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
         $limit = $this->getConfigValue($this->getFullSettingsPath().'need_synch/', 'items_limit');
 
         $listingProductCollection->getSelect()->joinLeft(
-            array(
-                'mpc' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_processing_lock')
-            ),
+            [
+                'mpc' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_processing_lock')
+            ],
             "mpc.object_id = main_table.id AND mpc.tag='{$tag}' AND mpc.model_name = '{$modelName}'",
-            array()
+            []
         );
-        $listingProductCollection->addFieldToFilter('mpc.id', array('null' => true));
+        $listingProductCollection->addFieldToFilter('mpc.id', ['null' => true]);
 
         $listingProductCollection->getSelect()->limit($limit);
 
         /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
         foreach ($listingProductCollection->getItems() as $listingProduct) {
-
             try {
-                $listingProduct->setData('synch_status',\Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_SKIP)->save();
+                $listingProduct->setData('synch_status', \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_SKIP)->save();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithAction(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                 );
 
                 if ($isExistInRunner) {
@@ -367,12 +430,11 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
                 }
 
                 /** @var $configurator \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Walmart\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
                 $configurator->reset();
 
                 $walmartListingProduct = $listingProduct->getChildObject();
                 $reasons               = $listingProduct->getSynchReasons();
-                $isActionRequired      = false;
 
                 $detailsReasons = [
                     WalmartTemplate\Category::SYNCH_REASON,
@@ -380,8 +442,7 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
                     WalmartTemplate\SellingFormat::SYNCH_REASON_DETAILS
                 ];
 
-                if (count(array_intersect($detailsReasons, $reasons)) > 0) {
-
+                if (!empty(array_intersect($detailsReasons, $reasons))) {
                     if ($this->getInspector()->isMeetReviseDetailsRequirements($listingProduct, false)) {
                         if (!$walmartListingProduct->isDetailsDataChanged()) {
                             $walmartListingProduct->setData('is_details_data_changed', true)->save();
@@ -397,37 +458,40 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
                     $this->getInspector()->isMeetReviseQtyRequirements($listingProduct)
                 ) {
                     $configurator->allowQty();
-                    $isActionRequired = true;
+                }
+
+                if (in_array(WalmartTemplate\SellingFormat::SYNCH_REASON_LAG_TIME, $reasons) &&
+                    $this->getInspector()->isMeetReviseLagTimeRequirements($listingProduct)
+                ) {
+                    $configurator->allowLagTime();
                 }
 
                 if (in_array(WalmartTemplate\SellingFormat::SYNCH_REASON_PRICE, $reasons) &&
                     $this->getInspector()->isMeetRevisePriceRequirements($listingProduct)
                 ) {
                     $configurator->allowPrice();
-                    $isActionRequired = true;
                 }
 
                 if (in_array(WalmartTemplate\SellingFormat::SYNCH_REASON_PROMOTIONS, $reasons) &&
                     $this->getInspector()->isMeetRevisePromotionsPriceRequirements($listingProduct)
                 ) {
                     $configurator->allowPromotions();
-                    $isActionRequired = true;
-                }
-
-                if (!$isActionRequired) {
-                    continue;
                 }
 
                 $this->checkUpdatePriceOrPromotionsFeedsLock(
-                    $listingProduct, $configurator, \Ess\M2ePro\Model\Listing\Log::ACTION_REVISE_PRODUCT_ON_COMPONENT
+                    $listingProduct,
+                    $configurator,
+                    \Ess\M2ePro\Model\Listing\Log::ACTION_REVISE_PRODUCT_ON_COMPONENT
                 );
 
-                if (count($configurator->getAllowedDataTypes()) == 0) {
+                if (empty($configurator->getAllowedDataTypes())) {
                     continue;
                 }
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -435,10 +499,11 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -449,13 +514,14 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
 
     private function executeTotal()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Execute revise all');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Execute revise all');
 
         $lastListingProductProcessed = $this->getConfigValue(
-            $this->getFullSettingsPath().'total/','last_listing_product_id'
+            $this->getFullSettingsPath().'total/',
+            'last_listing_product_id'
         );
 
-        if (is_null($lastListingProductProcessed)) {
+        if ($lastListingProductProcessed === null) {
             return;
         }
 
@@ -463,20 +529,19 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
 
         $collection = $this->walmartFactory->getObject('Listing\Product')
             ->getCollection()
-            ->addFieldToFilter('id',array('gt' => $lastListingProductProcessed))
+            ->addFieldToFilter('id', ['gt' => $lastListingProductProcessed])
             ->addFieldToFilter('status', \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED)
             ->addFieldToFilter('is_variation_parent', 0);
 
         $collection->getSelect()->limit($itemsPerCycle);
         $collection->getSelect()->order('id ASC');
 
-        /* @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+        /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
         foreach ($collection->getItems() as $listingProduct) {
-
             try {
-
                 $isExistInRunner = $this->getRunner()->isExistProductWithAction(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                 );
 
                 if ($isExistInRunner) {
@@ -484,10 +549,12 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
                 }
 
                 /** @var $configurator \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Walmart\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -499,10 +566,11 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -511,17 +579,18 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
         $lastListingProduct = $collection->getLastItem()->getId();
 
         if ($collection->getSize() < $itemsPerCycle) {
-
             $this->setConfigValue(
-                $this->getFullSettingsPath().'total/', 'end_date',
+                $this->getFullSettingsPath().'total/',
+                'end_date',
                 $this->getHelper('Data')->getCurrentGmtDate()
             );
 
-            $lastListingProduct = NULL;
+            $lastListingProduct = null;
         }
 
         $this->setConfigValue(
-            $this->getFullSettingsPath().'total/', 'last_listing_product_id',
+            $this->getFullSettingsPath().'total/',
+            'last_listing_product_id',
             $lastListingProduct
         );
 
@@ -536,11 +605,12 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
      */
     private function getChangedListingsProducts(array $trackingAttributes)
     {
-        $filteredChangedListingsProducts = array();
+        $filteredChangedListingsProducts = [];
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstancesByListingProduct(
-            array_unique($trackingAttributes), true
+            array_unique($trackingAttributes),
+            true
         );
 
         foreach ($changedListingsProducts as $changedListingProduct) {
@@ -562,7 +632,8 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstancesByVariationOption(
-            array_unique($trackingAttributes), true
+            array_unique($trackingAttributes),
+            true
         );
 
         foreach ($changedListingsProducts as $changedListingProduct) {
@@ -583,8 +654,10 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
     //########################################
 
     protected function checkUpdatePriceOrPromotionsFeedsLock(
-        Product $listingProduct, Configurator $configurator, $action
-    ){
+        Product $listingProduct,
+        Configurator $configurator,
+        $action
+    ) {
         if (count($configurator->getAllowedDataTypes()) !== 1) {
             return;
         }
@@ -598,8 +671,7 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
         }
 
         if ($configurator->isPriceAllowed()) {
-
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 'Item Price cannot yet be submitted. Walmart allows updating the Price information no sooner than
                 24 hours after the relevant product is listed on their website.',
@@ -607,10 +679,8 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
             );
 
             $configurator->disallowPrice();
-
         } else {
-
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 'Item Promotion Price cannot yet be submitted. Walmart allows updating the Promotion Price
                 information no sooner than 24 hours after the relevant product is listed on their website.',
@@ -620,7 +690,7 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
             $configurator->disallowPromotions();
         }
 
-        $logger = $this->modelFactory->getObject('Walmart\Listing\Product\Action\Logger');
+        $logger = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Logger');
         $logger->setAction($action);
         $logger->setActionId($this->activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId());
         $logger->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
@@ -632,7 +702,7 @@ class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
         $walmartListingProduct = $listingProduct->getChildObject();
 
-        if (is_null($walmartListingProduct->getListDate())) {
+        if ($walmartListingProduct->getListDate() === null) {
             return false;
         }
 

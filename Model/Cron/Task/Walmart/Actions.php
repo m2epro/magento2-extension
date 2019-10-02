@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Walmart;
 
+/**
+ * Class Actions
+ * @package Ess\M2ePro\Model\Cron\Task\Walmart
+ */
 class Actions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'walmart/actions';
@@ -29,7 +33,7 @@ class Actions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
-        $actionsProcessor = $this->modelFactory->getObject('Walmart\Actions\Processor');
+        $actionsProcessor = $this->modelFactory->getObject('Walmart_Actions_Processor');
         $actionsProcessor->setLockItem($this->getLockItem());
         $actionsProcessor->process();
     }

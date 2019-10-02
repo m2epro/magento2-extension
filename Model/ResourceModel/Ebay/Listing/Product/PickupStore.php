@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product;
 
 use \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\PickupStore\CollectionFactory;
 
+/**
+ * Class PickupStore
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product
+ */
 class PickupStore extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     protected $pickupStoreCollectionFactory;
@@ -23,8 +27,7 @@ class PickupStore extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         $connectionName = null
-    )
-    {
+    ) {
         $this->pickupStoreCollectionFactory = $pickupStoreCollectionFactory;
         parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
     }
@@ -54,7 +57,6 @@ class PickupStore extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
         $insertData = [];
         foreach ($productsIds as $productId) {
             foreach ($storesIds as $storeId) {
-
                 $key = $productId . '|' . $storeId;
                 if (isset($existData[$key])) {
                     continue;
@@ -73,7 +75,7 @@ class PickupStore extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
         }
 
         $this->getConnection()->insertMultiple(
-            $this->activeRecordFactory->getObject('Ebay\Listing\Product\PickupStore')->getResource()->getMainTable(),
+            $this->activeRecordFactory->getObject('Ebay_Listing_Product_PickupStore')->getResource()->getMainTable(),
             $insertData
         );
     }
@@ -97,14 +99,14 @@ class PickupStore extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
             }
 
             $this->getConnection()->update(
-                $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\State')->getResource()->getMainTable(),
+                $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')->getResource()->getMainTable(),
                 ['is_deleted' => 1],
                 ['sku = ?' => $onlineSku, 'account_pickup_store_id IN (?)' => $usedPickupStoresIds]
             );
         }
 
         $this->getConnection()->delete(
-            $this->activeRecordFactory->getObject('Ebay\Listing\Product\PickupStore')->getResource()->getMainTable(),
+            $this->activeRecordFactory->getObject('Ebay_Listing_Product_PickupStore')->getResource()->getMainTable(),
             ['listing_product_id = ?' => $listingProduct->getId()]
         );
     }
@@ -129,7 +131,7 @@ class PickupStore extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
         }
 
         $this->getConnection()->update(
-            $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\State')->getResource()->getMainTable(),
+            $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')->getResource()->getMainTable(),
             ['is_deleted' => 1],
             ['sku = ?' => $onlineSku, 'account_pickup_store_id IN (?)' => $usedPickupStoresIds]
         );

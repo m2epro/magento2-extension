@@ -60,13 +60,13 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_sellingformat');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_sellingformat');
         return parent::save();
     }
 
     public function delete()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_sellingformat');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_sellingformat');
         return parent::delete();
     }
 
@@ -78,9 +78,9 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getListings($asObjects = false, array $filters = array())
+    public function getListings($asObjects = false, array $filters = [])
     {
-        return $this->getRelatedComponentItems('Listing','template_selling_format_id',$asObjects,$filters);
+        return $this->getRelatedComponentItems('Listing', 'template_selling_format_id', $asObjects, $filters);
     }
 
     //########################################
@@ -91,11 +91,13 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      * @return array|\Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getBusinessDiscounts($asObjects = false, array $filters = array())
+    public function getBusinessDiscounts($asObjects = false, array $filters = [])
     {
         $businessDiscounts = $this->getRelatedSimpleItems(
-            'Amazon\Template\SellingFormat\BusinessDiscount',
-            'template_selling_format_id', $asObjects, $filters
+            'Amazon_Template_SellingFormat_BusinessDiscount',
+            'template_selling_format_id',
+            $asObjects,
+            $filters
         );
 
         if ($asObjects) {
@@ -171,7 +173,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      */
     public function getQtySource()
     {
-        return array(
+        return [
             'mode'      => $this->getQtyMode(),
             'value'     => $this->getQtyNumber(),
             'attribute' => $this->getData('qty_custom_attribute'),
@@ -179,7 +181,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
             'qty_min_posted_value'      => $this->getQtyMinPostedValue(),
             'qty_max_posted_value'      => $this->getQtyMaxPostedValue(),
             'qty_percentage'            => $this->getQtyPercentage()
-        );
+        ];
     }
 
     /**
@@ -187,7 +189,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      */
     public function getQtyAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getQtySource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE) {
@@ -311,11 +313,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      */
     public function getRegularPriceSource()
     {
-        return array(
+        return [
             'mode'        => $this->getRegularPriceMode(),
             'coefficient' => $this->getRegularPriceCoefficient(),
             'attribute'   => $this->getData('regular_price_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -323,7 +325,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      */
     public function getRegularPriceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getRegularPriceSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
@@ -380,10 +382,10 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      */
     public function getRegularMapPriceSource()
     {
-        return array(
+        return [
             'mode'        => $this->getRegularMapPriceMode(),
             'attribute'   => $this->getData('regular_map_price_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -391,7 +393,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      */
     public function getRegularMapPriceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getRegularMapPriceSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
@@ -453,11 +455,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      */
     public function getRegularSalePriceSource()
     {
-        return array(
+        return [
             'mode'        => $this->getRegularSalePriceMode(),
             'coefficient' => $this->getRegularSalePriceCoefficient(),
             'attribute'   => $this->getData('regular_sale_price_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -465,7 +467,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      */
     public function getRegularSalePriceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getRegularSalePriceSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
@@ -511,11 +513,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      */
     public function getRegularSalePriceStartDateSource()
     {
-        return array(
+        return [
             'mode'        => $this->getRegularSalePriceStartDateMode(),
             'value'       => $this->getRegularSalePriceStartDateValue(),
             'attribute'   => $this->getData('regular_sale_price_start_date_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -523,7 +525,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      */
     public function getRegularSalePriceStartDateAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getRegularSalePriceStartDateSource();
 
         if ($src['mode'] == self::DATE_ATTRIBUTE) {
@@ -569,11 +571,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      */
     public function getRegularSalePriceEndDateSource()
     {
-        return array(
+        return [
             'mode'        => $this->getRegularSalePriceEndDateMode(),
             'value'       => $this->getRegularSalePriceEndDateValue(),
             'attribute'   => $this->getData('regular_sale_price_end_date_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -581,7 +583,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      */
     public function getRegularSalePriceEndDateAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getRegularSalePriceEndDateSource();
 
         if ($src['mode'] == self::DATE_ATTRIBUTE) {
@@ -671,11 +673,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      */
     public function getBusinessPriceSource()
     {
-        return array(
+        return [
             'mode'        => $this->getBusinessPriceMode(),
             'coefficient' => $this->getBusinessPriceCoefficient(),
             'attribute'   => $this->getData('business_price_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -683,7 +685,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      */
     public function getBusinessPriceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getBusinessPriceSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
@@ -785,10 +787,10 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
      */
     public function getBusinessDiscountsSource()
     {
-        return array(
+        return [
             'mode'                   => $this->getBusinessDiscountsMode(),
             'tier_customer_group_id' => $this->getBusinessDiscountsTierCustomerGroupId(),
-        );
+        ];
     }
 
     //########################################
@@ -801,7 +803,8 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
         $attributeHelper = $this->getHelper('Magento\Attribute');
 
         $isPriceConvertEnabled = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/magento/attribute/', 'price_type_converting'
+            '/magento/attribute/',
+            'price_type_converting'
         );
 
         if ($this->isRegularCustomerAllowed()) {
@@ -890,7 +893,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
 
         $businessDiscounts = $this->getBusinessDiscounts(true);
         foreach ($businessDiscounts as $businessDiscount) {
-            $attributes = array_merge($attributes,$businessDiscount->getUsedAttributes());
+            $attributes = array_merge($attributes, $businessDiscount->getUsedAttributes());
         }
 
         return array_unique($attributes);
@@ -909,7 +912,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
 
         foreach ($data['business_discounts'] as &$businessDiscount) {
             foreach ($businessDiscount as &$value) {
-                !is_null($value) && !is_array($value) && $value = (string)$value;
+                $value !== null && !is_array($value) && $value = (string)$value;
             }
         }
         unset($value);
@@ -929,7 +932,8 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Collection $listingCollection */
         $listingCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing'
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Listing'
         )->getCollection();
         $listingCollection->addFieldToFilter('template_selling_format_id', $this->getId());
         $listingCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
@@ -937,9 +941,10 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Product'
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Listing\Product'
         )->getCollection();
-        $listingProductCollection->addFieldToFilter('listing_id',array('in' => $listingCollection->getSelect()));
+        $listingProductCollection->addFieldToFilter('listing_id', ['in' => $listingCollection->getSelect()]);
 
         if ($onlyPhysicalUnits) {
             $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
@@ -955,12 +960,12 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'), true);
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id'], true);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

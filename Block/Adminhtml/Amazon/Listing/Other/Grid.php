@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    protected $cacheData = array();
+    protected $cacheData = [];
     protected $amazonFactory;
 
     //########################################
@@ -20,8 +24,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -54,7 +57,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->prepareCacheData();
 
         $collection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
-        $collection->getSelect()->group(array('account_id','marketplace_id'));
+        $collection->getSelect()->group(['account_id','marketplace_id']);
 
         // Set collection to grid
         $this->setCollection($collection);
@@ -64,23 +67,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('account', array(
+        $this->addColumn('account', [
             'header'    => $this->__('Account'),
             'align'     => 'left',
             'type'      => 'text',
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnAccount')
-        ));
+            'frame_callback' => [$this, 'callbackColumnAccount']
+        ]);
 
-        $this->addColumn('marketplace', array(
+        $this->addColumn('marketplace', [
             'header'    => $this->__('Marketplace'),
             'align'     => 'left',
             'type'      => 'text',
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnMarketplace')
-        ));
+            'frame_callback' => [$this, 'callbackColumnMarketplace']
+        ]);
 
-        $this->addColumn('products_total_count', array(
+        $this->addColumn('products_total_count', [
             'header'    => $this->__('Total Items'),
             'align'     => 'right',
             'width'     => '100px',
@@ -88,10 +91,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'     => 'products_total_count',
             'filter_index' => 'main_table.products_total_count',
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnTotalProducts')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTotalProducts']
+        ]);
 
-        $this->addColumn('products_active_count', array(
+        $this->addColumn('products_active_count', [
             'header'    => $this->__('Active Items'),
             'align'     => 'right',
             'width'     => '100px',
@@ -99,10 +102,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'     => 'products_active_count',
             'filter_index' => 'main_table.products_active_count',
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnListedProducts')
-        ));
+            'frame_callback' => [$this, 'callbackColumnListedProducts']
+        ]);
 
-        $this->addColumn('products_inactive_count', array(
+        $this->addColumn('products_inactive_count', [
             'header'    => $this->__('Inactive Items'),
             'align'     => 'right',
             'width'     => '100px',
@@ -110,8 +113,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'     => 'products_inactive_count',
             'filter_index' => 'main_table.products_inactive_count',
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnInactiveProducts')
-        ));
+            'frame_callback' => [$this, 'callbackColumnInactiveProducts']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -129,7 +132,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnMarketplace($value, $row, $column, $isExport)
     {
         $marketplaceTitle = $this->amazonFactory
-            ->getObjectLoaded('Marketplace',$row->getData('marketplace_id'))
+            ->getObjectLoaded('Marketplace', $row->getData('marketplace_id'))
             ->getTitle();
         return $this->getHelper('Data')->escapeHtml($marketplaceTitle);
     }
@@ -142,9 +145,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $value = $this->cacheData[$key]['total_items'];
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             $value = $this->__('N/A');
-        } else if ($value <= 0) {
+        } elseif ($value <= 0) {
             $value = '<span style="color: red;">0</span>';
         }
 
@@ -159,9 +162,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $value = $this->cacheData[$key]['active_items'];
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             $value = $this->__('N/A');
-        } else if ($value <= 0) {
+        } elseif ($value <= 0) {
             $value = '<span style="color: red;">0</span>';
         }
 
@@ -176,9 +179,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $value = $this->cacheData[$key]['inactive_items'];
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             $value = $this->__('N/A');
-        } else if ($value <= 0) {
+        } elseif ($value <= 0) {
             $value = '<span style="color: red;">0</span>';
         }
 
@@ -189,38 +192,37 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function getRowUrl($row)
     {
-        return $this->getUrl('*/amazon_listing_other/view', array(
+        return $this->getUrl('*/amazon_listing_other/view', [
             'account' => $row->getData('account_id'),
             'marketplace' => $row->getData('marketplace_id'),
             'back'=> $this->getHelper('Data')->makeBackUrlParam('*/amazon_listing_other/index')
-        ));
+        ]);
     }
 
     //########################################
 
     protected function prepareCacheData()
     {
-        $this->cacheData = array();
+        $this->cacheData = [];
 
         $collection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-        $collection->getSelect()->columns(array(
+        $collection->getSelect()->columns([
             'count' => new \Zend_Db_Expr('COUNT(id)'),
             'account_id',
             'marketplace_id',
             'status'
-        ));
-        $collection->getSelect()->group(array('account_id','marketplace_id','status'));
+        ]);
+        $collection->getSelect()->group(['account_id','marketplace_id','status']);
 
         foreach ($collection->getItems() as $item) {
-
             $key = $item->getData('account_id') . ',' . $item->getData('marketplace_id');
 
-            empty($this->cacheData[$key]) && ($this->cacheData[$key] = array(
+            empty($this->cacheData[$key]) && ($this->cacheData[$key] = [
                 'total_items' => 0,
                 'active_items' => 0,
                 'inactive_items' => 0
-            ));
+            ]);
 
             if ($item->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {
                 $this->cacheData[$key]['active_items'] += (int)$item['count'];

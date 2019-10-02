@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
+/**
+ * Class Delete
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat
+ */
 class Delete extends Template
 {
     public function execute()

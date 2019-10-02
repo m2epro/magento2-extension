@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs;
 
 use \Ess\M2ePro\Helper\Module\Cron as CronHelper;
 
+/**
+ * Class CronJobDetails
+ * @package Ess\M2ePro\Block\Adminhtml\Developers\Tabs
+ */
 class CronJobDetails extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     public $cronIsNotWorking = false;
@@ -21,7 +25,8 @@ class CronJobDetails extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFo
         $form = $this->_formFactory->create();
         $moduleConfig = $this->getHelper('Module')->getConfig();
 
-        $form->addField('cron_job_details',
+        $form->addField(
+            'cron_job_details',
             self::HELP_BLOCK,
             [
                 'no_collapse' => true,
@@ -68,14 +73,16 @@ HTML
             ]
         );
 
-        $fieldSet = $form->addFieldset('field_current_status',
+        $fieldSet = $form->addFieldset(
+            'field_current_status',
             [
                 'legend' => $this->__('Current Status'),
                 'collapsable' => false
             ]
         );
 
-        $fieldSet->addField('current_status_type',
+        $fieldSet->addField(
+            'current_status_type',
             'note',
             [
                 'label' => $this->__('Type'),
@@ -84,7 +91,8 @@ HTML
         );
 
         if ($this->getHelper('Module\Cron')->isRunnerService() && !$this->getData('is_support_mode')) {
-            $fieldSet->addField('current_status_service_auth_key',
+            $fieldSet->addField(
+                'current_status_service_auth_key',
                 'note',
                 [
                     'label' => $this->__('Service Auth Key'),
@@ -94,13 +102,14 @@ HTML
         }
 
         $cronLastRunTime = $this->getHelper('Module\Cron')->getLastRun();
-        if (!is_null($cronLastRunTime)) {
-            $this->cronIsNotWorking = $this->getHelper('Module\Cron')->isLastRunMoreThan(12,true);
+        if ($cronLastRunTime !== null) {
+            $this->cronIsNotWorking = $this->getHelper('Module\Cron')->isLastRunMoreThan(12, true);
         } else {
             $cronLastRunTime = 'N/A';
         }
 
-        $fieldSet->addField('current_status_last_run',
+        $fieldSet->addField(
+            'current_status_last_run',
             'note',
             [
                 'label' => $this->__('Last Run'),
@@ -111,11 +120,12 @@ HTML
         );
 
         $isDisabled = (bool)(int)$moduleConfig->getGroupValue(
-            '/cron/'.CronHelper::RUNNER_SERVICE_CONTROLLER.'/','disabled'
+            '/cron/'.CronHelper::RUNNER_SERVICE_CONTROLLER.'/',
+            'disabled'
         );
         if (!$this->getData('is_support_mode') && $isDisabled) {
-
-            $fieldSet->addField('current_status_frontend_controller_cron_state',
+            $fieldSet->addField(
+                'current_status_frontend_controller_cron_state',
                 'note',
                 [
                     'label' => $this->__('Service Controller Cron State'),
@@ -126,11 +136,12 @@ HTML
         }
 
         $isDisabled = (bool)(int)$moduleConfig->getGroupValue(
-            '/cron/'.CronHelper::RUNNER_SERVICE_PUB.'/','disabled'
+            '/cron/'.CronHelper::RUNNER_SERVICE_PUB.'/',
+            'disabled'
         );
         if (!$this->getData('is_support_mode') && $isDisabled) {
-
-            $fieldSet->addField('current_status_external_controller_cron_state',
+            $fieldSet->addField(
+                'current_status_external_controller_cron_state',
                 'note',
                 [
                     'label' => $this->__('Service Pub Cron State'),
@@ -141,11 +152,12 @@ HTML
         }
 
         $isDisabled = (bool)(int)$moduleConfig->getGroupValue(
-            '/cron/'.CronHelper::RUNNER_MAGENTO.'/','disabled'
+            '/cron/'.CronHelper::RUNNER_MAGENTO.'/',
+            'disabled'
         );
         if (!$this->getData('is_support_mode') && $isDisabled) {
-
-            $fieldSet->addField('current_status_magento_cron_state',
+            $fieldSet->addField(
+                'current_status_magento_cron_state',
                 'note',
                 [
                     'label' => $this->__('Magento Cron State'),
@@ -156,8 +168,8 @@ HTML
         }
 
         if ($this->isShownRecommendationsMessage()) {
-
-            $fieldSet = $form->addFieldset('field_setup_instruction',
+            $fieldSet = $form->addFieldset(
+                'field_setup_instruction',
                 [
                     'legend' => $this->__('Additional'),
                     'collapsable' => false
@@ -165,8 +177,8 @@ HTML
             );
 
             $baseDir = $this->getHelper('Client')->getBaseDirectory();
-
-            $fieldSet->addField('setup_instruction_php',
+            $fieldSet->addField(
+                'setup_instruction_php',
                 'note',
                 [
                     'label' => $this->__('PHP Command'),
@@ -175,7 +187,8 @@ HTML
             );
 
             $baseUrl = $this->getHelper('Magento')->getBaseUrl();
-            $fieldSet->addField('setup_instruction_get',
+            $fieldSet->addField(
+                'setup_instruction_get',
                 'note',
                 [
                     'label' => $this->__('GET Command'),
@@ -184,7 +197,8 @@ HTML
             );
         }
 
-        $fieldSet = $form->addFieldset('field_additional',
+        $fieldSet = $form->addFieldset(
+            'field_additional',
             [
                 'legend' => $this->__('Additional'),
                 'collapsable' => false
@@ -192,7 +206,8 @@ HTML
         );
 
         if ($this->isShownServiceDescriptionMessage()) {
-            $fieldSet->addField('setup_instruction_service',
+            $fieldSet->addField(
+                'setup_instruction_service',
                 'note',
                 [
                     'label' => $this->__('What is the Cron Type Service?'),
@@ -207,12 +222,13 @@ HTML
             );
         }
 
-        $fieldSet->addField('recommendation_message',
+        $fieldSet->addField(
+            'recommendation_message',
             'note',
             [
                 'text' => '<strong>'.$this->__(
-                        'We recommend to set up your Magento Cron Job to be run every 1 minute (e.g. * * * * *).'
-                    ) . '</strong>',
+                    'We recommend to set up your Magento Cron Job to be run every 1 minute (e.g. * * * * *).'
+                ) . '</strong>',
                 'style' => 'text-align: center;'
             ]
         );

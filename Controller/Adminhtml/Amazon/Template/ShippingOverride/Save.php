@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ShippingOverride;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ShippingOverride
+ */
 class Save extends Template
 {
     public function execute()
@@ -22,12 +26,12 @@ class Save extends Template
 
         // Base prepare
         // ---------------------------------------
-        $data = array();
+        $data = [];
 
-        $keys = array(
+        $keys = [
             'title',
             'marketplace_id'
-        );
+        ];
 
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -36,21 +40,21 @@ class Save extends Template
         }
 
         /** @var \Ess\M2ePro\Model\Amazon\Template\ShippingOverride $model */
-        $model = $this->activeRecordFactory->getObjectLoaded('Amazon\Template\ShippingOverride', $id, NULL, false);
+        $model = $this->activeRecordFactory->getObjectLoaded('Amazon_Template_ShippingOverride', $id, null, false);
 
-        if (is_null($model)) {
+        if ($model === null) {
             /** @var \Ess\M2ePro\Model\Amazon\Template\ShippingOverride $model */
-            $model = $this->activeRecordFactory->getObject('Amazon\Template\ShippingOverride');
+            $model = $this->activeRecordFactory->getObject('Amazon_Template_ShippingOverride');
         }
 
-        $oldData = (!empty($id)) ? $model->getDataSnapshot() : array();
+        $oldData = (!empty($id)) ? $model->getDataSnapshot() : [];
 
         $model->addData($data)->save();
         $this->setServices($post['shipping_override_rule'], $model->getId());
 
         $newData = $model->getDataSnapshot();
 
-        $model->setSynchStatusNeed($newData,$oldData);
+        $model->setSynchStatusNeed($newData, $oldData);
 
         if ($this->isAjax()) {
             $this->setJsonContent([
@@ -70,10 +74,9 @@ class Save extends Template
 
     private function setServices($data, $templateId)
     {
-        $newServices = array();
+        $newServices = [];
         foreach ($data['service'] as $key => $service) {
-
-            $newService = array();
+            $newService = [];
 
             $newService['template_shipping_override_id'] = $templateId;
             $newService['service'] = $data['service'][$key];
@@ -95,11 +98,12 @@ class Save extends Template
 
         $connection = $this->resourceConnection->getConnection();
 
-        $atsosTable = $this->activeRecordFactory->getObject('Amazon\Template\ShippingOverride\Service')
+        $atsosTable = $this->activeRecordFactory->getObject('Amazon_Template_ShippingOverride_Service')
             ->getResource()->getMainTable();
 
         $connection->delete(
-            $atsosTable, ['template_shipping_override_id = ?' => (int)$templateId]
+            $atsosTable,
+            ['template_shipping_override_id = ?' => (int)$templateId]
         );
 
         if (empty($newServices)) {
@@ -107,7 +111,8 @@ class Save extends Template
         }
 
         $connection->insertMultiple(
-            $atsosTable, $newServices
+            $atsosTable,
+            $newServices
         );
     }
 }

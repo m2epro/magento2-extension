@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\Form
 {
     public $showCreateNewAsin = 0;
@@ -32,14 +36,18 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             'id' => 'edit_form',
         ]]);
 
-        $form->addField('group_id', 'hidden',
+        $form->addField(
+            'group_id',
+            'hidden',
             [
                 'name' => 'id',
                 'value' => $this->formData['id']
             ]
         );
 
-        $form->addField('auto_mode', 'hidden',
+        $form->addField(
+            'auto_mode',
+            'hidden',
             [
                 'name' => 'auto_mode',
                 'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY
@@ -48,7 +56,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 
         $fieldSet = $form->addFieldset('category_form_container_field', []);
 
-        $fieldSet->addField('group_title', 'text',
+        $fieldSet->addField(
+            'group_title',
+            'text',
             [
                 'name' => 'title',
                 'label' => $this->__('Title'),
@@ -59,7 +69,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             ]
         );
 
-        $fieldSet->addField('adding_mode',
+        $fieldSet->addField(
+            'adding_mode',
             'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select',
             [
                 'name' => 'adding_mode',
@@ -75,7 +86,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             ]
         );
 
-        $fieldSet->addField('adding_add_not_visible',
+        $fieldSet->addField(
+            'adding_add_not_visible',
             'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select',
             [
                 'name' => 'adding_add_not_visible',
@@ -98,7 +110,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             ]
         );
 
-        $fieldSet->addField('auto_action_create_asin',
+        $fieldSet->addField(
+            'auto_action_create_asin',
             self::SELECT,
             [
                 'name' => 'auto_action_create_asin',
@@ -124,22 +137,23 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
         );
 
         $collection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Template\Description'
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Template\Description'
         )->getCollection();
         $collection->addFieldToFilter('marketplace_id', $this->getListing()->getMarketplaceId());
 
         $descriptionTemplates = $collection->getData();
 
-        if (count($descriptionTemplates) > 0) {
+        if (!empty($descriptionTemplates)) {
             $this->showCreateNewAsin = 1;
         }
 
-        usort($descriptionTemplates, function($a, $b) {
+        usort($descriptionTemplates, function ($a, $b) {
             return $a["is_new_asin_accepted"] < $b["is_new_asin_accepted"];
         });
 
         $options = [['label' => '','value' => '', 'attrs' => ['class' => 'empty']]];
-        foreach($descriptionTemplates as $template) {
+        foreach ($descriptionTemplates as $template) {
             $tmp = [
                 'label' => $this->escapeHtml($template['title']),
                 'value' => $template['id']
@@ -152,13 +166,14 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             $options[] = $tmp;
         }
 
-        $url = $this->getUrl('*/amazon_template_description/new', array(
+        $url = $this->getUrl('*/amazon_template_description/new', [
             'is_new_asin_accepted'  => 1,
             'marketplace_id'        => $this->getListing()->getMarketplaceId(),
             'close_on_save' => true
-        ));
+        ]);
 
-        $fieldSet->addField('adding_description_template_id',
+        $fieldSet->addField(
+            'adding_description_template_id',
             self::SELECT,
             [
                 'name' => 'adding_description_template_id',
@@ -174,7 +189,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
                     <br/><br/><b>Note:</b> If chosen Description Policy doesn’t meet all the
                     Conditions for new ASIN/ISBN creation, the Products will still be added to M2E Pro Listings
                     but will not be Listed on Amazon.'
-                                    )) . '<a href="javascript: void(0);"
+                )) . '<a href="javascript: void(0);"
                                             style="vertical-align: inherit; margin-left: 65px;"
                                             onclick="ListingAutoActionObj.addNewTemplate(\''.$url.'\',
                                             ListingAutoActionObj.reloadDescriptionTemplates);">'.$this->__('Add New').'
@@ -182,7 +197,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             ]
         );
 
-        $fieldSet->addField('deleting_mode',
+        $fieldSet->addField(
+            'deleting_mode',
             'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select',
             [
                 'name' => 'deleting_mode',
@@ -210,15 +226,15 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 
     public function getDefault()
     {
-        return array(
-            'id' => NULL,
-            'title' => NULL,
-            'category_id' => NULL,
+        return [
+            'id' => null,
+            'title' => null,
+            'category_id' => null,
             'adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
             'adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'adding_description_template_id' => NULL
-        );
+            'adding_description_template_id' => null
+        ];
     }
 
     //########################################
@@ -226,7 +242,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Listing::class)
         );
 
         $this->js->add(<<<JS

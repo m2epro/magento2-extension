@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
+/**
+ * Class Database
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs
+ */
 class Database extends AbstractContainer
 {
     public function _construct()

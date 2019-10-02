@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
+ */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
 {
     public function execute()
@@ -30,25 +34,26 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
         $data = $this->getHelper('Data')->jsonDecode($post['auto_action_data']);
 
         if (isset($data['template_category_data'])) {
-            $this->getHelper('Component\Ebay\Category')->fillCategoriesPaths(
-                $data['template_category_data'], $listing
+            $this->getHelper('Component_Ebay_Category')->fillCategoriesPaths(
+                $data['template_category_data'],
+                $listing
             );
         }
 
-        $listingData = array(
+        $listingData = [
             'auto_mode' => \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE,
             'auto_global_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'auto_global_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'auto_global_adding_template_category_id' => NULL,
-            'auto_global_adding_template_other_category_id' => NULL,
+            'auto_global_adding_template_category_id' => null,
+            'auto_global_adding_template_other_category_id' => null,
             'auto_website_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'auto_website_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'auto_website_adding_template_category_id' => NULL,
-            'auto_website_adding_template_other_category_id' => NULL,
+            'auto_website_adding_template_category_id' => null,
+            'auto_website_adding_template_other_category_id' => null,
             'auto_website_deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE
-        );
+        ];
 
-        $groupData = array(
+        $groupData = [
             'id' => null,
             'category' => null,
             'title' => null,
@@ -56,8 +61,8 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
             'adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
             'deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
-            'categories' => array()
-        );
+            'categories' => []
+        ];
 
         $addingModeAddAndAssignCategory = \Ess\M2ePro\Model\Ebay\Listing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY;
 
@@ -73,10 +78,10 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
                 $builderData['account_id'] = $listing->getAccountId();
                 $builderData['specifics'] = $data['template_category_specifics_data']['specifics'];
 
-                $categoryTemplate = $this->modelFactory->getObject('Ebay\Template\Category\Builder')->build(
+                $categoryTemplate = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build(
                     $builderData
                 );
-                $otherCategoryTemplate = $this->modelFactory->getObject('Ebay\Template\OtherCategory\Builder')->build(
+                $otherCategoryTemplate = $this->modelFactory->getObject('Ebay_Template_OtherCategory_Builder')->build(
                     $builderData
                 );
 
@@ -102,10 +107,10 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
                 $builderData['account_id'] = $listing->getAccountId();
                 $builderData['specifics'] = $data['template_category_specifics_data']['specifics'];
 
-                $categoryTemplate = $this->modelFactory->getObject('Ebay\Template\Category\Builder')->build(
+                $categoryTemplate = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build(
                     $builderData
                 );
-                $otherCategoryTemplate = $this->modelFactory->getObject('Ebay\Template\OtherCategory\Builder')->build(
+                $otherCategoryTemplate = $this->modelFactory->getObject('Ebay_Template_OtherCategory_Builder')->build(
                     $builderData
                 );
 
@@ -123,7 +128,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
         if ($data['auto_mode'] == \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY) {
             $listingData['auto_mode'] = \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY;
 
-            $group = $this->ebayFactory->getObject('Listing\Auto\Category\Group');
+            $group = $this->ebayFactory->getObject('Listing_Auto_Category_Group');
 
             if ((int)$data['id'] > 0) {
                 $group->load((int)$data['id']);
@@ -143,25 +148,25 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
                 $builderData['account_id'] = $listing->getAccountId();
                 $builderData['specifics'] = $data['template_category_specifics_data']['specifics'];
 
-                $categoryTemplate = $this->modelFactory->getObject('Ebay\Template\Category\Builder')->build(
+                $categoryTemplate = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build(
                     $builderData
                 );
-                $otherCategoryTemplate = $this->modelFactory->getObject('Ebay\Template\OtherCategory\Builder')->build(
+                $otherCategoryTemplate = $this->modelFactory->getObject('Ebay_Template_OtherCategory_Builder')->build(
                     $builderData
                 );
 
                 $group->getChildObject()->setData('adding_template_category_id', $categoryTemplate->getId());
                 $group->getChildObject()->setData('adding_template_other_category_id', $otherCategoryTemplate->getId());
             } else {
-                $group->getChildObject()->setData('adding_template_category_id', NULL);
-                $group->getChildObject()->setData('adding_template_other_category_id', NULL);
+                $group->getChildObject()->setData('adding_template_category_id', null);
+                $group->getChildObject()->setData('adding_template_other_category_id', null);
             }
 
             $group->save();
             $group->clearCategories();
 
             foreach ($data['categories'] as $categoryId) {
-                $category = $this->activeRecordFactory->getObject('Listing\Auto\Category');
+                $category = $this->activeRecordFactory->getObject('Listing_Auto_Category');
                 $category->setData('group_id', $group->getId());
                 $category->setData('category_id', $categoryId);
                 $category->save();

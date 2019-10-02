@@ -10,14 +10,18 @@ namespace Ess\M2ePro\Controller\Adminhtml\General;
 
 use Ess\M2ePro\Controller\Adminhtml\General;
 
+/**
+ * Class SynchGetExecutingInfo
+ * @package Ess\M2ePro\Controller\Adminhtml\General
+ */
 class SynchGetExecutingInfo extends General
 {
     //########################################
 
     public function execute()
     {
-        $response = array();
-        $lockItem = $this->modelFactory->getObject('Synchronization\Lock\Item\Manager');
+        $response = [];
+        $lockItem = $this->modelFactory->getObject('Synchronization_Lock_Item_Manager');
 
         if (!$lockItem->isExist()) {
             $response['mode'] = 'inactive';

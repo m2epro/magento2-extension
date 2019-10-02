@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request
 {
     /**
      * @var array
      */
-    protected $validatorsData = array();
+    protected $validatorsData = [];
 
     //########################################
 
@@ -46,12 +50,14 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Listing\Product\Ac
 
     protected function addNotFoundAttributesMessages($title, array $attributes)
     {
-        $attributesTitles = array();
+        $attributesTitles = [];
 
         foreach ($attributes as $attribute) {
             $attributesTitles[] = $this->getHelper('Magento\Attribute')
-                ->getAttributeLabel($attribute,
-                    $this->getListing()->getStoreId());
+                ->getAttributeLabel(
+                    $attribute,
+                    $this->getListing()->getStoreId()
+                );
         }
         // M2ePro\TRANSLATIONS
         // %attribute_title%: Attribute(s) %attributes% were not found in this Product and its value was not sent.
@@ -59,7 +65,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Listing\Product\Ac
             $this->getHelper('Module\Translation')->__(
                 '%attribute_title%: Attribute(s) %attributes% were not found'.
                 ' in this Product and its value was not sent.',
-                $this->getHelper('Module\Translation')->__($title), implode(',',$attributesTitles)
+                $this->getHelper('Module\Translation')->__($title),
+                implode(',', $attributesTitles)
             )
         );
     }

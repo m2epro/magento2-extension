@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Moving;
 
+/**
+ * Class PrepareMoveToListing
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing\Moving
+ */
 class PrepareMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
 {
     //########################################
@@ -23,26 +27,30 @@ class PrepareMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Movi
             ->getObject($componentMode, 'Listing\Product')
             ->getCollection();
 
-        $listingProductCollection->addFieldToFilter('main_table.id', array('in' => $selectedProducts));
+        $listingProductCollection->addFieldToFilter('main_table.id', ['in' => $selectedProducts]);
         $tempData = $listingProductCollection
             ->getSelect()
-            ->join(array('listing'=>$this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()),
-                '`main_table`.`listing_id` = `listing`.`id`' )
-            ->join(array(
-                'cpe'=>$this->getHelper('Module\Database\Structure')
+            ->join(
+                ['listing'=>$this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
+                '`main_table`.`listing_id` = `listing`.`id`'
+            )
+            ->join(
+                [
+                'cpe'=>$this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('catalog_product_entity')
-            ),
-                '`main_table`.`product_id` = `cpe`.`entity_id`' )
-            ->group(array('listing.account_id','listing.marketplace_id'))
+                ],
+                '`main_table`.`product_id` = `cpe`.`entity_id`'
+            )
+            ->group(['listing.account_id','listing.marketplace_id'])
             ->reset(\Zend_Db_Select::COLUMNS)
-            ->columns(array('marketplace_id', 'account_id'), 'listing')
+            ->columns(['marketplace_id', 'account_id'], 'listing')
             ->query()
             ->fetchAll();
 
-        $this->setJsonContent(array(
+        $this->setJsonContent([
             'accountId' => $tempData[0]['account_id'],
             'marketplaceId' => $tempData[0]['marketplace_id'],
-        ));
+        ]);
         return $this->getResult();
     }
 

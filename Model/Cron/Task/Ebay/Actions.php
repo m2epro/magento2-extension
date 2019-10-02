@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Ebay;
 
+/**
+ * Class Actions
+ * @package Ess\M2ePro\Model\Cron\Task\Ebay
+ */
 class Actions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'ebay/actions';
@@ -29,7 +33,7 @@ class Actions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
-        $actionsProcessor = $this->modelFactory->getObject('Ebay\Actions\Processor');
+        $actionsProcessor = $this->modelFactory->getObject('Ebay_Actions_Processor');
         $actionsProcessor->setLockItem($this->getLockItem());
         $actionsProcessor->process();
     }

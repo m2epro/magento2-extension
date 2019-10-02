@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise;
 
 use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise\Request as ReviseRequest;
 
+/**
+ * Class Response
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise
+ */
 class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Response
 {
     //########################################
@@ -17,13 +21,13 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
     /**
      * @param array $params
      */
-    public function processSuccess($params = array())
+    public function processSuccess($params = [])
     {
-        $data = array();
+        $data = [];
 
         if ($this->getConfigurator()->isDefaultMode()) {
             $data['synch_status'] = \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_OK;
-            $data['synch_reasons'] = NULL;
+            $data['synch_reasons'] = null;
         }
 
         if ($this->getRequestData()->getIsNeedProductIdUpdate()) {
@@ -40,6 +44,7 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
 
         $data = $this->appendStatusChangerValue($data);
         $data = $this->appendQtyValues($data);
+        $data = $this->appendLagTimeValues($data);
         $data = $this->appendPriceValues($data);
         $data = $this->appendPromotionsValues($data);
         $data = $this->appendDetailsValues($data);
@@ -69,7 +74,7 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
             return 'Item was successfully Revised';
         }
 
-        $sequenceStrings = array();
+        $sequenceStrings = [];
         $isPlural = false;
 
         if ($this->getConfigurator()->isQtyAllowed()) {
@@ -91,7 +96,6 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
         }
 
         if ($this->getConfigurator()->isDetailsAllowed()) {
-
             if ($this->getRequestData()->getIsNeedSkuUpdate()) {
                 // M2ePro\TRANSLATIONS
                 // SKU
@@ -99,7 +103,6 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
             }
 
             if ($this->getRequestData()->getIsNeedProductIdUpdate()) {
-
                 $idsMetadata = $this->getRequestMetaData(ReviseRequest::PRODUCT_ID_UPDATE_METADATA_KEY);
                 !empty($idsMetadata) && $sequenceStrings[] = strtoupper($idsMetadata['type']);
             }

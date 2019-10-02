@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
+/**
+ * Class Chooser
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings
+ */
 class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     //########################################
@@ -18,9 +22,9 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     protected $_accountId = null;
 
-    protected $_attributes = array();
+    protected $_attributes = [];
 
-    protected $_internalData = array();
+    protected $_internalData = [];
 
     protected $_divId = null;
 
@@ -44,8 +48,7 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct($context, $data);
     }
@@ -96,11 +99,12 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
         $attributes = $this->getHelper('Magento\Attribute')->getGeneralFromAllAttributeSets();
         if (empty($attributes)) {
-            return array();
+            return [];
         }
 
         $this->_attributes = $this->getHelper('Magento\Attribute')->filterByInputTypes(
-            $attributes, array('text', 'select')
+            $attributes,
+            ['text', 'select']
         );
 
         return $attributes;
@@ -119,12 +123,12 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     public function setInternalData(array $data)
     {
-        $categoryTypePrefixes = array(
+        $categoryTypePrefixes = [
             \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN => 'category_main_',
             \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY => 'category_secondary_',
             \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN => 'store_category_main_',
             \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY => 'store_category_secondary_',
-        );
+        ];
 
         foreach ($categoryTypePrefixes as $type => $prefix) {
             if (!isset($data[$prefix.'mode'])) {
@@ -139,11 +143,11 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
                         $path = $this->_prepareEbayCategoryPath($data[$prefix.'id'], $type);
                     }
 
-                    $this->_internalData[$type] = array(
+                    $this->_internalData[$type] = [
                         'mode' => $data[$prefix.'mode'],
                         'value' => $data[$prefix.'id'],
                         'path' => $path . ' (' . $data[$prefix.'id'] . ')'
-                    );
+                    ];
 
                     break;
 
@@ -154,20 +158,20 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
                         $path = $this->_prepareAttributeCategoryPath($data[$prefix.'attribute']);
                     }
 
-                    $this->_internalData[$type] = array(
+                    $this->_internalData[$type] = [
                         'mode' => $data[$prefix.'mode'],
                         'value' => $data[$prefix.'attribute'],
                         'path' => $path
-                    );
+                    ];
 
                     break;
 
                 case \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE:
                     if (!empty($data[$prefix.'message'])) {
-                        $this->_internalData[$type] = array(
+                        $this->_internalData[$type] = [
                             'mode' => $data[$prefix.'mode'],
                             'message' => $data[$prefix.'message']
-                        );
+                        ];
                     }
 
                     break;
@@ -199,7 +203,7 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     public function getDivId()
     {
-        if (is_null($this->_divId)) {
+        if ($this->_divId === null) {
             $this->_divId = $this->mathRandom->getUniqueHash('category_chooser_');
         }
 
@@ -271,7 +275,7 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     public function isShowStoreCatalog()
     {
-        if (is_null($this->getAccountId())) {
+        if ($this->getAccountId() === null) {
             return false;
         }
 
@@ -298,13 +302,14 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     protected function _prepareEbayCategoryPath($value, $type)
     {
-        if (in_array($type, $this->getHelper('Component\Ebay\Category')->getEbayCategoryTypes())) {
-            return $this->getHelper('Component\Ebay\Category\Ebay')->getPath(
-                $value, $this->getMarketplaceId()
+        if (in_array($type, $this->getHelper('Component_Ebay_Category')->getEbayCategoryTypes())) {
+            return $this->getHelper('Component_Ebay_Category_Ebay')->getPath(
+                $value,
+                $this->getMarketplaceId()
             );
         }
 
-        return $this->getHelper('Component\Ebay\Category\Store')->getPath($value, $this->getAccountId());
+        return $this->getHelper('Component_Ebay_Category_Store')->getPath($value, $this->getAccountId());
     }
 
     protected function _prepareAttributeCategoryPath($attributeCode)

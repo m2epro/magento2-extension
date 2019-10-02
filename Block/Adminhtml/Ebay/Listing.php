@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
+/**
+ * Class Listing
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay
+ */
 class Listing extends AbstractContainer
 {
     //########################################
@@ -43,13 +47,13 @@ class Listing extends AbstractContainer
         ]);
 
         // ---------------------------------------
-        $url = $this->getUrl('*/ebay_listing_create/index', array('step' => 1, 'clear' => 1));
-        $this->addButton('add', array(
+        $url = $this->getUrl('*/ebay_listing_create/index', ['step' => 1, 'clear' => 1]);
+        $this->addButton('add', [
             'label'     => $this->__('Add Listing'),
             'onclick'   => 'setLocation(\'' .$url.'\')',
             'class' => 'action-primary',
             'button_class' => '',
-        ));
+        ]);
         // ---------------------------------------
 
         return parent::_prepareLayout();

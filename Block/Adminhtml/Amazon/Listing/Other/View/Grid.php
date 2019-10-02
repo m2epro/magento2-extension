@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other\View;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other\View
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $localeCurrency;
@@ -23,8 +27,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->amazonFactory = $amazonFactory;
@@ -56,24 +59,29 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
 
         $collection->getSelect()->joinLeft(
-            array('mp' => $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable()),
+            ['mp' => $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable()],
             'mp.id = main_table.marketplace_id',
-            array('marketplace_title' => 'mp.title')
+            ['marketplace_title' => 'mp.title']
         )->joinLeft(
-            array('am' => $this->activeRecordFactory->getObject('Amazon\Marketplace')->getResource()->getMainTable()),
+            ['am' => $this->activeRecordFactory->getObject('Amazon\Marketplace')->getResource()->getMainTable()],
             'am.marketplace_id = main_table.marketplace_id',
-            array('currency' => 'am.default_currency'));
+            ['currency' => 'am.default_currency']
+        );
 
         // Add Filter By Account
         if ($this->getRequest()->getParam('account')) {
-            $collection->addFieldToFilter('main_table.account_id',
-                                          $this->getRequest()->getParam('account'));
+            $collection->addFieldToFilter(
+                'main_table.account_id',
+                $this->getRequest()->getParam('account')
+            );
         }
 
         // Add Filter By Marketplace
         if ($this->getRequest()->getParam('marketplace')) {
-            $collection->addFieldToFilter('main_table.marketplace_id',
-                                          $this->getRequest()->getParam('marketplace'));
+            $collection->addFieldToFilter(
+                'main_table.marketplace_id',
+                $this->getRequest()->getParam('marketplace')
+            );
         }
 
         $this->setCollection($collection);
@@ -83,84 +91,84 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('product_id', array(
+        $this->addColumn('product_id', [
             'header' => $this->__('Product ID'),
             'align'  => 'left',
             'width'  => '80px',
             'type'   => 'number',
             'index'  => 'product_id',
             'filter_index' => 'product_id',
-            'frame_callback' => array($this, 'callbackColumnProductId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductId']
+        ]);
 
-        $this->addColumn('title', array(
+        $this->addColumn('title', [
             'header'    => $this->__('Title / SKU'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'title',
             'escape' => false,
             'filter_index' => 'second_table.title',
-            'frame_callback' => array($this, 'callbackColumnProductTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+        ]);
 
-        $this->addColumn('general_id', array(
+        $this->addColumn('general_id', [
             'header' => $this->__('ASIN / ISBN'),
             'align' => 'left',
             'width' => '100px',
             'type' => 'text',
             'index' => 'general_id',
             'filter_index' => 'general_id',
-            'frame_callback' => array($this, 'callbackColumnGeneralId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnGeneralId']
+        ]);
 
-        $this->addColumn('online_qty', array(
+        $this->addColumn('online_qty', [
             'header' => $this->__('QTY'),
             'align' => 'right',
             'width' => '100px',
             'type' => 'number',
             'index' => 'online_qty',
             'filter_index' => 'online_qty',
-            'frame_callback' => array($this, 'callbackColumnAvailableQty'),
+            'frame_callback' => [$this, 'callbackColumnAvailableQty'],
             'filter'   => 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty',
-            'filter_condition_callback' => array($this, 'callbackFilterQty')
-        ));
+            'filter_condition_callback' => [$this, 'callbackFilterQty']
+        ]);
 
-        $priceColumn = array(
+        $priceColumn = [
             'header' => $this->__('Price'),
             'align' => 'right',
             'width' => '110px',
             'type' => 'number',
             'index' => 'online_price',
             'filter_index' => 'online_price',
-            'frame_callback' => array($this, 'callbackColumnPrice'),
-            'filter_condition_callback' => array($this, 'callbackFilterPrice')
-        );
+            'frame_callback' => [$this, 'callbackColumnPrice'],
+            'filter_condition_callback' => [$this, 'callbackFilterPrice']
+        ];
 
         $account = $this->amazonFactory->getObjectLoaded('Account', $this->getRequest()->getParam('account'));
 
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
             $account->getChildObject()->isRepricing()) {
             $priceColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price';
         }
 
         $this->addColumn('online_price', $priceColumn);
 
-        $this->addColumn('status', array(
+        $this->addColumn('status', [
             'header' => $this->__('Status'),
             'width' => '75px',
             'index' => 'status',
             'filter_index' => 'main_table.status',
             'type' => 'options',
             'sortable' => false,
-            'options' => array(
+            'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => $this->__('Unknown'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Inactive (Blocked)')
-            ),
-            'frame_callback' => array($this, 'callbackColumnStatus')
-        ));
+            ],
+            'frame_callback' => [$this, 'callbackColumnStatus']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -173,33 +181,33 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->getMassactionBlock()->setFormFieldName('ids');
         // ---------------------------------------
 
-        $this->getMassactionBlock()->setGroups(array(
+        $this->getMassactionBlock()->setGroups([
             'mapping' => $this->__('Mapping'),
             'other'   => $this->__('Other')
-        ));
+        ]);
 
         // Set mass-action
         // ---------------------------------------
-        $this->getMassactionBlock()->addItem('autoMapping', array(
+        $this->getMassactionBlock()->addItem('autoMapping', [
             'label'   => $this->__('Map Item(s) Automatically'),
             'url'     => '',
             'confirm' => $this->__('Are you sure?')
-        ), 'mapping');
-        $this->getMassactionBlock()->addItem('moving', array(
+        ], 'mapping');
+        $this->getMassactionBlock()->addItem('moving', [
             'label'   => $this->__('Move Item(s) to Listing'),
             'url'     => '',
             'confirm' => $this->__('Are you sure?')
-        ), 'other');
-        $this->getMassactionBlock()->addItem('removing', array(
+        ], 'other');
+        $this->getMassactionBlock()->addItem('removing', [
             'label'   => $this->__('Remove Item(s)'),
             'url'     => '',
             'confirm' => $this->__('Are you sure?')
-        ), 'other');
-        $this->getMassactionBlock()->addItem('unmapping', array(
+        ], 'other');
+        $this->getMassactionBlock()->addItem('unmapping', [
             'label'   => $this->__('Unmap Item(s)'),
             'url'     => '',
             'confirm' => $this->__('Are you sure?')
-        ), 'mapping');
+        ], 'mapping');
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -237,15 +245,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         $htmlValue = '&nbsp<a href="'
-                     .$this->getUrl('catalog/product/edit',
-                                    array('id' => $row->getData('product_id')))
+                     .$this->getUrl(
+                         'catalog/product/edit',
+                         ['id' => $row->getData('product_id')]
+                     )
                      .'" target="_blank">'
                      .$row->getData('product_id')
                      .'</a>';
 
         $htmlValue .= '&nbsp&nbsp&nbsp<a href="javascript:void(0);"'
                       .' onclick="AmazonListingOtherGridObj.movingHandler.getGridHtml('
-                      .$this->getHelper('Data')->jsonEncode(array((int)$row->getData('id')))
+                      .$this->getHelper('Data')->jsonEncode([(int)$row->getData('id')])
                       .')">'
                       .$this->__('Move')
                       .'</a>';
@@ -261,7 +271,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $title = $row->getChildObject()->getData('title');
 
-        if (is_null($title)) {
+        if ($title === null) {
             $title = '<i style="color:gray;">' . $this->__('receiving') . '...</i>';
         } else {
             $title = '<span>' . $this->getHelper('Data')->escapeHtml($title) . '</span>';
@@ -311,7 +321,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 HTML;
         }
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -327,9 +337,8 @@ HTML;
         $html ='';
         $value = $row->getChildObject()->getData('online_price');
 
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
             (int)$row->getChildObject()->getData('is_repricing') == 1) {
-
             $icon = 'repricing-enabled';
             $text = $this->__(
                 'This Product is used by Amazon Repricing Tool, so its Price cannot be managed via M2E Pro. <br>
@@ -354,7 +363,7 @@ HTML;
 HTML;
         }
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A') . $html;
         }
 
@@ -363,7 +372,7 @@ HTML;
         }
 
         $currency = $this->amazonFactory
-                        ->getCachedObjectLoaded('Marketplace',$row->getData('marketplace_id'))
+                        ->getCachedObjectLoaded('Marketplace', $row->getData('marketplace_id'))
                         ->getChildObject()
                         ->getDefaultCurrency();
 
@@ -473,9 +482,8 @@ HTML;
             $where .= 'online_price <= ' . (float)$value['to'];
         }
 
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
-            (isset($value['is_repricing']) && $value['is_repricing'] !== ''))
-        {
+        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+            (isset($value['is_repricing']) && $value['is_repricing'] !== '')) {
             if (!empty($where)) {
                 $where = '(' . $where . ') OR ';
             }
@@ -498,12 +506,12 @@ HTML;
 
         $dbSelect = $connection->select()
             ->from(
-                $this->activeRecordFactory->getObject('Listing\Other\Log')->getResource()->getMainTable(),
-                array('action_id','action','type','description','create_date','initiator')
+                $this->activeRecordFactory->getObject('Listing_Other_Log')->getResource()->getMainTable(),
+                ['action_id','action','type','description','create_date','initiator']
             )
             ->where('`listing_other_id` = ?', $listingOtherId)
             ->where('`action` IN (?)', $availableActionsId)
-            ->order(array('id DESC'))
+            ->order(['id DESC'])
             ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::PRODUCTS_LIMIT);
 
         $logs = $connection->fetchAll($dbSelect);
@@ -514,7 +522,7 @@ HTML;
 
         // ---------------------------------------
 
-        $summary = $this->createBlock('Listing\Log\Grid\LastActions')->setData([
+        $summary = $this->createBlock('Listing_Log_Grid_LastActions')->setData([
             'entity_id' => $listingOtherId,
             'logs'      => $logs,
             'available_actions' => $this->getAvailableActions(),
@@ -553,7 +561,7 @@ JS
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/amazon_listing_other/grid', array('_current' => true));
+        return $this->getUrl('*/amazon_listing_other/grid', ['_current' => true]);
     }
 
     public function getRowUrl($row)

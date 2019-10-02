@@ -10,13 +10,17 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingOverride\Edit;
 
 use \Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingOverride\Edit
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    public $formData = NULL;
+    public $formData = null;
 
-    private $enabledMarketplaces = NULL;
-    private $attributes = NULL;
-    private $overrideDictionaryData = NULL;
+    private $enabledMarketplaces = null;
+    private $attributes = null;
+    private $overrideDictionaryData = null;
 
     protected $_template = 'amazon/template/shipping_override/edit/form.phtml';
 
@@ -30,8 +34,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -53,7 +56,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         /** @var \Ess\M2ePro\Model\Amazon\Template\ShippingOverride $model */
         $model = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
 
-        $formData = array();
+        $formData = [];
         if ($model) {
             $formData = $model->toArray();
         }
@@ -62,12 +65,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $formData['shipping_override_rule'] = $model->getServices();
         }
 
-        $default = array(
+        $default = [
             'id' => '',
             'title' => '',
             'marketplace_id' => '',
-            'shipping_override_rule' => array()
-        );
+            'shipping_override_rule' => []
+        ];
 
         $default['marketplace_id'] = $this->getRequest()->getParam('marketplace_id', '');
 
@@ -119,7 +122,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]]);
             $marketplaceInput->setForm($form);
 
-            $fieldset->addField('marketplace_id_container',
+            $fieldset->addField(
+                'marketplace_id_container',
                 self::CUSTOM_CONTAINER,
                 [
                     'label' => $this->__('Marketplace'),
@@ -130,7 +134,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 HTML
                 ]
             );
-
         } else {
             $marketplaces = [['value' => '', 'label' => '']];
             foreach ($this->getEnabledMarketplaces() as $marketplace) {
@@ -183,7 +186,8 @@ HTML
     protected function _prepareLayout()
     {
         $this->appendHelpBlock([
-            'content' => $this->__('
+            'content' => $this->__(
+                '
         The Shipping Override Policy allows to override Shipping Settings provided in your Amazon Seller Central. So you
         can add/edit selected Shipping Service and  Locale as well as the Shipping Cost Settings.<br/><br/>
 
@@ -206,21 +210,21 @@ HTML
 
         // ---------------------------------------
         $buttonBlock = $this->createBlock('Magento\Button')
-            ->setData(array(
+            ->setData([
                 'label'   => $this->__('Add Override'),
                 'onclick' => 'AmazonTemplateShippingOverrideObj.addRow();',
                 'class' => 'action primary add_shipping_override_rule_button'
-            ));
+            ]);
         $this->setChild('add_shipping_override_rule_button', $buttonBlock);
         // ---------------------------------------
 
         // ---------------------------------------
         $buttonBlock = $this->createBlock('Magento\Button')
-            ->setData(array(
+            ->setData([
                 'label'   => $this->__('Remove'),
                 'onclick' => 'AmazonTemplateShippingOverrideObj.removeRow(this);',
                 'class' => 'delete icon-btn remove_shipping_override_rule_button'
-            ));
+            ]);
         $this->setChild('remove_shipping_override_rule_button', $buttonBlock);
         // ---------------------------------------
     }
@@ -228,11 +232,12 @@ HTML
     public function _toHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Amazon')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service')
+            $this->getHelper('Data')
+                ->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service::class)
         );
 
         $this->jsUrl->addUrls([
@@ -309,17 +314,16 @@ JS
 
     public function getAttributes()
     {
-        if (is_null($this->attributes)) {
+        if ($this->attributes === null) {
 
             /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
             $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
             $this->attributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
             $this->attributes = $magentoAttributeHelper
-                                    ->filterByInputTypes($this->attributes, array('text', 'select', 'price'));
+                                    ->filterByInputTypes($this->attributes, ['text', 'select', 'price']);
 
             if ($this->formData['id']) {
                 foreach ($this->formData['shipping_override_rule'] as $rule) {
-
                     if ($rule['cost_mode'] != Service::COST_MODE_CUSTOM_ATTRIBUTE ||
                         $magentoAttributeHelper->isExistInAttributesArray($rule['cost_value'], $this->attributes) ||
                         $rule['cost_value'] == '') {
@@ -341,7 +345,7 @@ JS
 
     public function getEnabledMarketplaces()
     {
-        if (is_null($this->enabledMarketplaces)) {
+        if ($this->enabledMarketplaces === null) {
             $collection = $this->activeRecordFactory->getObject('Marketplace')->getCollection();
             $collection->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Amazon::NICK);
             $collection->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
@@ -357,9 +361,9 @@ JS
 
     public function getOverrideDictionaryData()
     {
-        if (is_null($this->overrideDictionaryData)) {
+        if ($this->overrideDictionaryData === null) {
             $connection = $this->resourceConnection->getConnection();
-            $table = $this->getHelper('Module\Database\Structure')
+            $table = $this->getHelper('Module_Database_Structure')
                 ->getTableNameWithPrefix('m2epro_amazon_dictionary_shipping_override');
 
             $this->overrideDictionaryData = $connection->select()->from($table)->query()->fetchAll();

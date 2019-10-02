@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml;
 
+/**
+ * Class Developers
+ * @package Ess\M2ePro\Block\Adminhtml
+ */
 class Developers extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     //########################################

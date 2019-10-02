@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class Wizard
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart
+ */
 abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 {
     protected $walmartFactory;
@@ -20,8 +24,7 @@ abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         Context $context
-    )
-    {
+    ) {
         $this->walmartFactory = $walmartFactory;
         parent::__construct($nameBuilder, $context);
     }
@@ -45,7 +48,7 @@ abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 
     protected function initResultPage()
     {
-        if (!is_null($this->resultPage)) {
+        if ($this->resultPage !== null) {
             return;
         }
 

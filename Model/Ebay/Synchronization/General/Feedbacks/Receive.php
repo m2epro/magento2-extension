@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks;
 
+/**
+ * Class Receive
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks
+ */
 class Receive extends AbstractModel
 {
     //########################################
@@ -86,11 +90,8 @@ class Receive extends AbstractModel
                 'Get feedbacks from eBay'
             );
             try {
-
                 $this->processAccount($account);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Receive" Action for eBay Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -119,8 +120,10 @@ class Receive extends AbstractModel
     protected function getPermittedAccounts()
     {
         $collection = $this->ebayFactory->getObject('Account')->getCollection()
-                                    ->addFieldToFilter('feedbacks_receive',
-                                                       \Ess\M2ePro\Model\Ebay\Account::FEEDBACKS_RECEIVE_YES);
+                                    ->addFieldToFilter(
+                                        'feedbacks_receive',
+                                        \Ess\M2ePro\Model\Ebay\Account::FEEDBACKS_RECEIVE_YES
+                                    );
         return $collection->getItems();
     }
 
@@ -132,52 +135,57 @@ class Receive extends AbstractModel
         $tableFeedbacks = $this->activeRecordFactory->getObject('Ebay\Feedback')->getResource()->getMainTable();
 
         $dbSelect = $connRead->select()
-                             ->from($tableFeedbacks,new \Zend_Db_Expr('MAX(`seller_feedback_date`)'))
-                             ->where('`account_id` = ?',(int)$account->getId());
+                             ->from($tableFeedbacks, new \Zend_Db_Expr('MAX(`seller_feedback_date`)'))
+                             ->where('`account_id` = ?', (int)$account->getId());
         $maxSellerDate = $connRead->fetchOne($dbSelect);
         if (strtotime($maxSellerDate) < strtotime('2001-01-02')) {
-            $maxSellerDate = NULL;
+            $maxSellerDate = null;
         }
 
         $dbSelect = $connRead->select()
-                             ->from($tableFeedbacks,new \Zend_Db_Expr('MAX(`buyer_feedback_date`)'))
-                             ->where('`account_id` = ?',(int)$account->getId());
+                             ->from($tableFeedbacks, new \Zend_Db_Expr('MAX(`buyer_feedback_date`)'))
+                             ->where('`account_id` = ?', (int)$account->getId());
         $maxBuyerDate = $connRead->fetchOne($dbSelect);
         if (strtotime($maxBuyerDate) < strtotime('2001-01-02')) {
-            $maxBuyerDate = NULL;
+            $maxBuyerDate = null;
         }
 
-        $paramsConnector = array();
-        !is_null($maxSellerDate) && $paramsConnector['seller_max_date'] = $maxSellerDate;
-        !is_null($maxBuyerDate) && $paramsConnector['buyer_max_date'] = $maxBuyerDate;
-        $result = $this->receiveFromEbay($account,$paramsConnector);
+        $paramsConnector = [];
+        $maxSellerDate !== null && $paramsConnector['seller_max_date'] = $maxSellerDate;
+        $maxBuyerDate !== null && $paramsConnector['buyer_max_date'] = $maxBuyerDate;
+        $result = $this->receiveFromEbay($account, $paramsConnector);
 
         $this->getActualOperationHistory()->appendText('Total received Feedback from eBay: '.$result['total']);
         $this->getActualOperationHistory()->appendText('Total only new Feedback from eBay: '.$result['new']);
         $this->getActualOperationHistory()->saveBufferString();
     }
 
-    protected function receiveFromEbay(\Ess\M2ePro\Model\Account $account, array $paramsConnector = array())
+    protected function receiveFromEbay(\Ess\M2ePro\Model\Account $account, array $paramsConnector = [])
     {
-        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorObj = $dispatcherObj->getVirtualConnector('feedback','get','entity',
-                                                            $paramsConnector,'feedbacks',
-                                                            NULL,$account->getId());
+        $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        $connectorObj = $dispatcherObj->getVirtualConnector(
+            'feedback',
+            'get',
+            'entity',
+            $paramsConnector,
+            'feedbacks',
+            null,
+            $account->getId()
+        );
 
         $dispatcherObj->process($connectorObj);
         $feedbacks = $connectorObj->getResponseData();
         $this->processResponseMessages($connectorObj->getResponseMessages());
 
-        is_null($feedbacks) && $feedbacks = array();
+        $feedbacks === null && $feedbacks = [];
 
         $countNewFeedbacks = 0;
         foreach ($feedbacks as $feedback) {
-
-            $dbFeedback = array(
+            $dbFeedback = [
                 'account_id' => $account->getId(),
                 'ebay_item_id' => $feedback['item_id'],
                 'ebay_transaction_id' => $feedback['transaction_id']
-            );
+            ];
 
             if ($feedback['item_title'] != '') {
                 $dbFeedback['ebay_item_title'] = $feedback['item_title'];
@@ -202,8 +210,7 @@ class Receive extends AbstractModel
                 ->addFieldToFilter('ebay_transaction_id', $feedback['transaction_id'])
                 ->getFirstItem();
 
-            if (!is_null($existFeedback->getId())) {
-
+            if ($existFeedback->getId() !== null) {
                 if ($feedback['from_role'] == \Ess\M2ePro\Model\Ebay\Feedback::ROLE_BUYER &&
                     !$existFeedback->getData('buyer_feedback_id')) {
                     $countNewFeedbacks++;
@@ -213,7 +220,6 @@ class Receive extends AbstractModel
                     !$existFeedback->getData('seller_feedback_id')) {
                     $countNewFeedbacks++;
                 }
-
             } else {
                 $countNewFeedbacks++;
             }
@@ -221,20 +227,19 @@ class Receive extends AbstractModel
             $existFeedback->addData($dbFeedback)->save();
         }
 
-        return array(
+        return [
             'total' => count($feedbacks),
             'new'   => $countNewFeedbacks
-        );
+        ];
     }
 
     private function processResponseMessages(array $messages)
     {
         /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messagesSet */
-        $messagesSet = $this->modelFactory->getObject('Connector\Connection\Response\Message\Set');
+        $messagesSet = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
         $messagesSet->init($messages);
 
         foreach ($messagesSet->getEntities() as $message) {
-
             if (!$message->isError() && !$message->isWarning()) {
                 continue;
             }

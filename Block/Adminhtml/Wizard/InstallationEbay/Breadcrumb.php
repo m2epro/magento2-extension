@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay;
 
+/**
+ * Class Breadcrumb
+ * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay
+ */
 class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
 {
     public function _construct()

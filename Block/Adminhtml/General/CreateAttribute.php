@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\General;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
+/**
+ * Class CreateAttribute
+ * @package Ess\M2ePro\Block\Adminhtml\General
+ */
 class CreateAttribute extends AbstractContainer
 {
     //########################################

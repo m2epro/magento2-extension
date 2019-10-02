@@ -7,8 +7,13 @@
  */
 
 namespace Ess\M2ePro\Model\Ebay\Connector\OrderItem\Update;
+
 use \Ess\M2ePro\Model\Order as Order;
 
+/**
+ * Class Status
+ * @package Ess\M2ePro\Model\Ebay\Connector\OrderItem\Update
+ */
 class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 {
     // M2ePro_TRANSLATIONS
@@ -31,8 +36,7 @@ class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Order\Item $orderItem,
         array $params
-    )
-    {
+    ) {
         parent::__construct(
             $marketplace,
             $account,
@@ -41,7 +45,7 @@ class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
             $params
         );
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->orderItem           = (!is_null($orderItem->getId())) ? $orderItem : NULL;
+        $this->orderItem           = ($orderItem->getId() !== null) ? $orderItem : null;
     }
 
     // ########################################
@@ -71,7 +75,7 @@ class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 
     protected function getCommand()
     {
-        return array('orders', 'update', 'status');
+        return ['orders', 'update', 'status'];
     }
 
     protected function isNeedSendRequest()
@@ -90,14 +94,14 @@ class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
         $trackingNumber = !empty($this->params['tracking_number']) ? $this->params['tracking_number'] : null;
         $carrierCode    = !empty($this->params['carrier_code'])    ? $this->params['carrier_code']    : null;
 
-        return array(
+        return [
             'account'         => $this->orderItem->getOrder()->getAccount()->getChildObject()->getServerHash(),
             'action'          => $action,
             'item_id'         => $this->orderItem->getChildObject()->getItemId(),
             'transaction_id'  => $this->orderItem->getChildObject()->getTransactionId(),
             'tracking_number' => $trackingNumber,
             'carrier_code'    => $carrierCode
-        );
+        ];
     }
 
     // ########################################
@@ -116,11 +120,11 @@ class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
             }
 
             $messageText = 'Shipping status was not updated (Item: %item_id%, Transaction: %trn_id%). Reason: %msg%';
-            $this->orderItem->getOrder()->addErrorLog($messageText, array(
+            $this->orderItem->getOrder()->addErrorLog($messageText, [
                 '!item_id' => $this->orderItem->getChildObject()->getItemId(),
                 '!trn_id'  => $this->orderItem->getChildObject()->getTransactionId(),
                 'msg'      => $message->getText(),
-            ));
+            ]);
         }
     }
 
@@ -142,10 +146,10 @@ class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
         if (!isset($responseData['result']) || !$responseData['result']) {
             $message = 'Shipping status was not updated (Item: %item_id%, Transaction: %trn_id%). '.
                 'Reason: eBay Failure.';
-            $this->orderItem->getOrder()->addErrorLog($message, array(
+            $this->orderItem->getOrder()->addErrorLog($message, [
                 '!item_id' => $this->orderItem->getChildObject()->getItemId(),
                 '!trn_id'  => $this->orderItem->getChildObject()->getTransactionId(),
-            ));
+            ]);
 
             return;
         }
@@ -153,24 +157,24 @@ class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
         if (!empty($this->params['tracking_number']) && !empty($this->params['carrier_code'])) {
             $message = 'Tracking number "%num%" for "%code%" has been sent to eBay '.
                 '(Item: %item_id%, Transaction: %trn_id%).';
-            $this->orderItem->getOrder()->addSuccessLog($message, array(
+            $this->orderItem->getOrder()->addSuccessLog($message, [
                 '!num' => $this->params['tracking_number'],
                 'code' => $this->params['carrier_code'],
                 '!item_id' => $this->orderItem->getChildObject()->getItemId(),
                 '!trn_id'  => $this->orderItem->getChildObject()->getTransactionId(),
-            ));
+            ]);
         } else {
             $message = 'Order Item has been marked as Shipped (Item: %item_id%, Transaction: %trn_id%).';
-            $this->orderItem->getOrder()->addSuccessLog($message, array(
+            $this->orderItem->getOrder()->addSuccessLog($message, [
                 '!item_id' => $this->orderItem->getChildObject()->getItemId(),
                 '!trn_id'  => $this->orderItem->getChildObject()->getTransactionId(),
-            ));
+            ]);
         }
 
         $this->activeRecordFactory
-            ->getObject('Order\Change')
-            ->getResource()
-            ->deleteByIds(array($this->getOrderChangeId()));
+             ->getObject('Order\Change')
+             ->getResource()
+             ->deleteByIds([$this->getOrderChangeId()]);
     }
 
     // ########################################

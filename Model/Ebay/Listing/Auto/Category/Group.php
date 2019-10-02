@@ -11,22 +11,26 @@
  */
 namespace Ess\M2ePro\Model\Ebay\Listing\Auto\Category;
 
+/**
+ * Class Group
+ * @package Ess\M2ePro\Model\Ebay\Listing\Auto\Category
+ */
 class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Category
      */
-    private $categoryTemplateModel = NULL;
+    private $categoryTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory
      */
-    private $otherCategoryTemplateModel = NULL;
+    private $otherCategoryTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Magento\Product
      */
-    private $magentoProductModel = NULL;
+    private $magentoProductModel = null;
 
     //########################################
 
@@ -44,9 +48,9 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             return false;
         }
 
-        $this->categoryTemplateModel = NULL;
-        $this->otherCategoryTemplateModel = NULL;
-        $this->magentoProductModel = NULL;
+        $this->categoryTemplateModel = null;
+        $this->otherCategoryTemplateModel = null;
+        $this->magentoProductModel = null;
 
         return parent::delete();
     }
@@ -58,18 +62,17 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      */
     public function getCategoryTemplate()
     {
-        if (is_null($this->categoryTemplateModel)) {
-
+        if ($this->categoryTemplateModel === null) {
             try {
                 $this->categoryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                    'Ebay\Template\Category',
+                    'Ebay_Template_Category',
                     (int)$this->getAddingTemplateCategoryId()
                 );
             } catch (\Exception $exception) {
                 return $this->categoryTemplateModel;
             }
 
-            if (!is_null($this->getMagentoProduct())) {
+            if ($this->getMagentoProduct() !== null) {
                 $this->categoryTemplateModel->setMagentoProduct($this->getMagentoProduct());
             }
         }
@@ -92,17 +95,17 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      */
     public function getOtherCategoryTemplate()
     {
-        if (is_null($this->otherCategoryTemplateModel)) {
-
+        if ($this->otherCategoryTemplateModel === null) {
             try {
                 $this->otherCategoryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                    'Ebay\Template\OtherCategory', (int)$this->getAddingTemplateOtherCategoryId()
+                    'Ebay_Template_OtherCategory',
+                    (int)$this->getAddingTemplateOtherCategoryId()
                 );
             } catch (\Exception $exception) {
                 return $this->otherCategoryTemplateModel;
             }
 
-            if (!is_null($this->getMagentoProduct())) {
+            if ($this->getMagentoProduct() !== null) {
                 $this->otherCategoryTemplateModel->setMagentoProduct($this->getMagentoProduct());
             }
         }

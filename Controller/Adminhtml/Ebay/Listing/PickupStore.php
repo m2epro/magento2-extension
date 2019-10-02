@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+/**
+ * Class PickupStore
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ */
 abstract class PickupStore extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -17,7 +21,7 @@ abstract class PickupStore extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $id = $this->getRequest()->getParam('id');
 
         try {
-            $listing = $this->ebayFactory->getCachedObjectLoaded('Listing',$id);
+            $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $id);
         } catch (\LogicException $e) {
             $this->getMessageManager()->addErrorMessage($this->__('Listing does not exist.'));
             return $this->_redirect('*/ebay_listing/index');

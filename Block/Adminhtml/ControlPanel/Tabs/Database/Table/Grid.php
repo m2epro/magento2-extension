@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 use \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel as ParentAbstractModel;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table
+ */
 class Grid extends AbstractGrid
 {
     const MERGE_MODE_COOKIE_KEY = 'database_tables_merge_mode_cookie_key';
@@ -81,10 +85,10 @@ class Grid extends AbstractGrid
         /** @var  $collection */
         $collection = $this->tableModel->getModel()->getCollection();
 
-        if ($this->tableModel->getTableName() == 'm2epro_operation_history'){
-            $collection->getSelect()->columns(array(
+        if ($this->tableModel->getTableName() == 'm2epro_operation_history') {
+            $collection->getSelect()->columns([
                 'total_run_time' => new \Zend_Db_Expr("TIME_TO_SEC(TIMEDIFF(`end_date`, `start_date`))")
-            ));
+            ]);
         }
 
         $this->setCollection($collection);
@@ -94,7 +98,6 @@ class Grid extends AbstractGrid
     protected function _prepareColumns()
     {
         foreach ($this->tableModel->getColumns() as $column) {
-
             $mergeMarkerHtml = '';
             if ($column['is_parent']) {
                 $mergeMarkerHtml = '<span style="color: orangered;">[p]</span>';
@@ -111,23 +114,22 @@ class Grid extends AbstractGrid
                 $filterIndex = 'second_table.' . strtolower($column['name']);
             }
 
-            $params = array(
+            $params = [
                 'header'         => $header,
                 'align'          => 'left',
                 'type'           => $this->getColumnType($column),
                 'string_limit'   => 65000,
                 'index'          => strtolower($column['name']),
                 'filter_index'   => $filterIndex,
-                'frame_callback' => array($this, 'callbackColumnData'),
+                'frame_callback' => [$this, 'callbackColumnData'],
 
                 'is_auto_increment' => strpos($column['extra'], 'increment') !== false,
 
                 'is_parent' => $column['is_parent'],
                 'is_child'  => $column['is_child'],
-            );
+            ];
 
             if ($this->getColumnType($column) == 'datetime') {
-
                 // will be replaced by UTC
                 // vendor\magento\module-backend\Block\Widget\Grid\Column\Renderer\Datetime.php
                 $params['timezone']    = false;
@@ -136,12 +138,12 @@ class Grid extends AbstractGrid
                 $params['filter']      = '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime';
             }
 
-            if($this->tableModel->getTableName() == 'm2epro_operation_history' && $column['name'] == 'nick') {
+            if ($this->tableModel->getTableName() == 'm2epro_operation_history' && $column['name'] == 'nick') {
                 $params['filter'] = '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Column\Filter\Select';
             }
 
             if ($this->tableModel->getTableName() == 'm2epro_operation_history' && $column['name'] == 'data') {
-                $columnData = array(
+                $columnData = [
                     'header'                    => $this->__('Total Run Time'),
                     'align'                     => 'right',
                     'width'                     => '70px',
@@ -149,9 +151,9 @@ class Grid extends AbstractGrid
                     'index'                     => 'total_run_time',
                     'filter'                    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range',
                     'sortable'                  => true,
-                    'frame_callback'            => array($this, 'callbackColumnTotalRunTime'),
-                    'filter_condition_callback' => array($this, 'callbackTotalRunTimeFilter')
-                );
+                    'frame_callback'            => [$this, 'callbackColumnTotalRunTime'],
+                    'filter_condition_callback' => [$this, 'callbackTotalRunTimeFilter']
+                ];
 
                 $this->addColumn('total_time', $columnData);
             }
@@ -159,7 +161,7 @@ class Grid extends AbstractGrid
             $this->addColumn($column['name'], $params);
         }
 
-        $this->addColumn('actions_row', array(
+        $this->addColumn('actions_row', [
             'header'    => '&nbsp;'.$this->__('Actions'),
             'align'     => 'left',
             'width'     => '70px',
@@ -167,8 +169,8 @@ class Grid extends AbstractGrid
             'index'     => 'actions_row',
             'filter'    => false,
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnActions')
-        ));
+            'frame_callback' => [$this, 'callbackColumnActions']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -190,7 +192,8 @@ class Grid extends AbstractGrid
             'controlPanel/getTableCellsPopupHtml' => $this->getUrl('*/*/getTableCellsPopupHtml', $urlParams),
 
             'controlPanel/manageTable' => $this->getUrl(
-                '*/*/manageTable', ['table' => $this->tableModel->getTableName()]
+                '*/*/manageTable',
+                ['table' => $this->tableModel->getTableName()]
             ),
         ];
         $this->jsUrl->addUrls($urls);
@@ -224,17 +227,17 @@ JS
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->getMassactionBlock()->addItem('deleteTableRows', array(
+        $this->getMassactionBlock()->addItem('deleteTableRows', [
              'label'    => $this->__('Delete'),
              'url'      => '',
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->getMassactionBlock()->addItem('updateTableCells', array(
+        $this->getMassactionBlock()->addItem('updateTableCells', [
             'label'    => $this->__('Update'),
             'url'      => ''
-        ));
+        ]);
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -253,13 +256,13 @@ JS
         }
 
         $tempValue = '<span style="color:silver;"><small>NULL</small></span>';
-        if (!is_null($value)) {
+        if ($value !== null) {
             $tempValue = $this->isColumnValueShouldBeCut($value) ? $this->cutColumnValue($value) : $value;
             $tempValue = $this->escapeHtml($tempValue);
         }
 
         $inputValue = 'NULL';
-        if (!is_null($value)) {
+        if ($value !== null) {
             $inputValue = $this->escapeHtml($value);
         }
 
@@ -304,12 +307,13 @@ HTML;
 HTML;
 
         if ($this->tableModel->getTableName() == 'm2epro_operation_history') {
-
             $urlUp = $this->getUrl(
-                '*/*/showOperationHistoryExecutionTreeUp', ['operation_history_id' => $row->getId()]
+                '*/*/showOperationHistoryExecutionTreeUp',
+                ['operation_history_id' => $row->getId()]
             );
             $urlDown = $this->getUrl(
-                '*/*/showOperationHistoryExecutionTreeDown', ['operation_history_id' => $row->getId()]
+                '*/*/showOperationHistoryExecutionTreeDown',
+                ['operation_history_id' => $row->getId()]
             );
             $html .= <<<HTML
 <br/>
@@ -322,12 +326,11 @@ HTML;
 </a>
 HTML;
         }
-        $helper = $this->getHelper('Module\Database\Structure');
+        $helper = $this->getHelper('Module_Database_Structure');
         $componentMode = $row->getData('component_mode');
 
         if (!$this->tableModel->getIsMergeModeEnabled() && $componentMode &&
             $helper->isTableHorizontalParent($this->tableModel->getTableName())) {
-
             $html .= <<<HTML
 <br/>
 <a style="color: green;" href="javascript:void(0);"
@@ -344,7 +347,7 @@ HTML;
 
     public function callbackColumnTotalRunTime($value, $row, $column, $isExport)
     {
-        if (is_null($value)) {
+        if (!is_numeric($value)) {
             return '<span style="color:silver;"><small>NULL</small></span>';
         }
         $color = $value > 1800 ? 'red' : 'green';
@@ -366,7 +369,7 @@ HTML;
             return $this;
         }
 
-        $value = array_map(function($item) {
+        $value = array_map(function ($item) {
             list($minutes, $seconds) = explode(':', $item);
             return (int) $minutes * 60 + $seconds;
         }, $value);
@@ -403,7 +406,7 @@ HTML;
 
     protected function isColumnValueShouldBeCut($originalValue)
     {
-        if (is_null($originalValue)) {
+        if ($originalValue === null) {
             return false;
         }
 
@@ -412,7 +415,7 @@ HTML;
 
     protected function cutColumnValue($originalValue)
     {
-        if (is_null($originalValue)) {
+        if ($originalValue === null) {
             return $originalValue;
         }
 
@@ -433,17 +436,17 @@ HTML;
                 : $column->getIndex();
 
             if ($this->isNullFilter($value)) {
-                $this->getCollection()->addFieldToFilter($field, array('null' => true));
+                $this->getCollection()->addFieldToFilter($field, ['null' => true]);
                 return $this;
             }
 
             if ($this->isNotIsNullFilter($value)) {
-                $this->getCollection()->addFieldToFilter($field, array('notnull' => true));
+                $this->getCollection()->addFieldToFilter($field, ['notnull' => true]);
                 return $this;
             }
 
             if ($this->isUnEqualFilter($value)) {
-                $this->getCollection()->addFieldToFilter($field, array('neq' => preg_replace('/^!=/', '', $value)));
+                $this->getCollection()->addFieldToFilter($field, ['neq' => preg_replace('/^!=/', '', $value)]);
                 return $this;
             }
         }
@@ -457,7 +460,7 @@ HTML;
             return true;
         }
 
-        if (isset($value['from'] ,$value['to']) && $value['from'] === 'isnull' && $value['to'] === 'isnull') {
+        if (isset($value['from'], $value['to']) && $value['from'] === 'isnull' && $value['to'] === 'isnull') {
             return true;
         }
 
@@ -470,7 +473,7 @@ HTML;
             return true;
         }
 
-        if (isset($value['from'] ,$value['to']) && $value['from'] === '!isnull' && $value['to'] === '!isnull') {
+        if (isset($value['from'], $value['to']) && $value['from'] === '!isnull' && $value['to'] === '!isnull') {
             return true;
         }
 
@@ -490,12 +493,12 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/databaseTableGrid', array('_current'=>true));
+        return $this->getUrl('*/*/databaseTableGrid', ['_current'=>true]);
     }
 
     public function getRowUrl($row)
     {
-        //return $this->getUrl('*/*/editTableRow', array('id' => $row->getId()));
+        return false;
     }
 
     public function getTableModel()

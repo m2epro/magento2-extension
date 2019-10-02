@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Condition;
 
+/**
+ * Class Combine
+ * @package Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Condition
+ */
 class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
 {
     //########################################
@@ -17,8 +21,7 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Rule\Model\Condition\Context $context,
         array $data = []
-    )
-    {
+    ) {
 
         parent::__construct($helperFactory, $modelFactory, $context, $data);
         $this->setType('Ebay\Magento\Product\Rule\Condition\Combine');
@@ -49,8 +52,8 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
     {
         $attributes = $this->getCustomOptionsAttributes();
         return !empty($attributes) ?
-            $this->getOptions('Ebay\Magento\Product\Rule\Condition\Product', $attributes, array('ebay'))
-            : array();
+            $this->getOptions('Ebay\Magento\Product\Rule\Condition\Product', $attributes, ['ebay'])
+            : [];
     }
 
     /**
@@ -59,7 +62,7 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
     protected function getCustomOptionsAttributes()
     {
         $helper = $this->helperFactory->getObject('Module\Translation');
-        return array(
+        return [
             'ebay_item_id' => $helper->__('Item ID'),
             'ebay_online_title' => $helper->__('Title'),
             'ebay_online_sku' => $helper->__('SKU'),
@@ -74,7 +77,7 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
             'ebay_status' => $helper->__('Status'),
             'ebay_start_date' => $helper->__('Start Date'),
             'ebay_end_date' => $helper->__('End Date'),
-        );
+        ];
     }
 
     //########################################

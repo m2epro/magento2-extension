@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\System\Config\General;
 
+/**
+ * Class Fieldset
+ * @package Ess\M2ePro\Block\Adminhtml\System\Config\General
+ */
 class Fieldset extends \Magento\Config\Block\System\Config\Form\Fieldset
 {
-    private $helperFactory = NULL;
+    private $helperFactory = null;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -18,8 +22,7 @@ class Fieldset extends \Magento\Config\Block\System\Config\Form\Fieldset
         \Magento\Backend\Model\Auth\Session $authSession,
         \Magento\Framework\View\Helper\Js $jsHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
         parent::__construct($context, $authSession, $jsHelper, $data);
     }
@@ -65,7 +68,6 @@ class Fieldset extends \Magento\Config\Block\System\Config\Form\Fieldset
     protected function getIntegrationHelpBlockHtml($htmlId)
     {
         if (strpos($htmlId, 'ebay') !== false) {
-
             $content = __(<<<HTML
             <p>You can enable/disable eBay Integration.</p><br>
 
@@ -74,9 +76,7 @@ class Fieldset extends \Magento\Config\Block\System\Config\Form\Fieldset
             (even if you did not remove the data from M2E Pro).</p>
 HTML
             );
-
         } elseif (strpos($htmlId, 'amazon') !== false) {
-
             $content = __(<<<HTML
             <p>You can enable/disable Amazon Integration.</p><br>
 
@@ -85,9 +85,7 @@ HTML
             (even if you did not remove the data from M2E Pro).</p>
 HTML
             );
-
         } elseif (strpos($htmlId, 'buy') !== false) {
-
             $content = __(<<<HTML
             <p>Currently, M2E Pro Team is working on the migration of Rakuten.com
             Integration from Magento v 1.x environment to Magento v 2.x.</p><br>
@@ -97,7 +95,6 @@ HTML
 HTML
             );
         } elseif (strpos($htmlId, 'advanced') !== false) {
-
             $url = $this->helperFactory->getObject('Module\Support')->getDocumentationArticleUrl("x/EgA9AQ");
             $content = __(<<<HTML
             <p>This page contains additional functionality for M2E Pro Module’s management such as ability to
@@ -109,11 +106,15 @@ HTML
 
         $helpBlockHtml = '';
         if (!empty($content)) {
-            $helpBlockHtml = $this->getLayout()->createBlock('Ess\M2ePro\Block\Adminhtml\HelpBlock', '', ['data' => [
-                'no_collapse' => true,
-                'no_hide' => true,
-                'content' => $content
-            ]])->toHtml();
+            $helpBlockHtml = $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\HelpBlock::class,
+                '',
+                ['data' => [
+                    'no_collapse' => true,
+                    'no_hide' => true,
+                    'content' => $content
+                ]]
+            )->toHtml();
         }
 
         $css = "<style>

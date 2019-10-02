@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template\Payment\Service;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Template\Payment\Service
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     //########################################

@@ -7,6 +7,10 @@
  */
 namespace Ess\M2ePro\Model\Amazon\Listing\Other;
 
+/**
+ * Class Mapping
+ * @package Ess\M2ePro\Model\Amazon\Listing\Other
+ */
 class Mapping extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $productFactory;
@@ -14,9 +18,9 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Account|null
      */
-    protected $account = NULL;
+    protected $account = null;
 
-    protected $mappingSettings = NULL;
+    protected $mappingSettings = null;
 
     protected $amazonFactory;
 
@@ -27,8 +31,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->productFactory = $productFactory;
         $this->amazonFactory = $amazonFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -36,10 +39,10 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function initialize(\Ess\M2ePro\Model\Account $account = NULL)
+    public function initialize(\Ess\M2ePro\Model\Account $account = null)
     {
         $this->account = $account;
-        $this->mappingSettings = NULL;
+        $this->mappingSettings = null;
     }
 
     //########################################
@@ -50,10 +53,9 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
      */
     public function autoMapOtherListingsProducts(array $otherListings)
     {
-        $otherListingsFiltered = array();
+        $otherListingsFiltered = [];
 
         foreach ($otherListings as $otherListing) {
-
             if (!($otherListing instanceof \Ess\M2ePro\Model\Listing\Other)) {
                 continue;
             }
@@ -71,7 +73,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        $sortedItems = array();
+        $sortedItems = [];
 
         /** @var $otherListing \Ess\M2ePro\Model\Listing\Other */
         foreach ($otherListingsFiltered as $otherListing) {
@@ -111,8 +113,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
         $mappingSettings = $this->getMappingRulesByPriority();
 
         foreach ($mappingSettings as $type) {
-
-            $magentoProductId = NULL;
+            $magentoProductId = null;
 
             if ($type == 'general_id') {
                 $magentoProductId = $this->getGeneralIdMappedMagentoProductId($otherListing);
@@ -126,7 +127,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
                 $magentoProductId = $this->getTitleMappedMagentoProductId($otherListing);
             }
 
-            if (is_null($magentoProductId)) {
+            if ($magentoProductId === null) {
                 continue;
             }
 
@@ -142,17 +143,17 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
     protected function getMappingRulesByPriority()
     {
-        if (!is_null($this->mappingSettings)) {
+        if ($this->mappingSettings !== null) {
             return $this->mappingSettings;
         }
 
-        $this->mappingSettings = array();
+        $this->mappingSettings = [];
 
-        foreach ($this->getAccount()->getChildObject()->getOtherListingsMappingSettings() as $key=>$value) {
+        foreach ($this->getAccount()->getChildObject()->getOtherListingsMappingSettings() as $key => $value) {
             if ((int)$value['mode'] == 0) {
                 continue;
             }
-            for ($i=0;$i<10;$i++) {
+            for ($i=0; $i<10; $i++) {
                 if (!isset($this->mappingSettings[(int)$value['priority']+$i])) {
                     $this->mappingSettings[(int)$value['priority']+$i] = (string)$key;
                     break;
@@ -172,11 +173,10 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
         $temp = $otherListing->getChildObject()->getGeneralId();
 
         if (empty($temp)) {
-            return NULL;
+            return null;
         }
 
         if ($this->getAccount()->getChildObject()->isOtherListingsMappingGeneralIdModeCustomAttribute()) {
-
             $storeId = $otherListing->getChildObject()->getRelatedStoreId();
             $attributeCode = $this->getAccount()->getChildObject()->getOtherListingsMappingGeneralIdAttribute();
             $attributeValue = trim($otherListing->getChildObject()->getGeneralId());
@@ -186,12 +186,11 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
             if ($productObj && $productObj->getId() &&
                 $this->isMagentoProductTypeAllowed($productObj->getTypeId())) {
-
                 return $productObj->getId();
             }
         }
 
-        return NULL;
+        return null;
     }
 
     /**
@@ -204,15 +203,14 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
         $temp = $otherListing->getChildObject()->getSku();
 
         if (empty($temp)) {
-            return NULL;
+            return null;
         }
 
         if ($this->getAccount()->getChildObject()->isOtherListingsMappingSkuModeProductId()) {
-
             $productId = trim($otherListing->getChildObject()->getSku());
 
             if (!ctype_digit($productId) || (int)$productId <= 0) {
-                return NULL;
+                return null;
             }
 
             $product = $this->productFactory->create()->load($productId);
@@ -221,10 +219,10 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
                 return $product->getId();
             }
 
-            return NULL;
+            return null;
         }
 
-        $attributeCode = NULL;
+        $attributeCode = null;
 
         if ($this->getAccount()->getChildObject()->isOtherListingsMappingSkuModeDefault()) {
             $attributeCode = 'sku';
@@ -234,8 +232,8 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
             $attributeCode = $this->getAccount()->getChildObject()->getOtherListingsMappingSkuAttribute();
         }
 
-        if (is_null($attributeCode)) {
-            return NULL;
+        if ($attributeCode === null) {
+            return null;
         }
 
         $storeId = $otherListing->getChildObject()->getRelatedStoreId();
@@ -246,11 +244,10 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
         if ($productObj && $productObj->getId() &&
             $this->isMagentoProductTypeAllowed($productObj->getTypeId())) {
-
             return $productObj->getId();
         }
 
-        return NULL;
+        return null;
     }
 
     /**
@@ -263,10 +260,10 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
         $temp = $otherListing->getChildObject()->getTitle();
 
         if (empty($temp)) {
-            return NULL;
+            return null;
         }
 
-        $attributeCode = NULL;
+        $attributeCode = null;
 
         if ($this->getAccount()->getChildObject()->isOtherListingsMappingTitleModeDefault()) {
             $attributeCode = 'name';
@@ -276,8 +273,8 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
             $attributeCode = $this->getAccount()->getChildObject()->getOtherListingsMappingTitleAttribute();
         }
 
-        if (is_null($attributeCode)) {
-            return NULL;
+        if ($attributeCode === null) {
+            return null;
         }
 
         $storeId = $otherListing->getChildObject()->getRelatedStoreId();
@@ -288,24 +285,22 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
         if ($productObj && $productObj->getId() &&
             $this->isMagentoProductTypeAllowed($productObj->getTypeId())) {
-
             return $productObj->getId();
         }
 
-        $findCount = preg_match('/^.+(\[(.+)\])$/',$attributeValue,$tempMatches);
+        $findCount = preg_match('/^.+(\[(.+)\])$/', $attributeValue, $tempMatches);
         if ($findCount > 0 && isset($tempMatches[1])) {
-            $attributeValue = trim(str_replace($tempMatches[1],'',$attributeValue));
+            $attributeValue = trim(str_replace($tempMatches[1], '', $attributeValue));
             $productObj = $this->productFactory->create()->setStoreId($storeId);
             $productObj = $productObj->loadByAttribute($attributeCode, $attributeValue);
 
             if ($productObj && $productObj->getId() &&
                 $this->isMagentoProductTypeAllowed($productObj->getTypeId())) {
-
                 return $productObj->getId();
             }
         }
 
-        return NULL;
+        return null;
     }
 
     //########################################
@@ -333,15 +328,16 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function setAccountByOtherListingProduct(\Ess\M2ePro\Model\Listing\Other $otherListing)
     {
-        if (!is_null($this->account) && $this->account->getId() == $otherListing->getAccountId()) {
+        if ($this->account !== null && $this->account->getId() == $otherListing->getAccountId()) {
             return;
         }
 
         $this->account = $this->amazonFactory->getCachedObjectLoaded(
-            'Account',$otherListing->getAccountId()
+            'Account',
+            $otherListing->getAccountId()
         );
 
-        $this->mappingSettings = NULL;
+        $this->mappingSettings = null;
     }
 
     //########################################

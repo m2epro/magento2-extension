@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Order;
 
+/**
+ * Class Helper
+ * @package Ess\M2ePro\Model\Amazon\Order
+ */
 class Helper extends \Ess\M2ePro\Model\AbstractModel
 {
     const AMAZON_STATUS_PENDING             = 'Pending';

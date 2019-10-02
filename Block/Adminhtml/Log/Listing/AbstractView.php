@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Log\Listing;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
+/**
+ * Class AbstractView
+ * @package Ess\M2ePro\Block\Adminhtml\Log\Listing
+ */
 abstract class AbstractView extends AbstractContainer
 {
     /** @var  \Ess\M2ePro\Block\Adminhtml\Log\Listing\View\Switcher */
@@ -41,7 +45,7 @@ abstract class AbstractView extends AbstractContainer
 
         $gridClass = $this->nameBuilder->buildClassName([
             $this->getComponentMode(),
-            'Log\Listing',
+            'Log_Listing',
             $this->listingTypeSwitcherBlock->getSelectedParam(),
             'View',
             $this->viewModeSwitcherBlock->getSelectedParam(),
@@ -68,14 +72,14 @@ JS
 
     protected function createViewModeSwitcherBlock()
     {
-        return $this->createBlock('Log\Listing\View\Switcher')->setData([
+        return $this->createBlock('Log_Listing_View_Switcher')->setData([
             'component_mode' => $this->getComponentMode()
         ]);
     }
 
     protected function createListingTypeSwitcherBlock()
     {
-        return $this->createBlock('Log\Listing\TypeSwitcher')->setData([
+        return $this->createBlock('Log_Listing_TypeSwitcher')->setData([
             'component_mode' => $this->getComponentMode()
         ]);
     }

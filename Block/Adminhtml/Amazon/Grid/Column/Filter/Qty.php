@@ -10,6 +10,10 @@ namespace  Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter;
 
 use Ess\M2ePro\Model\Amazon\Listing\Product as AmazonListingProduct;
 
+/**
+ * Class Qty
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter
+ */
 class Qty extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range
 {
     //########################################
@@ -19,7 +23,7 @@ class Qty extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range
         $anySelected = $noSelected = $yesSelected = '';
         $filterValue = (string)$this->getValue('afn');
 
-        $filterValue === ''  && $anySelected = ' selected="selected" ';
+        $filterValue === '' && $anySelected = ' selected="selected" ';
         $filterValue === '0' && $noSelected  = ' selected="selected" ';
         $filterValue === '1' && $yesSelected = ' selected="selected" ';
 
@@ -53,14 +57,14 @@ HTML;
 
     //########################################
 
-    public function getValue($index=null)
+    public function getValue($index = null)
     {
         if ($index) {
             return $this->getData('value', $index);
         }
         $value = $this->getData('value');
-        if ((isset($value['from']) && strlen($value['from']) > 0) ||
-            (isset($value['to']) && strlen($value['to']) > 0) ||
+        if ((isset($value['from']) && $value['from'] !== '') ||
+            (isset($value['to']) && $value['to'] !== '') ||
             (isset($value['afn']) && $value['afn'] !== '')) {
             return $value;
         }

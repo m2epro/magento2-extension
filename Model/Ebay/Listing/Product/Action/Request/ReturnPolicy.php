@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request;
 
+/**
+ * Class ReturnPolicy
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request
+ */
 class ReturnPolicy extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy
      */
-    private $returnTemplate = NULL;
+    private $returnTemplate = null;
 
     //########################################
 
@@ -22,8 +26,8 @@ class ReturnPolicy extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request
      */
     public function getRequestData()
     {
-        return array(
-            'return' => array(
+        return [
+            'return' => [
                 'accepted'      => $this->getReturnTemplate()->getAccepted(),
                 'option'        => $this->getReturnTemplate()->getOption(),
                 'within'        => $this->getReturnTemplate()->getWithin(),
@@ -31,8 +35,8 @@ class ReturnPolicy extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request
                 'description'   => $this->getReturnTemplate()->getDescription(),
                 'shipping_cost'  => $this->getReturnTemplate()->getShippingCost(),
                 'restocking_fee' => $this->getReturnTemplate()->getRestockingFee()
-            )
-        );
+            ]
+        ];
     }
 
     //########################################
@@ -42,7 +46,7 @@ class ReturnPolicy extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request
      */
     private function getReturnTemplate()
     {
-        if (is_null($this->returnTemplate)) {
+        if ($this->returnTemplate === null) {
             $this->returnTemplate = $this->getListingProduct()
                                          ->getChildObject()
                                          ->getReturnTemplate();

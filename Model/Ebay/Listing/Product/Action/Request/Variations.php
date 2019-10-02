@@ -13,6 +13,10 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request;
 
 use \Ess\M2ePro\Model\Ebay\Template\Description\Source as DescriptionSource;
 
+/**
+ * Class Variations
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request
+ */
 class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\AbstractModel
 {
     protected $variationsThatCanNotBeDeleted = [];
@@ -24,9 +28,9 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
      */
     public function getRequestData()
     {
-        $data = array(
+        $data = [
             'is_variation_item' => $this->getIsVariationItem()
-        );
+        ];
 
         $this->logLimitationsAndReasons();
 
@@ -61,12 +65,12 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
      */
     public function getVariationsData()
     {
-        $data = array();
+        $data = [];
 
         $qtyMode = $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->getQtyMode();
 
-        $productsIds = array();
-        $variationIdsIndexes = array();
+        $productsIds = [];
+        $variationIdsIndexes = [];
 
         foreach ($this->getListingProduct()->getVariations(true) as $variation) {
             /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
@@ -80,7 +84,7 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
                 $variationPrice = $ebayVariation->getPrice();
             }
 
-            $item = array(
+            $item = [
                 '_instance_' => $variation,
                 'price'      => $variationPrice,
                 'qty'        => $ebayVariation->isDelete() ? 0 : $ebayVariation->getQty(),
@@ -88,8 +92,8 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
                                                                : $ebayVariation->getSku(),
                 'add'        => $ebayVariation->isAdd(),
                 'delete'     => $ebayVariation->isDelete(),
-                'specifics'  => array()
-            );
+                'specifics'  => []
+            ];
 
             if ($ebayVariation->isDelete()) {
                 $item['sku'] = 'del-' . sha1(microtime(1).$ebayVariation->getOnlineSku());
@@ -97,17 +101,15 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
 
             if (($qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED ||
                 $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT) && !$item['delete']) {
-
                 foreach ($variation->getOptions(true) as $option) {
                     $productsIds[] = $option->getProductId();
                 }
             }
 
             if ($this->getEbayListingProduct()->isPriceDiscountStp()) {
-
-                $priceDiscountData = array(
+                $priceDiscountData = [
                     'original_retail_price' => $ebayVariation->getPriceDiscountStp()
-                );
+                ];
 
                 if ($this->getEbayMarketplace()->isStpAdvancedEnabled()) {
                     $priceDiscountData = array_merge(
@@ -121,9 +123,9 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
             }
 
             if ($this->getEbayListingProduct()->isPriceDiscountMap()) {
-                $priceDiscountMapData = array(
+                $priceDiscountMapData = [
                     'minimum_advertised_price' => $ebayVariation->getPriceDiscountMap(),
-                );
+                ];
 
                 $exposure = $ebayVariation->getEbaySellingFormatTemplate()->getPriceDiscountMapExposureType();
                 $priceDiscountMapData['minimum_advertised_price_exposure'] =
@@ -148,8 +150,7 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
             //-- MPN Specific has been changed
             if (!empty($item['details']['mpn_previous']) && !empty($item['details']['mpn']) &&
                 $item['details']['mpn_previous'] != $item['details']['mpn']) {
-
-                $oneMoreVariation = array(
+                $oneMoreVariation = [
                     'qty'       => 0,
                     'price'     => $item['price'],
                     'sku'       => 'del-' . sha1(microtime(1) . $item['sku']),
@@ -158,7 +159,7 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
                     'specifics' => $item['specifics'],
                     'has_sales' => true,
                     'details'   => $item['details']
-                );
+                ];
                 $oneMoreVariation['details']['mpn'] = $item['details']['mpn_previous'];
 
                 $specificsReplacements = $this->getEbayListingProduct()->getVariationSpecificsReplacements();
@@ -205,7 +206,8 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
 
         if (isset($additionalData['variations_that_can_not_be_deleted'])) {
             $canNotBeDeleted = array_merge(
-                $canNotBeDeleted, $additionalData['variations_that_can_not_be_deleted']
+                $canNotBeDeleted,
+                $additionalData['variations_that_can_not_be_deleted']
             );
         }
 
@@ -217,18 +219,18 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
      */
     public function getImagesData()
     {
-        $attributeLabels = array();
+        $attributeLabels = [];
 
         if ($this->getMagentoProduct()->isConfigurableType()) {
             $attributeLabels = $this->getConfigurableImagesAttributeLabels();
         }
 
         if ($this->getMagentoProduct()->isGroupedType()) {
-            $attributeLabels = array(\Ess\M2ePro\Model\Magento\Product\Variation::GROUPED_PRODUCT_ATTRIBUTE_LABEL);
+            $attributeLabels = [\Ess\M2ePro\Model\Magento\Product\Variation::GROUPED_PRODUCT_ATTRIBUTE_LABEL];
         }
 
         if (count($attributeLabels) <= 0) {
-            return array();
+            return [];
         }
 
         return $this->getImagesDataByAttributeLabels($attributeLabels);
@@ -252,13 +254,13 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
             return;
         }
 
-        $isVariationEnabled = $this->getHelper('Component\Ebay\Category\Ebay')
+        $isVariationEnabled = $this->getHelper('Component_Ebay_Category_Ebay')
                                     ->isVariationEnabled(
                                         (int)$this->getCategorySource()->getMainCategory(),
                                         $this->getMarketplace()->getId()
                                     );
 
-        if (!is_null($isVariationEnabled) && !$isVariationEnabled) {
+        if ($isVariationEnabled !== null && !$isVariationEnabled) {
             $this->addWarningMessage(
                 $this->getHelper('Module\Translation')->__(
                     'The Product was Listed as a Simple Product as it has limitation for Multi-Variation Items. '.
@@ -296,13 +298,13 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
         $descriptionTemplate = $this->getEbayListingProduct()->getEbayDescriptionTemplate();
 
         if (!$descriptionTemplate->isVariationConfigurableImages()) {
-            return array();
+            return [];
         }
 
         $product = $this->getMagentoProduct()->getProduct();
 
         $attributeCodes = $descriptionTemplate->getDecodedVariationConfigurableImages();
-        $attributes = array();
+        $attributes = [];
 
         foreach ($attributeCodes as $attributeCode) {
             $attribute = $product->getResource()->getAttribute($attributeCode);
@@ -316,24 +318,22 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
         }
 
         if (empty($attributes)) {
-            return array();
+            return [];
         }
 
-        $attributeLabels = array();
+        $attributeLabels = [];
 
         /** @var $productTypeInstance \Magento\ConfigurableProduct\Model\Product\Type\Configurable */
         $productTypeInstance = $this->getMagentoProduct()->getTypeInstance();
         $magentoProduct = $this->getMagentoProduct()->getProduct();
 
-        foreach ($productTypeInstance->getConfigurableAttributes($magentoProduct) as $configurableAttribute){
+        foreach ($productTypeInstance->getConfigurableAttributes($magentoProduct) as $configurableAttribute) {
 
             /** @var $configurableAttribute \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute */
             $configurableAttribute->setStoteId($product->getStoreId());
 
             foreach ($attributes as $attribute) {
-
                 if ((int)$attribute->getAttributeId() == (int)$configurableAttribute->getAttributeId()) {
-
                     $attributeLabels = [];
                     foreach ($attribute->getStoreLabels() as $storeLabel) {
                         $attributeLabels[] = trim($storeLabel);
@@ -349,13 +349,12 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
         }
 
         if (empty($attributeLabels)) {
-
             $this->addNotFoundAttributesMessages(
                 $this->getHelper('Module\Translation')->__('Change Images for Attribute'),
                 $attributes
             );
 
-            return array();
+            return [];
         }
 
         return $attributeLabels;
@@ -363,8 +362,8 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
 
     private function getImagesDataByAttributeLabels(array $attributeLabels)
     {
-        $images = array();
-        $imagesLinks = array();
+        $images = [];
+        $imagesLinks = [];
         $attributeLabel = false;
 
         foreach ($this->getListingProduct()->getVariations(true) as $variation) {
@@ -404,7 +403,6 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
                                      ->getVariationImages();
 
                 foreach ($optionImages as $image) {
-
                     if (!$image->getUrl()) {
                         continue;
                     }
@@ -414,7 +412,6 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
                     }
 
                     if (!isset($images[$image->getHash()])) {
-
                         $imagesLinks[$optionValue][] = $image->getUrl();
                         $images[$image->getHash()] = $image;
                     }
@@ -423,18 +420,20 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
         }
 
         if (!$attributeLabel || !$imagesLinks) {
-            return array();
+            return [];
         }
 
         if (!empty($images)) {
-            $this->addMetaData('ebay_product_variation_images_hash',
-                               $this->getHelper('Component\Ebay\Images')->getHash($images, $attributeLabel));
+            $this->addMetaData(
+                'ebay_product_variation_images_hash',
+                $this->getHelper('Component_Ebay_Images')->getHash($images, $attributeLabel)
+            );
         }
 
-        return array(
+        return [
             'specific' => $attributeLabel,
             'images'   => $imagesLinks
-        );
+        ];
     }
 
     //########################################
@@ -454,9 +453,8 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
         $qtyMode = $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->getQtyMode();
         if ($qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED ||
             $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT) {
-
             $productsIds = array_unique($productsIds);
-            $qtyWarnings = array();
+            $qtyWarnings = [];
 
             $listingProductId = $this->getListingProduct()->getId();
             $storeId = $this->getListing()->getStoreId();
@@ -464,7 +462,6 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
             foreach ($productsIds as $productId) {
                 if (!empty(\Ess\M2ePro\Model\Magento\Product::$statistics
                         [$listingProductId][$productId][$storeId]['qty'])) {
-
                     $qtys = \Ess\M2ePro\Model\Magento\Product::$statistics
                         [$listingProductId][$productId][$storeId]['qty'];
                     $qtyWarnings = array_unique(array_merge($qtyWarnings, array_keys($qtys)));
@@ -505,22 +502,21 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
 
     private function getVariationDetails(\Ess\M2ePro\Model\Listing\Product\Variation $variation)
     {
-        $data = array();
+        $data = [];
 
         /** @var \Ess\M2ePro\Model\Ebay\Template\Description $ebayDescriptionTemplate */
         $ebayDescriptionTemplate = $this->getEbayListingProduct()->getEbayDescriptionTemplate();
 
-        $options = NULL;
+        $options = null;
         $additionalData = $variation->getAdditionalData();
 
-        foreach (array('isbn','upc','ean','mpn','epid') as $tempType) {
-
+        foreach (['isbn','upc','ean','mpn','epid'] as $tempType) {
             if ($tempType == 'mpn' && !empty($additionalData['online_product_details']['mpn'])) {
-
                 $data['mpn'] = $additionalData['online_product_details']['mpn'];
 
                 $isMpnCanBeChanged = $this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/component/ebay/variation/', 'mpn_can_be_changed'
+                    '/component/ebay/variation/',
+                    'mpn_can_be_changed'
                 );
 
                 if (!$isMpnCanBeChanged) {
@@ -536,7 +532,6 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
             }
 
             if ($tempType == 'mpn') {
-
                 if ($ebayDescriptionTemplate->isProductDetailsModeNone('brand')) {
                     continue;
                 }
@@ -567,7 +562,7 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
                 continue;
             }
 
-            if (is_null($options)) {
+            if ($options === null) {
                 $options = $variation->getOptions(true);
             }
 
@@ -595,7 +590,7 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
 
         $categoryId = $this->getCategorySource()->getMainCategory();
         $marketplaceId = $this->getMarketplace()->getId();
-        $categoryFeatures = $this->getHelper('Component\Ebay\Category\Ebay')
+        $categoryFeatures = $this->getHelper('Component_Ebay_Category_Ebay')
                                   ->getFeatures($categoryId, $marketplaceId);
 
         if (empty($categoryFeatures)) {
@@ -604,15 +599,13 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
 
         $statusDisabled = \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay::PRODUCT_IDENTIFIER_STATUS_DISABLED;
 
-        foreach (array('ean','upc','isbn','epid') as $identifier) {
-
+        foreach (['ean','upc','isbn','epid'] as $identifier) {
             $key = $identifier.'_enabled';
             if (!isset($categoryFeatures[$key]) || $categoryFeatures[$key] != $statusDisabled) {
                 continue;
             }
 
             if (isset($data[$identifier])) {
-
                 unset($data[$identifier]);
 
                 // M2ePro\TRANSLATIONS

@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\SellingFormat;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 use \Magento\Backend\App\Action;
 
+/**
+ * Class GetSearchCharityPopUpHtml
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template\SellingFormat
+ */
 class GetSearchCharityPopUpHtml extends Template
 {
     //########################################
@@ -26,7 +30,7 @@ class GetSearchCharityPopUpHtml extends Template
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity\Search $charitySearchBlock */
-        $charitySearchBlock = $this->createBlock('Ebay\Template\SellingFormat\Edit\Form\Charity\Search');
+        $charitySearchBlock = $this->createBlock('Ebay_Template_SellingFormat_Edit_Form_Charity_Search');
         $charitySearchBlock->setData('marketplace_id', $marketplaceId);
 
         $this->setAjaxContent($charitySearchBlock);

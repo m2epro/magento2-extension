@@ -12,7 +12,6 @@ namespace Ess\M2ePro\Model\Amazon;
  * @method \Ess\M2ePro\Model\Order getParentObject()
  * @method \Ess\M2ePro\Model\ResourceModel\Amazon\Order getResource()
  */
-
 class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
     // M2ePro\TRANSLATIONS
@@ -28,6 +27,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     //########################################
 
+    private $shipmentFactory;
+
     private $shippingAddressFactory;
 
     private $carrierFactory;
@@ -36,15 +37,15 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     private $invoiceSender;
 
-    private $subTotalPrice = NULL;
+    private $subTotalPrice = null;
 
-    private $grandTotalPrice = NULL;
+    private $grandTotalPrice = null;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\Magento\Order\ShipmentFactory $shipmentFactory,
         \Ess\M2ePro\Model\Amazon\Order\ShippingAddressFactory $shippingAddressFactory,
-        \Magento\Shipping\Model\CarrierFactory $carrierFactory,
         \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
         \Magento\Sales\Model\Order\Email\Sender\InvoiceSender $invoiceSender,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -56,10 +57,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
+        $this->shipmentFactory = $shipmentFactory;
         $this->shippingAddressFactory = $shippingAddressFactory;
-        $this->carrierFactory = $carrierFactory;
         $this->orderSender = $orderSender;
         $this->invoiceSender = $invoiceSender;
 
@@ -88,7 +88,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     public function getProxy()
     {
-        return $this->modelFactory->getObject('Amazon\Order\Proxy', [
+        return $this->modelFactory->getObject('Amazon_Order_ProxyObject', [
             'order' => $this
         ]);
     }
@@ -171,25 +171,25 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     public function getShipDateFrom()
     {
         $shippingDates = $this->getSettings('shipping_dates');
-        return !empty($shippingDates['ship']['from']) ? $shippingDates['ship']['from'] : NULL;
+        return !empty($shippingDates['ship']['from']) ? $shippingDates['ship']['from'] : null;
     }
 
     public function getShipDateTo()
     {
         $shippingDates = $this->getSettings('shipping_dates');
-        return !empty($shippingDates['ship']['to']) ? $shippingDates['ship']['to'] : NULL;
+        return !empty($shippingDates['ship']['to']) ? $shippingDates['ship']['to'] : null;
     }
 
     public function getDeliveryDateFrom()
     {
         $shippingDates = $this->getSettings('shipping_dates');
-        return !empty($shippingDates['delivery']['from']) ? $shippingDates['delivery']['from'] : NULL;
+        return !empty($shippingDates['delivery']['from']) ? $shippingDates['delivery']['from'] : null;
     }
 
     public function getDeliveryDateTo()
     {
         $shippingDates = $this->getSettings('shipping_dates');
-        return !empty($shippingDates['delivery']['to']) ? $shippingDates['delivery']['to'] : NULL;
+        return !empty($shippingDates['delivery']['to']) ? $shippingDates['delivery']['to'] : null;
     }
 
     //########################################
@@ -250,6 +250,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             return 0;
         }
 
+        if ($this->getSubtotalPrice() - $this->getPromotionDiscountAmount() <= 0) {
+            return 0;
+        }
+
         $taxRate = ($taxAmount / ($this->getSubtotalPrice() - $this->getPromotionDiscountAmount())) * 100;
 
         return round($taxRate, 4);
@@ -262,6 +266,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     {
         $taxAmount = $this->getShippingPriceTaxAmount();
         if ($taxAmount <= 0) {
+            return 0;
+        }
+
+        if ($this->getShippingPrice() - $this->getShippingDiscountAmount() <= 0) {
             return 0;
         }
 
@@ -422,7 +430,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      */
     public function getSubtotalPrice()
     {
-        if (is_null($this->subTotalPrice)) {
+        if ($this->subTotalPrice === null) {
             $this->subTotalPrice = $this->getResource()->getItemsTotal($this->getId());
         }
 
@@ -434,7 +442,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      */
     public function getGrandTotalPrice()
     {
-        if (is_null($this->grandTotalPrice)) {
+        if ($this->grandTotalPrice === null) {
             $this->grandTotalPrice = $this->getSubtotalPrice();
             $this->grandTotalPrice += $this->getProductPriceTaxAmount();
             $this->grandTotalPrice += $this->getShippingPrice();
@@ -452,9 +460,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     public function getStatusForMagentoOrder()
     {
         $status = '';
-        $this->isUnshipped()        && $status = $this->getAmazonAccount()->getMagentoOrdersStatusProcessing();
+        $this->isUnshipped() && $status = $this->getAmazonAccount()->getMagentoOrdersStatusProcessing();
         $this->isPartiallyShipped() && $status = $this->getAmazonAccount()->getMagentoOrdersStatusProcessing();
-        $this->isShipped()          && $status = $this->getAmazonAccount()->getMagentoOrdersStatusShipped();
+        $this->isShipped() && $status = $this->getAmazonAccount()->getMagentoOrdersStatusShipped();
 
         return $status;
     }
@@ -466,7 +474,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      */
     public function getAssociatedStoreId()
     {
-        $storeId = NULL;
+        $storeId = null;
 
         $channelItems = $this->getParentObject()->getChannelItems();
 
@@ -538,7 +546,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     public function beforeCreateMagentoOrder()
     {
         if ($this->isPending() || $this->isCanceled()) {
-
             throw new \Ess\M2ePro\Model\Exception(
                 'Magento Order Creation is not allowed for pending and canceled Amazon Orders.'
             );
@@ -552,9 +559,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         }
 
         if ($this->isFulfilledByAmazon() && !$this->getAmazonAccount()->isMagentoOrdersFbaStockEnabled()) {
-            $this->_eventManager->dispatch('ess_amazon_fba_magento_order_place_after', array(
+            $this->_eventManager->dispatch('ess_amazon_fba_magento_order_place_after', [
                 'magento_order' => $this->getParentObject()->getMagentoOrder()
-            ));
+            ]);
         }
     }
 
@@ -578,7 +585,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         }
 
         $magentoOrder = $this->getParentObject()->getMagentoOrder();
-        if (is_null($magentoOrder)) {
+        if ($magentoOrder === null) {
             return false;
         }
 
@@ -598,7 +605,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     public function createInvoice()
     {
         if (!$this->canCreateInvoice()) {
-            return NULL;
+            return null;
         }
 
         $magentoOrder = $this->getParentObject()->getMagentoOrder();
@@ -606,7 +613,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         // Create invoice
         // ---------------------------------------
         /** @var $invoiceBuilder \Ess\M2ePro\Model\Magento\Order\Invoice */
-        $invoiceBuilder = $this->modelFactory->getObject('Magento\Order\Invoice');
+        $invoiceBuilder = $this->modelFactory->getObject('Magento_Order_Invoice');
         $invoiceBuilder->setMagentoOrder($magentoOrder);
         $invoiceBuilder->buildInvoice();
         // ---------------------------------------
@@ -636,7 +643,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         }
 
         $magentoOrder = $this->getParentObject()->getMagentoOrder();
-        if (is_null($magentoOrder)) {
+        if ($magentoOrder === null) {
             return false;
         }
 
@@ -650,23 +657,18 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     // ---------------------------------------
 
     /**
-     * @return \Magento\Sales\Model\Order\Shipment|null
+     * @return \Magento\Sales\Model\Order\Shipment[]|null
      */
     public function createShipments()
     {
         if (!$this->canCreateShipments()) {
-            return NULL;
+            return null;
         }
 
-        $magentoOrder = $this->getParentObject()->getMagentoOrder();
-
-        // Create shipment
-        // ---------------------------------------
         /** @var $shipmentBuilder \Ess\M2ePro\Model\Magento\Order\Shipment */
-        $shipmentBuilder = $this->modelFactory->getObject('Magento\Order\Shipment');
-        $shipmentBuilder->setMagentoOrder($magentoOrder);
+        $shipmentBuilder = $this->shipmentFactory->create($this->getParentObject()->getMagentoOrder());
+        $shipmentBuilder->setMagentoOrder($this->getParentObject()->getMagentoOrder());
         $shipmentBuilder->buildShipments();
-        // ---------------------------------------
 
         return $shipmentBuilder->getShipments();
     }
@@ -677,7 +679,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      * @param array $trackingDetails
      * @return bool
      */
-    public function canUpdateShippingStatus(array $trackingDetails = array())
+    public function canUpdateShippingStatus(array $trackingDetails = [])
     {
         if ($this->isFulfilledByAmazon()) {
             return false;
@@ -703,7 +705,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      * @param array $items
      * @return bool
      */
-    public function updateShippingStatus(array $trackingDetails = array(), array $items = array())
+    public function updateShippingStatus(array $trackingDetails = [], array $items = [])
     {
         if (!$this->canUpdateShippingStatus($trackingDetails)) {
             return false;
@@ -713,11 +715,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             $trackingDetails['fulfillment_date'] = $this->getHelper('Data')->getCurrentGmtDate();
         }
 
-        $params = array(
+        $params = [
             'amazon_order_id'  => $this->getAmazonOrderId(),
             'fulfillment_date' => $trackingDetails['fulfillment_date'],
-            'items'            => array()
-        );
+            'items'            => []
+        ];
 
         $params = array_merge($params, $trackingDetails);
 
@@ -730,10 +732,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
                 continue;
             }
 
-            $params['items'][] = array(
+            $params['items'][] = [
                 'amazon_order_item_id' => $item['amazon_order_item_id'],
                 'qty' => (int)$item['qty']
-            );
+            ];
         }
 
         $orderId     = $this->getParentObject()->getId();
@@ -755,7 +757,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             $this->updateOrderChange($change, $params);
         } else {
             $this->activeRecordFactory->getObject('Order\Change')->create(
-                $orderId, $action, $creatorType, $component, $params
+                $orderId,
+                $action,
+                $creatorType,
+                $component,
+                $params
             );
         }
 
@@ -772,7 +778,19 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         foreach ($params['items'] as $newItem) {
             foreach ($existingParams['items'] as &$existingItem) {
                 if ($newItem['amazon_order_item_id'] === $existingItem['amazon_order_item_id']) {
-                    $existingItem['qty'] += $newItem['qty'];
+                    $newQtyTotal = $newItem['qty'] + $existingItem['qty'];
+
+                    $maxQtyTotal  = $this->activeRecordFactory
+                                         ->getObject('Amazon_Order_Item')
+                                         ->getCollection()
+                                         ->addFieldToFilter(
+                                             'amazon_order_item_id',
+                                             $existingItem['amazon_order_item_id']
+                                         )
+                                         ->getFirstItem()
+                                         ->getQtyPurchased();
+                    $newQtyTotal >= $maxQtyTotal && $newQtyTotal = $maxQtyTotal;
+                    $existingItem['qty'] = $newQtyTotal;
                     continue 2;
                 }
             }
@@ -780,7 +798,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             $existingParams['items'][] = $newItem;
         }
 
-        $change->setParams($this->getHelper('Data')->jsonEncode($existingParams))->save();
+        $change->setData('params', $this->getHelper('Data')->jsonEncode($existingParams));
+        $change->save();
     }
 
     //########################################
@@ -806,17 +825,17 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function refund(array $items = array())
+    public function refund(array $items = [])
     {
         if (!$this->canRefund()) {
             return false;
         }
 
-        $params = array(
+        $params = [
             'order_id' => $this->getAmazonOrderId(),
             'currency' => $this->getCurrency(),
             'items'    => $items,
-        );
+        ];
 
         $totalItemsCount = $this->getParentObject()->getItemsCollection()->getSize();
 
@@ -826,7 +845,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
         $changeCollection = $this->activeRecordFactory->getObject('Order\Change')->getCollection();
         $changeCollection->addFieldToFilter('order_id', $orderId);
-        $changeCollection->addFieldToFilter('action',\Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING);
+        $changeCollection->addFieldToFilter('action', \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING);
 
         $action = \Ess\M2ePro\Model\Order\Change::ACTION_CANCEL;
         if ($this->isShipped() || $this->isPartiallyShipped() || count($items) != $totalItemsCount ||
@@ -835,10 +854,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             if (empty($items)) {
                 $this->getParentObject()->addErrorLog(
                     'Amazon Order was not refunded. Reason: %msg%',
-                    array('msg' => 'Refund request was not submitted.
+                    ['msg' => 'Refund request was not submitted.
                                     To be processed through Amazon API, the refund must be applied to certain products
                                     in an order. Please indicate the number of each line item, that need to be refunded,
-                                    in Credit Memo form.')
+                                    in Credit Memo form.']
                 );
                 return false;
             }
@@ -847,7 +866,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         }
 
         $this->activeRecordFactory->getObject('Order\Change')->create(
-            $orderId, $action, $creatorType, $component, $params
+            $orderId,
+            $action,
+            $creatorType,
+            $component,
+            $params
         );
 
         return true;

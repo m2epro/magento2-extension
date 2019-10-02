@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Strategy;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Cron\Strategy
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     const INITIALIZATION_TRANSACTIONAL_LOCK_NICK = 'cron_strategy_initialization';
@@ -16,16 +20,16 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     private $initiator = null;
 
-    private $allowedTasks = NULL;
+    private $allowedTasks = null;
 
     /**
      * @var \Ess\M2ePro\Model\OperationHistory
      */
-    private $operationHistory = NULL;
+    private $operationHistory = null;
     /**
      * @var \Ess\M2ePro\Model\OperationHistory
      */
-    private $parentOperationHistory = NULL;
+    private $parentOperationHistory = null;
 
     //########################################
 
@@ -33,8 +37,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -69,11 +72,11 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getAllowedTasks()
     {
-        if (!is_null($this->allowedTasks)) {
+        if ($this->allowedTasks !== null) {
             return $this->allowedTasks;
         }
 
-        return $this->allowedTasks = array(
+        return $this->allowedTasks = [
             \Ess\M2ePro\Model\Cron\Task\IssuesResolver::NICK,
             \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingInspectProducts::NICK,
             \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingUpdateSettings::NICK,
@@ -92,7 +95,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             \Ess\M2ePro\Model\Cron\Task\Ebay\UpdateAccountsPreferences::NICK,
             \Ess\M2ePro\Model\Cron\Task\Synchronization::NICK,
             \Ess\M2ePro\Model\Cron\Task\ArchiveOrdersEntities::NICK
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -126,19 +129,16 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $this->beforeStart();
 
         try {
-
             $result = $this->processTasks();
-
         } catch (\Exception $exception) {
-
             $result = false;
 
-            $this->getOperationHistory()->addContentData('exception', array(
+            $this->getOperationHistory()->addContentData('exception', [
                 'message' => $exception->getMessage(),
                 'file'    => $exception->getFile(),
                 'line'    => $exception->getLine(),
                 'trace'   => $exception->getTraceAsString(),
-            ));
+            ]);
 
             $this->getHelper('Module\Exception')->process($exception);
         }
@@ -193,7 +193,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function getOperationHistory()
     {
-        if (!is_null($this->operationHistory)) {
+        if ($this->operationHistory !== null) {
             return $this->operationHistory;
         }
 

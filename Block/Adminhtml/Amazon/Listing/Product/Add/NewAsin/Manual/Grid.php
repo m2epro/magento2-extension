@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     /** @var \Ess\M2ePro\Model\Listing */
-    protected $listing = NULL;
+    protected $listing = null;
 
     protected $magentoProductCollectionFactory;
     protected $amazonFactory;
@@ -24,8 +28,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->amazonFactory = $amazonFactory;
 
@@ -61,7 +64,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     {
         // Get collection
         // ---------------------------------------
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->setListingProductModeOn();
 
@@ -77,26 +80,28 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
         $collection->joinTable(
-            array('lp' => $lpTable),
+            ['lp' => $lpTable],
             'product_id=entity_id',
-            array(
+            [
                 'id' => 'id'
-            ),
+            ],
             '{{table}}.listing_id='.(int)$this->listing->getId()
         );
-        $alpTable = $this->activeRecordFactory->getObject('Amazon\Listing\Product')->getResource()->getMainTable();
+        $alpTable = $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable();
         $collection->joinTable(
-            array('alp' => $alpTable),
+            ['alp' => $alpTable],
             'listing_product_id=id',
-            array(
+            [
                 'listing_product_id'        => 'listing_product_id',
                 'template_description_id'   => 'template_description_id'
-            )
+            ]
         );
 
         $collection->getSelect()->where('lp.id IN (?)', $listingProductsIds);
-        $collection->getSelect()->where('alp.search_settings_status != ? OR alp.search_settings_status IS NULL',
-            \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_IN_PROGRESS);
+        $collection->getSelect()->where(
+            'alp.search_settings_status != ? OR alp.search_settings_status IS NULL',
+            \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_IN_PROGRESS
+        );
         $collection->getSelect()->where('alp.general_id IS NULL');
         // ---------------------------------------
 
@@ -109,17 +114,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('product_id', array(
+        $this->addColumn('product_id', [
             'header'    => $this->__('Product ID'),
             'align'     => 'right',
             'width'     => '100px',
             'type'      => 'number',
             'index'     => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => array($this, 'callbackColumnProductId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductId']
+        ]);
 
-        $this->addColumn('name', array(
+        $this->addColumn('name', [
             'header'    => $this->__('Product Title / Product SKU'),
             'align'     => 'left',
             'width'     => '400px',
@@ -127,11 +132,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'index'     => 'name',
             'filter_index' => 'name',
             'escape'       => false,
-            'frame_callback' => array($this, 'callbackColumnProductTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterProductTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterProductTitle']
+        ]);
 
-        $this->addColumn('description_template', array(
+        $this->addColumn('description_template', [
             'header'    => $this->__('Description Policy'),
             'align'     => 'left',
             'width'     => '*',
@@ -139,15 +144,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'type'      => 'options',
             'index'     => 'description_template_id',
             'filter_index' => 'description_template_id',
-            'options'   => array(
+            'options'   => [
                 1 => $this->__('Description Policy Selected'),
                 0 => $this->__('Description Policy Not Selected')
-            ),
-            'frame_callback' => array($this, 'callbackColumnDescriptionTemplateCallback'),
-            'filter_condition_callback' => array($this, 'callbackColumnDescriptionTemplateFilterCallback')
-        ));
+            ],
+            'frame_callback' => [$this, 'callbackColumnDescriptionTemplateCallback'],
+            'filter_condition_callback' => [$this, 'callbackColumnDescriptionTemplateFilterCallback']
+        ]);
 
-        $actionsColumn = array(
+        $actionsColumn = [
             'header'    => $this->__('Actions'),
             'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
             'align'     => 'center',
@@ -156,21 +161,21 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'field'     => 'id',
             'sortable'  => false,
             'filter'    => false,
-            'actions'   => array()
-        );
+            'actions'   => []
+        ];
 
-        $actions = array(
-            array(
+        $actions = [
+            [
                 'caption' => $this->__('Set Description Policy'),
                 'field'   => 'id',
                 'onclick_action' => 'ListingGridHandlerObj.setDescriptionTemplateRowAction'
-            ),
-            array(
+            ],
+            [
                 'caption' => $this->__('Reset Description Policy'),
                 'field'   => 'id',
                 'onclick_action' => 'ListingGridHandlerObj.resetDescriptionTemplateRowAction'
-            )
-        );
+            ]
+        ];
 
         $actionsColumn['actions'] = $actions;
 
@@ -185,15 +190,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $this->setMassactionIdFieldOnlyIndexValue(true);
 
         // ---------------------------------------
-        $this->getMassactionBlock()->addItem('setDescriptionTemplate', array(
+        $this->getMassactionBlock()->addItem('setDescriptionTemplate', [
             'label' => $this->__('Set Description Policy'),
             'url'   => ''
-        ));
+        ]);
 
-        $this->getMassactionBlock()->addItem('resetDescriptionTemplate', array(
+        $this->getMassactionBlock()->addItem('resetDescriptionTemplate', [
             'label' => $this->__('Reset Description Policy'),
             'url'   => ''
-        ));
+        ]);
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -232,11 +237,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         } else {
             $productOptions = $amazonListingProduct->getVariationManager()
                 ->getTypeModel()->getProductOptions();
-            $productAttributes = !empty($productOptions) ? array_keys($productOptions) : array();
+            $productAttributes = !empty($productOptions) ? array_keys($productOptions) : [];
         }
 
         if (!empty($productAttributes)) {
-
             $value .= '<div style="font-size: 11px; font-weight: bold; color: grey; margin-left: 7px"><br/>';
             $value .= implode(', ', $productAttributes);
             $value .= '</div>';
@@ -257,13 +261,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 HTML;
         }
 
-        $templateDescriptionEditUrl = $this->getUrl('*/amazon_template_description/edit', array(
+        $templateDescriptionEditUrl = $this->getUrl('*/amazon_template_description/edit', [
             'id' => $descriptionTemplateId
-        ));
+        ]);
 
         /** @var \Ess\M2ePro\Model\Amazon\Template\Description $descriptionTemplate */
         $descriptionTemplate = $this->activeRecordFactory->getObjectLoaded(
-            'Template\Description', $descriptionTemplateId
+            'Template\Description',
+            $descriptionTemplateId
         );
 
         $title = $this->getHelper('Data')->escapeHtml($descriptionTemplate->getData('title'));
@@ -284,10 +289,10 @@ HTML;
         }
 
         $collection->addFieldToFilter(
-            array(
-                array('attribute'=>'sku','like'=>'%'.$value.'%'),
-                array('attribute'=>'name', 'like'=>'%'.$value.'%')
-            )
+            [
+                ['attribute'=>'sku','like'=>'%'.$value.'%'],
+                ['attribute'=>'name', 'like'=>'%'.$value.'%']
+            ]
         );
     }
 
@@ -302,9 +307,9 @@ HTML;
         }
 
         if ($value) {
-            $collection->addFieldToFilter('template_description_id', array('notnull' => null));
+            $collection->addFieldToFilter('template_description_id', ['notnull' => null]);
         } else {
-            $collection->addFieldToFilter('template_description_id', array('null' => null));
+            $collection->addFieldToFilter('template_description_id', ['null' => null]);
         }
     }
 
@@ -321,7 +326,7 @@ HTML;
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
-<<<JS
+                <<<JS
     ListingGridHandlerObj.afterInitPage();
 JS
             );

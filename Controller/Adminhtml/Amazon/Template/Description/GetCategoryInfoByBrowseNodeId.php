@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
+/**
+ * Class GetCategoryInfoByBrowseNodeId
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description
+ */
 class GetCategoryInfoByBrowseNodeId extends Description
 {
     //########################################
@@ -18,14 +22,14 @@ class GetCategoryInfoByBrowseNodeId extends Description
     {
         $queryStmt = $this->resourceConnection->getConnection()->select()
             ->from(
-                $this->getHelper('Module\Database\Structure')
+                $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_amazon_dictionary_category')
             )
             ->where('marketplace_id = ?', $this->getRequest()->getPost('marketplace_id'))
             ->where('browsenode_id = ?', $this->getRequest()->getPost('browsenode_id'))
             ->query();
 
-        $tempCategories = array();
+        $tempCategories = [];
 
         while ($row = $queryStmt->fetch()) {
             $this->formatCategoryRow($row);
@@ -33,15 +37,14 @@ class GetCategoryInfoByBrowseNodeId extends Description
         }
 
         if (empty($tempCategories)) {
-            $this->setAjaxContent(null);
+            $this->setAjaxContent(null, false);
             return $this->getResult();
         }
 
         $dbCategoryPath = str_replace(' > ', '>', $this->getRequest()->getPost('category_path'));
 
         foreach ($tempCategories as $category) {
-
-            $tempCategoryPath = !is_null($category['path']) ? $category['path'] .'>'. $category['title']
+            $tempCategoryPath = $category['path'] !== null ? $category['path'] .'>'. $category['title']
                 : $category['title'];
             if ($tempCategoryPath == $dbCategoryPath) {
                 $this->setJsonContent($category);

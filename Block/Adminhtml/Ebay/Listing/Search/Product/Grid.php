@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\Product;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\Product
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
 {
     //########################################
@@ -33,7 +37,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
 
     protected function _prepareCollection()
     {
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->getSelect()->distinct();
@@ -54,7 +58,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
             ]
         );
         $collection->joinTable(
-            ['elp' => $this->activeRecordFactory->getObject('Ebay\Listing\Product')->getResource()->getMainTable()],
+            ['elp' => $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable()],
             'listing_product_id=id',
             [
                 'listing_product_id'    => 'listing_product_id',
@@ -95,7 +99,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
             [
                 'item_id' => 'item_id',
             ],
-            NULL,
+            null,
             'left'
         );
 
@@ -153,7 +157,6 @@ HTML;
         $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $listingProductId);
 
         if ($listingProduct->getChildObject()->isVariationsReady()) {
-
             $additionalData    = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
             $productAttributes = array_keys($additionalData['variations_sets']);
             $productAttributes = implode(', ', $productAttributes);
@@ -240,7 +243,6 @@ HTML;
         $onlineQty = 'elp.online_qty - elp.online_qty_sold';
 
         if (isset($cond['from']) || isset($cond['to'])) {
-
             if (isset($cond['from']) && $cond['from'] != '') {
                 $value = $collection->getConnection()->quote($cond['from']);
                 $where .= "{$onlineQty} >= {$value}";
@@ -280,12 +282,12 @@ HTML;
 
         if (is_array($value) && isset($value['value'])) {
             $collection->addFieldToFilter($index, (int)$value['value']);
-        } elseif (!is_array($value) && !is_null($value)) {
+        } elseif (!is_array($value) && $value !== null) {
             $collection->addFieldToFilter($index, (int)$value);
         }
 
         if (isset($value['is_duplicate'])) {
-            $collection->addFieldToFilter('is_duplicate' , 1);
+            $collection->addFieldToFilter('is_duplicate', 1);
         }
     }
 
@@ -306,7 +308,6 @@ HTML;
     {
         $collection = $this->getCollection();
         if ($collection) {
-
             $columnIndex = $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
 
             if ($columnIndex == 'online_qty') {

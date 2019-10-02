@@ -8,8 +8,11 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\ListingsProducts;
 
-abstract class AbstractModel
-    extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\ListingsProducts
+ */
+abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
 {
     //########################################
 

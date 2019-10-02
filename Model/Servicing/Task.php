@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Model\Servicing;
 
+/**
+ * Class Task
+ * @package Ess\M2ePro\Model\Servicing
+ */
 abstract class Task extends \Ess\M2ePro\Model\AbstractModel
 {
-    private $params = array();
+    private $params = [];
     private $initiator;
 
     protected $config;
@@ -31,8 +35,7 @@ abstract class Task extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
-    )
-    {
+    ) {
         $this->config = $config;
         $this->cacheConfig = $cacheConfig;
         $this->storeManager = $storeManager;
@@ -76,7 +79,7 @@ abstract class Task extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param array $params
      */
-    public function setParams(array $params = array())
+    public function setParams(array $params = [])
     {
         $this->params = $params;
     }

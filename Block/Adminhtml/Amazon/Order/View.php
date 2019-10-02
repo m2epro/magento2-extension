@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Order
+ */
 class View extends AbstractContainer
 {
     /** @var $order \Ess\M2ePro\Model\Order */
@@ -42,65 +46,65 @@ class View extends AbstractContainer
 
         // ---------------------------------------
         $url = $this->getHelper('Data')->getBackUrl('*/*/index');
-        $this->addButton('back', array(
+        $this->addButton('back', [
             'label'     => $this->__('Back'),
             'onclick'   => 'CommonObj.backClick(\''.$url.'\')',
             'class'     => 'back'
-        ));
+        ]);
         // ---------------------------------------
 
         if ($this->order->getChildObject()->canUpdateShippingStatus() && !$this->order->getChildObject()->isPrime()) {
             // ---------------------------------------
-            $url = $this->getUrl('*/*/updateShippingStatus', array('id' => $this->order->getId()));
-            $this->addButton('update_shipping_status', array(
+            $url = $this->getUrl('*/*/updateShippingStatus', ['id' => $this->order->getId()]);
+            $this->addButton('update_shipping_status', [
                 'label'     => $this->__('Mark as Shipped'),
                 'onclick'   => "setLocation('".$url."');",
                 'class'     => 'primary'
-            ));
+            ]);
             // ---------------------------------------
         }
 
         if ($this->order->getReserve()->isPlaced()) {
             // ---------------------------------------
-            $url = $this->getUrl('*/order/reservationCancel', array('ids' => $this->order->getId()));
-            $this->addButton('reservation_cancel', array(
+            $url = $this->getUrl('*/order/reservationCancel', ['ids' => $this->order->getId()]);
+            $this->addButton('reservation_cancel', [
                 'label'     => $this->__('Cancel QTY Reserve'),
                 'onclick'   => "confirmSetLocation(M2ePro.translator.translate('Are you sure?'), '".$url."');",
                 'class'     => 'primary'
-            ));
+            ]);
             // ---------------------------------------
         } elseif ($this->order->isReservable()) {
             // ---------------------------------------
-            $url = $this->getUrl('*/order/reservationPlace', array('ids' => $this->order->getId()));
-            $this->addButton('reservation_place', array(
+            $url = $this->getUrl('*/order/reservationPlace', ['ids' => $this->order->getId()]);
+            $this->addButton('reservation_place', [
                 'label'     => $this->__('Reserve QTY'),
                 'onclick'   => "confirmSetLocation(M2ePro.translator.translate('Are you sure?'), '".$url."');",
                 'class'     => 'primary'
-            ));
+            ]);
             // ---------------------------------------
         }
 
-        if (is_null($this->order->getMagentoOrderId())) {
+        if ($this->order->getMagentoOrderId() === null) {
             // ---------------------------------------
-            $url = $this->getUrl('*/*/createMagentoOrder', array('id' => $this->order->getId()));
-            $this->addButton('order', array(
+            $url = $this->getUrl('*/*/createMagentoOrder', ['id' => $this->order->getId()]);
+            $this->addButton('order', [
                 'label'     => $this->__('Create Magento Order'),
                 'onclick'   => "setLocation('".$url."');",
                 'class'     => 'primary'
-            ));
+            ]);
             // ---------------------------------------
-        } elseif (is_null($this->order->getMagentoOrder()) || $this->order->getMagentoOrder()->isCanceled()) {
+        } elseif ($this->order->getMagentoOrder() === null || $this->order->getMagentoOrder()->isCanceled()) {
             // ---------------------------------------
-            $url = $this->getUrl('*/*/createMagentoOrder', array('id' => $this->order->getId(), 'force' => 'yes'));
+            $url = $this->getUrl('*/*/createMagentoOrder', ['id' => $this->order->getId(), 'force' => 'yes']);
             $confirm = $this->getHelper('Data')->escapeJs(
                 $this->__('Are you sure that you want to create new Magento Order?')
             );
 
-            $this->addButton('order', array(
+            $this->addButton('order', [
                 'label'     => $this->__('Create Magento Order'),
                 'onclick'   => "confirmSetLocation('".$confirm."','".$url."');",
                 'class'     => 'primary'
-            ));
+            ]);
             // ---------------------------------------
         }
     }

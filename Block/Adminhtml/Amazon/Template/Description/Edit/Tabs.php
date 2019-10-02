@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit
+ */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 {
     protected $_groups = ['configuration'];
@@ -33,21 +37,21 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $this->addTab('general', [
             'label'   => $this->__('Main'),
             'title'   => $this->__('Main'),
-            'content' => $this->createBlock('Amazon\Template\Description\Edit\Tabs\General')
+            'content' => $this->createBlock('Amazon_Template_Description_Edit_Tabs_General')
                               ->toHtml(),
         ]);
 
         $this->addTab('definition', [
             'label'   => $this->__('Definition'),
             'title'   => $this->__('Definition'),
-            'content' => $this->createBlock('Amazon\Template\Description\Edit\Tabs\Definition')
+            'content' => $this->createBlock('Amazon_Template_Description_Edit_Tabs_Definition')
                               ->toHtml(),
         ]);
 
         $this->addTab('specifics', [
             'label'   => $this->__('Specifics'),
             'title'   => $this->__('Specifics'),
-            'content' => $this->createBlock('Amazon\Template\Description\Edit\Tabs\Specifics')
+            'content' => $this->createBlock('Amazon_Template_Description_Edit_Tabs_Specifics')
                               ->toHtml(),
         ]);
 
@@ -61,14 +65,14 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
     public function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Template\Description')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\Description::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Amazon')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Template\Description'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Template_Description'));
         $this->jsUrl->addUrls([
             'formSubmit'    => $this->getUrl(
                 '*/amazon_template_description/save',

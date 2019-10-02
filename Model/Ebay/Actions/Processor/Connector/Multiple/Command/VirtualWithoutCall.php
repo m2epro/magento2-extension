@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Ebay\Actions\Processor\Connector\Multiple\Command;
 
+/**
+ * Class VirtualWithoutCall
+ * @package Ess\M2ePro\Model\Ebay\Actions\Processor\Connector\Multiple\Command
+ */
 class VirtualWithoutCall extends \Ess\M2ePro\Model\Connector\Command\RealTime\Virtual
 {
     // ########################################
 
     public function process()
     {
-        if (is_null($this->getConnection()->getResponse())) {
+        if ($this->getConnection()->getResponse() === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
                 'This object must be processed in Ess_M2ePro_Model_Connector_Connection_Multiple.'
             );

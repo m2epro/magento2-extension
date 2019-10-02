@@ -13,6 +13,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Product\Type;
 
+/**
+ * Class Configurable
+ * @package Ess\M2ePro\Model\Magento\Product\Type
+ */
 class Configurable extends \Magento\ConfigurableProduct\Model\Product\Type\Configurable
 {
     //########################################
@@ -24,7 +28,7 @@ class Configurable extends \Magento\ConfigurableProduct\Model\Product\Type\Confi
     {
         $collection = parent::getUsedProductCollection($product);
 
-        if (!is_null($this->getStoreFilter($product))) {
+        if ($this->getStoreFilter($product) !== null) {
             $collection->setStoreId($this->getStoreFilter($product));
         }
 
@@ -34,7 +38,7 @@ class Configurable extends \Magento\ConfigurableProduct\Model\Product\Type\Confi
     public function cleanProductCache($product)
     {
         $cache = \Magento\Framework\App\ObjectManager::getInstance()
-                                                     ->get(\Magento\Framework\App\Cache\Type\Collection::class);
+            ->get(\Magento\Framework\App\Cache\Type\Collection::class);
         $cache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_TAG, [self::TYPE_CODE . '_' . $product->getId()]);
     }
 

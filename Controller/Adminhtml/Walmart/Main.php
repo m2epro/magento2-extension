@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class Main
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart
+ */
 abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
 {
     protected $walmartFactory;
@@ -19,8 +23,7 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         Context $context
-    )
-    {
+    ) {
         $this->walmartFactory = $walmartFactory;
 
         parent::__construct($context);
@@ -42,7 +45,7 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
 
     protected function initResultPage()
     {
-        if (!is_null($this->resultPage)) {
+        if ($this->resultPage !== null) {
             return;
         }
 

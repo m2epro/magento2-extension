@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Debug;
 
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main;
 
+/**
+ * Class DisableDevelopmentMode
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Debug
+ */
 class DisableDevelopmentMode extends Main
 {
     public function execute()

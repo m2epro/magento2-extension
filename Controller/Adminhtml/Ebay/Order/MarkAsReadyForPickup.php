@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
+/**
+ * Class MarkAsReadyForPickup
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Order
+ */
 class MarkAsReadyForPickup extends Order
 {
     public function execute()

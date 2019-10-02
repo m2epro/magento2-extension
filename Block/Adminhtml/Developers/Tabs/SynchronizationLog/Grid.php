@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SynchronizationLog;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SynchronizationLog
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 {
     protected $actionsTitles;
@@ -24,7 +28,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         // Initialization block
         // ---------------------------------------
         $this->setId(
-            'synchronizationLogGrid' . (!is_null($task) ? $task : '') . ucfirst($channel)
+            'synchronizationLogGrid' . ($task !== null ? $task : '') . ucfirst($channel)
         );
         // ---------------------------------------
 
@@ -35,9 +39,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
 
-        $filters = array();
-        !is_null($task) && $filters['task'] = $task;
-        !is_null($task) && $filters['component_mode'] = $channel;
+        $filters = [];
+        $task !== null && $filters['task'] = $task;
+        $task !== null && $filters['component_mode'] = $channel;
         $this->setDefaultFilter($filters);
         // ---------------------------------------
 
@@ -68,13 +72,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             'component_mode IN(\'' . implode('\',\'', $components) . '\') OR component_mode IS NULL'
         );
 
-        // we need sort by id also, because create_date may be same for some adjacents entries
-        // ---------------------------------------
-        if ($this->getRequest()->getParam('sort', 'create_date') == 'create_date') {
-            $collection->setOrder('id', $this->getRequest()->getParam('dir', 'DESC'));
-        }
-        // ---------------------------------------
-
         // Set collection to grid
         $this->setCollection($collection);
 
@@ -83,7 +80,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('create_date', array(
+        $this->addColumn('create_date', [
             'header'    => $this->__('Creation Date'),
             'align'     => 'left',
             'type'      => 'datetime',
@@ -91,38 +88,38 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             'filter_time' => true,
             'format'    => \IntlDateFormatter::MEDIUM,
             'index'     => 'create_date'
-        ));
+        ]);
 
-        $this->addColumn('task', array(
+        $this->addColumn('task', [
             'header'    => $this->__('Task'),
             'align'     => 'left',
             'type'      => 'options',
             'index'     => 'task',
             'sortable'  => false,
             'filter_index' => 'task',
-            'filter_condition_callback' => array($this, 'callbackFilterTask'),
+            'filter_condition_callback' => [$this, 'callbackFilterTask'],
             'option_groups' => $this->getActionTitles(),
             'options' => $this->actionsTitles
-        ));
+        ]);
 
-        $this->addColumn('description', array(
+        $this->addColumn('description', [
             'header'    => $this->__('Message'),
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'description',
             'filter_index' => 'main_table.description',
-            'frame_callback' => array($this, 'callbackDescription')
-        ));
+            'frame_callback' => [$this, 'callbackDescription']
+        ]);
 
-        $this->addColumn('type', array(
+        $this->addColumn('type', [
             'header'=> $this->__('Type'),
             'index' => 'type',
             'align'     => 'right',
             'type'  => 'options',
             'sortable'  => false,
             'options' => $this->_getLogTypeList(),
-            'frame_callback' => array($this, 'callbackColumnType')
-        ));
+            'frame_callback' => [$this, 'callbackColumnType']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -148,7 +145,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
         $collection->getSelect()->where(
             "CONCAT_WS('_', main_table.component_mode, main_table.task) LIKE ?",
-            $value .'%');
+            $value .'%'
+        );
     }
 
     //########################################
@@ -175,9 +173,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         ];
 
         foreach ($this->actionsTitles as $value => $label) {
-
             if (!in_array($value, $skipForEbay)) {
-
                 $ebayTitles[] = [
                     'label' => $label,
                     'value' => \Ess\M2ePro\Helper\View\Ebay::NICK . '_' . $value
@@ -185,7 +181,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             }
 
             if (!in_array($value, $skipForAmazon)) {
-
                 $amazonTitles[] = [
                     'label' => $label,
                     'value' => \Ess\M2ePro\Helper\View\Amazon::NICK . '_' . $value

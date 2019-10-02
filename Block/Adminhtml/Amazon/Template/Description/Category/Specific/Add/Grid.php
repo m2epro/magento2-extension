@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Specific\Add;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Specific\Add
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $customCollectionFactory;
@@ -21,8 +25,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public $searchQuery;
     public $onlyDesired = false;
 
-    public $selectedSpecifics = array();
-    public $renderedSpecifics = array();
+    public $selectedSpecifics = [];
+    public $renderedSpecifics = [];
 
     //########################################
 
@@ -32,8 +36,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->customCollectionFactory = $customCollectionFactory;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($context, $backendHelper, $data);
@@ -69,7 +72,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $select = $this->resourceConnection->getConnection()->select()
               ->from(
-                  $this->getHelper('Module\Database\Structure')
+                  $this->getHelper('Module_Database_Structure')
                       ->getTableNameWithPrefix('m2epro_amazon_dictionary_specific')
               )
               ->where('marketplace_id = ?', (int)$this->marketplaceId)
@@ -86,7 +89,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $queryStmt = $select->query();
         while ($row = $queryStmt->fetch()) {
-
             if (in_array($row['xpath'], $this->renderedSpecifics) ||
                 in_array($row['xpath'], $this->selectedSpecifics)) {
                 continue;
@@ -102,7 +104,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $filteredResult[] = $row;
         }
 
-        usort($filteredResult, function($a, $b) {
+        usort($filteredResult, function ($a, $b) {
 
             if ($a['is_desired'] && !$b['is_desired']) {
                 return -1;
@@ -129,7 +131,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('title', array(
+        $this->addColumn('title', [
             'header'         => $this->__('Specific'),
             'align'          => 'left',
             'type'           => 'text',
@@ -138,10 +140,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'escape'         => false,
             'filter'         => false,
             'sortable'       => false,
-            'frame_callback' => array($this, 'callbackColumnTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTitle']
+        ]);
 
-        $this->addColumn('is_desired', array(
+        $this->addColumn('is_desired', [
             'header'         => $this->__('Desired'),
             'align'          => 'center',
             'type'           => 'text',
@@ -149,18 +151,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'width'          => '80px',
             'filter'         => false,
             'sortable'       => false,
-            'frame_callback' => array($this, 'callbackColumnIsDesired')
-        ));
+            'frame_callback' => [$this, 'callbackColumnIsDesired']
+        ]);
 
-        $this->addColumn('actions', array(
+        $this->addColumn('actions', [
             'header'         => $this->__('Action'),
             'align'          => 'center',
             'type'           => 'text',
             'width'          => '80px',
             'filter'         => false,
             'sortable'       => false,
-            'frame_callback' => array($this, 'callbackColumnActions'),
-        ));
+            'frame_callback' => [$this, 'callbackColumnActions'],
+        ]);
     }
 
     //########################################
@@ -256,7 +258,9 @@ HTML;
 
     private function replaceWithDictionaryXpathes(array $xPathes)
     {
-        return array_map(function($el) { return preg_replace('/-\d+/', '', $el); }, $xPathes);
+        return array_map(function ($el) {
+            return preg_replace('/-\d+/', '', $el);
+        }, $xPathes);
     }
 
     //########################################

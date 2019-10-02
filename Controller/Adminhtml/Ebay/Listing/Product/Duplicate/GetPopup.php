@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Duplicate;
 
+/**
+ * Class GetPopup
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Duplicate
+ */
 class GetPopup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -18,7 +22,7 @@ class GetPopup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $listingProductId = $this->getRequest()->getParam('listing_product_id');
         $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $listingProductId, null, false);
 
-        if (is_null($listingProduct)) {
+        if ($listingProduct === null) {
             $this->setJsonContent([
                 'error' => $this->__("Unable to load product ID [{$listingProductId}].")
             ]);
@@ -26,7 +30,7 @@ class GetPopup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\ItemDuplicate $block */
-        $block = $this->createBlock('Ebay\Listing\View\Ebay\ItemDuplicate');
+        $block = $this->createBlock('Ebay_Listing_View_Ebay_ItemDuplicate');
         $block->setListingProduct($listingProduct);
 
         $this->setJsonContent([

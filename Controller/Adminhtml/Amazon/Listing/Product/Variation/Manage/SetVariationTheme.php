@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manag
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class SetVariationTheme
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manage
+ */
 class SetVariationTheme extends Main
 {
     public function execute()
@@ -17,7 +21,7 @@ class SetVariationTheme extends Main
         $listingProductId = $this->getRequest()->getParam('product_id');
         $variationTheme   = $this->getRequest()->getParam('variation_theme', null);
 
-        if (empty($listingProductId) || is_null($variationTheme)) {
+        if (empty($listingProductId) || $variationTheme === null) {
             return $this->getResponse()->setBody('You should provide correct parameters.');
         }
 
@@ -29,7 +33,7 @@ class SetVariationTheme extends Main
 
         $parentTypeModel = $amazonListingProduct->getVariationManager()->getTypeModel();
 
-        $result = array('success' => true);
+        $result = ['success' => true];
 
         if ($parentTypeModel->getChannelTheme() == $variationTheme) {
             $this->setJsonContent($result);
@@ -39,12 +43,12 @@ class SetVariationTheme extends Main
 
         $parentTypeModel->setChannelTheme($variationTheme, true, false);
 
-        $variationHelper = $this->getHelper('Component\Amazon\Variation');
+        $variationHelper = $this->getHelper('Component_Amazon_Variation');
         $variationHelper->increaseThemeUsageCount($variationTheme, $listingProduct->getMarketplace()->getId());
 
         $productDataNick = $amazonListingProduct->getAmazonDescriptionTemplate()->getProductDataNick();
 
-        $marketplaceDetails = $this->modelFactory->getObject('Amazon\Marketplace\Details');
+        $marketplaceDetails = $this->modelFactory->getObject('Amazon_Marketplace_Details');
         $marketplaceDetails->setMarketplaceId($amazonListingProduct->getMarketplace()->getId());
 
         $themeAttributes   = $marketplaceDetails->getVariationThemeAttributes($productDataNick, $variationTheme);
@@ -60,7 +64,7 @@ class SetVariationTheme extends Main
         $productAttribute = reset($productAttributes);
         $themeAttribute   = reset($themeAttributes);
 
-        $parentTypeModel->setMatchedAttributes(array($productAttribute => $themeAttribute), true);
+        $parentTypeModel->setMatchedAttributes([$productAttribute => $themeAttribute], true);
         $parentTypeModel->getProcessor()->process();
 
         if ($productAttribute == $themeAttribute || $listingProduct->getMagentoProduct()->isGroupedType()) {
@@ -70,7 +74,7 @@ class SetVariationTheme extends Main
         }
 
         /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper */
-        $vocabularyHelper = $this->getHelper('Component\Amazon\Vocabulary');
+        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
 
         if ($vocabularyHelper->isAttributeAutoActionDisabled()) {
             $this->setJsonContent($result);
@@ -91,7 +95,7 @@ class SetVariationTheme extends Main
         }
 
         if ($vocabularyHelper->isAttributeAutoActionNotSet()) {
-            $result['vocabulary_attributes'] = array($productAttribute => $themeAttribute);
+            $result['vocabulary_attributes'] = [$productAttribute => $themeAttribute];
             $this->setJsonContent($result);
 
             return $this->getResult();

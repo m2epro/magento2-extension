@@ -9,6 +9,10 @@ namespace Ess\M2ePro\Setup\Update\y19_m01;
 
 use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
 
+/**
+ * Class NewCronRunner
+ * @package Ess\M2ePro\Setup\Update\y19_m01
+ */
 class NewCronRunner extends AbstractFeature
 {
     public function getBackupTables()

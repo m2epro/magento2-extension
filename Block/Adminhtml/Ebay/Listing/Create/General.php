@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create;
 
+/**
+ * Class General
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create
+ */
 class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     //########################################
@@ -39,10 +43,10 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('next', array(
+        $this->addButton('next', [
             'label'     => $this->__('Next Step'),
             'class'     => 'action-primary next_step_button forward'
-        ));
+        ]);
         // ---------------------------------------
     }
 
@@ -51,7 +55,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
     protected function _toHtml()
     {
 
-        $breadcrumb = $this->createBlock('Ebay\Listing\Create\Breadcrumb');
+        $breadcrumb = $this->createBlock('Ebay_Listing_Create_Breadcrumb');
         $breadcrumb->setSelectedStep(1);
 
         $helpBlock = $this->createBlock('HelpBlock');

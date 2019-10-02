@@ -8,17 +8,21 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Matcher\Attribute;
 
+/**
+ * Class Resolver
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Matcher\Attribute
+ */
 class Resolver extends \Ess\M2ePro\Model\AbstractModel
 {
-    private $sourceAttributes = array();
+    private $sourceAttributes = [];
 
-    private $sourceAttributesNames = array();
+    private $sourceAttributesNames = [];
 
-    private $destinationAttributes = array();
+    private $destinationAttributes = [];
 
-    private $destinationAttributesNames = array();
+    private $destinationAttributesNames = [];
 
-    private $resolvedAttributes = array();
+    private $resolvedAttributes = [];
 
     //########################################
 
@@ -64,11 +68,10 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
     public function resolve()
     {
         if (array_diff($this->sourceAttributes, array_keys($this->resolvedAttributes))) {
-            $this->resolvedAttributes = array();
+            $this->resolvedAttributes = [];
         }
 
         foreach ($this->sourceAttributes as $sourceAttribute) {
-
             if (!empty($this->resolvedAttributes[$sourceAttribute]) &&
                 in_array($this->resolvedAttributes[$sourceAttribute], $this->destinationAttributes)
             ) {
@@ -82,7 +85,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
             foreach ($this->destinationAttributes as $destinationAttribute) {
                 $destinationNames = $this->destinationAttributesNames[$destinationAttribute];
 
-                if (count(array_intersect($sourceNames, $destinationNames)) > 0 &&
+                if (!empty(array_intersect($sourceNames, $destinationNames)) &&
                     !in_array($destinationAttribute, $this->resolvedAttributes)
                 ) {
                     $this->resolvedAttributes[$sourceAttribute] = $destinationAttribute;
@@ -109,8 +112,8 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
      */
     public function clearSourceAttributes()
     {
-        $this->sourceAttributes = array();
-        $this->sourceAttributesNames = array();
+        $this->sourceAttributes = [];
+        $this->sourceAttributesNames = [];
 
         return $this;
     }
@@ -120,8 +123,8 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
      */
     public function clearDestinationAttributes()
     {
-        $this->destinationAttributes = array();
-        $this->destinationAttributesNames = array();
+        $this->destinationAttributes = [];
+        $this->destinationAttributesNames = [];
 
         return $this;
     }

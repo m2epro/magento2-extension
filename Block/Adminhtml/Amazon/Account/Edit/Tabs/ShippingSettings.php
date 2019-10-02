@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Account;
 
+/**
+ * Class ShippingSettings
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs
+ */
 class ShippingSettings extends AbstractForm
 {
     //########################################
@@ -19,17 +23,18 @@ class ShippingSettings extends AbstractForm
     {
         /** @var $account \Ess\M2ePro\Model\Account */
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
-        $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
-        $defaults = array(
+        $defaults = [
             'shipping_mode' => Account::SHIPPING_MODE_TEMPLATE
-        );
+        ];
 
         $formData = array_merge($defaults, $formData);
 
         $form = $this->_formFactory->create();
 
-        $form->addField('amazon_accounts_shipping_settings_help_block',
+        $form->addField(
+            'amazon_accounts_shipping_settings_help_block',
             self::HELP_BLOCK,
             [
                 'content' => $this->__(<<<HTML
@@ -42,19 +47,20 @@ class ShippingSettings extends AbstractForm
                 More detailed information about how to work with this Page you can find
                 <a href="%url%" target="_blank">here</a>.
 HTML
-                    ,$this->getHelper('Module\Support')->getDocumentationArticleUrl("x/yQA9AQ")
-                )
+                    , $this->getHelper('Module\Support')->getDocumentationArticleUrl("x/yQA9AQ"))
             ]
         );
 
-        $fieldset = $form->addFieldset('amazon_accounts_shipping_settings_general',
+        $fieldset = $form->addFieldset(
+            'amazon_accounts_shipping_settings_general',
             [
                 'legend' => $this->__('General'),
                 'collapsable' => false
             ]
         );
 
-        $fieldset->addField('shipping_mode',
+        $fieldset->addField(
+            'shipping_mode',
             'select',
             [
                 'name' => 'shipping_mode',

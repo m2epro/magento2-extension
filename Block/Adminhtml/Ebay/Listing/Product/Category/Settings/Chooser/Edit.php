@@ -8,11 +8,15 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser
+ */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     protected $_categoryType = null;
 
-    protected $_selectedCategory = array();
+    protected $_selectedCategory = [];
 
     //########################################
 
@@ -45,7 +49,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     protected function _toHtml()
     {
         // ---------------------------------------
-        $tabsContainer = $this->createBlock('Ebay\Listing\Product\Category\Settings\Chooser\Tabs');
+        $tabsContainer = $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser_Tabs');
         $tabsContainer->setDestElementId('chooser_tabs_container');
         // ---------------------------------------
 
@@ -59,7 +63,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
     public function getCategoryType()
     {
-        if (is_null($this->_categoryType)) {
+        if ($this->_categoryType === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Category type is not set.');
         }
 
@@ -74,7 +78,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
     public function getCategoryTitle()
     {
-        $titles = $this->getHelper('Component\Ebay\Category')->getCategoryTitles();
+        $titles = $this->getHelper('Component_Ebay_Category')->getCategoryTitles();
 
         return isset($titles[$this->_categoryType]) ? $titles[$this->_categoryType] : '';
     }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor;
 
+/**
+ * Class Mass
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor
+ */
 class Mass extends \Ess\M2ePro\Model\AbstractModel
 {
     const MAX_PROCESSORS_COUNT_PER_ONE_TIME = 1000;
@@ -15,7 +19,7 @@ class Mass extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     /** @var \Ess\M2ePro\Model\Listing\Product[] $listingsProducts */
-    private $listingsProducts = array();
+    private $listingsProducts = [];
 
     private $forceExecuting = true;
 
@@ -27,8 +31,7 @@ class Mass extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -61,7 +64,7 @@ class Mass extends \Ess\M2ePro\Model\AbstractModel
     {
         $uniqueProcessors = $this->getUniqueProcessors();
 
-        $alreadyProcessed = array();
+        $alreadyProcessed = [];
 
         foreach ($uniqueProcessors as $listingProductId => $processor) {
             if (!$this->forceExecuting && count($alreadyProcessed) >= self::MAX_PROCESSORS_COUNT_PER_ONE_TIME) {
@@ -88,11 +91,11 @@ class Mass extends \Ess\M2ePro\Model\AbstractModel
 
         $connWrite->update(
             $resource->getChildTable(\Ess\M2ePro\Helper\Component\Amazon::NICK),
-            array('variation_parent_need_processor' => 1),
-            array(
+            ['variation_parent_need_processor' => 1],
+            [
                 'is_variation_parent = ?'   => 1,
                 'listing_product_id IN (?)' => $notProcessedListingProductIds,
-            )
+            ]
         );
     }
 
@@ -103,7 +106,7 @@ class Mass extends \Ess\M2ePro\Model\AbstractModel
      */
     private function getUniqueProcessors()
     {
-        $processors = array();
+        $processors = [];
 
         foreach ($this->listingsProducts as $listingProduct) {
             if (isset($processors[$listingProduct->getId()])) {

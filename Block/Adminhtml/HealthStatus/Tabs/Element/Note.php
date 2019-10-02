@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Element;
 use Magento\Framework\Data\Form\Element\Note as OriginalNote;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
+/**
+ * Class Note
+ * @package Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Element
+ */
 class Note extends OriginalNote
 {
     /** @var \Ess\M2ePro\Model\HealthStatus\Task\Result */
@@ -23,7 +27,7 @@ class Note extends OriginalNote
         \Magento\Framework\Data\Form\Element\CollectionFactory $factoryCollection,
         \Magento\Framework\Escaper $escaper,
         array $data = []
-    ){
+    ) {
         parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
 
         if (isset($data['task_result']) && ($data['task_result'] instanceof Result)) {
@@ -37,7 +41,7 @@ class Note extends OriginalNote
     {
         $parentHtml = parent::getLabelHtml($idSuffix, $scopeLabel);
 
-        if (!is_null($this->taskResult)) {
+        if ($this->taskResult !== null) {
             $labelClass = $this->getLabelClass($this->taskResult);
             $parentHtml = preg_replace('/class="(.+)"/', 'class="' .$labelClass. ' $1"', $parentHtml);
         }

@@ -12,6 +12,10 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Account;
 use Magento\Framework\Message\MessageInterface;
 
+/**
+ * Class Order
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs
+ */
 class Order extends AbstractForm
 {
     protected $orderConfig;
@@ -26,8 +30,7 @@ class Order extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->orderConfig = $orderConfig;
         $this->customerGroup = $customerGroup;
         $this->taxClass = $taxClass;
@@ -39,7 +42,7 @@ class Order extends AbstractForm
     {
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
 
-        $websites = $this->getHelper('Magento\Store\Website')->getWebsites(true);
+        $websites = $this->getHelper('Magento_Store_Website')->getWebsites(true);
 
         // ---------------------------------------
 
@@ -52,81 +55,83 @@ class Order extends AbstractForm
         $productTaxClasses = $this->taxClass->getCollection()
             ->addFieldToFilter('class_type', \Magento\Tax\Model\ClassModel::TAX_CLASS_TYPE_PRODUCT)
             ->toOptionArray();
-        $none = array('value' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE, 'label' => $this->__('None'));
+        $none = ['value' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE, 'label' => $this->__('None')];
         array_unshift($productTaxClasses, $none);
 
         // ---------------------------------------
 
-        $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
         $formData['magento_orders_settings'] = !empty($formData['magento_orders_settings'])
-            ? $this->getHelper('Data')->jsonDecode($formData['magento_orders_settings']) : array();
+            ? $this->getHelper('Data')->jsonDecode($formData['magento_orders_settings']) : [];
 
-        $defaults = array(
-            'magento_orders_settings' => array(
-                'listing' => array(
+        $defaults = [
+            'magento_orders_settings' => [
+                'listing' => [
                     'mode' => Account::MAGENTO_ORDERS_LISTINGS_MODE_YES,
                     'store_mode' => Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
-                    'store_id' => NULL
-                ),
-                'listing_other' => array(
+                    'store_id' => null
+                ],
+                'listing_other' => [
                     'mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES,
                     'product_mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
                     'store_id' => $this->getHelper('Magento\Store')->getDefaultStoreId(),
-                ),
-                'number' => array(
+                ],
+                'number' => [
                     'source' => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
-                    'prefix' => array(
+                    'prefix' => [
                         'mode'   => Account::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_NO,
                         'prefix' => '',
-                    ),
-                ),
-                'customer' => array(
+                    ],
+                ],
+                'customer' => [
                     'mode' => Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,
-                    'id' => NULL,
-                    'website_id' => NULL,
-                    'group_id' => NULL,
+                    'id' => null,
+                    'website_id' => null,
+                    'group_id' => null,
 //                'subscription_mode' => Account::MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_NO,
-                    'notifications' => array(
+                    'notifications' => [
 //                    'customer_created' => false,
                         'invoice_created' => false,
                         'order_created' => false
-                    )
-                ),
-                'creation' => array(
+                    ]
+                ],
+                'creation' => [
                     'mode' => Account::MAGENTO_ORDERS_CREATE_CHECKOUT_AND_PAID,
                     'reservation_days' => 0
-                ),
-                'tax' => array(
+                ],
+                'tax' => [
                     'mode' => Account::MAGENTO_ORDERS_TAX_MODE_MIXED
-                ),
-                'in_store_pickup_statuses' => array(
+                ],
+                'in_store_pickup_statuses' => [
                     'mode' => 0,
                     'ready_for_pickup' => '',
                     'picked_up' => '',
-                ),
-                'status_mapping' => array(
+                ],
+                'status_mapping' => [
                     'mode' => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
                     'new' => Account::MAGENTO_ORDERS_STATUS_MAPPING_NEW,
                     'paid' => Account::MAGENTO_ORDERS_STATUS_MAPPING_PAID,
                     'shipped' => Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED
-                ),
-                'qty_reservation' => array(
+                ],
+                'qty_reservation' => [
                     'days' => 1
-                ),
+                ],
                 'invoice_mode' => Account::MAGENTO_ORDERS_INVOICE_MODE_YES,
                 'shipment_mode' => Account::MAGENTO_ORDERS_SHIPMENT_MODE_YES
-            )
-        );
+            ]
+        ];
 
         $formData = array_replace_recursive($defaults, $formData);
 
         $form = $this->_formFactory->create();
 
-        $form->addField('ebay_accounts_orders',
+        $form->addField(
+            'ebay_accounts_orders',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(<<<HTML
+                'content' => $this->__(
+                    <<<HTML
 <p>Specify how M2E Pro should manage the Orders imported from eBay.</p><br/>
 <p>You are able to configure the different rules of <strong>Magento Order Creation</strong> considering whether the
 Item was listed via M2E Pro or by some other software.</p><br/>
@@ -137,18 +142,21 @@ for your Magento Orders as well as specify the automatic creation of invoices an
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/LgItAQ'))
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/LgItAQ')
+                )
             ]
         );
 
-        $fieldset = $form->addFieldset('listed_by_m2e',
+        $fieldset = $form->addFieldset(
+            'listed_by_m2e',
             [
                 'legend' => $this->__('Product Is Listed By M2E Pro'),
                 'collapsable' => false
             ]
         );
 
-        $fieldset->addField('magento_orders_listings_mode',
+        $fieldset->addField(
+            'magento_orders_listings_mode',
             'select',
             [
                 'name' => 'magento_orders_settings[listing][mode]',
@@ -165,7 +173,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_listings_store_mode',
+        $fieldset->addField(
+            'magento_orders_listings_store_mode',
             'select',
             [
                 'container_id' => 'magento_orders_listings_store_mode_container',
@@ -183,7 +192,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_listings_store_id',
+        $fieldset->addField(
+            'magento_orders_listings_store_id',
             self::STORE_SWITCHER,
             [
                 'container_id' => 'magento_orders_listings_store_id_container',
@@ -197,14 +207,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('listed_by_other',
+        $fieldset = $form->addFieldset(
+            'listed_by_other',
             [
                 'legend' => $this->__('Product Is Listed By Any Other Software'),
                 'collapsable' => false
             ]
         );
 
-        $fieldset->addField('magento_orders_listings_other_mode',
+        $fieldset->addField(
+            'magento_orders_listings_other_mode',
             'select',
             [
                 'name' => 'magento_orders_settings[listing_other][mode]',
@@ -221,7 +233,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_listings_other_store_id',
+        $fieldset->addField(
+            'magento_orders_listings_other_store_id',
             self::STORE_SWITCHER,
             [
                 'container_id' => 'magento_orders_listings_other_store_id_container',
@@ -235,7 +248,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_listings_other_product_mode',
+        $fieldset->addField(
+            'magento_orders_listings_other_product_mode',
             'select',
             [
                 'container_id' => 'magento_orders_listings_other_product_mode_container',
@@ -247,8 +261,9 @@ HTML
                 ],
                 'value' => $formData['magento_orders_settings']['listing_other']['product_mode'],
                 'tooltip' => $this->__(
-                        'Choose what should happen if an Order is received for a Product that
-                         does not exist in your Magento Inventory.')
+                    'Choose what should happen if an Order is received for a Product that
+                         does not exist in your Magento Inventory.'
+                )
                         . '<span id="magento_orders_listings_other_product_mode_note">'
                         . $this->__(
                             '<br/><b>Note:</b> Only Simple Products without Variations can be created in Magento.
@@ -264,7 +279,8 @@ HTML
             $values[$taxClass['value']] = $taxClass['label'];
         }
 
-        $fieldset->addField('magento_orders_listings_other_product_tax_class_id',
+        $fieldset->addField(
+            'magento_orders_listings_other_product_tax_class_id',
             'select',
             [
                 'container_id' => 'magento_orders_listings_other_product_tax_class_id_container',
@@ -276,14 +292,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_accounts_magento_orders_number',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_accounts_magento_orders_number',
             [
                 'legend' => $this->__('Magento Order Number'),
                 'collapsable' => true
             ]
         );
 
-        $fieldset->addField('magento_orders_number_source',
+        $fieldset->addField(
+            'magento_orders_number_source',
             'select',
             [
                 'name' => 'magento_orders_settings[number][source]',
@@ -300,7 +318,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_number_prefix_mode',
+        $fieldset->addField(
+            'magento_orders_number_prefix_mode',
             'select',
             [
                 'name' => 'magento_orders_settings[number][prefix][mode]',
@@ -314,7 +333,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_number_prefix_prefix',
+        $fieldset->addField(
+            'magento_orders_number_prefix_prefix',
             'text',
             [
                 'container_id' => 'magento_orders_number_prefix_container',
@@ -327,21 +347,24 @@ HTML
             ]
         );
 
-        $fieldset->addField('sample_magento_order_id',
+        $fieldset->addField(
+            'sample_magento_order_id',
             'hidden',
             [
                 'value' => $this->getHelper('Magento')->getNextMagentoOrderId()
             ]
         );
 
-        $fieldset->addField('sample_ebay_order_id',
+        $fieldset->addField(
+            'sample_ebay_order_id',
             'hidden',
             [
                 'value' => '110194096334-27192305001'
             ]
         );
 
-        $fieldset->addField('order_number_example',
+        $fieldset->addField(
+            'order_number_example',
             'label',
             [
                 'label' => '',
@@ -349,14 +372,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_accounts_magento_orders_customer',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_accounts_magento_orders_customer',
             [
                 'legend' => $this->__('Customer Settings'),
                 'collapsable' => true
             ]
         );
 
-        $fieldset->addField('magento_orders_customer_mode',
+        $fieldset->addField(
+            'magento_orders_customer_mode',
             'select',
             [
                 'name' => 'magento_orders_settings[customer][mode]',
@@ -379,7 +404,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_customer_id',
+        $fieldset->addField(
+            'magento_orders_customer_id',
             'text',
             [
                 'container_id' => 'magento_orders_customer_id_container',
@@ -396,7 +422,8 @@ HTML
             $values[$website['website_id']] = $website['name'];
         }
 
-        $fieldset->addField('magento_orders_customer_new_website_id',
+        $fieldset->addField(
+            'magento_orders_customer_new_website_id',
             'select',
             [
                 'container_id' => 'magento_orders_customer_new_website_id_container',
@@ -413,7 +440,8 @@ HTML
             $values[$group['customer_group_id']] = $group['customer_group_code'];
         }
 
-        $fieldset->addField('magento_orders_customer_new_group_id',
+        $fieldset->addField(
+            'magento_orders_customer_new_group_id',
             'select',
             [
                 'container_id' => 'magento_orders_customer_new_group_id_container',
@@ -431,7 +459,8 @@ HTML
         $formData['magento_orders_settings']['customer']['notifications']['invoice_created']
             && $value[] = 'invoice_created';
 
-        $fieldset->addField('magento_orders_customer_new_notifications',
+        $fieldset->addField(
+            'magento_orders_customer_new_notifications',
             'multiselect',
             [
                 'container_id' => 'magento_orders_customer_new_notifications_container',
@@ -450,14 +479,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_accounts_magento_orders_rules',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_accounts_magento_orders_rules',
             [
                 'legend' => $this->__('Order Creation Rules'),
                 'collapsable' => true,
             ]
         );
 
-        $fieldset->addField('magento_orders_creation_mode_immediately_warning',
+        $fieldset->addField(
+            'magento_orders_creation_mode_immediately_warning',
             self::MESSAGES,
             [
                 'messages' => [
@@ -474,7 +505,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('magento_orders_creation_mode',
+        $fieldset->addField(
+            'magento_orders_creation_mode',
             'select',
             [
                 'name' => 'magento_orders_settings[creation][mode]',
@@ -504,7 +536,8 @@ HTML
             $values[$day] = $this->__('In %d% days', $day);
         }
 
-        $fieldset->addField('magento_orders_creation_reservation_days',
+        $fieldset->addField(
+            'magento_orders_creation_reservation_days',
             'select',
             [
                 'container_id' => 'magento_orders_creation_reservation_days_container',
@@ -528,7 +561,8 @@ HTML
             }
         }
 
-        $fieldset->addField('magento_orders_qty_reservation_days',
+        $fieldset->addField(
+            'magento_orders_qty_reservation_days',
             'select',
             [
                 'container_id' => 'magento_orders_qty_reservation_days_container',
@@ -543,14 +577,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_accounts_magento_orders_tax',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_accounts_magento_orders_tax',
             [
                 'legend' => $this->__('Order Tax Settings'),
                 'collapsable' => true
             ]
         );
 
-        $fieldset->addField('magento_orders_tax_mode',
+        $fieldset->addField(
+            'magento_orders_tax_mode',
             'select',
             [
                 'name' => 'magento_orders_settings[tax][mode]',
@@ -574,14 +610,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_accounts_magento_orders_status_mapping',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_accounts_magento_orders_status_mapping',
             [
                 'legend' => $this->__('Order Status Mapping'),
                 'collapsable' => true
             ]
         );
 
-        $fieldset->addField('magento_orders_status_mapping_mode',
+        $fieldset->addField(
+            'magento_orders_status_mapping_mode',
             'select',
             [
                 'name' => 'magento_orders_settings[status_mapping][mode]',
@@ -617,7 +655,8 @@ HTML
 
         $statusList = $this->orderConfig->getStatuses();
 
-        $fieldset->addField('magento_orders_status_mapping_new',
+        $fieldset->addField(
+            'magento_orders_status_mapping_new',
             'select',
             [
                 'name' => 'magento_orders_settings[status_mapping][new]',
@@ -634,7 +673,8 @@ HTML
         || $formData['magento_orders_settings']['invoice_mode'] == Account::MAGENTO_ORDERS_INVOICE_MODE_YES
             ? 'checked="checked"' : '';
 
-        $fieldset->addField('magento_orders_status_mapping_paid',
+        $fieldset->addField(
+            'magento_orders_status_mapping_paid',
             'select',
             [
                 'container_id' => 'magento_orders_status_mapping_paid_container',
@@ -650,7 +690,7 @@ HTML
        name="magento_orders_settings[invoice_mode]"
        type="checkbox" $invoiceModeChecked $invoiceModeDisabled> {$this->__('Automatic Invoice Creation')}</label>
 HTML
-);
+        );
 
         $shipmentModeDisabled = $isDisabledStatus ? 'disabled="disabled"' : '';
         $shipmentModeChecked = $formData['magento_orders_settings']['status_mapping']['mode']
@@ -658,7 +698,8 @@ HTML
         || $formData['magento_orders_settings']['shipment_mode'] == Account::MAGENTO_ORDERS_SHIPMENT_MODE_YES
             ? 'checked="checked"' : '';
 
-        $fieldset->addField('magento_orders_status_mapping_shipped',
+        $fieldset->addField(
+            'magento_orders_status_mapping_shipped',
             'select',
             [
                 'container_id' => 'magento_orders_status_mapping_shipped_container',
@@ -674,7 +715,7 @@ HTML
        name="magento_orders_settings[shipment_mode]"
        type="checkbox" $shipmentModeChecked $shipmentModeDisabled> {$this->__('Automatic Shipment Creation')}</label>
 HTML
-);
+        );
 
         $this->setForm($form);
 
@@ -734,7 +775,7 @@ HTML
         = "{$formData['magento_orders_settings']['customer']['group_id']}";
 
 JS
-);
+        );
 
         return parent::_prepareForm();
     }

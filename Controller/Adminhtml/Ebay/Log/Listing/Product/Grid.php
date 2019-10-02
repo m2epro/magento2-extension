@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing\Product;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\View;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing\Product
+ */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
 {
     //########################################
@@ -21,8 +25,7 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         Context $context
-    )
-    {
+    ) {
         $this->nameBuilder = $nameBuilder;
 
         parent::__construct($ebayFactory, $context);
@@ -31,26 +34,28 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
     public function execute()
     {
         $listingId = $this->getRequest()->getParam(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD, false
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
+            false
         );
         $listingProductId = $this->getRequest()->getParam(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_PRODUCT_ID_FIELD, false
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_PRODUCT_ID_FIELD,
+            false
         );
 
         if ($listingId) {
             $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId, null, false);
 
-            if (is_null($listing)) {
+            if ($listing === null) {
                 $this->setJsonContent([
                     'status' => false,
                     'message' => $this->__('Listing does not exist.')
                 ]);
                 return $this->getResult();
             }
-        } else if ($listingProductId) {
+        } elseif ($listingProductId) {
             $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $listingProductId, null, false);
 
-            if (is_null($listingProduct)) {
+            if ($listingProduct === null) {
                 $this->setJsonContent([
                     'status' => false,
                     'message' => $this->__('Listing Product does not exist.')
@@ -63,17 +68,18 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
             \Ess\M2ePro\Helper\View\Ebay::NICK . '_log_listing_view_mode'
         );
 
-        if (is_null($sessionViewMode)) {
+        if ($sessionViewMode === null) {
             $sessionViewMode = View\Switcher::VIEW_MODE_SEPARATED;
         }
 
         $viewMode = $this->getRequest()->getParam(
-            'view_mode', $sessionViewMode
+            'view_mode',
+            $sessionViewMode
         );
 
         $gridClass = $this->nameBuilder->buildClassName([
             \Ess\M2ePro\Helper\View\Ebay::NICK,
-            'Log\Listing\Product\View',
+            'Log_Listing_Product_View',
             $viewMode,
             'Grid'
         ]);

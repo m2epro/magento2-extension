@@ -37,14 +37,14 @@ HTML;
     {
         $color = $this->getCheckObject()->isMeet() ? 'green' : 'red';
 
-        if (is_null($this->getCheckObject()->getReal())) {
+        if ($this->getCheckObject()->getReal() === null) {
             $value = $this->getHelper('Module\Translation')->__('unknown');
             $html = <<<HTML
 <span style="color: {$color};">
     <span>{$value}</span>&nbsp;
 </span>
 HTML;
-        } else if ($this->getCheckObject()->getReal() <= 0) {
+        } elseif ($this->getCheckObject()->getReal() <= 0) {
             $value = $this->getHelper('Module\Translation')->__('unlimited');
             $html = <<<HTML
 <span style="color: {$color};">
@@ -61,7 +61,6 @@ HTML;
         }
 
         if ($this->getHelper('Client')->isPhpApiFastCgi()) {
-
             $id = strtolower(__CLASS__);
             $notice = $this->getHelper('Module\Translation')->__(
                 'PHP is running using <b>fast CGI</b> Module on your web Server.

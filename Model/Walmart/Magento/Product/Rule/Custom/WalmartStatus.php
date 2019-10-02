@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Custom;
 
+/**
+ * Class WalmartStatus
+ * @package Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Custom
+ */
 class WalmartStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
     //########################################
@@ -65,28 +69,28 @@ class WalmartStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abstra
      */
     public function getOptions()
     {
-        return array(
-            array(
+        return [
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN,
                 'label' => $this->helperFactory->getObject('Module\Translation')->__('Unknown'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
                 'label' => $this->helperFactory->getObject('Module\Translation')->__('Not Listed'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
                 'label' => $this->helperFactory->getObject('Module\Translation')->__('Active'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
                 'label' => $this->helperFactory->getObject('Module\Translation')->__('Inactive'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
                 'label' => $this->helperFactory->getObject('Module\Translation')->__('Inactive (Blocked)'),
-            ),
-        );
+            ],
+        ];
     }
 
     //########################################

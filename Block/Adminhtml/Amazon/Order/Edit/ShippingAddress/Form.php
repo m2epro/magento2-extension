@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order\Edit\ShippingAddress;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Order\Edit\ShippingAddress
+ */
 class Form extends AbstractForm
 {
     //########################################
@@ -152,7 +156,8 @@ class Form extends AbstractForm
             [
                 'name' => 'county',
                 'label' => $this->__('County'),
-                'value' => $address['county'],
+                'value' => isset($address['county'])
+                    ? $this->getHelper('Data')->escapeHtml($address['county']) : '',
             ]
         );
 
@@ -182,7 +187,8 @@ class Form extends AbstractForm
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Order'));
         $this->jsUrl->add(
             $this->getUrl(
-                '*/amazon_order/saveShippingAddress', array('order_id' => $this->getRequest()->getParam('id'))
+                '*/amazon_order/saveShippingAddress',
+                ['order_id' => $this->getRequest()->getParam('id')]
             ),
             'formSubmit'
         );

@@ -12,6 +12,10 @@ use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Api\Data\CategoryAttributeInterface;
 use Magento\Framework\Config\ConfigOptionsListConstants;
 
+/**
+ * Class Staging
+ * @package Ess\M2ePro\Helper\Magento
+ */
 class Staging extends \Ess\M2ePro\Helper\AbstractHelper
 {
     /** @var \Magento\Framework\Module\FullModuleList */
@@ -31,8 +35,7 @@ class Staging extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->fullModuleList = $fullModuleList;
         $this->deploymentConfig = $deploymentConfig;
         $this->resourceConnection = $resourceConnection;
@@ -86,7 +89,7 @@ class Staging extends \Ess\M2ePro\Helper\AbstractHelper
     public function getTableLinkField($entityType)
     {
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($entityType . '_entity');
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($entityType . '_entity');
 
         $indexList = $connection->getIndexList($tableName);
         return $indexList[$connection->getPrimaryKeyName($tableName)]['COLUMNS_LIST'][0];

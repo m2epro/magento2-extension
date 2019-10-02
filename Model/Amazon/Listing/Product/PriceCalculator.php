@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product;
 use Ess\M2ePro\Model\Amazon\Template\SellingFormat;
 use Ess\M2ePro\Model\Magento\Product;
 
+/**
+ * Class PriceCalculator
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product
+ */
 class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
 {
     /**
@@ -53,7 +57,8 @@ class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
     //########################################
 
     protected function applyAdditionalOptionValuesModifications(
-        \Ess\M2ePro\Model\Listing\Product\Variation $variation, $value
+        \Ess\M2ePro\Model\Listing\Product\Variation $variation,
+        $value
     ) {
         if ($this->getIsSalePrice() && $value <= 0 && $this->isSourceModeSpecial()) {
             return 0;

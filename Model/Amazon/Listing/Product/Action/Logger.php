@@ -8,18 +8,22 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action;
 
+/**
+ * Class Logger
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action
+ */
 class Logger extends \Ess\M2ePro\Model\AbstractModel
 {
     private $action    = \Ess\M2ePro\Model\Listing\Log::ACTION_UNKNOWN;
 
-    private $actionId  = NULL;
+    private $actionId  = null;
 
     private $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Listing\Log
      */
-    private $listingLog = NULL;
+    private $listingLog = null;
 
     private $status = \Ess\M2ePro\Helper\Data::STATUS_SUCCESS;
 
@@ -31,8 +35,7 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -99,19 +102,22 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
      * @param int $type
      * @param int $priority
      */
-    public function logListingProductMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct,
-                                             \Ess\M2ePro\Model\Connector\Connection\Response\Message $message,
-                                             $priority = \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM)
-    {
-        $this->getListingLog()->addProductMessage($listingProduct->getListingId() ,
-                                                  $listingProduct->getProductId() ,
-                                                  $listingProduct->getId() ,
-                                                  $this->initiator ,
-                                                  $this->actionId ,
-                                                  $this->action ,
-                                                  $message->getText(),
-                                                  $this->initLogType($message),
-                                                  $priority);
+    public function logListingProductMessage(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        \Ess\M2ePro\Model\Connector\Connection\Response\Message $message,
+        $priority = \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+    ) {
+        $this->getListingLog()->addProductMessage(
+            $listingProduct->getListingId(),
+            $listingProduct->getProductId(),
+            $listingProduct->getId(),
+            $this->initiator,
+            $this->actionId,
+            $this->action,
+            $message->getText(),
+            $this->initLogType($message),
+            $priority
+        );
     }
 
     //########################################
@@ -121,10 +127,10 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
      */
     private function getListingLog()
     {
-        if (is_null($this->listingLog)) {
+        if ($this->listingLog === null) {
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Log $listingLog */
-            $listingLog = $this->activeRecordFactory->getObject('Amazon\Listing\Log');
+            $listingLog = $this->activeRecordFactory->getObject('Amazon_Listing_Log');
 
             $this->listingLog = $listingLog;
         }

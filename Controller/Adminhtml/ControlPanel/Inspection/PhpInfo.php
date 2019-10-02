@@ -12,6 +12,10 @@ use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main;
 use Ess\M2ePro\Helper\Module;
 use Magento\Backend\App\Action;
 
+/**
+ * Class PhpInfo
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Inspection
+ */
 class PhpInfo extends Main
 {
     public function execute()

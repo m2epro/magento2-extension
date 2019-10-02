@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template;
 
+/**
+ * Class ShippingTemplate
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template
+ */
 class ShippingTemplate extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template
 {
     //########################################

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Helper\Magento;
 
 use \Magento\Framework\App\Area;
 
+/**
+ * Class Plugin
+ * @package Ess\M2ePro\Helper\Magento
+ */
 class Plugin extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $fileResolver;
@@ -23,7 +27,7 @@ class Plugin extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\App\Config\FileResolver $fileResolver,
         \Magento\Framework\App\AreaList $areaList,
         \Magento\Framework\App\Helper\Context $context
-    ){
+    ) {
         parent::__construct($helperFactory, $context);
 
         $this->fileResolver = $fileResolver;
@@ -99,7 +103,7 @@ class Plugin extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function isValidPlugin($plugin)
     {
-        return ($plugin instanceof \DOMElement) && $plugin->tagName === 'plugin'&& $plugin->getAttribute('type');
+        return ($plugin instanceof \DOMElement) && $plugin->tagName === 'plugin' && $plugin->getAttribute('type');
     }
 
     private function getMethods($class)
@@ -108,7 +112,6 @@ class Plugin extends \Ess\M2ePro\Helper\AbstractHelper
 
         $methods = [];
         foreach ($reflection->getMethods() as $method) {
-
             foreach (['before', 'after', 'around'] as $prefix) {
                 if (strpos($method->name, $prefix) === 0) {
                     $methods[] = $method->name;

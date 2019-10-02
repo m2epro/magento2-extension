@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
+/**
+ * Class ReservationPlace
+ * @package Ess\M2ePro\Controller\Adminhtml\Order
+ */
 class ReservationPlace extends Order
 {
     public function execute()
@@ -25,9 +29,9 @@ class ReservationPlace extends Order
         /** @var $orders \Ess\M2ePro\Model\Order[] */
         $orders = $this->activeRecordFactory->getObject('Order')
             ->getCollection()
-            ->addFieldToFilter('id', array('in' => $ids))
-            ->addFieldToFilter('reservation_state', array('neq' => \Ess\M2ePro\Model\Order\Reserve::STATE_PLACED))
-            ->addFieldToFilter('magento_order_id', array('null' => true));
+            ->addFieldToFilter('id', ['in' => $ids])
+            ->addFieldToFilter('reservation_state', ['neq' => \Ess\M2ePro\Model\Order\Reserve::STATE_PLACED])
+            ->addFieldToFilter('magento_order_id', ['null' => true]);
 
         try {
             $actionSuccessful = false;
@@ -53,12 +57,12 @@ class ReservationPlace extends Order
                     $this->__('QTY for selected Order(s) was not reserved.')
                 );
             }
-
         } catch (\Exception $e) {
             $this->messageManager->addError(
                 $this->__(
                     'QTY for selected Order(s) was not reserved. Reason: %error_message%',
-                    $e->getMessage())
+                    $e->getMessage()
+                )
             );
         }
 

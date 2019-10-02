@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
+/**
+ * Class CheckAuth
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Account
+ */
 class CheckAuth extends Account
 {
     public function execute()
@@ -20,43 +24,39 @@ class CheckAuth extends Account
         $clientSecret  = $this->getRequest()->getParam('client_secret', false);
         $marketplaceId = $this->getRequest()->getParam('marketplace_id', false);
 
-        $result = array (
+        $result =  [
             'result' => false,
             'reason' => null
-        );
+        ];
 
         /** @var $marketplaceObject \Ess\M2ePro\Model\Marketplace */
         $marketplaceObject = $this->walmartFactory->getCachedObjectLoaded(
-            'Marketplace', $marketplaceId
+            'Marketplace',
+            $marketplaceId
         );
 
         if ($marketplaceId == \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA &&
             $consumerId && $oldPrivateKey) {
-
-            $requestData = array(
+            $requestData = [
                 'marketplace' => $marketplaceObject->getNativeId(),
                 'consumer_id' => $consumerId,
                 'private_key' => $oldPrivateKey,
-            );
-
+            ];
         } elseif ($marketplaceId != \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA &&
             $clientId && $clientSecret) {
-
-            $requestData = array(
+            $requestData = [
                 'marketplace'   => $marketplaceObject->getNativeId(),
                 'client_id'     => $clientId,
                 'client_secret' => $clientSecret,
                 'consumer_id'   => $consumerId
-            );
-
+            ];
         } else {
             $this->setJsonContent($result);
             return $this->getResult();
         }
 
         try {
-
-            $dispatcherObject = $this->modelFactory->getObject('Walmart\Connector\Dispatcher');
+            $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector('account', 'check', 'access', $requestData);
             $dispatcherObject->process($connectorObj);
 
@@ -67,7 +67,6 @@ class CheckAuth extends Account
             if (!empty($response['reason'])) {
                 $result['reason'] = $this->getHelper('Data')->escapeJs($response['reason']);
             }
-
         } catch (\Exception $exception) {
             $result['result'] = false;
             $this->getHelper('Module\Exception')->process($exception);

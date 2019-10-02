@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat
+ */
 class Index extends Template
 {
     public function execute()

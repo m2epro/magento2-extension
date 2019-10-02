@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization;
 
+/**
+ * Class Marketplaces
+ * @package Ess\M2ePro\Model\Ebay\Synchronization
+ */
 class Marketplaces extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
 {
     //########################################
@@ -25,7 +29,7 @@ class Marketplaces extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
      */
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------
@@ -102,7 +106,7 @@ class Marketplaces extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
         $result = !$this->processTask('Marketplaces\MotorsEpids') ? false : $result;
         $result = !$this->processTask('Marketplaces\MotorsKtypes') ? false : $result;
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('marketplace');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
 
         return $result;
     }

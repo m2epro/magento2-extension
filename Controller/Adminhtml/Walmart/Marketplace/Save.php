@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace
+ */
 class Save extends Marketplace
 {
     //########################################
@@ -21,7 +25,7 @@ class Save extends Marketplace
         foreach ($marketplaces as $marketplace) {
             $newStatus = $this->getRequest()->getParam('status_'.$marketplace->getId());
 
-            if (is_null($newStatus)) {
+            if ($newStatus === null) {
                 continue;
             }
             if ($marketplace->getStatus() == $newStatus) {

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class GetUpdatedPriceBySkus
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing
+ */
 class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
     protected $localeCurrency;
@@ -18,8 +22,7 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         Context $context
-    )
-    {
+    ) {
         $this->localeCurrency = $localeCurrency;
         parent::__construct($amazonFactory, $context);
     }
@@ -33,7 +36,7 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         }
 
         $groupedSkus = $this->getHelper('Data')->jsonDecode($groupedSkus);
-        $resultPrices = array();
+        $resultPrices = [];
 
         foreach ($groupedSkus as $accountId => $skus) {
             /** @var $account \Ess\M2ePro\Model\Account */
@@ -45,26 +48,26 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $currency = $amazonAccount->getMarketplace()->getChildObject()->getDefaultCurrency();
 
             /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\ActualPrice */
-            $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\ActualPrice');
+            $repricingSynchronization = $this->modelFactory->getObject('Amazon_Repricing_Synchronization_ActualPrice');
             $repricingSynchronization->setAccount($account);
             $repricingSynchronization->run($skus);
 
             /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
             $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
             $listingProductCollection->getSelect()->joinLeft(
-                array('l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()),
+                ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
                 'l.id = main_table.listing_id',
-                array()
+                []
             );
             $listingProductCollection->addFieldToFilter('l.account_id', $accountId);
-            $listingProductCollection->addFieldToFilter('sku', array('in' => $skus));
+            $listingProductCollection->addFieldToFilter('sku', ['in' => $skus]);
 
             $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
             $listingProductCollection->getSelect()->columns(
-                array(
+                [
                     'second_table.sku',
                     'second_table.online_regular_price'
-                )
+                ]
             );
 
             $listingsProductsData = $listingProductCollection->getData();
@@ -80,14 +83,14 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
 
             $listingOtherCollection->addFieldToFilter('account_id', $accountId);
-            $listingOtherCollection->addFieldToFilter('sku', array('in' => $skus));
+            $listingOtherCollection->addFieldToFilter('sku', ['in' => $skus]);
 
             $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
             $listingOtherCollection->getSelect()->columns(
-                array(
+                [
                     'second_table.sku',
                     'second_table.online_price'
-                )
+                ]
             );
 
             $listingsOthersData = $listingOtherCollection->getData();

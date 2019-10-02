@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search;
 
+/**
+ * Class Custom
+ * @package Ess\M2ePro\Model\Amazon\Search
+ */
 class Custom extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -41,10 +45,11 @@ class Custom extends \Ess\M2ePro\Model\AbstractModel
 
     public function process()
     {
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
         $connectorObj = $dispatcherObject->getCustomConnector(
             'Amazon\Search\Custom\\'.ucfirst($this->getSearchMethod()).'\Requester',
-            $this->getConnectorParams(), $this->listingProduct->getAccount()
+            $this->getConnectorParams(),
+            $this->listingProduct->getAccount()
         );
 
         $dispatcherObject->process($connectorObj);
@@ -61,9 +66,9 @@ class Custom extends \Ess\M2ePro\Model\AbstractModel
         $amazonListingProduct = $this->listingProduct->getChildObject();
         $isModifyChildToSimple = !$amazonListingProduct->getVariationManager()->isRelationParentType();
 
-        $params = array(
+        $params = [
             'variation_bad_parent_modify_child_to_simple' => $isModifyChildToSimple,
-        );
+        ];
 
         if ($searchMethod == 'byQuery') {
             $params['query'] = $this->query;
@@ -122,17 +127,17 @@ class Custom extends \Ess\M2ePro\Model\AbstractModel
 
         if ($searchData !== false && $this->getSearchMethod() == 'byAsin') {
             if (is_array($searchData) && !empty($searchData)) {
-                $searchData = array($searchData);
-            } else if (is_null($searchData)) {
-                $searchData = array();
+                $searchData = [$searchData];
+            } elseif ($searchData === null) {
+                $searchData = [];
             }
         }
 
-        return array(
+        return [
             'type'  => $type,
             'value' => $connectorParams['query'],
             'data'  => $searchData,
-        );
+        ];
     }
 
     private function getStrippedQuery()

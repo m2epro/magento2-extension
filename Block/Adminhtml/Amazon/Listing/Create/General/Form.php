@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\General;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Block\Adminhtml\StoreSwitcher;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\General
+ */
 class Form extends AbstractForm
 {
     protected $amazonFactory;
@@ -23,8 +27,7 @@ class Form extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -59,9 +62,9 @@ class Form extends AbstractForm
         $sessionKey = 'amazon_listing_create';
         $sessionData = $this->getHelper('Data\Session')->getValue($sessionKey);
 
-        isset($sessionData['title'])          && $title = $sessionData['title'];
-        isset($sessionData['account_id'])     && $accountId = $sessionData['account_id'];
-        isset($sessionData['store_id'])       && $storeId = $sessionData['store_id'];
+        isset($sessionData['title']) && $title = $sessionData['title'];
+        isset($sessionData['account_id']) && $accountId = $sessionData['account_id'];
+        isset($sessionData['store_id']) && $storeId = $sessionData['store_id'];
         // ---------------------------------------
 
         $fieldset->addField(
@@ -88,7 +91,7 @@ class Form extends AbstractForm
 
         // ---------------------------------------
         $accountsCollection = $this->amazonFactory->getObject('Account')->getCollection()
-            ->setOrder('title','ASC');
+            ->setOrder('title', 'ASC');
 
         $accountsCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS)
             ->columns([
@@ -99,7 +102,7 @@ class Form extends AbstractForm
 
         $accountSelectionDisabled = false;
 
-        if($this->getRequest()->getParam('account_id')) {
+        if ($this->getRequest()->getParam('account_id')) {
             $accountId = $this->getRequest()->getParam('account_id');
             $fieldset->addField(
                 'account_id_hidden',
@@ -141,7 +144,7 @@ HTML
                     'id' => 'add_account_button',
                     'label' => $this->__('Add Another'),
                     'style' => 'margin-left: 5px;' .
-                        ($this->getRequest()->getParam('wizard',false) ? 'display: none;' : ''),
+                        ($this->getRequest()->getParam('wizard', false) ? 'display: none;' : ''),
                     'onclick' => '',
                     'class' => 'primary'
                 ])->toHtml(),
@@ -151,8 +154,8 @@ HTML
 
         // ---------------------------------------
         $marketplacesCollection = $this->amazonFactory->getObject('Marketplace')->getCollection()
-            ->setOrder('sorder','ASC')
-            ->setOrder('title','ASC');
+            ->setOrder('sorder', 'ASC')
+            ->setOrder('title', 'ASC');
 
         $marketplacesCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS)
             ->columns([
@@ -212,12 +215,12 @@ HTML
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Account'));
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Marketplace'));
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Amazon\Listing\Create', ['_current' => true])
+            $this->getHelper('Data')->getControllerActions('Amazon_Listing_Create', ['_current' => true])
         );
 
         $this->jsUrl->add($this->getUrl('*/amazon_account/newAction', [
             'close_on_save' => true,
-            'wizard' => (bool)$this->getRequest()->getParam('wizard',false)
+            'wizard' => (bool)$this->getRequest()->getParam('wizard', false)
         ]), 'amazon_account/newAction');
 
         $this->jsTranslator->add(
@@ -227,7 +230,8 @@ HTML
             )
         );
         $this->jsTranslator->add(
-            'Account not found, please create it.', $this->__('Account not found, please create it.')
+            'Account not found, please create it.',
+            $this->__('Account not found, please create it.')
         );
         $this->jsTranslator->add('Add Another', $this->__('Add Another'));
         $this->jsTranslator->add(
@@ -235,16 +239,20 @@ HTML
             $this->__('Please wait while Synchronization is finished.')
         );
         $this->jsTranslator->add(
-            'Preparing to start. Please wait ...', $this->__('Preparing to start. Please wait ...')
+            'Preparing to start. Please wait ...',
+            $this->__('Preparing to start. Please wait ...')
         );
         $this->jsTranslator->add(
-            'Another Synchronization Is Already Running.', $this->__('Another Synchronization Is Already Running.')
+            'Another Synchronization Is Already Running.',
+            $this->__('Another Synchronization Is Already Running.')
         );
         $this->jsTranslator->add(
-            'Getting information. Please wait ...', $this->__('Getting information. Please wait ...')
+            'Getting information. Please wait ...',
+            $this->__('Getting information. Please wait ...')
         );
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Amazon'));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class));
 
         $this->js->add(<<<JS
 

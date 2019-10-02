@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
+/**
+ * Class JsRenderer
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Renderer
+ */
 class JsRenderer extends AbstractRenderer
 {
     protected $js = [];
@@ -68,5 +72,4 @@ JS;
 
         return implode($this->js, ';');
     }
-
 }

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class RequirementsPopup
+ * @package Ess\M2ePro\Block\Adminhtml
+ */
 class RequirementsPopup extends AbstractBlock
 {
     protected $_template = 'requirements_popup.phtml';
@@ -43,7 +47,7 @@ require([
 JS
         );
 
-        $block = $this->createBlock('ControlPanel\Inspection\Requirements');
+        $block = $this->createBlock('ControlPanel_Inspection_Requirements');
         $this->setChild('requirements', $block);
     }
 

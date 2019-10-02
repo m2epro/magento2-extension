@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\Amazon\Listing;
 use Ess\M2ePro\Model\Amazon\Listing;
 use Ess\M2ePro\Model\Magento\Product\Image;
 
+/**
+ * Class Source
+ * @package Ess\M2ePro\Model\Amazon\Listing
+ */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
@@ -134,12 +138,12 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $src = $this->getAmazonListing()->getGeneralIdSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_NOT_SET) {
-            $result = NULL;
+            $result = null;
         }
 
         if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE) {
             $result = $this->getMagentoProduct()->getAttributeValue($src['attribute']);
-            $result = str_replace('-','',$result);
+            $result = str_replace('-', '', $result);
         }
 
         is_string($result) && $result = trim($result);
@@ -156,12 +160,12 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $src = $this->getAmazonListing()->getWorldwideIdSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Listing::WORLDWIDE_ID_MODE_NOT_SET) {
-            $result = NULL;
+            $result = null;
         }
 
         if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Listing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE) {
             $result = $this->getMagentoProduct()->getAttributeValue($src['attribute']);
-            $result = str_replace('-','',$result);
+            $result = str_replace('-', '', $result);
         }
 
         is_string($result) && $result = trim($result);
@@ -188,7 +192,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $result = (int)$result;
-        $result < 0  && $result = 0;
+        $result < 0 && $result = 0;
         $result > 30 && $result = 30;
 
         return $result;
@@ -243,7 +247,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $src = $this->getAmazonListing()->getConditionNoteSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Listing::CONDITION_NOTE_MODE_CUSTOM_VALUE) {
-            $renderer = $this->getHelper('Module\Renderer\Description');
+            $renderer = $this->getHelper('Module_Renderer_Description');
             $result = $renderer->parseTemplate($src['value'], $this->getMagentoProduct());
         }
 
@@ -264,7 +268,6 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getAmazonListing()->isImageMainModeAttribute()) {
-
             $src = $this->getAmazonListing()->getImageMainSource();
             $image = $this->getMagentoProduct()->getImage($src['attribute']);
         }
@@ -278,10 +281,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     public function getGalleryImages()
     {
         if ($this->getAmazonListing()->isImageMainModeNone()) {
-            return array();
+            return [];
         }
 
-        $allowedConditionValues = array(
+        $allowedConditionValues = [
             \Ess\M2ePro\Model\Amazon\Listing::CONDITION_USED_LIKE_NEW,
             \Ess\M2ePro\Model\Amazon\Listing::CONDITION_USED_VERY_GOOD,
             \Ess\M2ePro\Model\Amazon\Listing::CONDITION_USED_GOOD,
@@ -290,43 +293,40 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             \Ess\M2ePro\Model\Amazon\Listing::CONDITION_COLLECTIBLE_VERY_GOOD,
             \Ess\M2ePro\Model\Amazon\Listing::CONDITION_COLLECTIBLE_GOOD,
             \Ess\M2ePro\Model\Amazon\Listing::CONDITION_COLLECTIBLE_ACCEPTABLE
-        );
+        ];
 
         $conditionData = $this->getAmazonListing()->getConditionSource();
 
         if ($this->getAmazonListing()->isConditionDefaultMode() &&
             !in_array($conditionData['value'], $allowedConditionValues)) {
-
-            return array();
+            return [];
         }
 
         if ($this->getAmazonListing()->isConditionAttributeMode()) {
             $tempConditionValue = $this->getMagentoProduct()->getAttributeValue($conditionData['attribute']);
 
             if (!in_array($tempConditionValue, $allowedConditionValues)) {
-                return array();
+                return [];
             }
         }
 
         if (!$mainImage = $this->getMainImage()) {
-            return array();
+            return [];
         }
 
         if ($this->getAmazonListing()->isGalleryImagesModeNone()) {
-            return array($mainImage);
+            return [$mainImage];
         }
 
-        $galleryImages = array();
+        $galleryImages = [];
         $gallerySource = $this->getAmazonListing()->getGalleryImagesSource();
         $limitGalleryImages = Listing::GALLERY_IMAGES_COUNT_MAX;
 
         if ($this->getAmazonListing()->isGalleryImagesModeProduct()) {
-
             $limitGalleryImages = (int)$gallerySource['limit'];
             $galleryImagesTemp = $this->getMagentoProduct()->getGalleryImages($limitGalleryImages + 1);
 
             foreach ($galleryImagesTemp as $image) {
-
                 if (array_key_exists($image->getHash(), $galleryImages)) {
                     continue;
                 }
@@ -336,21 +336,19 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getAmazonListing()->isGalleryImagesModeAttribute()) {
-
             $limitGalleryImages = Listing::GALLERY_IMAGES_COUNT_MAX;
 
             $galleryImagesTemp = $this->getMagentoProduct()->getAttributeValue($gallerySource['attribute']);
             $galleryImagesTemp = (array)explode(',', $galleryImagesTemp);
 
             foreach ($galleryImagesTemp as $tempImageLink) {
-
                 $tempImageLink = trim($tempImageLink);
                 if (empty($tempImageLink)) {
                     continue;
                 }
 
                 /** @var Image $image */
-                $image = $this->modelFactory->getObject('Magento\Product\Image');
+                $image = $this->modelFactory->getObject('Magento_Product_Image');
                 $image->setUrl($tempImageLink);
                 $image->setStoreId($this->getMagentoProduct()->getStoreId());
 
@@ -365,7 +363,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         unset($galleryImages[$mainImage->getHash()]);
 
         if (count($galleryImages) <= 0) {
-            return array($mainImage);
+            return [$mainImage];
         }
 
         $galleryImages = array_slice($galleryImages, 0, $limitGalleryImages);
@@ -381,7 +379,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getGiftWrap()
     {
-        $result = NULL;
+        $result = null;
         $src = $this->getAmazonListing()->getGiftWrapSource();
 
         if ($this->getAmazonListing()->isGiftWrapModeYes()) {
@@ -412,7 +410,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getGiftMessage()
     {
-        $result = NULL;
+        $result = null;
         $src = $this->getAmazonListing()->getGiftMessageSource();
 
         if ($this->getAmazonListing()->isGiftMessageModeYes()) {

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper;
 
+/**
+ * Class Primary
+ * @package Ess\M2ePro\Helper
+ */
 class Primary extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $primaryConfig;
@@ -18,8 +22,7 @@ class Primary extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\Config\Manager\Primary $primaryConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->primaryConfig = $primaryConfig;
         parent::__construct($helperFactory, $context);
     }

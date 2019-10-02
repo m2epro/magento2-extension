@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection;
 use Magento\Catalog\Api\Data\CategoryAttributeInterface;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
+ */
 abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
     protected $helperFactory;
@@ -27,8 +31,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\C
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
         \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
@@ -36,7 +39,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\C
 
     //########################################
 
-    protected function _toOptionArray($valueField = 'id', $labelField = 'title', $additional = array())
+    protected function _toOptionArray($valueField = 'id', $labelField = 'title', $additional = [])
     {
         return parent::_toOptionArray($valueField, $labelField, $additional);
     }
@@ -83,7 +86,6 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\C
 
         if ($helper->isInstalled() && $helper->isStagedTable($table) &&
             strpos($cond, 'entity_id') !== false) {
-
             $linkField = $helper->isStagedTable($table, ProductAttributeInterface::ENTITY_TYPE_CODE)
                 ? $helper->getTableLinkField(ProductAttributeInterface::ENTITY_TYPE_CODE)
                 : $helper->getTableLinkField(CategoryAttributeInterface::ENTITY_TYPE_CODE);

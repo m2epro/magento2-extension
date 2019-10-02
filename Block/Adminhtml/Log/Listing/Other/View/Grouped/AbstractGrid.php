@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\View\Grouped;
 
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\View;
 
+/**
+ * Class AbstractGrid
+ * @package Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\View\Grouped
+ */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid
 {
     protected $nestedLogs = [];
@@ -34,7 +38,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Othe
 
     protected function _prepareCollection()
     {
-        $logCollection = $this->activeRecordFactory->getObject('Listing\Other\Log')->getCollection();
+        $logCollection = $this->activeRecordFactory->getObject('Listing_Other_Log')->getCollection();
 
         $this->applyFilters($logCollection);
 
@@ -44,7 +48,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Othe
 
         $lastAllowedLog = $logCollection->getFirstItem();
 
-        if (!is_null($lastAllowedLog->getId())) {
+        if ($lastAllowedLog->getId() !== null) {
             $logCollection->getSelect()->limit($this->getMaxLastHandledRecordsCount());
             $this->addMaxAllowedLogsCountExceededNotification($lastAllowedLog->getCreateDate());
         } else {
@@ -96,7 +100,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Othe
             return parent::_afterLoadCollection();
         }
 
-        $otherLogCollection = $this->activeRecordFactory->getObject('Listing\Other\Log')->getCollection();
+        $otherLogCollection = $this->activeRecordFactory->getObject('Listing_Other_Log')->getCollection();
 
         $otherLogCollection->getSelect()
             ->reset(\Zend_Db_Select::COLUMNS)
@@ -116,7 +120,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Othe
         }
 
         $otherLogCollection->getSelect()->where(
-            new \Zend_Db_Expr('main_table.id IN (?)'), $nestedLogsIds
+            new \Zend_Db_Expr('main_table.id IN (?)'),
+            $nestedLogsIds
         );
 
         foreach ($otherLogCollection->getItems() as $log) {
@@ -126,7 +131,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Othe
         $sortOrder = \Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::$actionsSortOrder;
 
         foreach ($this->nestedLogs as &$logs) {
-            usort($logs, function($a, $b) use ($sortOrder) {
+            usort($logs, function ($a, $b) use ($sortOrder) {
                 return $sortOrder[$a['type']] > $sortOrder[$b['type']];
             });
         }
@@ -144,13 +149,15 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Othe
 
         /** @var \Ess\M2ePro\Model\Listing\Other\Log $log */
         foreach ($nestedLogs as $log) {
-
             $messageType = '';
             $createDate = '';
 
             if (count($nestedLogs) > 1) {
                 $messageType = $this->callbackColumnType(
-                    '[' . $this->_getLogTypeList()[$log->getType()] . ']', $log, $column, $isExport
+                    '[' . $this->_getLogTypeList()[$log->getType()] . ']',
+                    $log,
+                    $column,
+                    $isExport
                 );
                 $createDate = $this->_localeDate->formatDate($log->getCreateDate(), \IntlDateFormatter::MEDIUM, true);
             }

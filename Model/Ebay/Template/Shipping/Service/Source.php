@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
 
+/**
+ * Class Source
+ * @package Ess\M2ePro\Model\Ebay\Template\Shipping\Service
+ */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
@@ -66,7 +70,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
      * @param null $storeForConvertingAttributeTypePrice
      * @return float
      */
-    public function getCost($storeForConvertingAttributeTypePrice = NULL)
+    public function getCost($storeForConvertingAttributeTypePrice = null)
     {
         $result = 0;
 
@@ -85,16 +89,16 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 break;
         }
 
-        is_string($result) && $result = str_replace(',','.',$result);
+        is_string($result) && $result = str_replace(',', '.', $result);
 
-        return round((float)$result,2);
+        return round((float)$result, 2);
     }
 
     /**
      * @param null $storeForConvertingAttributeTypePrice
      * @return float
      */
-    public function getCostAdditional($storeForConvertingAttributeTypePrice = NULL)
+    public function getCostAdditional($storeForConvertingAttributeTypePrice = null)
     {
         $result = 0;
 
@@ -113,16 +117,16 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 break;
         }
 
-        is_string($result) && $result = str_replace(',','.',$result);
+        is_string($result) && $result = str_replace(',', '.', $result);
 
-        return round((float)$result,2);
+        return round((float)$result, 2);
     }
 
     /**
      * @param null $storeForConvertingAttributeTypePrice
      * @return float
      */
-    public function getCostSurcharge($storeForConvertingAttributeTypePrice = NULL)
+    public function getCostSurcharge($storeForConvertingAttributeTypePrice = null)
     {
         $result = 0;
 
@@ -141,16 +145,16 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 break;
         }
 
-        is_string($result) && $result = str_replace(',','.',$result);
+        is_string($result) && $result = str_replace(',', '.', $result);
 
-        return round((float)$result,2);
+        return round((float)$result, 2);
     }
 
     // ---------------------------------------
 
     protected function getMagentoProductAttributeValue($attributeCode, $store)
     {
-        if (is_null($store)) {
+        if ($store === null) {
             return $this->getMagentoProduct()->getAttributeValue($attributeCode);
         }
 

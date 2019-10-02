@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation;
 
+/**
+ * Class Manager
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation
+ */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Listing\Product
      */
-    private $listingProduct = NULL;
+    private $listingProduct = null;
 
     //########################################
 
@@ -113,30 +117,30 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     public function setSimpleType()
     {
-        $this->getAmazonListingProduct()->setData('is_variation_product',0)
-                                  ->setData('is_variation_parent',0)
-                                  ->setData('variation_parent_id',NULL)
+        $this->getAmazonListingProduct()->setData('is_variation_product', 0)
+                                  ->setData('is_variation_parent', 0)
+                                  ->setData('variation_parent_id', null)
                                   ->save();
     }
 
     public function setIndividualType()
     {
-        $this->getAmazonListingProduct()->setData('is_variation_parent',0)
-                                  ->setData('variation_parent_id',NULL)
+        $this->getAmazonListingProduct()->setData('is_variation_parent', 0)
+                                  ->setData('variation_parent_id', null)
                                   ->save();
     }
 
     public function setRelationParentType()
     {
-        $this->getAmazonListingProduct()->setData('is_variation_parent',1)
-                                  ->setData('variation_parent_id',NULL)
+        $this->getAmazonListingProduct()->setData('is_variation_parent', 1)
+                                  ->setData('variation_parent_id', null)
                                   ->save();
     }
 
     public function setRelationChildType($variationParentId)
     {
-        $this->getAmazonListingProduct()->setData('is_variation_parent',0)
-                                  ->setData('variation_parent_id',$variationParentId)
+        $this->getAmazonListingProduct()->setData('is_variation_parent', 0)
+                                  ->setData('variation_parent_id', $variationParentId)
                                   ->save();
     }
 
@@ -184,16 +188,16 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getTypeModel()
     {
-        $model = NULL;
+        $model = null;
 
         if ($this->isIndividualType()) {
-            $model = $this->modelFactory->getObject('Amazon\Listing\Product\Variation\Manager\Type\Individual');
-        } else if ($this->isRelationParentType()) {
+            $model = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Manager_Type_Individual');
+        } elseif ($this->isRelationParentType()) {
             $model = $this->modelFactory
-                ->getObject('Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation');
-        } else if ($this->isRelationChildType()) {
+                ->getObject('Amazon_Listing_Product_Variation_Manager_Type_Relation_ParentRelation');
+        } elseif ($this->isRelationChildType()) {
             $model = $this->modelFactory
-                ->getObject('Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation');
+                ->getObject('Amazon_Listing_Product_Variation_Manager_Type_Relation_ChildRelation');
         } else {
             throw new \Ess\M2ePro\Model\Exception('This Product is not a Variation Product.');
         }
@@ -227,7 +231,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             $this->setRelationParentType();
             $this->getTypeModel()->resetProductAttributes();
             $this->getTypeModel()->getProcessor()->process();
-        } else if ($this->isRelationParentType()) {
+        } elseif ($this->isRelationParentType()) {
             $this->getTypeModel()->getProcessor()->process();
             $this->getTypeModel()->clearTypeData();
             $this->setIndividualType();

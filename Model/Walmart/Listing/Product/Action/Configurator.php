@@ -8,12 +8,17 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action;
 
+/**
+ * Class Configurator
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action
+ */
 class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
 {
-    const DATA_TYPE_QTY = 'qty';
-    const DATA_TYPE_PRICE = 'price';
+    const DATA_TYPE_QTY        = 'qty';
+    const DATA_TYPE_LAG_TIME   = 'lag_time';
+    const DATA_TYPE_PRICE      = 'price';
     const DATA_TYPE_PROMOTIONS = 'promotions';
-    const DATA_TYPE_DETAILS = 'details';
+    const DATA_TYPE_DETAILS    = 'details';
 
     //########################################
 
@@ -22,12 +27,13 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
      */
     public function getAllDataTypes()
     {
-        return array(
+        return [
             self::DATA_TYPE_QTY,
+            self::DATA_TYPE_LAG_TIME,
             self::DATA_TYPE_PRICE,
             self::DATA_TYPE_PROMOTIONS,
             self::DATA_TYPE_DETAILS,
-        );
+        ];
     }
 
     //########################################
@@ -54,6 +60,32 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
     public function disallowQty()
     {
         return $this->disallow(self::DATA_TYPE_QTY);
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isLagTimeAllowed()
+    {
+        return $this->isAllowed(self::DATA_TYPE_LAG_TIME);
+    }
+
+    /**
+     * @return $this
+     */
+    public function allowLagTime()
+    {
+        return $this->allow(self::DATA_TYPE_LAG_TIME);
+    }
+
+    /**
+     * @return $this
+     */
+    public function disallowLagTime()
+    {
+        return $this->disallow(self::DATA_TYPE_LAG_TIME);
     }
 
     // ---------------------------------------

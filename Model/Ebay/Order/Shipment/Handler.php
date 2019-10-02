@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Order\Shipment;
 
+/**
+ * Class Handler
+ * @package Ess\M2ePro\Model\Ebay\Order\Shipment
+ */
 class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
 {
     private $ebayFactory;
@@ -20,8 +24,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
         \Magento\Shipping\Model\CarrierFactoryInterface $carrierFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct($activeRecordFactory, $carrierFactory, $helperFactory, $modelFactory);
     }
@@ -70,27 +73,25 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
     {
         $magentoProductHelper = $this->getHelper('Magento\Product');
 
-        $items = array();
-        $allowedItems = array();
+        $items = [];
+        $allowedItems = [];
         foreach ($shipment->getAllItems() as $shipmentItem) {
             /** @var $shipmentItem \Magento\Sales\Model\Order\Shipment\Item */
 
             $orderItem = $shipmentItem->getOrderItem();
             $parentOrderItemId = $orderItem->getParentItemId();
 
-            if (!is_null($parentOrderItemId)) {
+            if ($parentOrderItemId !== null) {
                 !in_array($parentOrderItemId, $allowedItems) && ($allowedItems[] = $parentOrderItemId);
                 continue;
             }
 
             if (!$magentoProductHelper->isBundleType($orderItem->getProductType()) &&
                 !$magentoProductHelper->isGroupedType($orderItem->getProductType())) {
-
                 $allowedItems[] = $orderItem->getId();
             }
 
-            $additionalData = $orderItem->getAdditionalData();
-            $additionalData = is_string($additionalData) ? @unserialize($additionalData) : array();
+            $additionalData = $this->getHelper('Data')->unserialize($orderItem->getAdditionalData());
 
             $itemId = $transactionId = null;
             $orderItemDataIdentifier = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER;
@@ -114,7 +115,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
                 }
             }
 
-            if (is_null($itemId) || is_null($transactionId)) {
+            if ($itemId === null || $transactionId === null) {
                 continue;
             }
 
@@ -131,7 +132,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
             $items[$orderItem->getId()] = $item;
         }
 
-        $resultItems = array();
+        $resultItems = [];
         foreach ($items as $orderItemId => $item) {
             if (!in_array($orderItemId, $allowedItems)) {
                 continue;

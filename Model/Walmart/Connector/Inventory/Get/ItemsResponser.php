@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Connector\Inventory\Get;
 
+/**
+ * Class ItemsResponser
+ * @package Ess\M2ePro\Model\Walmart\Connector\Inventory\Get
+ */
 abstract class ItemsResponser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Responser
 {
     // ########################################
@@ -20,9 +24,9 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Walmart\Connector\Comman
 
     protected function prepareResponseData()
     {
-        $preparedData = array(
-            'data' => array(),
-        );
+        $preparedData = [
+            'data' => [],
+        ];
 
         $responseData = $this->getResponse()->getResponseData();
 

@@ -8,17 +8,16 @@
 
 namespace Ess\M2ePro\Plugin\StockItem\Magento\CatalogInventory\Model\Quote\Item\QuantityValidator;
 
+use \Ess\M2ePro\Model\Magento\Quote\Builder;
+
+/**
+ * Class QuoteItemQtyList
+ * @package Ess\M2ePro\Plugin\StockItem\Magento\CatalogInventory\Model\Quote\Item\QuantityValidator
+ */
 class QuoteItemQtyList extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     //########################################
 
-    /**
-     * @param \Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\QuoteItemQtyList $interceptor
-     * @param \Closure $callback
-     * @param mixed ...$arguments
-     * @return mixed
-     * @throws \Ess\M2ePro\Model\Exception
-     */
     public function aroundGetQty($interceptor, \Closure $callback, ...$arguments)
     {
         return $this->execute('getQty', $interceptor, $callback, $arguments);
@@ -27,27 +26,21 @@ class QuoteItemQtyList extends \Ess\M2ePro\Plugin\AbstractPlugin
     /**
      * @param \Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\QuoteItemQtyList $interceptor
      * @param \Closure $callback
-     * @param mixed ...$arguments
+     * @param array $arguments
      * @return mixed
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function processGetQty($interceptor, \Closure $callback, ...$arguments)
+    public function processGetQty($interceptor, \Closure $callback, array $arguments)
     {
-        /** @var \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper */
-        $globalDataHelper = $this->getHelper('Data\GlobalData');
+        $quoteItemId = $arguments[1];
+        $quoteId     = $arguments[2];
+        $itemQty     = &$arguments[3];
 
-        $currentProcessQuoteItemId = empty($arguments[0][1]) ? NULL : (int)$arguments[0][1];
-        $currentProcessQuoteId = empty($arguments[0][2]) ? NULL : (int)$arguments[0][2];
-        $quoteId = (int)$globalDataHelper->getValue(\Ess\M2ePro\Model\Magento\Quote\Builder::PROCESS_QUOTE_ID);
-
-        if ($quoteId !== $currentProcessQuoteId) {
-            return $callback(...$arguments[0]);
+        if ($this->getHelper('Data\GlobalData')->getValue(Builder::PROCESS_QUOTE_ID) == $quoteId) {
+            empty($quoteItemId) && $itemQty = 0;
         }
 
-        // 4rd argument is qty in quote item
-        empty($currentProcessQuoteItemId) && $arguments[0][3] = 0;
-
-        return $callback(...$arguments[0]);
+        return $callback(...$arguments);
     }
 
     //########################################

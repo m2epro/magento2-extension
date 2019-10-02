@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Order;
 
+/**
+ * Class ShippingAddress
+ * @package Ess\M2ePro\Model\Walmart\Order
+ */
 class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
 {
     //########################################
@@ -17,7 +21,7 @@ class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
      */
     public function getRawData()
     {
-        return array(
+        return [
             'buyer_name'     => $this->order->getChildObject()->getBuyerName(),
             'email'          => $this->getBuyerEmail(),
             'recipient_name' => $this->getData('recipient_name'),
@@ -28,7 +32,7 @@ class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
             'telephone'      => $this->getPhone(),
             'company'        => $this->getData('company'),
             'street'         => array_filter($this->getData('street'))
-        );
+        ];
     }
 
     private function getBuyerEmail()

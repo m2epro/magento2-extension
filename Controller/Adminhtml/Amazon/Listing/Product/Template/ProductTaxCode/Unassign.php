@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Produc
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode;
 
+/**
+ * Class Unassign
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode
+ */
 class Unassign extends ProductTaxCode
 {
     public function execute()
@@ -25,24 +29,24 @@ class Unassign extends ProductTaxCode
             $productsIds = explode(',', $productsIds);
         }
 
-        $messages = array();
+        $messages = [];
         $productsIdsLocked = $this->filterLockedProducts($productsIds);
 
         if (count($productsIdsLocked) < count($productsIds)) {
-            $messages[] = array(
+            $messages[] = [
                 'type' => 'warning',
                 'text' => '<p>' . $this->__(
-                        'Product Tax Code Policy cannot be unassigned from some Products
-                         because the Products are in Action'). '</p>'
-            );
+                    'Product Tax Code Policy cannot be unassigned from some Products
+                         because the Products are in Action'
+                ). '</p>'
+            ];
         }
 
         if (!empty($productsIdsLocked)) {
-
-            $messages[] = array(
+            $messages[] = [
                 'type' => 'success',
                 'text' => $this->__('Product Tax Code Policy was successfully unassigned.')
-            );
+            ];
 
             $this->setProductTaxCodeTemplateForProducts($productsIdsLocked, null);
             $this->runProcessorForParents($productsIdsLocked);

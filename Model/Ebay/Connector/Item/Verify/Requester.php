@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Item\Verify;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Ebay\Connector\Item\Verify
+ */
 class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
 {
     protected $isRealTime = true;
@@ -16,7 +20,7 @@ class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
 
     protected function getCommand()
     {
-        return array('item','add','single');
+        return ['item','add','single'];
     }
 
     protected function getActionType()
@@ -36,9 +40,15 @@ class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
         return false;
     }
 
-    protected function lockListingProduct() {}
+    protected function lockListingProduct()
+    {
+        return null;
+    }
 
-    protected function unlockListingProduct() {}
+    protected function unlockListingProduct()
+    {
+        return null;
+    }
 
     //----------------------------------------
 

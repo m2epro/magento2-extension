@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation;
 
+/**
+ * Class ChildRelation
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation
+ */
 class ChildRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\PhysicalUnit
 {
     /**
      * @var \Ess\M2ePro\Model\Listing\Product
      */
-    private $parentListingProduct = NULL;
+    private $parentListingProduct = null;
 
     //########################################
 
@@ -22,10 +26,11 @@ class ChildRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\M
      */
     public function getParentListingProduct()
     {
-        if (is_null($this->parentListingProduct)) {
+        if ($this->parentListingProduct === null) {
             $parentListingProductId = $this->getVariationManager()->getVariationParentId();
             $this->parentListingProduct = $this->amazonFactory->getObjectLoaded(
-                'Listing\Product',$parentListingProductId
+                'Listing\Product',
+                $parentListingProductId
             );
         }
 
@@ -62,7 +67,7 @@ class ChildRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\M
             return $productOptions;
         }
 
-        $realProductOptions = array();
+        $realProductOptions = [];
         foreach ($productOptions as $attribute => $value) {
             if (isset($virtualProductAttributes[$attribute])) {
                 continue;
@@ -108,7 +113,7 @@ class ChildRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\M
             return;
         }
 
-        $this->setChannelOptions(array(), false);
+        $this->setChannelOptions([], false);
 
         $amazonListingProduct = $this->getAmazonListingProduct();
 
@@ -124,7 +129,7 @@ class ChildRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\M
      */
     public function getChannelOptions()
     {
-        return $this->getListingProduct()->getSetting('additional_data', 'variation_channel_options', array());
+        return $this->getListingProduct()->getSetting('additional_data', 'variation_channel_options', []);
     }
 
     /**
@@ -139,7 +144,7 @@ class ChildRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\M
             return $channelOptions;
         }
 
-        $realChannelOptions = array();
+        $realChannelOptions = [];
         foreach ($channelOptions as $attribute => $value) {
             if (isset($virtualChannelAttributes[$attribute])) {
                 continue;
@@ -168,7 +173,9 @@ class ChildRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\M
     public function setCorrectMatchedAttributes(array $matchedAttributes, $save = true)
     {
         $this->getListingProduct()->setSetting(
-            'additional_data', 'variation_correct_matched_attributes', $matchedAttributes
+            'additional_data',
+            'variation_correct_matched_attributes',
+            $matchedAttributes
         );
         $save && $this->getListingProduct()->save();
     }
@@ -179,7 +186,9 @@ class ChildRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\M
     public function getCorrectMatchedAttributes()
     {
         return $this->getListingProduct()->getSetting(
-            'additional_data', 'variation_correct_matched_attributes', array()
+            'additional_data',
+            'variation_correct_matched_attributes',
+            []
         );
     }
 

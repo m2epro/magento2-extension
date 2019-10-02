@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use \Ess\M2ePro\Model\Ebay\Account\PickupStore;
 
+/**
+ * Class StockSettings
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs
+ */
 class StockSettings extends AbstractForm
 {
     //########################################
@@ -41,7 +45,8 @@ class StockSettings extends AbstractForm
 
         $attributesByInputTypes = ['text' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text']),];
 
-        $form->addField('block_notice_ebay_accounts_pickup_store_stock_settings',
+        $form->addField(
+            'block_notice_ebay_accounts_pickup_store_stock_settings',
             self::HELP_BLOCK,
             [
                 'content' => $this->__('
@@ -60,13 +65,15 @@ class StockSettings extends AbstractForm
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_account_pickup_store_form_data_quantity_general',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_account_pickup_store_form_data_quantity_general',
             [
                 'legend' => $this->__('General'), 'collapsable' => false
             ]
         );
 
-        $fieldset->addField('default_mode',
+        $fieldset->addField(
+            'default_mode',
             self::SELECT,
             [
                 'name' => 'default_mode',
@@ -84,13 +91,15 @@ class StockSettings extends AbstractForm
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_account_pickup_store_form_data_quantity_custom_settings',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_account_pickup_store_form_data_quantity_custom_settings',
             [
                 'legend' => $this->__('Custom Settings'), 'collapsable' => false
             ]
         );
 
-        $fieldset->addField('performance_error_message_block',
+        $fieldset->addField(
+            'performance_error_message_block',
             self::MESSAGES,
             [
                 'messages' => [[
@@ -121,7 +130,7 @@ class StockSettings extends AbstractForm
             ];
         }
 
-        foreach($attributesByInputTypes['text'] as $attribute) {
+        foreach ($attributesByInputTypes['text'] as $attribute) {
             $tmp = [
                 'label' => $attribute['label'],
                 'value' => PickupStore::QTY_MODE_ATTRIBUTE,
@@ -152,7 +161,8 @@ class StockSettings extends AbstractForm
             ]
         ];
 
-        $fieldset->addField('qty_mode',
+        $fieldset->addField(
+            'qty_mode',
             self::SELECT,
             [
                 'name' => 'qty_mode',
@@ -173,7 +183,8 @@ class StockSettings extends AbstractForm
 
         $fieldset->addField('qty_custom_attribute', 'hidden', ['name' => 'qty_custom_attribute']);
 
-        $fieldset->addField('qty_custom_value',
+        $fieldset->addField(
+            'qty_custom_value',
             'text',
             [
                 'name' => 'qty_custom_value',
@@ -192,7 +203,8 @@ class StockSettings extends AbstractForm
             ];
         }
 
-        $fieldset->addField('qty_percentage',
+        $fieldset->addField(
+            'qty_percentage',
             self::SELECT,
             [
                 'name' => 'qty_percentage',
@@ -211,7 +223,8 @@ class StockSettings extends AbstractForm
             ]
         );
 
-        $fieldset->addField('qty_modification_mode',
+        $fieldset->addField(
+            'qty_modification_mode',
             self::SELECT,
             [
                 'name' => 'qty_modification_mode',
@@ -232,7 +245,8 @@ class StockSettings extends AbstractForm
             ]
         );
 
-        $fieldset->addField('qty_min_posted_value',
+        $fieldset->addField(
+            'qty_min_posted_value',
             'text',
             [
                 'name' => 'qty_min_posted_value',
@@ -248,7 +262,8 @@ class StockSettings extends AbstractForm
             ]
         );
 
-        $fieldset->addField('qty_max_posted_value',
+        $fieldset->addField(
+            'qty_max_posted_value',
             'text',
             [
                 'name' => 'qty_max_posted_value',
@@ -278,7 +293,7 @@ JS
 
     public function getFormData()
     {
-        $default = array(
+        $default = [
             'qty_mode' => PickupStore::QTY_MODE_SELLING_FORMAT_TEMPLATE,
             'qty_custom_value' => 1,
             'qty_custom_attribute' => '',
@@ -286,10 +301,10 @@ JS
             'qty_modification_mode' => 0,
             'qty_min_posted_value' => 1,
             'qty_max_posted_value' => 100
-        );
+        ];
 
         $model = $this->getHelper('Data\GlobalData')->getValue('temp_data');
-        if(is_null($model)) {
+        if ($model === null) {
             return $default;
         }
 

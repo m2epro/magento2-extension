@@ -8,11 +8,18 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search\Custom\ByAsin;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Amazon\Search\Custom\ByAsin
+ */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByAsin\ItemsResponser
 {
     //########################################
 
-    protected function processResponseData() {}
+    protected function processResponseData()
+    {
+        return null;
+    }
 
     //########################################
 }

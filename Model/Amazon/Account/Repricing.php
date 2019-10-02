@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Amazon\Account;
 
 use Ess\M2ePro\Model\Account;
 
+/**
+ * Class Repricing
+ * @package Ess\M2ePro\Model\Amazon\Account
+ */
 class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     const PRICE_MODE_MANUAL    = 0;
@@ -35,7 +39,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     /**
      * @var Account
      */
-    private $accountModel = NULL;
+    private $accountModel = null;
 
     protected $amazonFactory;
 
@@ -51,8 +55,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
 
         parent::__construct(
@@ -79,7 +82,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('account');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
         return parent::save();
     }
 
@@ -87,10 +90,10 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function delete()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('account');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
 
         $temp = parent::delete();
-        $temp && $this->accountModel = NULL;
+        $temp && $this->accountModel = null;
 
         return $temp;
     }
@@ -102,7 +105,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getAccount()
     {
-        if (is_null($this->accountModel)) {
+        if ($this->accountModel === null) {
             $this->accountModel = $this->amazonFactory->getCachedObjectLoaded('Account', $this->getAccountId());
         }
 
@@ -211,11 +214,11 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getRegularPriceSource()
     {
-        return array(
+        return [
             'mode'        => $this->getRegularPriceMode(),
             'coefficient' => $this->getRegularPriceCoefficient(),
             'attribute'   => $this->getData('regular_price_attribute')
-        );
+        ];
     }
 
     /**
@@ -223,7 +226,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getRegularPriceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getRegularPriceSource();
 
         if ($src['mode'] == self::PRICE_MODE_ATTRIBUTE) {
@@ -311,13 +314,13 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getMinPriceSource()
     {
-        return array(
+        return [
             'mode'            => $this->getMinPriceMode(),
             'coefficient'     => $this->getMinPriceCoefficient(),
             'attribute'       => $this->getData('min_price_attribute'),
             'regular_value'   => $this->getData('min_price_value'),
             'regular_percent' => $this->getData('min_price_percent'),
-        );
+        ];
     }
 
     /**
@@ -325,7 +328,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getMinPriceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getMinPriceSource();
 
         if ($src['mode'] == self::PRICE_MODE_ATTRIBUTE) {
@@ -413,13 +416,13 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getMaxPriceSource()
     {
-        return array(
+        return [
             'mode'            => $this->getMaxPriceMode(),
             'coefficient'     => $this->getMaxPriceCoefficient(),
             'attribute'       => $this->getData('max_price_attribute'),
             'regular_value'   => $this->getData('max_price_value'),
             'regular_percent' => $this->getData('max_price_percent'),
-        );
+        ];
     }
 
     /**
@@ -427,7 +430,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getMaxPriceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getMaxPriceSource();
 
         if ($src['mode'] == self::PRICE_MODE_ATTRIBUTE) {
@@ -512,10 +515,10 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getDisableSource()
     {
-        return array(
+        return [
             'mode'        => $this->getDisableMode(),
             'attribute'   => $this->getData('disable_mode_attribute')
-        );
+        ];
     }
 
     /**
@@ -523,7 +526,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getDisableAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getDisableSource();
 
         if ($src['mode'] == self::DISABLE_MODE_ATTRIBUTE) {
@@ -574,7 +577,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
         $listingProductCollection->addFieldToFilter('is_repricing', 1);
-        $listingProductCollection->addFieldToFilter('listing_id', array('in' => $listingCollection->getSelect()));
+        $listingProductCollection->addFieldToFilter('listing_id', ['in' => $listingCollection->getSelect()]);
 
         if (is_array($columns) && !empty($columns)) {
             $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
@@ -586,7 +589,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function setProcessRequired($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'));
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id']);
         if (empty($listingsProducts)) {
             return;
         }

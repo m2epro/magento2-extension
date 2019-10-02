@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Column\Filter;
 
+/**
+ * Class Select
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Column\Filter
+ */
 class Select extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
 {
     //########################################
@@ -22,8 +26,7 @@ class Select extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Block $context,
         \Magento\Framework\DB\Helper $resourceHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->helperFactory = $context->getHelperFactory();
         $this->activeRecordFactory  = $context->getActiveRecordFactory();
 
@@ -32,7 +35,7 @@ class Select extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
 
     protected function _getOptions()
     {
-        $options = array();
+        $options = [];
 
         $modelName = $this->getColumn()->getGrid()->getTableModel()->getModelName();
         $htmlName = $this->_getHtmlName();
@@ -44,12 +47,12 @@ class Select extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
             ->query();
 
         if (!empty($colOptions)) {
-            $options = array(array('value' => null, 'label' => ''));
+            $options = [['value' => null, 'label' => '']];
             foreach ($colOptions as $colOption) {
-                $options[] = array(
+                $options[] = [
                     'value' => $colOption[$htmlName],
                     'label' => $colOption[$htmlName],
-                );
+                ];
             }
         }
 

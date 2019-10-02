@@ -10,11 +10,15 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class GetSwitchToIndividualModePopUp
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation
+ */
 class GetSwitchToIndividualModePopUp extends Main
 {
     public function execute()
     {
-        $block = $this->createBlock('Amazon\Listing\Product\Variation\SwitchToIndividualPopup');
+        $block = $this->createBlock('Amazon_Listing_Product_Variation_SwitchToIndividualPopup');
 
         $this->setAjaxContent($block);
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel;
 
+/**
+ * Class Registry
+ * @package Ess\M2ePro\Model\ResourceModel
+ */
 class Registry extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################

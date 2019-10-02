@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel;
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs;
 use \Ess\M2ePro\Helper\View\ControlPanel as HelperControlPanel;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel
+ */
 class Tabs extends AbstractHorizontalTabs
 {
     //########################################
@@ -26,7 +30,7 @@ class Tabs extends AbstractHorizontalTabs
     protected function _prepareLayout()
     {
         $activeTab = $this->getRequest()->getParam('tab');
-        $allowedTabs = array(
+        $allowedTabs = [
             HelperControlPanel::TAB_OVERVIEW,
             HelperControlPanel::TAB_INSPECTION,
             HelperControlPanel::TAB_DATABASE,
@@ -34,56 +38,54 @@ class Tabs extends AbstractHorizontalTabs
             HelperControlPanel::TAB_TOOLS_GENERAL,
             HelperControlPanel::TAB_TOOLS_MODULE,
             HelperControlPanel::TAB_DEBUG,
-        );
+        ];
 
         if (!in_array($activeTab, $allowedTabs)) {
             $activeTab = HelperControlPanel::TAB_OVERVIEW;
         }
 
         // ---------------------------------------
-        $params = array('label' => $this->helperFactory->getObject('Module\Translation')->__('Overview'));
-        if ($activeTab == HelperControlPanel::TAB_OVERVIEW) {
-            $params['content'] = $this->createBlock('ControlPanel\Tabs\Overview')->toHtml();
-        } else {
-            $params['url'] = $this->getUrl('*/controlPanel/overviewTab');
-        }
-        $this->addTab(HelperControlPanel::TAB_OVERVIEW, $params);
+        $this->addTab(HelperControlPanel::TAB_OVERVIEW, [
+            'label'   => $this->helperFactory->getObject('Module\Translation')->__('Overview'),
+            'content' => $this->createBlock('ControlPanel_Tabs_Overview')->toHtml()
+        ]);
         // ---------------------------------------
 
-        $this->addTab(HelperControlPanel::TAB_INSPECTION, array(
+        $this->addTab(HelperControlPanel::TAB_INSPECTION, [
             'label'   => $this->helperFactory->getObject('Module\Translation')->__('Inspection'),
-            'content' => $this->createBlock('ControlPanel\Tabs\Inspection')->toHtml(),
-        ));
+            'content' => $this->createBlock('ControlPanel_Tabs_Inspection')->toHtml(),
+        ]);
 
-        $this->addTab(HelperControlPanel::TAB_VERSIONS_HISTORY, array(
+        $this->addTab(HelperControlPanel::TAB_VERSIONS_HISTORY, [
             'label'   => $this->helperFactory->getObject('Module\Translation')->__('Versions History'),
-            'content' => $this->createBlock('ControlPanel\Tabs\VersionsHistory')->toHtml(),
-        ));
+            'content' => $this->createBlock('ControlPanel_Tabs_VersionsHistory')->toHtml(),
+        ]);
 
         // ---------------------------------------
-        $params = array('label' => $this->helperFactory->getObject('Module\Translation')->__('Database'));
+        $params = ['label' => $this->helperFactory->getObject('Module\Translation')->__('Database')];
         if ($activeTab == HelperControlPanel::TAB_DATABASE) {
-            $params['content'] = $this->createBlock('ControlPanel\Tabs\Database')->toHtml();
+            $params['content'] = $this->createBlock('ControlPanel_Tabs_Database')->toHtml();
         } else {
+            $params['class'] = 'ajax';
             $params['url'] = $this->getUrl('*/controlPanel/databaseTab');
         }
         $this->addTab(HelperControlPanel::TAB_DATABASE, $params);
         // ---------------------------------------
 
-        $this->addTab(HelperControlPanel::TAB_TOOLS_GENERAL, array(
+        $this->addTab(HelperControlPanel::TAB_TOOLS_GENERAL, [
             'label'   => $this->helperFactory->getObject('Module\Translation')->__('General Tools'),
-            'content' => $this->createBlock('ControlPanel\Tabs\ToolsGeneral')->toHtml(),
-        ));
+            'content' => $this->createBlock('ControlPanel_Tabs_ToolsGeneral')->toHtml(),
+        ]);
 
-        $this->addTab(HelperControlPanel::TAB_TOOLS_MODULE, array(
+        $this->addTab(HelperControlPanel::TAB_TOOLS_MODULE, [
             'label'   => $this->helperFactory->getObject('Module\Translation')->__('Module Tools'),
-            'content' => $this->createBlock('ControlPanel\Tabs\ToolsModule')->toHtml(),
-        ));
+            'content' => $this->createBlock('ControlPanel_Tabs_ToolsModule')->toHtml(),
+        ]);
 
-        $this->addTab(HelperControlPanel::TAB_DEBUG, array(
+        $this->addTab(HelperControlPanel::TAB_DEBUG, [
             'label'   => $this->helperFactory->getObject('Module\Translation')->__('Debug'),
-            'content' => $this->createBlock('ControlPanel\Tabs\Debug')->toHtml(),
-        ));
+            'content' => $this->createBlock('ControlPanel_Tabs_Debug')->toHtml(),
+        ]);
 
         $this->setActiveTab($activeTab);
 

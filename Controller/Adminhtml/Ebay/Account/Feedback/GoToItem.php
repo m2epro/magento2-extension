@@ -10,13 +10,17 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
+/**
+ * Class GoToItem
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback
+ */
 class GoToItem extends Account
 {
     public function execute()
     {
         $feedbackId = $this->getRequest()->getParam('feedback_id');
 
-        if (is_null($feedbackId)) {
+        if ($feedbackId === null) {
             $this->getMessageManager()->addError($this->__('Feedback is not defined.'));
             return $this->_redirect('*/ebay_account/index');
         }
@@ -26,10 +30,11 @@ class GoToItem extends Account
         $itemId = $feedback->getData('ebay_item_id');
 
         $listingProduct = $this->getHelper('Component\Ebay')->getListingProductByEbayItem(
-            $feedback->getData('ebay_item_id'), $feedback->getData('account_id')
+            $feedback->getData('ebay_item_id'),
+            $feedback->getData('account_id')
         );
 
-        if (!is_null($listingProduct)) {
+        if ($listingProduct !== null) {
             $itemUrl = $this->getHelper('Component\Ebay')->getItemUrl(
                 $itemId,
                 $listingProduct->getListing()->getAccount()->getChildObject()->getMode(),
@@ -41,7 +46,7 @@ class GoToItem extends Account
 
         $order = $feedback->getOrder();
 
-        if (!is_null($order) && !is_null($order->getMarketplaceId())) {
+        if ($order !== null && $order->getMarketplaceId() !== null) {
             $itemUrl = $this->getHelper('Component\Ebay')->getItemUrl(
                 $itemId,
                 $order->getAccount()->getChildObject()->getMode(),

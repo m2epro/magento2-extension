@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product;
 
 use Ess\M2ePro\Model\Listing;
 
+/**
+ * Class Add
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product
+ */
 abstract class Add extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     protected $sessionKey = 'ebay_listing_product_add';
@@ -26,19 +30,19 @@ abstract class Add extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         return $this;
     }
 
-    protected function getSessionValue($key = NULL)
+    protected function getSessionValue($key = null)
     {
         $sessionData = $this->getHelper('Data\Session')->getValue($this->sessionKey);
 
-        if (is_null($sessionData)) {
-            $sessionData = array();
+        if ($sessionData === null) {
+            $sessionData = [];
         }
 
-        if (is_null($key)) {
+        if ($key === null) {
             return $sessionData;
         }
 
-        return isset($sessionData[$key]) ? $sessionData[$key] : NULL;
+        return isset($sessionData[$key]) ? $sessionData[$key] : null;
     }
 
     protected function clearSession()
@@ -53,7 +57,7 @@ abstract class Add extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
      */
     protected function getListing()
     {
-        return $this->ebayFactory->getObjectLoaded('Listing',$this->getRequest()->getParam('id'));
+        return $this->ebayFactory->getObjectLoaded('Listing', $this->getRequest()->getParam('id'));
     }
 
     //########################################
@@ -66,6 +70,6 @@ abstract class Add extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             return;
         }
 
-        $wizardHelper->setStep(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK,$step);
+        $wizardHelper->setStep(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK, $step);
     }
 }

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Order
+ */
 class Index extends Order
 {
     public function execute()

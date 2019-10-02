@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Account\PickupStore;
 
+/**
+ * Class Log
+ * @package Ess\M2ePro\Model\Ebay\Account\PickupStore
+ */
 class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 {
     const ACTION_UNKNOWN = 1;
@@ -32,20 +36,22 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     //########################################
 
-    public function addMessage($accountPickupStoreStateId,
-                               $actionId = NULL,
-                               $action = NULL,
-                               $description = NULL,
-                               $type = NULL,
-                               $priority = NULL)
-    {
+    public function addMessage(
+        $accountPickupStoreStateId,
+        $actionId = null,
+        $action = null,
+        $description = null,
+        $type = null,
+        $priority = null
+    ) {
         $dataForAdd = $this->makeDataForAdd(
             $accountPickupStoreStateId,
             $actionId,
             $action,
             $description,
             $type,
-            $priority);
+            $priority
+        );
 
         $this->createMessage($dataForAdd);
     }
@@ -56,7 +62,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     {
         /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore\State $accountPickupStoreState */
         $accountPickupStoreState = $this->activeRecordFactory->getObjectLoaded(
-            'Ebay\Account\PickupStore\State',
+            'Ebay_Account_PickupStore_State',
             $dataForAdd['account_pickup_store_state_id']
         );
 
@@ -65,48 +71,49 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         $dataForAdd['location_id']    = $accountPickupStore->getLocationId();
         $dataForAdd['location_title'] = $accountPickupStore->getName();
 
-        $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\Log')
+        $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_Log')
             ->setData($dataForAdd)
             ->save();
     }
 
-    protected function makeDataForAdd($accountPickupStoreStateId,
-                                      $actionId = NULL,
-                                      $action = NULL,
-                                      $description = NULL,
-                                      $type = NULL,
-                                      $priority = NULL,
-                                      array $additionalData = array())
-    {
-        $dataForAdd = array();
+    protected function makeDataForAdd(
+        $accountPickupStoreStateId,
+        $actionId = null,
+        $action = null,
+        $description = null,
+        $type = null,
+        $priority = null,
+        array $additionalData = []
+    ) {
+        $dataForAdd = [];
 
         $dataForAdd['account_pickup_store_state_id'] = (int)$accountPickupStoreStateId;
 
-        if (!is_null($actionId)) {
+        if ($actionId !== null) {
             $dataForAdd['action_id'] = (int)$actionId;
         } else {
             $dataForAdd['action_id'] = $this->getResource()->getNextActionId();
         }
 
-        if (!is_null($action)) {
+        if ($action !== null) {
             $dataForAdd['action'] = (int)$action;
         } else {
             $dataForAdd['action'] = self::ACTION_UNKNOWN;
         }
 
-        if (!is_null($description)) {
+        if ($description !== null) {
             $dataForAdd['description'] = $description;
         } else {
-            $dataForAdd['description'] = NULL;
+            $dataForAdd['description'] = null;
         }
 
-        if (!is_null($type)) {
+        if ($type !== null) {
             $dataForAdd['type'] = (int)$type;
         } else {
             $dataForAdd['type'] = self::TYPE_NOTICE;
         }
 
-        if (!is_null($priority)) {
+        if ($priority !== null) {
             $dataForAdd['priority'] = (int)$priority;
         } else {
             $dataForAdd['priority'] = self::PRIORITY_LOW;

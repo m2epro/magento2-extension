@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter;
 
+/**
+ * Class Range
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter
+ */
 class Range extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Range
 {
     use \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait;
@@ -26,8 +30,7 @@ class Range extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Range
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\DB\Helper $resourceHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
         $this->modelFactory = $modelFactory;
 

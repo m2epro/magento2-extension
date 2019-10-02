@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Product;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Rule
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Product
+ */
 class Rule extends AbstractForm
 {
     protected $conditions;
@@ -24,8 +28,7 @@ class Rule extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->conditions = $conditions;
         $this->rendererFieldset = $rendererFieldset;
         parent::__construct($context, $registry, $formFactory, $data);

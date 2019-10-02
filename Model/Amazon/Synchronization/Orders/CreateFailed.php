@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders;
 
 use Ess\M2ePro\Model\Order;
 
+/**
+ * Class CreateFailed
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders
+ */
 class CreateFailed extends AbstractModel
 {
     const MAX_TRIES_TO_CREATE_ORDER = 3;
@@ -54,7 +58,6 @@ class CreateFailed extends AbstractModel
             /** @var $account \Ess\M2ePro\Model\Account **/
 
             try {
-
                 $this->getActualOperationHistory()->addText('Starting account "'.$account->getTitle().'"');
 
                 // M2ePro_TRANSLATIONS
@@ -66,15 +69,13 @@ class CreateFailed extends AbstractModel
 
                 $amazonOrders = $this->getAmazonOrders($account);
 
-                if (count($amazonOrders) > 0) {
+                if (!empty($amazonOrders)) {
                     $percentsForOneOrder = (int)(($this->getPercentsStart() + $iteration * $percentsForOneAcc)
                         / count($amazonOrders));
 
                     $this->createMagentoOrders($amazonOrders, $percentsForOneOrder);
                 }
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Create Failed Orders" Action for Amazon Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -114,7 +115,8 @@ class CreateFailed extends AbstractModel
         $collection->addFieldToFilter('magento_order_creation_failure', Order::MAGENTO_ORDER_CREATION_FAILED_YES);
         $collection->addFieldToFilter('magento_order_creation_fails_count', ['lt' => self::MAX_TRIES_TO_CREATE_ORDER]);
         $collection->addFieldToFilter(
-            'magento_order_creation_latest_attempt_date', ['lt' => $backToDate->format('Y-m-d H:i:s')]
+            'magento_order_creation_latest_attempt_date',
+            ['lt' => $backToDate->format('Y-m-d H:i:s')]
         );
         $collection->getSelect()->order('magento_order_creation_latest_attempt_date ASC');
         $collection->setPageSize(25);
@@ -139,7 +141,6 @@ class CreateFailed extends AbstractModel
             $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
 
             if ($order->canCreateMagentoOrder()) {
-
                 try {
                     $order->addNoticeLog(
                         'Magento order creation rules are met. M2E Pro will attempt to create Magento order.'
@@ -148,13 +149,11 @@ class CreateFailed extends AbstractModel
                 } catch (\Exception $exception) {
                     continue;
                 }
-
             } else {
-
                 $order->addData([
                     'magento_order_creation_failure'             => Order::MAGENTO_ORDER_CREATION_FAILED_NO,
                     'magento_order_creation_fails_count'         => 0,
-                    'magento_order_creation_latest_attempt_date' => NULL
+                    'magento_order_creation_latest_attempt_date' => null
                 ]);
                 $order->save();
 

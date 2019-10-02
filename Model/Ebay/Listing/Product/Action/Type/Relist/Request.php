@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Relist;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Relist
+ */
 class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 {
     //########################################
@@ -44,27 +48,24 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
     public function getActionData()
     {
         if (!$uuid = $this->getEbayListingProduct()->getItemUUID()) {
-
             $uuid = $this->getEbayListingProduct()->generateItemUUID();
             $this->getEbayListingProduct()->setData('item_uuid', $uuid)->save();
         }
 
         $data = array_merge(
-            array(
+            [
                 'item_id'   => $this->getEbayListingProduct()->getEbayItemIdReal(),
                 'item_uuid' => $uuid
-            ),
+            ],
             $this->getRequestVariations()->getRequestData()
         );
 
         if ($this->getConfigurator()->isGeneralAllowed()) {
-
             $data['sku'] = $this->getEbayListingProduct()->getSku();
 
             $data = array_merge(
 
                 $data,
-
                 $this->getRequestPayment()->getRequestData(),
                 $this->getRequestReturn()->getRequestData()
             );

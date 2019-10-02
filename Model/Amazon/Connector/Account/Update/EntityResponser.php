@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Account\Update;
 
+/**
+ * Class EntityResponser
+ * @package Ess\M2ePro\Model\Amazon\Connector\Account\Update
+ */
 class EntityResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
 {
     // ########################################
@@ -29,9 +33,9 @@ class EntityResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending
         /** @var $amazonAccount \Ess\M2ePro\Model\Amazon\Account */
         $amazonAccount = $this->getAccount()->getChildObject();
 
-        $dataForUpdate = array(
+        $dataForUpdate = [
             'info' => $this->getHelper('Data')->jsonEncode($responseData['info'])
-        );
+        ];
 
         $amazonAccount->addData($dataForUpdate)->save();
     }
@@ -43,7 +47,7 @@ class EntityResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending
      */
     protected function getAccount()
     {
-        return $this->getObjectByParam('Account','account_id');
+        return $this->getObjectByParam('Account', 'account_id');
     }
 
     // ########################################

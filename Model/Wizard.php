@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Model;
 
+/**
+ * Class Wizard
+ * @package Ess\M2ePro\Model
+ */
 class Wizard extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    protected $steps = array();
+    protected $steps = [];
 
     //########################################
 
@@ -35,7 +39,7 @@ class Wizard extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getNick()
     {
-        return NULL;
+        return null;
     }
 
     //########################################

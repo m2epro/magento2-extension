@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductTaxCode;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
+/**
+ * Class Delete
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductTaxCode
+ */
 class Delete extends Template
 {
     public function execute()
@@ -23,7 +27,7 @@ class Delete extends Template
 
         $deleted = $locked = 0;
         foreach ($ids as $id) {
-            $template = $this->activeRecordFactory->getObjectLoaded('Amazon\Template\ProductTaxCode', $id, NULL, false);
+            $template = $this->activeRecordFactory->getObjectLoaded('Amazon_Template_ProductTaxCode', $id, null, false);
             if (!$template->getId()) {
                 continue;
             }

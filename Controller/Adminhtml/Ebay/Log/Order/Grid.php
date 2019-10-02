@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order
+ */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order
 {
     //########################################
 
     public function execute()
     {
-        $response = $this->createBlock('Ebay\Log\Order\Grid')->toHtml();
+        $response = $this->createBlock('Ebay_Log_Order_Grid')->toHtml();
         $this->setAjaxContent($response);
 
         return $this->getResult();

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization\Orders;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\Orders
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Walmart\Synchronization\AbstractModel
 {
     //########################################

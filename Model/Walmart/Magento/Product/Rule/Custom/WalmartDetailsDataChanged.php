@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Custom;
 
+/**
+ * Class WalmartDetailsDataChanged
+ * @package Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Custom
+ */
 class WalmartDetailsDataChanged extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
     //########################################
@@ -58,16 +62,16 @@ class WalmartDetailsDataChanged extends \Ess\M2ePro\Model\Magento\Product\Rule\C
      */
     public function getOptions()
     {
-        return array(
-            array(
+        return [
+            [
                 'value' => 0,
                 'label' => $this->helperFactory->getObject('Module\Translation')->__('No'),
-            ),
-            array(
+            ],
+            [
                 'value' => 1,
                 'label' => $this->helperFactory->getObject('Module\Translation')->__('Yes'),
-            ),
-        );
+            ],
+        ];
     }
 
     //########################################

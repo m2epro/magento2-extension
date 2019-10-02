@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model;
 
 use Magento\Store\Model\Store;
 
+/**
+ * Class Currency
+ * @package Ess\M2ePro\Model
+ */
 class Currency extends AbstractModel
 {
     protected $storeManager;
@@ -22,8 +26,7 @@ class Currency extends AbstractModel
         \Magento\Framework\Locale\CurrencyInterface $currency,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         Factory $modelFactory
-    )
-    {
+    ) {
         $this->storeManager = $storeManager;
         $this->currency = $currency;
         parent::__construct($helperFactory, $modelFactory);

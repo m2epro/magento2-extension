@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Setup;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Setup
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     //########################################

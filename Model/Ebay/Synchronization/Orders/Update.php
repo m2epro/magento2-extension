@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Orders;
 
+/**
+ * Class Update
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\Orders
+ */
 class Update extends AbstractModel
 {
     const MAX_UPDATES_PER_TIME = 200;
@@ -76,11 +80,8 @@ class Update extends AbstractModel
             // ---------------------------------------
 
             try {
-
                 $this->processAccount($account);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Update" Action for eBay Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -136,7 +137,7 @@ class Update extends AbstractModel
         $changesCollection->addAccountFilter($account->getId());
         $changesCollection->addProcessingAttemptDateFilter();
         $changesCollection->setPageSize(self::MAX_UPDATES_PER_TIME);
-        $changesCollection->getSelect()->group(array('order_id'));
+        $changesCollection->getSelect()->group(['order_id']);
 
         return $changesCollection->getItems();
     }
@@ -146,7 +147,7 @@ class Update extends AbstractModel
     private function processChange(\Ess\M2ePro\Model\Order\Change $change)
     {
         $this->activeRecordFactory->getObject('Order\Change')->getResource()->incrementAttemptCount(
-            array($change->getId())
+            [$change->getId()]
         );
 
         $connectorData = ['change_id' => $change->getId()];
@@ -156,10 +157,10 @@ class Update extends AbstractModel
             /** @var \Ess\M2ePro\Model\Order $order */
             $order = $this->ebayFactory->getObjectLoaded('Order', $change->getOrderId());
             if ($order->getId()) {
-                $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Order\Dispatcher');
+                $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Order_Dispatcher');
                 $dispatcher->process(
                     \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_PAY,
-                    array($order),
+                    [$order],
                     $connectorData
                 );
             }
@@ -168,14 +169,13 @@ class Update extends AbstractModel
         }
 
         if ($change->isShippingUpdateAction()) {
-
             $changeParams    = $change->getParams();
 
             $action = \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP;
             if (!empty($changeParams['tracking_number']) && !empty($changeParams['carrier_title'])) {
-
                 $action = \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP_TRACK;
                 /**
+                 * TODO check(rewrite) during orders refactoring.
                  * Ess_M2ePro_Model_Ebay_Connector_Order_Dispatcher expects array of order to be proccessed.
                  * But $connectorData has no link to order instance, so appears like discrepancy between these
                  * two parameters.
@@ -190,8 +190,8 @@ class Update extends AbstractModel
                 $item = $this->ebayFactory->getObjectLoaded('Order\Item', $changeParams['item_id']);
 
                 if ($item->getId()) {
-                    $dispatcher = $this->modelFactory->getObject('Ebay\Connector\OrderItem\Dispatcher');
-                    $dispatcher->process($action, array($item), $connectorData);
+                    $dispatcher = $this->modelFactory->getObject('Ebay_Connector_OrderItem_Dispatcher');
+                    $dispatcher->process($action, [$item], $connectorData);
                 }
             } else {
 
@@ -199,8 +199,8 @@ class Update extends AbstractModel
                 $order = $this->ebayFactory->getObjectLoaded('Order', $change->getOrderId());
 
                 if ($order->getId()) {
-                    $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Order\Dispatcher');
-                    $dispatcher->process($action, array($order), $connectorData);
+                    $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Order_Dispatcher');
+                    $dispatcher->process($action, [$order], $connectorData);
                 }
             }
         }
@@ -211,8 +211,8 @@ class Update extends AbstractModel
     private function deleteNotActualChanges()
     {
         $this->activeRecordFactory->getObject('Order\Change')->getResource()->deleteByProcessingAttemptCount(
-           \Ess\M2ePro\Model\Order\Change::MAX_ALLOWED_PROCESSING_ATTEMPTS,
-           \Ess\M2ePro\Helper\Component\Ebay::NICK
+            \Ess\M2ePro\Model\Order\Change::MAX_ALLOWED_PROCESSING_ATTEMPTS,
+            \Ess\M2ePro\Helper\Component\Ebay::NICK
         );
     }
 

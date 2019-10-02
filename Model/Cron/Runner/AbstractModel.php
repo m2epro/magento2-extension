@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Runner;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Cron\Runner
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     const MAX_INACTIVE_TIME = 300;
@@ -21,13 +25,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected $activeRecordFactory;
 
-    private $previousStoreId = NULL;
+    private $previousStoreId = null;
 
     /** @var \Ess\M2ePro\Model\OperationHistory $operationHistory */
-    private $operationHistory = NULL;
+    private $operationHistory = null;
 
     /** @var \Ess\M2ePro\Model\Setup\PublicVersionsChecker $publicVersionsChecker */
-    private $publicVersionsChecker = NULL;
+    private $publicVersionsChecker = null;
 
     //########################################
 
@@ -56,14 +60,22 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     public function process()
     {
+        if (!$this->helperFactory->getObject('Magento')->isInstalled()) {
+            return false;
+        }
+
+        if ($this->getHelper('Module\Maintenance')->isEnabled()) {
+            return false;
+        }
+
         if ($this->isDisabled()) {
             return false;
         }
 
-        $runnerSwitcher = $this->modelFactory->getObject('Cron\Runner\Switcher');
+        $runnerSwitcher = $this->modelFactory->getObject('Cron_Runner_Switcher');
         $runnerSwitcher->check($this);
 
-        $transactionalManager = $this->modelFactory->getObject('Lock\Transactional\Manager');
+        $transactionalManager = $this->modelFactory->getObject('Lock_Transactional_Manager');
         $transactionalManager->setNick('cron_runner');
 
         $transactionalManager->lock();
@@ -94,17 +106,15 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             $strategyObject->setParentOperationHistory($this->getOperationHistory());
 
             $result = $strategyObject->process();
-
         } catch (\Exception $exception) {
-
             $result = false;
 
-            $this->getOperationHistory()->addContentData('exception', array(
+            $this->getOperationHistory()->addContentData('exception', [
                 'message' => $exception->getMessage(),
                 'file'    => $exception->getFile(),
                 'line'    => $exception->getLine(),
                 'trace'   => $exception->getTraceAsString(),
-            ));
+            ]);
 
             $this->getHelper('Module\Exception')->process($exception);
         }
@@ -143,9 +153,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function deInitialize()
     {
-        if (!is_null($this->previousStoreId)) {
+        if ($this->previousStoreId !== null) {
             $this->storeManager->setCurrentStore($this->previousStoreId);
-            $this->previousStoreId = NULL;
+            $this->previousStoreId = null;
         }
     }
 
@@ -159,10 +169,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function isPossibleToRun()
     {
-        if ($this->getHelper('Module\Maintenance')->isEnabled()) {
-            return false;
-        }
-
         if ($this->getHelper('Module')->isDisabled()) {
             return false;
         }
@@ -192,7 +198,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function beforeStart()
     {
-        $this->getOperationHistory()->start('cron_runner',null,$this->getInitiator(),$this->getOperationHistoryData());
+        $this->getOperationHistory()
+            ->start('cron_runner', null, $this->getInitiator(), $this->getOperationHistoryData());
         $this->getOperationHistory()->makeShutdownFunction();
     }
 
@@ -215,7 +222,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getOperationHistory()
     {
-        if (!is_null($this->operationHistory)) {
+        if ($this->operationHistory !== null) {
             return $this->operationHistory;
         }
 

@@ -7,6 +7,11 @@
 .left { float:left; }
 .right { float:right; }
 
+ul.list > li {
+    margin-left: 2rem;
+    list-style-type: disc;
+}
+
 .required {
     color: #eb5202;
 }

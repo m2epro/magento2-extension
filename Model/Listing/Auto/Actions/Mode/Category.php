@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Model\Listing\Auto\Actions\Mode;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Model\Listing\Auto\Actions\Mode
+ */
 class Category extends AbstractMode
 {
-    private $cacheLoadedListings = array();
-    private $cacheAutoCategoriesByCategoryId = array();
+    private $cacheLoadedListings = [];
+    private $cacheAutoCategoriesByCategoryId = [];
 
     //########################################
 
@@ -43,7 +47,8 @@ class Category extends AbstractMode
             }
 
             $this->getListingObject($listing)->addProductByCategoryGroup(
-                $this->getProduct(), $autoCategory->getGroup()
+                $this->getProduct(),
+                $autoCategory->getGroup()
             );
         }
     }
@@ -96,7 +101,7 @@ class Category extends AbstractMode
 
         /** @var $listingStoreObject \Magento\Store\Model\Store */
         $listingStoreObject = $this->storeManager->getStore($listing->getStoreId());
-        $listing->setData('store_website_id',$listingStoreObject->getWebsite()->getId());
+        $listing->setData('store_website_id', $listingStoreObject->getWebsite()->getId());
 
         return $this->cacheLoadedListings[$listingId] = $listing;
     }
@@ -108,7 +113,7 @@ class Category extends AbstractMode
         }
 
         return $this->cacheAutoCategoriesByCategoryId[$categoryId] =
-            $this->activeRecordFactory->getObject('Listing\Auto\Category')
+            $this->activeRecordFactory->getObject('Listing_Auto_Category')
                 ->getCollection()
                 ->addFieldToFilter('category_id', $categoryId)
                 ->getItems();

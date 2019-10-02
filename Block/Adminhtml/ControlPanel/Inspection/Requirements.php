@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection;
 
+/**
+ * Class Requirements
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection
+ */
 class Requirements extends AbstractInspection
 {
     protected $_template = 'control_panel/inspection/requirements.phtml';

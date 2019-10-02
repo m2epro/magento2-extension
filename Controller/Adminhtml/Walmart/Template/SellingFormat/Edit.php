@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat
+ */
 class Edit extends Template
 {
     //########################################
@@ -31,7 +35,7 @@ class Edit extends Template
         $headerTextEdit = $this->__('Edit Selling Policy');
         $headerTextAdd = $this->__('Add Selling Policy');
 
-        if (!is_null($template)
+        if ($template !== null
             && $template->getId()
         ) {
             $headerText = $headerTextEdit;
@@ -45,7 +49,7 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
         $this->setPageHelpLink('x/SgBhAQ');
-        $this->addContent($this->createBlock('Walmart\Template\SellingFormat\Edit'));
+        $this->addContent($this->createBlock('Walmart_Template_SellingFormat_Edit'));
 
         return $this->getResultPage();
     }

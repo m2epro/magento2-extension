@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
+/**
+ * Class GetCategoryChooserHtml
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description
+ */
 class GetCategoryChooserHtml extends Description
 {
     //########################################
@@ -17,14 +21,14 @@ class GetCategoryChooserHtml extends Description
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Edit $editBlock */
-        $editBlock = $this->createBlock('Amazon\\Template\\Description\\Category\\Chooser\\Edit');
+        $editBlock = $this->createBlock('Amazon_Template_Description_Category_Chooser_Edit');
 
         $editBlock->setMarketplaceId($this->getRequest()->getPost('marketplace_id'));
 
         $browseNodeId = $this->getRequest()->getPost('browsenode_id');
         $categoryPath = $this->getRequest()->getPost('category_path');
 
-        $recentlySelectedCategories = $this->getHelper('Component\Amazon\Category')->getRecent(
+        $recentlySelectedCategories = $this->getHelper('Component_Amazon_Category')->getRecent(
             $this->getRequest()->getPost('marketplace_id'),
             ['browsenode_id' => $browseNodeId, 'path' => $categoryPath]
         );

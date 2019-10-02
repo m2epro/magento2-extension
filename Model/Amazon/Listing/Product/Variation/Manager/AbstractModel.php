@@ -8,17 +8,21 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Listing\Product
      */
-    private $listingProduct = NULL;
+    private $listingProduct = null;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager
      */
-    private $variationManager = NULL;
+    private $variationManager = null;
 
     private $isCacheEnabled = false;
 
@@ -32,8 +36,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->amazonFactory = $amazonFactory;
         parent::__construct($helperFactory, $modelFactory);

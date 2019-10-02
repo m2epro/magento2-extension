@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\General;
 
 use Ess\M2ePro\Controller\Adminhtml\General;
 
+/**
+ * Class IsAttributeCodeUnique
+ * @package Ess\M2ePro\Controller\Adminhtml\General
+ */
 class IsAttributeCodeUnique extends General
 {
     protected $attributeFactory;
@@ -21,8 +25,7 @@ class IsAttributeCodeUnique extends General
         \Magento\Eav\Model\Entity\AttributeFactory $attributeFactory,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
-    )
-    {
+    ) {
         $this->attributeFactory = $attributeFactory;
         $this->catalogProductFactory = $catalogProductFactory;
         parent::__construct($context);
@@ -38,7 +41,7 @@ class IsAttributeCodeUnique extends General
         );
 
         $this->setJsonContent([
-            'status' => is_null($attributeObj->getId())
+            'status' => $attributeObj->getId() === null
         ]);
 
         return $this->getResult();

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Description
+ */
 class Edit extends Template
 {
     public function execute()
@@ -41,7 +45,7 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
         $this->setPageHelpLink('x/RwBhAQ');
-        $this->addContent($this->createBlock('Walmart\Template\Description\Edit'));
+        $this->addContent($this->createBlock('Walmart_Template_Description_Edit'));
 
         return $this->getResultPage();
     }

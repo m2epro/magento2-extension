@@ -12,6 +12,10 @@ use Ess\M2ePro\Model\Account;
 use Ess\M2ePro\Model\Amazon\Account as AmazonAccount;
 use Ess\M2ePro\Model\Exception\Connection;
 
+/**
+ * Class Repricing
+ * @package Ess\M2ePro\Helper\Component\Amazon
+ */
 class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const COMMAND_ACCOUNT_LINK             = 'account/link';
@@ -36,8 +40,7 @@ class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context,
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig
-    )
-    {
+    ) {
         parent::__construct($helperFactory, $context);
         $this->moduleConfig = $moduleConfig;
     }
@@ -66,7 +69,7 @@ class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
 
         // set the data body of the request
         curl_setopt($curlObject, CURLOPT_POST, true);
-        curl_setopt($curlObject, CURLOPT_POSTFIELDS, http_build_query($postData,'','&'));
+        curl_setopt($curlObject, CURLOPT_POSTFIELDS, http_build_query($postData, '', '&'));
 
         // set it to return the transfer as a string from curl_exec
         curl_setopt($curlObject, CURLOPT_RETURNTRANSFER, true);
@@ -81,35 +84,33 @@ class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
         curl_close($curlObject);
 
         if ($response === false) {
-
             throw new Connection(
                 'The Action was not completed because connection with M2E Pro Repricing Service was not set.
                  There are several possible reasons: temporary connection problem – please wait and try again later;
                  block of outgoing connection by firewall',
-                array(
+                [
                     'curl_error_number' => $errorNumber,
                     'curl_info'         => $curlInfo
-                )
+                ]
             );
         }
 
         $responseDecoded = $this->getHelper('Data')->jsonDecode($response);
         if (!$responseDecoded || !is_array($responseDecoded)) {
-
             throw new \Ess\M2ePro\Model\Exception\Connection(
                 'The Action was not completed because server responded with an incorrect response.',
-                array(
+                [
                     'raw_response' => $response,
                     'curl_info'    => $curlInfo
-                )
+                ]
             );
         }
 
-        return array(
+        return [
             'curl_error_number' => $errorNumber,
             'curl_info'         => $curlInfo,
             'response'          => $responseDecoded
-        );
+        ];
     }
 
     public function getBaseUrl()
@@ -122,7 +123,7 @@ class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function prepareActionUrl($command, $serverRequestToken)
     {
-        return $this->getBaseUrl().$command.'?'.http_build_query(array('request_token' => $serverRequestToken));
+        return $this->getBaseUrl().$command.'?'.http_build_query(['request_token' => $serverRequestToken]);
     }
 
     public function getManagementUrl(Account $account)
@@ -133,9 +134,9 @@ class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
             return false;
         }
 
-        return $this->getBaseUrl().self::COMMAND_GOTO_SERVICE.'?'.http_build_query(array(
+        return $this->getBaseUrl().self::COMMAND_GOTO_SERVICE.'?'.http_build_query([
             'account_token' => $amazonAccount->getRepricing()->getToken()
-        ));
+        ]);
     }
 
     //########################################

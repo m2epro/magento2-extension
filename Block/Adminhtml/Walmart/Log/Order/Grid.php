@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Log\Order;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Log\Order
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractGrid
 {
     //########################################

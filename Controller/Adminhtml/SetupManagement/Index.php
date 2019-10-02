@@ -14,6 +14,10 @@ use Magento\Setup\Model\Cron;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Ess\M2ePro\Setup\LoggerFactory;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\SetupManagement
+ */
 class Index extends \Magento\Backend\App\Action
 {
     const AUTHORIZATION_COOKIE_NAME  = '_auth_';
@@ -84,7 +88,7 @@ class Index extends \Magento\Backend\App\Action
     ) {
         parent::__construct($context);
 
-        $this->resourceConnection = $this->_objectManager->get('Magento\Framework\App\ResourceConnection');
+        $this->resourceConnection = $this->_objectManager->get(\Magento\Framework\App\ResourceConnection::class);
         $this->moduleResource     = new \Magento\Framework\Module\ModuleResource($dbContext);
 
         $this->moduleList            = $moduleList;
@@ -292,10 +296,9 @@ HTML;
         $html = '<div class="messages">';
 
         foreach ($this->getMessageManager()->getMessages(true)->getItems() as $message) {
-
             $classes = '';
             $message->getType() == MessageInterface::TYPE_SUCCESS && $classes = 'message-success success';
-            $message->getType() == MessageInterface::TYPE_ERROR   && $classes = 'message-error error';
+            $message->getType() == MessageInterface::TYPE_ERROR && $classes = 'message-error error';
             $message->getType() == MessageInterface::TYPE_WARNING && $classes = 'message-warning warning';
 
             $subContainerClasses = explode(' ', $classes);
@@ -418,7 +421,6 @@ HTML;
         $className = '';
         if (version_compare($schemaVersion, $setupVersion) < 0 ||
             version_compare($dataVersion, $setupVersion)) {
-
             $className = 'feature-enabled';
         }
 
@@ -429,7 +431,7 @@ HTML;
                                                  ]]);
 
         !$schemaVersion && $schemaVersion = 'none';
-        !$dataVersion   && $dataVersion = 'none';
+        !$dataVersion && $dataVersion = 'none';
 
         $html .=  <<<HTML
 <span>Schema \ Data Version: <span class="{$className}">{$schemaVersion} \ {$dataVersion}</span></span>&nbsp;
@@ -469,7 +471,6 @@ HTML;
 <span class="feature-disabled">Cron queue is empty.</span><br>
 HTML;
         } else {
-
             $html .= <<<HTML
 <span class="feature-disabled">Cron queue:</span><br>
 HTML;
@@ -511,7 +512,7 @@ HTML;
         $tablesPrefix = (string)$this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_DB_PREFIX);
         $tables = $this->resourceConnection->getConnection()->getTables($tablesPrefix.'m2epro_%');
 
-        usort($tables, function($a, $b) {
+        usort($tables, function ($a, $b) {
 
             $aResult = strpos($a, '__b_');
             $bResult = strpos($b, '__b_');
@@ -528,7 +529,6 @@ HTML;
         });
 
         foreach ($tables as $table) {
-
             $count = $this->resourceConnection->getConnection()
                 ->select()
                 ->from($table, new \Zend_Db_Expr('COUNT(*)'))
@@ -576,7 +576,7 @@ HTML;
     {
         $html = "<div>";
 
-        $tableName = $this->helperFactory->getObject('Module\Database\Structure')
+        $tableName = $this->helperFactory->getObject('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_setup');
         if (!$this->resourceConnection->getConnection()->isTableExists($tableName)) {
             $html .= <<<HTML
@@ -605,7 +605,6 @@ HTML;
 HTML;
 
         while ($row = $queryStmt->fetch()) {
-
             $dropUrl = $this->_url->getUrl('*/*/*', ['action' => 'dropM2eProSetupRow',
                                                     '_query' => [
                                                         'id' => $row['id'],
@@ -658,7 +657,7 @@ HTML;
     {
         $html = "<div>";
 
-        $tableName = $this->helperFactory->getObject('Module\Database\Structure')
+        $tableName = $this->helperFactory->getObject('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_versions_history');
         if (!$this->resourceConnection->getConnection()->isTableExists($tableName)) {
             $html .= <<<HTML
@@ -684,7 +683,6 @@ HTML;
 HTML;
 
         while ($row = $queryStmt->fetch()) {
-
             $html .= <<<HTML
 <div class="m2epro-files-versions-grid-container">
     <div>
@@ -736,7 +734,6 @@ HTML;
             ->isExist('m2epro' .DIRECTORY_SEPARATOR. LoggerFactory::LOGFILE_NAME);
 
         if ($isExistSetupLogFile) {
-
             $download = $this->_url->getUrl('*/*/*', ['action' => 'downloadSetupLogFile']);
             $remove   = $this->_url->getUrl('*/*/*', ['action' => 'removeSetupLogFile']);
             $html .= <<<HTML
@@ -757,7 +754,7 @@ HTML;
         $select = $this->resourceConnection->getConnection()
             ->select()
             ->from(
-                $this->helperFactory->getObject('Module\Database\Structure')
+                $this->helperFactory->getObject('Module_Database_Structure')
                     ->getTableNameWithPrefix('core_config_data'),
                 'value'
             )
@@ -780,15 +777,13 @@ HTML;
 
             'm2epro/migrationFromMagento1/status'
         ])) {
-
             $this->messageManager->addErrorMessage("This config path is not supported [{$path}].");
             return $this->_redirect($this->_url->getUrl('*/*/*'));
         }
 
         if ($this->getMagentoCoreConfigValue($path) === false) {
-
             $this->resourceConnection->getConnection()->insert(
-                $this->helperFactory->getObject('Module\Database\Structure')
+                $this->helperFactory->getObject('Module_Database_Structure')
                     ->getTableNameWithPrefix('core_config_data'),
                 [
                     'scope'    => 'default',
@@ -797,11 +792,9 @@ HTML;
                     'value'    => $value
                 ]
             );
-
         } else {
-
             $this->resourceConnection->getConnection()->update(
-                $this->helperFactory->getObject('Module\Database\Structure')
+                $this->helperFactory->getObject('Module_Database_Structure')
                     ->getTableNameWithPrefix('core_config_data'),
                 ['value' => $value],
                 [
@@ -822,7 +815,6 @@ HTML;
         $version = $this->getRequest()->getParam('version');
 
         if (!$version) {
-
             $this->messageManager->addErrorMessage('Version is not provided.');
             return $this->_redirect($this->_url->getUrl('*/*/*'));
         }
@@ -886,7 +878,6 @@ HTML;
         $tablesPrefix = (string)$this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_DB_PREFIX);
 
         if (strpos($tableName, $tablesPrefix.'m2epro_') !== 0) {
-
             $this->getMessageManager()->addErrorMessage("Only M2E Pro tables are supported. Table: [{$tableName}].");
             return $this->_redirect($this->_url->getUrl('*/*/*'));
         }
@@ -904,7 +895,6 @@ HTML;
         $tablesPrefix = (string)$this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_DB_PREFIX);
 
         if (strpos($tableName, $tablesPrefix.'m2epro_') !== 0) {
-
             $this->getMessageManager()->addErrorMessage("Only M2E Pro tables are supported. Table: [{$tableName}].");
             return $this->_redirect($this->_url->getUrl('*/*/*'));
         }
@@ -921,15 +911,14 @@ HTML;
     public function dropM2eProSetupRowAction()
     {
         if (!$id = $this->getRequest()->getParam('id')) {
-
             $this->getMessageManager()->addErrorMessage('Row id is not specified.');
             return $this->_redirect($this->_url->getUrl('*/*/*'));
         }
 
         $this->resourceConnection->getConnection()
              ->delete(
-                 $this->helperFactory->getObject('Module\Database\Structure')->getTableNameWithPrefix('m2epro_setup'),
-                      ['id = ?' => (int)$id]
+                 $this->helperFactory->getObject('Module_Database_Structure')->getTableNameWithPrefix('m2epro_setup'),
+                 ['id = ?' => (int)$id]
              );
 
         $this->getMessageManager()->addSuccessMessage('Successfully removed.');
@@ -942,15 +931,14 @@ HTML;
         $column = $this->getRequest()->getParam('column');
         $value  = $this->getRequest()->getParam('value');
 
-        if (!$id || is_null($column) || is_null($value)) {
-
+        if (!$id || $column === null || $value === null) {
             $this->getMessageManager()->addErrorMessage('Some required data is not specified.');
             return $this->_redirect($this->_url->getUrl('*/*/*'));
         }
 
         $this->resourceConnection->getConnection()
             ->update(
-                $this->helperFactory->getObject('Module\Database\Structure')->getTableNameWithPrefix('m2epro_setup'),
+                $this->helperFactory->getObject('Module_Database_Structure')->getTableNameWithPrefix('m2epro_setup'),
                 [$column => $value],
                 ['id = ?' => (int)$id]
             );
@@ -966,7 +954,10 @@ HTML;
         $magentoRoot = $this->fileSystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::ROOT)
                                         ->getAbsolutePath();
 
-        $output = shell_exec('php ' . $magentoRoot . DIRECTORY_SEPARATOR . 'bin/magento setup:upgrade');
+        $output = call_user_func(
+            'shell_exec',
+            'php ' . $magentoRoot . DIRECTORY_SEPARATOR . 'bin/magento setup:upgrade'
+        );
         $this->getResponse()->setContent('<pre>' . $output);
     }
 
@@ -975,7 +966,10 @@ HTML;
         $magentoRoot = $this->fileSystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::ROOT)
                                         ->getAbsolutePath();
 
-        $output = shell_exec('php ' . $magentoRoot . DIRECTORY_SEPARATOR . 'bin/magento setup:di:compile');
+        $output = call_user_func(
+            'shell_exec',
+            'php ' . $magentoRoot . DIRECTORY_SEPARATOR . 'bin/magento setup:di:compile'
+        );
         $this->getResponse()->setContent('<pre>' . $output);
     }
 
@@ -984,7 +978,10 @@ HTML;
         $magentoRoot = $this->fileSystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::ROOT)
                                         ->getAbsolutePath();
 
-        $output = shell_exec('php ' . $magentoRoot . DIRECTORY_SEPARATOR . 'bin/magento setup:static-content:deploy');
+        $output = call_user_func(
+            'shell_exec',
+            'php ' . $magentoRoot . DIRECTORY_SEPARATOR . 'bin/magento setup:static-content:deploy'
+        );
         $this->getResponse()->setContent('<pre>' . $output);
     }
 
@@ -1032,15 +1029,16 @@ HTML;
     private function authorizeAction()
     {
         if ($this->getRequest()->getParam(self::AUTHORIZATION_COOKIE_NAME) == self::AUTHORIZATION_COOKIE_VALUE) {
-
             $cookieMetadata = $this->cookieMetadataFactory->createPublicCookieMetadata()
                                    ->setPath('/')
                                    ->setSecure($this->getRequest()->isSecure())
                                    ->setDuration(3600);
 
-            $this->cookieManager->setPublicCookie(self::AUTHORIZATION_COOKIE_NAME,
-                                                  self::AUTHORIZATION_COOKIE_VALUE,
-                                                  $cookieMetadata);
+            $this->cookieManager->setPublicCookie(
+                self::AUTHORIZATION_COOKIE_NAME,
+                self::AUTHORIZATION_COOKIE_VALUE,
+                $cookieMetadata
+            );
 
             return $this->_redirect($this->getUrl('*/*/*'));
         }

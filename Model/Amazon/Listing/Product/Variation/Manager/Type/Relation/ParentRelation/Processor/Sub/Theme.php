@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
+/**
+ * Class Theme
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub
+ */
 class Theme extends AbstractModel
 {
     //########################################
@@ -75,12 +79,12 @@ class Theme extends AbstractModel
         );
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Theme $themeMatcher */
-        $themeMatcher = $this->modelFactory->getObject('Amazon\Listing\Product\Variation\Matcher\Theme');
+        $themeMatcher = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Matcher_Theme');
         $themeMatcher->setThemes($possibleThemes);
         $themeMatcher->setSourceAttributes($channelAttributes);
 
         $matchedTheme = $themeMatcher->getMatchedTheme();
-        if (is_null($matchedTheme)) {
+        if ($matchedTheme === null) {
             return;
         }
 
@@ -92,12 +96,12 @@ class Theme extends AbstractModel
         $possibleThemes = $this->getProcessor()->getPossibleThemes();
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Theme $themeMatcher */
-        $themeMatcher = $this->modelFactory->getObject('Amazon\Listing\Product\Variation\Matcher\Theme');
+        $themeMatcher = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Matcher_Theme');
         $themeMatcher->setThemes($possibleThemes);
         $themeMatcher->setMagentoProduct($this->getProcessor()->getListingProduct()->getMagentoProduct());
 
         $matchedTheme = $themeMatcher->getMatchedTheme();
-        if (is_null($matchedTheme)) {
+        if ($matchedTheme === null) {
             return;
         }
 

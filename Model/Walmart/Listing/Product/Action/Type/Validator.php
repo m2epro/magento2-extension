@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type;
 
+/**
+ * Class Validator
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type
+ */
 abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
      * @var array
      */
-    private $params = array();
+    private $params = [];
 
     /**
      * @var \Ess\M2ePro\Model\Listing\Product
@@ -26,12 +30,12 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @var array
      */
-    private $messages = array();
+    private $messages = [];
 
     /**
      * @var array
      */
-    protected $data = array();
+    protected $data = [];
 
     //########################################
 
@@ -177,10 +181,10 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     protected function addMessage($message, $type = \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR)
     {
-        $this->messages[] = array(
+        $this->messages[] = [
             'text' => $message,
             'type' => $type,
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -201,7 +205,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getValidatorData($key = null)
     {
-        if (is_null($key)) {
+        if ($key === null) {
             return $this->data;
         }
 
@@ -223,7 +227,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     protected function validateSku()
     {
         if (!$this->getWalmartListingProduct()->getSku()) {
-
             // M2ePro\TRANSLATIONS
             // You have to list Item first.
             $this->addMessage('You have to list Item first.');
@@ -232,9 +235,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
         $params = $this->getParams();
         if (isset($params['changed_sku'])) {
-
             if (preg_match('/[.\s-]+/', $params['changed\sku'])) {
-
                 $this->addMessage(
                     'Item SKU was not updated because it contains special characters,
                     i.e. hyphen (-), space ( ), and period (.), that are not allowed by Walmart.
@@ -244,7 +245,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             }
 
             if (strlen($params['changed_sku']) > \Ess\M2ePro\Helper\Component\Walmart::SKU_MAX_LENGTH) {
-
                 $this->addMessage('The length of SKU must be less than 50 characters.');
                 return false;
             }
@@ -258,7 +258,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     protected function validateCategory()
     {
         if (!$this->getWalmartListingProduct()->isExistCategoryTemplate()) {
-
             // M2ePro\TRANSLATIONS
             // Categories Settings are not set.
             $this->addMessage('Categories Settings are not set.');
@@ -290,7 +289,6 @@ HTML;
     protected function validateMissedOnChannelBlocked()
     {
         if ($this->getListingProduct()->isBlocked() && $this->getWalmartListingProduct()->isMissedOnChannel()) {
-
             $message = <<<HTML
 The action cannot be submitted. Your Item is in Inactive (Blocked) status because it seems that the corresponding
  Walmart Item does not exist in your Channel inventory. Please contact Walmart Support Team to resolve the issue.
@@ -332,12 +330,8 @@ HTML;
 
         $qty = $this->getQty();
         if ($qty <= 0) {
-
             if (isset($this->params['status_changer']) &&
                 $this->params['status_changer'] == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER) {
-
-                // M2ePro\TRANSLATIONS
-                // You are submitting an Item with zero quantity. It contradicts Walmart requirements. Please apply the Stop Action instead.
                 $message = 'You are submitting an Item with zero quantity. It contradicts Walmart requirements.';
 
                 if ($this->getListingProduct()->isStoppable()) {
@@ -346,8 +340,6 @@ HTML;
 
                 $this->addMessage($message);
             } else {
-                // M2ePro\TRANSLATIONS
-                // Cannot submit an Item with zero quantity. It contradicts Walmart requirements. This action has been generated automatically based on your Synchronization Rule settings. The error occurs when the Stop Rules are not properly configured or disabled. Please review your settings.
                 $message = 'Cannot submit an Item with zero quantity. It contradicts Walmart requirements.
                             This action has been generated automatically based on your Synchronization Rule settings. ';
 
@@ -376,7 +368,6 @@ HTML;
 
         $price = $this->getPrice();
         if ($price <= 0) {
-
             // M2ePro\TRANSLATIONS
             // The Price must be greater than 0. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
@@ -449,7 +440,6 @@ HTML;
     protected function validatePhysicalUnitAndSimple()
     {
         if (!$this->getVariationManager()->isPhysicalUnit() && !$this->getVariationManager()->isSimpleType()) {
-
             // M2ePro\TRANSLATIONS
             // Only physical Products can be processed.
             $this->addMessage('Only physical Products can be processed.');
@@ -463,7 +453,6 @@ HTML;
     protected function validatePhysicalUnitMatching()
     {
         if (!$this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
-
             // M2ePro\TRANSLATIONS
             // You have to select Magento Variation.
             $this->addMessage('You have to select Magento Variation.');
@@ -536,19 +525,17 @@ HTML;
             return true;
         }
 
-        $requiredAttributesMap = array(
+        $requiredAttributesMap = [
             'start_date'       => $this->helperFactory->getObject('Module\Translation')->__('Start Date'),
             'end_date'         => $this->helperFactory->getObject('Module\Translation')->__('End Date'),
             'price'            => $this->helperFactory->getObject('Module\Translation')->__('Promotion Price'),
             'comparison_price' => $this->helperFactory->getObject('Module\Translation')->__('Comparison Price'),
-        );
+        ];
 
         $promotions = $this->getPromotions();
         foreach ($promotions as $promotionIndex => $promotionRow) {
-
             foreach ($requiredAttributesMap as $requiredAttributeKey => $requiredAttributeTitle) {
                 if (empty($promotionRow[$requiredAttributeKey])) {
-
                     $message = <<<HTML
 Invalid Promotion #%s. The Promotion Price has no defined value.
  Please adjust Magento Attribute "%s" value set for the Promotion Price in your Selling Policy.
@@ -604,7 +591,7 @@ HTML;
 
     protected function validatePriceAndPromotionsFeedBlocked()
     {
-        if (is_null($this->getWalmartListingProduct()->getListDate())) {
+        if ($this->getWalmartListingProduct()->getListDate() === null) {
             return true;
         }
 
@@ -620,7 +607,6 @@ HTML;
         }
 
         if ($this->getConfigurator()->isPromotionsAllowed()) {
-
             $this->getConfigurator()->disallowPromotions();
             $this->addMessage(
                 'Item Promotion Price will not be submitted during this action.
@@ -631,7 +617,6 @@ HTML;
         }
 
         if ($this->getConfigurator()->isPriceAllowed()) {
-
             $this->getConfigurator()->disallowPrice();
             $this->addMessage(
                 'Item Price will not be submitted during this action.
@@ -655,13 +640,12 @@ HTML;
         $isAtLeastOneSpecified = false;
 
         if ($gtin = $this->getGtin()) {
-
             if (!$this->getHelper('Data')->isGTIN($gtin)) {
                 $this->addMessage(
                     $this->getHelper('Module\Log')->encodeDescription(
                         'The action cannot be completed because the product GTIN has incorrect format: "%id%".
                         Please adjust the related Magento Attribute value and resubmit the action.',
-                        array('!id' => $gtin)
+                        ['!id' => $gtin]
                     )
                 );
                 return false;
@@ -672,13 +656,12 @@ HTML;
         }
 
         if ($upc = $this->getUpc()) {
-
             if (!$this->getHelper('Data')->isUPC($upc)) {
                 $this->addMessage(
                     $this->getHelper('Module\Log')->encodeDescription(
                         'The action cannot be completed because the product UPC has incorrect format: "%id%".
                         Please adjust the related Magento Attribute value and resubmit the action.',
-                        array('!id' => $upc)
+                        ['!id' => $upc]
                     )
                 );
                 return false;
@@ -689,13 +672,12 @@ HTML;
         }
 
         if ($ean = $this->getEan()) {
-
             if (!$this->getHelper('Data')->isEAN($ean)) {
                 $this->addMessage(
                     $this->getHelper('Module\Log')->encodeDescription(
                         'The action cannot be completed because the product EAN has incorrect format: "%id%".
                         Please adjust the related Magento Attribute value and resubmit the action.',
-                        array('!id' => $ean)
+                        ['!id' => $ean]
                     )
                 );
                 return false;
@@ -706,13 +688,12 @@ HTML;
         }
 
         if ($isbn = $this->getIsbn()) {
-
             if (!$this->getHelper('Data')->isISBN($isbn)) {
                 $this->addMessage(
                     $this->getHelper('Module\Log')->encodeDescription(
                         'The action cannot be completed because the product ISBN has incorrect format: "%id%".
                         Please adjust the related Magento Attribute value and resubmit the action.',
-                        array('!id' => $isbn)
+                        ['!id' => $isbn]
                     )
                 );
                 return false;
@@ -723,7 +704,6 @@ HTML;
         }
 
         if (!$isAtLeastOneSpecified) {
-
             $this->addMessage(
                 'The Item was not listed because it has no defined Product ID. Walmart requires that all Items sold
                 on the website have Product IDs. Please provide a valid GTIN, UPC, EAN or ISBN for the Product.

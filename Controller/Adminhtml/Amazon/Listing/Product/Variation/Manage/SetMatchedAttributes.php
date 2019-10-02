@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manag
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class SetMatchedAttributes
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manage
+ */
 class SetMatchedAttributes extends Main
 {
     public function execute()
@@ -28,7 +32,7 @@ class SetMatchedAttributes extends Main
         );
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-        $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product',$productId);
+        $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
         $amazonListingProduct = $listingProduct->getChildObject();
@@ -42,7 +46,7 @@ class SetMatchedAttributes extends Main
                     $variationAttributes['virtual_magento_option']
                 )
             );
-        } else if (!empty($variationAttributes['virtual_amazon_attributes'])) {
+        } elseif (!empty($variationAttributes['virtual_amazon_attributes'])) {
             $typeModel->setVirtualChannelAttributes(
                 array_combine(
                     $variationAttributes['virtual_amazon_attributes'],
@@ -54,9 +58,9 @@ class SetMatchedAttributes extends Main
         $typeModel->setMatchedAttributes($matchedAttributes);
         $typeModel->getProcessor()->process();
 
-        $result = array(
+        $result = [
             'success' => true,
-        );
+        ];
 
         if ($listingProduct->getMagentoProduct()->isGroupedType()) {
             $this->setJsonContent($result);
@@ -65,7 +69,7 @@ class SetMatchedAttributes extends Main
         }
 
         /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper */
-        $vocabularyHelper = $this->getHelper('Component\Amazon\Vocabulary');
+        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
 
         if ($vocabularyHelper->isAttributeAutoActionDisabled()) {
             $this->setJsonContent($result);
@@ -73,7 +77,7 @@ class SetMatchedAttributes extends Main
             return $this->getResult();
         }
 
-        $attributesForAddingToVocabulary = array();
+        $attributesForAddingToVocabulary = [];
 
         foreach ($matchedAttributes as $productAttribute => $channelAttribute) {
             if ($productAttribute == $channelAttribute) {

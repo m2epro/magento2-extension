@@ -48,7 +48,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     public function save($reloadOnCreate = false)
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('account');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
         return parent::save($reloadOnCreate);
     }
 
@@ -79,7 +79,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
         $this->deleteChildInstance();
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('account');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
         return parent::delete();
     }
 
@@ -91,9 +91,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
      * @return array|\Ess\M2ePro\Model\Listing\Other[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getOtherListings($asObjects = false, array $filters = array())
+    public function getOtherListings($asObjects = false, array $filters = [])
     {
-        $otherListings = $this->getRelatedComponentItems('Listing\Other','account_id',$asObjects,$filters);
+        $otherListings = $this->getRelatedComponentItems('Listing\Other', 'account_id', $asObjects, $filters);
 
         if ($asObjects) {
             foreach ($otherListings as $otherListing) {
@@ -111,9 +111,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getOrders($asObjects = false, array $filters = array())
+    public function getOrders($asObjects = false, array $filters = [])
     {
-        $orders = $this->getRelatedComponentItems('Order','account_id',$asObjects,$filters);
+        $orders = $this->getRelatedComponentItems('Order', 'account_id', $asObjects, $filters);
 
         if ($asObjects) {
             foreach ($orders as $order) {

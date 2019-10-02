@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Helper\Component\Ebay;
 
 use Ess\M2ePro\Model\Magento\Product\Image;
 
+/**
+ * Class Images
+ * @package Ess\M2ePro\Helper\Component\Ebay
+ */
 class Images extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const SHOULD_BE_URLS_SECURE_NO  = 0;
@@ -20,7 +24,8 @@ class Images extends \Ess\M2ePro\Helper\AbstractHelper
     public function shouldBeUrlsSecure()
     {
         return (bool)(int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/ebay/description/', 'should_be_ulrs_secure'
+            '/ebay/description/',
+            'should_be_ulrs_secure'
         );
     }
 
@@ -31,17 +36,16 @@ class Images extends \Ess\M2ePro\Helper\AbstractHelper
      * @param string|NULL $attributeLabel for Variation product
      * @return string $hash
      */
-    public function getHash(array $images, $attributeLabel = NULL)
+    public function getHash(array $images, $attributeLabel = null)
     {
         if (empty($images)) {
-            return NULL;
+            return null;
         }
 
-        $hashes = array();
+        $hashes = [];
         $haveNotSelfHostedImage = false;
 
-        foreach($images as $image) {
-
+        foreach ($images as $image) {
             $tempImageHash = $image->getHash();
 
             if (!$image->isSelfHosted()) {
@@ -51,7 +55,7 @@ class Images extends \Ess\M2ePro\Helper\AbstractHelper
             $hashes[] = $tempImageHash;
         }
 
-        $hash = md5($this->getHelper('Data')->jsonEncode($hashes));
+        $hash = sha1($this->getHelper('Data')->jsonEncode($hashes));
         $attributeLabel && $hash .= $attributeLabel;
 
         if ($haveNotSelfHostedImage) {

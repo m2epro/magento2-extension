@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization\Log;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization\Log
+ */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 {
     //########################################
 
     public function execute()
     {
-        $response = $this->createBlock('Ebay\Synchronization\Log\Grid')->toHtml();
+        $response = $this->createBlock('Ebay_Synchronization_Log_Grid')->toHtml();
         $this->setAjaxContent($response);
 
         return $this->getResult();

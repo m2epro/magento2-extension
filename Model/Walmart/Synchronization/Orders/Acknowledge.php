@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization\Orders;
 
+/**
+ * Class Acknowledge
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\Orders
+ */
 class Acknowledge extends AbstractModel
 {
     const MAX_ORDERS_COUNT = 50;
@@ -52,7 +56,6 @@ class Acknowledge extends AbstractModel
             /** @var $account \Ess\M2ePro\Model\Account **/
 
             try {
-
                 $this->getActualOperationHistory()->addText('Starting account "'.$account->getTitle().'"');
 
                 // M2ePro_TRANSLATIONS
@@ -63,11 +66,8 @@ class Acknowledge extends AbstractModel
                 ));
 
                 try {
-
                     $this->processAccount($account);
-
                 } catch (\Exception $exception) {
-
                     $message = $this->getHelper('Module\Translation')->__(
                         'The "Cancel" Action for Walmart Account "%account%" was completed with error.',
                         $account->getTitle()
@@ -76,9 +76,7 @@ class Acknowledge extends AbstractModel
                     $this->processTaskAccountException($message, __FILE__, __LINE__);
                     $this->processTaskException($exception);
                 }
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Orders Acknowledge" Action for Walmart Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -109,7 +107,7 @@ class Acknowledge extends AbstractModel
         foreach ($ordersForProcess as $order) {
             /** @var \Ess\M2ePro\Model\Order $order */
 
-            $actionHandler = $this->modelFactory->getObject('Walmart\Order\Action\Handler\Acknowledge');
+            $actionHandler = $this->modelFactory->getObject('Walmart_Order_Action_Handler_Acknowledge');
             $actionHandler->setOrder($order);
 
             if ($actionHandler->isNeedProcess()) {

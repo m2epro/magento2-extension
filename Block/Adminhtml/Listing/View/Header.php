@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\View;
 
+/**
+ * Class Header
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\View
+ */
 class Header extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     protected $isListingViewMode = false;

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode;
 
+/**
+ * Class GlobalMode
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode
+ */
 class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $listing;
@@ -35,7 +39,9 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $form = $this->_formFactory->create();
         $selectElementType = 'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select';
 
-        $form->addField('auto_mode', 'hidden',
+        $form->addField(
+            'auto_mode',
+            'hidden',
             [
                 'name' => 'auto_mode',
                 'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL
@@ -44,7 +50,9 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $fieldSet = $form->addFieldset('auto_global_fieldset_container', []);
 
-        $fieldSet->addField('auto_global_adding_mode', $selectElementType,
+        $fieldSet->addField(
+            'auto_global_adding_mode',
+            $selectElementType,
             [
                 'name' => 'auto_global_adding_mode',
                 'label' => $this->__('New Product Added to Magento'),
@@ -61,7 +69,9 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('auto_global_adding_add_not_visible', $selectElementType,
+        $fieldSet->addField(
+            'auto_global_adding_add_not_visible',
+            $selectElementType,
             [
                 'name' => 'auto_global_adding_add_not_visible',
                 'label' => $this->__('Add not Visible Individually Products'),
@@ -86,7 +96,9 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('auto_global_deleting_mode', $selectElementType,
+        $fieldSet->addField(
+            'auto_global_deleting_mode',
+            $selectElementType,
             [
                 'name' => 'auto_global_deleting_mode',
                 'disabled' => true,
@@ -123,11 +135,11 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     public function getDefault()
     {
-        return array(
+        return [
             'auto_global_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'auto_global_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
             'auto_global_deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
-        );
+        ];
     }
 
     //########################################
@@ -138,10 +150,11 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
      */
     public function getListing()
     {
-        if (is_null($this->listing)) {
+        if ($this->listing === null) {
             $listingId = $this->getRequest()->getParam('id');
             $this->listing = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Listing', $listingId
+                'Listing',
+                $listingId
             );
         }
 
@@ -153,7 +166,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
 
         $hasFormData = $this->hasFormData() ? 'true' : 'false';

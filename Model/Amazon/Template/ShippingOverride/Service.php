@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\ShippingOverride;
 
+/**
+ * Class Service
+ * @package Ess\M2ePro\Model\Amazon\Template\ShippingOverride
+ */
 class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     const TYPE_EXCLUSIVE   = 0;
@@ -21,12 +25,12 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Amazon\Template\ShippingOverride
      */
-    private $shippingOverrideTemplateModel = NULL;
+    private $shippingOverrideTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service\Source[]
      */
-    private $shippingOverrideServiceSourceModels = NULL;
+    private $shippingOverrideServiceSourceModels = null;
 
     //########################################
 
@@ -41,8 +45,8 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function delete()
     {
         $temp = parent::delete();
-        $temp && $this->shippingOverrideTemplateModel = NULL;
-        $temp && $this->shippingOverrideServiceSourceModels = array();
+        $temp && $this->shippingOverrideTemplateModel = null;
+        $temp && $this->shippingOverrideServiceSourceModels = [];
         return $temp;
     }
 
@@ -53,9 +57,11 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getShippingOverrideTemplate()
     {
-        if (is_null($this->shippingOverrideTemplateModel)) {
+        if ($this->shippingOverrideTemplateModel === null) {
             $this->shippingOverrideTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Amazon\Template\ShippingOverride', $this->getTemplateShippingOverrideId(), NULL
+                'Amazon_Template_ShippingOverride',
+                $this->getTemplateShippingOverrideId(),
+                null
             );
         }
 
@@ -85,7 +91,7 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         }
 
         $this->shippingOverrideServiceSourceModels[$id] =
-            $this->modelFactory->getObject('Amazon\Template\ShippingOverride\Service\Source');
+            $this->modelFactory->getObject('Amazon_Template_ShippingOverride_Service_Source');
 
         $this->shippingOverrideServiceSourceModels[$id]->setMagentoProduct($magentoProduct);
         $this->shippingOverrideServiceSourceModels[$id]->setShippingOverrideServiceTemplate($this);
@@ -204,7 +210,7 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getCostAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         if ($this->isCostModeCustomAttribute()) {
             $attributes[] = $this->getCostValue();
@@ -220,7 +226,7 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getTrackingAttributes()
     {
-        return array();
+        return [];
     }
 
     /**

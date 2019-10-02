@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing;
 
+/**
+ * Class Log
+ * @package Ess\M2ePro\Model\Ebay\Listing
+ */
 class Log extends \Ess\M2ePro\Model\Listing\Log
 {
     //########################################

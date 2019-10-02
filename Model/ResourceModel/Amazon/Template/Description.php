@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Template;
 
+/**
+ * Class Description
+ * @package Ess\M2ePro\Model\ResourceModel\Amazon\Template
+ */
 class Description extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
@@ -28,31 +32,31 @@ class Description extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component
             return;
         }
 
-        $listingsProductsIds = array();
+        $listingsProductsIds = [];
         foreach ($listingsProducts as $listingProduct) {
             $listingsProductsIds[] = $listingProduct['id'];
         }
 
-        if (!$this->isDifferent($newData,$oldData)) {
+        if (!$this->isDifferent($newData, $oldData)) {
             return;
         }
 
-        $templates = array('descriptionTemplate');
+        $templates = ['descriptionTemplate'];
 
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
 
         $this->getConnection()->update(
             $lpTable,
-            array(
+            [
                 'synch_status' => \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_NEED,
                 'synch_reasons' => new \Zend_Db_Expr(
                     "IF(synch_reasons IS NULL,
-                        '".implode(',',$templates)."',
-                        CONCAT(synch_reasons,'".','.implode(',',$templates)."')
+                        '".implode(',', $templates)."',
+                        CONCAT(synch_reasons,'".','.implode(',', $templates)."')
                     )"
                 )
-            ),
-            array('id IN ('.implode(',', $listingsProductsIds).')')
+            ],
+            ['id IN ('.implode(',', $listingsProductsIds).')']
         );
     }
 
@@ -60,30 +64,30 @@ class Description extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component
 
     public function isDifferent($newData, $oldData)
     {
-        $ignoreFields = array(
+        $ignoreFields = [
             $this->getIdFieldName(),
             'id', 'title', 'component_mode',
             'create_date', 'update_date',
-        );
+        ];
 
         foreach ($ignoreFields as $ignoreField) {
-            unset($newData[$ignoreField],$oldData[$ignoreField]);
+            unset($newData[$ignoreField], $oldData[$ignoreField]);
         }
 
-        $definitionNewData = isset($newData['definition']) ? $newData['definition'] : array();
-        $definitionOldData = isset($oldData['definition']) ? $oldData['definition'] : array();
+        $definitionNewData = isset($newData['definition']) ? $newData['definition'] : [];
+        $definitionOldData = isset($oldData['definition']) ? $oldData['definition'] : [];
         unset($newData['definition'], $oldData['definition']);
 
-        $ignoreFields = array('template_description_id', 'update_date', 'create_date');
+        $ignoreFields = ['template_description_id', 'update_date', 'create_date'];
         foreach ($ignoreFields as $ignoreField) {
             unset($definitionNewData[$ignoreField], $definitionOldData[$ignoreField]);
         }
 
-        $specificsNewData = isset($newData['specifics']) ? $newData['specifics'] : array();
-        $specificsOldData = isset($oldData['specifics']) ? $oldData['specifics'] : array();
+        $specificsNewData = isset($newData['specifics']) ? $newData['specifics'] : [];
+        $specificsOldData = isset($oldData['specifics']) ? $oldData['specifics'] : [];
         unset($newData['specifics'], $oldData['specifics']);
 
-        $ignoreFields = array('id', 'template_description_id', 'update_date', 'create_date');
+        $ignoreFields = ['id', 'template_description_id', 'update_date', 'create_date'];
         foreach ($specificsNewData as $key => $newInfo) {
             foreach ($ignoreFields as $ignoreField) {
                 unset($specificsNewData[$key][$ignoreField]);
@@ -101,7 +105,7 @@ class Description extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component
         $encodedSpecificsNewData = $this->getHelper('Data')->jsonEncode($specificsNewData);
         $encodedSpecificsOldData = $this->getHelper('Data')->jsonEncode($specificsOldData);
 
-        return md5($encodedSpecificsNewData) !== md5($encodedSpecificsOldData) ||
+        return sha1($encodedSpecificsNewData) !== sha1($encodedSpecificsOldData) ||
                count(array_diff_assoc($definitionNewData, $definitionOldData)) ||
                count(array_diff_assoc($newData, $oldData));
     }

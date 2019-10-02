@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
 use Ess\M2ePro\Model\Amazon\Account as AccountModel;
 
+/**
+ * Class AfterGetToken
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Account
+ */
 class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 {
     public function execute()
@@ -22,10 +26,10 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
             ]);
         }
 
-        $requiredFields = array(
+        $requiredFields = [
             'Merchant',
             'MWSAuthToken',
-        );
+        ];
 
         foreach ($requiredFields as $requiredField) {
             if (!isset($params[$requiredField])) {

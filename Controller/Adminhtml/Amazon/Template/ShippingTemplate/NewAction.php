@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ShippingTemplate;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
+/**
+ * Class NewAction
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ShippingTemplate
+ */
 class NewAction extends Template
 {
     public function execute()

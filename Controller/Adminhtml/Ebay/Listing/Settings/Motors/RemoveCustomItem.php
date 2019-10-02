@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
+/**
+ * Class RemoveCustomItem
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ */
 class RemoveCustomItem extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
 
     public function execute()
     {
-        $helper = $this->getHelper('Component\Ebay\Motors');
+        $helper = $this->getHelper('Component_Ebay_Motors');
         $motorsType = $this->getRequest()->getParam('motors_type');
         $keyId = $this->getRequest()->getParam('key_id');
 
@@ -31,29 +35,29 @@ class RemoveCustomItem extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $idKey = $helper->getIdentifierKey($motorsType);
 
         $connection = $this->resourceConnection->getConnection();
-        $conditions = array("{$idKey} = ?" => $keyId);
+        $conditions = ["{$idKey} = ?" => $keyId];
         if ($helper->isTypeBasedOnEpids($motorsType)) {
             $conditions['scope = ?'] = $helper->getEpidsScopeByType($motorsType);
         }
 
         $connection->delete($tableName, $conditions);
 
-        $table = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_ebay_motor_group');
+        $table = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_ebay_motor_group');
 
         $select = $connection->select();
-        $select->from(array('emg' => $table), array('id'))
+        $select->from(['emg' => $table], ['id'])
                ->where('items_data REGEXP ?', '"ITEM"\|"'.$keyId.'"');
 
         $groupIds = $connection->fetchCol($select);
 
         foreach ($groupIds as $groupId) {
             /** @var \Ess\M2ePro\Model\Ebay\Motor\Group $group */
-            $group = $this->activeRecordFactory->getObjectLoaded('Ebay\Motor\Group', $groupId);
+            $group = $this->activeRecordFactory->getObjectLoaded('Ebay_Motor_Group', $groupId);
 
             $items = $group->getItems();
             unset($items[$keyId]);
 
-            if (count($items) > 0) {
+            if (!empty($items)) {
                 $group->setItemsData($helper->buildItemsAttributeValue($items));
                 $group->save();
             } else {

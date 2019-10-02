@@ -12,6 +12,10 @@ use Ess\M2ePro\Model\HealthStatus\Task;
 use Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs;
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 
+/**
+ * Class LocationResolver
+ * @package Ess\M2ePro\Model\HealthStatus\Task\Result
+ */
 class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
 {
     const KEY_TAB       = 'tab';
@@ -23,10 +27,9 @@ class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
     public function resolveTabName(Task\AbstractModel $task)
     {
         $result = $this->usingMap($task);
-        is_null($result) && $result = $this->usingClassName($task);
+        $result === null && $result = $this->usingClassName($task);
 
-        if (is_null($result)) {
-
+        if ($result === null) {
             $className = get_class($task);
             throw new \Exception("Unable to create Result object for task [{$className}]");
         }
@@ -37,10 +40,9 @@ class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
     public function resolveFieldSetName(Task\AbstractModel $task)
     {
         $result = $this->usingMap($task);
-        is_null($result) && $result = $this->usingClassName($task);
+        $result === null && $result = $this->usingClassName($task);
 
-        if (is_null($result)) {
-
+        if ($result === null) {
             $className = get_class($task);
             throw new \Exception("Unable to create Result object for task [{$className}]");
         }
@@ -51,10 +53,9 @@ class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
     public function resolveFieldName(Task\AbstractModel $task)
     {
         $result = $this->usingMap($task);
-        is_null($result) && $result = $this->usingClassName($task);
+        $result === null && $result = $this->usingClassName($task);
 
-        if (is_null($result)) {
-
+        if ($result === null) {
             $className = get_class($task);
             throw new \Exception("Unable to create Result object for task [{$className}]");
         }

@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Helper\Magento\Store;
 
+/**
+ * Class Group
+ * @package Ess\M2ePro\Helper\Magento\Store
+ */
 class Group extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    private $defaultStoreGroup = NULL;
+    private $defaultStoreGroup = null;
 
     protected $catalogCategoryFactory;
     protected $storeGroupFactory;
@@ -24,8 +28,7 @@ class Group extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->catalogCategoryFactory = $catalogCategoryFactory;
         $this->storeGroupFactory = $storeGroupFactory;
         $this->storeManager = $storeManager;
@@ -59,8 +62,7 @@ class Group extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getDefault()
     {
-        if (is_null($this->defaultStoreGroup)) {
-
+        if ($this->defaultStoreGroup === null) {
             $defaultWebsite = $this->storeManager->getWebsite(true);
             $defaultStoreGroupId = $defaultWebsite->getDefaultGroupId();
 
@@ -79,9 +81,10 @@ class Group extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function addGroup($websiteId, $name, $rootCategoryId)
     {
-        if (!$this->getHelper('Magento\Store\Website')->isExists($websiteId)) {
+        if (!$this->getHelper('Magento_Store_Website')->isExists($websiteId)) {
             $error = $this->getHelper('Module\Translation')->__(
-                'Website with id %value% does not exist.', (int)$websiteId
+                'Website with id %value% does not exist.',
+                (int)$websiteId
             );
             throw new \Ess\M2ePro\Model\Exception($error);
         }
@@ -98,7 +101,8 @@ class Group extends \Ess\M2ePro\Helper\AbstractHelper
 
             if (!$category->hasEntityId()) {
                 $error = $this->getHelper('Module\Translation')->__(
-                    'Category with %category_id% doen\'t exist', $rootCategoryId
+                    'Category with %category_id% doen\'t exist',
+                    $rootCategoryId
                 );
                 throw new \Ess\M2ePro\Model\Exception($error);
             }

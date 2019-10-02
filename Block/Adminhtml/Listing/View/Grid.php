@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\View;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\View
+ */
 abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     /**

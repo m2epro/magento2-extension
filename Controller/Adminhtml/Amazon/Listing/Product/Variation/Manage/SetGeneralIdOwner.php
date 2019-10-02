@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manag
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class SetGeneralIdOwner
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manage
+ */
 class SetGeneralIdOwner extends Main
 {
     public function execute()
@@ -17,7 +21,7 @@ class SetGeneralIdOwner extends Main
         $listingProductId = $this->getRequest()->getParam('product_id');
         $generalIdOwner = $this->getRequest()->getParam('general_id_owner', null);
 
-        if (empty($listingProductId) || is_null($generalIdOwner)) {
+        if (empty($listingProductId) || $generalIdOwner === null) {
             $this->setAjaxContent('You should provide correct parameters.', false);
 
             return $this->getResult();
@@ -40,12 +44,12 @@ class SetGeneralIdOwner extends Main
         $data = $this->setGeneralIdOwner($listingProductId, $generalIdOwner);
 
         if (!$data['success']) {
-            $mainBlock = $this->createBlock('Amazon\Listing\Product\Template\Description');
-            $mainBlock->setMessages(array(
-                array(
+            $mainBlock = $this->createBlock('Amazon_Listing_Product_Template_Description');
+            $mainBlock->setMessages([
+                [
                     'type' => 'warning',
                     'text' => $data['msg']
-                )));
+                ]]);
             $data['html'] = $mainBlock->toHtml();
         } else {
             $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $listingProductId);
@@ -70,7 +74,7 @@ class SetGeneralIdOwner extends Main
 
     private function setGeneralIdOwner($productId, $generalIdOwner)
     {
-        $data = array('success' => true);
+        $data = ['success' => true];
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
@@ -99,7 +103,7 @@ class SetGeneralIdOwner extends Main
                 return $data;
             }
 
-            $detailsModel = $this->modelFactory->getObject('Amazon\Marketplace\Details');
+            $detailsModel = $this->modelFactory->getObject('Amazon_Marketplace_Details');
             $detailsModel->setMarketplaceId($listingProduct->getListing()->getMarketplaceId());
             $themes = $detailsModel->getVariationThemes(
                 $amazonListingProduct->getAmazonDescriptionTemplate()->getProductDataNick()

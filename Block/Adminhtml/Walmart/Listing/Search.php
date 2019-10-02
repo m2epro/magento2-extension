@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing;
 
+/**
+ * Class Search
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing
+ */
 class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -46,8 +50,8 @@ class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $content = $this->__(
             <<<HTML
         On this page, you can review the Items from both M2E Pro and 3rd Party Listings.<br/>
-        Filter the records by the Listing Type, Account or Marketplace.
-        Click the Arrow Icon next to the Item to go to the related Listing.
+        Filter the records by the Listing Type, Account or Marketplace. Click the Arrow Icon next to the Item to go
+        to the related Listing.
 HTML
         );
 
@@ -62,17 +66,17 @@ HTML
 
     protected function _toHtml()
     {
-        $marketplaceSwitcherBlock = $this->createBlock('Walmart\Marketplace\Switcher')->setData([
+        $marketplaceSwitcherBlock = $this->createBlock('Walmart_Marketplace_Switcher')->setData([
             'component_mode' => \Ess\M2ePro\Helper\View\Walmart::NICK,
             'controller_name' => $this->getRequest()->getControllerName()
         ]);
 
-        $accountSwitcherBlock = $this->createBlock('Walmart\Account\Switcher')->setData([
+        $accountSwitcherBlock = $this->createBlock('Walmart_Account_Switcher')->setData([
             'component_mode' => \Ess\M2ePro\Helper\View\Walmart::NICK,
             'controller_name' => $this->getRequest()->getControllerName()
         ]);
 
-        $listingTypeSwitcherBlock = $this->createBlock('Listing\Search\TypeSwitcher')->setData([
+        $listingTypeSwitcherBlock = $this->createBlock('Listing_Search_TypeSwitcher')->setData([
             'controller_name' => $this->getRequest()->getControllerName()
         ]);
 

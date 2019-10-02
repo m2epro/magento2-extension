@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Exception;
 
+/**
+ * Class Logic
+ * @package Ess\M2ePro\Model\Exception
+ */
 class Logic extends \Ess\M2ePro\Model\Exception
 {
     //########################################

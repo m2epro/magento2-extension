@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\SellingFormat;
 
+/**
+ * Class Source
+ * @package Ess\M2ePro\Model\Ebay\Template\SellingFormat
+ */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
@@ -110,7 +114,6 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $src = $this->getEbaySellingFormatTemplate()->getListingTypeSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_ATTRIBUTE) {
-
             $ebayStringType = $this->getMagentoProduct()->getAttributeValue($src['attribute']);
 
             switch ($ebayStringType) {

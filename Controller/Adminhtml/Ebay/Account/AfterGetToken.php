@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
+/**
+ * Class AfterGetToken
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account
+ */
 class AfterGetToken extends Account
 {
     public function execute()
@@ -17,7 +21,7 @@ class AfterGetToken extends Account
         // Get eBay session id
         // ---------------------------------------
         $sessionId = $this->getHelper('Data\Session')->getValue('get_token_session_id', true);
-        is_null($sessionId) && $this->_redirect('*/*/index');
+        $sessionId === null && $this->_redirect('*/*/index');
         // ---------------------------------------
 
         // Get account form data
@@ -30,9 +34,9 @@ class AfterGetToken extends Account
         $accountId = (int)$this->getHelper('Data\Session')->getValue('get_token_account_id', true);
 
         if ($accountId == 0) {
-            $this->_redirect('*/*/new',array('_current' => true));
+            $this->_redirect('*/*/new', ['_current' => true]);
         } else {
-            $data = array();
+            $data = [];
             $data['mode'] = $this->getHelper('Data\Session')->getValue('get_token_account_mode');
             $data['token_session'] = $sessionId;
 
@@ -40,7 +44,7 @@ class AfterGetToken extends Account
             $id = $this->updateAccount($accountId, $data);
 
             $this->messageManager->addSuccess($this->__('Token was successfully saved'));
-            $this->_redirect('*/*/edit', array('id' => $id, '_current' => true));
+            $this->_redirect('*/*/edit', ['id' => $id, '_current' => true]);
         }
         // ---------------------------------------
     }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model;
 
+/**
+ * Class VersionsHistory
+ * @package Ess\M2ePro\Model
+ */
 class VersionsHistory extends ActiveRecord\AbstractModel
 {
     //########################################

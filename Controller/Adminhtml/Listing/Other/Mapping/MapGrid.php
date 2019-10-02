@@ -10,12 +10,16 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping;
 
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 
+/**
+ * Class MapGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping
+ */
 class MapGrid extends Listing
 {
     public function execute()
     {
-        $block = $this->getLayout()->createBlock(
-            'Ess\M2ePro\Block\Adminhtml\Listing\Other\Mapping\Grid'
+        $block = $this->createBlock(
+            'Listing_Other_Mapping_Grid'
         );
 
         $this->setAjaxContent($block);

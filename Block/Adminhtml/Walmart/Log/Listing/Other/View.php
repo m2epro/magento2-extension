@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Other;
 
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractView;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Other
+ */
 class View extends AbstractView
 {
     //########################################
@@ -21,14 +25,14 @@ class View extends AbstractView
 
     protected function createAccountSwitcherBlock()
     {
-        return $this->createBlock('Walmart\Account\Switcher')->setData([
+        return $this->createBlock('Walmart_Account_Switcher')->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }
 
     protected function createMarketplaceSwitcherBlock()
     {
-        return $this->createBlock('Walmart\Marketplace\Switcher')->setData([
+        return $this->createBlock('Walmart_Marketplace_Switcher')->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }

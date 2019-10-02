@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Product;
 
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractView;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Product
+ */
 class View extends AbstractView
 {
     //########################################
@@ -21,14 +25,14 @@ class View extends AbstractView
 
     protected function createAccountSwitcherBlock()
     {
-        return $this->createBlock('Walmart\Account\Switcher')->setData([
+        return $this->createBlock('Walmart_Account_Switcher')->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }
 
     protected function createMarketplaceSwitcherBlock()
     {
-        return $this->createBlock('Walmart\Marketplace\Switcher')->setData([
+        return $this->createBlock('Walmart_Marketplace_Switcher')->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }
@@ -39,8 +43,8 @@ class View extends AbstractView
     {
         $helpBlock = $this->createBlock('HelpBlock')->setData([
             'content' => $this->__(
-                '<p>This Log contains all information about Actions, which were done on
-                all M2E Pro and 3rd Party Listings and their Items.</p>'
+                'The Log contains information about the actions applied to M2E Pro Listings,
+                3rd Party Listings, and related Items.'
             )
         ]);
 

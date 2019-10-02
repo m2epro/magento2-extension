@@ -31,7 +31,7 @@ SQL
         foreach ($listings as $listing) {
 
             $listingId = $listing['id'];
-            $additionalData = (array)@json_decode($listing['additional_data'], true);
+            $additionalData = (array)json_decode($listing['additional_data'], true);
 
             if (!empty($additionalData['mode_same_category_data']['specifics'])) {
                 foreach ($additionalData['mode_same_category_data']['specifics'] as &$specific) {

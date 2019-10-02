@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction;
 
+/**
+ * Class GetDescriptionTemplatesList
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
+ */
 class GetDescriptionTemplatesList extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
 {
     //########################################
@@ -23,8 +27,7 @@ class GetDescriptionTemplatesList extends \Ess\M2ePro\Controller\Adminhtml\Amazo
 
         $descriptionTemplates = $collection->getData();
         if ($isNewAsinAccepted == 1) {
-            usort($descriptionTemplates, function($a, $b)
-            {
+            usort($descriptionTemplates, function ($a, $b) {
                 return $a["is_new_asin_accepted"] < $b["is_new_asin_accepted"];
             });
         }
@@ -34,5 +37,4 @@ class GetDescriptionTemplatesList extends \Ess\M2ePro\Controller\Adminhtml\Amazo
     }
 
     //########################################
-
 }

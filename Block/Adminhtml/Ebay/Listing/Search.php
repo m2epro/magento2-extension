@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
+/**
+ * Class Search
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing
+ */
 class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -75,7 +79,7 @@ HTML
             'controller_name' => $this->getRequest()->getControllerName()
         ]);
 
-        $listingTypeSwitcherBlock = $this->createBlock('Listing\Search\TypeSwitcher')->setData([
+        $listingTypeSwitcherBlock = $this->createBlock('Listing_Search_TypeSwitcher')->setData([
             'controller_name' => $this->getRequest()->getControllerName()
         ]);
 

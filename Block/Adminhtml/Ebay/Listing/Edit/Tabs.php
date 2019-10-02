@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit
+ */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs
 {
     //########################################
@@ -29,7 +33,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
     public function getAllowedTabs()
     {
         if (!isset($this->_data['allowed_tabs']) || !is_array($this->_data['allowed_tabs'])) {
-            return array();
+            return [];
         }
 
         return $this->_data['allowed_tabs'];
@@ -56,43 +60,46 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
     {
         // ---------------------------------------
         if ($this->isTabAllowed('general')) {
-            $block = $this->createBlock('Ebay\Listing\Edit\Tabs\General','',
-                                        array('policy_localization' => $this->getData('policy_localization')));
+            $block = $this->createBlock(
+                'Ebay_Listing_Edit_Tabs_General',
+                '',
+                ['policy_localization' => $this->getData('policy_localization')]
+            );
             $this->addTab(
                 'general',
-                array(
+                [
                     'label'   => $this->__('Payment and Shipping'),
                     'title'   => $this->__('Payment and Shipping'),
                     'content' => $block->toHtml(),
-                )
+                ]
             );
         }
         // ---------------------------------------
 
         // ---------------------------------------
         if ($this->isTabAllowed('selling')) {
-            $block = $this->createBlock('Ebay\Listing\Edit\Tabs\Selling');
+            $block = $this->createBlock('Ebay_Listing_Edit_Tabs_Selling');
             $this->addTab(
                 'selling',
-                array(
+                [
                     'label'   => $this->__('Selling'),
                     'title'   => $this->__('Selling'),
                     'content' => $block->toHtml(),
-                )
+                ]
             );
         }
         // ---------------------------------------
 
         // ---------------------------------------
         if ($this->isTabAllowed('synchronization')) {
-            $block = $this->createBlock('Ebay\Listing\Edit\Tabs\Synchronization');
+            $block = $this->createBlock('Ebay_Listing_Edit_Tabs_Synchronization');
             $this->addTab(
                 'synchronization',
-                array(
+                [
                     'label'   => $this->__('Synchronization'),
                     'title'   => $this->__('Synchronization'),
                     'content' => $block->toHtml(),
-                )
+                ]
             );
         }
         // ---------------------------------------

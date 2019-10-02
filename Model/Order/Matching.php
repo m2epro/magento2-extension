@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Order;
 
+/**
+ * Class Matching
+ * @package Ess\M2ePro\Model\Order
+ */
 class Matching extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     //########################################
@@ -68,11 +72,11 @@ class Matching extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $component,
         $hash = null
     ) {
-        if (is_null($productId) || count($input) == 0 || count($output) == 0) {
+        if ($productId === null || count($input) == 0 || count($output) == 0) {
             throw new \InvalidArgumentException('Invalid matching data.');
         }
 
-        if (is_null($hash)) {
+        if ($hash === null) {
             $hash = self::generateHash($input);
         }
 
@@ -83,13 +87,13 @@ class Matching extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         /** @var \Ess\M2ePro\Model\Order\Matching $matching */
         $matching = $matchingCollection->getFirstItem();
 
-        $matching->addData(array(
+        $matching->addData([
             'product_id'               => (int)$productId,
             'input_variation_options'  => $this->getHelper('Data')->jsonEncode($input),
             'output_variation_options' => $this->getHelper('Data')->jsonEncode($output),
             'hash'                     => $hash,
             'component'                => $component,
-        ));
+        ]);
 
         $matching->save();
     }
@@ -100,7 +104,8 @@ class Matching extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return null;
         }
 
-        return sha1(serialize($input));
+        $helper = \Magento\Framework\App\ObjectManager::getInstance()->get(\Ess\M2ePro\Helper\Data::class);
+        return sha1($helper->serialize($input));
     }
 
     //########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Observer;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Observer
+ */
 class Category extends AbstractModel
 {
     //########################################
@@ -27,20 +31,18 @@ class Category extends AbstractModel
             return;
         }
 
-        $websitesProductsIds = array(
+        $websitesProductsIds = [
             // website for default store view
             0 => $changedProductsIds
-        );
+        ];
 
         if ($websiteId == 0) {
-
             foreach ($changedProductsIds as $productId) {
                 $productModel = $this->modelFactory->getObject('Magento\Product')->setProductId($productId);
                 foreach ($productModel->getWebsiteIds() as $websiteId) {
                     $websitesProductsIds[$websiteId][] = $productId;
                 }
             }
-
         } else {
             $websitesProductsIds[$websiteId] = $changedProductsIds;
         }
@@ -52,13 +54,13 @@ class Category extends AbstractModel
                 $product = $this->getHelper('Magento\Product')->getCachedAndLoadedProduct($productId);
 
                 /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Category $object */
-                $object = $this->modelFactory->getObject('Listing\Auto\Actions\Mode\Category');
+                $object = $this->modelFactory->getObject('Listing_Auto_Actions_Mode_Category');
                 $object->setProduct($product);
 
-                if (in_array($productId,$postedProductsIds)) {
-                    $object->synchWithAddedCategoryId($categoryId,$websiteId);
+                if (in_array($productId, $postedProductsIds)) {
+                    $object->synchWithAddedCategoryId($categoryId, $websiteId);
                 } else {
-                    $object->synchWithDeletedCategoryId($categoryId,$websiteId);
+                    $object->synchWithDeletedCategoryId($categoryId, $websiteId);
                 }
             }
         }

@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization\OtherListings\Update;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\OtherListings\Update
+ */
 class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsRequester
 {
     // ########################################
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Walmart\Synchronization\OtherListings\Update\ProcessingRunner';
+        return 'Walmart_Synchronization_OtherListings_Update_ProcessingRunner';
     }
 
     // ########################################

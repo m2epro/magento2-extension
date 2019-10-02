@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Log\Listing\Other;
 
+/**
+ * Class AbstractGrid
+ * @package Ess\M2ePro\Block\Adminhtml\Log\Listing\Other
+ */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\AbstractGrid
 {
     const LISTING_ID_FIELD = 'id';
@@ -55,23 +59,25 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
 
         if ($this->getComponentMode() == \Ess\M2ePro\Helper\Component\Ebay::NICK) {
             $collection->getSelect()
-                ->joinLeft(array('ea' => $this->activeRecordFactory->getObject('Ebay\Account')
-                    ->getResource()->getMainTable()),
+                ->joinLeft(
+                    ['ea' => $this->activeRecordFactory->getObject('Ebay\Account')
+                    ->getResource()->getMainTable()],
                     '(`main_table`.account_id = `ea`.account_id)',
-                    array(
+                    [
                         'real_account_id' => 'ea.account_id',
                         'account_mode' => 'ea.mode'
-                    )
+                    ]
                 );
         }
 
         $collection->getSelect()
-            ->joinLeft(array('lo' => $this->activeRecordFactory->getObject('Listing\Other')
-                ->getResource()->getMainTable()),
+            ->joinLeft(
+                ['lo' => $this->activeRecordFactory->getObject('Listing\Other')
+                ->getResource()->getMainTable()],
                 '(`main_table`.listing_other_id = `lo`.id)',
-                array(
+                [
                     'real_listing_other_id' => 'lo.id'
-                )
+                ]
             );
         // ---------------------------------------
 
@@ -126,7 +132,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
     {
         $columnTitles = $this->getColumnTitles();
 
-        $this->addColumn('create_date', array(
+        $this->addColumn('create_date', [
             'header' => $this->__($columnTitles['create_date']),
             'align' => 'left',
             'type' => 'datetime',
@@ -135,10 +141,10 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             'width' => '150px',
             'index' => 'create_date',
             'filter_index' => 'main_table.create_date',
-            'frame_callback' => array($this, 'callbackColumnCreateDate')
-        ));
+            'frame_callback' => [$this, 'callbackColumnCreateDate']
+        ]);
 
-        $this->addColumn('action', array(
+        $this->addColumn('action', [
             'header' => $this->__($columnTitles['action']),
             'align' => 'left',
             'type' => 'options',
@@ -146,48 +152,48 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             'sortable' => false,
             'filter_index' => 'main_table.action',
             'options' => $this->getActionTitles(),
-        ));
+        ]);
 
         if (!$this->isListingLog()) {
-            $this->addColumn('identifier', array(
+            $this->addColumn('identifier', [
                 'header' => $this->__($columnTitles['identifier']),
                 'align' => 'left',
                 'type' => 'text',
                 'index' => 'identifier',
                 'filter_index' => 'main_table.identifier',
-                'frame_callback' => array($this, 'callbackColumnIdentifier'),
-                'filter_condition_callback' => array($this, 'callbackFilterIdentifier')
-            ));
+                'frame_callback' => [$this, 'callbackColumnIdentifier'],
+                'filter_condition_callback' => [$this, 'callbackFilterIdentifier']
+            ]);
         }
 
-        $this->addColumn('description', array(
+        $this->addColumn('description', [
             'header' => $this->__($columnTitles['description']),
             'align' => 'left',
             'type' => 'text',
             'index' => 'description',
             'filter_index' => 'main_table.description',
-            'frame_callback' => array($this, 'callbackDescription')
-        ));
+            'frame_callback' => [$this, 'callbackDescription']
+        ]);
 
-        $this->addColumn('initiator', array(
+        $this->addColumn('initiator', [
             'header' => $this->__($columnTitles['initiator']),
             'index' => 'initiator',
             'align' => 'right',
             'type' => 'options',
             'sortable' => false,
             'options' => $this->_getLogInitiatorList(),
-            'frame_callback' => array($this, 'callbackColumnInitiator')
-        ));
+            'frame_callback' => [$this, 'callbackColumnInitiator']
+        ]);
 
-        $this->addColumn('type', array(
+        $this->addColumn('type', [
             'header' => $this->__($columnTitles['type']),
             'index' => 'type',
             'align' => 'right',
             'type' => 'options',
             'sortable' => false,
             'options' => $this->_getLogTypeList(),
-            'frame_callback' => array($this, 'callbackColumnType')
-        ));
+            'frame_callback' => [$this, 'callbackColumnType']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -198,8 +204,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
     {
         $title = $row->getData('title');
 
-        $isEmptyId = (is_null($value) || $value === '');
-        $isEmptyTitle = (is_null($title) || $title === '');
+        $isEmptyId = ($value === null || $value === '');
+        $isEmptyTitle = ($title === null || $title === '');
 
         if ($isEmptyTitle && $isEmptyId) {
             return $this->__('N/A');
@@ -219,7 +225,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
 
         $identifier = $urlTitle;
 
-        if (!is_null($row->getData('real_listing_other_id'))) {
+        if ($row->getData('real_listing_other_id') !== null) {
             switch ($row->getData('component_mode')) {
                 case \Ess\M2ePro\Helper\Component\Ebay::NICK:
                     $url = $this->getHelper('Component\Ebay')->getItemUrl($value, $accountMode, $marketplaceId);
@@ -244,7 +250,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
     {
         $logHash = $this->getLogHash($row);
 
-        if (!is_null($logHash)) {
+        if ($logHash !== null) {
             return "{$value}<div class='no-display log-hash'>{$logHash}</div>";
         }
 
@@ -263,8 +269,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
 
         $where = 'main_table.title LIKE ' . $collection->getSelect()->getAdapter()->quote('%'. $value .'%');
 
-        if (
-            $this->getComponentMode() == \Ess\M2ePro\Helper\View\Amazon::NICK
+        if ($this->getComponentMode() == \Ess\M2ePro\Helper\View\Amazon::NICK
             || is_numeric($value)
         ) {
             $where .= ' OR main_table.identifier = ' . $collection->getSelect()->getAdapter()->quote($value);
@@ -284,7 +289,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
 
     protected function getActionTitles()
     {
-        return $this->activeRecordFactory->getObject('Listing\Other\Log')->getActionsTitles();
+        return $this->activeRecordFactory->getObject('Listing_Other_Log')->getActionsTitles();
     }
 
     //########################################

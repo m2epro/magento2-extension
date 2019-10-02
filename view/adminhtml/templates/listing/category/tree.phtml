@@ -1,7 +1,17 @@
 <?php
-    $selectedCategories = $block->getSelectedCategories();
-    $highlightedCategories = $block->getHighlightedCategories();
-    $callback = $block->getCallback();
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree $block */
+
+$selectedCategories = $block->getSelectedCategories();
+$highlightedCategories = $block->getHighlightedCategories();
+$callback = $block->getCallback();
 ?>
 
 <style>
@@ -55,7 +65,7 @@
             });
 
             tree.on('click', function(node) {
-                <?php if (!empty($callback)): ?>
+                <?php if (!empty($callback)) : ?>
                 !ignoreTreeCallback && (<?php echo $callback ?>)([node.id]);
                 <?php endif; ?>
 
@@ -80,7 +90,7 @@
                     ListingCategoryTreeObj.tree_categoryRemove(node.id);
                 }
 
-                <?php if (!empty($callback)): ?>
+                <?php if (!empty($callback)) : ?>
                     !ignoreTreeCallback && (<?php echo $callback ?>)(categories_selected_items);
                 <?php endif; ?>
             }, tree);
@@ -137,9 +147,9 @@
             }
         }
 
-        <?php if ($block->_isAjax): ?>
+        <?php if ($block->_isAjax) : ?>
             init();
-        <?php else: ?>
+        <?php else : ?>
             Ext.EventManager.onDocumentReady(function() {(init)();});
         <?php endif; ?>
     });

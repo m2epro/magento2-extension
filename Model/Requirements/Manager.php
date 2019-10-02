@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Requirements;
 
+/**
+ * Class Manager
+ * @package Ess\M2ePro\Model\Requirements
+ */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {
     const CACHE_KEY = 'is_meet_requirements';
@@ -22,7 +26,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         array $data = []
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory, $data);
         $this->objectManager = $objectManager;
     }
@@ -31,7 +35,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     public function isMeet()
     {
-        $isMeetRequirements = $this->getHelper('Data\Cache\Permanent')->getValue(self::CACHE_KEY);
+        $isMeetRequirements = $this->getHelper('Data_Cache_Permanent')->getValue(self::CACHE_KEY);
         if ($isMeetRequirements !== false) {
             return (bool)$isMeetRequirements;
         }
@@ -42,7 +46,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
-        $this->getHelper('Data\Cache\Permanent')->setValue(self::CACHE_KEY,(int)$isMeetRequirements, [], 60*60);
+        $this->getHelper('Data_Cache_Permanent')->setValue(self::CACHE_KEY, (int)$isMeetRequirements, [], 60*60);
         return (bool)$isMeetRequirements;
     }
 
@@ -53,18 +57,19 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getChecks()
     {
-        $checks = array(
+        $checks = [
             Checks\MemoryLimit::class,
             Checks\ExecutionTime::class,
             Checks\MagentoVersion::class,
             Checks\PhpVersion::class,
-        );
+        ];
 
         foreach ($checks as $check) {
             /** @var Checks\AbstractCheck $checkObj */
             $checkObj = $this->objectManager->create($check);
             $checkObj->setRenderer($this->objectManager->create(
-                str_replace('Checks', 'Renderer', $check), ['checkObject' => $checkObj]
+                str_replace('Checks', 'Renderer', $check),
+                ['checkObject' => $checkObj]
             ));
 
             yield $checkObj;

@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Description;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 use Ess\M2ePro\Helper\Component\Walmart;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Description
+ */
 class Save extends Template
 {
     //########################################
@@ -28,12 +32,12 @@ class Save extends Template
 
         // Base prepare
         // ---------------------------------------
-        $data = array();
+        $data = [];
         // ---------------------------------------
 
         // tab: list
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'title',
             'title_mode',
             'title_template',
@@ -91,7 +95,7 @@ class Save extends Template
 
             'description_mode',
             'description_template',
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -130,7 +134,7 @@ class Save extends Template
         $model->save();
 
         $newData = array_merge($model->getDataSnapshot(), $model->getChildObject()->getDataSnapshot());
-        $model->getChildObject()->setSynchStatusNeed($newData,$oldData);
+        $model->getChildObject()->setSynchStatusNeed($newData, $oldData);
 
         if ($this->isAjax()) {
             $this->setJsonContent([
@@ -143,13 +147,13 @@ class Save extends Template
         // ---------------------------------------
 
         $this->messageManager->addSuccess($this->__('Policy was successfully saved'));
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('*/walmart_template/index', array(), array(
-            'edit' => array(
+        return $this->_redirect($this->getHelper('Data')->getBackUrl('*/walmart_template/index', [], [
+            'edit' => [
                 'id' => $id,
                 'wizard' => $this->getRequest()->getParam('wizard'),
                 'close_on_save' => $this->getRequest()->getParam('close_on_save')
-            ),
-        )));
+            ],
+        ]));
     }
 
     //########################################
@@ -170,7 +174,7 @@ class Save extends Template
         }
 
         foreach ($keyData as $index => $value) {
-            $result[] = array('name' => $value, 'value' => $valueData[$index]);
+            $result[] = ['name' => $value, 'value' => $valueData[$index]];
         }
 
         return $result;

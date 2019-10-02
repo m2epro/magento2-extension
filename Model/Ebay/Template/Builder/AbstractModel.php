@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Builder;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Ebay\Template\Builder
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $activeRecordFactory;
@@ -20,8 +24,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -42,7 +45,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function prepareData(array &$data)
     {
-        $prepared = array();
+        $prepared = [];
 
         // ---------------------------------------
         if (isset($data['id']) && (int)$data['id'] > 0) {

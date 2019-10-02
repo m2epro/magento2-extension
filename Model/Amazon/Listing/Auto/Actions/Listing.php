@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Auto\Actions;
 
+/**
+ * Class Listing
+ * @package Ess\M2ePro\Model\Amazon\Listing\Auto\Actions
+ */
 class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 {
     protected $amazonFactory;
@@ -19,8 +23,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         parent::__construct($activeRecordFactory, $helperFactory, $modelFactory);
     }
@@ -38,17 +41,16 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             return;
         }
 
-        $listingsProducts = $this->getListing()->getProducts(true,array('product_id'=>(int)$product->getId()));
+        $listingsProducts = $this->getListing()->getProducts(true, ['product_id'=>(int)$product->getId()]);
 
         if (count($listingsProducts) <= 0) {
             return;
         }
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $parentsForRemove */
-        $parentsForRemove = array();
+        $parentsForRemove = [];
 
         foreach ($listingsProducts as $listingProduct) {
-
             if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
                 return;
             }
@@ -64,7 +66,6 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             }
 
             try {
-
                 if ($deletingMode == \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP) {
                     $listingProduct->isStoppable() &&
                     $this->activeRecordFactory->getObject('StopQueue')->add($listingProduct);
@@ -73,13 +74,13 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
                 if ($deletingMode == \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE) {
                     $listingProduct->isStoppable() &&
                     $this->activeRecordFactory->getObject('StopQueue')->add($listingProduct);
-                    $listingProduct->addData(array(
+                    $listingProduct->addData([
                         'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED
-                    ))->save();
+                    ])->save();
                     $listingProduct->delete();
                 }
-
-            } catch (\Exception $exception) {}
+            } catch (\Exception $exception) {
+            }
         }
 
         if (empty($parentsForRemove)) {
@@ -102,15 +103,18 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
     public function addProductByCategoryGroup(
         \Magento\Catalog\Model\Product $product,
         \Ess\M2ePro\Model\Listing\Auto\Category\Group $categoryGroup
-    )
-    {
-        $logData = array(
+    ) {
+        $logData = [
             'reason'     => __METHOD__,
             'rule_id'    => $categoryGroup->getId(),
             'rule_title' => $categoryGroup->getTitle(),
-        );
+        ];
         $listingProduct = $this->getListing()->addProduct(
-            $product, \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION, false, true, $logData
+            $product,
+            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+            false,
+            true,
+            $logData
         );
 
         if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
@@ -120,9 +124,9 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Auto\Category\Group $amazonCategoryGroup */
         $amazonCategoryGroup = $categoryGroup->getChildObject();
 
-        $params = array(
+        $params = [
             'template_description_id' => $amazonCategoryGroup->getAddingDescriptionTemplateId(),
-        );
+        ];
 
         $this->processAddedListingProduct($listingProduct, $params);
     }
@@ -135,13 +139,16 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
     public function addProductByGlobalListing(
         \Magento\Catalog\Model\Product $product,
         \Ess\M2ePro\Model\Listing $listing
-    )
-    {
-        $logData = array(
+    ) {
+        $logData = [
             'reason' => __METHOD__,
-        );
+        ];
         $listingProduct = $this->getListing()->addProduct(
-            $product, \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION, false, true, $logData
+            $product,
+            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+            false,
+            true,
+            $logData
         );
 
         if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
@@ -153,9 +160,9 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         /** @var \Ess\M2ePro\Model\Amazon\Listing $amazonListing */
         $amazonListing = $listing->getChildObject();
 
-        $params = array(
+        $params = [
             'template_description_id' => $amazonListing->getAutoGlobalAddingDescriptionTemplateId(),
-        );
+        ];
 
         $this->processAddedListingProduct($listingProduct, $params);
     }
@@ -168,13 +175,16 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
     public function addProductByWebsiteListing(
         \Magento\Catalog\Model\Product $product,
         \Ess\M2ePro\Model\Listing $listing
-    )
-    {
-        $logData = array(
+    ) {
+        $logData = [
             'reason' => __METHOD__,
-        );
+        ];
         $listingProduct = $this->getListing()->addProduct(
-            $product, \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION, false, true, $logData
+            $product,
+            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+            false,
+            true,
+            $logData
         );
 
         if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
@@ -184,9 +194,9 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         /** @var \Ess\M2ePro\Model\Amazon\Listing $amazonListing */
         $amazonListing = $listing->getChildObject();
 
-        $params = array(
+        $params = [
             'template_description_id' => $amazonListing->getAutoWebsiteAddingDescriptionTemplateId(),
-        );
+        ];
 
         $this->processAddedListingProduct($listingProduct, $params);
     }
@@ -203,7 +213,6 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $amazonListingProduct = $listingProduct->getChildObject();
 
         if (!$amazonListingProduct->getVariationManager()->isRelationParentType()) {
-
             $amazonListingProduct->setData('template_description_id', $params['template_description_id']);
             $amazonListingProduct->setData(
                 'is_general_id_owner',
@@ -225,12 +234,13 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             return;
         }
 
-        $detailsModel = $this->modelFactory->getObject('Amazon\Marketplace\Details');
+        $detailsModel = $this->modelFactory->getObject('Amazon_Marketplace_Details');
         $detailsModel->setMarketplaceId($listingProduct->getListing()->getMarketplaceId());
 
         /** @var \Ess\M2ePro\Model\Template\Description $descriptionTemplate */
         $descriptionTemplate = $this->amazonFactory->getObjectLoaded(
-            'Template\Description', $params['template_description_id']
+            'Template\Description',
+            $params['template_description_id']
         );
 
         /** @var \Ess\M2ePro\Model\Amazon\Template\Description $amazonDescriptionTemplate */

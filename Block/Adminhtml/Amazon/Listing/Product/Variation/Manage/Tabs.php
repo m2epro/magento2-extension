@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage
+ */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -49,15 +53,15 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
 
     protected function _beforeToHtml()
     {
-        $this->addTab('variations', array(
+        $this->addTab('variations', [
             'label'   => $this->__('Child Products'),
             'title'   => $this->__('Child Products'),
-            'content' => $this->createBlock('Amazon\Listing\Product\Variation\Manage\Tabs\Variations')
+            'content' => $this->createBlock('Amazon_Listing_Product_Variation_Manage_Tabs_Variations')
                 ->setListingProduct($this->getListingProduct())
                 ->toHtml()
-        ));
+        ]);
 
-        $settingsBlock = $this->createBlock('Amazon\Listing\Product\Variation\Manage\Tabs\Settings\Form')
+        $settingsBlock = $this->createBlock('Amazon_Listing_Product_Variation_Manage_Tabs_Settings_Form')
             ->setListingProduct($this->getListingProduct());
         $settingsBlock->calculateWarnings();
 
@@ -76,19 +80,19 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
 <img style="{$iconStyle}" src="{$iconPath}" title="{$iconTitle}" alt="" width="16" height="15">&nbsp;
 HTML;
 
-        $this->addTab('settings', array(
+        $this->addTab('settings', [
             'label'   => $problemIcon . $settingsBlockLabel,
             'title'   => $settingsBlockTitle,
             'content' => $settingsBlock->toHtml()
-        ));
+        ]);
 
-        $this->addTab('vocabulary', array(
+        $this->addTab('vocabulary', [
             'label'   => $this->__('Advanced'),
             'title'   => $this->__('Advanced'),
-            'content' => $this->createBlock('Amazon\Listing\Product\Variation\Manage\Tabs\Vocabulary')
+            'content' => $this->createBlock('Amazon_Listing_Product_Variation_Manage_Tabs_Vocabulary')
                 ->setListingProduct($this->getListingProduct())
                 ->toHtml()
-        ));
+        ]);
 
         $generalId = $this->getListingProduct()->getChildObject()->getGeneralId();
         if (empty($generalId) && $this->getListingProduct()->getChildObject()->isGeneralIdOwner()) {
@@ -109,7 +113,7 @@ HTML;
         );
 
         $this->js->add(
-<<<JS
+            <<<JS
     if (!{$showChildProducts}) {
         jQuery(jQuery('#amazonVariationProductManageTabs').find("li")[0]).hide();
     }

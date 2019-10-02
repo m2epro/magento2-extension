@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Helper\Data\Cache;
 
+/**
+ * Class AbstractHelper
+ * @package Ess\M2ePro\Helper\Data\Cache
+ */
 abstract class AbstractHelper extends \Ess\M2ePro\Helper\AbstractHelper
 {
     //########################################
 
     abstract public function getValue($key);
 
-    abstract public function setValue($key, $value, array $tags = array(), $lifetime = null);
+    abstract public function setValue($key, $value, array $tags = [], $lifetime = null);
 
     //########################################
 

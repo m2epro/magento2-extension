@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay
+ */
 class Item extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################

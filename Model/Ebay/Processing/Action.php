@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Processing;
 
+/**
+ * Class Action
+ * @package Ess\M2ePro\Model\Ebay\Processing
+ */
 class Action extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     const TYPE_LISTING_PRODUCT_LIST   = 0;
@@ -18,7 +22,7 @@ class Action extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     //####################################
 
     /** @var \Ess\M2ePro\Model\Processing $processing */
-    private $processing = NULL;
+    private $processing = null;
 
     //####################################
 
@@ -46,7 +50,7 @@ class Action extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             throw new \Ess\M2ePro\Model\Exception\Logic('Instance must be loaded first.');
         }
 
-        if (!is_null($this->processing)) {
+        if ($this->processing !== null) {
             return $this->processing;
         }
 

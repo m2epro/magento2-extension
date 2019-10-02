@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation;
 
+/**
+ * Class SwitchToIndividualPopup
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation
+ */
 class SwitchToIndividualPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     //########################################

@@ -10,10 +10,14 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing
+ */
 class View extends AbstractContainer
 {
     /** @var \Ess\M2ePro\Model\Listing */
-    private $listing = NULL;
+    private $listing = null;
 
     //########################################
 
@@ -24,7 +28,7 @@ class View extends AbstractContainer
         $this->listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Switcher $viewModeSwitcher */
-        $viewModeSwitcher = $this->createBlock('Ebay\Listing\View\Switcher');
+        $viewModeSwitcher = $this->createBlock('Ebay_Listing_View_Switcher');
 
         // Initialization block
         // ---------------------------------------
@@ -44,14 +48,13 @@ class View extends AbstractContainer
         $this->css->addFile('ebay/listing/view.css');
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(
             '\Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid'
         ));
 
         if (!$this->getRequest()->isXmlHttpRequest()) {
-
             $this->appendHelpBlock([
                 'content' => $this->__(
                     '<p>M2E Pro Listing is a group of Magento Products sold on a certain Marketplace
@@ -62,64 +65,64 @@ class View extends AbstractContainer
             ]);
 
             $this->setPageActionsBlock(
-                'Ebay\Listing\View\Switcher',
+                'Ebay_Listing_View_Switcher',
                 'ebay_listing_view_switcher'
             );
         }
 
         // ---------------------------------------
-        $this->addButton('back', array(
+        $this->addButton('back', [
             'label'   => $this->__('Back'),
             'onclick' => 'setLocation(\''.$this->getUrl('*/ebay_listing/index') . '\');',
             'class'   => 'back'
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
         $url = $this->getUrl(
             '*/ebay_log_listing_product',
-            array(
+            [
                 \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD =>
                     $this->listing->getId()
-            )
+            ]
         );
-        $this->addButton('view_log', array(
+        $this->addButton('view_log', [
             'label'   => $this->__('View Log'),
             'onclick' => 'window.open(\'' . $url . '\',\'_blank\')',
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
         if ($this->listing->getAccount()->getChildObject()->isPickupStoreEnabled() &&
             $this->listing->getMarketplace()->getChildObject()->isInStorePickupEnabled()) {
             $pickupStoreUrl = $this->getUrl('*/ebay_listing_pickupStore/index', ['id' => $this->listing->getId()]);
-            $this->addButton('pickup_store_management', array(
+            $this->addButton('pickup_store_management', [
                 'label' => $this->__('In-Store Pickup'),
                 'onclick' => 'window.open(\'' . $pickupStoreUrl . '\',\'_blank\')',
                 'class' => 'success primary'
-            ));
+            ]);
         }
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('edit_templates', array(
+        $this->addButton('edit_templates', [
             'label'   => $this->__('Edit Settings'),
             'onclick' => '',
             'class'   => 'drop_down edit_default_settings_drop_down primary',
             'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
             'options' => $this->getSettingsButtonDropDownItems()
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('add_products', array(
+        $this->addButton('add_products', [
             'id'        => 'add_products',
             'label'     => $this->__('Add Products'),
             'class'     => 'add',
             'button_class' => '',
             'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
             'options' => $this->getAddProductsDropDownItems(),
-        ));
+        ]);
         // ---------------------------------------
 
         return parent::_prepareLayout();
@@ -147,7 +150,7 @@ class View extends AbstractContainer
         $html = '';
 
         // ---------------------------------------
-        $viewHeaderBlock = $this->createBlock('Listing\View\Header','', [
+        $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
             'data' => ['listing' => $this->listing]
         ]);
         $viewHeaderBlock->setListingViewMode(true);
@@ -159,21 +162,23 @@ class View extends AbstractContainer
         // ---------------------------------------
 
         $this->jsUrl->addUrls(array_merge(
-            array(),
+            [],
             $helper->getControllerActions(
-                'Ebay\Listing', array('_current' => true)
+                'Ebay\Listing',
+                ['_current' => true]
             ),
             $helper->getControllerActions(
-                'Ebay\Listing\AutoAction', array('id' => $this->getRequest()->getParam('id'))
+                'Ebay_Listing_AutoAction',
+                ['id' => $this->getRequest()->getParam('id')]
             ),
-            array('variationProductManage' =>
-                $this->getUrl('*/ebay_listing_variation_product_manage/index'))
+            ['variationProductManage' =>
+                $this->getUrl('*/ebay_listing_variation_product_manage/index')]
         ));
         // ---------------------------------------
 
         // ---------------------------------------
 
-        $this->jsTranslator->addTranslations(array(
+        $this->jsTranslator->addTranslations([
             'Remove Category' => $this->__('Remove Category'),
             'Add New Group' => $this->__('Add New Group'),
             'Add/Edit Categories Rule' => $this->__('Add/Edit Categories Rule'),
@@ -208,11 +213,13 @@ class View extends AbstractContainer
             'Synchronization has successfully ended.' => $this->__('Synchronization has successfully ended.'),
             'Synchronization ended with warnings. <a target="_blank" href="%url%">View Log</a> for details.' =>
                 $this->__(
-                    'Synchronization ended with warnings. <a target="_blank" href="%url%">View Log</a> for details.'),
+                    'Synchronization ended with warnings. <a target="_blank" href="%url%">View Log</a> for details.'
+                ),
             'Synchronization ended with errors. <a target="_blank" href="%url%">View Log</a> for details.' =>
                 $this->__(
-                    'Synchronization ended with errors. <a target="_blank" href="%url%">View Log</a> for details.')
-        ));
+                    'Synchronization ended with errors. <a target="_blank" href="%url%">View Log</a> for details.'
+                )
+        ]);
         // ---------------------------------------
 
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -266,17 +273,17 @@ JS
         // ---------------------------------------
         $url = $this->getUrl(
             '*/ebay_template/editListing',
-            array(
+            [
                 'id' => $this->listing->getId(),
                 'tab' => 'general'
-            )
+            ]
         );
-        $items[] = array(
+        $items[] = [
             'url' => $url,
             'label' => $this->__('Payment / Shipping'),
             'onclick' => 'window.open(\'' . $url . '\',\'_blank\');',
             'target' => '_blank'
-        );
+        ];
         // ---------------------------------------
 
         // ---------------------------------------
@@ -309,7 +316,7 @@ JS
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/ebay_listing_product_add',[
+        $url = $this->getUrl('*/ebay_listing_product_add', [
             'source' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_CATEGORY,
             'clear' => true,
             'id' => $this->listing->getId()

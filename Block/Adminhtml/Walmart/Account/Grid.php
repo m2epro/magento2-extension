@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Account
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
 {
     protected $WalmartFactory;
@@ -17,8 +21,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->WalmartFactory = $WalmartFactory;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -29,9 +32,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
     {
         $collection = $this->WalmartFactory->getObject('Account')->getCollection();
 
-        $collection->getSelect()->joinLeft([
+        $collection->getSelect()->joinLeft(
+            [
             'm' => $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable(),
-        ],
+            ],
             '(`m`.`id` = `second_table`.`marketplace_id`)',
             ['marketplace_title'=>'title']
         );
@@ -43,25 +47,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('id', array(
+        $this->addColumn('id', [
             'header'    => $this->__('ID'),
             'align'     => 'right',
             'width'     => '100px',
             'type'      => 'number',
             'index'     => 'id',
             'filter_index' => 'main_table.id'
-        ));
+        ]);
 
-        $this->addColumn('title', array(
+        $this->addColumn('title', [
             'header'    => $this->__('Title / Info'),
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'title',
             'escape'    => true,
             'filter_index' => 'main_table.title',
-            'frame_callback' => array($this, 'callbackColumnTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -104,7 +108,7 @@ HTML;
         $collection->getSelect()->where(
             'main_table.title LIKE ?
             OR m.title LIKE ?
-            OR second_table.merchant_id LIKE ?',
+            OR second_table.consumer_id LIKE ?',
             '%'. $value .'%'
         );
     }

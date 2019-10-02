@@ -12,6 +12,10 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Quote\Model\Quote\Address\Total\AbstractTotal;
 use Magento\Tax\Model\Sales\Total\Quote\CommonTaxCollector;
 
+/**
+ * Class WasteRecyclingFee
+ * @package Ess\M2ePro\Model\Magento\Quote\Total
+ */
 class WasteRecyclingFee extends AbstractTotal
 {
     const TITLE                 = 'Waste Recycling Fee';
@@ -94,7 +98,7 @@ class WasteRecyclingFee extends AbstractTotal
         $this->_store = $quote->getStore();
 
         $items = $shippingAssignment->getItems();
-        if (!count($items)) {
+        if (empty($items)) {
             return $this;
         }
 

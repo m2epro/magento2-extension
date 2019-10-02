@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Module;
 
+/**
+ * Class Wizard
+ * @package Ess\M2ePro\Helper\Module
+ */
 class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const STATUS_NOT_STARTED = 0;
@@ -36,8 +40,7 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($helperFactory, $context);
@@ -115,7 +118,7 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->getConfigValue($nick, self::KEY_STEP);
     }
 
-    public function setStep($nick, $step = NULL)
+    public function setStep($nick, $step = null)
     {
         $this->setConfigValue($nick, self::KEY_STEP, $step);
     }
@@ -156,7 +159,6 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
 
         /** @var $wizard \Ess\M2ePro\Model\Wizard */
         foreach ($wizards as $wizard) {
-
             if ($this->getType($this->getNick($wizard)) != self::TYPE_BLOCKER) {
                 continue;
             }
@@ -173,9 +175,9 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function getAllWizards($view)
     {
-        (is_null($this->cache) || $this->getHelper('Module')->isDevelopmentEnvironment()) && $this->loadCache();
+        ($this->cache === null || $this->getHelper('Module')->isDevelopmentEnvironment()) && $this->loadCache();
 
-        $wizards = array();
+        $wizards = [];
         foreach ($this->cache as $nick => $wizard) {
             if ($wizard['view'] != '*' && $wizard['view'] != $view) {
                 continue;
@@ -192,13 +194,13 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
     private function loadCache()
     {
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_wizard');
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_wizard');
 
         $this->cache = $connection->fetchAll(
-            $connection->select()->from($tableName,'*')
+            $connection->select()->from($tableName, '*')
         );
 
-        usort($this->cache, function($a,$b) {
+        usort($this->cache, function ($a, $b) {
 
             if ($a['type'] != $b['type']) {
                 return $a['type'] == \Ess\M2ePro\Helper\Module\Wizard::TYPE_BLOCKER ? - 1 : 1;
@@ -216,10 +218,10 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
             unset($this->cache[$id]);
         }
 
-        $this->getHelper('Data\Cache\Permanent')->setValue(
+        $this->getHelper('Data_Cache_Permanent')->setValue(
             'wizard',
             $this->getHelper('Data')->jsonEncode($this->cache),
-            array('wizard'),
+            ['wizard'],
             60*60
         );
     }
@@ -230,11 +232,11 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $this->getHelper('Module')->isDevelopmentEnvironment() && $this->loadCache();
 
-        if (!is_null($this->cache)) {
+        if ($this->cache !== null) {
             return $this->cache[$nick][$key];
         }
 
-        if (($this->cache = $this->getHelper('Data\Cache\Permanent')->getValue('wizard')) !== NULL) {
+        if (($this->cache = $this->getHelper('Data_Cache_Permanent')->getValue('wizard')) !== null) {
             $this->cache = $this->getHelper('Data')->jsonDecode($this->cache);
             return $this->cache[$nick][$key];
         }
@@ -246,24 +248,24 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function setConfigValue($nick, $key, $value)
     {
-        (is_null($this->cache) || $this->getHelper('Module')->isDevelopmentEnvironment()) && $this->loadCache();
+        ($this->cache === null || $this->getHelper('Module')->isDevelopmentEnvironment()) && $this->loadCache();
 
         $this->cache[$nick][$key] = $value;
 
-        $this->getHelper('Data\Cache\Permanent')->setValue(
+        $this->getHelper('Data_Cache_Permanent')->setValue(
             'wizard',
             $this->getHelper('Data')->jsonEncode($this->cache),
-            array('wizard'),
+            ['wizard'],
             60*60
         );
 
         $connWrite = $this->resourceConnection->getConnection();
-        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_wizard');
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_wizard');
 
         $connWrite->update(
             $tableName,
-            array($key => $value),
-            array('nick = ?' => $nick)
+            [$key => $value],
+            ['nick = ?' => $nick]
         );
 
         return $this;

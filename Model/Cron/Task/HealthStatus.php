@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Cron\Task;
 
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 
+/**
+ * Class HealthStatus
+ * @package Ess\M2ePro\Model\Cron\Task
+ */
 class HealthStatus extends AbstractModel
 {
     const NICK = 'health_status';
@@ -52,7 +56,7 @@ class HealthStatus extends AbstractModel
 
     private function processEmailNotification()
     {
-        $settings = $this->modelFactory->getObject('HealthStatus\Notification\Settings');
+        $settings = $this->modelFactory->getObject('HealthStatus_Notification_Settings');
         $currentStatus = $this->modelFactory->getObject('HealthStatus\CurrentStatus');
 
         if (!$settings->isModeEmail() || empty($settings->getEmail())) {
@@ -60,7 +64,6 @@ class HealthStatus extends AbstractModel
         }
 
         if ($currentStatus->get() < $settings->getLevel()) {
-
             $this->unsetProblemExistsMark();
             return;
         }
@@ -69,7 +72,7 @@ class HealthStatus extends AbstractModel
             return;
         }
 
-        $sender = $this->modelFactory->getObject('HealthStatus\Notification\Email\Sender');
+        $sender = $this->modelFactory->getObject('HealthStatus_Notification_Email_Sender');
         $sender->send();
 
         $this->setProblemExistsMark();
@@ -81,7 +84,10 @@ class HealthStatus extends AbstractModel
     {
         /** @var \Ess\M2ePro\Model\Registry $registry */
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::MESSAGE_SEND_REGISTRY_KEY, 'key', false
+            'Registry',
+            self::MESSAGE_SEND_REGISTRY_KEY,
+            'key',
+            false
         );
 
         if (!$registry || !$registry->getId()) {
@@ -98,7 +104,10 @@ class HealthStatus extends AbstractModel
     private function setProblemExistsMark()
     {
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::MESSAGE_SEND_REGISTRY_KEY, 'key', false
+            'Registry',
+            self::MESSAGE_SEND_REGISTRY_KEY,
+            'key',
+            false
         );
 
         !$registry && $registry = $this->activeRecordFactory->getObject('Registry');
@@ -110,7 +119,10 @@ class HealthStatus extends AbstractModel
     private function unsetProblemExistsMark()
     {
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::MESSAGE_SEND_REGISTRY_KEY, 'key', false
+            'Registry',
+            self::MESSAGE_SEND_REGISTRY_KEY,
+            'key',
+            false
         );
 
         if ($registry && $registry->getId()) {

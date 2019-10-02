@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 {
     protected $dateTime;
@@ -18,8 +22,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         \Magento\Framework\Stdlib\DateTime $dateTime,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
-    )
-    {
+    ) {
         $this->dateTime = $dateTime;
         parent::__construct($amazonFactory, $context);
     }
@@ -40,9 +43,9 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         }
 
         $id = $this->getRequest()->getParam('id');
-        $listing = $this->amazonFactory->getObjectLoaded('Listing', $id, NULL, false);
+        $listing = $this->amazonFactory->getObjectLoaded('Listing', $id, null, false);
 
-        if (is_null($listing) && $id) {
+        if ($listing === null && $id) {
             $this->getMessageManager()->addError($this->__('Listing does not exist.'));
             return $this->_redirect('*/amazon_listing/index');
         }
@@ -51,15 +54,15 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
         // Base prepare
         // ---------------------------------------
-        $data = array();
+        $data = [];
         // ---------------------------------------
 
         // tab: settings
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'template_selling_format_id',
             'template_synchronization_id',
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -71,11 +74,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         $listing->getChildObject()->addData($data);
         $listing->save();
 
-        $templateData = array();
+        $templateData = [];
 
         // tab: channel settings
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'account_id',
             'marketplace_id',
 
@@ -119,7 +122,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
             'restock_date_mode',
             'restock_date_value',
             'restock_date_custom_attribute'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $templateData[$key] = $post[$key];
@@ -129,9 +132,10 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         if ($templateData['restock_date_value'] === '') {
             $templateData['restock_date_value'] = $this->getHelper('Data')->getCurrentGmtDate();
         } else {
-
             $timestamp = $this->getHelper('Data')->parseTimestampFromLocalizedFormat(
-                $templateData['restock_date_value'], \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT
+                $templateData['restock_date_value'],
+                \IntlDateFormatter::SHORT,
+                \IntlDateFormatter::SHORT
             );
             $templateData['restock_date_value'] = $this->getHelper('Data')->getDate($timestamp);
         }
@@ -143,11 +147,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
         $newData = array_merge($listing->getDataSnapshot(), $listing->getChildObject()->getDataSnapshot());
 
-        $listing->getChildObject()->setSynchStatusNeed($newData,$oldData);
+        $listing->getChildObject()->setSynchStatusNeed($newData, $oldData);
 
         $this->getMessageManager()->addSuccess($this->__('The Listing was successfully saved.'));
 
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('list',array(),array('edit'=>array('id'=>$id))));
+        return $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], ['edit'=>['id'=>$id]]));
     }
 
     //########################################

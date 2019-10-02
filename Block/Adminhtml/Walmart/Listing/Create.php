@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing;
 
+/**
+ * Class Create
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing
+ */
 class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     //########################################
@@ -39,14 +43,14 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/walmart_listing_create/index', array(
+        $url = $this->getUrl('*/walmart_listing_create/index', [
             '_current' => true
-        ));
-        $this->addButton('save_and_next', array(
+        ]);
+        $this->addButton('save_and_next', [
             'label'     => $this->__('Next Step'),
             'onclick'   => 'CommonObj.saveClick(\'' . $url . '\')',
             'class'     => 'action-primary forward'
-        ));
+        ]);
         // ---------------------------------------
     }
 

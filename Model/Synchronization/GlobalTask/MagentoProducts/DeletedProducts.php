@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts;
 
+/**
+ * Class DeletedProducts
+ * @package Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts
+ */
 class DeletedProducts extends AbstractModel
 {
     private $itemModel;
@@ -21,8 +25,7 @@ class DeletedProducts extends AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->itemModel = $itemModel;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($activeRecordFactory, $helperFactory, $modelFactory);
@@ -93,21 +96,22 @@ class DeletedProducts extends AbstractModel
         $collection->getSelect()->columns('product_id');
         $collection->getSelect()->distinct(true);
 
-        $entityTableName = $this->getHelper('Module\Database\Structure')
+        $entityTableName = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('catalog_product_entity');
 
         $collection->getSelect()->joinLeft(
-            array('cpe'=>$entityTableName), '(cpe.entity_id = `main_table`.product_id)',array('entity_id')
+            ['cpe'=>$entityTableName],
+            '(cpe.entity_id = `main_table`.product_id)',
+            ['entity_id']
         );
 
         $collection->getSelect()->where('cpe.entity_id IS NULL');
 
-        $tempProductsIds = array();
+        $tempProductsIds = [];
         $rows = $collection->toArray();
 
         foreach ($rows['items'] as $row) {
-
-            if (in_array((int)$row['product_id'],$tempProductsIds)) {
+            if (in_array((int)$row['product_id'], $tempProductsIds)) {
                 continue;
             }
 
@@ -127,21 +131,22 @@ class DeletedProducts extends AbstractModel
         $collection->getSelect()->distinct(true);
         $collection->getSelect()->where('product_id IS NOT NULL');
 
-        $entityTableName = $this->getHelper('Module\Database\Structure')
+        $entityTableName = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('catalog_product_entity');
 
         $collection->getSelect()->joinLeft(
-            array('cpe'=>$entityTableName), '(cpe.entity_id = `main_table`.product_id)',array('entity_id')
+            ['cpe'=>$entityTableName],
+            '(cpe.entity_id = `main_table`.product_id)',
+            ['entity_id']
         );
 
         $collection->getSelect()->where('cpe.entity_id IS NULL');
 
-        $tempProductsIds = array();
+        $tempProductsIds = [];
         $rows = $collection->toArray();
 
         foreach ($rows['items'] as $row) {
-
-            if (in_array((int)$row['product_id'],$tempProductsIds)) {
+            if (in_array((int)$row['product_id'], $tempProductsIds)) {
                 continue;
             }
 
@@ -155,7 +160,6 @@ class DeletedProducts extends AbstractModel
     private function deleteItems()
     {
         foreach ($this->getHelper('Component')->getComponents() as $component) {
-
             $upperCasedComponent = ucfirst($component);
             $model = $this->activeRecordFactory->getObject("{$upperCasedComponent}\\Item");
 
@@ -170,21 +174,22 @@ class DeletedProducts extends AbstractModel
             $collection->getSelect()->distinct(true);
             $collection->getSelect()->where('product_id IS NOT NULL');
 
-            $entityTableName = $this->getHelper('Module\Database\Structure')
+            $entityTableName = $this->getHelper('Module_Database_Structure')
                 ->getTableNameWithPrefix('catalog_product_entity');
 
             $collection->getSelect()->joinLeft(
-                array('cpe'=>$entityTableName), '(cpe.entity_id = `main_table`.product_id)', array('entity_id')
+                ['cpe'=>$entityTableName],
+                '(cpe.entity_id = `main_table`.product_id)',
+                ['entity_id']
             );
 
             $collection->getSelect()->where('cpe.entity_id IS NULL');
 
-            $tempProductsIds = array();
+            $tempProductsIds = [];
             $rows = $collection->toArray();
 
             foreach ($rows['items'] as $row) {
-
-                if (in_array((int)$row['product_id'],$tempProductsIds)) {
+                if (in_array((int)$row['product_id'], $tempProductsIds)) {
                     continue;
                 }
 

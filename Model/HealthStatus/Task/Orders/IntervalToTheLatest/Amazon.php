@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\HealthStatus\Task\Orders\IntervalToTheLatest;
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 
+/**
+ * Class Amazon
+ * @package Ess\M2ePro\Model\HealthStatus\Task\Orders\IntervalToTheLatest
+ */
 class Amazon extends IssueType
 {
     const DIFF_CRITICAL_FACTOR = 1.50;
@@ -32,7 +36,7 @@ class Amazon extends IssueType
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory);
         $this->resultFactory = $resultFactory;
         $this->amazonFactory = $amazonFactory;
@@ -55,10 +59,9 @@ class Amazon extends IssueType
         $result->setTaskData($currentInterval);
 
         if ($currentInterval >= $maxInterval * self::DIFF_WARNING_FACTOR) {
-
             $result->setTaskResult(TaskResult::STATE_WARNING);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-<<<HTML
+            <<<HTML
 It was detected that there were no orders imported into your M2E Pro during the latest <b>%interval%</b> hours.
 Such case might be a sequence of some issue with your Module running (e.g. failed Install/Upgrade processes,
 incorrect settings for Magento Cron and inability to use M2E Pro Cron Service, lost connection to M2E Pro Servers,
@@ -78,10 +81,9 @@ HTML
         }
 
         if ($currentInterval >= $maxInterval * self::DIFF_CRITICAL_FACTOR) {
-
             $result->setTaskResult(TaskResult::STATE_CRITICAL);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-<<<HTML
+            <<<HTML
 It seems that there were no orders imported into your M2E Pro during the latest <b>%interval%</b> hours
 which is rather unusual. We strongly recommend you to ensure that there were purchases made on Channel.<br>
 If the purchases are available on Channel, there might be some issue with your Module running
@@ -134,12 +136,10 @@ HTML
         $maxInterval = 0;
         $previousItemDate = null;
 
-        foreach ($collection->getItems() as $item){
-
+        foreach ($collection->getItems() as $item) {
             $currentItemDate = new \DateTime($item->getData('purchase_create_date'), new \DateTimeZone('UTC'));
 
-            if (is_null($previousItemDate)) {
-
+            if ($previousItemDate === null) {
                 $previousItemDate = $currentItemDate;
                 continue;
             }

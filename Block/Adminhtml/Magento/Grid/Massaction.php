@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid;
 
+/**
+ * Class Massaction
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Grid
+ */
 class Massaction extends \Magento\Backend\Block\Widget\Grid\Massaction\Extended
 {
-    protected $_groups      = array();
+    protected $_groups      = [];
 
     //########################################
 
@@ -24,16 +28,16 @@ class Massaction extends \Magento\Backend\Block\Widget\Grid\Massaction\Extended
     public function setGroups(array $groups)
     {
         foreach ($groups as $groupName => $label) {
-            $this->_groups[$groupName] = array(
+            $this->_groups[$groupName] = [
                 'label' => $label,
-                'items' => array()
-            );
+                'items' => []
+            ];
         }
 
         return $this;
     }
 
-    public function addItem($itemId, array $item, $group = NULL)
+    public function addItem($itemId, array $item, $group = null)
     {
         if (!empty($group) && isset($this->_groups[$group])) {
             $this->_groups[$group]['items'][] = $itemId;
@@ -86,14 +90,15 @@ HTML;
 
     public function wrapOptionsInOptGroups($html)
     {
+        libxml_use_internal_errors(true);
+
         $dom = new \DOMDocument();
-        @$dom->loadHTML($html);
+        $dom->loadHTML($html);
 
         $xpathObj = new \DOMXPath($dom);
         $select = $dom->getElementsByTagName('select')->item(0);
 
         foreach ($this->_groups as $groupName => $groupData) {
-
             if (count($groupData['items']) == 0) {
                 continue;
             }
@@ -113,23 +118,19 @@ HTML;
 
         // Moving remaining options in end of list
         foreach ($xpathObj->query('//select/option', $select) as $option) {
-
             if (empty($option->getAttribute('value'))) {
                 continue;
             }
 
-            try {
-
-                $option = $select->removeChild($option);
-                $select->appendChild($option);
-
-            } catch(\DOMException $e) {}
+            $option = $select->removeChild($option);
+            $select->appendChild($option);
         }
 
         // Removing doctype, html, body
         $dom->removeChild($dom->doctype);
         $dom->replaceChild($dom->firstChild->firstChild->firstChild, $dom->firstChild);
 
+        libxml_use_internal_errors(false);
         return $dom->saveHTML();
     }
 

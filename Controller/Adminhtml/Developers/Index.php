@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Developers;
 
 use Ess\M2ePro\Controller\Adminhtml\Developers;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Developers
+ */
 class Index extends Developers
 {
     //########################################
@@ -23,9 +27,9 @@ class Index extends Developers
 
     public function execute()
     {
-        $activeTab = $this->getRequest()->getParam('active_tab', NULL);
+        $activeTab = $this->getRequest()->getParam('active_tab', null);
 
-        if (is_null($activeTab)) {
+        if ($activeTab === null) {
             $activeTab = \Ess\M2ePro\Block\Adminhtml\Developers\Tabs::TAB_ID_INSTALLATION_DETAILS;
         }
 
@@ -47,8 +51,10 @@ class Index extends Developers
 
         $referrer = $this->getRequest()->getParam('referrer', false);
 
-        if ($referrer == 'ebay') {
+        if ($referrer === 'ebay') {
             $this->setPageHelpLink('x/sglPAQ');
+        } elseif ($referrer === 'walmart') {
+            $this->setPageHelpLink('x/qIFwAQ');
         } else {
             $this->setPageHelpLink('x/nxBPAQ');
         }

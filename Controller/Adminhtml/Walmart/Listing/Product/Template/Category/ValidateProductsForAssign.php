@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Categ
 
 use \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category;
 
+/**
+ * Class ValidateProductsForAssign
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category
+ */
 class ValidateProductsForAssign extends Category
 {
     public function execute()
@@ -47,7 +51,7 @@ class ValidateProductsForAssign extends Category
             return $this->getResult();
         }
 
-        $block = $this->createBlock('Walmart\Listing\Product\Template\Category');
+        $block = $this->createBlock('Walmart_Listing_Product_Template_Category');
         if (!empty($messages)) {
             $block->setMessages($messages);
         }

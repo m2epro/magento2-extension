@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
 use \Ess\M2ePro\Block\Adminhtml\Listing\Switcher as AbstractSwitcher;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing
+ */
 class Switcher extends AbstractSwitcher
 {
     //########################################

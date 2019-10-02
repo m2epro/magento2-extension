@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
+/**
+ * Class ViewSearchSettings
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
+ */
 class ViewSearchSettings extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {
     //########################################
@@ -22,7 +26,7 @@ class ViewSearchSettings extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
             return $this->getResult();
         }
 
-        $settings = $this->createBlock('Amazon\Listing\Create\Search');
+        $settings = $this->createBlock('Amazon_Listing_Create_Search');
 
         $this->setAjaxContent($settings->toHtml());
 

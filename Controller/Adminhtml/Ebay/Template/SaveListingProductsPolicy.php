@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
+/**
+ * Class SaveListingProductsPolicy
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template
+ */
 class SaveListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
 {
     /** @var \Magento\Framework\DB\TransactionFactory  */
-    protected $transactionFactory = NULL;
+    protected $transactionFactory = null;
 
     //########################################
 
@@ -20,8 +24,7 @@ class SaveListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
         \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
-    )
-    {
+    ) {
         $this->transactionFactory = $transactionFactory;
         parent::__construct($templateManager, $ebayFactory, $context);
     }
@@ -115,7 +118,7 @@ class SaveListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
             $idColumn = $manager->getIdColumnNameByMode($templateMode);
             $modeColumn = $manager->getModeColumnName();
 
-            if (!is_null($idColumn)) {
+            if ($idColumn !== null) {
                 $data[$idColumn] = (int)$templateId;
             }
 
@@ -143,11 +146,11 @@ class SaveListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
         foreach ($modes as $mode) {
             $column = $this->templateManager->setTemplate($nick)->getIdColumnNameByMode($mode);
 
-            if (is_null($column)) {
+            if ($column === null) {
                 continue;
             }
 
-            $data[$column] = NULL;
+            $data[$column] = null;
         }
     }
 

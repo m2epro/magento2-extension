@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon;
 
+/**
+ * Class Settings
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon
+ */
 class Settings extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     //########################################
@@ -25,11 +29,11 @@ class Settings extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         $this->removeButton('save');
         $this->removeButton('edit');
 
-        $this->addButton('save', array(
+        $this->addButton('save', [
             'label'     => $this->__('Save'),
             'onclick'   => 'SettingsObj.saveSettingsTab()',
             'class'     => 'primary'
-        ));
+        ]);
     }
 
     //########################################

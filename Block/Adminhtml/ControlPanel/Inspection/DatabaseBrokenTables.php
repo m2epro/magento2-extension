@@ -8,11 +8,15 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection;
 
+/**
+ * Class DatabaseBrokenTables
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection
+ */
 class DatabaseBrokenTables extends AbstractInspection
 {
-    public $emptyTables        = array();
-    public $notInstalledTables = array();
-    public $crashedTables      = array();
+    public $emptyTables        = [];
+    public $notInstalledTables = [];
+    public $crashedTables      = [];
 
     //########################################
 
@@ -52,11 +56,10 @@ class DatabaseBrokenTables extends AbstractInspection
 
     private function getEmptyTables()
     {
-        $helper = $this->getHelper('Module\Database\Structure');
+        $helper = $this->getHelper('Module_Database_Structure');
 
-        $emptyTables = array();
+        $emptyTables = [];
         foreach ($this->getGeneralTables() as $table) {
-
             if (!$helper->isTableReady($table)) {
                 continue;
             }
@@ -69,9 +72,9 @@ class DatabaseBrokenTables extends AbstractInspection
 
     private function getNotInstalledTables()
     {
-        $helper = $this->getHelper('Module\Database\Structure');
+        $helper = $this->getHelper('Module_Database_Structure');
 
-        $notInstalledTables = array();
+        $notInstalledTables = [];
         foreach ($helper->getMySqlTables() as $tableName) {
             !$helper->isTableExists($tableName) && $notInstalledTables[] = $tableName;
         }
@@ -81,11 +84,10 @@ class DatabaseBrokenTables extends AbstractInspection
 
     private function getCrashedTables()
     {
-        $helper = $this->getHelper('Module\Database\Structure');
+        $helper = $this->getHelper('Module_Database_Structure');
 
-        $crashedTables = array();
+        $crashedTables = [];
         foreach ($helper->getMySqlTables() as $tableName) {
-
             if (!$helper->isTableExists($tableName)) {
                 continue;
             }
@@ -100,7 +102,7 @@ class DatabaseBrokenTables extends AbstractInspection
 
     private function getGeneralTables()
     {
-        return array(
+        return [
             'm2epro_primary_config',
             'm2epro_module_config',
             'm2epro_synchronization_config',
@@ -108,7 +110,7 @@ class DatabaseBrokenTables extends AbstractInspection
             'm2epro_marketplace',
             'm2epro_amazon_marketplace',
             'm2epro_ebay_marketplace',
-        );
+        ];
     }
 
     //########################################

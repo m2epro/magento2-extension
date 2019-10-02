@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
+/**
+ * Class RemoveFilter
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ */
 class RemoveFilter extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -21,16 +25,16 @@ class RemoveFilter extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Filter\Collection $filters */
-        $filters = $this->activeRecordFactory->getObject('Ebay\Motor\Filter')->getCollection()
-            ->addFieldToFilter('id', array('in' => $filtersIds));
+        $filters = $this->activeRecordFactory->getObject('Ebay_Motor_Filter')->getCollection()
+            ->addFieldToFilter('id', ['in' => $filtersIds]);
 
         foreach ($filters->getItems() as $filter) {
             $connection = $this->resourceConnection->getConnection();
-            $table = $this->getHelper('Module\Database\Structure')
+            $table = $this->getHelper('Module_Database_Structure')
                 ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
 
             $select = $connection->select();
-            $select->from(array('emftg' => $table), array('group_id'))
+            $select->from(['emftg' => $table], ['group_id'])
                 ->where('filter_id IN (?)', $filter->getId());
 
             $groupIds = $connection->fetchCol($select);
@@ -39,7 +43,7 @@ class RemoveFilter extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
             foreach ($groupIds as $groupId) {
                 /** @var \Ess\M2ePro\Model\Ebay\Motor\Group $group */
-                $group = $this->activeRecordFactory->getObjectLoaded('Ebay\Motor\Group', $groupId);
+                $group = $this->activeRecordFactory->getObjectLoaded('Ebay_Motor_Group', $groupId);
 
                 if (count($group->getFiltersIds()) === 0) {
                     $group->delete();

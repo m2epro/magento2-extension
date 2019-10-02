@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit
+ */
 class Tabs extends AbstractTabs
 {
     protected function _construct()
@@ -25,52 +29,50 @@ class Tabs extends AbstractTabs
         /** @var $account \Ess\M2ePro\Model\Account */
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
 
-        $this->addTab('general', array(
+        $this->addTab('general', [
             'label'   => $this->__('General'),
             'title'   => $this->__('General'),
-            'content' => $this->createBlock('Amazon\Account\Edit\Tabs\General')->toHtml(),
-        ));
+            'content' => $this->createBlock('Amazon_Account_Edit_Tabs_General')->toHtml(),
+        ]);
 
-        $this->addTab('listingOther', array(
+        $this->addTab('listingOther', [
             'label'   => $this->__('3rd Party Listings'),
             'title'   => $this->__('3rd Party Listings'),
-            'content' => $this->createBlock('Amazon\Account\Edit\Tabs\ListingOther')->toHtml(),
-        ));
+            'content' => $this->createBlock('Amazon_Account_Edit_Tabs_ListingOther')->toHtml(),
+        ]);
 
-        $this->addTab('orders', array(
+        $this->addTab('orders', [
             'label'   => $this->__('Orders'),
             'title'   => $this->__('Orders'),
-            'content' => $this->createBlock('Amazon\Account\Edit\Tabs\Order')->toHtml(),
-        ));
+            'content' => $this->createBlock('Amazon_Account_Edit_Tabs_Order')->toHtml(),
+        ]);
 
-        $this->addTab('shipping_settings', array(
+        $this->addTab('shipping_settings', [
             'label'   => $this->__('Shipping Settings'),
             'title'   => $this->__('Shipping Settings'),
-            'content' => $this->createBlock('Amazon\Account\Edit\Tabs\ShippingSettings')->toHtml(),
-        ));
+            'content' => $this->createBlock('Amazon_Account_Edit_Tabs_ShippingSettings')->toHtml(),
+        ]);
 
-        if (
-            !is_null($account)
+        if ($account !== null
             && $account->getId()
             && $account->getChildObject()->getMarketplace()->getChildObject()->isVatCalculationServiceAvailable()
         ) {
-            $this->addTab('vat_calculation_service', array(
+            $this->addTab('vat_calculation_service', [
                 'label'   => $this->__('VAT Calculation Service'),
                 'title'   => $this->__('VAT Calculation Service'),
-                'content' => $this->createBlock('Amazon\Account\Edit\Tabs\VatCalculationService')->toHtml(),
-            ));
+                'content' => $this->createBlock('Amazon_Account_Edit_Tabs_VatCalculationService')->toHtml(),
+            ]);
         }
 
-        if (
-            !is_null($account)
+        if ($account !== null
             && $account->getId()
-            && $this->getHelper('Component\Amazon\Repricing')->isEnabled()
+            && $this->getHelper('Component_Amazon_Repricing')->isEnabled()
         ) {
-            $this->addTab('repricing', array(
+            $this->addTab('repricing', [
                 'label'   => $this->__('Repricing Tool'),
                 'title'   => $this->__('Repricing Tool'),
-                'content' => $this->createBlock('Amazon\Account\Edit\Tabs\Repricing')->toHtml(),
-            ));
+                'content' => $this->createBlock('Amazon_Account_Edit_Tabs_Repricing')->toHtml(),
+            ]);
         }
 
         $this->setActiveTab($this->getRequest()->getParam('tab', 'general'));

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class Preview
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description
+ */
 class Preview extends AbstractBlock
 {
     protected $_template = 'ebay/template/description/preview.phtml';

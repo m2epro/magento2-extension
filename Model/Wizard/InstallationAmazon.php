@@ -10,9 +10,13 @@ namespace Ess\M2ePro\Model\Wizard;
 
 use Ess\M2ePro\Model\Wizard;
 
+/**
+ * Class InstallationAmazon
+ * @package Ess\M2ePro\Model\Wizard
+ */
 class InstallationAmazon extends Wizard
 {
-    protected $steps = array(
+    protected $steps = [
         'registration',
         'account',
 
@@ -25,7 +29,7 @@ class InstallationAmazon extends Wizard
         'productSelection',
         'searchAsin',
         'newAsin'
-    );
+    ];
 
     //########################################
 

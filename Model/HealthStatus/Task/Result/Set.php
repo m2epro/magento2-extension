@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\HealthStatus\Task\Result;
 
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
+/**
+ * Class Set
+ * @package Ess\M2ePro\Model\HealthStatus\Task\Result
+ */
 class Set extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var Result[] */
@@ -99,11 +103,10 @@ class Set extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getByKeys($affectedKeys = null, $skipHiddenResults = true)
     {
-        is_null($affectedKeys) && $affectedKeys = $this->getAllKeys();
+        $affectedKeys === null && $affectedKeys = $this->getAllKeys();
 
         $results = [];
         foreach ($affectedKeys as $affectedKey) {
-
             if (!isset($this->results[$affectedKey])) {
                 continue;
             }

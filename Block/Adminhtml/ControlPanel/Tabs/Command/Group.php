@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class Group
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command
+ */
 class Group extends AbstractBlock
 {
     //########################################
@@ -27,7 +31,7 @@ class Group extends AbstractBlock
     {
         $this->enabledComponents = $this->getHelper('Component')->getEnabledComponents();
 
-        $this->commands = $this->getHelper('View\ControlPanel\Command')
+        $this->commands = $this->getHelper('View_ControlPanel_Command')
                             ->parseGeneralCommandsData($this->getControllerName());
 
         return parent::_beforeToHtml();

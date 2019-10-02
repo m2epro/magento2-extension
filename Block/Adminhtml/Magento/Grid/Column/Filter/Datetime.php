@@ -11,10 +11,14 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter;
 use Ess\M2ePro\Helper\Factory;
 use Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface;
 
+/**
+ * Class Datetime
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter
+ */
 class Datetime extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Datetime
 {
     /** @var Factory $helperFactory */
-    protected $helperFactory = NULL;
+    protected $helperFactory = null;
 
     //########################################
 
@@ -46,27 +50,29 @@ class Datetime extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Datetime
         }
 
         try {
-
+            // $format   = $this->getColumn()->getFormat()?: \IntlDateFormatter::SHORT;
             $format = \IntlDateFormatter::SHORT;
             $timezone = $this->getColumn()->getTimezone() !== false ? $this->_localeDate->getConfigTimezone()
                                                                     : 'UTC';
 
             $timeStamp = $this->helperFactory->getObject('Data')->parseTimestampFromLocalizedFormat(
-                $date, $format, $format, $timezone
+                $date,
+                $format,
+                $format,
+                $timezone
             );
 
             if (empty($timeStamp)) {
-                return NULL;
+                return null;
             }
 
-            $simpleRes = new \DateTime(NULL, new \DateTimeZone($timezone));
+            $simpleRes = new \DateTime(null, new \DateTimeZone($timezone));
             $simpleRes->setTimestamp($timeStamp);
             $simpleRes->setTimezone(new \DateTimeZone('UTC'));
 
             return $simpleRes;
-
         } catch (\Exception $e) {
-            return NULL;
+            return null;
         }
     }
 

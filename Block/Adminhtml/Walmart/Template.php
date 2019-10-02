@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart;
 
 use Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid;
 
+/**
+ * Class Template
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart
+ */
 class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -43,23 +47,19 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
 
     protected function _prepareLayout()
     {
-        $content = $this->__('
+        $content = $this->__(
+            '
             <strong>Category Policy</strong> includes the Walmart Category/Subcategory and
             Specifics that best describe your Item.<br/><br/>
 
             <strong>Description Policy</strong> highlights the most essential Product details, e.g.
-            Title, Brand, Images, etc..<br/><br/>
+            Title, Brand, Images, etc.<br/><br/>
 
-            <strong>Selling Policy</strong> contains conditions based on which you are going to sell your Item on
-            the Channel, e.g. Item Price, Quantity, Shipping and Product Tax Code settings, etc.<br /><br />
+            <strong>Selling Policy</strong> contains conditions based on which you are going to sell your
+            Item on the Channel, e.g. Item Price, Quantity, Shipping and Product Tax Code settings, etc.<br /><br />
 
-            <strong>Synchronization Policy</strong> defines the Rules based on which your Walmart
-            Items will be dynamically updated with Magento data.<br/><br/>
-
-            The detailed information can be found
-            <a href="%url%" target="_blank" class="external-link">here</a>.',
-
-            $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/QwBhAQ')
+            <strong>Synchronization Policy</strong> defines the Rules based on which your Walmart Items will
+            be dynamically updated with Magento data.<br/><br/>'
         );
 
         $this->appendHelpBlock([

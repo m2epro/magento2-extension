@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\System\Config\Ebay;
 
+/**
+ * Class Field
+ * @package Ess\M2ePro\Block\Adminhtml\System\Config\Ebay
+ */
 class Field extends \Ess\M2ePro\Block\Adminhtml\System\Config\Integration
 {
     /**
@@ -16,7 +20,8 @@ class Field extends \Ess\M2ePro\Block\Adminhtml\System\Config\Integration
     protected function _getElementHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
         $element->setValue((int)$this->moduleHelper->getConfig()->getGroupValue(
-            '/component/ebay/', 'mode'
+            '/component/ebay/',
+            'mode'
         ));
 
         return parent::_getElementHtml($element);

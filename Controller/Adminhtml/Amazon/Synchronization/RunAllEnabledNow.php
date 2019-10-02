@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Synchronization;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Settings;
 
+/**
+ * Class RunAllEnabledNow
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Synchronization
+ */
 class RunAllEnabledNow extends Settings
 {
     //########################################
@@ -21,9 +25,9 @@ class RunAllEnabledNow extends Settings
         /** @var $dispatcher \Ess\M2ePro\Model\Synchronization\Dispatcher */
         $dispatcher = $this->modelFactory->getObject('Synchronization\Dispatcher');
 
-        $dispatcher->setAllowedComponents(array(\Ess\M2ePro\Helper\Component\Amazon::NICK));
+        $dispatcher->setAllowedComponents([\Ess\M2ePro\Helper\Component\Amazon::NICK]);
 
-        $dispatcher->setAllowedTasksTypes(array(
+        $dispatcher->setAllowedTasksTypes([
             \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::PROCESSING,
             \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::MAGENTO_PRODUCTS,
             \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::STOP_QUEUE,
@@ -32,10 +36,10 @@ class RunAllEnabledNow extends Settings
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::TEMPLATES,
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::ORDERS,
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::OTHER_LISTINGS
-        ));
+        ]);
 
         $dispatcher->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
-        $dispatcher->setParams(array());
+        $dispatcher->setParams([]);
 
         $dispatcher->process();
     }

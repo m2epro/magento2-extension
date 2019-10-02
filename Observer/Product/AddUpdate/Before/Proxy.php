@@ -8,16 +8,20 @@
 
 namespace Ess\M2ePro\Observer\Product\AddUpdate\Before;
 
+/**
+ * Class Proxy
+ * @package Ess\M2ePro\Observer\Product\AddUpdate\Before
+ */
 class Proxy
 {
-    private $productId = NULL;
-    private $storeId = NULL;
+    private $productId = null;
+    private $storeId = null;
 
-    private $data = array();
-    private $attributes = array();
+    private $data = [];
+    private $attributes = [];
 
-    private $websiteIds = array();
-    private $categoriesIds = array();
+    private $websiteIds = [];
+    private $categoriesIds = [];
 
     //########################################
 
@@ -64,7 +68,7 @@ class Proxy
 
     public function getData($key)
     {
-        return isset($this->data[$key]) ? $this->data[$key] : NULL;
+        return isset($this->data[$key]) ? $this->data[$key] : null;
     }
 
     // ---------------------------------------
@@ -72,7 +76,7 @@ class Proxy
     /**
      * @param array $attributes
      */
-    public function setAttributes(array $attributes = array())
+    public function setAttributes(array $attributes = [])
     {
         $this->attributes = $attributes;
     }
@@ -90,7 +94,7 @@ class Proxy
     /**
      * @param array $ids
      */
-    public function setWebsiteIds(array $ids = array())
+    public function setWebsiteIds(array $ids = [])
     {
         $this->websiteIds = $ids;
     }
@@ -108,7 +112,7 @@ class Proxy
     /**
      * @param array $ids
      */
-    public function setCategoriesIds(array $ids = array())
+    public function setCategoriesIds(array $ids = [])
     {
         $this->categoriesIds = $ids;
     }

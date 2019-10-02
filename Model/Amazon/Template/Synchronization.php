@@ -131,9 +131,9 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getListings($asObjects = false, array $filters = array())
+    public function getListings($asObjects = false, array $filters = [])
     {
-        return $this->getRelatedComponentItems('Listing','template_synchronization_id',$asObjects,$filters);
+        return $this->getRelatedComponentItems('Listing', 'template_synchronization_id', $asObjects, $filters);
     }
 
     //########################################
@@ -571,7 +571,8 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Collection $listingCollection */
         $listingCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing'
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Listing'
         )->getCollection();
         $listingCollection->addFieldToFilter('template_synchronization_id', $this->getId());
         $listingCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
@@ -579,9 +580,10 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Product'
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Listing\Product'
         )->getCollection();
-        $listingProductCollection->addFieldToFilter('listing_id',array('in' => $listingCollection->getSelect()));
+        $listingProductCollection->addFieldToFilter('listing_id', ['in' => $listingCollection->getSelect()]);
 
         if ($onlyPhysicalUnits) {
             $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
@@ -597,12 +599,12 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id', 'synch_status', 'synch_reasons'));
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id', 'synch_status', 'synch_reasons']);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

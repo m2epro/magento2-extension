@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel;
 
+/**
+ * Class ProductChange
+ * @package Ess\M2ePro\Model\ResourceModel
+ */
 class ProductChange extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################

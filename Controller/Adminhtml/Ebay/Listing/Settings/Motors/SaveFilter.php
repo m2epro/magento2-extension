@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
+/**
+ * Class SaveFilter
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ */
 class SaveFilter extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -23,14 +27,14 @@ class SaveFilter extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             }
         }
 
-        $data = array(
+        $data = [
             'title' => $post['title'],
             'type' => $post['type'],
             'note' => $post['note'],
             'conditions' => $this->getHelper('Data')->jsonEncode($post['conditions']),
-        );
+        ];
 
-        $model = $this->activeRecordFactory->getObject('Ebay\Motor\Filter');
+        $model = $this->activeRecordFactory->getObject('Ebay_Motor_Filter');
         $model->addData($data)->save();
 
         $this->setAjaxContent(0, false);

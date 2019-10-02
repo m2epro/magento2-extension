@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task;
 
+/**
+ * Class Messages
+ * @package Ess\M2ePro\Model\Servicing\Task
+ */
 class Messages extends \Ess\M2ePro\Model\Servicing\Task
 {
     //########################################
@@ -27,7 +31,7 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
      */
     public function getRequestData()
     {
-        return array();
+        return [];
     }
 
     public function processResponseData(array $data)
@@ -44,7 +48,7 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
             return isset($message['is_global']) && (bool)$message['is_global'];
         });
 
-        $magentoTypes = array(
+        $magentoTypes = [
             \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_NOTICE =>
                 \Magento\Framework\Notification\MessageInterface::SEVERITY_NOTICE,
             \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_SUCCESS =>
@@ -53,7 +57,7 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
                 \Magento\Framework\Notification\MessageInterface::SEVERITY_MINOR,
             \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_ERROR =>
                 \Magento\Framework\Notification\MessageInterface::SEVERITY_CRITICAL
-        );
+        ];
 
         foreach ($messages as $message) {
             $this->getHelper('Magento')->addGlobalNotification(
@@ -75,13 +79,14 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
         /** @var \Ess\M2ePro\Model\Registry $registryModel */
         $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', '/server/messages/', 'key', false);
 
-        if (is_null($registryModel)) {
+        if ($registryModel === null) {
             $registryModel = $this->activeRecordFactory->getObject('Registry');
             $registryModel->setData('key', '/server/messages/');
         }
 
         $registryModel->setData(
-            'value', $this->getHelper('Data')->jsonEncode($messages)
+            'value',
+            $this->getHelper('Data')->jsonEncode($messages)
         )->save();
     }
 

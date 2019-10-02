@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Other;
 
+/**
+ * Class Updating
+ * @package Ess\M2ePro\Model\Ebay\Listing\Other
+ */
 class Updating extends \Ess\M2ePro\Model\AbstractModel
 {
     const EBAY_STATUS_ACTIVE = 'Active';
@@ -20,9 +24,9 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Account|null
      */
-    protected $account = NULL;
+    protected $account = null;
 
-    protected $logsActionId = NULL;
+    protected $logsActionId = null;
 
     protected $resourceConnection;
     protected $activeRecordFactory;
@@ -36,8 +40,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;
@@ -46,7 +49,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function initialize(\Ess\M2ePro\Model\Account $account = NULL)
+    public function initialize(\Ess\M2ePro\Model\Account $account = null)
     {
         $this->account = $account;
     }
@@ -65,14 +68,13 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
         $responseData['items'] = $this->filterReceivedOnlyOtherListings($responseData['items']);
 
         /** @var $logModel \Ess\M2ePro\Model\Listing\Other\Log */
-        $logModel = $this->activeRecordFactory->getObject('Listing\Other\Log');
+        $logModel = $this->activeRecordFactory->getObject('Listing_Other_Log');
         $logModel->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
 
         /** @var $mappingModel \Ess\M2ePro\Model\Ebay\Listing\Other\Mapping */
-        $mappingModel = $this->modelFactory->getObject('Ebay\Listing\Other\Mapping');
+        $mappingModel = $this->modelFactory->getObject('Ebay_Listing_Other_Mapping');
 
         foreach ($responseData['items'] as $receivedItem) {
-
             $collection = $this->ebayFactory->getObject('Listing\Other')->getCollection()
                 ->addFieldToFilter('item_id', $receivedItem['id'])
                 ->addFieldToFilter('account_id', $this->getAccount()->getId())
@@ -86,7 +88,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            $newData = array(
+            $newData = [
                 'title' => (string)$receivedItem['title'],
                 'currency' => (string)$receivedItem['currency'],
                 'online_price' => (float)$receivedItem['currentPrice'],
@@ -95,10 +97,9 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
                 'online_bids' => (int)$receivedItem['bidCount'],
                 'start_date' => (string)$this->getHelper('Data')->getDate($receivedItem['startTime']),
                 'end_date' => (string)$this->getHelper('Data')->getDate($receivedItem['endTime'])
-            );
+            ];
 
             if (isset($receivedItem['listingDuration'])) {
-
                 $duration = str_replace(self::EBAY_DURATION_DAYS_PREFIX, '', $receivedItem['listingDuration']);
                 if ($duration == self::EBAY_DURATION_GTC) {
                     $duration = \Ess\M2ePro\Helper\Component\Ebay::LISTING_DURATION_GTC;
@@ -116,7 +117,9 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
                 $newData['item_id'] = (double)$receivedItem['id'];
                 $newData['account_id'] = (int)$this->getAccount()->getId();
                 $newData['marketplace_id'] = (int)$this->ebayFactory->getCachedObjectLoaded(
-                    'Marketplace', $receivedItem['marketplace'], 'code'
+                    'Marketplace',
+                    $receivedItem['marketplace'],
+                    'code'
                 )->getId();
             }
 
@@ -128,39 +131,27 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
             if (($receivedItem['listingStatus'] == self::EBAY_STATUS_COMPLETED ||
                  $receivedItem['listingStatus'] == self::EBAY_STATUS_ENDED) &&
                  $newData['online_qty'] == $newData['online_qty_sold']) {
-
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD;
-
-            } else if ($receivedItem['listingStatus'] == self::EBAY_STATUS_COMPLETED) {
-
+            } elseif ($receivedItem['listingStatus'] == self::EBAY_STATUS_COMPLETED) {
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
-
-            } else if ($receivedItem['listingStatus'] == self::EBAY_STATUS_ENDED) {
-
+            } elseif ($receivedItem['listingStatus'] == self::EBAY_STATUS_ENDED) {
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED;
-
-            } else if ($receivedItem['listingStatus'] == self::EBAY_STATUS_ACTIVE &&
+            } elseif ($receivedItem['listingStatus'] == self::EBAY_STATUS_ACTIVE &&
                        $receivedItem['quantity'] - $receivedItem['quantitySold'] <= 0) {
-
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN;
-
-            } else if ($receivedItem['listingStatus'] == self::EBAY_STATUS_ACTIVE) {
-
+            } elseif ($receivedItem['listingStatus'] == self::EBAY_STATUS_ACTIVE) {
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
             }
 
             $accountOutOfStockControl = $this->getAccount()->getChildObject()->getOutOfStockControl(true);
 
             if (isset($receivedItem['out_of_stock'])) {
-
-                $newData['additional_data'] = array('out_of_stock_control' => (bool)$receivedItem['out_of_stock']);
+                $newData['additional_data'] = ['out_of_stock_control' => (bool)$receivedItem['out_of_stock']];
                 $newData['additional_data'] = $this->getHelper('Data')->jsonEncode($newData['additional_data']);
-
             } elseif ($newData['status'] == \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN &&
-                      !is_null($accountOutOfStockControl) && !$accountOutOfStockControl) {
-
+                      $accountOutOfStockControl !== null && !$accountOutOfStockControl) {
                 // Listed Hidden Status can be only for GTC items
-                if (!$existsId || is_null($existObject->getChildObject()->getOnlineDuration())) {
+                if (!$existsId || $existObject->getChildObject()->getOnlineDuration() === null) {
                     $newData['online_duration'] = \Ess\M2ePro\Helper\Component\Ebay::LISTING_DURATION_GTC;
                 }
 
@@ -168,15 +159,14 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
                     $additionalData = $existObject->getAdditionalData();
                     empty($additionalData['out_of_stock_control']) && $additionalData['out_of_stock_control'] = true;
                 } else {
-                    $additionalData = array('out_of_stock_control' => true);
+                    $additionalData = ['out_of_stock_control' => true];
                 }
 
                 $newData['additional_data'] = $this->getHelper('Data')->jsonEncode($additionalData);
             }
 
             if ($existsId) {
-
-                $tempLogMessages = array();
+                $tempLogMessages = [];
 
                 if ($newData['online_price'] != $existObject->getChildObject()->getOnlinePrice()) {
                     // M2ePro\TRANSLATIONS
@@ -244,16 +234,17 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
             $existObject->save();
 
             if (!$existsId) {
-
-                $logModel->addProductMessage($existObject->getId(),
-                     \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-                     NULL,
-                     \Ess\M2ePro\Model\Listing\Other\Log::ACTION_ADD_ITEM,
+                $logModel->addProductMessage(
+                    $existObject->getId(),
+                    \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+                    null,
+                    \Ess\M2ePro\Model\Listing\Other\Log::ACTION_ADD_ITEM,
                     // M2ePro\TRANSLATIONS
                     // Item was successfully Added
                      'Item was successfully Added',
-                     \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-                     \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW);
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+                );
 
                 if (!$this->getAccount()->getChildObject()->isOtherListingsMappingEnabled()) {
                     continue;
@@ -274,13 +265,13 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
 
         if (isset($responseData['to_time'])) {
             if (is_array($responseData['to_time'])) {
-                $tempToTime = array();
+                $tempToTime = [];
                 foreach ($responseData['to_time'] as $tempToTime2) {
                     $tempToTime[] = strtotime($tempToTime2);
                 }
-                sort($tempToTime,SORT_NUMERIC);
+                sort($tempToTime, SORT_NUMERIC);
                 $tempToTime = array_pop($tempToTime);
-                $tempToTime = date('Y-m-d H:i:s',$tempToTime);
+                $tempToTime = date('Y-m-d H:i:s', $tempToTime);
             } else {
                 $tempToTime = $responseData['to_time'];
             }
@@ -300,16 +291,15 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
     {
         $connection = $this->resourceConnection->getConnection();
 
-        $receivedItemsByItemId = array();
-        $receivedItemsIds      = array();
+        $receivedItemsByItemId = [];
+        $receivedItemsIds      = [];
 
         foreach ($receivedItems as $receivedItem) {
             $receivedItemsIds[] = (string)$receivedItem['id'];
             $receivedItemsByItemId[(string)$receivedItem['id']] = $receivedItem;
         }
 
-        foreach (array_chunk($receivedItemsIds,500,true) as $partReceivedItemsIds) {
-
+        foreach (array_chunk($receivedItemsIds, 500, true) as $partReceivedItemsIds) {
             if (count($partReceivedItemsIds) <= 0) {
                 continue;
             }
@@ -318,15 +308,16 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
             $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
 
             $collection->getSelect()->join(
-                array('l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()),
-                'main_table.listing_id = l.id', array()
+                ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
+                'main_table.listing_id = l.id',
+                []
             );
             $collection->getSelect()->where('l.account_id = ?', (int)$this->getAccount()->getId());
 
             $collection->getSelect()->join(
-                array('eit' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()),
+                ['eit' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()],
                 'main_table.product_id = eit.product_id AND eit.account_id = '.(int)$this->getAccount()->getId(),
-                array('item_id')
+                ['item_id']
             );
             $collection->getSelect()->where('eit.item_id IN (?)', $partReceivedItemsIds);
 
@@ -352,11 +343,11 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
 
     protected function getLogsActionId()
     {
-        if (!is_null($this->logsActionId)) {
+        if ($this->logsActionId !== null) {
             return $this->logsActionId;
         }
 
-        return $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Other\Log')
+        return $this->logsActionId = $this->activeRecordFactory->getObject('Listing_Other_Log')
                                           ->getResource()->getNextActionId();
     }
 

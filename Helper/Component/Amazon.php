@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Helper\Component;
 
 use \Ess\M2ePro\Model\Listing\Product as ListingProduct;
 
+/**
+ * Class Amazon
+ * @package Ess\M2ePro\Helper\Component
+ */
 class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const NICK  = 'amazon';
@@ -30,8 +34,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         $this->moduleConfig = $moduleConfig;
         parent::__construct($helperFactory, $context);
@@ -53,16 +56,16 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getHumanTitleByListingProductStatus($status)
     {
-        $statuses = array(
+        $statuses = [
             ListingProduct::STATUS_UNKNOWN    => $this->getHelper('Module\Translation')->__('Unknown'),
             ListingProduct::STATUS_NOT_LISTED => $this->getHelper('Module\Translation')->__('Not Listed'),
             ListingProduct::STATUS_LISTED     => $this->getHelper('Module\Translation')->__('Active'),
             ListingProduct::STATUS_STOPPED    => $this->getHelper('Module\Translation')->__('Inactive'),
             ListingProduct::STATUS_BLOCKED    => $this->getHelper('Module\Translation')->__('Inactive (Blocked)')
-        );
+        ];
 
         if (!isset($statuses[$status])) {
-            return NULL;
+            return null;
         }
 
         return $statuses[$status];
@@ -77,7 +80,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getRegisterUrl($marketplaceId = NULL)
+    public function getRegisterUrl($marketplaceId = null)
     {
         $marketplaceId = (int)$marketplaceId;
         $marketplaceId <= 0 && $marketplaceId = self::MARKETPLACE_US;
@@ -94,22 +97,22 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
                 $marketplace->getChildObject()->getDeveloperKey();
     }
 
-    public function getItemUrl($productId, $marketplaceId = NULL)
+    public function getItemUrl($productId, $marketplaceId = null)
     {
         $marketplaceId = (int)$marketplaceId;
         $marketplaceId <= 0 && $marketplaceId = self::MARKETPLACE_US;
 
-        $domain = $this->amazonFactory->getCachedObjectLoaded('Marketplace',$marketplaceId)->getUrl();
+        $domain = $this->amazonFactory->getCachedObjectLoaded('Marketplace', $marketplaceId)->getUrl();
 
         return 'http://'.$domain.'/gp/product/'.$productId;
     }
 
-    public function getOrderUrl($orderId, $marketplaceId = NULL)
+    public function getOrderUrl($orderId, $marketplaceId = null)
     {
         $marketplaceId = (int)$marketplaceId;
         $marketplaceId <= 0 && $marketplaceId = self::MARKETPLACE_US;
 
-        $domain = $this->amazonFactory->getCachedObjectLoaded('Marketplace',$marketplaceId)->getUrl();
+        $domain = $this->amazonFactory->getCachedObjectLoaded('Marketplace', $marketplaceId)->getUrl();
 
         return 'https://sellercentral.'.$domain.'/gp/orders-v2/details/?orderID='.$orderId;
     }
@@ -138,16 +141,16 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getCurrencies()
     {
-        return array (
+        return  [
             'GBP' => 'British Pound',
             'EUR' => 'Euro',
             'USD' => 'US Dollar',
-        );
+        ];
     }
 
     public function getCarriers()
     {
-        return array(
+        return [
             'usps'  => 'USPS',
             'ups'   => 'UPS',
             'fedex' => 'FedEx',
@@ -164,7 +167,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
             'SagawaExpress',
             'NipponExpress',
             'YamatoTransport'
-        );
+        ];
     }
 
     // ----------------------------------------
@@ -174,7 +177,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->amazonFactory->getObject('Marketplace')->getCollection()
                     ->addFieldToFilter('component_mode', self::NICK)
                     ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
-                    ->addFieldToFilter('developer_key', array('notnull' => true))
+                    ->addFieldToFilter('developer_key', ['notnull' => true])
                     ->setOrder('sorder', 'ASC');
     }
 
@@ -188,7 +191,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function clearCache()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagsValues(self::NICK);
+        $this->getHelper('Data_Cache_Permanent')->removeTagsValues(self::NICK);
     }
 
     //########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder;
 
+/**
+ * Class Qty
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder
+ */
 class Qty extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\AbstractModel
 {
     //########################################
@@ -21,18 +25,11 @@ class Qty extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\A
             $this->cachedData['qty'] = $this->getWalmartListingProduct()->getQty();
         }
 
-        $data = array(
+        $data = [
             'qty' => $this->cachedData['qty'],
-        );
+        ];
 
         $this->checkQtyWarnings();
-
-        if (!isset($this->cachedData['lag_time'])) {
-            $lagTime = $this->getWalmartListingProduct()->getSellingFormatTemplateSource()->getLagTime();
-            $this->cachedData['lag_time'] = $lagTime;
-        }
-
-        $data['lag_time'] = $this->cachedData['lag_time'];
 
         return $data;
     }
@@ -44,14 +41,12 @@ class Qty extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\A
         $qtyMode = $this->getWalmartListing()->getWalmartSellingFormatTemplate()->getQtyMode();
         if ($qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED ||
             $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT) {
-
             $listingProductId = $this->getListingProduct()->getId();
             $productId = $this->getWalmartListingProduct()->getActualMagentoProduct()->getProductId();
             $storeId = $this->getListing()->getStoreId();
 
             if (!empty(\Ess\M2ePro\Model\Magento\Product::$statistics[$listingProductId][$productId][$storeId]['qty'])
             ) {
-
                 $qtys = \Ess\M2ePro\Model\Magento\Product::$statistics[$listingProductId][$productId][$storeId]['qty'];
                 foreach ($qtys as $type => $override) {
                     $this->addQtyWarnings($type);
@@ -63,8 +58,6 @@ class Qty extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\A
     public function addQtyWarnings($type)
     {
         if ($type === \Ess\M2ePro\Model\Magento\Product::FORCING_QTY_TYPE_MANAGE_STOCK_NO) {
-            // M2ePro\TRANSLATIONS
-            // During the Quantity Calculation the Settings in the "Manage Stock No" field were taken into consideration.
             $this->addWarningMessage('During the Quantity Calculation the Settings in the "Manage Stock No" ' .
                 'field were taken into consideration.');
         }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template;
 
+/**
+ * Class ProductTaxCode
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template
+ */
 class ProductTaxCode extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template
 {
     //########################################

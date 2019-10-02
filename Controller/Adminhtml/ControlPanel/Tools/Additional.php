@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
+/**
+ * Class Additional
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools
+ */
 class Additional extends Command
 {
     private $cookieManager;
@@ -37,10 +41,9 @@ class Additional extends Command
         ini_set('display_errors', 1);
 
         /** @var \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig */
-        $cacheConfig = $this->modelFactory->getObject('Config\Manager\Cache');
+        $cacheConfig = $this->modelFactory->getObject('Config_Manager_Cache');
 
         if (!$this->getRequest()->getParam('do_test', null)) {
-
             $html = '';
             if ($value = $cacheConfig->getGroupValue('/control_panel/', 'test_memory_limit')) {
                 $value = round($value, 2);
@@ -58,12 +61,14 @@ HTML;
         }
 
         $i = 0;
-        $array = array();
+        $array = [];
 
         while (1) {
             ($array[] = $array) && ((++$i % 100) == 0)
             && $cacheConfig->setGroupValue(
-                '/control_panel/', 'test_memory_limit', memory_get_usage(true) / 1000000
+                '/control_panel/',
+                'test_memory_limit',
+                memory_get_usage(true) / 1000000
             );
         }
     }
@@ -79,7 +84,7 @@ HTML;
         $seconds = (int)$this->getRequest()->getParam('seconds', null);
 
         /** @var \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig */
-        $cacheConfig = $this->modelFactory->getObject('Config\Manager\Cache');
+        $cacheConfig = $this->modelFactory->getObject('Config_Manager_Cache');
 
         $html = '';
         if ($value = $cacheConfig->getGroupValue('/control_panel/', 'test_execution_time')) {
@@ -87,13 +92,15 @@ HTML;
         }
 
         if ($seconds) {
-
             $i = 0;
             while ($i < $seconds) {
                 sleep(1);
                 ((++$i % 10) == 0) && $cacheConfig->setGroupValue(
-                    '/control_panel/', 'test_execution_time', "{$i} seconds passed"
-                );;
+                    '/control_panel/',
+                    'test_execution_time',
+                    "{$i} seconds passed"
+                );
+                ;
             }
 
             $html .= "<div>{$seconds} seconds passed successfully!</div><br/>";
@@ -116,11 +123,10 @@ HTML;
      */
     public function clearOpcodeAction()
     {
-        $messages = array();
+        $messages = [];
 
         if (!$this->getHelper('Client\Cache')->isApcAvailable() &&
             !$this->getHelper('Client\Cache')->isZendOpcacheAvailable()) {
-
             $this->getMessageManager()->addError('Opcode extensions are not installed.');
             return $this->_redirect($this->getHelper('View\ControlPanel')->getPageToolsTabUrl());
         }

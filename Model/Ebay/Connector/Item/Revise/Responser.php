@@ -24,21 +24,22 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
     //########################################
 
-    protected function processCompleted(array $data = array(), array $params = array())
+    protected function processCompleted(array $data = [], array $params = [])
     {
         if (!empty($data['already_stop'])) {
             $this->getResponseObject()->processAlreadyStopped($data, $params);
 
             // M2ePro\TRANSLATIONS
             // Item was already Stopped on eBay
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 'Item was already Stopped on eBay',
-               \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
+                \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
             );
 
             $this->getLogger()->logListingProductMessage(
-                $this->listingProduct, $message
+                $this->listingProduct,
+                $message
             );
 
             return;
@@ -54,19 +55,20 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         if ($this->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH &&
             !$this->getConfigurator()->isDefaultMode() &&
             $this->isNewRequiredSpecificNeeded($responseMessages)) {
-
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
-            $message->initFromPreparedData($this->getHelper('Module\Translation')->__(
-                'It has been detected that the Category you are using is going to require the Product Identifiers
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
+            $message->initFromPreparedData(
+                $this->getHelper('Module\Translation')->__(
+                    'It has been detected that the Category you are using is going to require the Product Identifiers
                 to be specified (UPC, EAN, ISBN, etc.). Full Revise will be automatically performed to send
                 the value(s) of the required Identifier(s) based on the settings
-                provided in the eBay Catalog Identifiers section of the Description Policy.'),
+                provided in the eBay Catalog Identifiers section of the Description Policy.'
+                ),
                 Message::TYPE_WARNING
             );
 
             $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
 
-            $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+            $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
 
             $this->processAdditionalAction($this->getActionType(), $configurator);
         }

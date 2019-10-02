@@ -16,6 +16,10 @@ use \Ess\M2ePro\Helper\Factory as HelperFactory;
 use \Magento\Framework\View\Result\PageFactory;
 use \Ess\M2ePro\Block\Adminhtml\Magento\Renderer\CssRenderer;
 
+/**
+ * Class Base
+ * @package Ess\M2ePro\Controller\Adminhtml
+ */
 abstract class Base extends Action
 {
     const LAYOUT_ONE_COLUMN  = '1column';
@@ -26,46 +30,46 @@ abstract class Base extends Action
     const GLOBAL_MESSAGES_GROUP = 'm2epro_global_messages_group';
 
     /** @var HelperFactory $helperFactory */
-    protected $helperFactory = NULL;
+    protected $helperFactory = null;
 
     /** @var ModelFactory $modelFactory */
-    protected $modelFactory = NULL;
+    protected $modelFactory = null;
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory */
-    protected $parentFactory = NULL;
+    protected $parentFactory = null;
 
     /** @var ActiveRecordFactory $activeRecordFactory */
-    protected $activeRecordFactory = NULL;
+    protected $activeRecordFactory = null;
 
     /** @var PageFactory $resultPageFactory */
-    protected $resultPageFactory = NULL;
+    protected $resultPageFactory = null;
 
     /** @var \Magento\Framework\Controller\Result\RawFactory $resultRawFactory  */
-    protected $resultRawFactory = NULL;
+    protected $resultRawFactory = null;
 
     /** @var \Magento\Framework\View\LayoutFactory $layoutFactory */
-    protected $layoutFactory = NULL;
+    protected $layoutFactory = null;
 
     /** @var CssRenderer $cssRenderer  */
-    protected $cssRenderer = NULL;
+    protected $cssRenderer = null;
 
     /** @var \Magento\Framework\App\ResourceConnection|null  */
-    protected $resourceConnection = NULL;
+    protected $resourceConnection = null;
 
     /** @var \Magento\Config\Model\Config */
-    protected $magentoConfig = NULL;
+    protected $magentoConfig = null;
 
     /** @var \Magento\Framework\Controller\Result\Raw $rawResult  */
-    protected $rawResult = NULL;
+    protected $rawResult = null;
 
     /** @var \Magento\Framework\View\LayoutInterface $emptyLayout */
-    protected $emptyLayout = NULL;
+    protected $emptyLayout = null;
 
     /** @var \Magento\Framework\View\Result\Page $resultPage  */
-    protected $resultPage = NULL;
+    protected $resultPage = null;
 
     /** @var \Ess\M2ePro\Model\Setup\PublicVersionsChecker $publicVersionsChecker */
-    private $publicVersionsChecker = NULL;
+    private $publicVersionsChecker = null;
 
     private $generalBlockWasAppended = false;
 
@@ -97,9 +101,9 @@ abstract class Base extends Action
 
     //########################################
 
-    protected function isAjax(\Magento\Framework\App\RequestInterface $request = NULL)
+    protected function isAjax(\Magento\Framework\App\RequestInterface $request = null)
     {
-        if (is_null($request)) {
+        if ($request === null) {
             $request = $this->getRequest();
         }
 
@@ -125,28 +129,36 @@ abstract class Base extends Action
     protected function addExtendedErrorMessage($message, $group = null)
     {
         $this->getMessageManager()->addComplexErrorMessage(
-            self::MESSAGE_IDENTIFIER, ['content' => (string)$message], $group
+            self::MESSAGE_IDENTIFIER,
+            ['content' => (string)$message],
+            $group
         );
     }
 
     protected function addExtendedWarningMessage($message, $group = null)
     {
         $this->getMessageManager()->addComplexWarningMessage(
-            self::MESSAGE_IDENTIFIER, ['content' => (string)$message], $group
+            self::MESSAGE_IDENTIFIER,
+            ['content' => (string)$message],
+            $group
         );
     }
 
     protected function addExtendedNoticeMessage($message, $group = null)
     {
         $this->getMessageManager()->addComplexNoticeMessage(
-            self::MESSAGE_IDENTIFIER, ['content' => (string)$message], $group
+            self::MESSAGE_IDENTIFIER,
+            ['content' => (string)$message],
+            $group
         );
     }
 
     protected function addExtendedSuccessMessage($message, $group = null)
     {
         $this->getMessageManager()->addComplexSuccessMessage(
-            self::MESSAGE_IDENTIFIER, ['content' => (string)$message], $group
+            self::MESSAGE_IDENTIFIER,
+            ['content' => (string)$message],
+            $group
         );
     }
 
@@ -163,13 +175,9 @@ abstract class Base extends Action
         $this->getHelper('Module\Exception')->setFatalErrorHandler();
 
         try {
-
             $result = parent::dispatch($request);
-
         } catch (\Exception $exception) {
-
             if ($request->getControllerName() == $this->getHelper('Module\Support')->getPageControllerName()) {
-
                 $this->getRawResult()->setContents($exception->getMessage());
                 return $this->getRawResult();
             }
@@ -189,11 +197,11 @@ abstract class Base extends Action
                 $this->getHelper('Module\Exception')->getUserMessage($exception)
             );
 
-            $params = array(
+            $params = [
                 'error' => 'true'
-            );
+            ];
 
-            if (!is_null($this->getHelper('View')->getCurrentView())) {
+            if ($this->getHelper('View')->getCurrentView() !== null) {
                 $params['referrer'] = $this->getHelper('View')->getCurrentView();
             }
 
@@ -231,10 +239,10 @@ abstract class Base extends Action
         }
 
         if ($this->isAjax($request) && !$this->_auth->isLoggedIn()) {
-            $this->getRawResult()->setContents($this->getHelper('Data')->jsonEncode(array(
+            $this->getRawResult()->setContents($this->getHelper('Data')->jsonEncode([
                 'ajaxExpired'  => 1,
                 'ajaxRedirect' => $this->_redirect->getRefererUrl()
-            )));
+            ]));
 
             return $this->getRawResult();
         }
@@ -273,7 +281,7 @@ abstract class Base extends Action
 
     protected function initEmptyLayout()
     {
-        if (!is_null($this->emptyLayout)) {
+        if ($this->emptyLayout !== null) {
             return;
         }
 
@@ -295,7 +303,7 @@ abstract class Base extends Action
 
     protected function getResultPage()
     {
-        if (is_null($this->resultPage)) {
+        if ($this->resultPage === null) {
             $this->initResultPage();
         }
 
@@ -304,7 +312,7 @@ abstract class Base extends Action
 
     protected function initResultPage()
     {
-        if (!is_null($this->resultPage)) {
+        if ($this->resultPage !== null) {
             return;
         }
 
@@ -318,7 +326,7 @@ abstract class Base extends Action
 
     protected function getRawResult()
     {
-        if (is_null($this->rawResult)) {
+        if ($this->rawResult === null) {
             $this->initRawResult();
         }
 
@@ -327,7 +335,7 @@ abstract class Base extends Action
 
     protected function initRawResult()
     {
-        if (!is_null($this->rawResult)) {
+        if ($this->rawResult !== null) {
             return;
         }
 
@@ -399,9 +407,15 @@ abstract class Base extends Action
 
     // ---------------------------------------
 
-    protected function beforeAddLeftEvent() {}
+    protected function beforeAddLeftEvent()
+    {
+        return null;
+    }
 
-    protected function beforeAddContentEvent() {}
+    protected function beforeAddContentEvent()
+    {
+        return null;
+    }
 
     //########################################
 
@@ -443,6 +457,9 @@ abstract class Base extends Action
      */
     protected function createBlock($block, $name = '', array $arguments = [])
     {
+        // fix for Magento2 sniffs that forcing to use ::class
+        $block = str_replace('_', '\\', $block);
+
         return $this->getLayout()->createBlock('Ess\M2ePro\Block\Adminhtml\\' . $block, $name, $arguments);
     }
 
@@ -453,20 +470,20 @@ abstract class Base extends Action
         $id = $this->getRequest()->getParam($key);
         $ids = $this->getRequest()->getParam($key.'s');
 
-        if (is_null($id) && is_null($ids)) {
-            return array();
+        if ($id === null && $ids === null) {
+            return [];
         }
 
-        $requestIds = array();
+        $requestIds = [];
 
-        if (!is_null($ids)) {
+        if ($ids !== null) {
             if (is_string($ids)) {
                 $ids = explode(',', $ids);
             }
             $requestIds = (array)$ids;
         }
 
-        if (!is_null($id)) {
+        if ($id !== null) {
             $requestIds[] = $id;
         }
 

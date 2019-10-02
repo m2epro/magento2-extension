@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors;
 
+/**
+ * Class ClearAddedMotorsData
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors
+ */
 class ClearAddedMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 {
     //########################################
 
     public function execute()
     {
-        $helper = $this->getHelper('Component\Ebay\Motors');
+        $helper = $this->getHelper('Component_Ebay_Motors');
         $motorsType = $this->getRequest()->getPost('motors_type');
 
         if (!$motorsType) {
@@ -23,13 +27,14 @@ class ClearAddedMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Setting
         }
 
         $connWrite = $this->resourceConnection->getConnection();
-        $conditions = array('is_custom = ?' => 1);
+        $conditions = ['is_custom = ?' => 1];
         if ($helper->isTypeBasedOnEpids($motorsType)) {
             $conditions['scope = ?'] = $helper->getEpidsScopeByType($motorsType);
         }
 
         $connWrite->delete(
-            $helper->getDictionaryTable($motorsType), $conditions
+            $helper->getDictionaryTable($motorsType),
+            $conditions
         );
 
         $this->getMessageManager()->addSuccess($this->__('Added compatibility data has been cleared.'));

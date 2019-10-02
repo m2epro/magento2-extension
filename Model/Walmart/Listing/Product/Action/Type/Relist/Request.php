@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Relist;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Relist
+ */
 class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Request
 {
     //########################################
@@ -15,11 +19,12 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
     protected function getActionData()
     {
         $data = array_merge(
-            array(
+            [
                 'sku'  => $this->getWalmartListingProduct()->getSku(),
                 'wpid' => $this->getWalmartListingProduct()->getWpid(),
-            ),
+            ],
             $this->getQtyData(),
+            $this->getLagTimeData(),
             $this->getPriceData(),
             $this->getPromotionsData()
         );

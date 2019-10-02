@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Lock\Transactional;
 
+/**
+ * Class Manager
+ * @package Ess\M2ePro\Model\Lock\Transactional
+ */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {
     private $nick = 'undefined';
@@ -26,8 +30,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory, $data);
@@ -52,7 +55,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     public function unlock()
     {
-        $this->isTableLocked        && $this->unlockTable();
+        $this->isTableLocked && $this->unlockTable();
         $this->isTransactionStarted && $this->commitTransaction();
     }
 
@@ -64,7 +67,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
         $connection = $this->resourceConnection->getConnection();
         $lockId = (int)$connection->select()
-                                  ->from($this->getTableName(), array('id'))
+                                  ->from($this->getTableName(), ['id'])
                                   ->where('nick = ?', $this->nick)
                                   ->forUpdate()
                                   ->query()->fetchColumn();
@@ -82,15 +85,17 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         $this->lockTable();
 
         $lock = $this->activeRecordFactory->getObjectLoaded(
-            'Lock\Transactional', $this->nick, 'nick', false
+            'Lock\Transactional',
+            $this->nick,
+            'nick',
+            false
         );
 
-        if (is_null($lock)) {
-
+        if ($lock === null) {
             $lock = $this->activeRecordFactory->getObject('Lock\Transactional');
-            $lock->setData(array(
+            $lock->setData([
                 'nick' => $this->nick,
-            ));
+            ]);
             $lock->save();
         }
 

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing\Product;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing\Product
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
 {
     //########################################
@@ -20,8 +24,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
         \Magento\Framework\Filter\FilterManager $filterManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         Context $context
-    )
-    {
+    ) {
         $this->filterManager = $filterManager;
 
         parent::__construct($ebayFactory, $context);
@@ -30,16 +33,18 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
     public function execute()
     {
         $listingId = $this->getRequest()->getParam(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD, false
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
+            false
         );
         $listingProductId = $this->getRequest()->getParam(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_PRODUCT_ID_FIELD, false
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_PRODUCT_ID_FIELD,
+            false
         );
 
         if ($listingId) {
             $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId, null, false);
 
-            if (is_null($listing)) {
+            if ($listing === null) {
                 $this->getMessageManager()->addErrorMessage($this->__('Listing does not exist.'));
                 return $this->_redirect('*/*/index');
             }
@@ -50,7 +55,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
         } elseif ($listingProductId) {
             $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $listingProductId, null, false);
 
-            if (is_null($listingProduct)) {
+            if ($listingProduct === null) {
                 $this->getMessageManager()->addErrorMessage($this->__('Listing Product does not exist.'));
                 return $this->_redirect('*/*/index');
             }
@@ -63,7 +68,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
             $this->getResult()->getConfig()->getTitle()->prepend($this->__('Listings Logs & Events'));
         }
 
-        $this->addContent($this->createBlock('Ebay\Log\Listing\Product\View'));
+        $this->addContent($this->createBlock('Ebay_Log_Listing_Product_View'));
 
         return $this->getResult();
     }

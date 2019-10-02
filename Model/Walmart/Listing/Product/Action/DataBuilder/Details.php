@@ -8,6 +8,12 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder;
 
+use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
+
+/**
+ * Class Details
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder
+ */
 class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\AbstractModel
 {
     //########################################
@@ -16,7 +22,7 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
     {
         $sellingFormatTemplateSource = $this->getWalmartListingProduct()->getSellingFormatTemplateSource();
 
-        $data = array(
+        $data = [
             'product_data_nick'     => $this->getWalmartListingProduct()->getCategoryTemplate()->getProductDataNick(),
             'product_data'          => $this->getProductData(),
             'product_ids_data'      => $this->getProductIdsData(),
@@ -24,7 +30,7 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
             'shipping_weight'       => $sellingFormatTemplateSource->getItemWeight(),
             'tax_code'              => $sellingFormatTemplateSource->getProductTaxCode(),
             'additional_attributes' => $sellingFormatTemplateSource->getAttributes(),
-        );
+        ];
 
         if ($this->getWalmartListingProduct()->getWpid()) {
             $data['wpid'] = $this->getWalmartListingProduct()->getWpid();
@@ -50,12 +56,12 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
         }
 
         $mustShipAlone = $this->getWalmartListingProduct()->getSellingFormatTemplateSource()->getMustShipAlone();
-        if (!is_null($mustShipAlone)) {
+        if ($mustShipAlone !== null) {
             $data['is_must_ship_alone'] = $mustShipAlone;
         }
 
         $shipsInOriginalPackaging = $sellingFormatTemplateSource->getShipsInOriginalPackaging();
-        if (!is_null($shipsInOriginalPackaging)) {
+        if ($shipsInOriginalPackaging !== null) {
             $data['is_ship_in_original_packaging'] = $shipsInOriginalPackaging;
         }
 
@@ -71,6 +77,7 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
             /** @var \Ess\M2ePro\Model\Listing\Product $parentListingProduct */
             $parentListingProduct = $typeModel->getParentListingProduct();
 
+            /** @var ParentRelation $parentTypeModel */
             $parentTypeModel = $parentListingProduct->getChildObject()->getVariationManager()->getTypeModel();
 
             if ($parentTypeModel->hasChannelGroupId()) {
@@ -80,10 +87,10 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
                 $parentTypeModel->setChannelGroupId($variationGroupId, true);
             }
 
-            $data['variation_data'] = array(
+            $data['variation_data'] = [
                 'group_id'   => $variationGroupId,
                 'attributes' => $typeModel->getRealChannelOptions(),
-            );
+            ];
         }
 
         return $data;
@@ -93,12 +100,11 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
 
     private function getProductData()
     {
-        $data = array();
+        $data = [];
 
         $this->searchNotFoundAttributes();
 
         foreach ($this->getWalmartListingProduct()->getCategoryTemplate()->getSpecifics(true) as $specific) {
-
             $source = $specific->getSource($this->getWalmartListingProduct()->getActualMagentoProduct());
 
             if (!$specific->isRequired() && !$specific->isModeNone() && !$source->getValue()) {
@@ -106,7 +112,8 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
             }
 
             $data = array_replace_recursive(
-                $data, $this->getHelper('Data')->jsonDecode($source->getPath())
+                $data,
+                $this->getHelper('Data')->jsonDecode($source->getPath())
             );
         }
 
@@ -119,19 +126,19 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
 
     private function getProductIdsData()
     {
-        $data = array();
+        $data = [];
 
-        $idsTypes = array('gtin', 'upc', 'ean', 'isbn');
+        $idsTypes = ['gtin', 'upc', 'ean', 'isbn'];
 
         foreach ($idsTypes as $idType) {
             if (!isset($this->cachedData[$idType])) {
                 continue;
             }
 
-            $data[] = array(
+            $data[] = [
                 'type' => strtoupper($idType),
                 'id'   => $this->cachedData[$idType]
-            );
+            ];
         }
 
         return $data;
@@ -143,7 +150,7 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
     {
         $source = $this->getWalmartListingProduct()->getDescriptionTemplateSource();
 
-        $data = array();
+        $data = [];
 
         $this->searchNotFoundAttributes();
         $data['title'] = $source->getTitle();
@@ -220,11 +227,11 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
     {
         $mainImage = $this->getWalmartListingProduct()->getDescriptionTemplateSource()->getMainImage();
 
-        if (is_null($mainImage)) {
+        if ($mainImage === null) {
             return '';
         }
 
-        $walmartConfigurationHelper = $this->getHelper('Component\Walmart\Configuration');
+        $walmartConfigurationHelper = $this->getHelper('Component_Walmart_Configuration');
 
         if ($walmartConfigurationHelper->isOptionImagesURLHTTPSMode()) {
             return str_replace('http://', 'https://', $mainImage->getUrl());
@@ -239,9 +246,9 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
 
     private function getProductSecondaryImageUrls()
     {
-        $urls = array();
+        $urls = [];
 
-        $walmartConfigurationHelper = $this->getHelper('Component\Walmart\Configuration');
+        $walmartConfigurationHelper = $this->getHelper('Component_Walmart_Configuration');
         foreach ($this->getWalmartListingProduct()->getDescriptionTemplateSource()->getGalleryImages() as $image) {
             if (!$image->getUrl()) {
                 continue;
@@ -266,7 +273,7 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
     private function getSwatchImages()
     {
         if (!$this->getVariationManager()->isRelationChildType()) {
-            return array();
+            return [];
         }
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child $childTypeModel */
@@ -274,15 +281,15 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
 
         $swatchAttribute = $childTypeModel->getParentTypeModel()->getSwatchImagesAttribute();
         if (empty($swatchAttribute)) {
-            return array();
+            return [];
         }
 
         $image = $this->getWalmartListingProduct()->getDescriptionTemplateSource()->getVariationDifferenceImage();
-        if (is_null($image)) {
-            return array();
+        if ($image === null) {
+            return [];
         }
 
-        $walmartConfigurationHelper = $this->getHelper('Component\Walmart\Configuration');
+        $walmartConfigurationHelper = $this->getHelper('Component_Walmart_Configuration');
         $url = $image->getUrl();
 
         if ($walmartConfigurationHelper->isOptionImagesURLHTTPSMode()) {
@@ -293,19 +300,19 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
             $url = str_replace('https://', 'http://', $url);
         }
 
-        $swatchImageData = array(
+        $swatchImageData = [
             'url'          => $url,
             'by_attribute' => $swatchAttribute,
-        );
+        ];
 
-        return array($swatchImageData);
+        return [$swatchImageData];
     }
 
     // ---------------------------------------
 
     private function getShippingOverrides()
     {
-        $result = array();
+        $result = [];
 
         $shippingOverrides = $this->getWalmartListingProduct()->getWalmartSellingFormatTemplate()
             ->getShippingOverrides(true);
@@ -319,12 +326,12 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
                 $this->getWalmartListingProduct()->getActualMagentoProduct()
             );
 
-            $result[] = array(
+            $result[] = [
                 'ship_method'         => $shippingOverride->getMethod(),
                 'ship_region'         => $shippingOverride->getRegion(),
                 'ship_price'          => $source->getCost(),
                 'is_shipping_allowed' => (bool)$shippingOverride->getIsShippingAllowed(),
-            );
+            ];
         }
 
         return $result;

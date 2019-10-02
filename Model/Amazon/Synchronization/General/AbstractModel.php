@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\General;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\General
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Synchronization\AbstractModel
 {
     //########################################

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\Other;
 
 use \Ess\M2ePro\Model\Walmart\Listing\Product;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\Other
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGrid
 {
     //########################################
@@ -46,17 +50,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
         $collection->getSelect()->distinct();
 
         $collection->getSelect()->joinLeft(
-            array(
-                'cpe' => $this->getHelper('Module\Database\Structure')
+            [
+                'cpe' => $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('catalog_product_entity')
-            ),
+            ],
             '(cpe.entity_id = `main_table`.product_id)',
-            array('sku' => 'sku')
+            ['sku' => 'sku']
         );
 
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $collection->getSelect()->columns(
-            array(
+            [
                 'sku'                          => 'cpe.sku',
                 'name'                         => 'second_table.title',
                 'listing_title'                => new \Zend_Db_Expr('NULL'),
@@ -84,7 +88,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
                 'online_sale_price_start_date' => new \Zend_Db_Expr('NULL'),
                 'online_sale_price_end_date'   => new \Zend_Db_Expr('NULL'),
                 'is_online_price_invalid'      => 'second_table.is_online_price_invalid',
-            )
+            ]
         );
 
         $accountId = (int)$this->getRequest()->getParam('walmartAccount', false);
@@ -109,7 +113,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
     {
         $title = $row->getData('name');
 
-        if (is_null($title) || $title === '') {
+        if ($title === null || $title === '') {
             $value = '<i style="color:gray;">' . $this->__('receiving') . '...</i>';
         } else {
             $value = '<span>' .$this->getHelper('Data')->escapeHtml($title). '</span>';
@@ -127,7 +131,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
 
         $sku = $row->getData('sku');
         if (!empty($sku)) {
-
             $sku = $this->getHelper('Data')->escapeHtml($sku);
             $skuWord = $this->__('SKU');
 
@@ -150,13 +153,13 @@ HTML;
         $altTitle = $this->getHelper('Data')->escapeHtml($this->__('Go to Listing'));
         $iconSrc  = $this->getViewFileUrl('Ess_M2ePro::images/goto_listing.png');
 
-        $manageUrl = $this->getUrl('*/walmart_listing_other/view/', array(
+        $manageUrl = $this->getUrl('*/walmart_listing_other/view/', [
             'account'     => $row->getData('account_id'),
             'marketplace' => $row->getData('marketplace_id'),
             'filter'      => base64_encode(
                 'title=' . $row->getData('online_sku')
             )
-        ));
+        ]);
 
         $html = <<<HTML
 <div style="float:right; margin:5px 15px 0 0;">
@@ -167,21 +170,11 @@ HTML;
         return $html;
     }
 
-    public function callbackColumnIsInStock($value, $row, $column, $isExport)
-    {
-        if (is_null($row->getData('is_in_stock'))) {
-            return $this->__('N/A');
-        }
-
-        return parent::callbackColumnIsInStock($value, $row, $column, $isExport);
-    }
-
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
-        if (is_null($value) || $value === '' ||
+        if ($value === null || $value === '' ||
             ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
-             !$row->getData('is_online_price_invalid')))
-        {
+             !$row->getData('is_online_price_invalid'))) {
             return $this->__('N/A');
         }
 
@@ -242,7 +235,6 @@ HTML;
         $condition = '';
 
         if (isset($value['from']) || isset($value['to'])) {
-
             if (isset($value['from']) && $value['from'] != '') {
                 $condition = 'second_table.online_price >= \'' . (float)$value['from'] . '\'';
             }

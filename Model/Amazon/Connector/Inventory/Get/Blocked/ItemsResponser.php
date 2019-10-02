@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked;
 
+/**
+ * Class ItemsResponser
+ * @package Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
+ */
 abstract class ItemsResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
 {
     // ########################################
@@ -20,9 +24,9 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     protected function prepareResponseData()
     {
-        $preparedData = array(
-            'data' => array(),
-        );
+        $preparedData = [
+            'data' => [],
+        ];
 
         $responseData = $this->getResponse()->getResponseData();
         if (!empty($responseData['data']['skus']) && is_array($responseData['data']['skus'])) {

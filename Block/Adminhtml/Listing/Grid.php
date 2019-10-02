@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Listing
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    protected $_groupedActions = array();
-    protected $_actions        = array();
+    protected $_groupedActions = [];
+    protected $_actions        = [];
 
     //########################################
 
@@ -42,7 +46,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn(
-            'id', [
+            'id',
+            [
                 'header' => $this->__('ID'),
                 'align' => 'left',
                 'type'  => 'number',
@@ -51,48 +56,48 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ]
         );
 
-        $this->addColumn('title', array(
+        $this->addColumn('title', [
             'header'    => $this->__('Title / Info'),
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'title',
             'escape'    => false,
             'filter_index' => 'main_table.title',
-            'frame_callback' => array($this, 'callbackColumnTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+        ]);
 
-        $this->addColumn('products_total_count', array(
+        $this->addColumn('products_total_count', [
             'header'    => $this->__('Total Items'),
             'align'     => 'right',
             'type'      => 'number',
             'index'     => 'products_total_count',
             'filter_index' => 'main_table.products_total_count',
-            'frame_callback' => array($this, 'callbackColumnTotalProducts')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTotalProducts']
+        ]);
 
-        $this->addColumn('products_active_count', array(
+        $this->addColumn('products_active_count', [
             'header'    => $this->__('Active Items'),
             'align'     => 'right',
             'type'      => 'number',
             'index'     => 'products_active_count',
             'filter_index' => 'main_table.products_active_count',
-            'frame_callback' => array($this, 'callbackColumnListedProducts')
-        ));
+            'frame_callback' => [$this, 'callbackColumnListedProducts']
+        ]);
 
-        $this->addColumn('products_inactive_count', array(
+        $this->addColumn('products_inactive_count', [
             'header'    => $this->__('Inactive Items'),
             'align'     => 'right',
             'width'     => 100,
             'type'      => 'number',
             'index'     => 'products_inactive_count',
             'filter_index' => 'main_table.products_inactive_count',
-            'frame_callback' => array($this, 'callbackColumnInactiveProducts')
-        ));
+            'frame_callback' => [$this, 'callbackColumnInactiveProducts']
+        ]);
 
         $this->setColumns();
 
-        $this->addColumn('actions', array(
+        $this->addColumn('actions', [
             'header'    => $this->__('Actions'),
             'align'     => 'left',
             'type'      => 'action',
@@ -103,12 +108,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
             'group_order' => $this->getGroupOrder(),
             'actions'     => $this->getColumnActionsItems()
-        ));
+        ]);
 
         return parent::_prepareColumns();
     }
 
-    protected function setColumns() {}
+    protected function setColumns()
+    {
+        return null;
+    }
 
     //########################################
 
@@ -117,7 +125,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return $value;
     }
 
-    protected function callbackFilterTitle($collection, $column) {}
+    protected function callbackFilterTitle($collection, $column)
+    {
+        return null;
+    }
 
     // ---------------------------------------
 
@@ -140,9 +151,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function getColumnValue($value)
     {
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             $value = $this->__('N/A');
-        } else if ($value <= 0) {
+        } elseif ($value <= 0) {
             $value = '<span style="color: red;">0</span>';
         }
 
@@ -153,16 +164,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function getGroupOrder()
     {
-        return array(
+        return [
             'products_actions' => $this->__('Products'),
             'edit_actions'     => $this->__('Edit Settings'),
             'other'            => $this->__('Other'),
-        );
+        ];
     }
 
     protected function getColumnActionsItems()
     {
-        return array();
+        return [];
     }
 
     //########################################

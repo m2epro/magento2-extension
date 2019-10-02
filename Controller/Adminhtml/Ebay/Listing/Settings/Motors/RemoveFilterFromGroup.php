@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
+/**
+ * Class RemoveFilterFromGroup
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ */
 class RemoveFilterFromGroup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -23,16 +27,16 @@ class RemoveFilterFromGroup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listin
 
         $connection = $this->resourceConnection->getConnection();
 
-        $filterGroupRelation = $this->getHelper('Module\Database\Structure')
+        $filterGroupRelation = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
 
-        $connection->delete($filterGroupRelation, array(
+        $connection->delete($filterGroupRelation, [
             'filter_id in (?)' => $filtersIds,
             'group_id = ?' => $groupId,
-        ));
+        ]);
 
         /** @var \Ess\M2ePro\Model\Ebay\Motor\Group $model */
-        $model = $this->activeRecordFactory->getObjectLoaded('Ebay\Motor\Group', $groupId);
+        $model = $this->activeRecordFactory->getObjectLoaded('Ebay_Motor_Group', $groupId);
 
         if (count($model->getFiltersIds()) == 0) {
             $model->delete();

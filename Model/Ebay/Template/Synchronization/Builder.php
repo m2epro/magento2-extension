@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Ebay\Template\Synchronization;
 
 use Ess\M2ePro\Model\Ebay\Template\Synchronization as SynchronizationPolicy;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Ebay\Template\Synchronization
+ */
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 {
     /** @var \Magento\Framework\App\RequestInterface */
@@ -23,7 +27,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    ){
+    ) {
         parent::__construct($activeRecordFactory, $ebayFactory, $helperFactory, $modelFactory);
         $this->request = $request;
     }
@@ -33,7 +37,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
     public function build(array $data)
     {
         if (empty($data)) {
-            return NULL;
+            return null;
         }
 
         $this->validate($data);
@@ -61,7 +65,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
     {
         $prepared = parent::prepareData($data);
 
-        $defaultData = $this->activeRecordFactory->getObject('Ebay\Template\Synchronization')->getDefaultSettings();
+        $defaultData = $this->activeRecordFactory->getObject('Ebay_Template_Synchronization')->getDefaultSettings();
 
         $data = array_replace_recursive($defaultData, $data);
 
@@ -80,7 +84,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
     private function prepareListData(array $data)
     {
-        $prepared = array();
+        $prepared = [];
 
         if (isset($data['list_mode'])) {
             $prepared['list_mode'] = (int)$data['list_mode'];
@@ -133,7 +137,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
     private function prepareReviseData(array $data)
     {
-        $prepared = array();
+        $prepared = [];
 
         if (isset($data['revise_update_qty'])) {
             $prepared['revise_update_qty'] = (int)$data['revise_update_qty'];
@@ -217,7 +221,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
     private function prepareRelistData(array $data)
     {
-        $prepared = array();
+        $prepared = [];
 
         if (isset($data['relist_mode'])) {
             $prepared['relist_mode'] = (int)$data['relist_mode'];
@@ -278,7 +282,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
     private function prepareStopData(array $data)
     {
-        $prepared = array();
+        $prepared = [];
 
         if (isset($data['stop_status_disabled'])) {
             $prepared['stop_status_disabled'] = (int)$data['stop_status_disabled'];
@@ -335,7 +339,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             return null;
         }
 
-        $ruleModel = $this->activeRecordFactory->getObject('Magento\Product\Rule')->setData(
+        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
             ['prefix' => $rulePrefix]
         );
 

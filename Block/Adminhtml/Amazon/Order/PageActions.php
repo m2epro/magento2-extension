@@ -10,17 +10,21 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class PageActions
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Order
+ */
 class PageActions extends AbstractBlock
 {
     protected function _toHtml()
     {
         // ---------------------------------------
-        $marketplaceSwitcherBlock = $this->createBlock('Amazon\Marketplace\Switcher')->setData([
+        $marketplaceSwitcherBlock = $this->createBlock('Amazon_Marketplace_Switcher')->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'controller_name' => 'amazon_order'
         ]);
 
-        $accountSwitcherBlock = $this->createBlock('Amazon\Account\Switcher')->setData([
+        $accountSwitcherBlock = $this->createBlock('Amazon_Account_Switcher')->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'controller_name' => 'amazon_order'
         ]);

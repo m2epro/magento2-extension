@@ -8,17 +8,21 @@
 
 namespace Ess\M2ePro\Model\Connector\Command;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Connector\Command
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     // ########################################
 
-    protected $params = array();
+    protected $params = [];
 
     /** @var \Ess\M2ePro\Model\Connector\Protocol */
-    protected $protocol = NULL;
+    protected $protocol = null;
 
     /** @var \Ess\M2ePro\Model\Connector\Connection\Single $connection */
-    protected $connection = NULL;
+    protected $connection = null;
 
     // ########################################
 
@@ -26,8 +30,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params = []
-    )
-    {
+    ) {
         $this->params = $params;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -60,7 +63,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function getConnection()
     {
-        if (!is_null($this->connection)) {
+        if ($this->connection !== null) {
             return $this->connection;
         }
 
@@ -69,7 +72,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function buildConnectionInstance()
     {
-        $connection = $this->modelFactory->getObject('Connector\Connection\Single');
+        $connection = $this->modelFactory->getObject('Connector_Connection_Single');
         $connection->setRequest($this->buildRequestInstance());
 
         return $connection;
@@ -79,7 +82,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function buildRequestInstance()
     {
-        $request = $this->modelFactory->getObject('Connector\Connection\Request');
+        $request = $this->modelFactory->getObject('Connector_Connection_Request');
         $request->setCommand($this->getCommand());
 
         $request->setComponent($this->getProtocol()->getComponent());

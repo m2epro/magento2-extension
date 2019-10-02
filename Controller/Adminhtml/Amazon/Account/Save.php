@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Account
+ */
 class Save extends Account
 {
     public function execute()
@@ -24,17 +28,17 @@ class Save extends Account
 
         // Base prepare
         // ---------------------------------------
-        $data = array();
+        $data = [];
         // ---------------------------------------
 
         // tab: general
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'title',
             'marketplace_id',
             'merchant_id',
             'token',
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -44,13 +48,13 @@ class Save extends Account
 
         // tab: 3rd party listings
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'related_store_id',
 
             'other_listings_synchronization',
             'other_listings_mapping_mode',
             'other_listings_move_mode'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -60,8 +64,8 @@ class Save extends Account
 
         // Mapping
         // ---------------------------------------
-        $tempData = array();
-        $keys = array(
+        $tempData = [];
+        $keys = [
             'mapping_general_id_mode',
             'mapping_general_id_priority',
             'mapping_general_id_attribute',
@@ -73,14 +77,14 @@ class Save extends Account
             'mapping_title_mode',
             'mapping_title_priority',
             'mapping_title_attribute'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $tempData[$key] = $post[$key];
             }
         }
 
-        $mappingSettings = array();
+        $mappingSettings = [];
 
         $temp = \Ess\M2ePro\Model\Amazon\Account::OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_CUSTOM_ATTRIBUTE;
         if (isset($tempData['mapping_general_id_mode']) &&
@@ -121,19 +125,19 @@ class Save extends Account
 
         // tab: orders
         // ---------------------------------------
-        $data['magento_orders_settings'] = array();
+        $data['magento_orders_settings'] = [];
 
         // m2e orders settings
         // ---------------------------------------
         $tempKey = 'listing';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode',
             'store_mode',
             'store_id'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -145,14 +149,14 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'listing_other';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode',
             'product_mode',
             'product_tax_class_id',
             'store_id'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -164,15 +168,15 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'number';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
         $data['magento_orders_settings'][$tempKey]['source'] = $tempSettings['source'];
 
-        $prefixKeys = array(
+        $prefixKeys = [
             'mode',
             'prefix',
-        );
-        $tempSettings = !empty($tempSettings['prefix']) ? $tempSettings['prefix'] : array();
+        ];
+        $tempSettings = !empty($tempSettings['prefix']) ? $tempSettings['prefix'] : [];
         foreach ($prefixKeys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey]['prefix'][$key] = $tempSettings[$key];
@@ -184,11 +188,11 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'qty_reservation';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'days',
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -200,11 +204,11 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'refund_and_cancellation';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'refund_mode',
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -216,12 +220,12 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'fba';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode',
             'stock_mode'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -233,11 +237,11 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'tax';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -249,28 +253,28 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'customer';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode',
             'id',
             'website_id',
             'group_id',
             'billing_address_mode',
 //            'subscription_mode'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
             }
         }
 
-        $notificationsKeys = array(
+        $notificationsKeys = [
 //            'customer_created',
             'order_created',
             'invoice_created'
-        );
-        $tempSettings = !empty($tempSettings['notifications']) ? $tempSettings['notifications'] : array();
+        ];
+        $tempSettings = !empty($tempSettings['notifications']) ? $tempSettings['notifications'] : [];
         foreach ($notificationsKeys as $key) {
             if (in_array($key, $tempSettings)) {
                 $data['magento_orders_settings'][$tempKey]['notifications'][$key] = true;
@@ -282,13 +286,13 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'status_mapping';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode',
             'processing',
             'shipped'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -306,7 +310,6 @@ class Save extends Account
         $temp = \Ess\M2ePro\Model\Amazon\Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM;
         if (!empty($data['magento_orders_settings']['status_mapping']['mode']) &&
             $data['magento_orders_settings']['status_mapping']['mode'] == $temp) {
-
             $temp = \Ess\M2ePro\Model\Amazon\Account::MAGENTO_ORDERS_INVOICE_MODE_NO;
             if (!isset($post['magento_orders_settings']['invoice_mode'])) {
                 $data['magento_orders_settings']['invoice_mode'] = $temp;
@@ -322,13 +325,13 @@ class Save extends Account
         $data['magento_orders_settings'] = $this->getHelper('Data')->jsonEncode($data['magento_orders_settings']);
         // ---------------------------------------
 
-        $isEdit = !is_null($id);
+        $isEdit = $id !== null;
 
         // tab: shipping settings
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'shipping_mode'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -338,10 +341,10 @@ class Save extends Account
 
         // tab: vat calculation service
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'is_vat_calculation_service_enabled',
             'is_magento_invoice_creation_disabled',
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -356,7 +359,7 @@ class Save extends Account
         // Add or update model
         // ---------------------------------------
         $model = $this->amazonFactory->getObject('Account');
-        if (is_null($id)) {
+        if ($id === null) {
             $model->setData($data);
         } else {
             $model->load($id);
@@ -365,15 +368,17 @@ class Save extends Account
         }
 
         $oldData = $model->getOrigData();
-        if (!is_null($id)) {
+        if ($id !== null) {
             $oldData = array_merge($oldData, $model->getChildObject()->getOrigData());
         }
         $id = $model->save()->getId();
         // ---------------------------------------
 
-        $model->getChildObject()->setSetting('other_listings_move_settings',
-            array('synch'),
-            $post['other_listings_move_synch']);
+        $model->getChildObject()->setSetting(
+            'other_listings_move_settings',
+            ['synch'],
+            $post['other_listings_move_synch']
+        );
         $model->getChildObject()->save();
 
         // Repricing
@@ -395,7 +400,6 @@ class Save extends Account
         // ---------------------------------------
 
         try {
-
             // Add or update server
             // ---------------------------------------
 
@@ -405,45 +409,50 @@ class Save extends Account
             if (!$accountObj->isSetProcessingLock('server_synchronize')) {
 
                 /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
-                $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+                $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
 
                 if (!$isEdit) {
-
-                    $params = array(
+                    $params = [
                         'title'            => $post['title'],
                         'marketplace_id'   => (int)$post['marketplace_id'],
                         'merchant_id'      => $post['merchant_id'],
                         'token'            => $post['token'],
                         'related_store_id' => (int)$post['related_store_id']
-                    );
+                    ];
 
-                    $connectorObj = $dispatcherObject->getConnector('account', 'add' ,'entityRequester',
-                        $params, $id);
+                    $connectorObj = $dispatcherObject->getConnector(
+                        'account',
+                        'add',
+                        'entityRequester',
+                        $params,
+                        $id
+                    );
                     $dispatcherObject->process($connectorObj);
-
                 } else {
-
-                    $newData = array(
+                    $newData = [
                         'title'            => $post['title'],
                         'marketplace_id'   => (int)$post['marketplace_id'],
                         'merchant_id'      => $post['merchant_id'],
                         'token'            => $post['token'],
                         'related_store_id' => (int)$post['related_store_id']
-                    );
+                    ];
 
                     $params = array_diff_assoc($newData, $oldData);
 
                     if (!empty($params)) {
-                        $connectorObj = $dispatcherObject->getConnector('account', 'update' ,'entityRequester',
-                            $params, $id);
+                        $connectorObj = $dispatcherObject->getConnector(
+                            'account',
+                            'update',
+                            'entityRequester',
+                            $params,
+                            $id
+                        );
                         $dispatcherObject->process($connectorObj);
                     }
                 }
             }
             // ---------------------------------------
-
         } catch (\Exception $exception) {
-
             $this->getHelper('Module\Exception')->process($exception);
 
             // M2ePro_TRANSLATIONS
@@ -476,18 +485,18 @@ class Save extends Account
 
         $this->messageManager->addSuccess($this->__('Account was successfully saved'));
 
-        /* @var $wizardHelper \Ess\M2ePro\Helper\Module\Wizard */
+        /** @var $wizardHelper \Ess\M2ePro\Helper\Module\Wizard */
         $wizardHelper = $this->getHelper('Module\Wizard');
 
-        $routerParams = array(
+        $routerParams = [
             'id' => $id,
             '_current' => true
-        );
+        ];
         if ($wizardHelper->isActive(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK) &&
             $wizardHelper->getStep(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK) == 'account') {
             $routerParams['wizard'] = true;
         }
 
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('list',array(),array('edit'=>$routerParams)));
+        return $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], ['edit'=>$routerParams]));
     }
 }

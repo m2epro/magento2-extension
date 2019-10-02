@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
+/**
+ * Class Processor
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation
+ */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
     //########################################
@@ -33,8 +37,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory, $data);
     }
@@ -74,7 +77,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     public function process()
     {
-        if (is_null($this->listingProduct)) {
+        if ($this->listingProduct === null) {
             throw new \Ess\M2ePro\Model\Exception('Listing Product was not set.');
         }
 
@@ -92,7 +95,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     private function getSortedProcessors()
     {
-        return array(
+        return [
             'Template',
             'GeneralIdOwner',
             'Attributes',
@@ -101,7 +104,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             'Options',
             'Status',
             'Selling',
-        );
+        ];
     }
 
     private function getProcessorModel($processorName)
@@ -158,7 +161,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getTypeModel()
     {
-        if (!is_null($this->typeModel)) {
+        if ($this->typeModel !== null) {
             return $this->typeModel;
         }
 
@@ -195,7 +198,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getDescriptionTemplate()
     {
-        if (!is_null($this->descriptionTemplate)) {
+        if ($this->descriptionTemplate !== null) {
             return $this->descriptionTemplate;
         }
 
@@ -217,21 +220,21 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getPossibleThemes()
     {
-        if (!is_null($this->possibleThemes)) {
+        if ($this->possibleThemes !== null) {
             return $this->possibleThemes;
         }
 
         $marketPlaceId = $this->getMarketplaceId();
 
-        $possibleThemes = $this->modelFactory->getObject('Amazon\Marketplace\Details')
+        $possibleThemes = $this->modelFactory->getObject('Amazon_Marketplace_Details')
             ->setMarketplaceId($marketPlaceId)
             ->getVariationThemes(
                 $this->getAmazonDescriptionTemplate()->getProductDataNick()
             );
 
-        $variationHelper = $this->getHelper('Component\Amazon\Variation');
+        $variationHelper = $this->getHelper('Component_Amazon_Variation');
         $themesUsageData = $variationHelper->getThemesUsageData();
-        $usedThemes = array();
+        $usedThemes = [];
 
         if (!empty($themesUsageData[$marketPlaceId])) {
             foreach ($themesUsageData[$marketPlaceId] as $theme => $count) {
@@ -249,7 +252,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getMarketplaceId()
     {
-        if (!is_null($this->marketplaceId)) {
+        if ($this->marketplaceId !== null) {
             return $this->marketplaceId;
         }
 

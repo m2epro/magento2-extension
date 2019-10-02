@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\ResourceModel\Amazon\Listing;
 
 use Ess\M2ePro\Model\Account;
 
+/**
+ * Class Other
+ * @package Ess\M2ePro\Model\ResourceModel\Amazon\Listing
+ */
 class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
@@ -25,8 +29,7 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         $connectionName = null
-    )
-    {
+    ) {
         parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
 
         $this->amazonFactory = $amazonFactory;
@@ -42,23 +45,23 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
     //########################################
 
-    public function getRepricingSkus(Account $account, $filterSkus = NULL, $repricingDisabled = NULL)
+    public function getRepricingSkus(Account $account, $filterSkus = null, $repricingDisabled = null)
     {
         $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
         $listingOtherCollection->addFieldToFilter('is_repricing', 1);
         $listingOtherCollection->addFieldToFilter('account_id', $account->getId());
 
         if (!empty($filterSkus)) {
-            $listingOtherCollection->addFieldToFilter('sku', array('in' => $filterSkus));
+            $listingOtherCollection->addFieldToFilter('sku', ['in' => $filterSkus]);
         }
 
-        if (!is_null($repricingDisabled)) {
+        if ($repricingDisabled !== null) {
             $listingOtherCollection->addFieldToFilter('is_repricing_disabled', (int)$repricingDisabled);
         }
 
         $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $listingOtherCollection->getSelect()->columns(
-            array('sku'  => 'second_table.sku')
+            ['sku'  => 'second_table.sku']
         );
 
         return $listingOtherCollection->getColumnValues('sku');
@@ -66,10 +69,11 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
     //########################################
 
-    public function getProductsDataBySkus(array $skus = array(),
-                                          array $filters = array(),
-                                          array $columns = array())
-    {
+    public function getProductsDataBySkus(
+        array $skus = [],
+        array $filters = [],
+        array $columns = []
+    ) {
         $result = [];
         $skuWithQuotes = false;
 
@@ -83,12 +87,13 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         $skus = (empty($skus) || !$skuWithQuotes) ? [$skus] : array_chunk($skus, 500);
 
         foreach ($skus as $skusChunk) {
-
             $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
 
             if (!empty($skusChunk)) {
-                $skusChunk = array_map(function($el){ return (string)$el; }, $skusChunk);
-                $listingOtherCollection->addFieldToFilter('sku', array('in' => array_unique($skusChunk)));
+                $skusChunk = array_map(function ($el) {
+                    return (string)$el;
+                }, $skusChunk);
+                $listingOtherCollection->addFieldToFilter('sku', ['in' => array_unique($skusChunk)]);
             }
 
             if (!empty($filters)) {

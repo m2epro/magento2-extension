@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Plugin\FunctionGetArgsFix;
 
+/**
+ * Class Translation
+ * @package Ess\M2ePro\Plugin\FunctionGetArgsFix
+ */
 class Translation extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     //########################################

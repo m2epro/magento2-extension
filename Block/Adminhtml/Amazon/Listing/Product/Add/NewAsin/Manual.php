@@ -7,6 +7,10 @@
  */
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin;
 
+/**
+ * Class Manual
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin
+ */
 class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -36,23 +40,23 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/*/resetNewAsin', array(
+        $url = $this->getUrl('*/*/resetNewAsin', [
             '_current' => true
-        ));
-        $this->addButton('back', array(
+        ]);
+        $this->addButton('back', [
             'label'     => $this->__('Back'),
             'onclick'   => 'ListingGridHandlerObj.backClick(\'' . $url . '\')',
             'class'     => 'back'
-        ));
+        ]);
         // ---------------------------------------
 
-        $url = $this->getUrl('*/*/index', array('_current' => true, 'step' => 5));
+        $url = $this->getUrl('*/*/index', ['_current' => true, 'step' => 5]);
         // ---------------------------------------
-        $this->addButton('save_and_go_to_listing_view', array(
+        $this->addButton('save_and_go_to_listing_view', [
             'label'     => $this->__('Continue'),
             'onclick'   => 'ListingGridHandlerObj.checkManualProducts(\''.$url.'\')',
             'class'     => 'action-primary forward'
-        ));
+        ]);
         // ---------------------------------------
     }
 
@@ -61,7 +65,9 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
 
         $viewHeaderBlock = $this->createBlock(
-            'Listing\View\Header','', ['data' => ['listing' => $listing]]
+            'Listing_View_Header',
+            '',
+            ['data' => ['listing' => $listing]]
         );
 
         return $viewHeaderBlock->toHtml() . parent::getGridHtml();
@@ -78,9 +84,9 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
 
         // URL
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing\Product'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Listing_Product'));
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Template\Description')
+            $this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Template_Description')
         );
 
         $this->jsUrl->add($this->getUrl('*/amazon_listing_product_template_description/viewGrid', [
@@ -94,7 +100,7 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
 
         $this->js->add(
-<<<JS
+            <<<JS
     selectTemplateDescription = function (el, templateId, mapToGeneralId)
     {
         ListingGridHandlerObj.mapToTemplateDescription(el, templateId, mapToGeneralId);

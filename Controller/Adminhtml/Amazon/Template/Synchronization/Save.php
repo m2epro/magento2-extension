@@ -12,6 +12,10 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 use Ess\M2ePro\Helper\Component\Amazon;
 use Ess\M2ePro\Model\Amazon\Template\Synchronization as SynchronizationPolicy;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Synchronization
+ */
 class Save extends Template
 {
     public function execute()
@@ -27,12 +31,12 @@ class Save extends Template
 
         // Base prepare
         // ---------------------------------------
-        $data = array();
+        $data = [];
         // ---------------------------------------
 
         // tab: list
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'title',
             'list_mode',
             'list_status_enabled',
@@ -44,7 +48,7 @@ class Save extends Template
             'list_qty_calculated_value',
             'list_qty_calculated_value_max',
             'list_advanced_rules_mode'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -60,7 +64,7 @@ class Save extends Template
 
         // tab: revise
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'revise_update_qty',
             'revise_update_qty_max_applied_value_mode',
             'revise_update_qty_max_applied_value',
@@ -74,7 +78,7 @@ class Save extends Template
             'revise_change_shipping_template',
             'revise_change_product_tax_code_template',
             'revise_change_listing'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -84,7 +88,7 @@ class Save extends Template
 
         // tab: relist
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'relist_mode',
             'relist_filter_user_lock',
             'relist_send_data',
@@ -97,7 +101,7 @@ class Save extends Template
             'relist_qty_calculated_value',
             'relist_qty_calculated_value_max',
             'relist_advanced_rules_mode'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -111,7 +115,7 @@ class Save extends Template
 
         // tab: stop
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'stop_status_disabled',
             'stop_out_off_stock',
             'stop_qty_magento',
@@ -121,7 +125,7 @@ class Save extends Template
             'stop_qty_calculated_value',
             'stop_qty_calculated_value_max',
             'stop_advanced_rules_mode'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -157,7 +161,7 @@ class Save extends Template
         $model->save();
 
         $newData = array_merge($model->getDataSnapshot(), $model->getChildObject()->getDataSnapshot());
-        $model->getChildObject()->setSynchStatusNeed($newData,$oldData);
+        $model->getChildObject()->setSynchStatusNeed($newData, $oldData);
 
         if ($this->isAjax()) {
             $this->setJsonContent([
@@ -170,13 +174,13 @@ class Save extends Template
         // ---------------------------------------
 
         $this->messageManager->addSuccess($this->__('Policy was successfully saved'));
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('*/amazon_template/index', array(), array(
-            'edit' => array(
+        return $this->_redirect($this->getHelper('Data')->getBackUrl('*/amazon_template/index', [], [
+            'edit' => [
                 'id' => $id,
                 'wizard' => $this->getRequest()->getParam('wizard'),
                 'close_on_save' => $this->getRequest()->getParam('close_on_save')
-            ),
-        )));
+            ],
+        ]));
     }
 
     private function getRuleData($rulePrefix)
@@ -187,7 +191,7 @@ class Save extends Template
             return null;
         }
 
-        $ruleModel = $this->activeRecordFactory->getObject('Magento\Product\Rule')->setData(
+        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
             ['prefix' => $rulePrefix]
         );
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection;
 
+/**
+ * Class ConflictedModules
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection
+ */
 class ConflictedModules extends AbstractInspection
 {
     //########################################
@@ -28,7 +32,7 @@ class ConflictedModules extends AbstractInspection
 
     public function isShown()
     {
-        return count($this->getHelper('Magento')->getConflictedModules()) > 0;
+        return !empty($this->getHelper('Magento')->getConflictedModules());
     }
 
     //########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Settings;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
 {
     //########################################
@@ -21,14 +25,14 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
 
     public function execute()
     {
-        $activeTab = $this->getRequest()->getParam('active_tab', NULL);
+        $activeTab = $this->getRequest()->getParam('active_tab', null);
 
-        if (is_null($activeTab)) {
+        if ($activeTab === null) {
             $activeTab = \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs::TAB_ID_MAIN;
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs $tabsBlock */
-        $tabsBlock = $this->createBlock('Amazon\Settings\Tabs', '', ['data' => [
+        $tabsBlock = $this->createBlock('Amazon_Settings_Tabs', '', ['data' => [
             'active_tab' => $activeTab
         ]]);
 

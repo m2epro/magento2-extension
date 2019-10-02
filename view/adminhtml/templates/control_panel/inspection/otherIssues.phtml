@@ -1,13 +1,22 @@
 <?php
-    /** @var \Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\OtherIssues $this */
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\OtherIssues $block */
+
 ?>
 
 <table class="form-list" cellspacing="0" cellpadding="0">
 
-    <?php if ($this->isMagicQuotesEnabled()) : ?>
+    <?php if ($block->isMagicQuotesEnabled()) : ?>
         <tr>
             <td class="label">
-                <label><?php echo $this->__('PHP Magic Quotes'); ?>: </label>
+                <label><?php echo $block->__('PHP Magic Quotes'); ?>: </label>
             </td>
             <td class="value">
                 <span style="color: red"><b>Enabled</b></span>
@@ -15,10 +24,10 @@
         </tr>
     <?php endif; ?>
 
-    <?php if ($this->isGdLibraryUnAvailable()) : ?>
+    <?php if ($block->isGdLibraryUnAvailable()) : ?>
         <tr>
             <td class="label">
-                <label><?php echo $this->__('PHP GD Library'); ?>: </label>
+                <label><?php echo $block->__('PHP GD Library'); ?>: </label>
             </td>
             <td class="value">
                 <span style="color: red"><b>Not Installed</b></span>
@@ -26,10 +35,10 @@
         </tr>
     <?php endif; ?>
 
-    <?php if ($this->isZendOpcacheAvailable()) : ?>
+    <?php if ($block->isZendOpcacheAvailable()) : ?>
         <tr>
             <td class="label">
-                <label><?php echo $this->__('Zend Opcache'); ?>: </label>
+                <label><?php echo $block->__('Zend Opcache'); ?>: </label>
             </td>
             <td class="value">
                 <span style="color: red"><b>Enabled</b></span>
@@ -37,15 +46,15 @@
         </tr>
     <?php endif; ?>
 
-    <?php if ($this->isSystemLogNotEmpty()) : ?>
+    <?php if ($block->isSystemLogNotEmpty()) : ?>
             <tr>
                 <td class="label">
-                    <label><?php echo $this->__('System Log'); ?>: </label>
+                    <label><?php echo $block->__('System Log'); ?>: </label>
                 </td>
                 <td class="value">
-                    <a style="margin-left: 10px;" href="<?php echo $this->getUrl('*/controlPanel_database/manageTable', array('table' => 'm2epro_system_log')); ?>">Show</a>
+                    <a style="margin-left: 10px;" href="<?php echo $block->getUrl('*/controlPanel_database/manageTable', ['table' => 'm2epro_system_log']); ?>">Show</a>
                 </td>
             </tr>
-        <?php endif; ?>
+    <?php endif; ?>
 
 </table>

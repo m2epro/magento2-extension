@@ -8,15 +8,19 @@
 
 namespace Ess\M2ePro\Observer\Product\AddUpdate;
 
+/**
+ * Class Before
+ * @package Ess\M2ePro\Observer\Product\AddUpdate
+ */
 class Before extends AbstractAddUpdate
 {
-    public static $proxyStorage = array();
+    public static $proxyStorage = [];
 
-    private $proxyFactory = NULL;
+    private $proxyFactory = null;
     /**
      * @var null|\Ess\M2ePro\Observer\Product\AddUpdate\Before\Proxy
      */
-    private $proxy = NULL;
+    private $proxy = null;
 
     //########################################
 
@@ -26,8 +30,7 @@ class Before extends AbstractAddUpdate
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->proxyFactory = $proxyFactory;
         parent::__construct($productFactory, $helperFactory, $activeRecordFactory, $modelFactory);
     }
@@ -56,7 +59,7 @@ class Before extends AbstractAddUpdate
 
         $this->reloadProduct();
 
-        $this->getProxy()->setData('name',$this->getProduct()->getName());
+        $this->getProxy()->setData('name', $this->getProduct()->getName());
 
         $this->getProxy()->setWebsiteIds($this->getProduct()->getWebsiteIds());
         $this->getProxy()->setCategoriesIds($this->getProduct()->getCategoryIds());
@@ -65,12 +68,12 @@ class Before extends AbstractAddUpdate
             return;
         }
 
-        $this->getProxy()->setData('status',(int)$this->getProduct()->getStatus());
-        $this->getProxy()->setData('price',(float)$this->getProduct()->getPrice());
-        $this->getProxy()->setData('special_price',(float)$this->getProduct()->getSpecialPrice());
-        $this->getProxy()->setData('special_price_from_date',$this->getProduct()->getSpecialFromDate());
-        $this->getProxy()->setData('special_price_to_date',$this->getProduct()->getSpecialToDate());
-        $this->getProxy()->setData('tier_price',$this->getProduct()->getTierPrice());
+        $this->getProxy()->setData('status', (int)$this->getProduct()->getStatus());
+        $this->getProxy()->setData('price', (float)$this->getProduct()->getPrice());
+        $this->getProxy()->setData('special_price', (float)$this->getProduct()->getSpecialPrice());
+        $this->getProxy()->setData('special_price_from_date', $this->getProduct()->getSpecialFromDate());
+        $this->getProxy()->setData('special_price_to_date', $this->getProduct()->getSpecialToDate());
+        $this->getProxy()->setData('tier_price', $this->getProduct()->getTierPrice());
 
         $this->getProxy()->setAttributes($this->getTrackingAttributesWithValues());
     }
@@ -89,7 +92,7 @@ class Before extends AbstractAddUpdate
      */
     private function getProxy()
     {
-        if (!is_null($this->proxy)) {
+        if ($this->proxy !== null) {
             return $this->proxy;
         }
 
@@ -129,7 +132,7 @@ class Before extends AbstractAddUpdate
 
     private function getTrackingAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         foreach ($this->getAffectedListingsProducts() as $listingProduct) {
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -142,7 +145,7 @@ class Before extends AbstractAddUpdate
 
     private function getTrackingAttributesWithValues()
     {
-        $attributes = array();
+        $attributes = [];
 
         foreach ($this->getTrackingAttributes() as $attributeCode) {
             $attributes[$attributeCode] = $this->getMagentoProduct()->getAttributeValue($attributeCode);

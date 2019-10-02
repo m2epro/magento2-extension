@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Item\Stop;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Ebay\Connector\Item\Stop
+ */
 class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 {
     //########################################
@@ -47,7 +51,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
         $configurator = $this->getConfigurator();
         if (!empty($responseData['start_processing_date'])) {
-            $configurator->setParams(array('start_processing_date' => $responseData['start_processing_date']));
+            $configurator->setParams(['start_processing_date' => $responseData['start_processing_date']]);
         }
 
         $this->processAdditionalAction(
@@ -62,19 +66,19 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
     protected function processCompleted(array $data = [], array $params = [])
     {
         if (!empty($data['already_stop'])) {
-
             $this->getResponseObject()->processSuccess($data, $params);
 
             // M2ePro\TRANSLATIONS
             // Item was already Stopped on eBay
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 'Item was already Stopped on eBay',
-                 \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
+                \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
             );
 
             $this->getLogger()->logListingProductMessage(
-                $this->listingProduct, $message
+                $this->listingProduct,
+                $message
             );
 
             return;

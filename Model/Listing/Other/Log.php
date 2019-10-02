@@ -43,35 +43,38 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     //########################################
 
-    public function addProductMessage($listingOtherId,
-                                      $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
-                                      $actionId = NULL,
-                                      $action = NULL,
-                                      $description = NULL,
-                                      $type = NULL,
-                                      $priority = NULL)
-    {
-        $dataForAdd = $this->makeDataForAdd($listingOtherId,
-                                            $initiator,
-                                            $actionId,
-                                            $action,
-                                            $description,
-                                            $type,
-                                            $priority);
+    public function addProductMessage(
+        $listingOtherId,
+        $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
+        $actionId = null,
+        $action = null,
+        $description = null,
+        $type = null,
+        $priority = null
+    ) {
+        $dataForAdd = $this->makeDataForAdd(
+            $listingOtherId,
+            $initiator,
+            $actionId,
+            $action,
+            $description,
+            $type,
+            $priority
+        );
 
         $this->createMessage($dataForAdd);
     }
 
     //########################################
 
-    public function clearMessages($listingOtherId = NULL)
+    public function clearMessages($listingOtherId = null)
     {
-        $filters = array();
+        $filters = [];
 
-        if (!is_null($listingOtherId)) {
+        if ($listingOtherId !== null) {
             $filters['listing_other_id'] = $listingOtherId;
         }
-        if (!is_null($this->componentMode)) {
+        if ($this->componentMode !== null) {
             $filters['component_mode'] = $this->componentMode;
         }
 
@@ -84,7 +87,9 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     {
         /** @var \Ess\M2ePro\Model\Listing\Other $listingOther */
         $listingOther = $this->parentFactory->getObjectLoaded(
-            $this->getComponentMode(), 'Listing\Other', $dataForAdd['listing_other_id']
+            $this->getComponentMode(),
+            'Listing\Other',
+            $dataForAdd['listing_other_id']
         );
 
         $dataForAdd['account_id']     = $listingOther->getAccountId();
@@ -101,56 +106,57 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
         $dataForAdd['component_mode'] = $this->getComponentMode();
 
-        $this->activeRecordFactory->getObject('Listing\Other\Log')
+        $this->activeRecordFactory->getObject('Listing_Other_Log')
             ->setData($dataForAdd)
             ->save()
             ->getId();
     }
 
-    protected function makeDataForAdd($listingOtherId,
-                                      $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
-                                      $actionId = NULL,
-                                      $action = NULL,
-                                      $description = NULL,
-                                      $type = NULL,
-                                      $priority = NULL,
-                                      array $additionalData = array())
-    {
-        $dataForAdd = array();
+    protected function makeDataForAdd(
+        $listingOtherId,
+        $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
+        $actionId = null,
+        $action = null,
+        $description = null,
+        $type = null,
+        $priority = null,
+        array $additionalData = []
+    ) {
+        $dataForAdd = [];
 
-        if (!is_null($listingOtherId)) {
+        if ($listingOtherId !== null) {
             $dataForAdd['listing_other_id'] = (int)$listingOtherId;
         } else {
-            $dataForAdd['listing_other_id'] = NULL;
+            $dataForAdd['listing_other_id'] = null;
         }
 
         $dataForAdd['initiator'] = $initiator;
 
-        if (!is_null($actionId)) {
+        if ($actionId !== null) {
             $dataForAdd['action_id'] = (int)$actionId;
         } else {
             $dataForAdd['action_id'] = $this->getResource()->getNextActionId();
         }
 
-        if (!is_null($action)) {
+        if ($action !== null) {
             $dataForAdd['action'] = (int)$action;
         } else {
             $dataForAdd['action'] = self::ACTION_UNKNOWN;
         }
 
-        if (!is_null($description)) {
+        if ($description !== null) {
             $dataForAdd['description'] = $description;
         } else {
-            $dataForAdd['description'] = NULL;
+            $dataForAdd['description'] = null;
         }
 
-        if (!is_null($type)) {
+        if ($type !== null) {
             $dataForAdd['type'] = (int)$type;
         } else {
             $dataForAdd['type'] = self::TYPE_NOTICE;
         }
 
-        if (!is_null($priority)) {
+        if ($priority !== null) {
             $dataForAdd['priority'] = (int)$priority;
         } else {
             $dataForAdd['priority'] = self::PRIORITY_LOW;

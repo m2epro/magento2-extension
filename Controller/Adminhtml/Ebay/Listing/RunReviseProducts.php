@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+/**
+ * Class RunReviseProducts
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ */
 class RunReviseProducts extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\ActionAbstract
 {
     public function execute()

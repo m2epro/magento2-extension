@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Category;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Ebay\Template\Category
+ */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $activeRecordFactory;
@@ -20,8 +24,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->transactionFactory = $transactionFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -36,7 +39,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
      */
     public function build(array $data)
     {
-        $categoryTemplateData = array();
+        $categoryTemplateData = [];
 
         $categoryTemplateData['category_main_mode']      = (int)$data['category_main_mode'];
         $categoryTemplateData['category_main_id']        = $data['category_main_id'];
@@ -53,25 +56,24 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $categoryTemplate = $this->activeRecordFactory
-            ->getObject('Ebay\Template\Category')->setData($categoryTemplateData);
+            ->getObject('Ebay_Template_Category')->setData($categoryTemplateData);
         $categoryTemplate->save();
 
         $transaction = $this->transactionFactory->create();
 
         foreach ($data['specifics'] as $specific) {
-
-            $specificData = array(
+            $specificData = [
                 'mode'                   => (int)$specific['mode'],
                 'attribute_title'        => $specific['attribute_title'],
                 'value_mode'             => (int)$specific['value_mode'],
                 'value_ebay_recommended' => $specific['value_ebay_recommended'],
                 'value_custom_value'     => $specific['value_custom_value'],
                 'value_custom_attribute' => $specific['value_custom_attribute']
-            );
+            ];
 
             $specificData['template_category_id'] = $categoryTemplate->getId();
 
-            $specific = $this->activeRecordFactory->getObject('Ebay\Template\Category\Specific');
+            $specific = $this->activeRecordFactory->getObject('Ebay_Template_Category_Specific');
             $specific->setData($specificData);
 
             $transaction->addObject($specific);
@@ -92,12 +94,11 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
      */
     private function getTemplateIfTheSameAlreadyExists(array $templateData, array $postSpecifics)
     {
-        $existingTemplates = $this->activeRecordFactory->getObject('Ebay\Template\Category')->getCollection()
-             ->getItemsByPrimaryCategories(array($templateData));
+        $existingTemplates = $this->activeRecordFactory->getObject('Ebay_Template_Category')->getCollection()
+             ->getItemsByPrimaryCategories([$templateData]);
 
-        /* @var $existingCategoryTemplate \Ess\M2ePro\Model\Ebay\Template\Category */
+        /** @var $existingCategoryTemplate \Ess\M2ePro\Model\Ebay\Template\Category */
         foreach ($existingTemplates as $existingCategoryTemplate) {
-
             $currentSpecifics = $existingCategoryTemplate->getSpecifics();
 
             foreach ($currentSpecifics as &$specific) {

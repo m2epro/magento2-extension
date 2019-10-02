@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General\AccountPickupStore;
 
+/**
+ * Class Update
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\General\AccountPickupStore
+ */
 class Update extends \Ess\M2ePro\Model\Ebay\Synchronization\General\AbstractModel
 {
     const MAX_ITEMS_COUNT = 10000;
@@ -40,7 +44,7 @@ class Update extends \Ess\M2ePro\Model\Ebay\Synchronization\General\AbstractMode
 
     public function performActions()
     {
-        $accounts = $this->getHelper('Component\Ebay\PickupStore')->getEnabledAccounts();
+        $accounts = $this->getHelper('Component_Ebay_PickupStore')->getEnabledAccounts();
 
         if (count($accounts) <= 0) {
             return;
@@ -68,11 +72,8 @@ class Update extends \Ess\M2ePro\Model\Ebay\Synchronization\General\AbstractMode
             );
 
             try {
-
                 $this->processAccount($account);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Synchronize Data" Action for eBay Account: "%account%" was completed with error.',
                     $account->getTitle()
@@ -102,19 +103,19 @@ class Update extends \Ess\M2ePro\Model\Ebay\Synchronization\General\AbstractMode
 
     private function processAccount(\Ess\M2ePro\Model\Account $account)
     {
-        $collection = $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\State')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')->getCollection();
         $collection->getSelect()->where('(is_deleted = 1) OR (target_qty != online_qty)');
         $collection->addFieldToFilter('is_in_processing', 0);
 
         $pickupStoreTable = $this->activeRecordFactory
-            ->getObject('Ebay\Account\PickupStore')
+            ->getObject('Ebay_Account_PickupStore')
             ->getResource()
             ->getMainTable();
 
         $collection->getSelect()->joinLeft(
-            array('eaps' => $pickupStoreTable),
+            ['eaps' => $pickupStoreTable],
             'eaps.id = main_table.account_pickup_store_id',
-            array('account_id')
+            ['account_id']
         );
 
         $collection->addFieldToFilter('eaps.account_id', $account->getId());
@@ -126,11 +127,16 @@ class Update extends \Ess\M2ePro\Model\Ebay\Synchronization\General\AbstractMode
             return;
         }
 
-        $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+        $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
 
         /** @var \Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize\ProductsRequester $connector */
         $connector = $dispatcher->getConnector(
-            'accountPickupStore', 'synchronize', 'productsRequester', array(), NULL, $account->getId()
+            'accountPickupStore',
+            'synchronize',
+            'productsRequester',
+            [],
+            null,
+            $account->getId()
         );
         $connector->setPickupStoreStateItems($pickupStoreStateItems);
         $dispatcher->process($connector);

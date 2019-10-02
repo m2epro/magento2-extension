@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Indexer\Listing\Product\VariationParent;
 
+/**
+ * Class Manager
+ * @package Ess\M2ePro\Model\Indexer\Listing\Product\VariationParent
+ */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {
     const INDEXER_LIFETIME = 1800;
@@ -26,8 +30,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->listing = $listing;
         $this->activeRecordFactory = $activeRecordFactory;
 
@@ -53,7 +56,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     public function markInvalidated()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeValue(
+        $this->getHelper('Data_Cache_Permanent')->removeValue(
             $this->getUpToDateCacheKey()
         );
         return $this;
@@ -63,14 +66,14 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     private function isUpToDate()
     {
-        return $this->getHelper('Data\Cache\Permanent')->getValue(
+        return $this->getHelper('Data_Cache_Permanent')->getValue(
             $this->getUpToDateCacheKey()
         );
     }
 
     private function markAsIsUpToDate()
     {
-        $this->getHelper('Data\Cache\Permanent')->setValue(
+        $this->getHelper('Data_Cache_Permanent')->setValue(
             $this->getUpToDateCacheKey(),
             'true',
             ['indexer_listing_product_parent'],

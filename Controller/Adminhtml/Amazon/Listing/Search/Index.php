@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Search;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Search
+ */
 class Index extends Main
 {
     //########################################
@@ -27,9 +31,9 @@ class Index extends Main
             $listingType = $this->getRequest()->getParam('listing_type', false);
 
             if ($listingType == \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_LISTING_OTHER) {
-                $gridBlock = 'Amazon\Listing\Search\Other\Grid';
+                $gridBlock = 'Amazon_Listing_Search_Other_Grid';
             } else {
-                $gridBlock = 'Amazon\Listing\Search\Product\Grid';
+                $gridBlock = 'Amazon_Listing_Search_Product_Grid';
             }
 
             $this->setAjaxContent(
@@ -38,7 +42,7 @@ class Index extends Main
             return $this->getResult();
         }
 
-        $this->addContent($this->createBlock('Amazon\Listing\Search'));
+        $this->addContent($this->createBlock('Amazon_Listing_Search'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Search Products'));
         $this->setPageHelpLink('x/-gEtAQ');
 

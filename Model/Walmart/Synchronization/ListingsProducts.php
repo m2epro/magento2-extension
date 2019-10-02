@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization;
 
+/**
+ * Class ListingsProducts
+ * @package Ess\M2ePro\Model\Walmart\Synchronization
+ */
 class ListingsProducts extends AbstractModel
 {
     //########################################
@@ -19,7 +23,7 @@ class ListingsProducts extends AbstractModel
 
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------
@@ -40,7 +44,7 @@ class ListingsProducts extends AbstractModel
     {
         $result = true;
 
-        $result = !$this->processTask('ListingsProducts\Update\Blocked') ? false : $result;
+        $result = !$this->processTask('ListingsProducts_Update_Blocked') ? false : $result;
         $result = !$this->processTask('ListingsProducts\Update') ? false : $result;
 
         return $result;

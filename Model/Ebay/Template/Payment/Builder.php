@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Payment;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Ebay\Template\Payment
+ */
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 {
     //########################################
@@ -15,7 +19,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
     public function build(array $data)
     {
         if (empty($data)) {
-            return NULL;
+            return null;
         }
 
         $this->validate($data);
@@ -23,10 +27,11 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         $data = $this->prepareData($data);
 
         $marketplace = $this->ebayFactory->getCachedObjectLoaded(
-            'Marketplace', $data['marketplace_id']
+            'Marketplace',
+            $data['marketplace_id']
         );
 
-        $template = $this->activeRecordFactory->getObject('Ebay\Template\Payment');
+        $template = $this->activeRecordFactory->getObject('Ebay_Template_Payment');
 
         if (isset($data['id'])) {
             $template->load($data['id']);
@@ -101,12 +106,12 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
     private function createService($templatePaymentId, $codeName)
     {
-        $data = array(
+        $data = [
             'template_payment_id' => $templatePaymentId,
             'code_name' => $codeName
-        );
+        ];
 
-        $model = $this->activeRecordFactory->getObject('Ebay\Template\Payment\Service');
+        $model = $this->activeRecordFactory->getObject('Ebay_Template_Payment_Service');
         $model->addData($data);
         $model->save();
 

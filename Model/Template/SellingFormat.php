@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Template;
 
+/**
+ * Class SellingFormat
+ * @package Ess\M2ePro\Model\Template
+ */
 class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
     const QTY_MODE_PRODUCT       = 1;
@@ -34,7 +38,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abst
 
     public function save($reloadOnCreate = false)
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_sellingformat');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_sellingformat');
         return parent::save($reloadOnCreate);
     }
 
@@ -46,7 +50,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abst
             return false;
         }
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_sellingformat');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_sellingformat');
 
         return parent::delete();
     }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector;
 
+/**
+ * Class Protocol
+ * @package Ess\M2ePro\Model\Amazon\Connector
+ */
 class Protocol extends \Ess\M2ePro\Model\Connector\Protocol
 {
     // ########################################

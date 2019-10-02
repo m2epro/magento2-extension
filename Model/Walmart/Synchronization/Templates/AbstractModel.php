@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization\Templates;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\Templates
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Walmart\Synchronization\AbstractModel
 {
-    protected $productChangesManager = NULL;
+    protected $productChangesManager = null;
 
     //########################################
 
@@ -44,12 +48,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Walmart\Synchronization\A
 
     //########################################
 
-    protected function logError(\Ess\M2ePro\Model\Listing\Product $listingProduct,
-                                \Exception $exception,
-                                $sendToServer = true)
-    {
+    protected function logError(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        \Exception $exception,
+        $sendToServer = true
+    ) {
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Log $logModel */
-        $logModel = $this->activeRecordFactory->getObject('Walmart\Listing\Log');
+        $logModel = $this->activeRecordFactory->getObject('Walmart_Listing_Log');
 
         $logModel->addProductMessage(
             $listingProduct->getListingId(),

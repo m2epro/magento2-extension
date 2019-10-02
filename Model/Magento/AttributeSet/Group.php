@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\AttributeSet;
 
+/**
+ * Class Group
+ * @package Ess\M2ePro\Model\Magento\AttributeSet
+ */
 class Group extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $entityAttributeSetFactory;
@@ -22,7 +26,7 @@ class Group extends \Ess\M2ePro\Model\AbstractModel
     protected $name;
     protected $attributeSetId;
 
-    protected $params = array();
+    protected $params = [];
 
     //########################################
 
@@ -31,8 +35,7 @@ class Group extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Eav\Model\Entity\Attribute\GroupFactory $entityAttributeGroupFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->entityAttributeSetFactory = $entityAttributeSetFactory;
         $this->entityAttributeGroupFactory = $entityAttributeGroupFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -49,7 +52,6 @@ class Group extends \Ess\M2ePro\Model\AbstractModel
     private function init()
     {
         if (!($this->attributeSetObj instanceof \Magento\Eav\Model\Entity\Attribute\Set)) {
-
             $attributeSet = $this->entityAttributeSetFactory->create()->load($this->attributeSetId);
             $attributeSet->getId() && $this->attributeSetObj = $attributeSet;
         }
@@ -67,11 +69,11 @@ class Group extends \Ess\M2ePro\Model\AbstractModel
     private function saveGroup()
     {
         if ($this->groupObj->getId()) {
-            return array('result' => true);
+            return ['result' => true];
         }
 
         if (!$this->attributeSetObj) {
-            return array('result' => false, 'error' => "Attribute Set '{$this->attributeSetId}' is not found.");
+            return ['result' => false, 'error' => "Attribute Set '{$this->attributeSetId}' is not found."];
         }
 
         $this->groupObj->setAttributeGroupName($this->name);
@@ -80,10 +82,10 @@ class Group extends \Ess\M2ePro\Model\AbstractModel
         try {
             $this->groupObj->save();
         } catch (\Exception $e) {
-            return array('result' => false, 'error' => $e->getMessage());
+            return ['result' => false, 'error' => $e->getMessage()];
         }
 
-        return array('result' => true, 'obj' => $this->groupObj);
+        return ['result' => true, 'obj' => $this->groupObj];
     }
 
     //########################################
@@ -100,7 +102,7 @@ class Group extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    public function setParams(array $value = array())
+    public function setParams(array $value = [])
     {
         $this->params = $value;
         return $this;

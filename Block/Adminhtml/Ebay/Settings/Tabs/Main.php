@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs;
 
+/**
+ * Class Main
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs
+ */
 class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
     /** @var \Ess\M2ePro\Model\Config\Manager\Cache  */
@@ -21,8 +25,7 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->cacheConfig = $cacheConfig;
 
         parent::__construct($context, $registry, $formFactory, $data);
@@ -33,21 +36,26 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
         $configModel = $this->getHelper('Module')->getConfig();
 
         $useLastSpecificsMode = (bool)(int)$configModel->getGroupValue(
-            '/view/ebay/template/category/','use_last_specifics'
+            '/view/ebay/template/category/',
+            'use_last_specifics'
         );
         $checkTheSameProductAlreadyListedMode = (bool)(int)$configModel->getGroupValue(
-            '/ebay/connector/listing/','check_the_same_product_already_listed'
+            '/ebay/connector/listing/',
+            'check_the_same_product_already_listed'
         );
 
         $uploadImagesMode = (int)$configModel->getGroupValue(
-            '/ebay/description/','upload_images_mode'
+            '/ebay/description/',
+            'upload_images_mode'
         );
         $shouldBeUlrsSecure = (int)$configModel->getGroupValue(
-            '/ebay/description/','should_be_ulrs_secure'
+            '/ebay/description/',
+            'should_be_ulrs_secure'
         );
 
         $viewEbayFeedbacksNotificationMode = (int)$configModel->getGroupValue(
-            '/view/ebay/feedbacks/notification/','mode'
+            '/view/ebay/feedbacks/notification/',
+            'mode'
         );
 
         $form = $this->_formFactory->create([
@@ -57,14 +65,16 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
             ]
         ]);
 
-        $fieldset = $form->addFieldset('selling',
+        $fieldset = $form->addFieldset(
+            'selling',
             [
                 'legend' => $this->__('Listing'),
                 'collapsable' => false,
             ]
         );
 
-        $fieldset->addField('use_last_specifics_mode',
+        $fieldset->addField(
+            'use_last_specifics_mode',
             'select',
             [
                 'name'        => 'use_last_specifics_mode',
@@ -81,14 +91,16 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
             ]
         );
 
-        $fieldset = $form->addFieldset('images',
+        $fieldset = $form->addFieldset(
+            'images',
             [
                 'legend' => $this->__('Images Uploading'),
                 'collapsable' => false,
             ]
         );
 
-        $fieldset->addField('upload_images_mode',
+        $fieldset->addField(
+            'upload_images_mode',
             'select',
             [
                 'name'   => 'upload_images_mode',
@@ -114,7 +126,8 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
             ]
         );
 
-        $fieldset->addField('should_be_ulrs_secure',
+        $fieldset->addField(
+            'should_be_ulrs_secure',
             'select',
             [
                 'name'   => 'should_be_ulrs_secure',
@@ -130,14 +143,16 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
             ]
         );
 
-        $fieldset = $form->addFieldset('additional',
+        $fieldset = $form->addFieldset(
+            'additional',
             [
                 'legend' => $this->__('Additional'),
                 'collapsable' => false,
             ]
         );
 
-        $fieldset->addField('check_the_same_product_already_listed_mode',
+        $fieldset->addField(
+            'check_the_same_product_already_listed_mode',
             'select',
             [
                 'name'        => 'check_the_same_product_already_listed_mode',
@@ -160,7 +175,8 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
         );
 
         if ($this->getHelper('View\Ebay')->isFeedbacksShouldBeShown()) {
-            $fieldset->addField('view_ebay_feedbacks_notification_mode',
+            $fieldset->addField(
+                'view_ebay_feedbacks_notification_mode',
                 'select',
                 [
                     'name' => 'view_ebay_feedbacks_notification_mode',

@@ -10,17 +10,21 @@ namespace Ess\M2ePro\Model\Synchronization\Templates\Synchronization;
 
 use Ess\M2ePro\Model\Listing\Product\Action\Configurator;
 
+/**
+ * Class Runner
+ * @package Ess\M2ePro\Model\Synchronization\Templates\Synchronization
+ */
 class Runner extends \Ess\M2ePro\Model\AbstractModel
 {
-    private $items = array();
+    private $items = [];
 
     /** @var \Ess\M2ePro\Model\Synchronization\Lock\Item\Manager $lockItem */
-    private $lockItem      = NULL;
+    private $lockItem      = null;
     private $percentsStart = 0;
     private $percentsEnd   = 100;
 
     private $maxProductsPerStep = 10;
-    private $connectorModel     = NULL;
+    private $connectorModel     = null;
 
     //########################################
 
@@ -114,12 +118,12 @@ class Runner extends \Ess\M2ePro\Model\AbstractModel
      * @param \Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator
      * @return bool
      */
-    public function addProduct($product,
-                               $action,
-                               \Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator)
-    {
+    public function addProduct(
+        $product,
+        $action,
+        \Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator
+    ) {
         if (isset($this->items[$product->getId()])) {
-
             $existedItem = $this->items[$product->getId()];
 
             if ($existedItem['action'] == $action) {
@@ -133,7 +137,6 @@ class Runner extends \Ess\M2ePro\Model\AbstractModel
             }
 
             do {
-
                 if ($action == \Ess\M2ePro\Model\Listing\Product::ACTION_STOP) {
                     $this->deleteProduct($existedItem['product']);
                     break;
@@ -160,16 +163,15 @@ class Runner extends \Ess\M2ePro\Model\AbstractModel
                 if ($existedItem['action'] == \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST) {
                     return false;
                 }
-
             } while (false);
         }
 
         $product->setActionConfigurator($configurator);
 
-        $this->items[$product->getId()] = array(
+        $this->items[$product->getId()] = [
             'product' => $product,
             'action'  => $action,
-        );
+        ];
 
         return true;
     }
@@ -218,7 +220,7 @@ class Runner extends \Ess\M2ePro\Model\AbstractModel
 
     public function resetProducts()
     {
-        $this->items = array();
+        $this->items = [];
     }
 
     //########################################
@@ -227,25 +229,26 @@ class Runner extends \Ess\M2ePro\Model\AbstractModel
     {
         $this->setPercents($this->getPercentsStart());
 
-        $actions = array(
+        $actions = [
             \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
             \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST,
             \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
             \Ess\M2ePro\Model\Listing\Product::ACTION_LIST
-        );
+        ];
 
-        $results = array();
+        $results = [];
 
         $iteration = 0;
         $percentsForOneIteration = $this->getPercentsInterval() / count($actions);
 
         foreach ($actions as $action) {
+            $tempResults = $this->executeAction(
+                $action,
+                $this->getPercentsStart() + $iteration*$percentsForOneIteration,
+                $this->getPercentsStart() + (++$iteration)*$percentsForOneIteration
+            );
 
-            $tempResults = $this->executeAction($action,
-                                                $this->getPercentsStart() + $iteration*$percentsForOneIteration,
-                                                $this->getPercentsStart() + (++$iteration)*$percentsForOneIteration);
-
-            $results = array_merge($results,$tempResults);
+            $results = array_merge($results, $tempResults);
         }
 
         $this->setPercents($this->getPercentsEnd());
@@ -258,7 +261,7 @@ class Runner extends \Ess\M2ePro\Model\AbstractModel
 
         $products = $this->getActionProducts($action);
         if (empty($products)) {
-            return array();
+            return [];
         }
 
         $totalProductsCount = count($products);
@@ -266,21 +269,22 @@ class Runner extends \Ess\M2ePro\Model\AbstractModel
 
         $percentsOneProduct = ($percentsTo - $percentsFrom)/$totalProductsCount;
 
-        $results = array();
+        $results = [];
 
         foreach (array_chunk($products, $this->getMaxProductsPerStep()) as $stepProducts) {
-
-            $countString = $this->getHelper('Module\Translation')->__('%perStep% from %total% Product(s).',
-                                                      count($stepProducts), $totalProductsCount);
+            $countString = $this->getHelper('Module\Translation')->__(
+                '%perStep% from %total% Product(s).',
+                count($stepProducts),
+                $totalProductsCount
+            );
 
             if (count($stepProducts) < 10) {
-
-                $productsIds = array();
+                $productsIds = [];
                 foreach ($stepProducts as $product) {
                     $productsIds[] = $product->getProductId();
                 }
 
-                $productsIds = implode('", "',$productsIds);
+                $productsIds = implode('", "', $productsIds);
                 $countString = $this->getHelper('Module\Translation')->__('Product(s) with ID(s)')
                     ." \"{$productsIds}\".";
             }
@@ -290,8 +294,9 @@ class Runner extends \Ess\M2ePro\Model\AbstractModel
                              ' '.$this->getHelper('Module\Translation')->__('Please wait...'));
 
             $results[] = $this->modelFactory->getObject($this->getConnectorModel())->process(
-                $action, $stepProducts,
-                array('status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH)
+                $action,
+                $stepProducts,
+                ['status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH]
             );
 
             $processedProductsCount += count($stepProducts);
@@ -334,7 +339,7 @@ class Runner extends \Ess\M2ePro\Model\AbstractModel
 
     private function getActionProducts($action)
     {
-        $resultProducts = array();
+        $resultProducts = [];
 
         foreach ($this->items as $item) {
             if ($item['action'] != $action) {

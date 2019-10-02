@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
+/**
+ * Class Search
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Category
+ */
 class Search extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {
 
@@ -19,14 +23,14 @@ class Search extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $categoryType = $this->getRequest()->getParam('category_type');
         $marketplaceId  = $this->getRequest()->getParam('marketplace_id');
         $accountId  = $this->getRequest()->getParam('account_id');
-        $result = array();
+        $result = [];
 
-        $ebayCategoryTypes = $this->getHelper('Component\Ebay\Category')->getEbayCategoryTypes();
-        $storeCategoryTypes = $this->getHelper('Component\Ebay\Category')->getStoreCategoryTypes();
+        $ebayCategoryTypes = $this->getHelper('Component_Ebay_Category')->getEbayCategoryTypes();
+        $storeCategoryTypes = $this->getHelper('Component_Ebay_Category')->getStoreCategoryTypes();
 
-        if (is_null($query)
-            || (in_array($categoryType, $ebayCategoryTypes) && is_null($marketplaceId))
-            || (in_array($categoryType, $storeCategoryTypes) && is_null($accountId))
+        if ($query === null
+            || (in_array($categoryType, $ebayCategoryTypes) && $marketplaceId === null)
+            || (in_array($categoryType, $storeCategoryTypes) && $accountId === null)
         ) {
             $this->setJsonContent($result);
 
@@ -35,10 +39,10 @@ class Search extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
         $connection = $this->resourceConnection->getConnection();
         if (in_array($categoryType, $ebayCategoryTypes)) {
-            $tableName = $this->getHelper('Module\Database\Structure')
+            $tableName = $this->getHelper('Module_Database_Structure')
                 ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
         } else {
-            $tableName = $this->getHelper('Module\Database\Structure')
+            $tableName = $this->getHelper('Module_Database_Structure')
                 ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
         }
 
@@ -69,19 +73,21 @@ class Search extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
         foreach ($ids as $categoryId) {
             if (in_array($categoryType, $ebayCategoryTypes)) {
-                $treePath = $this->getHelper('Component\Ebay\Category\Ebay')->getPath(
-                    $categoryId['category_id'], $marketplaceId
+                $treePath = $this->getHelper('Component_Ebay_Category_Ebay')->getPath(
+                    $categoryId['category_id'],
+                    $marketplaceId
                 );
             } else {
-                $treePath = $this->getHelper('Component\Ebay\Category\Store')->getPath(
-                    $categoryId['category_id'], $accountId
+                $treePath = $this->getHelper('Component_Ebay_Category_Store')->getPath(
+                    $categoryId['category_id'],
+                    $accountId
                 );
             }
 
-            $result[] = array(
+            $result[] = [
                 'titles' => $treePath,
                 'id' => $categoryId['category_id']
-            );
+            ];
         }
 
         $this->setJsonContent($result);

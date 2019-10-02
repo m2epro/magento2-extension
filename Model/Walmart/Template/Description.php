@@ -13,6 +13,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Template;
 
+/**
+ * Class Description
+ * @package Ess\M2ePro\Model\Walmart\Template
+ */
 class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     const TITLE_MODE_CUSTOM = 1;
@@ -80,7 +84,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
     /**
      * @var \Ess\M2ePro\Model\Walmart\Template\Description\Source[]
      */
-    private $descriptionSourceModels = array();
+    private $descriptionSourceModels = [];
 
     //########################################
 
@@ -115,7 +119,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
             return false;
         }
 
-        $this->descriptionSourceModels = array();
+        $this->descriptionSourceModels = [];
 
         return parent::delete();
     }
@@ -135,7 +139,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
         }
 
         $this->descriptionSourceModels[$productId] = $this->modelFactory->getObject(
-            'Walmart\Template\Description\Source'
+            'Walmart_Template_Description_Source'
         );
         $this->descriptionSourceModels[$productId]->setMagentoProduct($magentoProduct);
         $this->descriptionSourceModels[$productId]->setDescriptionTemplate($this->getParentObject());
@@ -174,10 +178,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getTitleSource()
     {
-        return array(
+        return [
             'mode'     => $this->getTitleMode(),
             'template' => $this->getData('title_template')
-        );
+        ];
     }
 
     /**
@@ -185,13 +189,13 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getTitleAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getTitleSource();
 
         if ($src['mode'] == self::TITLE_MODE_PRODUCT) {
             $attributes[] = 'name';
         } else {
-            $match = array();
+            $match = [];
             preg_match_all('/#([a-zA-Z_0-9]+?)#/', $src['template'], $match);
             $match && $attributes = $match[1];
         }
@@ -230,11 +234,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getBrandSource()
     {
-        return array(
+        return [
             'mode'             => $this->getBrandMode(),
             'custom_value'     => $this->getData('brand_custom_value'),
             'custom_attribute' => $this->getData('brand_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -242,7 +246,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getBrandAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getBrandSource();
 
         if ($src['mode'] == self::BRAND_MODE_CUSTOM_ATTRIBUTE) {
@@ -301,11 +305,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getCountPerPackSource()
     {
-        return array(
+        return [
             'mode'      => $this->getCountPerPackMode(),
             'value'     => $this->getCountPerPackCustomValue(),
             'attribute' => $this->getCountPerPackCustomAttribute()
-        );
+        ];
     }
 
     /**
@@ -313,7 +317,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getCountPerPackAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getCountPerPackSource();
 
         if ($src['mode'] == self::COUNT_PER_PACK_MODE_CUSTOM_ATTRIBUTE) {
@@ -362,11 +366,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getMultipackQuantitySource()
     {
-        return array(
+        return [
             'mode'      => $this->getMultipackQuantityMode(),
             'value'     => $this->getData('multipack_quantity_custom_value'),
             'attribute' => $this->getData('multipack_quantity_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -374,7 +378,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getMultipackQuantityAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getMultipackQuantitySource();
 
         if ($src['mode'] == self::MULTIPACK_QUANTITY_MODE_CUSTOM_ATTRIBUTE) {
@@ -423,11 +427,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getTotalCountSource()
     {
-        return array(
+        return [
             'mode'             => $this->getTotalCountMode(),
             'custom_value'     => $this->getData('total_count_custom_value'),
             'custom_attribute' => $this->getData('total_count_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -435,7 +439,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getTotalCountAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getTotalCountSource();
 
         if ($src['mode'] == self::TOTAL_COUNT_MODE_CUSTOM_ATTRIBUTE) {
@@ -484,11 +488,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getModelNumberSource()
     {
-        return array(
+        return [
             'mode'             => $this->getModelNumberMode(),
             'custom_value'     => $this->getData('model_number_custom_value'),
             'custom_attribute' => $this->getData('model_number_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -496,7 +500,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getModelNumberAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getModelNumberSource();
 
         if ($src['mode'] == self::MODEL_NUMBER_MODE_CUSTOM_ATTRIBUTE) {
@@ -545,10 +549,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getDescriptionSource()
     {
-        return array(
+        return [
             'mode'     => $this->getDescriptionMode(),
             'template' => $this->getData('description_template')
-        );
+        ];
     }
 
     /**
@@ -556,7 +560,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getDescriptionAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getDescriptionSource();
 
         if ($src['mode'] == self::DESCRIPTION_MODE_PRODUCT) {
@@ -564,7 +568,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
         } elseif ($src['mode'] == self::DESCRIPTION_MODE_SHORT) {
             $attributes[] = 'short_description';
         } else {
-            $match = array();
+            $match = [];
             preg_match_all('/#([a-zA-Z_0-9]+?)#/', $src['template'], $match);
             $match && $attributes = $match[1];
         }
@@ -587,8 +591,8 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getKeyFeaturesTemplate()
     {
-        return !is_null($this->getData('key_features'))
-            ? $this->getHelper('Data')->jsonDecode($this->getData('key_features')) : array();
+        return $this->getData('key_features') !== null
+            ? $this->getHelper('Data')->jsonDecode($this->getData('key_features')) : [];
     }
 
     /**
@@ -612,10 +616,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getKeyFeaturesSource()
     {
-        return array(
+        return [
             'mode'     => $this->getKeyFeaturesMode(),
             'template' => $this->getKeyFeaturesTemplate()
-        );
+        ];
     }
 
     /**
@@ -626,13 +630,13 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
         $src = $this->getKeyFeaturesSource();
 
         if ($src['mode'] == self::KEY_FEATURES_MODE_NONE) {
-            return array();
+            return [];
         }
 
-        $attributes = array();
+        $attributes = [];
 
         if ($src['mode'] == self::KEY_FEATURES_MODE_CUSTOM) {
-            $match = array();
+            $match = [];
             $audience = implode(PHP_EOL, $src['template']);
             preg_match_all('/#([a-zA-Z_0-9]+?)#/', $audience, $match);
             $match && $attributes = $match[1];
@@ -656,8 +660,8 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getOtherFeaturesTemplate()
     {
-        return is_null($this->getData('other_features'))
-            ? array() : $this->getHelper('Data')->jsonDecode($this->getData('other_features'));
+        return $this->getData('other_features') === null
+            ? [] : $this->getHelper('Data')->jsonDecode($this->getData('other_features'));
     }
 
     /**
@@ -681,10 +685,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getOtherFeaturesSource()
     {
-        return array(
+        return [
             'mode'     => $this->getOtherFeaturesMode(),
             'template' => $this->getOtherFeaturesTemplate()
-        );
+        ];
     }
 
     /**
@@ -695,13 +699,13 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
         $src = $this->getOtherFeaturesSource();
 
         if ($src['mode'] == self::OTHER_FEATURES_MODE_NONE) {
-            return array();
+            return [];
         }
 
-        $attributes = array();
+        $attributes = [];
 
         if ($src['mode'] == self::OTHER_FEATURES_MODE_CUSTOM) {
-            $match = array();
+            $match = [];
             $bullets = implode(PHP_EOL, $src['template']);
             preg_match_all('/#([a-zA-Z_0-9]+?)#/', $bullets, $match);
             $match && $attributes = $match[1];
@@ -725,8 +729,8 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getAttributesTemplate()
     {
-        return is_null($this->getData('attributes'))
-            ? array() : $this->getHelper('Data')->jsonDecode($this->getData('attributes'));
+        return $this->getData('attributes') === null
+            ? [] : $this->getHelper('Data')->jsonDecode($this->getData('attributes'));
     }
 
     /**
@@ -750,10 +754,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getAttributesSource()
     {
-        return array(
+        return [
             'mode'     => $this->getAttributesMode(),
             'template' => $this->getAttributesTemplate()
-        );
+        ];
     }
 
     /**
@@ -764,15 +768,15 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
         $src = $this->getAttributesSource();
 
         if ($src['mode'] == self::ATTRIBUTES_MODE_NONE) {
-            return array();
+            return [];
         }
 
-        $attributes = array();
+        $attributes = [];
 
         if ($src['mode'] == self::ATTRIBUTES_MODE_CUSTOM) {
-            $match = array();
+            $match = [];
 
-            $templateValues = array();
+            $templateValues = [];
             foreach ($src['template'] as $item) {
                 $templateValues[] = $item['value'];
             }
@@ -824,11 +828,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getKeywordsSource()
     {
-        return array(
+        return [
             'mode'             => $this->getKeywordsMode(),
             'custom_value'     => $this->getData('keywords_custom_value'),
             'custom_attribute' => $this->getData('keywords_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -836,7 +840,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getKeywordsAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getKeywordsSource();
 
         if ($src['mode'] == self::KEYWORDS_MODE_CUSTOM_ATTRIBUTE) {
@@ -885,11 +889,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getManufacturerSource()
     {
-        return array(
+        return [
             'mode'             => $this->getManufacturerMode(),
             'custom_value'     => $this->getData('manufacturer_custom_value'),
             'custom_attribute' => $this->getData('manufacturer_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -897,7 +901,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getManufacturerAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getManufacturerSource();
 
         if ($src['mode'] == self::MANUFACTURER_MODE_CUSTOM_ATTRIBUTE) {
@@ -946,11 +950,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getManufacturerPartNumberSource()
     {
-        return array(
+        return [
             'mode'             => $this->getManufacturerPartNumberMode(),
             'custom_value'     => $this->getData('manufacturer_part_number_custom_value'),
             'custom_attribute' => $this->getData('manufacturer_part_number_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -958,7 +962,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getManufacturerPartNumberAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getManufacturerPartNumberSource();
 
         if ($src['mode'] == self::MANUFACTURER_PART_NUMBER_MODE_CUSTOM_ATTRIBUTE) {
@@ -999,10 +1003,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getMsrpRrpSource()
     {
-        return array(
+        return [
             'mode'             => $this->getMsrpRrpMode(),
             'custom_attribute' => $this->getData('msrp_rrp_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -1010,7 +1014,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getMsrpRrpAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getMsrpRrpSource();
 
         if ($src['mode'] == self::MSRP_RRP_MODE_ATTRIBUTE) {
@@ -1059,10 +1063,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getImageMainSource()
     {
-        return array(
+        return [
             'mode'      => $this->getImageMainMode(),
             'attribute' => $this->getData('image_main_attribute')
-        );
+        ];
     }
 
     /**
@@ -1070,7 +1074,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getImageMainAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getImageMainSource();
 
         if ($src['mode'] == self::IMAGE_MAIN_MODE_PRODUCT) {
@@ -1123,10 +1127,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getImageVariationDifferenceSource()
     {
-        return array(
+        return [
             'mode'      => $this->getImageVariationDifferenceMode(),
             'attribute' => $this->getData('image_variation_difference_attribute')
-        );
+        ];
     }
 
     /**
@@ -1134,7 +1138,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getImageVariationDifferenceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getImageVariationDifferenceSource();
 
         if ($src['mode'] == self::IMAGE_VARIATION_DIFFERENCE_MODE_PRODUCT) {
@@ -1187,11 +1191,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getGalleryImagesSource()
     {
-        return array(
+        return [
             'mode'      => $this->getGalleryImagesMode(),
             'attribute' => $this->getData('gallery_images_attribute'),
             'limit'     => $this->getData('gallery_images_limit')
-        );
+        ];
     }
 
     /**
@@ -1199,7 +1203,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      */
     public function getGalleryImagesAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getGalleryImagesSource();
 
         if ($src['mode'] == self::GALLERY_IMAGES_MODE_ATTRIBUTE) {
@@ -1235,15 +1239,12 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
             $this->getModelNumberAttributes(),
             $this->getTotalCountAttributes(),
             $this->getDescriptionAttributes(),
-
             $this->getOtherFeaturesAttributes(),
             $this->getAttributesAttributes(),
             $this->getKeyFeaturesAttributes(),
             $this->getKeywordsAttributes(),
-
             $this->getManufacturerAttributes(),
             $this->getManufacturerPartNumberAttributes(),
-
             $this->getMsrpRrpAttributes()
         ));
     }
@@ -1294,7 +1295,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('listing_id',array('in' => $listingCollection->getSelect()));
+        $listingProductCollection->addFieldToFilter('listing_id', ['in' => $listingCollection->getSelect()]);
 
         if ($onlyPhysicalUnits) {
             $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
@@ -1310,12 +1311,12 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'), true);
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id'], true);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     public function isCacheEnabled()

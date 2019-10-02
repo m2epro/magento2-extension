@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing;
 
+/**
+ * Class Other
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing
+ */
 class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -32,13 +36,12 @@ class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->appendHelpBlock([
             'content' => $this->__(
                 <<<HTML
-    On this page, you can review the 3rd Party Listings imported by M2E Pro from your
-    Channel Account associated with particular Marketplace.<br><br>
+    On this page, you can review the 3rd Party Listings imported by M2E Pro from your Channel Account
+    associated with particular Marketplace. In the grid below,
+    click the 3rd Party Listing line to manage the Items.<br><br>
 
-    In the grid below, click the 3rd Party Listing line to manage the Items.
-    You can Map the 3rd Party Items to the related Magento Products and Move them to the selected M2E Pro Listing.
-    Manage each Item individually or use the Mass Actions to update the Items in bulk.
-
+    <strong>Note:</strong> To import the 3rd Party Listings, enable the related option in your Account
+    Configuration under <i>Walmart Integration > Configuration > Accounts > Edit Account > 3rd Party Listings</i>.
 HTML
             )
         ]);

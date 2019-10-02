@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
+/**
+ * Class Account
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay
+ */
 class Account extends AbstractContainer
 {
     protected function _construct()
@@ -31,10 +35,10 @@ class Account extends AbstractContainer
 etc. can be specified for each Account separately.</p><br>
 <p><strong>Note:</strong> eBay Account can be deleted only if it is not being used for any of M2E Pro Listings.</p>
 HTML
-)
+        )
         ]);
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Account\Feedback'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Account_Feedback'));
 
         $this->jsTranslator->addTranslations([
             'Should be between 2 and 80 characters long.' => $this->__('Should be between 2 and 80 characters long.')
@@ -62,5 +66,4 @@ JS
 
         return parent::_toHtml();
     }
-
 }

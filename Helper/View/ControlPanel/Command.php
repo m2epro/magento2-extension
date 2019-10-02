@@ -11,16 +11,21 @@ namespace Ess\M2ePro\Helper\View\ControlPanel;
 use Ess\M2ePro\Helper\Factory;
 use Ess\M2ePro\Helper\Module;
 
+/**
+ * Class Command
+ * @package Ess\M2ePro\Helper\View\ControlPanel
+ */
 class Command extends \Ess\M2ePro\Helper\AbstractHelper
 {
     //########################################
 
-    const CONTROLLER_MODULE_MODULE             = 'controlPanel_module/module';
-    const CONTROLLER_MODULE_SYNCHRONIZATION    = 'controlPanel_module/synchronization';
-    const CONTROLLER_MODULE_INTEGRATION        = 'controlPanel_module/integration';
-    const CONTROLLER_MODULE_INTEGRATION_EBAY   = 'controlPanel_module_integration/ebay';
-    const CONTROLLER_MODULE_INTEGRATION_AMAZON = 'controlPanel_module_integration/amazon';
-    const CONTROLLER_MODULE_SERVICING          = 'controlPanel_module/servicing';
+    const CONTROLLER_MODULE_MODULE              = 'controlPanel_module/module';
+    const CONTROLLER_MODULE_SYNCHRONIZATION     = 'controlPanel_module/synchronization';
+    const CONTROLLER_MODULE_INTEGRATION         = 'controlPanel_module/integration';
+    const CONTROLLER_MODULE_INTEGRATION_EBAY    = 'controlPanel_module_integration/ebay';
+    const CONTROLLER_MODULE_INTEGRATION_AMAZON  = 'controlPanel_module_integration/amazon';
+    const CONTROLLER_MODULE_INTEGRATION_WALMART = 'controlPanel_module_integration/walmart';
+    const CONTROLLER_MODULE_SERVICING           = 'controlPanel_module/servicing';
 
     const CONTROLLER_TOOLS_M2EPRO_GENERAL   = 'controlPanel_tools_m2ePro/general';
     const CONTROLLER_TOOLS_M2EPRO_INSTALL   = 'controlPanel_tools_m2ePro/install';
@@ -48,20 +53,20 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $tempClass = $this->getControllerClassName($controller);
 
-        $reflectionClass = new \ReflectionClass ($tempClass);
+        $reflectionClass = new \ReflectionClass($tempClass);
         $reflectionMethods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
 
         // Get actions methods
         // ---------------------------------------
-        $actions = array();
+        $actions = [];
         foreach ($reflectionMethods as $reflectionMethod) {
             $methodName = $reflectionMethod->name;
 
-            if (substr($methodName,strlen($methodName)-6) != 'Action') {
+            if (substr($methodName, strlen($methodName)-6) != 'Action') {
                 continue;
             }
 
-            $methodName = substr($methodName,0,strlen($methodName)-6);
+            $methodName = substr($methodName, 0, strlen($methodName)-6);
 
             $actions[] = $methodName;
         }
@@ -69,11 +74,10 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
 
         // Print method actions
         // ---------------------------------------
-        $methods = array();
+        $methods = [];
         foreach ($actions as $action) {
-
             $controllerName = $this->getControllerClassName($controller);
-            $reflectionMethod = new \ReflectionMethod ($controllerName,$action.'Action');
+            $reflectionMethod = new \ReflectionMethod($controllerName, $action.'Action');
 
             $commentsString = $this->getMethodComments($reflectionMethod);
 
@@ -129,7 +133,7 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
             preg_match('/new_window/', $commentsString, $matches);
             isset($matches[0]) && $methodNewWindow = true;
 
-            $methods[] = array(
+            $methods[] = [
                 'invisible'      => $methodInvisible,
                 'non_production' => $methodNonProduction,
                 'title'          => $methodTitle,
@@ -138,13 +142,13 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
                 'content'        => $methodContent,
                 'new_line'       => $methodNewLine,
                 'confirm'        => $methodConfirm,
-                'prompt'      => array(
+                'prompt'      => [
                     'text' => $methodPrompt,
                     'var'  => $methodPromptVar
-                ),
+                ],
                 'components'  => $methodComponents,
                 'new_window'  => $methodNewWindow
-            );
+            ];
         }
         // ---------------------------------------
 
@@ -157,20 +161,20 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $tempClass = $this->getControllerClassName($controller);
 
-        $reflectionClass = new \ReflectionClass ($tempClass);
+        $reflectionClass = new \ReflectionClass($tempClass);
         $reflectionMethods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
 
         // Get actions methods
         // ---------------------------------------
-        $actions = array();
+        $actions = [];
         foreach ($reflectionMethods as $reflectionMethod) {
             $methodName = $reflectionMethod->name;
 
-            if (substr($methodName,strlen($methodName)-6) != 'Action') {
+            if (substr($methodName, strlen($methodName)-6) != 'Action') {
                 continue;
             }
 
-            $methodName = substr($methodName,0,strlen($methodName)-6);
+            $methodName = substr($methodName, 0, strlen($methodName)-6);
 
             $actions[] = $methodName;
         }
@@ -178,11 +182,10 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
 
         // Print method actions
         // ---------------------------------------
-        $methods = array();
+        $methods = [];
         foreach ($actions as $action) {
-
             $controllerName = $this->getControllerClassName($controller);
-            $reflectionMethod = new \ReflectionMethod ($controllerName,$action.'Action');
+            $reflectionMethod = new \ReflectionMethod($controllerName, $action.'Action');
 
             $commentsString = $this->getMethodComments($reflectionMethod);
 
@@ -213,13 +216,13 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
             preg_match('/new_window/', $commentsString, $matchesNewWindow);
             $methodNewWindow = isset($matchesNewWindow[0]);
 
-            $methods[] = array(
+            $methods[] = [
                 'title' => $methodTitle,
                 'description' => $methodDescription,
                 'url' => $methodUrl,
                 'confirm' => $methodConfirm,
                 'new_window' => $methodNewWindow
-            );
+            ];
         }
         // ---------------------------------------
 
@@ -232,7 +235,7 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $controller = str_replace(['_', '/'], '\\', $controller);
 
-        $controller = array_map(function($part) {
+        $controller = array_map(function ($part) {
             return ucfirst($part);
         }, explode('\\', $controller));
 
@@ -242,10 +245,10 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
     private function getMethodComments(\ReflectionMethod $reflectionMethod)
     {
         $contentPhpFile = file_get_contents($reflectionMethod->getFileName());
-        $contentPhpFile = explode(chr(10),$contentPhpFile);
+        $contentPhpFile = explode(chr(10), $contentPhpFile);
 
-        $commentsArray = array();
-        for ($i=$reflectionMethod->getStartLine()-2;$i>0;$i--) {
+        $commentsArray = [];
+        for ($i=$reflectionMethod->getStartLine()-2; $i>0; $i--) {
             $contentPhpFile[$i] = trim($contentPhpFile[$i]);
             $commentsArray[] = $contentPhpFile[$i];
             if ($contentPhpFile[$i] == '/**' ||
@@ -255,7 +258,7 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $commentsArray = array_reverse($commentsArray);
-        $commentsString = implode(chr(10),$commentsArray);
+        $commentsString = implode(chr(10), $commentsArray);
 
         return $commentsString;
     }

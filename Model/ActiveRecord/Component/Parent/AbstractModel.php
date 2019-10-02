@@ -8,14 +8,18 @@
 
 namespace Ess\M2ePro\Model\ActiveRecord\Component\Parent;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\ActiveRecord\Component\Parent
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    protected $childMode = NULL;
+    protected $childMode = null;
 
     /**
      * @var \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel
      */
-    protected $childObject = NULL;
+    protected $childObject = null;
 
     protected $parentFactory;
 
@@ -31,8 +35,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->parentFactory = $parentFactory;
         parent::__construct(
             $modelFactory,
@@ -68,12 +71,12 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
 
     public function hasChildObjectLoaded()
     {
-        return !is_null($this->childObject);
+        return $this->childObject !== null;
     }
 
     public function setChildObject(\Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $object)
     {
-        if (is_null($object->getId())) {
+        if ($object->getId() === null) {
             return;
         }
 
@@ -86,17 +89,17 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
      */
     public function getChildObject()
     {
-        if (is_null($this->getId())) {
+        if ($this->getId() === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Method require loaded instance first');
         }
 
-        if (!is_null($this->childObject)) {
+        if ($this->childObject !== null) {
             return $this->childObject;
         }
 
-        $tempMode = NULL;
+        $tempMode = null;
 
-        if (!is_null($this->childMode)) {
+        if ($this->childMode !== null) {
             $tempMode = $this->childMode;
         } else {
             $tempMode = $this->getComponentMode();
@@ -106,7 +109,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
             throw new \Ess\M2ePro\Model\Exception\Logic('Component Mode is not defined.');
         }
 
-        $modelName = str_replace('Ess\M2ePro\Model\ResourceModel',ucwords($tempMode),$this->_resourceName);
+        $modelName = str_replace('Ess\M2ePro\Model\ResourceModel', ucwords($tempMode), $this->_resourceName);
 
         if ($this->isCacheLoading()) {
             $this->childObject = $this->activeRecordFactory->getCachedObjectLoaded($modelName, $this->getId());
@@ -123,7 +126,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
 
     public function getComponentMode()
     {
-        if (is_null($this->getId())) {
+        if ($this->getId() === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Method require loaded instance first');
         }
 
@@ -170,7 +173,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
 
     public function isLocked()
     {
-        if (is_null($this->getId())) {
+        if ($this->getId() === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Method require loaded instance first');
         }
 
@@ -180,7 +183,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
 
         $childObject = $this->getChildObject();
 
-        if (is_null($childObject)) {
+        if ($childObject === null) {
             return false;
         }
 
@@ -197,8 +200,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
     {
         $isObjectNew = $this->isObjectNew();
 
-        if (!is_null($this->childMode) && is_null($this->getData('component_mode'))) {
-            $this->setData('component_mode',$this->childMode);
+        if ($this->childMode !== null && $this->getData('component_mode') === null) {
+            $this->setData('component_mode', $this->childMode);
         }
 
         if ($reloadOnCreate) {
@@ -207,7 +210,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
 
         $temp = parent::save();
 
-        if (is_null($this->childObject)) {
+        if ($this->childObject === null) {
             return $temp;
         }
 
@@ -221,7 +224,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
 
     public function delete()
     {
-        if (is_null($this->getId())) {
+        if ($this->getId() === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Method require loaded instance first');
         }
 
@@ -232,21 +235,21 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
         $this->deleteChildInstance();
         $temp = parent::delete();
 
-        $this->childMode = NULL;
-        $this->childObject = NULL;
+        $this->childMode = null;
+        $this->childObject = null;
 
         return $temp;
     }
 
     protected function deleteChildInstance()
     {
-        if (is_null($this->getId())) {
+        if ($this->getId() === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Method require loaded instance first');
         }
 
         $childObject = $this->getChildObject();
 
-        if (is_null($childObject) || !($childObject instanceof \Ess\M2ePro\Model\ActiveRecord\AbstractModel)) {
+        if ($childObject === null || !($childObject instanceof \Ess\M2ePro\Model\ActiveRecord\AbstractModel)) {
             return;
         }
 
@@ -264,28 +267,32 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getRelatedComponentItems($modelName, $fieldName, $asObjects = false,
-                                                array $filters = array(), array $sort = array())
-    {
-        if (is_null($this->getId())) {
+    protected function getRelatedComponentItems(
+        $modelName,
+        $fieldName,
+        $asObjects = false,
+        array $filters = [],
+        array $sort = []
+    ) {
+        if ($this->getId() === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Method require loaded instance first');
         }
 
-        $tempMode = NULL;
+        $tempMode = null;
 
-        if (!is_null($this->childMode)) {
+        if ($this->childMode !== null) {
             $tempMode = $this->childMode;
         } else {
             $tempMode = $this->getComponentMode();
         }
 
-        $tempModel = $this->parentFactory->getObject($tempMode,$modelName);
+        $tempModel = $this->parentFactory->getObject($tempMode, $modelName);
 
-        if (is_null($tempModel) || !($tempModel instanceof \Ess\M2ePro\Model\ActiveRecord\AbstractModel)) {
-            return array();
+        if ($tempModel === null || !($tempModel instanceof \Ess\M2ePro\Model\ActiveRecord\AbstractModel)) {
+            return [];
         }
 
-        return $this->getRelatedItems($tempModel,$fieldName,$asObjects,$filters,$sort);
+        return $this->getRelatedItems($tempModel, $fieldName, $asObjects, $filters, $sort);
     }
 
     //########################################

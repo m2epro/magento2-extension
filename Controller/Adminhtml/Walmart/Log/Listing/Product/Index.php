@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing\Product;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing\Product
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
 {
     //########################################
@@ -20,8 +24,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
         \Magento\Framework\Filter\FilterManager $filterManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         Context $context
-    )
-    {
+    ) {
         $this->filterManager = $filterManager;
 
         parent::__construct($walmartFactory, $context);
@@ -30,16 +33,18 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
     public function execute()
     {
         $listingId = $this->getRequest()->getParam(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD, false
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
+            false
         );
         $listingProductId = $this->getRequest()->getParam(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_PRODUCT_ID_FIELD, false
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_PRODUCT_ID_FIELD,
+            false
         );
 
         if ($listingId) {
             $listing = $this->walmartFactory->getCachedObjectLoaded('Listing', $listingId, null, false);
 
-            if (is_null($listing)) {
+            if ($listing === null) {
                 $this->getMessageManager()->addErrorMessage($this->__('Listing does not exist.'));
                 return $this->_redirect('*/*/index');
             }
@@ -49,10 +54,13 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
             );
         } elseif ($listingProductId) {
             $listingProduct = $this->walmartFactory->getObjectLoaded(
-                'Listing\Product', $listingProductId, null, false
+                'Listing\Product',
+                $listingProductId,
+                null,
+                false
             );
 
-            if (is_null($listingProduct)) {
+            if ($listingProduct === null) {
                 $this->getMessageManager()->addErrorMessage($this->__('Listing product does not exist.'));
                 return $this->_redirect('*/*/index');
             }
@@ -66,7 +74,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
         }
 
         $this->setPageHelpLink('x/WgBhAQ');
-        $this->addContent($this->createBlock('Walmart\Log\Listing\Product\View'));
+        $this->addContent($this->createBlock('Walmart_Log_Listing_Product_View'));
 
         return $this->getResult();
     }

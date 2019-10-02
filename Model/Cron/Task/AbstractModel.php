@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Cron\Task;
 
 use Ess\M2ePro\Model\Exception;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Cron\Task
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     private $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
@@ -23,20 +27,20 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Lock\Item\Manager
      */
-    private $lockItem       = NULL;
+    private $lockItem       = null;
     /**
      * @var \Ess\M2ePro\Model\Lock\Item\Manager
      */
-    private $parentLockItem = NULL;
+    private $parentLockItem = null;
 
     /**
      * @var \Ess\M2ePro\Model\OperationHistory
      */
-    private $operationHistory       = NULL;
+    private $operationHistory       = null;
     /**
      * @var \Ess\M2ePro\Model\OperationHistory
      */
-    private $parentOperationHistory = NULL;
+    private $parentOperationHistory = null;
 
     //########################################
 
@@ -46,8 +50,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\ResourceConnection $resource
-    )
-    {
+    ) {
         parent::__construct($helperFactory, $modelFactory);
         $this->parentFactory = $parentFactory;
         $this->activeRecordFactory = $activeRecordFactory;
@@ -71,25 +74,22 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $result = true;
 
         try {
-
             $tempResult = $this->performActions();
 
-            if (!is_null($tempResult) && !$tempResult) {
+            if ($tempResult !== null && !$tempResult) {
                 $result = false;
             }
 
             $this->getLockItem()->activate();
-
         } catch (\Exception $exception) {
-
             $result = false;
 
-            $this->getOperationHistory()->addContentData('exception', array(
+            $this->getOperationHistory()->addContentData('exception', [
                 'message' => $exception->getMessage(),
                 'file'    => $exception->getFile(),
                 'line'    => $exception->getLine(),
                 'trace'   => $exception->getTraceAsString(),
-            ));
+            ]);
 
             $this->getHelper('Module\Exception')->process($exception);
         }
@@ -189,12 +189,12 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function updateLastAccess()
     {
-        $this->setConfigValue('last_access',$this->getHelper('Data')->getCurrentGmtDate());
+        $this->setConfigValue('last_access', $this->getHelper('Data')->getCurrentGmtDate());
     }
 
     protected function updateLastRun()
     {
-        $this->setConfigValue('last_run',$this->getHelper('Data')->getCurrentGmtDate());
+        $this->setConfigValue('last_run', $this->getHelper('Data')->getCurrentGmtDate());
     }
 
     // ---------------------------------------
@@ -229,11 +229,11 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function getLockItem()
     {
-        if (!is_null($this->lockItem)) {
+        if ($this->lockItem !== null) {
             return $this->lockItem;
         }
 
-        $this->lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+        $this->lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
         $this->lockItem->setNick('cron_task_'.str_replace("/", "_", $this->getNick()));
 
         return $this->lockItem;
@@ -244,7 +244,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function getOperationHistory()
     {
-        if (!is_null($this->operationHistory)) {
+        if ($this->operationHistory !== null) {
             return $this->operationHistory;
         }
 
@@ -268,7 +268,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     {
         $lastRun = $this->getConfigValue('last_run');
 
-        if (is_null($lastRun)) {
+        if ($lastRun === null) {
             return true;
         }
 

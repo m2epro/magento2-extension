@@ -11,6 +11,10 @@
  */
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Variation;
 
+/**
+ * Class Option
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Variation
+ */
 class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
     //########################################
@@ -28,7 +32,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstrac
         $listingProductId = $this->getListingProduct()->getId();
         $variationId      = $this->getListingProductVariation()->getId();
 
-        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+        $this->getHelper('Data_Cache_Runtime')->removeTagValues(
             "listing_product_{$listingProductId}_variation_{$variationId}_options"
         );
 
@@ -40,7 +44,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstrac
         $listingProductId = $this->getListingProduct()->getId();
         $variationId      = $this->getListingProductVariation()->getId();
 
-        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+        $this->getHelper('Data_Cache_Runtime')->removeTagValues(
             "listing_product_{$listingProductId}_variation_{$variationId}_options"
         );
 
@@ -240,22 +244,21 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstrac
         $simpleAttributes = $this->getListingProduct()->getMagentoProduct()->getProduct()->getOptions();
 
         foreach ($simpleAttributes as $tempAttribute) {
-
             if (!(bool)(int)$tempAttribute->getData('is_require')) {
                 continue;
             }
 
-            if (!in_array($tempAttribute->getType(), array('drop_down', 'radio', 'multiple', 'checkbox'))) {
+            if (!in_array($tempAttribute->getType(), ['drop_down', 'radio', 'multiple', 'checkbox'])) {
                 continue;
             }
 
             $attributeName = strtolower($this->getParentObject()->getAttribute());
 
-            $tempAttributeTitles = array(
+            $tempAttributeTitles = [
                 $tempAttribute->getData('default_title'),
                 $tempAttribute->getData('store_title'),
                 $tempAttribute->getData('title')
-            );
+            ];
             $tempAttributeTitles = array_map('strtolower', array_filter($tempAttributeTitles));
             $tempAttributeTitles = $this->prepareAttributeTitles($tempAttributeTitles);
 
@@ -264,14 +267,13 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstrac
             }
 
             foreach ($tempAttribute->getValues() as $tempOption) {
-
                 $optionName = strtolower($this->getParentObject()->getOption());
 
-                $tempOptionTitles = array(
+                $tempOptionTitles = [
                     $tempOption->getData('default_title'),
                     $tempOption->getData('store_title'),
                     $tempOption->getData('title')
-                );
+                ];
                 $tempOptionTitles = array_map('strtolower', array_filter($tempOptionTitles));
                 $tempOptionTitles = $this->prepareOptionTitles($tempOptionTitles);
 
@@ -279,7 +281,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstrac
                     continue;
                 }
 
-                if (!is_null($tempOption->getData('sku')) && $tempOption->getData('sku') !== false) {
+                if ($tempOption->getData('sku') !== null && $tempOption->getData('sku') !== false) {
                     $tempSku = $tempOption->getData('sku');
                 }
 
@@ -296,7 +298,8 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstrac
     {
         foreach ($optionTitles as &$optionTitle) {
             $optionTitle = trim($this->getHelper('Data')->reduceWordsInString(
-                $optionTitle, \Ess\M2ePro\Helper\Component\Ebay::MAX_LENGTH_FOR_OPTION_VALUE
+                $optionTitle,
+                \Ess\M2ePro\Helper\Component\Ebay::MAX_LENGTH_FOR_OPTION_VALUE
             ));
         }
 

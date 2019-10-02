@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Runner\Service;
 
+/**
+ * Class Pub
+ * @package Ess\M2ePro\Model\Cron\Runner\Service
+ */
 class Pub extends AbstractModel
 {
     //########################################

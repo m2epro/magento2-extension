@@ -8,14 +8,18 @@
 
 namespace Ess\M2ePro\Observer\StockItem\Save;
 
+/**
+ * Class After
+ * @package Ess\M2ePro\Observer\StockItem\Save
+ */
 class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 {
     /**
      * @var null|int
      */
-    private $productId = NULL;
+    private $productId = null;
 
-    private $affectedListingsProducts = array();
+    private $affectedListingsProducts = [];
 
     //########################################
 
@@ -36,7 +40,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 
     public function process()
     {
-        if (is_null($this->getStoredStockItem())) {
+        if ($this->getStoredStockItem() === null) {
             return;
         }
 
@@ -60,7 +64,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
         $oldValue = (int)$this->getStoredStockItem()->getOrigData('qty');
         $newValue = (int)$this->getStockItem()->getQty();
 
-        if (!$this->updateProductChangeRecord('qty',$oldValue,$newValue) || $oldValue == $newValue) {
+        if (!$this->updateProductChangeRecord('qty', $oldValue, $newValue) || $oldValue == $newValue) {
             return;
         }
 
@@ -68,9 +72,12 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
-            $this->logListingProductMessage($listingProduct,
+            $this->logListingProductMessage(
+                $listingProduct,
                 \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_QTY,
-                $oldValue, $newValue);
+                $oldValue,
+                $newValue
+            );
         }
     }
 
@@ -86,7 +93,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
         $oldValue = $oldValue ? 'IN Stock' : 'OUT of Stock';
         $newValue = $newValue ? 'IN Stock' : 'OUT of Stock';
 
-        if (!$this->updateProductChangeRecord('stock_availability',$oldValue,$newValue) ||
+        if (!$this->updateProductChangeRecord('stock_availability', $oldValue, $newValue) ||
             $oldValue == $newValue) {
             return;
         }
@@ -95,9 +102,12 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
-            $this->logListingProductMessage($listingProduct,
+            $this->logListingProductMessage(
+                $listingProduct,
                 \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_STOCK_AVAILABILITY,
-                $oldValue, $newValue);
+                $oldValue,
+                $newValue
+            );
         }
     }
 
@@ -123,7 +133,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 
     private function areThereAffectedItems()
     {
-        return count($this->getAffectedListingsProducts()) > 0;
+        return !empty($this->getAffectedListingsProducts());
     }
 
     // ---------------------------------------
@@ -142,9 +152,12 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 
     //########################################
 
-    private function logListingProductMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct, $action,
-                                              $oldValue, $newValue)
-    {
+    private function logListingProductMessage(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        $action,
+        $oldValue,
+        $newValue
+    ) {
         // M2ePro\TRANSLATIONS
         // From [%from%] to [%to%].
 
@@ -156,11 +169,11 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
             $listingProduct->getProductId(),
             $listingProduct->getId(),
             \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-            NULL,
+            null,
             $action,
             $this->getHelper('Module\Log')->encodeDescription(
                 'From [%from%] to [%to%].',
-                array('!from'=>$oldValue,'!to'=>$newValue)
+                ['!from'=>$oldValue,'!to'=>$newValue]
             ),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW

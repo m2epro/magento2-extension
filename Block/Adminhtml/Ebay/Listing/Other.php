@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
+/**
+ * Class Other
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing
+ */
 class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################

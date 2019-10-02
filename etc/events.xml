@@ -50,38 +50,6 @@
                   shared="false" />
     </event>
 
-    <!-- MSI -->
-
-    <event name="ess_sourceitem_save_after">
-        <observer name="m2epro_observer_msi_sourceitem_save"
-                  instance="Ess\M2ePro\Observer\MSI\SourceItem\Save"
-                  shared="false" />
-    </event>
-
-    <event name="ess_sourceitem_delete_after">
-        <observer name="m2epro_observer_msi_sourceitem_delete"
-                  instance="Ess\M2ePro\Observer\MSI\SourceItem\Delete"
-                  shared="false" />
-    </event>
-
-    <event name="ess_stock_channel_added">
-        <observer name="m2epro_observer_msi_stock_channeladded"
-                  instance="Ess\M2ePro\Observer\MSI\Stock\ChannelAdded"
-                  shared="false" />
-    </event>
-
-    <event name="ess_stock_sources_changed">
-        <observer name="m2epro_observer_msi_stock_sourceschanged"
-                  instance="Ess\M2ePro\Observer\MSI\Stock\SourcesChanged"
-                  shared="false" />
-    </event>
-
-    <event name="ess_product_reservation_placed">
-        <observer name="m2epro_observer_msi_product_reservationplaced"
-                  instance="Ess\M2ePro\Observer\MSI\Product\ReservationPlaced"
-                  shared="false" />
-    </event>
-
     <!-- synchronization -->
 
     <event name="ess_synchronization_before_start">

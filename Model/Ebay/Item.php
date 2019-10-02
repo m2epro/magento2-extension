@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Ebay;
 
 use Ess\M2ePro\Model\ActiveRecord\Factory;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Model\Ebay
+ */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     private $ebayParentFactory;
@@ -17,17 +21,17 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Account
      */
-    private $accountModel = NULL;
+    private $accountModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
-    private $marketplaceModel = NULL;
+    private $marketplaceModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Magento\Product
      */
-    protected $magentoProductModel = NULL;
+    protected $magentoProductModel = null;
 
     //########################################
 
@@ -69,9 +73,9 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function delete()
     {
         $temp = parent::delete();
-        $temp && $this->accountModel = NULL;
-        $temp && $this->marketplaceModel = NULL;
-        $temp && $this->magentoProductModel = NULL;
+        $temp && $this->accountModel = null;
+        $temp && $this->marketplaceModel = null;
+        $temp && $this->magentoProductModel = null;
         return $temp;
     }
 
@@ -82,9 +86,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getAccount()
     {
-        if (is_null($this->accountModel)) {
+        if ($this->accountModel === null) {
             $this->accountModel = $this->ebayParentFactory->getCachedObjectLoaded(
-                'Account', $this->getAccountId()
+                'Account',
+                $this->getAccountId()
             );
         }
 
@@ -106,9 +111,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getMarketplace()
     {
-        if (is_null($this->marketplaceModel)) {
+        if ($this->marketplaceModel === null) {
             $this->marketplaceModel = $this->ebayParentFactory->getCachedObjectLoaded(
-                'Marketplace', $this->getMarketplaceId()
+                'Marketplace',
+                $this->getMarketplaceId()
             );
         }
 

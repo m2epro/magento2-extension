@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Walmart\Template\Category\Specific;
 
 use Ess\M2ePro\Model\Walmart\Template\Category\Specific as CategorySpecific;
 
+/**
+ * Class Source
+ * @package Ess\M2ePro\Model\Walmart\Template\Category\Specific
+ */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
@@ -90,7 +94,6 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $templateObj = $this->getCategorySpecificTemplate();
 
         if ($templateObj->isModeNone()) {
-
             $path .= '[]';
             $path .= str_repeat('}', substr_count($path, '{'));
 
@@ -142,10 +145,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     {
         $templateObj = $this->getCategorySpecificTemplate();
 
-        $attributes = array();
+        $attributes = [];
 
         foreach ($templateObj->getAttributes() as $index => $attribute) {
-
             list($attributeName) = array_keys($attribute);
 
             $attributeData = $attribute[$attributeName];
@@ -154,10 +156,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 ? $attributeData['custom_value']
                 : $this->getMagentoProduct()->getAttributeValue($attributeData['custom_attribute']);
 
-            $attributes[$index] = array(
+            $attributes[$index] = [
                 'name'  => str_replace(' ', '', $attributeName),
                 'value' => $attributeValue,
-            );
+            ];
         }
 
         return $this->getHelper('Data')->jsonEncode($attributes);

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Listing;
 
 use \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Block\Adminhtml\Listing
+ */
 abstract class Switcher extends AbstractBlock
 {
     //########################################

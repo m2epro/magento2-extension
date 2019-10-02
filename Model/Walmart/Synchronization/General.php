@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization;
 
+/**
+ * Class General
+ * @package Ess\M2ePro\Model\Walmart\Synchronization
+ */
 class General extends AbstractModel
 {
     //########################################
@@ -25,7 +29,7 @@ class General extends AbstractModel
      */
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------

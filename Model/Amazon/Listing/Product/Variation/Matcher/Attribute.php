@@ -8,14 +8,18 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher;
 
+/**
+ * Class Attribute
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher
+ */
 class Attribute extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
     private $magentoProduct = null;
 
-    private $sourceAttributes = array();
+    private $sourceAttributes = [];
 
-    private $destinationAttributes = array();
+    private $destinationAttributes = [];
 
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Attribute\Resolver $resolver */
     private $resolver = null;
@@ -33,7 +37,7 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $product)
     {
         $this->magentoProduct = $product;
-        $this->sourceAttributes = array();
+        $this->sourceAttributes = [];
 
         $this->matchedAttributes = null;
 
@@ -113,7 +117,7 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getMatchedAttributes()
     {
-        if (is_null($this->matchedAttributes)) {
+        if ($this->matchedAttributes === null) {
             $this->match();
         }
 
@@ -169,14 +173,14 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
     private function match()
     {
-        if (!is_null($this->magentoProduct) && $this->magentoProduct->isGroupedType() &&
+        if ($this->magentoProduct !== null && $this->magentoProduct->isGroupedType() &&
             !$this->magentoProduct->getVariationVirtualAttributes()
         ) {
             $channelAttribute = reset($this->destinationAttributes);
 
-            $this->matchedAttributes = array(
+            $this->matchedAttributes = [
                 \Ess\M2ePro\Model\Magento\Product\Variation::GROUPED_PRODUCT_ATTRIBUTE_LABEL => $channelAttribute
-            );
+            ];
 
             return;
         }
@@ -202,7 +206,8 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($this->getSourceAttributes() as $attribute) {
             $this->getResolver()->addSourceAttribute(
-                $attribute, $this->prepareAttributeNames($attribute)
+                $attribute,
+                $this->prepareAttributeNames($attribute)
             );
         }
 
@@ -210,7 +215,8 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($this->getDestinationAttributes() as $attribute) {
             $this->getResolver()->addDestinationAttribute(
-                $attribute, $this->prepareAttributeNames($attribute)
+                $attribute,
+                $this->prepareAttributeNames($attribute)
             );
         }
 
@@ -225,7 +231,8 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($this->getSourceAttributesData() as $attribute => $names) {
             $this->getResolver()->addSourceAttribute(
-                $attribute, $this->prepareAttributeNames($attribute, $names)
+                $attribute,
+                $this->prepareAttributeNames($attribute, $names)
             );
         }
 
@@ -233,7 +240,8 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($this->getDestinationAttributesLocalVocabularyData() as $attribute => $names) {
             $this->getResolver()->addDestinationAttribute(
-                $attribute, $this->prepareAttributeNames($attribute, $names)
+                $attribute,
+                $this->prepareAttributeNames($attribute, $names)
             );
         }
 
@@ -248,7 +256,8 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($this->getSourceAttributesData() as $attribute => $names) {
             $this->getResolver()->addSourceAttribute(
-                $attribute, $this->prepareAttributeNames($attribute, $names)
+                $attribute,
+                $this->prepareAttributeNames($attribute, $names)
             );
         }
 
@@ -256,7 +265,8 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($this->getDestinationAttributesServerVocabularyData() as $attribute => $names) {
             $this->getResolver()->addDestinationAttribute(
-                $attribute, $this->prepareAttributeNames($attribute, $names)
+                $attribute,
+                $this->prepareAttributeNames($attribute, $names)
             );
         }
 
@@ -273,7 +283,7 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
             return $this->sourceAttributes;
         }
 
-        if (!is_null($this->magentoProduct)) {
+        if ($this->magentoProduct !== null) {
             $magentoVariations = $this->magentoProduct
                 ->getVariationInstance()
                 ->getVariationsTypeStandard();
@@ -286,7 +296,7 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
     private function getSourceAttributesData()
     {
-        if (!is_null($this->magentoProduct)) {
+        if ($this->magentoProduct !== null) {
             $magentoAttributesNames = $this->magentoProduct
                 ->getVariationInstance()
                 ->getTitlesVariationSet();
@@ -295,9 +305,9 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
                 ->getVariationInstance()
                 ->getVariationsTypeStandard();
 
-            $resultData = array();
+            $resultData = [];
             foreach (array_keys($magentoStandardVariations['set']) as $attribute) {
-                $titles = array();
+                $titles = [];
                 if (isset($magentoAttributesNames[$attribute])) {
                     $titles = $magentoAttributesNames[$attribute]['titles'];
                 }
@@ -308,7 +318,7 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
             return $resultData;
         }
 
-        return array_fill_keys($this->getSourceAttributes(), array());
+        return array_fill_keys($this->getSourceAttributes(), []);
     }
 
     private function getDestinationAttributes()
@@ -318,9 +328,9 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
     private function getDestinationAttributesLocalVocabularyData()
     {
-        $vocabularyHelper = $this->getHelper('Component\Amazon\Vocabulary');
+        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
 
-        $resultData = array();
+        $resultData = [];
         foreach ($this->getDestinationAttributes() as $attribute) {
             $resultData[$attribute] = $vocabularyHelper->getLocalAttributeNames($attribute);
         }
@@ -330,9 +340,9 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
     private function getDestinationAttributesServerVocabularyData()
     {
-        $vocabularyHelper = $this->getHelper('Component\Amazon\Vocabulary');
+        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
 
-        $resultData = array();
+        $resultData = [];
         foreach ($this->getDestinationAttributes() as $attribute) {
             $resultData[$attribute] = $vocabularyHelper->getServerAttributeNames($attribute);
         }
@@ -344,15 +354,15 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
     private function getResolver()
     {
-        if (!is_null($this->resolver)) {
+        if ($this->resolver !== null) {
             return $this->resolver;
         }
 
-        $this->resolver = $this->modelFactory->getObject('Amazon\Listing\Product\Variation\Matcher\Attribute\Resolver');
+        $this->resolver = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Matcher_Attribute_Resolver');
         return $this->resolver;
     }
 
-    private function prepareAttributeNames($attribute, array $names = array())
+    private function prepareAttributeNames($attribute, array $names = [])
     {
         $names[] = $attribute;
         $names = array_unique($names);

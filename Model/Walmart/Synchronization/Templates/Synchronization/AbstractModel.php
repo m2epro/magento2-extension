@@ -8,22 +8,26 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner
      */
-    protected $runner = NULL;
+    protected $runner = null;
 
     /**
      * @var \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization\Inspector
      */
-    protected $inspector = NULL;
+    protected $inspector = null;
 
     /**
      * @var \Ess\M2ePro\Model\Synchronization\Templates\ProductChanges\Manager
      */
-    protected $productChangesManager = NULL;
+    protected $productChangesManager = null;
 
     /** @var array */
     protected $pendingListingProducts = [];

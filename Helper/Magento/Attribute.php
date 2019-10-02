@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Magento;
 
+/**
+ * Class Attribute
+ * @package Ess\M2ePro\Helper\Magento
+ */
 class Attribute extends AbstractHelper
 {
     const PRICE_CODE = 'price';
@@ -32,8 +36,7 @@ class Attribute extends AbstractHelper
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->modelFactory = $modelFactory;
         $this->productResource = $productResource;
         $this->attributeColFactory = $attributeColFactory;
@@ -51,12 +54,12 @@ class Attribute extends AbstractHelper
         $attributeCollection = $this->getPreparedAttributeCollection();
         $attributeCollection->addVisibleFilter();
 
-        $resultAttributes = array();
+        $resultAttributes = [];
         foreach ($attributeCollection->getItems() as $attribute) {
-            $resultAttributes[] = array(
+            $resultAttributes[] = [
                 'code' => $attribute['attribute_code'],
                 'label' => $attribute['frontend_label']
-            );
+            ];
         }
 
         return $resultAttributes;
@@ -84,12 +87,12 @@ class Attribute extends AbstractHelper
             return $attributes;
         }
 
-        $resultAttributes = array();
+        $resultAttributes = [];
         foreach ($attributeCollection->getItems() as $attribute) {
-            $resultAttributes[] = array(
+            $resultAttributes[] = [
                 'code' => $attribute['attribute_code'],
                 'label' => $attribute['frontend_label']
-            );
+            ];
         }
 
         return $resultAttributes;
@@ -101,17 +104,17 @@ class Attribute extends AbstractHelper
     {
         $attributeSetId = $this->_getIdFromInput($attributeSet);
         if ($attributeSetId === false) {
-            return array();
+            return [];
         }
 
-        return $this->getByAttributeSets(array($attributeSetId), $returnType);
+        return $this->getByAttributeSets([$attributeSetId], $returnType);
     }
 
     public function getByAttributeSets(array $attributeSets, $returnType = self::RETURN_TYPE_ARRAYS)
     {
         $attributeSetIds = $this->_getIdsFromInput($attributeSets, 'attribute_set_id');
         if (empty($attributeSetIds)) {
-            return array();
+            return [];
         }
 
         $attributeCollection = $this->getPreparedAttributeCollection()
@@ -125,12 +128,12 @@ class Attribute extends AbstractHelper
             return $attributes;
         }
 
-        $resultAttributes = array();
+        $resultAttributes = [];
         foreach ($attributes as $attribute) {
-            $resultAttributes[] = array(
+            $resultAttributes[] = [
                 'code' => $attribute['attribute_code'],
                 'label' => $attribute['frontend_label']
-            );
+            ];
         }
 
         return $resultAttributes;
@@ -142,10 +145,10 @@ class Attribute extends AbstractHelper
     {
         $attributeSetIds = $this->_getIdsFromInput($attributeSets, 'attribute_set_id');
         if (empty($attributeSetIds)) {
-            return array();
+            return [];
         }
 
-        $attributes = array();
+        $attributes = [];
         $isFirst = true;
         $idsParts = array_chunk($attributeSetIds, 50);
         foreach ($idsParts as $part) {
@@ -159,27 +162,27 @@ class Attribute extends AbstractHelper
             }
 
             if (!$isFirst && empty($attributes)) {
-                return array();
+                return [];
             }
 
             $attributes = array_intersect($attributes, $tempAttributes);
         }
 
         if (empty($attributes)) {
-            return array();
+            return [];
         }
 
         $attributesData = $this->getPreparedAttributeCollection()
             ->addVisibleFilter()
-            ->addFieldToFilter('main_table.attribute_id', array('in' => $attributes))
+            ->addFieldToFilter('main_table.attribute_id', ['in' => $attributes])
             ->toArray();
 
-        $resultAttributes = array();
+        $resultAttributes = [];
         foreach ($attributesData['items'] as $attribute) {
-            $resultAttributes[] = array(
+            $resultAttributes[] = [
                 'code' => $attribute['attribute_code'],
                 'label' => $attribute['frontend_label'],
-            );
+            ];
         }
 
         return $resultAttributes;
@@ -216,18 +219,21 @@ class Attribute extends AbstractHelper
         $idsSelect->columns($attributeCollection->getResource()->getIdFieldName(), 'main_table');
 
         /**
-         * Magento version >= 2.2.4 (and Magento versioin >= 2.1.14 && < 2.2.0) uses HAVING on COUNT
+         * Magento > 2.2.4 (and Magento >= 2.1.12 && < 2.2.0) uses HAVING on COUNT
          * so we need to add COUNT after resetting columns
          */
 
-        if (version_compare($this->getHelper('Magento')->getVersion(), '2.2.4', '>=') ||
-            (version_compare($this->getHelper('Magento')->getVersion(), '2.1.14', '>=') &&
-                version_compare($this->getHelper('Magento')->getVersion(), '2.2.0', '<'))) {
-
-            $idsSelect->columns(array(
-                'count' => new \Zend_Db_Expr('COUNT(*)')), 'main_table'
+        if (version_compare($this->getHelper('Magento')->getVersion(), '2.2.4', '>') ||
+            (version_compare($this->getHelper('Magento')->getVersion(), '2.1.12', '>=') &&
+             version_compare($this->getHelper('Magento')->getVersion(), '2.2.0', '<'))
+        ) {
+            $idsSelect->columns(
+                ['count' => new \Zend_Db_Expr('COUNT(*)')],
+                'main_table'
             );
         }
+
+        //return $attributeCollection->getAllIds();
 
         return $attributeCollection->getConnection()->fetchCol($idsSelect);
     }
@@ -237,7 +243,8 @@ class Attribute extends AbstractHelper
     public function getGeneralFromProducts(array $products)
     {
         $productsAttributeSetIds = $this->getHelper('Magento\AttributeSet')->getFromProducts(
-            $products, self::RETURN_TYPE_IDS
+            $products,
+            self::RETURN_TYPE_IDS
         );
 
         return $this->getGeneralFromAttributeSets($productsAttributeSetIds);
@@ -248,7 +255,7 @@ class Attribute extends AbstractHelper
     public function getConfigurableByAttributeSets(array $attributeSets)
     {
         if (empty($attributeSets)) {
-            return array();
+            return [];
         }
 
         return $this->getConfigurable($attributeSets);
@@ -261,28 +268,28 @@ class Attribute extends AbstractHelper
 
     // ---------------------------------------
 
-    private function getConfigurable(array $attributeSetIds = array())
+    private function getConfigurable(array $attributeSetIds = [])
     {
         /** @var $connection \Magento\Framework\DB\Adapter\AdapterInterface */
         $connection = $this->resourceConnection->getConnection();
 
-        $cpTable  = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_entity');
-        $saTable  = $this->getHelper('Module\Database\Structure')
+        $cpTable  = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('catalog_product_entity');
+        $saTable  = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('catalog_product_super_attribute');
-        $aTable   = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('eav_attribute');
+        $aTable   = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('eav_attribute');
 
         $select = $connection->select()
             ->distinct(true)
-            ->from(array('p' => $cpTable), null)
+            ->from(['p' => $cpTable], null)
             ->join(
-                array('sa' => $saTable),
+                ['sa' => $saTable],
                 'p.entity_id = sa.product_id',
                 null
             )
             ->join(
-                array('a' => $aTable),
+                ['a' => $aTable],
                 'sa.attribute_id = a.attribute_id',
-                array('label' => 'frontend_label', 'code' => 'attribute_code')
+                ['label' => 'frontend_label', 'code' => 'attribute_code']
             )
             ->where('p.type_id = ?', \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE);
 
@@ -313,12 +320,12 @@ class Attribute extends AbstractHelper
     public function getAttributesLabels(array $attributeCodes)
     {
         if (empty($attributeCodes)) {
-            return array();
+            return [];
         }
 
         /** @var $connection \Magento\Framework\DB\Adapter\AdapterInterface */
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('eav_attribute');
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('eav_attribute');
 
         $entityTypeId = $this->eavConfig->getEntityType(\Magento\Catalog\Model\Product::ENTITY)->getId();
         $dbSelect = $connection->select();
@@ -327,12 +334,12 @@ class Attribute extends AbstractHelper
             ->where('entity_type_id = ?', $entityTypeId);
         $fetchResult = $connection->fetchAll($dbSelect);
 
-        $result = array();
+        $result = [];
         foreach ($fetchResult as $attribute) {
-            $result[] = array(
+            $result[] = [
                 'label' => $attribute['frontend_label'],
                 'code'  => $attribute['attribute_code']
-            );
+            ];
         }
 
         return $result;
@@ -352,40 +359,41 @@ class Attribute extends AbstractHelper
         return false;
     }
 
-    public function filterByInputTypes(array $attributes,
-                                       array $frontendInputTypes = [],
-                                       array $backendInputTypes = [])
-    {
+    public function filterByInputTypes(
+        array $attributes,
+        array $frontendInputTypes = [],
+        array $backendInputTypes = []
+    ) {
         if (empty($attributes)) {
-            return array();
+            return [];
         }
 
         if (empty($frontendInputTypes) && empty($backendInputTypes)) {
             return $attributes;
         }
 
-        $attributeCodes = array();
+        $attributeCodes = [];
         foreach ($attributes as $attribute) {
             $attributeCodes[] = $attribute['code'];
         }
 
         $attributeCollection = $this->getPreparedAttributeCollection()
-            ->addFieldToFilter('attribute_code', array('in' => $attributeCodes));
+            ->addFieldToFilter('attribute_code', ['in' => $attributeCodes]);
 
         if (!empty($frontendInputTypes)) {
-            $attributeCollection->addFieldToFilter('frontend_input', array('in' => $frontendInputTypes));
+            $attributeCollection->addFieldToFilter('frontend_input', ['in' => $frontendInputTypes]);
         }
         if (!empty($backendInputTypes)) {
-            $attributeCollection->addFieldToFilter('backend_type', array('in' => $backendInputTypes));
+            $attributeCollection->addFieldToFilter('backend_type', ['in' => $backendInputTypes]);
         }
 
         $filteredAttributes = $attributeCollection->toArray();
-        $resultAttributes = array();
+        $resultAttributes = [];
         foreach ($filteredAttributes['items'] as $attribute) {
-            $resultAttributes[] = array(
+            $resultAttributes[] = [
                 'code' => $attribute['attribute_code'],
                 'label' => $attribute['frontend_label'],
-            );
+            ];
         }
 
         return $resultAttributes;
@@ -396,11 +404,11 @@ class Attribute extends AbstractHelper
     public function getSetsFromProductsWhichLacksAttributes(array $attributes, array $productIds)
     {
         if (count($attributes) == 0 || count($productIds) == 0) {
-            return array();
+            return [];
         }
 
         $scopeAttributesOptionArray = $this->getHelper('Magento\Attribute')->getGeneralFromProducts($productIds);
-        $scopeAttributes = array();
+        $scopeAttributes = [];
         foreach ($scopeAttributesOptionArray as $scopeAttributesOption) {
             $scopeAttributes[] = $scopeAttributesOption['code'];
         }
@@ -408,12 +416,12 @@ class Attribute extends AbstractHelper
         $missingAttributes = array_diff($attributes, $scopeAttributes);
 
         if (count($missingAttributes) == 0) {
-            return array();
+            return [];
         }
 
         $attributesCollection = $this->eavEntityAttributeColFactory->create()
             ->setEntityTypeFilter($this->productResource->getTypeId())
-            ->addFieldToFilter('attribute_code', array('in' => $missingAttributes))
+            ->addFieldToFilter('attribute_code', ['in' => $missingAttributes])
             ->addSetInfo(true);
 
         $attributeSets = $this->getHelper('Magento\AttributeSet')
@@ -422,7 +430,7 @@ class Attribute extends AbstractHelper
                 \Ess\M2ePro\Helper\Magento\AbstractHelper::RETURN_TYPE_IDS
             );
 
-        $missingAttributesSets = array();
+        $missingAttributesSets = [];
 
         foreach ($attributesCollection->getItems() as $attribute) {
             foreach ($attributeSets as $setId) {
@@ -446,7 +454,7 @@ class Attribute extends AbstractHelper
     private function getPreparedAttributeCollection()
     {
         $collection = $this->attributeColFactory->create();
-        $collection->addFieldToFilter('attribute_code', array('neq' => 'quantity_and_stock_status'));
+        $collection->addFieldToFilter('attribute_code', ['neq' => 'quantity_and_stock_status']);
         $collection->setOrder('frontend_label', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
         return $collection;
@@ -457,15 +465,19 @@ class Attribute extends AbstractHelper
     public function isAttributeInputTypePrice($attributeCode)
     {
         $attributes = $this->filterByInputTypes(
-            [['code' => $attributeCode]], ['price']
+            [['code' => $attributeCode]],
+            ['price']
         );
 
-        return count($attributes) > 0;
+        return !empty($attributes);
     }
 
-    public function convertAttributeTypePriceFromStoreToMarketplace(\Ess\M2ePro\Model\Magento\Product $magentoProduct,
-                                                                    $attributeCode, $currencyCode, $store)
-    {
+    public function convertAttributeTypePriceFromStoreToMarketplace(
+        \Ess\M2ePro\Model\Magento\Product $magentoProduct,
+        $attributeCode,
+        $currencyCode,
+        $store
+    ) {
         $attributeValue = $magentoProduct->getAttributeValue($attributeCode);
 
         if (empty($attributeValue)) {
@@ -473,11 +485,11 @@ class Attribute extends AbstractHelper
         }
 
         $isPriceConvertEnabled = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/magento/attribute/', 'price_type_converting'
+            '/magento/attribute/',
+            'price_type_converting'
         );
 
         if ($isPriceConvertEnabled && $this->isAttributeInputTypePrice($attributeCode)) {
-
             $attributeValue = $this->modelFactory->getObject('Currency')->convertPrice(
                 $attributeValue,
                 $currencyCode,

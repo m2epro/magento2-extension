@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Settings\License;
 
+/**
+ * Class Change
+ * @package Ess\M2ePro\Controller\Adminhtml\Settings\License
+ */
 class Change extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
     //########################################
@@ -26,7 +30,7 @@ class Change extends \Ess\M2ePro\Controller\Adminhtml\Base
 
             try {
                 $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
-                    $this->modelFactory->getObject('Servicing\Task\License')->getPublicNick()
+                    $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
                 );
             } catch (\Exception $e) {
                 $this->setJsonContent([
@@ -53,7 +57,7 @@ class Change extends \Ess\M2ePro\Controller\Adminhtml\Base
             return $this->getResult();
         }
 
-        $this->setAjaxContent($this->createBlock('Settings\Tabs\License\Change'));
+        $this->setAjaxContent($this->createBlock('Settings_Tabs_License_Change'));
         return $this->getResult();
     }
 

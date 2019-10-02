@@ -11,6 +11,10 @@
  */
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation;
 
+/**
+ * Class Option
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation
+ */
 class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
     //########################################
@@ -28,7 +32,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstr
         $listingProductId = $this->getListingProduct()->getId();
         $variationId      = $this->getListingProductVariation()->getId();
 
-        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+        $this->getHelper('Data_Cache_Runtime')->removeTagValues(
             "listing_product_{$listingProductId}_variation_{$variationId}_options"
         );
 
@@ -40,7 +44,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstr
         $listingProductId = $this->getListingProduct()->getId();
         $variationId      = $this->getListingProductVariation()->getId();
 
-        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+        $this->getHelper('Data_Cache_Runtime')->removeTagValues(
             "listing_product_{$listingProductId}_variation_{$variationId}_options"
         );
 
@@ -232,12 +236,11 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstr
         $simpleAttributes = $this->getListingProduct()->getMagentoProduct()->getProduct()->getOptions();
 
         foreach ($simpleAttributes as $tempAttribute) {
-
             if (!(bool)(int)$tempAttribute->getData('is_require')) {
                 continue;
             }
 
-            if (!in_array($tempAttribute->getType(), array('drop_down', 'radio', 'multiple', 'checkbox'))) {
+            if (!in_array($tempAttribute->getType(), ['drop_down', 'radio', 'multiple', 'checkbox'])) {
                 continue;
             }
 
@@ -250,7 +253,6 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstr
             }
 
             foreach ($tempAttribute->getValues() as $tempOption) {
-
                 $option = strtolower($this->getParentObject()->getOption());
 
                 if (strtolower($tempOption->getData('default_title')) != $option &&
@@ -259,7 +261,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstr
                     continue;
                 }
 
-                if (!is_null($tempOption->getData('sku')) &&
+                if ($tempOption->getData('sku') !== null &&
                     $tempOption->getData('sku') !== false) {
                     $tempSku = $tempOption->getData('sku');
                 }

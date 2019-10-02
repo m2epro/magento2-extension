@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\Cron\Task;
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Request\Pending\Partial;
 
+/**
+ * Class RequestPendingPartial
+ * @package Ess\M2ePro\Model\Cron\Task
+ */
 class RequestPendingPartial extends AbstractModel
 {
     const NICK = 'request_pending_partial';
@@ -47,7 +51,7 @@ class RequestPendingPartial extends AbstractModel
 
     private function removeOutdated()
     {
-        $requestPendingPartialCollection = $this->activeRecordFactory->getObject('Request\Pending\Partial')
+        $requestPendingPartialCollection = $this->activeRecordFactory->getObject('Request_Pending_Partial')
             ->getCollection();
         $requestPendingPartialCollection->setOnlyOutdatedItemsFilter();
         $requestPendingPartialCollection->addFieldToFilter('is_completed', 1);
@@ -63,7 +67,7 @@ class RequestPendingPartial extends AbstractModel
     private function completeExpired()
     {
         $requestPendingPartialCollection = $this->activeRecordFactory
-            ->getObject('Request\Pending\Partial')->getCollection();
+            ->getObject('Request_Pending_Partial')->getCollection();
         $requestPendingPartialCollection->setOnlyExpiredItemsFilter();
         $requestPendingPartialCollection->addFieldToFilter('is_completed', 0);
 
@@ -71,14 +75,14 @@ class RequestPendingPartial extends AbstractModel
         $expiredRequestPendingPartialObjects = $requestPendingPartialCollection->getItems();
 
         foreach ($expiredRequestPendingPartialObjects as $requestPendingPartialObject) {
-            $this->completeRequest($requestPendingPartialObject, array($this->getFailedMessage()->asArray()));
+            $this->completeRequest($requestPendingPartialObject, [$this->getFailedMessage()->asArray()]);
         }
     }
 
     private function executeInProgress()
     {
         $requestPendingPartialCollection = $this->activeRecordFactory
-            ->getObject('Request\Pending\Partial')->getCollection();
+            ->getObject('Request_Pending_Partial')->getCollection();
         $requestPendingPartialCollection->addFieldToFilter('is_completed', 0);
 
         /** @var \Ess\M2ePro\Model\Request\Pending\Partial[] $requestPendingPartialObjects */
@@ -97,7 +101,7 @@ class RequestPendingPartial extends AbstractModel
             $serverData = $this->getServerData($requestPendingPartial);
 
             if ($serverData['status'] == self::STATUS_NOT_FOUND) {
-                $this->completeRequest($requestPendingPartial, array($this->getFailedMessage()->asArray()));
+                $this->completeRequest($requestPendingPartial, [$this->getFailedMessage()->asArray()]);
                 break;
             }
 
@@ -121,14 +125,18 @@ class RequestPendingPartial extends AbstractModel
         $dispatcher = $this->modelFactory
             ->getObject(ucfirst($requestPendingPartial->getComponent()).'\Connector\Dispatcher');
         $connector = $dispatcher->getVirtualConnector(
-            'processing','get','results',
-            array(
+            'processing',
+            'get',
+            'results',
+            [
                 'processing_id' => $requestPendingPartial->getServerHash(),
-                'necessary_parts' => array(
+                'necessary_parts' => [
                     $requestPendingPartial->getServerHash() => $requestPendingPartial->getNextPart(),
-                ),
-            ),
-            'results', NULL, NULL
+                ],
+            ],
+            'results',
+            null,
+            null
         );
 
         $dispatcher->process($connector);
@@ -141,15 +149,16 @@ class RequestPendingPartial extends AbstractModel
 
     private function getFailedMessage()
     {
-        $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
-            'Request wait timeout exceeded.', Message::TYPE_ERROR
+            'Request wait timeout exceeded.',
+            Message::TYPE_ERROR
         );
 
         return $message;
     }
 
-    private function completeRequest(Partial $requestPendingPartial, array $messages = array())
+    private function completeRequest(Partial $requestPendingPartial, array $messages = [])
     {
         $requestPendingPartial->setSettings('result_messages', $messages);
         $requestPendingPartial->setData('next_part', null);

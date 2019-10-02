@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction;
 
+/**
+ * Class Validator
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction
+ */
 class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Validator
 {
     //########################################
@@ -23,7 +27,6 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
 
         $sku = $this->getSku();
         if (empty($sku)) {
-
             // M2ePro\TRANSLATIONS
             // SKU is not provided. Please, check Listing Settings.
             $this->addMessage('SKU is not provided. Please, check Listing Settings.');
@@ -31,7 +34,6 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
         }
 
         if (strlen($sku) > \Ess\M2ePro\Helper\Component\Walmart::SKU_MAX_LENGTH) {
-
             // M2ePro\TRANSLATIONS
             // The length of SKU must be less than 50 characters.
             $this->addMessage('The length of SKU must be less than 50 characters.');
@@ -47,7 +49,6 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
         }
 
         if (!$this->getListingProduct()->isNotListed() || !$this->getListingProduct()->isListable()) {
-
             // M2ePro\TRANSLATIONS
             // Item is already on Walmart, or not available.
             $this->addMessage('Item is already on Walmart, or not available.');
@@ -99,11 +100,11 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
     protected function getGtin()
     {
         $gtin = parent::getGtin();
-        if (!is_null($gtin)) {
+        if ($gtin !== null) {
             return $gtin;
         }
 
-        $helper = $this->getHelper('Component\Walmart\Configuration');
+        $helper = $this->getHelper('Component_Walmart_Configuration');
 
         if ($helper->isGtinModeNotSet()) {
             return null;
@@ -117,11 +118,11 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
     protected function getUpc()
     {
         $upc = parent::getUpc();
-        if (!is_null($upc)) {
+        if ($upc !== null) {
             return $upc;
         }
 
-        $helper = $this->getHelper('Component\Walmart\Configuration');
+        $helper = $this->getHelper('Component_Walmart_Configuration');
 
         if ($helper->isUpcModeNotSet()) {
             return null;
@@ -135,11 +136,11 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
     protected function getEan()
     {
         $ean = parent::getEan();
-        if (!is_null($ean)) {
+        if ($ean !== null) {
             return $ean;
         }
 
-        $helper = $this->getHelper('Component\Walmart\Configuration');
+        $helper = $this->getHelper('Component_Walmart_Configuration');
 
         if ($helper->isEanModeNotSet()) {
             return null;
@@ -153,11 +154,11 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
     protected function getIsbn()
     {
         $isbn = parent::getIsbn();
-        if (!is_null($isbn)) {
+        if ($isbn !== null) {
             return $isbn;
         }
 
-        $helper = $this->getHelper('Component\Walmart\Configuration');
+        $helper = $this->getHelper('Component_Walmart_Configuration');
 
         if ($helper->isIsbnModeNotSet()) {
             return null;

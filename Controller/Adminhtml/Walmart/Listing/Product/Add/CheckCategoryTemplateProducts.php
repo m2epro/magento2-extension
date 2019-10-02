@@ -8,25 +8,30 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
+/**
+ * Class CheckCategoryTemplateProducts
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+ */
 class CheckCategoryTemplateProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
     public function execute()
     {
-        $listingProductsIds = $this->getListing()->getSetting('additional_data','adding_listing_products_ids');
+        $listingProductsIds = $this->getListing()->getSetting('additional_data', 'adding_listing_products_ids');
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-        $collection->getSelect()->columns(array(
+        $collection->getSelect()->columns([
             'id' => 'main_table.id'
-        ));
+        ]);
         $collection->getSelect()->where(
-            "`main_table`.`id` IN (?) AND `second_table`.`template_category_id` IS NULL", $listingProductsIds
+            "`main_table`.`id` IN (?) AND `second_table`.`template_category_id` IS NULL",
+            $listingProductsIds
         );
 
         $failedProductsIds = $collection->getColumnValues('id');
 
-        $popup = $this->createBlock('Walmart\Listing\Product\Add\CategoryTemplate\WarningPopup');
+        $popup = $this->createBlock('Walmart_Listing_Product_Add_CategoryTemplate_WarningPopup');
 
         $this->setJsonContent([
             'validation'      => count($failedProductsIds) == 0,
@@ -34,7 +39,7 @@ class CheckCategoryTemplateProducts extends \Ess\M2ePro\Controller\Adminhtml\Wal
             'failed_count'    => count($failedProductsIds),
             'failed_products' => $failedProductsIds,
             'html' => $popup->toHtml(),
-            'next_step_url' => $this->getUrl('*/*/index', array('id'=>$this->getRequest()->getParam('id'), 'step' => 4))
+            'next_step_url' => $this->getUrl('*/*/index', ['id'=>$this->getRequest()->getParam('id'), 'step' => 4])
         ]);
 
         return $this->getResult();

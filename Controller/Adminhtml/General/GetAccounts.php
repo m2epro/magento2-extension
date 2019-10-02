@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\General;
 
 use Ess\M2ePro\Controller\Adminhtml\General;
 
+/**
+ * Class GetAccounts
+ * @package Ess\M2ePro\Controller\Adminhtml\General
+ */
 class GetAccounts extends General
 {
     //########################################
@@ -18,14 +22,14 @@ class GetAccounts extends General
     {
         $component = $this->getRequest()->getParam('component');
 
-        $collection = $this->parentFactory->getObject($component,'Account')->getCollection();
+        $collection = $this->parentFactory->getObject($component, 'Account')->getCollection();
 
-        $accounts = array();
+        $accounts = [];
         foreach ($collection->getItems() as $account) {
-            $data = array(
+            $data = [
                 'id' => $account->getId(),
                 'title' => $this->getHelper('Data')->escapeHtml($account->getTitle())
-            );
+            ];
 
             if ($component == \Ess\M2ePro\Helper\Component\Amazon::NICK ||
                 $component == \Ess\M2ePro\Helper\Component\Walmart::NICK) {

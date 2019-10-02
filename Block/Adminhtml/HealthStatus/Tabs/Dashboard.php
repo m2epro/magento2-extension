@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs;
 
 use Magento\Framework\Message\MessageInterface;
 
+/**
+ * Class Dashboard
+ * @package Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs
+ */
 class Dashboard extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Ess\M2ePro\Model\HealthStatus\Task\Result\Set */
@@ -23,8 +27,7 @@ class Dashboard extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->resultSet = $resultSet;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -47,7 +50,7 @@ class Dashboard extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     [
                         'type' => MessageInterface::TYPE_NOTICE,
                         'content' => $this->__(
-<<<HTML
+                            <<<HTML
 The additional information which might be helpful for Developers and Administrators is available in the
 <a target="_blank" href="{$toDevelopersArea}">Developers Area</a>.
 HTML
@@ -61,12 +64,12 @@ HTML
         // ---------------------------------------
         $createdFieldSets = [];
         foreach ($this->resultSet->getByKeys() as $resultItem) {
-
             if (in_array($resultItem->getFieldSetName(), $createdFieldSets)) {
                 continue;
             }
 
-            $fieldSet = $form->addFieldset('fieldset_' . strtolower($resultItem->getFieldSetName()),
+            $fieldSet = $form->addFieldset(
+                'fieldset_' . strtolower($resultItem->getFieldSetName()),
                 [
                     'legend'      => $this->__($resultItem->getFieldSetName()),
                     'collapsable' => false
@@ -74,8 +77,8 @@ HTML
             );
 
             foreach ($this->resultSet->getByFieldSet($this->resultSet->getFieldSetKey($resultItem)) as $byFieldSet) {
-
-                $fieldSet->addField(strtolower($byFieldSet->getTaskHash()),
+                $fieldSet->addField(
+                    strtolower($byFieldSet->getTaskHash()),
                     'note',
                     [
                         'label' => $this->__($byFieldSet->getFieldName()),

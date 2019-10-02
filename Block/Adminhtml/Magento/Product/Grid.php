@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Product;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Product
+ */
 abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     public $hideMassactionColumn = false;
@@ -49,14 +53,14 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
      */
     public function setCollection($collection)
     {
-        if (is_null($collection->getStoreId())) {
+        if ($collection->getStoreId() === null) {
             $collection->setStoreId(\Magento\Store\Model\Store::DEFAULT_STORE_ID);
         }
 
         /** @var $ruleModel \Ess\M2ePro\Model\Magento\Product\Rule */
         $ruleModel = $this->getHelper('Data\GlobalData')->getValue('rule_model');
 
-        if (!is_null($ruleModel) && $this->useAdvancedFilter) {
+        if ($ruleModel !== null && $this->useAdvancedFilter) {
             $ruleModel->setAttributesFilterToCollection($collection);
         }
 
@@ -75,10 +79,10 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
         // Set fake action
         // ---------------------------------------
         if ($this->getMassactionBlock()->getCount() == 0) {
-            $this->getMassactionBlock()->addItem('fake', array(
+            $this->getMassactionBlock()->addItem('fake', [
                 'label' => '&nbsp;&nbsp;&nbsp;&nbsp;',
                 'url'   => '#',
-            ));
+            ]);
                 // Header of grid with massactions is rendering in other way, than with no massaction
                 // so it causes broken layout when the actions are absent
             $this->css->add(<<<CSS
@@ -97,7 +101,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
                 width: 62%;
             }
 CSS
-);
+            );
         }
         // ---------------------------------------
 
@@ -118,7 +122,7 @@ CSS
             return $this->hideMassactionColumn ? '' :  parent::getMassactionBlockHtml();
         }
 
-        $advancedFilterBlock = $this->createBlock('Listing\Product\Rule');
+        $advancedFilterBlock = $this->createBlock('Listing_Product_Rule');
         $advancedFilterBlock->setShowHideProductsOption($this->showAdvancedFilterProductsOption);
         $advancedFilterBlock->setGridJsObjectName($this->getJsObjectName());
 
@@ -131,18 +135,17 @@ CSS
     public function callbackColumnProductId($value, $row, $column, $isExport)
     {
         $productId = (int)$value;
+        $storeId = $this->getStoreId();
 
-        $url = $this->getUrl('catalog/product/edit', array('id' => $productId));
+        $url = $this->getUrl('catalog/product/edit', ['id' => $productId, 'store' => $storeId]);
         $htmlWithoutThumbnail = '<a href="' . $url . '" target="_blank">'.$productId.'</a>';
 
         $showProductsThumbnails = (bool)(int)$this->getHelper('Module')->getConfig()
-            ->getGroupValue('/view/','show_products_thumbnails');
+            ->getGroupValue('/view/', 'show_products_thumbnails');
 
         if (!$showProductsThumbnails) {
             return $htmlWithoutThumbnail;
         }
-
-        $storeId = $this->getStoreId();
 
         /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
         $magentoProduct = $this->modelFactory->getObject('Magento\Product');
@@ -150,7 +153,7 @@ CSS
         $magentoProduct->setStoreId($storeId);
 
         $thumbnail = $magentoProduct->getThumbnailImage();
-        if (is_null($thumbnail)) {
+        if ($thumbnail === null) {
             return $htmlWithoutThumbnail;
         }
 
@@ -171,8 +174,12 @@ HTML;
 
     public function callbackColumnIsInStock($value, $row, $column, $isExport)
     {
+        if ($row->getData('is_in_stock') === null) {
+            return $this->__('N/A');
+        }
+
         if ((int)$row->getData('is_in_stock') <= 0) {
-            return '<span style="color: red;">'.$value.'</span>';
+            return '<span style="color: red;">' . $this->__('Out of Stock') . '</span>';
         }
 
         return $value;
@@ -227,7 +234,6 @@ HTML;
     public function getAdvancedFilterButtonHtml()
     {
         if (!$this->getChild('advanced_filter_button')) {
-
             $buttonSettings = [
                 'class'   => 'task action-default scalable action-secondary',
                 'id'      => 'advanced_filter_button'
@@ -304,7 +310,7 @@ CSS
             }
         });
 JS
-);
+        );
         // ---------------------------------------
 
         if ($this->getRequest()->isXmlHttpRequest()) {
@@ -365,7 +371,7 @@ JS
             $this->getHelper('Data\GlobalData')->getValue('hide_products_others_listings_prefix')
         );
 
-        is_null($showHideProductsOption) && $showHideProductsOption = 1;
+        $showHideProductsOption === null && $showHideProductsOption = 1;
         return !empty($ruleData) || ($this->showAdvancedFilterProductsOption && $showHideProductsOption);
     }
 
@@ -374,7 +380,6 @@ JS
     protected function isFilterOrSortByPriceIsUsed($filterName = null, $advancedFilterName = null)
     {
         if ($filterName) {
-
             $filters = $this->getParam($this->getVarNameFilter());
             is_string($filters) && $filters = $this->_backendHelper->prepareFilterString($filters);
 
@@ -392,9 +397,7 @@ JS
         $ruleModel = $this->getHelper('Data\GlobalData')->getValue('rule_model');
 
         if ($advancedFilterName && $ruleModel) {
-
             foreach ($ruleModel->getConditions()->getData($ruleModel->getPrefix()) as $cond) {
-
                 if ($cond->getAttribute() == $advancedFilterName) {
                     return true;
                 }

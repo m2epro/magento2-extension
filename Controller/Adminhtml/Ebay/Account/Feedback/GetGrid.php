@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
+/**
+ * Class GetGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback
+ */
 class GetGrid extends Account
 {
     public function execute()
@@ -21,7 +25,7 @@ class GetGrid extends Account
             return $this->getResult();
         }
 
-        $response = $this->createBlock('Ebay\Account\Feedback\Grid')->toHtml();
+        $response = $this->createBlock('Ebay_Account_Feedback_Grid')->toHtml();
 
         $this->setAjaxContent($response);
 

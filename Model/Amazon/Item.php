@@ -8,22 +8,26 @@
 
 namespace Ess\M2ePro\Model\Amazon;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Model\Amazon
+ */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Account
      */
-    private $accountModel = NULL;
+    private $accountModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
-    private $marketplaceModel = NULL;
+    private $marketplaceModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Magento\Product
      */
-    protected $magentoProductModel = NULL;
+    protected $magentoProductModel = null;
 
     protected $amazonFactory;
 
@@ -47,8 +51,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         parent::__construct(
             $modelFactory,
@@ -67,9 +70,9 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function delete()
     {
         $temp = parent::delete();
-        $temp && $this->accountModel = NULL;
-        $temp && $this->marketplaceModel = NULL;
-        $temp && $this->magentoProductModel = NULL;
+        $temp && $this->accountModel = null;
+        $temp && $this->marketplaceModel = null;
+        $temp && $this->magentoProductModel = null;
         return $temp;
     }
 
@@ -80,9 +83,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getAccount()
     {
-        if (is_null($this->accountModel)) {
+        if ($this->accountModel === null) {
             $this->accountModel = $this->amazonFactory->getCachedObjectLoaded(
-                'Account',$this->getAccountId()
+                'Account',
+                $this->getAccountId()
             );
         }
 
@@ -104,9 +108,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getMarketplace()
     {
-        if (is_null($this->marketplaceModel)) {
+        if ($this->marketplaceModel === null) {
             $this->marketplaceModel = $this->amazonFactory->getCachedObjectLoaded(
-                'Marketplace', $this->getMarketplaceId()
+                'Marketplace',
+                $this->getMarketplaceId()
             );
         }
 

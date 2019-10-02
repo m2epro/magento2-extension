@@ -12,13 +12,17 @@ use Ess\M2ePro\Model\Account;
 use Ess\M2ePro\Model\Exception\Logic;
 use Ess\M2ePro\Model\Amazon\Account\Repricing as AccountRepricing;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Amazon\Repricing
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var Account $account */
-    private $account = NULL;
+    private $account = null;
 
     /** @var \Ess\M2ePro\Model\Synchronization\Log $synchronizationLog */
-    protected $synchronizationLog = NULL;
+    protected $synchronizationLog = null;
 
     protected $activeRecordFactory;
     protected $amazonFactory;
@@ -32,8 +36,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->amazonFactory = $amazonFactory;
         $this->resourceConnection = $resourceConnection;
@@ -82,7 +85,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         }
 
         foreach ($response['messages'] as $messageData) {
-
             $message = $this->modelFactory->getObject('Response\Message');
             $message->initFromResponseData($messageData);
 
@@ -105,7 +107,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function getSynchronizationLog()
     {
-        if (!is_null($this->synchronizationLog)) {
+        if ($this->synchronizationLog !== null) {
             return $this->synchronizationLog;
         }
 

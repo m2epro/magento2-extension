@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Account
+ */
 class Edit extends Account
 {
     //########################################
@@ -27,7 +31,8 @@ class Edit extends Account
         try {
             /** @var \Ess\M2ePro\Model\Account $account */
             $account = $this->walmartFactory->getObjectLoaded('Account', $id);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         if ($id && !$account->getId()) {
             $this->messageManager->addError($this->__('Account does not exist.'));
@@ -41,7 +46,7 @@ class Edit extends Account
             return $this->_redirect('*/walmart_account');
         }
 
-        if (!is_null($account)) {
+        if ($account !== null) {
             $this->addLicenseMessage($account);
         }
 
@@ -66,8 +71,8 @@ class Edit extends Account
 
         // ---------------------------------------
 
-        $this->addLeft($this->createBlock('Walmart\Account\Edit\Tabs'));
-        $this->addContent($this->createBlock('Walmart\Account\Edit'));
+        $this->addLeft($this->createBlock('Walmart_Account_Edit_Tabs'));
+        $this->addContent($this->createBlock('Walmart_Account_Edit'));
         $this->setPageHelpLink('x/XgBhAQ');
 
         return $this->getResultPage();
@@ -77,10 +82,10 @@ class Edit extends Account
     {
         try {
             $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector('account','get','info', array(
+            $connectorObj = $dispatcherObject->getVirtualConnector('account', 'get', 'info', [
                 'account' => $account->getChildObject()->getServerHash(),
                 'channel' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            ));
+            ]);
 
             $dispatcherObject->process($connectorObj);
             $response = $connectorObj->getResponseData();
@@ -102,7 +107,7 @@ class Edit extends Account
 
         $errorMessage = $this->__(
             'Work with this Account is currently unavailable for the following reason: <br/> %error_message%',
-            array('error_message' => $note)
+            ['error_message' => $note]
         );
 
         $this->addExtendedErrorMessage($errorMessage);

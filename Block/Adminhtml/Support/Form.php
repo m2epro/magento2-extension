@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Support;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Support
+ */
 class Form extends AbstractForm
 {
     protected function _prepareLayout()
@@ -73,7 +77,8 @@ HTML
             []
         );
 
-        $fieldset->addField('subject',
+        $fieldset->addField(
+            'subject',
             'text',
             [
                 'name' => 'subject',
@@ -82,7 +87,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('contact_name',
+        $fieldset->addField(
+            'contact_name',
             'text',
             [
                 'name' => 'contact_name',
@@ -91,7 +97,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('contact_mail',
+        $fieldset->addField(
+            'contact_mail',
             'text',
             [
                 'name' => 'contact_mail',
@@ -117,7 +124,8 @@ HTML
 
         $referrer = $this->getRequest()->getParam('referrer', false);
         if (count($values) > 1 && !$referrer) {
-            $fieldset->addField('component',
+            $fieldset->addField(
+                'component',
                 'select',
                 [
                     'name' => 'component',
@@ -127,7 +135,8 @@ HTML
                 ]
             );
         } else {
-            $fieldset->addField('component',
+            $fieldset->addField(
+                'component',
                 'hidden',
                 [
                     'name' => 'component',
@@ -136,7 +145,8 @@ HTML
             );
         }
 
-        $fieldset->addField('description',
+        $fieldset->addField(
+            'description',
             'textarea',
             [
                 'label' => $this->__('Description'),
@@ -155,7 +165,8 @@ TEXT
             ]
         );
 
-        $fieldset->addField('files',
+        $fieldset->addField(
+            'files',
             'file',
             [
                 'css_class' => 'no-margin-bottom',
@@ -166,7 +177,8 @@ TEXT
             ]
         );
 
-        $fieldset->addField('more_attachments',
+        $fieldset->addField(
+            'more_attachments',
             'button',
             [
                 'container_id' => 'more_attachments_container',
@@ -177,7 +189,8 @@ TEXT
             ]
         );
 
-        $fieldset->addField('send_button',
+        $fieldset->addField(
+            'send_button',
             'button',
             [
                 'label' => '',
@@ -199,7 +212,7 @@ TEXT
         window.SupportObj = new Support();
     });
 JS
-);
+        );
 
         $form->setUseContainer(true);
         $this->setForm($form);

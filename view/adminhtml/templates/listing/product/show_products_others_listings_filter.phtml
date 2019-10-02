@@ -1,4 +1,15 @@
-<?php /** @var \Ess\M2ePro\Block\Adminhtml\Listing\Product\HideOthersListingsProductsFilter $block */ ?>
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Listing\Product\HideOthersListingsProductsFilter $block */
+
+?>
 
 <style type="text/css">
 
@@ -30,7 +41,9 @@
         id="switcher_show_products_others_listings_filter"
         type="checkbox"
         class="admin__control-checkbox"
-        <?php if ($block->isChecked()): ?>checked="checked"<?php endif; ?>
+        <?php if ($block->isChecked()) :
+            ?>checked="checked"<?php
+        endif; ?>
         onclick="setLocation('<?php echo $block->getFilterUrl(); ?>');"
     >
     <label for="switcher_not_created_filter" class="admin__field-label">

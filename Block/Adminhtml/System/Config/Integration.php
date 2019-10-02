@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\System\Config;
 
+/**
+ * Class Integration
+ * @package Ess\M2ePro\Block\Adminhtml\System\Config
+ */
 abstract class Integration extends \Magento\Config\Block\System\Config\Form\Field
 {
     protected $moduleHelper;
@@ -16,8 +20,7 @@ abstract class Integration extends \Magento\Config\Block\System\Config\Form\Fiel
         \Magento\Backend\Block\Template\Context $context,
         \Ess\M2ePro\Helper\Module $moduleHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->moduleHelper = $moduleHelper;
         parent::__construct($context, $data);
     }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
+/**
+ * Class GetChooserEditHtml
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Category
+ */
 class GetChooserEditHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {
 
@@ -18,7 +22,8 @@ class GetChooserEditHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         // ---------------------------------------
         $categoryType = $this->getRequest()->getParam('category_type');
         $selectedMode = $this->getRequest()->getParam(
-            'selected_mode', \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE
+            'selected_mode',
+            \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE
         );
         $selectedValue = $this->getRequest()->getParam('selected_value');
         $selectedPath = $this->getRequest()->getParam('selected_path');
@@ -29,19 +34,23 @@ class GetChooserEditHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $this->getHelper('Data\GlobalData')->setValue('chooser_category_type', $categoryType);
 
         // ---------------------------------------
-        $editBlock = $this->createBlock('Ebay\Listing\Product\Category\Settings\Chooser\Edit');
+        $editBlock = $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser_Edit');
         $editBlock->setCategoryType($categoryType);
         // ---------------------------------------
 
-        $ebayCategoryTypes = $this->getHelper('Component\Ebay\Category')->getEbayCategoryTypes();
+        $ebayCategoryTypes = $this->getHelper('Component_Ebay_Category')->getEbayCategoryTypes();
 
         if (in_array($categoryType, $ebayCategoryTypes)) {
-            $recentCategories = $this->getHelper('Component\Ebay\Category')->getRecent(
-                $marketplaceId, $categoryType, $selectedValue
+            $recentCategories = $this->getHelper('Component_Ebay_Category')->getRecent(
+                $marketplaceId,
+                $categoryType,
+                $selectedValue
             );
         } else {
-            $recentCategories = $this->getHelper('Component\Ebay\Category')->getRecent(
-                $accountId, $categoryType, $selectedValue
+            $recentCategories = $this->getHelper('Component_Ebay_Category')->getRecent(
+                $accountId,
+                $categoryType,
+                $selectedValue
             );
         }
 
@@ -54,14 +63,16 @@ class GetChooserEditHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
                 switch ($selectedMode) {
                     case \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY:
                         if (in_array($categoryType, $ebayCategoryTypes)) {
-                            $selectedPath = $this->getHelper('Component\Ebay\Category\Ebay')->getPath(
-                                $selectedValue, $marketplaceId
+                            $selectedPath = $this->getHelper('Component_Ebay_Category_Ebay')->getPath(
+                                $selectedValue,
+                                $marketplaceId
                             );
 
                             $selectedPath .= ' (' . $selectedValue . ')';
                         } else {
-                            $selectedPath = $this->getHelper('Component\Ebay\Category\Store')->getPath(
-                                $selectedValue, $accountId
+                            $selectedPath = $this->getHelper('Component_Ebay_Category_Store')->getPath(
+                                $selectedValue,
+                                $accountId
                             );
                         }
 
@@ -74,11 +85,11 @@ class GetChooserEditHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
                 }
             }
 
-            $editBlock->setSelectedCategory(array(
+            $editBlock->setSelectedCategory([
                 'mode' => $selectedMode,
                 'value' => $selectedValue,
                 'path' => $selectedPath
-            ));
+            ]);
         }
 
         $this->setAjaxContent($editBlock->toHtml());

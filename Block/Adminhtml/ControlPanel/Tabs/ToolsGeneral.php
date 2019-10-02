@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 use Ess\M2ePro\Helper\View\ControlPanel\Command;
 
+/**
+ * Class ToolsGeneral
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs
+ */
 class ToolsGeneral extends AbstractBlock
 {
     //########################################
@@ -31,7 +35,7 @@ class ToolsGeneral extends AbstractBlock
 
     protected function _beforeToHtml()
     {
-        $this->setChild('tabs', $this->createBlock('ControlPanel\Tabs\ToolsGeneral\Tabs'));
+        $this->setChild('tabs', $this->createBlock('ControlPanel_Tabs_ToolsGeneral_Tabs'));
         return parent::_beforeToHtml();
     }
 

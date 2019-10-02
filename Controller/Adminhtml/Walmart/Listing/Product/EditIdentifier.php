@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product;
 
+/**
+ * Class EditIdentifier
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product
+ */
 class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {
     //########################################
@@ -25,7 +29,7 @@ class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
         $type = $this->getRequest()->getParam('type');
         $value = $this->getRequest()->getParam('value');
 
-        $allowedTypes = array('gtin', 'upc', 'ean', 'isbn');
+        $allowedTypes = ['gtin', 'upc', 'ean', 'isbn'];
 
         if (empty($productId) || empty($type) || empty($value) || !in_array($type, $allowedTypes)) {
             $this->setJsonContent([
@@ -60,7 +64,7 @@ class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 
         try {
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator $configurator */
-            $configurator = $this->modelFactory->getObject('Walmart\Listing\Product\Action\Configurator');
+            $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
 
             $configurator->reset();
             $configurator->allowDetails();
@@ -68,14 +72,13 @@ class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
             $listingProduct->setActionConfigurator($configurator);
 
             $params['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER;
-            $params['changed_identifier'] = array(
+            $params['changed_identifier'] = [
                 'type'  => $type,
                 'value' => $value,
-            );
+            ];
 
-            $dispatcherObject = $this->modelFactory->getObject('Walmart\Connector\Product\Dispatcher');
+            $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Product_Dispatcher');
             $dispatcherObject->process(\Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, [$listingProduct], $params);
-
         } catch (\Exception $exception) {
             $this->setJsonContent([
                 'result' => false,

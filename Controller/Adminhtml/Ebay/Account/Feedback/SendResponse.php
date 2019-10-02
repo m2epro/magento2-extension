@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
+/**
+ * Class SendResponse
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback
+ */
 class SendResponse extends Account
 {
     public function execute()
@@ -18,9 +22,9 @@ class SendResponse extends Account
         $feedbackText = $this->getRequest()->getParam('feedback_text');
 
         /** @var \Ess\M2ePro\Model\Ebay\Feedback $feedback */
-        $feedback = $this->activeRecordFactory->getObjectLoaded('Ebay\Feedback', $feedbackId, NULL, false);
+        $feedback = $this->activeRecordFactory->getObjectLoaded('Ebay\Feedback', $feedbackId, null, false);
 
-        if (empty($feedbackId) || is_null($feedback)) {
+        if (empty($feedbackId) || $feedback === null) {
             $this->setAjaxContent('You should provide correct parameters.', false);
             return $this->getResult();
         }

@@ -31,13 +31,17 @@
 
 namespace Ess\M2ePro\PublicServices\Product;
 
+/**
+ * Class SqlChange
+ * @package Ess\M2ePro\PublicServices\Product
+ */
 class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 {
     const VERSION = '1.0.2';
 
     protected $preventDuplicatesMode = true;
 
-    protected $changes = array();
+    protected $changes = [];
 
     protected $resource;
 
@@ -47,8 +51,7 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\ResourceConnection $resource
-    )
-    {
+    ) {
         $this->resource = $resource;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -57,7 +60,7 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 
     public function needPreventDuplicates($value = null)
     {
-        if (is_null($value)) {
+        if ($value === null) {
             return $this->preventDuplicatesMode;
         }
 
@@ -86,7 +89,7 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
      */
     public function flushChanges()
     {
-        $this->changes = array();
+        $this->changes = [];
         return $this;
     }
 
@@ -115,9 +118,13 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
         return $this->markProductChanged($productId);
     }
 
-    public function markProductAttributeChanged($productId, $attributeCode, $storeId,
-                                                $valueOld = null, $valueNew = null)
-    {
+    public function markProductAttributeChanged(
+        $productId,
+        $attributeCode,
+        $storeId,
+        $valueOld = null,
+        $valueNew = null
+    ) {
         $this->markProductChanged($productId);
 
         $change = $this->_getSkeleton();
@@ -156,7 +163,7 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 
     private function _getSkeleton()
     {
-        return array(
+        return [
             'product_id'    => null,
             'store_id'      => null,
             'action'        => \Ess\M2ePro\Model\ProductChange::ACTION_UPDATE,
@@ -167,7 +174,7 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
             'count_changes' => null,
             'update_date'   => $date = $this->getHelper('Data')->getCurrentGmtDate(),
             'create_date'   => $date
-        );
+        ];
     }
 
     private function _addChange(array $change)
@@ -195,7 +202,7 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 
     private function getAffectedProductsIds()
     {
-        $productIds = array();
+        $productIds = [];
 
         foreach ($this->changes as $change) {
             $productIds[] = (int)$change['product_id'];
@@ -212,7 +219,6 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 
         if ($change['action'] == \Ess\M2ePro\Model\ProductChange::ACTION_CREATE ||
             $change['action'] == \Ess\M2ePro\Model\ProductChange::ACTION_DELETE) {
-
             return false;
         }
 
@@ -229,33 +235,32 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 
         $connection = $this->resource->getConnection();
 
-        $listingProductTable  = $this->getHelper('Module\Database\Structure')
+        $listingProductTable  = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_listing_product');
-        $variationOptionTable = $this->getHelper('Module\Database\Structure')
+        $variationOptionTable = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_listing_product_variation_option');
 
         $simpleProductsSelect = $connection
             ->select()
             ->distinct()
-            ->from($listingProductTable, array('product_id'));
+            ->from($listingProductTable, ['product_id']);
 
         $variationsProductsSelect = $connection
             ->select()
             ->distinct()
-            ->from($variationOptionTable, array('product_id'));
+            ->from($variationOptionTable, ['product_id']);
 
         $stmtQuery = $connection
             ->select()
-            ->union(array($simpleProductsSelect, $variationsProductsSelect))
+            ->union([$simpleProductsSelect, $variationsProductsSelect])
             ->query();
 
-        $productsInListings = array();
+        $productsInListings = [];
         while ($productId = $stmtQuery->fetchColumn()) {
             $productsInListings[] = (int)$productId;
         }
 
         foreach ($this->changes as $key => $change) {
-
             if (!in_array($change['product_id'], $productsInListings)) {
                 unset($this->changes[$key]);
             }
@@ -265,7 +270,7 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
     private function insertPreventDuplicates()
     {
         $connection = $this->resource->getConnection();
-        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_product_change');
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_product_change');
 
         $queryStmt = $connection
             ->select()
@@ -273,16 +278,15 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
             ->where('`product_id` IN (?)', $this->getAffectedProductsIds())
             ->query();
 
-        $existedChanges = array();
+        $existedChanges = [];
 
         while ($row = $queryStmt->fetch()) {
             $key = $row['product_id'].'##'.$row['store_id'].'##'.$row['attribute'];
             $existedChanges[$key] = $row;
         }
 
-        $inserts = array();
+        $inserts = [];
         foreach ($this->changes as $changeKey => $change) {
-
             if (array_key_exists($changeKey, $existedChanges) && !$this->hasChangesCounter($change)) {
                 continue;
             }
@@ -297,11 +301,11 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 
             $connection->update(
                 $tableName,
-                array(
+                [
                     'count_changes' => $changesCounter,
                     'value_new'     => $change['value_new'],
                     'update_date'   => $change['update_date']
-                ),
+                ],
                 "id = {$id}"
             );
         }
@@ -311,7 +315,7 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 
     private function simpleInsert()
     {
-        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_product_change');
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_product_change');
 
         $this->resource->getConnection()->insertMultiple($tableName, $this->changes);
     }

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Mana
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
+/**
+ * Class ViewVariationsGridAjax
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage
+ */
 class ViewVariationsGridAjax extends Main
 {
     public function execute()
@@ -22,7 +26,7 @@ class ViewVariationsGridAjax extends Main
             return $this->getResult();
         }
 
-        $grid = $this->createBlock('Walmart\Listing\Product\Variation\Manage\Tabs\Variations\Grid');
+        $grid = $this->createBlock('Walmart_Listing_Product_Variation_Manage_Tabs_Variations_Grid');
         $grid->setListingProduct($this->walmartFactory->getObjectLoaded('Listing\Product', $productId));
 
         $this->setAjaxContent($grid);

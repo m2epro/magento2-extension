@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Connector\Account\Update;
 
+/**
+ * Class EntityResponser
+ * @package Ess\M2ePro\Model\Walmart\Connector\Account\Update
+ */
 class EntityResponser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Responser
 {
     // ########################################
@@ -29,9 +33,9 @@ class EntityResponser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pendin
         /** @var $walmartAccount \Ess\M2ePro\Model\Walmart\Account */
         $walmartAccount = $this->getAccount()->getChildObject();
 
-        $dataForUpdate = array(
+        $dataForUpdate = [
             'info' => $this->getHelper('Data')->jsonEncode($responseData['info'])
-        );
+        ];
 
         $walmartAccount->addData($dataForUpdate)->save();
     }

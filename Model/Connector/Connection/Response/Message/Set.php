@@ -8,8 +8,9 @@
 
 namespace Ess\M2ePro\Model\Connector\Connection\Response\Message;
 
-/** @method \Ess\M2ePro\Model\Connector\Connection\Response\Message[] getErrorEntities */
-
+/**
+ * @method \Ess\M2ePro\Model\Connector\Connection\Response\Message[] getErrorEntities
+ */
 class Set extends \Ess\M2ePro\Model\Response\Message\Set
 {
     //########################################
@@ -17,7 +18,7 @@ class Set extends \Ess\M2ePro\Model\Response\Message\Set
     /** @return \Ess\M2ePro\Model\Connector\Connection\Response\Message */
     protected function getEntityModel()
     {
-        return $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        return $this->modelFactory->getObject('Connector_Connection_Response_Message');
     }
 
     //########################################
@@ -35,10 +36,9 @@ class Set extends \Ess\M2ePro\Model\Response\Message\Set
 
     public function getCombinedSystemErrorsString()
     {
-        $messages = array();
+        $messages = [];
 
         foreach ($this->getErrorEntities() as $message) {
-
             if (!$message->isSenderSystem()) {
                 continue;
             }

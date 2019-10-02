@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Variation\Product\
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Variation\Product\View
+ */
 class Grid extends AbstractGrid
 {
     protected $listingProductId;
@@ -31,8 +35,7 @@ class Grid extends AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->resourceConnection       = $resourceConnection;
         $this->wrapperCollectionFactory = $wrapperCollectionFactory;
         $this->ebayFactory              = $ebayFactory;
@@ -64,14 +67,14 @@ class Grid extends AbstractGrid
     {
         // Get collection
         // ---------------------------------------
-        $collection = $this->ebayFactory->getObject('Listing\Product\Variation')->getCollection();
-        $collection->getSelect()->where('main_table.listing_product_id = ?',$this->listingProductId);
+        $collection = $this->ebayFactory->getObject('Listing_Product_Variation')->getCollection();
+        $collection->getSelect()->where('main_table.listing_product_id = ?', $this->listingProductId);
         $collection->getSelect()->group('main_table.id');
         // ---------------------------------------
 
         // ---------------------------------------
         $collection->getSelect()->join(
-            ['mlpvo' => $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')
+            ['mlpvo' => $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')
                                                   ->getResource()->getMainTable()],
             '`mlpvo`.`listing_product_variation_id`=`main_table`.`id`'
         );
@@ -122,19 +125,19 @@ class Grid extends AbstractGrid
             ]
         );
         $collection->getSelect()->join(
-            ['elpp' => $this->activeRecordFactory->getObject('Ebay\Listing\Product\PickupStore')
+            ['elpp' => $this->activeRecordFactory->getObject('Ebay_Listing_Product_PickupStore')
                                                  ->getResource()->getMainTable()],
             'elpp.listing_product_id=main_table.listing_product_id',
             ['account_pickup_store_id']
         );
         $collection->getSelect()->joinLeft(
-            ['eap' => $this->activeRecordFactory->getObject('Ebay\Account\PickupStore')
+            ['eap' => $this->activeRecordFactory->getObject('Ebay_Account_PickupStore')
                                                 ->getResource()->getMainTable()],
             'eap.id=elpp.account_pickup_store_id',
             ['store_name' => 'name']
         );
         $collection->getSelect()->joinLeft(
-            ['eaps' => $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\State')
+            ['eaps' => $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')
                                                  ->getResource()->getMainTable()],
             'eaps.sku=online_sku AND eaps.account_pickup_store_id=eap.id',
             [
@@ -192,10 +195,10 @@ class Grid extends AbstractGrid
             'width'     => '100px',
             'type'      => 'options',
             'sortable'  => false,
-            'options'   => array(
+            'options'   => [
                 1 => $this->__('Yes'),
                 0 => $this->__('No')
-            ),
+            ],
             'index'     => 'pickup_store_product_qty',
             'frame_callback' => [$this, 'callbackColumnOnlineAvailability'],
             'filter_condition_callback' => [$this, 'callbackFilterOnlineAvailability']
@@ -250,11 +253,11 @@ class Grid extends AbstractGrid
     public function callbackColumnOnlineSku($value, $row, $column, $isExport)
     {
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED &&
-            (is_null($value) || $value === '')) {
+            ($value === null || $value === '')) {
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -264,11 +267,11 @@ class Grid extends AbstractGrid
     public function callbackColumnStoreOnlineQty($value, $row, $column, $isExport)
     {
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED &&
-            (is_null($value) || $value === '')) {
+            ($value === null || $value === '')) {
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
-        if (is_null($value) || $value === '' || $row->getData('is_added')) {
+        if ($value === null || $value === '' || $row->getData('is_added')) {
             $value =  $this->__('Adding to Store');
         }
 
@@ -288,7 +291,7 @@ class Grid extends AbstractGrid
         }
 
         $qty = $row->getData('store_online_qty');
-        if (is_null($qty) || $row->getData('is_added')) {
+        if ($qty === null || $row->getData('is_added')) {
             return $this->__('Adding to Store');
         }
 
@@ -323,7 +326,7 @@ class Grid extends AbstractGrid
 
         $dbSelect = $this->resourceConnection->getConnection()->select()
             ->from(
-                $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\Log')
+                $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_Log')
                                           ->getResource()->getMainTable(),
                 ['action_id','action','type','description','create_date']
             )
@@ -344,7 +347,7 @@ class Grid extends AbstractGrid
 
         // ---------------------------------------
 
-        $summary = $this->createBlock('Listing\Log\Grid\LastActions')->setData([
+        $summary = $this->createBlock('Listing_Log_Grid_LastActions')->setData([
             'entity_id' => (int)$columnId,
             'logs'      => $logs,
             'available_actions' => $this->getAvailableActions(),
@@ -352,7 +355,7 @@ class Grid extends AbstractGrid
             'hide_help_handler' => 'EbayListingPickupStoreVariationGridObj.hideItemHelp',
         ]);
 
-        $pickupStoreState = $this->activeRecordFactory->getObjectLoaded('Ebay\Account\PickupStore\State', $stateId);
+        $pickupStoreState = $this->activeRecordFactory->getObjectLoaded('Ebay_Account_PickupStore_State', $stateId);
 
         $this->jsTranslator->addTranslations([
             'Log For SKU '.$stateId => $this->__('Log For SKU (%s%)', $pickupStoreState->getSku())
@@ -456,10 +459,10 @@ JS
 
     private function getVariationsAttributes()
     {
-        if (is_null($this->variationAttributes)) {
-            $tableVariation = $this->activeRecordFactory->getObject('Listing\Product\Variation')
+        if ($this->variationAttributes === null) {
+            $tableVariation = $this->activeRecordFactory->getObject('Listing_Product_Variation')
                 ->getResource()->getMainTable();
-            $tableOption = $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')
+            $tableOption = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')
                 ->getResource()->getMainTable();
 
             $select = $this->resourceConnection->getConnection()->select();

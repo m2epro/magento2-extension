@@ -8,11 +8,18 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
+/**
+ * Class Template
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub
+ */
 class Template extends AbstractModel
 {
     //########################################
 
-    protected function check() {}
+    protected function check()
+    {
+        return null;
+    }
 
     protected function execute()
     {

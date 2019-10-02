@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Other\View;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Other\View
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $localeCurrency;
@@ -23,8 +27,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->ebayFactory = $ebayFactory;
@@ -58,15 +61,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collection = $this->ebayFactory->getObject('Listing\Other')->getCollection();
 
         $collection->getSelect()->joinLeft(
-            array('mp' => $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable()),
+            ['mp' => $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable()],
             'mp.id = main_table.marketplace_id',
-            array('marketplace_title' => 'mp.title')
+            ['marketplace_title' => 'mp.title']
         );
 
         $collection->getSelect()->joinLeft(
-            array('mea' => $this->activeRecordFactory->getObject('Ebay\Account')->getResource()->getMainTable()),
+            ['mea' => $this->activeRecordFactory->getObject('Ebay\Account')->getResource()->getMainTable()],
             'mea.account_id = main_table.account_id',
-            array('account_mode' => 'mea.mode')
+            ['account_mode' => 'mea.mode']
         );
 
         // Add Filter By Account
@@ -81,7 +84,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $collection->getSelect()->columns(
-            array(
+            [
                 'id'                    => 'main_table.id',
                 'account_id'            => 'main_table.account_id',
                 'marketplace_id'        => 'main_table.marketplace_id',
@@ -99,7 +102,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'end_date'              => 'second_table.end_date',
                 'currency'              => 'second_table.currency',
                 'account_mode'          => 'mea.mode'
-            )
+            ]
         );
 
         $this->setCollection($collection);
@@ -109,86 +112,86 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('product_id', array(
+        $this->addColumn('product_id', [
             'header' => $this->__('Product ID'),
             'align' => 'left',
             'type' => 'number',
             'width' => '80px',
             'index' => 'product_id',
             'filter_index' => 'main_table.product_id',
-            'frame_callback' => array($this, 'callbackColumnProductId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductId']
+        ]);
 
-        $this->addColumn('title', array(
+        $this->addColumn('title', [
             'header' => $this->__('Title / SKU'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'title',
             'escape' => false,
             'filter_index' => 'second_table.title',
-            'frame_callback' => array($this, 'callbackColumnProductTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+        ]);
 
-        $this->addColumn('item_id', array(
+        $this->addColumn('item_id', [
             'header' => $this->__('Item ID'),
             'align' => 'left',
             'width' => '100px',
             'type' => 'text',
             'index' => 'item_id',
             'filter_index' => 'second_table.item_id',
-            'frame_callback' => array($this, 'callbackColumnItemId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnItemId']
+        ]);
 
-        $this->addColumn('available_qty', array(
+        $this->addColumn('available_qty', [
             'header' => $this->__('Available QTY'),
             'align' => 'right',
             'width' => '50px',
             'type' => 'number',
             'index' => 'available_qty',
             'filter_index' => new \Zend_Db_Expr('(second_table.online_qty - second_table.online_qty_sold)'),
-            'frame_callback' => array($this, 'callbackColumnOnlineAvailableQty')
-        ));
+            'frame_callback' => [$this, 'callbackColumnOnlineAvailableQty']
+        ]);
 
-        $this->addColumn('online_qty_sold', array(
+        $this->addColumn('online_qty_sold', [
             'header' => $this->__('Sold QTY'),
             'align' => 'right',
             'width' => '50px',
             'type' => 'number',
             'index' => 'online_qty_sold',
             'filter_index' => 'second_table.online_qty_sold',
-            'frame_callback' => array($this, 'callbackColumnOnlineQtySold')
-        ));
+            'frame_callback' => [$this, 'callbackColumnOnlineQtySold']
+        ]);
 
-        $this->addColumn('online_price', array(
+        $this->addColumn('online_price', [
             'header' => $this->__('Price'),
             'align' => 'right',
             'width' => '50px',
             'type' => 'number',
             'index' => 'online_price',
             'filter_index' => 'second_table.online_price',
-            'frame_callback' => array($this, 'callbackColumnOnlinePrice')
-        ));
+            'frame_callback' => [$this, 'callbackColumnOnlinePrice']
+        ]);
 
-        $this->addColumn('status', array(
+        $this->addColumn('status', [
             'header' => $this->__('Status'),
             'width' => '100px',
             'index' => 'status',
             'filter_index' => 'main_table.status',
             'type' => 'options',
             'sortable' => false,
-            'options' => array(
+            'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED   => $this->__('Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN   => $this->__('Listed (Hidden)'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD     => $this->__('Sold'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED  => $this->__('Stopped'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED => $this->__('Finished'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED  => $this->__('Pending')
-            ),
-            'frame_callback' => array($this, 'callbackColumnStatus')
-        ));
+            ],
+            'frame_callback' => [$this, 'callbackColumnStatus']
+        ]);
 
-        $this->addColumn('end_date', array(
+        $this->addColumn('end_date', [
            'header' => $this->__('End Date'),
            'align' => 'right',
            'width' => '150px',
@@ -197,14 +200,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
            'filter_time' => true,
            'index' => 'end_date',
            'filter_index' => 'second_table.end_date',
-           'frame_callback' => array($this, 'callbackColumnEndTime')
-        ));
+           'frame_callback' => [$this, 'callbackColumnEndTime']
+        ]);
 
-        $back = $this->getHelper('Data')->makeBackUrlParam('*/ebay_listing_other/view',array(
+        $back = $this->getHelper('Data')->makeBackUrlParam('*/ebay_listing_other/view', [
             'account' => $this->getRequest()->getParam('account'),
             'marketplace' => $this->getRequest()->getParam('marketplace'),
             'back' => $this->getRequest()->getParam('back')
-        ));
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -217,32 +220,32 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->getMassactionBlock()->setFormFieldName('ids');
         // ---------------------------------------
 
-        $this->getMassactionBlock()->setGroups(array(
+        $this->getMassactionBlock()->setGroups([
             'mapping' => $this->__('Mapping'),
             'other' => $this->__('Other')
-        ));
+        ]);
 
-        $this->getMassactionBlock()->addItem('autoMapping', array(
+        $this->getMassactionBlock()->addItem('autoMapping', [
             'label'   => $this->__('Map Item(s) Automatically'),
             'url'     => '',
             'confirm' => $this->__('Are you sure?')
-        ), 'mapping');
+        ], 'mapping');
 
-        $this->getMassactionBlock()->addItem('moving', array(
+        $this->getMassactionBlock()->addItem('moving', [
             'label'   => $this->__('Move Item(s) to Listing'),
             'url'     => '',
             'confirm' => $this->__('Are you sure?')
-        ), 'other');
-        $this->getMassactionBlock()->addItem('removing', array(
+        ], 'other');
+        $this->getMassactionBlock()->addItem('removing', [
             'label'   => $this->__('Remove Item(s)'),
             'url'     => '',
             'confirm' => $this->__('Are you sure?')
-        ), 'other');
-        $this->getMassactionBlock()->addItem('unmapping', array(
+        ], 'other');
+        $this->getMassactionBlock()->addItem('unmapping', [
             'label'   => $this->__('Unmap Item(s)'),
             'url'     => '',
             'confirm' => $this->__('Are you sure?')
-        ), 'mapping');
+        ], 'mapping');
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -281,15 +284,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         $htmlValue = '&nbsp<a href="'
-            .$this->getUrl('catalog/product/edit',
-                array('id' => $row->getData('product_id')))
+            .$this->getUrl(
+                'catalog/product/edit',
+                ['id' => $row->getData('product_id')]
+            )
             .'" target="_blank">'
             .$row->getData('product_id')
             .'</a>';
 
         $htmlValue .= '&nbsp&nbsp&nbsp<a href="javascript:void(0);"'
             .' onclick="EbayListingOtherGridObj.movingHandler.getGridHtml('
-            .$this->getHelper('Data')->jsonEncode(array((int)$row->getData('id')))
+            .$this->getHelper('Data')->jsonEncode([(int)$row->getData('id')])
             .')">'
             .$this->__('Move')
             .'</a>';
@@ -308,7 +313,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $tempSku = $row->getChildObject()->getData('sku');
 
-        if (is_null($tempSku)) {
+        if ($tempSku === null) {
             $tempSku = '<i style="color:gray;">receiving...</i>';
         } elseif ($tempSku == '') {
             $tempSku = '<i style="color:gray;">none</i>';
@@ -331,9 +336,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             return $this->__('N/A');
         }
 
-        $url = $this->getHelper('Component\Ebay')->getItemUrl($row->getChildObject()->getData('item_id'),
-                                                              $row->getData('account_mode'),
-                                                              $row->getData('marketplace_id'));
+        $url = $this->getHelper('Component\Ebay')->getItemUrl(
+            $row->getChildObject()->getData('item_id'),
+            $row->getData('account_mode'),
+            $row->getData('marketplace_id')
+        );
         $value = '<a href="' . $url . '" target="_blank">' . $value . '</a>';
 
         return $value;
@@ -342,7 +349,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnOnlineAvailableQty($value, $row, $column, $isExport)
     {
         $value = $row->getData('available_qty');
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -360,7 +367,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnOnlineQtySold($value, $row, $column, $isExport)
     {
         $value = $row->getChildObject()->getData('online_qty_sold');
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -374,7 +381,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnOnlinePrice($value, $row, $column, $isExport)
     {
         $value = $row->getChildObject()->getData('online_price');
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -447,12 +454,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
         $dbSelect = $this->resourceConnection->getConnection()->select()
             ->from(
-                $this->activeRecordFactory->getObject('Listing\Other\Log')->getResource()->getMainTable(),
-                array('action_id','action','type','description','create_date','initiator')
+                $this->activeRecordFactory->getObject('Listing_Other_Log')->getResource()->getMainTable(),
+                ['action_id','action','type','description','create_date','initiator']
             )
             ->where('`listing_other_id` = ?', $listingOtherId)
             ->where('`action` IN (?)', $availableActionsId)
-            ->order(array('id DESC'))
+            ->order(['id DESC'])
             ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::PRODUCTS_LIMIT);
 
         $logs = $this->resourceConnection->getConnection()->fetchAll($dbSelect);
@@ -463,7 +470,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         // ---------------------------------------
 
-        $summary = $this->createBlock('Listing\Log\Grid\LastActions')->setData([
+        $summary = $this->createBlock('Listing_Log_Grid_LastActions')->setData([
             'entity_id' => $listingOtherId,
             'logs'      => $logs,
             'available_actions' => $this->getAvailableActions(),
@@ -492,9 +499,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $html = '';
 
         foreach ($processingLocks as $processingLock) {
-
             switch ($processingLock->getTag()) {
-
                 case 'relist_action':
                     $html .= '<br/><span style="color: #605fff">[Relist in Progress...]</span>';
                     break;
@@ -509,7 +514,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
                 default:
                     break;
-
             }
         }
 
@@ -538,7 +542,7 @@ JS
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/ebay_listing_other/viewGrid', array('_current' => true));
+        return $this->getUrl('*/ebay_listing_other/viewGrid', ['_current' => true]);
     }
 
     public function getRowUrl($row)

@@ -8,25 +8,29 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type;
 
+/**
+ * Class Validator
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type
+ */
 abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
      * @var array
      */
-    private $params = array();
+    private $params = [];
 
     /**
      * @var \Ess\M2ePro\Model\Listing\Product
      */
-    private $listingProduct = NULL;
+    private $listingProduct = null;
 
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator */
-    private $configurator = NULL;
+    private $configurator = null;
 
     /**
      * @var array
      */
-    private $messages = array();
+    private $messages = [];
 
     protected $activeRecordFactory;
     protected $amazonFactory;
@@ -38,8 +42,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->amazonFactory = $amazonFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -187,12 +190,12 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     abstract public function validate();
 
-    protected function addMessage($message, $type =\Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR)
+    protected function addMessage($message, $type = \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR)
     {
-        $this->messages[] = array(
+        $this->messages[] = [
             'text' => $message,
             'type' => $type,
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -210,7 +213,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     protected function validateSku()
     {
         if (!$this->getAmazonListingProduct()->getSku()) {
-
             // M2ePro\TRANSLATIONS
             // You have to list Item first.
             $this->addMessage('You have to list Item first.');
@@ -226,9 +228,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     protected function validateBlocked()
     {
         if ($this->getListingProduct()->isBlocked()) {
-
-// M2ePro\TRANSLATIONS
-// The Action can not be executed as the Item was Closed, Incomplete or Blocked on Amazon. Please, go to Amazon Seller Central and activate the Item. After the next Synchronization the Item will be available.
             $this->addMessage(
                 'The Action can not be executed as the Item was Closed, Incomplete or Blocked on Amazon.
                  Please, go to Amazon Seller Central and activate the Item.
@@ -251,7 +250,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
         $qty = $this->getQty();
         if ($qty <= 0) {
-
 // M2ePro\TRANSLATIONS
 // The Quantity must be greater than 0. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
@@ -279,16 +277,16 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                 $this->addMessage(
                     'B2C Price can not be disabled by Revise/Relist action due to Amazon restrictions.
                     Both B2C and B2B Price values will be available on the Channel.',
-                    \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING);
+                    \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING
+                );
             }
 
             return true;
         }
 
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
             $this->getAmazonListingProduct()->isRepricingEnabled()
         ) {
-
             $this->getConfigurator()->disallowRegularPrice();
 
             $this->addMessage(
@@ -302,7 +300,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
         $regularPrice = $this->getPrice();
         if ($regularPrice <= 0) {
-
             // M2ePro\TRANSLATIONS
             // The Price must be greater than 0. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
@@ -330,7 +327,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                 $this->addMessage(
                     'B2B Price can not be disabled by Revise/Relist action due to Amazon restrictions.
                     Both B2B and B2C Price values will be available on the Channel.',
-                    \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING);
+                    \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING
+                );
             }
 
             return true;
@@ -338,7 +336,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
         $businessPrice = $this->getBusinessPrice();
         if ($businessPrice <= 0) {
-
             // M2ePro_TRANSLATIONS
             // The Business Price must be greater than 0. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
@@ -358,7 +355,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     protected function validateLogicalUnit()
     {
         if (!$this->getVariationManager()->isLogicalUnit()) {
-
             // M2ePro\TRANSLATIONS
             // Only logical Products can be processed.
             $this->addMessage('Only logical Products can be processed.');
@@ -395,7 +391,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     protected function validatePhysicalUnitAndSimple()
     {
         if (!$this->getVariationManager()->isPhysicalUnit() && !$this->getVariationManager()->isSimpleType()) {
-
             // M2ePro\TRANSLATIONS
             // Only physical Products can be processed.
             $this->addMessage('Only physical Products can be processed.');
@@ -409,7 +404,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     protected function validatePhysicalUnitMatching()
     {
         if (!$this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
-
             // M2ePro\TRANSLATIONS
             // You have to select Magento Variation.
             $this->addMessage('You have to select Magento Variation.');
@@ -425,7 +419,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         $typeModel = $this->getVariationManager()->getTypeModel();
 
         if (!$this->getAmazonListingProduct()->isGeneralIdOwner() && !$typeModel->isVariationChannelMatched()) {
-
             // M2ePro\TRANSLATIONS
             // You have to select Channel Variation.
             $this->addMessage('You have to select Channel Variation.');

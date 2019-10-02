@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\Description\Specific;
 
+/**
+ * Class Source
+ * @package Ess\M2ePro\Model\Amazon\Template\Description\Specific
+ */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
@@ -68,13 +72,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     public function getPath()
     {
         $xpath = $this->getDescriptionSpecificTemplate()->getXpath();
-        $xpathParts = explode('/',$xpath);
+        $xpathParts = explode('/', $xpath);
 
         $path = '';
         $isFirst = true;
 
         foreach ($xpathParts as $part) {
-            list($tag,$index) = explode('-',$part);
+            list($tag,$index) = explode('-', $part);
 
             if (!$tag) {
                 continue;
@@ -88,15 +92,14 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $templateObj = $this->getDescriptionSpecificTemplate();
 
         if ($templateObj->isModeNone()) {
-
             $path .= '[]';
-            $path .= str_repeat('}',substr_count($path,'{'));
+            $path .= str_repeat('}', substr_count($path, '{'));
 
             return $path;
         }
 
         $path .= '%data%';
-        $path .= str_repeat('}',substr_count($path,'{'));
+        $path .= str_repeat('}', substr_count($path, '{'));
 
         $path = str_replace(
             '%data%',
@@ -123,9 +126,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             $value = $this->getMagentoProduct()->getAttributeValue($value);
         }
 
-        $templateObj->isTypeInt()      && $value = (int)$value;
-        $templateObj->isTypeFloat()    && $value = (float)str_replace(',','.',$value);
-        $templateObj->isTypeDateTime() && $value = str_replace(' ','T',$value);
+        $templateObj->isTypeInt() && $value = (int)$value;
+        $templateObj->isTypeFloat() && $value = (float)str_replace(',', '.', $value);
+        $templateObj->isTypeDateTime() && $value = str_replace(' ', 'T', $value);
 
         return $value;
     }
@@ -134,10 +137,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     {
         $templateObj = $this->getDescriptionSpecificTemplate();
 
-        $attributes = array();
+        $attributes = [];
 
         foreach ($templateObj->getAttributes() as $index => $attribute) {
-
             list($attributeName) = array_keys($attribute);
 
             $attributeData = $attribute[$attributeName];
@@ -147,10 +149,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                     ? $attributeData['custom_value']
                     : $this->getMagentoProduct()->getAttributeValue($attributeData['custom_attribute']);
 
-            $attributes[$index] = array(
-                'name'  => str_replace(' ','',$attributeName),
+            $attributes[$index] = [
+                'name'  => str_replace(' ', '', $attributeName),
                 'value' => $attributeValue,
-            );
+            ];
         }
 
         return $this->getHelper('Data')->jsonEncode($attributes);

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
+/**
+ * Class Order
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay
+ */
 abstract class Order extends Main
 {
     //########################################
@@ -29,7 +33,7 @@ abstract class Order extends Main
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Orders'));
     }
 
-    protected function processConnector($action, array $params = array())
+    protected function processConnector($action, array $params = [])
     {
         $ids = $this->getRequestIds();
 
@@ -38,8 +42,10 @@ abstract class Order extends Main
             return false;
         }
 
-        return $this->modelFactory->getObject('Ebay\Connector\Order\Dispatcher')->process(
-            $action, $ids, $params
+        return $this->modelFactory->getObject('Ebay_Connector_Order_Dispatcher')->process(
+            $action,
+            $ids,
+            $params
         );
     }
 
@@ -72,11 +78,15 @@ abstract class Order extends Main
             /** @var \Ess\M2ePro\Model\Ebay\Order $ebayOrder */
             $ebayOrder = $order->getChildObject();
 
-            $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+            $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
             $connector = $dispatcher->getVirtualConnector(
-                'store', 'update', 'order',
-                array('order_id' => $ebayOrder->getEbayOrderId(), 'type' => $type),
-                NULL, NULL, $order->getAccount()
+                'store',
+                'update',
+                'order',
+                ['order_id' => $ebayOrder->getEbayOrderId(), 'type' => $type],
+                null,
+                null,
+                $order->getAccount()
             );
 
             try {

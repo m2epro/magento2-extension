@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Module;
 
+/**
+ * Class Logger
+ * @package Ess\M2ePro\Helper\Module
+ */
 class Logger extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $modelFactory;
@@ -24,8 +28,7 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest
-    )
-    {
+    ) {
         $this->modelFactory = $modelFactory;
         $this->moduleConfig = $moduleConfig;
         $this->logSystemFactory = $logSystemFactory;
@@ -35,10 +38,9 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function process($logData, $type = NULL, $sendToServer = true)
+    public function process($logData, $type = null, $sendToServer = true)
     {
         try {
-
             $info  = $this->getLogMessage($logData, $type);
             $info .= $this->getStackTraceInfo();
             $info .= $this->getCurrentUserActionInfo();
@@ -49,12 +51,12 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
                 return;
             }
 
-            $type = is_null($type) ? 'undefined' : $type;
-            $info .= $this->getHelper('Module\Support\Form')->getSummaryInfo();
+            $type = $type === null ? 'undefined' : $type;
+            $info .= $this->getHelper('Module_Support_Form')->getSummaryInfo();
 
             $this->send($info, $type);
-
-        } catch (\Exception $exceptionTemp) {}
+        } catch (\Exception $exceptionTemp) {
+        }
     }
 
     //########################################
@@ -64,7 +66,7 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
         /** @var \Ess\M2ePro\Model\Log\System $log */
         $log = $this->logSystemFactory->create();
 
-        $log->setType(is_null($type) ? 'Logging' : "{$type} Logging");
+        $log->setType($type === null ? 'Logging' : "{$type} Logging");
         $log->setDescription($info);
 
         $log->save();
@@ -74,10 +76,10 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
     {
         !is_string($logData) && $logData = print_r($logData, true);
 
-        $logData = '[DATE] '.date('Y-m-d H:i:s',(int)gmdate('U')).PHP_EOL.
+        $logData = '[DATE] '.date('Y-m-d H:i:s', (int)gmdate('U')).PHP_EOL.
             '[TYPE] '.$type.PHP_EOL.
             '[MESSAGE] '.$logData.PHP_EOL.
-            str_repeat('#',80).PHP_EOL.PHP_EOL;
+            str_repeat('#', 80).PHP_EOL.PHP_EOL;
 
         return $logData;
     }
@@ -118,9 +120,13 @@ ACTION;
     private function send($logData, $type)
     {
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('logger', 'add', 'entity',
-                                                               array('info' => $logData,
-                                                                     'type' => $type));
+        $connectorObj = $dispatcherObject->getVirtualConnector(
+            'logger',
+            'add',
+            'entity',
+            ['info' => $logData,
+            'type' => $type]
+        );
         $dispatcherObject->process($connectorObj);
     }
 

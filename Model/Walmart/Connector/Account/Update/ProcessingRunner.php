@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Connector\Account\Update;
 
+/**
+ * Class ProcessingRunner
+ * @package Ess\M2ePro\Model\Walmart\Connector\Account\Update
+ */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {
     // ########################################
@@ -20,7 +24,9 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Walmart::NICK, 'Account', $params['account_id']
+            \Ess\M2ePro\Helper\Component\Walmart::NICK,
+            'Account',
+            $params['account_id']
         );
 
         $account->addProcessingLock(null, $this->getProcessingObject()->getId());
@@ -36,7 +42,9 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Walmart::NICK, 'Account', $params['account_id']
+            \Ess\M2ePro\Helper\Component\Walmart::NICK,
+            'Account',
+            $params['account_id']
         );
 
         $account->deleteProcessingLocks(null, $this->getProcessingObject()->getId());

@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product;
 use Ess\M2ePro\Model\Ebay\Template\SellingFormat;
 use Ess\M2ePro\Model\Listing\Product\Variation as ListingProductVariation;
 
+/**
+ * Class PriceCalculator
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product
+ */
 class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
 {
     //########################################
@@ -42,7 +46,8 @@ class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
     {
         foreach ($optionTitles as &$optionTitle) {
             $optionTitle = trim($this->helperFactory->getObject('Data')->reduceWordsInString(
-                $optionTitle, \Ess\M2ePro\Helper\Component\Ebay::MAX_LENGTH_FOR_OPTION_VALUE
+                $optionTitle,
+                \Ess\M2ePro\Helper\Component\Ebay::MAX_LENGTH_FOR_OPTION_VALUE
             ));
         }
 

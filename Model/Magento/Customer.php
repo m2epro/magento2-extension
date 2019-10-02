@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Magento;
 
 use Ess\M2ePro\Model\AbstractModel;
 
+/**
+ * Class Customer
+ * @package Ess\M2ePro\Model\Magento
+ */
 class Customer extends AbstractModel
 {
     const FAKE_EMAIL_POSTFIX = '@dummy.email';
@@ -40,8 +44,7 @@ class Customer extends AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         array $data = []
-    )
-    {
+    ) {
         $this->customerDataFactory = $customerDataFactory;
         $this->addressDataFactory = $addressDataFactory;
         $this->mathRandom = $mathRandom;
@@ -110,7 +113,6 @@ class Customer extends AbstractModel
         $this->customer = $customerObject;
 
         foreach ($customerObject->getPrimaryAddresses() as $addressModel) {
-
             $this->_updateAddress($addressModel);
             $addressModel->save();
         }
@@ -152,7 +154,7 @@ class Customer extends AbstractModel
     {
         try {
             /** @var \Ess\M2ePro\Model\Magento\Attribute\Builder $attributeBuilder */
-            $attributeBuilder = $this->modelFactory->getObject('Magento\Attribute\Builder');
+            $attributeBuilder = $this->modelFactory->getObject('Magento_Attribute_Builder');
             $attributeBuilder->setCode($code);
             $attributeBuilder->setLabel($label);
             $attributeBuilder->setInputType('text');
@@ -172,7 +174,9 @@ class Customer extends AbstractModel
             $defaultAttributeSetId = $this->getDefaultAttributeSetId();
 
             $this->addAttributeToGroup(
-                $attribute->getId(), $defaultAttributeSetId, $this->getDefaultAttributeGroupId($defaultAttributeSetId)
+                $attribute->getId(),
+                $defaultAttributeSetId,
+                $this->getDefaultAttributeGroupId($defaultAttributeSetId)
             );
         } catch (\Exception $exception) {
             $this->helperFactory->getObject('Module\Exception')->process($exception, false);
@@ -193,7 +197,7 @@ class Customer extends AbstractModel
         ];
 
         $connWrite->insert(
-            $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('eav_entity_attribute'),
+            $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('eav_entity_attribute'),
             $data
         );
     }
@@ -204,7 +208,7 @@ class Customer extends AbstractModel
 
         $select = $connRead->select()
             ->from(
-                $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('eav_entity_type'),
+                $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('eav_entity_type'),
                 'default_attribute_set_id'
             )
             ->where('entity_type_id = ?', $this->customerFactory->create()->getEntityType()->getId());
@@ -218,7 +222,7 @@ class Customer extends AbstractModel
 
         $select = $connRead->select()
             ->from(
-                $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('eav_attribute_group'),
+                $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('eav_attribute_group'),
                 'attribute_group_id'
             )
             ->where('attribute_set_id = ?', $attributeSetId)

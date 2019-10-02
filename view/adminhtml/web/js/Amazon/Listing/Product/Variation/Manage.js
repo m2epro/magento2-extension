@@ -13,14 +13,13 @@ define([
         // ---------------------------------------
 
         initialize: function ($super, gridHandler) {
-            var self = this;
-
             $super(gridHandler);
+
+            this.initValidators();
         },
 
         // ---------------------------------------
 
-        options: {},
         matchingType: 1,
         matchedAttributes: [],
         productAttributes: [],
@@ -29,23 +28,16 @@ define([
         magentoVariationSet: [],
         amazonVariationSet: false,
 
-        setOptions: function (options) {
-            this.options = Object.extend(this.options, options);
-            this.initValidators();
-            return this;
-        },
-
         initValidators: function () {
-            var self = this;
+            Validation.add('M2ePro-amazon-attribute-unique-value', M2ePro.translator.translate('variation_manage_matched_attributes_error_duplicate'), function(value, el) {
 
-            jQuery.validator.addMethod('M2ePro-amazon-attribute-unique-value', function(value, el) {
                 var existedValues = [],
                     isValid = true,
                     form = el.up('form');
 
-                form.select('select').each(function (el) {
+                form.select('select').each(function(el) {
                     if (el.value != '') {
-                        if (existedValues.indexOf(el.value) === -1) {
+                        if(existedValues.indexOf(el.value) === -1) {
                             existedValues.push(el.value);
                         } else {
                             isValid = false;
@@ -54,7 +46,7 @@ define([
                 });
 
                 return isValid;
-            }, M2ePro.translator.translate('variation_manage_matched_attributes_error_duplicate'));
+            });
         },
 
         initSettingsTab: function () {

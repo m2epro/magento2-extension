@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Orders;
 
+/**
+ * Class Cancellation
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\Orders
+ */
 class Cancellation extends AbstractModel
 {
     private $orderHelper;
@@ -20,8 +24,7 @@ class Cancellation extends AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->orderHelper = $orderHelper;
         parent::__construct($ebayFactory, $activeRecordFactory, $helperFactory, $modelFactory);
     }
@@ -98,11 +101,8 @@ class Cancellation extends AbstractModel
             // ---------------------------------------
 
             try {
-
                 $this->processAccount($account);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Cancellation" Action for eBay Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -150,7 +150,7 @@ class Cancellation extends AbstractModel
         }
 
         /** @var $cancellationCandidates \Ess\M2ePro\Model\Order[] */
-        $cancellationCandidates = array();
+        $cancellationCandidates = [];
         foreach ($data as $orderData) {
             $cancellationCandidates[] = $this->associateAndUpdateOrder($account, $orderData);
         }
@@ -176,30 +176,35 @@ class Cancellation extends AbstractModel
             ->getCancellationCandidatesChannelIds($account->getId(), $startDate, $endDate);
 
         if (empty($ordersIds)) {
-            return array();
+            return [];
         }
 
-        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorObj = $dispatcherObj->getVirtualConnector('orders', 'get', 'orders',
-                                                            array('orders_ids' => $ordersIds),
-                                                            NULL, NULL, $account);
+        $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        $connectorObj = $dispatcherObj->getVirtualConnector(
+            'orders',
+            'get',
+            'orders',
+            ['orders_ids' => $ordersIds],
+            null,
+            null,
+            $account
+        );
 
         $dispatcherObj->process($connectorObj);
         $response = $connectorObj->getResponseData();
 
         $this->processResponseMessages($connectorObj->getResponseMessages());
 
-        return isset($response['orders']) ? $response['orders'] : array();
+        return isset($response['orders']) ? $response['orders'] : [];
     }
 
     private function processResponseMessages(array $messages)
     {
         /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messagesSet */
-        $messagesSet = $this->modelFactory->getObject('Connector\Connection\Response\Message\Set');
+        $messagesSet = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
         $messagesSet->init($messages);
 
         foreach ($messagesSet->getEntities() as $message) {
-
             if (!$message->isError() && !$message->isWarning()) {
                 continue;
             }
@@ -229,7 +234,7 @@ class Cancellation extends AbstractModel
         $startDate = clone $endDate;
         $startDate->modify('-3 days');
 
-        return array($startDate, $endDate);
+        return [$startDate, $endDate];
     }
 
     private function associateAndUpdateOrder(\Ess\M2ePro\Model\Account $account, array $orderData)
@@ -255,21 +260,22 @@ class Cancellation extends AbstractModel
             unset($paymentDetails['external_transactions']);
 
             $paymentDetails['method'] = $this->orderHelper->getPaymentMethodNameByCode(
-                $paymentDetails['method'], $order->getMarketplaceId()
+                $paymentDetails['method'],
+                $order->getMarketplaceId()
             );
 
             $order->setData('payment_details', $this->getHelper('Data')->jsonEncode($paymentDetails));
             $order->setData('payment_status', $paymentStatus);
         }
 
-        if (
-            !$order->getChildObject()->isCheckoutCompleted() &&
+        if (!$order->getChildObject()->isCheckoutCompleted() &&
             $checkoutStatus == \Ess\M2ePro\Model\Ebay\Order::CHECKOUT_STATUS_COMPLETED
         ) {
             $shippingDetails = $orderData['shipping'];
 
             $shippingDetails['service'] = $this->orderHelper->getShippingServiceNameByCode(
-                $shippingDetails['service'], $order->getMarketplaceId()
+                $shippingDetails['service'],
+                $order->getMarketplaceId()
             );
 
             $order->setData('shipping_details', $this->getHelper('Data')->jsonEncode($shippingDetails));
@@ -294,7 +300,7 @@ class Cancellation extends AbstractModel
             if ($order->canCancelMagentoOrder()) {
                 $message = 'Payment Status was updated to Paid on eBay. '.
                            'As Magento Order #%order_id% can have wrong data, it have to be cancelled.';
-                $order->addWarningLog($message, array('!order_id' => $order->getMagentoOrder()->getRealOrderId()));
+                $order->addWarningLog($message, ['!order_id' => $order->getMagentoOrder()->getRealOrderId()]);
 
                 try {
                     $order->cancelMagentoOrder();
@@ -315,11 +321,12 @@ class Cancellation extends AbstractModel
             if ($order->canCancelMagentoOrder()) {
                 $message = 'Payment Status was not updated to Paid. Magento Order #%order_id% '.
                            'have to be cancelled according to Account\'s Automatic Cancellation Setting.';
-                $order->addWarningLog($message, array('!order_id' => $order->getMagentoOrder()->getRealOrderId()));
+                $order->addWarningLog($message, ['!order_id' => $order->getMagentoOrder()->getRealOrderId()]);
 
                 try {
                     $order->cancelMagentoOrder();
-                } catch (\Exception $e) {}
+                } catch (\Exception $e) {
+                }
             }
 
             $this->openUnpaidItemProcess($order);
@@ -360,7 +367,7 @@ class Cancellation extends AbstractModel
         $order->setData('magento_order_id', null);
         $order->save();
 
-        $order->getItemsCollection()->walk('setProduct', array(null));
+        $order->getItemsCollection()->walk('setProduct', [null]);
     }
 
     //########################################
@@ -373,13 +380,13 @@ class Cancellation extends AbstractModel
         }
 
         $action = \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Dispatcher::ACTION_ADD_DISPUTE;
-        $params = array(
+        $params = [
             'explanation' => \Ess\M2ePro\Model\Ebay\Order\Item::DISPUTE_EXPLANATION_BUYER_HAS_NOT_PAID,
             'reason'      => \Ess\M2ePro\Model\Ebay\Order\Item::DISPUTE_REASON_BUYER_HAS_NOT_PAID
-        );
+        ];
 
         /** @var $dispatcher \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Dispatcher */
-        $dispatcher = $this->modelFactory->getObject('Ebay\Connector\OrderItem\Dispatcher');
+        $dispatcher = $this->modelFactory->getObject('Ebay_Connector_OrderItem_Dispatcher');
         $dispatcher->process($action, $items, $params);
     }
 
@@ -389,7 +396,8 @@ class Cancellation extends AbstractModel
         $collection = $this->ebayFactory->getObject('Order\Item')->getCollection();
         $collection->addFieldToFilter('order_id', $order->getId());
         $collection->addFieldToFilter(
-            'unpaid_item_process_state',\Ess\M2ePro\Model\Ebay\Order\Item::UNPAID_ITEM_PROCESS_NOT_OPENED
+            'unpaid_item_process_state',
+            \Ess\M2ePro\Model\Ebay\Order\Item::UNPAID_ITEM_PROCESS_NOT_OPENED
         );
 
         return $collection->getItems();
@@ -405,14 +413,17 @@ class Cancellation extends AbstractModel
     private function getPaymentStatus($orderData)
     {
         return $this->orderHelper->getPaymentStatus(
-            $orderData['payment']['method'], $orderData['payment']['date'], $orderData['payment']['status']
+            $orderData['payment']['method'],
+            $orderData['payment']['date'],
+            $orderData['payment']['status']
         );
     }
 
     private function getShippingStatus($orderData)
     {
         return $this->orderHelper->getShippingStatus(
-            $orderData['shipping']['date'], !empty($orderData['shipping']['service'])
+            $orderData['shipping']['date'],
+            !empty($orderData['shipping']['service'])
         );
     }
 

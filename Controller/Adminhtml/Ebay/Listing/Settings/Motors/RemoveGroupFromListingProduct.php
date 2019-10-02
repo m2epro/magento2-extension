@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
+/**
+ * Class RemoveGroupFromListingProduct
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ */
 class RemoveGroupFromListingProduct extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -24,10 +28,10 @@ class RemoveGroupFromListingProduct extends \Ess\M2ePro\Controller\Adminhtml\Eba
 
         $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $entityId);
 
-        $motorsAttribute = $this->getHelper('Component\Ebay\Motors')->getAttribute($motorsType);
+        $motorsAttribute = $this->getHelper('Component_Ebay_Motors')->getAttribute($motorsType);
         $attributeValue = $listingProduct->getMagentoProduct()->getAttributeValue($motorsAttribute);
 
-        $motorsData = $this->getHelper('Component\Ebay\Motors')->parseAttributeValue($attributeValue);
+        $motorsData = $this->getHelper('Component_Ebay_Motors')->parseAttributeValue($attributeValue);
 
         foreach ($groupsIds as $filterId) {
             if (($key = array_search($filterId, $motorsData['groups'])) !== false) {
@@ -35,10 +39,14 @@ class RemoveGroupFromListingProduct extends \Ess\M2ePro\Controller\Adminhtml\Eba
             }
         }
 
-        $attributeValue = $this->getHelper('Component\Ebay\Motors')->buildAttributeValue($motorsData);
+        $attributeValue = $this->getHelper('Component_Ebay_Motors')->buildAttributeValue($motorsData);
 
         $this->activeRecordFactory->getObject('Ebay\Listing')->getResource()->updateMotorsAttributesData(
-            $listingProduct->getListingId(), [$entityId], $motorsAttribute, $attributeValue, true
+            $listingProduct->getListingId(),
+            [$entityId],
+            $motorsAttribute,
+            $attributeValue,
+            true
         );
 
         $this->setAjaxContent(0, false);

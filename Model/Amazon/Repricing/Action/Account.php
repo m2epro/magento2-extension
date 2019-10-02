@@ -8,39 +8,43 @@
 
 namespace Ess\M2ePro\Model\Amazon\Repricing\Action;
 
+/**
+ * Class Account
+ * @package Ess\M2ePro\Model\Amazon\Repricing\Action
+ */
 class Account extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
 {
     //########################################
 
     public function sendLinkActionData($backUrl)
     {
-        $accountData = array(
+        $accountData = [
             'merchant_id'      => $this->getAmazonAccount()->getMerchantId(),
             'marketplace_code' => $this->getAmazonAccount()->getMarketplace()->getCode(),
             'additional_data'  => $this->getHelper('Magento\Admin')->getCurrentInfo(),
-        );
+        ];
 
         return $this->sendData(
             \Ess\M2ePro\Helper\Component\Amazon\Repricing::COMMAND_ACCOUNT_LINK,
-            array('account' => $accountData),
+            ['account' => $accountData],
             $backUrl
         );
     }
 
     public function sendUnlinkActionData($backUrl)
     {
-        $skus = $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')->getResource()->getSkus(
+        $skus = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')->getResource()->getSkus(
             $this->getAccount()
         );
 
-        $offers  = array();
+        $offers  = [];
         foreach ($skus as $sku) {
-            $offers[] = array('sku' => $sku);
+            $offers[] = ['sku' => $sku];
         }
 
         return $this->sendData(
             \Ess\M2ePro\Helper\Component\Amazon\Repricing::COMMAND_ACCOUNT_UNLINK,
-            array('offers' => $offers),
+            ['offers' => $offers],
             $backUrl
         );
     }
@@ -49,26 +53,25 @@ class Account extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
 
     private function sendData($command, array $data, $backUrl)
     {
-        $requestData = array(
-            'request' => array(
-                'back_url' => array(
+        $requestData = [
+            'request' => [
+                'back_url' => [
                     'url'    => $backUrl,
-                    'params' => array()
-                )
-            ),
+                    'params' => []
+                ]
+            ],
             'data' => $this->getHelper('Data')->jsonEncode($data),
-        );
+        ];
 
         if ($this->getAmazonAccount()->isRepricing()) {
-            $requestData['request']['auth'] = array(
+            $requestData['request']['auth'] = [
                 'account_token' => $this->getAmazonAccountRepricing()->getToken()
-            );
+            ];
         }
 
         try {
-            $result = $this->getHelper('Component\Amazon\Repricing')->sendRequest($command, $requestData);
+            $result = $this->getHelper('Component_Amazon_Repricing')->sendRequest($command, $requestData);
         } catch (\Exception $exception) {
-
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($exception->getMessage()),
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,

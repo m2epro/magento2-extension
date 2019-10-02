@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
 
+/**
+ * Class Main
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs
+ */
 class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
     //########################################
@@ -16,7 +20,9 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
     {
         $form = $this->_formFactory->create();
 
-        $form->addField('block_notice_general', self::HELP_BLOCK,
+        $form->addField(
+            'block_notice_general',
+            self::HELP_BLOCK,
             [
                 'content' => $this->__('This section allows you to configure the general settings for the interaction
                                         between M2E Pro Module and Amazon marketplaces.<br />
@@ -27,14 +33,16 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
             ]
         );
 
-        $fieldset = $form->addFieldset('amazon_main',
+        $fieldset = $form->addFieldset(
+            'amazon_main',
             [
                 'legend' => $this->__('Business (B2B)'),
                 'collapsable' => false,
             ]
         );
 
-        $fieldset->addField('business_mode',
+        $fieldset->addField(
+            'business_mode',
             self::SELECT,
             [
                 'name'        => 'business_mode',
@@ -43,7 +51,7 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
                     0 => $this->__('Disabled'),
                     1 => $this->__('Enabled')
                 ],
-                'value' => $this->getHelper('Component\Amazon\Business')->isEnabled(),
+                'value' => $this->getHelper('Component_Amazon_Business')->isEnabled(),
                 'tooltip' => $this->__(
                     'After you <strong>Enable</strong> this option, you can provide the settings for
                     <strong>Business Price</strong> and <strong >Quantity Discounts</strong>

@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Magento\Framework\Message\MessageInterface;
 
+/**
+ * Class Repricing
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs
+ */
 class Repricing extends AbstractForm
 {
     protected function _prepareForm()
@@ -20,7 +24,7 @@ class Repricing extends AbstractForm
 
         $isRepricingLinked = $account->getChildObject()->isRepricing();
 
-        $repricing = NULL;
+        $repricing = null;
         if ($isRepricingLinked) {
             /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing $repricing */
             $repricing = $account->getChildObject()->getRepricing();
@@ -31,10 +35,10 @@ class Repricing extends AbstractForm
 
         $generalAttributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
 
-        $attributesByInputTypes = array(
-            'text_price' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, array('text', 'price')),
-            'boolean' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, array('boolean')),
-        );
+        $attributesByInputTypes = [
+            'text_price' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, ['text', 'price']),
+            'boolean' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, ['boolean']),
+        ];
 
         $form = $this->_formFactory->create();
 
@@ -43,27 +47,27 @@ class Repricing extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(<<<HTML
-    You can use the <strong>Repricing Tool</strong> developed by M2E Pro Team to improve your
-    Offer position on Amazon Channel. Repricing functionality provides you with the constant edge over your Competitors.
-    <br /><br />
-    Use <strong>Link Now</strong> button to add your M2E Pro Amazon Account to Amazon Repricing Service.
-    Follow the Configuration Wizard steps to set up all necessary data.
-    <br /><br />
-    After your Account is successfully linked, the <strong>statistic information</strong> about the
-    Products managed by Repricing Tool becomes available.
-    <br /><br />
-    You have an ability to update parameters required for the repricing based on
-    Magento Product data via <strong>Additional settings</strong>.
-    <br /><br />
-    You can <strong>Add/Remove Items</strong> to/from the Repricing Service via M2E Pro.
-    Select appropriate action in Seller Central View Mode of your M2E Pro Listing.
-    <br /><br />
-    In case you decide to stop using the Repricing Tool for M2E Pro Listings, you can click on
-    <strong>Unlink</strong> button. The repricing process will be stopped for Products from this M2E Pro Amazon Account.
-    The Product Prices will be updated via M2E Pro again.
-    <br /><br />
-    More details about the Repricing Tool can be found
-    <a href="%url%" target="_blank" class="external-link">here</a>
+You can use the <strong>Repricing Tool</strong> developed by M2E Pro Team to improve your
+Offer position on Amazon Channel. Repricing functionality provides you with the constant edge over your Competitors.
+<br /><br />
+Use <strong>Link Now</strong> button to add your M2E Pro Amazon Account to Amazon Repricing Service.
+Follow the Configuration Wizard steps to set up all necessary data.
+<br /><br />
+After your Account is successfully linked, the <strong>statistic information</strong> about the
+Products managed by Repricing Tool becomes available.
+<br /><br />
+You have an ability to update parameters required for the repricing based on
+Magento Product data via <strong>Additional settings</strong>.
+<br /><br />
+You can <strong>Add/Remove Items</strong> to/from the Repricing Service via M2E Pro.
+Select appropriate action in Seller Central View Mode of your M2E Pro Listing.
+<br /><br />
+In case you decide to stop using the Repricing Tool for M2E Pro Listings, you can click on
+<strong>Unlink</strong> button. The repricing process will be stopped for Products from this M2E Pro Amazon Account.
+The Product Prices will be updated via M2E Pro again.
+<br /><br />
+More details about the Repricing Tool can be found
+<a href="%url%" target="_blank" class="external-link">here</a>
 HTML
                 , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/5QA9AQ'))
             ]
@@ -78,8 +82,8 @@ HTML
         );
 
         if ($isRepricingLinked) {
-
-            $fieldset->addField('unlink_repricing',
+            $fieldset->addField(
+                'unlink_repricing',
                 'note',
                 [
                     'text' => <<<HTML
@@ -93,7 +97,8 @@ HTML
                 ]
             );
 
-            $fieldset->addField('customer',
+            $fieldset->addField(
+                'customer',
                 self::CUSTOM_CONTAINER,
                 [
                     'label' => $this->__('Customer'),
@@ -109,8 +114,8 @@ HTML
                 ]
             );
         } else {
-
-            $fieldset->addField('link_repricing',
+            $fieldset->addField(
+                'link_repricing',
                 'note',
                 [
                     'text' => <<<HTML
@@ -135,7 +140,8 @@ HTML
 
         $totalProducts = ($repricing) ? $repricing->getTotalProducts() : 0;
 
-        $fieldset->addField('repricing_products',
+        $fieldset->addField(
+            'repricing_products',
             self::CUSTOM_CONTAINER,
             [
                 'label' => $this->__('Repricing Products'),
@@ -153,7 +159,8 @@ HTML
 
         $m2eProRepricingProducts = $this->getRepricingProductsCount();
 
-        $fieldset->addField('m2epro_products',
+        $fieldset->addField(
+            'm2epro_products',
             self::CUSTOM_CONTAINER,
             [
                 'label' => $this->__('M2E Pro Products'),
@@ -185,7 +192,6 @@ HTML
         $tooltipPriceCoefficient = '';
 
         if ($repricing) {
-
             $tooltipPriceCoefficient = '<div class="fix-magento-tooltip" style="margin-left: 20px;">' .
                 $this->getTooltipHtml(
                     $this->__('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)')
@@ -205,10 +211,10 @@ HTML
 
             if ($repricing->getRegularPriceMode() == $priceModeAttribute &&
                 !$magentoAttributeHelper->isExistInAttributesArray(
-                    $repricing->getData('regular_price_attribute'), $attributesByInputTypes['text_price']
+                    $repricing->getData('regular_price_attribute'),
+                    $attributesByInputTypes['text_price']
                 ) && $repricing->getData('regular_price_attribute') != ''
             ) {
-
                 $attrs = [
                     'attribute_code' => $repricing->getData('regular_price_attribute'),
                     'selected' => 'selected'
@@ -225,8 +231,7 @@ HTML
 
             foreach ($attributesByInputTypes['text_price'] as $attribute) {
                 $attrs = ['attribute_code' => $attribute['code']];
-                if (
-                    $repricing->getRegularPriceMode() == $priceModeAttribute
+                if ($repricing->getRegularPriceMode() == $priceModeAttribute
                     && $attribute['code'] == $repricing->getData('regular_price_attribute')
                 ) {
                     $attrs['selected'] = 'selected';
@@ -254,7 +259,8 @@ HTML
 
         $fieldTooltip = '<div class="fix-magento-tooltip" style="margin-left: 20px; margin-right: 20px;">' .
             $this->getTooltipHtml(
-                $this->__('
+                $this->__(
+                    '
     <strong>Regular Price</strong> is a common Price without any changes.
     This value is used for Repricing Rules configuration and plays the role of the roll-back Price in case
     the Rules cannot be applied or the Goals provided in the Repricing Rules cannot be achieved.
@@ -277,8 +283,9 @@ HTML
     <br /><br />
     More detailed information on how to work with this option can be found
     <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/aAAkAQ'),
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/5QA9AQ'))
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/aAAkAQ'),
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/5QA9AQ')
+                )
             ) .
             '</div>';
 
@@ -314,7 +321,8 @@ HTML
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
-        $fieldset->addField('regular_price_variation_mode',
+        $fieldset->addField(
+            'regular_price_variation_mode',
             self::SELECT,
             [
                 'container_id' => 'regular_price_variation_mode_tr',
@@ -354,9 +362,9 @@ HTML
 
             if ($repricing->getMinPriceMode() == \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_ATTRIBUTE &&
                 !$magentoAttributeHelper->isExistInAttributesArray(
-                    $repricing->getData('min_price_attribute'), $attributesByInputTypes['text_price']
+                    $repricing->getData('min_price_attribute'),
+                    $attributesByInputTypes['text_price']
                 ) && $repricing->getData('min_price_attribute') != '') {
-
                 $attrs = [
                     'attribute_code' => $repricing->getData('min_price_attribute'),
                     'selected' => 'selected'
@@ -373,8 +381,7 @@ HTML
 
             foreach ($attributesByInputTypes['text_price'] as $attribute) {
                 $attrs = ['attribute_code' => $attribute['code']];
-                if (
-                    $repricing->getMinPriceMode() == $priceModeAttribute
+                if ($repricing->getMinPriceMode() == $priceModeAttribute
                     && $attribute['code'] == $repricing->getData('min_price_attribute')
                 ) {
                     $attrs['selected'] = 'selected';
@@ -402,7 +409,8 @@ HTML
 
         $fieldTooltip = '<div class="fix-magento-tooltip" style="margin-left: 20px; margin-right: 20px;">' .
             $this->getTooltipHtml(
-                $this->__('
+                $this->__(
+                    '
 <strong>Min Price</strong> is the lowest Price which you could sell your Item at.
 <a href="%url1%" target="_blank">Learn more</a> about using the Max Price in Repricing Service.
 <br /><br />
@@ -467,7 +475,8 @@ More detailed information on how to work with this option can be found
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
-        $fieldset->addField('min_price_value',
+        $fieldset->addField(
+            'min_price_value',
             'text',
             [
                 'container_id' => 'min_price_value_tr',
@@ -483,7 +492,8 @@ More detailed information on how to work with this option can be found
             ]
         );
 
-        $fieldset->addField('min_price_percent',
+        $fieldset->addField(
+            'min_price_percent',
             'text',
             [
                 'container_id' => 'min_price_percent_tr',
@@ -499,7 +509,8 @@ More detailed information on how to work with this option can be found
             ]
         );
 
-        $fieldset->addField('min_price_variation_mode',
+        $fieldset->addField(
+            'min_price_variation_mode',
             self::SELECT,
             [
                 'container_id' => 'min_price_variation_mode_tr',
@@ -520,7 +531,8 @@ More detailed information on how to work with this option can be found
             ]
         );
 
-        $fieldset->addField('min_price_warning_tr',
+        $fieldset->addField(
+            'min_price_warning_tr',
             self::MESSAGES,
             [
                 'messages' => [
@@ -534,7 +546,8 @@ More detailed information on how to work with this option can be found
                             The dynamic updating of the Min Price value cannot give the 100%
                             assurance that all the data will be properly set and the correct
                             Price will be used for the Item. Thus, more preferable and reliable
-                            option is Manual updating of the Min Price value.')
+                            option is Manual updating of the Min Price value.'
+                        )
                     ],
                 ],
                 'style' => 'display: none'
@@ -560,10 +573,10 @@ More detailed information on how to work with this option can be found
 
             if ($repricing->getMaxPriceMode() == \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_ATTRIBUTE &&
                 !$magentoAttributeHelper->isExistInAttributesArray(
-                    $repricing->getData('max_price_attribute'), $attributesByInputTypes['text_price']
+                    $repricing->getData('max_price_attribute'),
+                    $attributesByInputTypes['text_price']
                 ) && $repricing->getData('max_price_attribute') != ''
             ) {
-
                 $attrs = [
                     'attribute_code' => $repricing->getData('max_price_attribute'),
                     'selected' => 'selected'
@@ -580,8 +593,7 @@ More detailed information on how to work with this option can be found
 
             foreach ($attributesByInputTypes['text_price'] as $attribute) {
                 $attrs = ['attribute_code' => $attribute['code']];
-                if (
-                    $repricing->getMaxPriceMode() == $priceModeAttribute
+                if ($repricing->getMaxPriceMode() == $priceModeAttribute
                     && $attribute['code'] == $repricing->getData('max_price_attribute')
                 ) {
                     $attrs['selected'] = 'selected';
@@ -609,7 +621,8 @@ More detailed information on how to work with this option can be found
 
         $fieldTooltip = '<div class="fix-magento-tooltip" style="margin-left: 20px; margin-right: 20px;">' .
             $this->getTooltipHtml(
-                $this->__('
+                $this->__(
+                    '
 <strong>Max Price</strong> is the highest Price which you could sell your Item at.
 <a href="%url%" target="_blank">Learn more</a> about using the Min Price in Repricing Service.
 <br /><br />
@@ -674,7 +687,8 @@ More detailed information on how to work with this option can be found
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
-        $fieldset->addField('max_price_value',
+        $fieldset->addField(
+            'max_price_value',
             'text',
             [
                 'container_id' => 'max_price_value_tr',
@@ -690,7 +704,8 @@ More detailed information on how to work with this option can be found
             ]
         );
 
-        $fieldset->addField('max_price_percent',
+        $fieldset->addField(
+            'max_price_percent',
             'text',
             [
                 'container_id' => 'max_price_percent_tr',
@@ -706,7 +721,8 @@ More detailed information on how to work with this option can be found
             ]
         );
 
-        $fieldset->addField('max_price_variation_mode',
+        $fieldset->addField(
+            'max_price_variation_mode',
             self::SELECT,
             [
                 'container_id' => 'max_price_variation_mode_tr',
@@ -727,7 +743,8 @@ More detailed information on how to work with this option can be found
             ]
         );
 
-        $fieldset->addField('max_price_warning_tr',
+        $fieldset->addField(
+            'max_price_warning_tr',
             self::MESSAGES,
             [
                 'messages' => [
@@ -741,7 +758,8 @@ More detailed information on how to work with this option can be found
                             The dynamic updating of the Max Price value cannot give the 100%
                             assurance that all the data will be properly set and the correct
                             Price will be used for the Item. Thus, more preferable and reliable
-                            option is Manual updating of the Max Price value.')
+                            option is Manual updating of the Max Price value.'
+                        )
                     ],
                 ],
                 'style' => 'display: none;'
@@ -768,10 +786,10 @@ More detailed information on how to work with this option can be found
 
             if ($repricing->getDisableMode() == $priceModeAttribute &&
                 !$magentoAttributeHelper->isExistInAttributesArray(
-                    $repricing->getData('disable_mode_attribute'), $attributesByInputTypes['boolean']
+                    $repricing->getData('disable_mode_attribute'),
+                    $attributesByInputTypes['boolean']
                 ) && $repricing->getData('disable_mode_attribute') != ''
             ) {
-
                 $attrs = [
                     'attribute_code' => $repricing->getData('disable_mode_attribute'),
                     'selected' => 'selected'
@@ -788,8 +806,7 @@ More detailed information on how to work with this option can be found
 
             foreach ($attributesByInputTypes['boolean'] as $attribute) {
                 $attrs = ['attribute_code' => $attribute['code']];
-                if (
-                    $repricing->getDisableMode() == $priceModeAttribute
+                if ($repricing->getDisableMode() == $priceModeAttribute
                     && $attribute['code'] == $repricing->getData('disable_mode_attribute')
                 ) {
                     $attrs['selected'] = 'selected';
@@ -827,9 +844,10 @@ More detailed information on how to work with this option can be found
                 ],
                 'create_magento_attribute' => true,
                 'value' => $value,
-                'after_element_html' => '<div class="fix-magento-tooltip" style="margin-left: 20px;
-                                              margin-right: 20px;">' .
-                    $this->getTooltipHtml($this->__('
+                'after_element_html' =>
+                    '<div class="fix-magento-tooltip" style="margin-left: 20px; margin-right: 20px;">' .
+                    $this->getTooltipHtml($this->__(
+                        '
 This option allows you to set when you would like to disable dynamic repricing for your M2E Pro Items.
 <a href="%url1%" target="_blank">Learn more</a> about the Product Disabling feature.
 <br /><br />
@@ -844,9 +862,9 @@ Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
 <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/aAAkAQ'),
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/5QA9AQ')
-                )).'</div>'
+                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/aAAkAQ'),
+                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/5QA9AQ')
+                    )).'</div>'
             ]
         )->addCustomAttribute('allowed_attribute_types', 'boolean');
 
@@ -865,7 +883,7 @@ JS
         }
 
         $this->css->add(
-<<<CSS
+            <<<CSS
     .field-link_repricing .control {
         margin-left: 17% !important;
         width: 78% !important;
@@ -890,7 +908,7 @@ CSS
             $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Account\Repricing')
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Account\Repricing', [
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Account_Repricing', [
             'id' => $account->getId()
         ]));
 
@@ -904,16 +922,17 @@ CSS
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
 
         $listingProductObject = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Product'
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Listing\Product'
         );
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Collection $collection */
         $collection = $listingProductObject->getCollection();
 
         $collection->getSelect()->join(
-            array('l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()),
+            ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
             '(`l`.`id` = `main_table`.`listing_id`)',
-            array()
+            []
         );
 
         $collection->getSelect()->where("`second_table`.`is_variation_parent` = 0");

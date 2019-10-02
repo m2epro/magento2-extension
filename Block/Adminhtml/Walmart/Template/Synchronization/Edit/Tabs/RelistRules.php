@@ -11,15 +11,19 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Walmart\Template\Synchronization;
 
+/**
+ * Class RelistRules
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs
+ */
 class RelistRules extends AbstractForm
 {
     protected function _prepareForm()
     {
         $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
-        $formData = !is_null($template)
+        $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $defaults = array(
+        $defaults = [
             'relist_mode' => Synchronization::RELIST_MODE_YES,
             'relist_filter_user_lock' => Synchronization::RELIST_FILTER_USER_LOCK_YES,
             'relist_status_enabled' => Synchronization::RELIST_STATUS_ENABLED_YES,
@@ -31,8 +35,11 @@ class RelistRules extends AbstractForm
 
             'relist_qty_calculated'           => Synchronization::RELIST_QTY_NONE,
             'relist_qty_calculated_value'     => '1',
-            'relist_qty_calculated_value_max' => '10'
-        );
+            'relist_qty_calculated_value_max' => '10',
+
+            'relist_advanced_rules_mode'    => Synchronization::ADVANCED_RULES_MODE_NONE,
+            'relist_advanced_rules_filters' => null
+        ];
         $formData = array_merge($defaults, $formData);
 
         $isEdit = !!$this->getRequest()->getParam('id');
@@ -45,13 +52,12 @@ class RelistRules extends AbstractForm
             [
                 'content' => $this->__(
                     <<<HTML
-                    <p>Enable the Relist Action and define the Relist Conditions based on which
-                    M2E Pro will automatically relist your Items on Walmart.</p><br>
-                    <p>The detailed information can be found
-                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>
+                    <p>Enable the Relist Action and define the Relist Conditions based on which M2E Pro
+                    will automatically relist your Items on Walmart.</p><br>
+                    <p><strong>Note:</strong> M2E Pro Listing Synchronization must be enabled under
+                    <strong>Walmart Integration > Configuration > Settings > Synchronization</strong>. Otherwise,
+                    Synchronization Rules will not take effect.</p>
 HTML
-                ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/UABhAQ')
                 )
             ]
         );
@@ -64,7 +70,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_mode',
+        $fieldset->addField(
+            'relist_mode',
             self::SELECT,
             [
                 'name' => 'relist_mode',
@@ -75,12 +82,13 @@ HTML
                     Synchronization::RELIST_MODE_YES => $this->__('Enabled'),
                 ],
                 'tooltip' => $this->__(
-                    'Enables/Disables the Relist Action for the Listings, which use current Synchronization Policy.'
+                    'Enable to automatically relist the Not Listed Item(s) when the Relist Conditions are met.'
                 )
             ]
         );
 
-        $fieldset->addField('relist_filter_user_lock',
+        $fieldset->addField(
+            'relist_filter_user_lock',
             self::SELECT,
             [
                 'container_id' => 'relist_filter_user_lock_tr_container',
@@ -92,7 +100,7 @@ HTML
                     Synchronization::RELIST_FILTER_USER_LOCK_NONE => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
-                    'Automatically Relists Item(s) even it has been Stopped manually within M2E Pro.'
+                    'Enable if you want to relist the Items that were stopped manually.'
                 )
             ]
         );
@@ -105,7 +113,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_status_enabled',
+        $fieldset->addField(
+            'relist_status_enabled',
             self::SELECT,
             [
                 'name' => 'relist_status_enabled',
@@ -117,14 +126,13 @@ HTML
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-product-status',
                 'tooltip' => $this->__(
-                    '<p><strong>Enabled:</strong> List Items on Walmart automatically if they have status Enabled
-                    in Magento Product. (Recommended)</p>
-                    <p><strong>Any:</strong> List Items with any Magento Product status on Walmart automatically.</p>'
+                    'Magento Product Status at which the Item(s) have to be relisted.'
                 )
             ]
         );
 
-        $fieldset->addField('relist_is_in_stock',
+        $fieldset->addField(
+            'relist_is_in_stock',
             self::SELECT,
             [
                 'name' => 'relist_is_in_stock',
@@ -136,14 +144,13 @@ HTML
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-stock-availability',
                 'tooltip' => $this->__(
-                    '<p><strong>In Stock:</strong> List Items automatically if Products are in Stock.
-                    (Recommended.)</p>
-                    <p><strong>Any:</strong> List Items automatically, regardless of Stock availability.</p>'
+                    'Magento Stock Availability at which the Item(s) have to be relisted.'
                 )
             ]
         );
 
-        $fieldset->addField('relist_qty_magento',
+        $fieldset->addField(
+            'relist_qty_magento',
             self::SELECT,
             [
                 'name' => 'relist_qty_magento',
@@ -156,11 +163,7 @@ HTML
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-item-qty',
                 'tooltip' => $this->__(
-                    '<p><strong>Any:</strong> List Items automatically with any Quantity available.</p>
-                    <p><strong>More or Equal:</strong> List Items automatically if the Quantity available in
-                    Magento is at least equal to the number you set. (Recommended)</p>
-                    <p><strong>Between:</strong> List Items automatically if the Quantity available in Magento is
-                    between the minimum and maximum numbers you set.</p>'
+                    'Magento Product Quantity at which the Item(s) have to be relisted.'
                 )
             ]
         )->addCustomAttribute('qty_type', 'magento');
@@ -191,7 +194,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_qty_calculated',
+        $fieldset->addField(
+            'relist_qty_calculated',
             self::SELECT,
             [
                 'name' => 'relist_qty_calculated',
@@ -204,12 +208,11 @@ HTML
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-item-qty',
                 'tooltip' => $this->__(
-                    '<p><strong>Any:</strong> List Items automatically with any Quantity available.</p>
-                    <p><strong>More or Equal:</strong> List Items automatically if the calculated Quantity is at
-                    least equal to the number you set, according to the Selling Policy.
-                    (Recommended)</p>
-                    <p><strong>Between:</strong> List Items automatically if the Quantity is between the minimum
-                    and maximum numbers you set, according to the Selling Policy.</p>'
+                    'Item Quantity calculated based on the Selling Policy settings at
+                    which the Item(s) have to be relisted. <br><br>
+
+                    <strong>Note:</strong> This option will be ignored for Magento Variational
+                    Product listed as Walmart Variant Group.'
                 )
             ]
         )->addCustomAttribute('qty_type', 'calculated');
@@ -240,6 +243,67 @@ HTML
             ]
         );
 
+        $fieldset = $form->addFieldset(
+            'magento_block_walmart_template_synchronization_relist_advanced_filters',
+            [
+                'legend' => $this->__('Advanced Conditions'),
+                'collapsable' => false,
+                'tooltip' => $this->__(
+                    '<p>Define Magento Attribute value(s) based on which a product must be relisted on the Channel.<br>
+                    Once both Relist Conditions and Advanced Conditions are met, the product will be relisted.</p>'
+                )
+            ]
+        );
+
+        $fieldset->addField(
+            'relist_advanced_rules_filters_warning',
+            self::MESSAGES,
+            [
+                'messages' => [[
+                    'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
+                    'content' => $this->__(
+                        'Please be very thoughtful before enabling this option as this functionality can have
+                        a negative impact on the Performance of your system.<br> It can decrease the speed of running
+                        in case you have a lot of Products with the high number of changes made to them.'
+                    )
+                ]]
+            ]
+        );
+
+        $fieldset->addField(
+            'relist_advanced_rules_mode',
+            self::SELECT,
+            [
+                'name' => 'relist_advanced_rules_mode',
+                'label' => $this->__('Mode'),
+                'value' => $formData['relist_advanced_rules_mode'],
+                'values' => [
+                    Synchronization::ADVANCED_RULES_MODE_NONE => $this->__('Disabled'),
+                    Synchronization::ADVANCED_RULES_MODE_YES  => $this->__('Enabled'),
+                ],
+            ]
+        );
+
+        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
+            ['prefix' => Synchronization::RELIST_ADVANCED_RULES_PREFIX]
+        );
+
+        if (!empty($formData['relist_advanced_rules_filters'])) {
+            $ruleModel->loadFromSerialized($formData['relist_advanced_rules_filters']);
+        }
+
+        $ruleBlock = $this->createBlock('Magento_Product_Rule')->setData(['rule_model' => $ruleModel]);
+
+        $fieldset->addField(
+            'advanced_filter',
+            self::CUSTOM_CONTAINER,
+            [
+                'container_id' => 'relist_advanced_rules_filters_container',
+                'label'        => $this->__('Conditions'),
+                'text'         => $ruleBlock->toHtml(),
+            ]
+        );
+
         $jsFormData = [
             'relist_mode',
             'relist_status_enabled',
@@ -252,6 +316,9 @@ HTML
             'relist_qty_calculated',
             'relist_qty_calculated_value',
             'relist_qty_calculated_value_max',
+
+            'relist_advanced_rules_mode',
+            'relist_advanced_rules_filters',
         ];
 
         foreach ($jsFormData as $item) {

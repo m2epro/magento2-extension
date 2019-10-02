@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Other;
 
+/**
+ * Class Mapping
+ * @package Ess\M2ePro\Model\Walmart\Listing\Other
+ */
 class Mapping extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $walmartFactory;
@@ -51,10 +55,9 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
      */
     public function autoMapOtherListingsProducts(array $otherListings)
     {
-        $otherListingsFiltered = array();
+        $otherListingsFiltered = [];
 
         foreach ($otherListings as $otherListing) {
-
             if (!($otherListing instanceof \Ess\M2ePro\Model\Listing\Other)) {
                 continue;
             }
@@ -72,7 +75,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        $sortedItems = array();
+        $sortedItems = [];
 
         /** @var $otherListing \Ess\M2ePro\Model\Listing\Other */
         foreach ($otherListingsFiltered as $otherListing) {
@@ -112,7 +115,6 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
         $mappingSettings = $this->getMappingRulesByPriority();
 
         foreach ($mappingSettings as $type) {
-
             $magentoProductId = null;
 
             if ($type == 'wpid') {
@@ -135,7 +137,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
                 $magentoProductId = $this->getTitleMappedMagentoProductId($otherListing);
             }
 
-            if (is_null($magentoProductId)) {
+            if ($magentoProductId === null) {
                 continue;
             }
 
@@ -151,11 +153,11 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
     protected function getMappingRulesByPriority()
     {
-        if (!is_null($this->mappingSettings)) {
+        if ($this->mappingSettings !== null) {
             return $this->mappingSettings;
         }
 
-        $this->mappingSettings = array();
+        $this->mappingSettings = [];
 
         foreach ($this->getAccount()->getChildObject()->getOtherListingsMappingSettings() as $key => $value) {
             if ((int)$value['mode'] == 0) {
@@ -185,7 +187,6 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getAccount()->getChildObject()->isOtherListingsMappingGtinModeCustomAttribute()) {
-
             $storeId = $otherListing->getChildObject()->getRelatedStoreId();
             $attributeCode = $this->getAccount()->getChildObject()->getOtherListingsMappingGtinAttribute();
             $attributeValue = trim($otherListing->getChildObject()->getGtin());
@@ -210,7 +211,6 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getAccount()->getChildObject()->isOtherListingsMappingWpidModeCustomAttribute()) {
-
             $storeId = $otherListing->getChildObject()->getRelatedStoreId();
             $attributeCode = $this->getAccount()->getChildObject()->getOtherListingsMappingWpidAttribute();
             $attributeValue = trim($otherListing->getChildObject()->getWpid());
@@ -235,7 +235,6 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getAccount()->getChildObject()->isOtherListingsMappingUpcModeCustomAttribute()) {
-
             $storeId = $otherListing->getChildObject()->getRelatedStoreId();
             $attributeCode = $this->getAccount()->getChildObject()->getOtherListingsMappingUpcAttribute();
             $attributeValue = trim($otherListing->getChildObject()->getUpc());
@@ -265,7 +264,6 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getAccount()->getChildObject()->isOtherListingsMappingSkuModeProductId()) {
-
             $productId = trim($otherListing->getChildObject()->getSku());
 
             if (!ctype_digit($productId) || (int)$productId <= 0) {
@@ -291,7 +289,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
             $attributeCode = $this->getAccount()->getChildObject()->getOtherListingsMappingSkuAttribute();
         }
 
-        if (is_null($attributeCode)) {
+        if ($attributeCode === null) {
             return null;
         }
 
@@ -331,7 +329,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
             $attributeCode = $this->getAccount()->getChildObject()->getOtherListingsMappingTitleAttribute();
         }
 
-        if (is_null($attributeCode)) {
+        if ($attributeCode === null) {
             return null;
         }
 
@@ -375,12 +373,13 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function setAccountByOtherListingProduct(\Ess\M2ePro\Model\Listing\Other $otherListing)
     {
-        if (!is_null($this->account) && $this->account->getId() == $otherListing->getAccountId()) {
+        if ($this->account !== null && $this->account->getId() == $otherListing->getAccountId()) {
             return;
         }
 
         $this->account = $this->walmartFactory->getCachedObjectLoaded(
-            'Account', $otherListing->getAccountId()
+            'Account',
+            $otherListing->getAccountId()
         );
 
         $this->mappingSettings = null;

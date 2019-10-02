@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml;
 
+/**
+ * Class Wizard
+ * @package Ess\M2ePro\Controller\Adminhtml
+ */
 abstract class Wizard extends Main
 {
     /** @var \Ess\M2ePro\Helper\Module\Wizard|null  */
-    protected $wizardHelper = NULL;
+    protected $wizardHelper = null;
 
     protected $nameBuilder;
 
@@ -97,10 +101,13 @@ abstract class Wizard extends Main
     protected function registrationAction()
     {
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', '/wizard/license_form_data/', 'key', false
+            'Registry',
+            '/wizard/license_form_data/',
+            'key',
+            false
         );
 
-        if (!is_null($registry)) {
+        if ($registry !== null) {
             $this->setStep($this->getNextStep());
             return $this->renderSimpleStep();
         }
@@ -114,7 +121,7 @@ abstract class Wizard extends Main
 
     protected function getWizardHelper()
     {
-        if (is_null($this->wizardHelper)) {
+        if ($this->wizardHelper === null) {
             $this->wizardHelper = $this->getHelper('Module\Wizard');
         }
 
@@ -200,20 +207,20 @@ abstract class Wizard extends Main
     {
         $step = $this->getRequest()->getParam('step');
 
-        if (is_null($step)) {
-            $this->setJsonContent(array(
+        if ($step === null) {
+            $this->setJsonContent([
                 'type' => 'error',
                 'message' => $this->__('Step is invalid')
-            ));
+            ]);
 
             return $this->getResult();
         }
 
         $this->setStep($step);
 
-        $this->setJsonContent(array(
+        $this->setJsonContent([
             'type' => 'success'
-        ));
+        ]);
 
         return $this->getResult();
     }
@@ -222,20 +229,20 @@ abstract class Wizard extends Main
     {
         $status = $this->getRequest()->getParam('status');
 
-        if (is_null($status)) {
-            $this->setJsonContent(array(
+        if ($status === null) {
+            $this->setJsonContent([
                 'type' => 'error',
                 'message' => $this->__('Status is invalid')
-            ));
+            ]);
 
             return $this->getResult();
         }
 
         $this->setStatus($status);
 
-        $this->setJsonContent(array(
+        $this->setJsonContent([
             'type' => 'success'
-        ));
+        ]);
 
         return $this->getResult();
     }

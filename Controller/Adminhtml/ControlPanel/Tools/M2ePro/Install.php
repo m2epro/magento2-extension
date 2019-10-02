@@ -14,6 +14,10 @@ use Ess\M2ePro\Helper\Module;
 use Magento\Framework\Component\ComponentRegistrar;
 use Ess\M2ePro\Model\M2ePro\Connector\Tables\Get\Diff as TablesDiffConnector;
 
+/**
+ * Class Install
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\M2ePro
+ */
 class Install extends Command
 {
     protected $filesystemDriver;
@@ -52,7 +56,7 @@ class Install extends Command
     public function checkFilesValidityAction()
     {
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('files','get','info');
+        $connectorObj = $dispatcherObject->getVirtualConnector('files', 'get', 'info');
         $dispatcherObject->process($connectorObj);
         $responseData = $connectorObj->getResponseData();
 
@@ -60,18 +64,17 @@ class Install extends Command
             return $this->getEmptyResultsHtml('No files info for this M2E Pro version on server.');
         }
 
-        $problems = array();
+        $problems = [];
         $basePath = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, Module::IDENTIFIER);
 
         foreach ($responseData['files_info'] as $info) {
-
             $filePath = $basePath .DIRECTORY_SEPARATOR. $info['path'];
 
             if (!$this->filesystemDriver->isExists($filePath)) {
-                $problems[] = array(
+                $problems[] = [
                     'path'   => $info['path'],
                     'reason' => 'File is missing'
-                );
+                ];
                 continue;
             }
 
@@ -79,13 +82,13 @@ class Install extends Command
             $fileReader = $this->fileReaderFactory->create($filePath, $this->filesystemDriver);
 
             $fileContent = trim($fileReader->readAll());
-            $fileContent = str_replace(array("\r\n","\n\r",PHP_EOL), chr(10), $fileContent);
+            $fileContent = str_replace(["\r\n","\n\r",PHP_EOL], chr(10), $fileContent);
 
-            if (md5($fileContent) != $info['hash']) {
-                $problems[] = array(
+            if (call_user_func('md5', $fileContent) != $info['hash']) {
+                $problems[] = [
                     'path'   => $info['path'],
                     'reason' => 'Hash mismatch'
-                );
+                ];
                 continue;
             }
         }
@@ -110,7 +113,6 @@ class Install extends Command
     </tr>
 HTML;
         foreach ($problems as $item) {
-
             $url = $this->getUrl('*/*/*', ['action' => 'filesDiff', 'filePath' => base64_encode($item['path'])]);
             $html .= <<<HTML
 <tr>
@@ -129,7 +131,7 @@ HTML;
         }
 
         $html .= '</table>';
-        return str_replace('%count%',count($problems),$html);
+        return str_replace('%count%', count($problems), $html);
     }
 
     /**
@@ -139,7 +141,7 @@ HTML;
     public function checkTablesStructureValidityAction()
     {
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getConnector('tables','get','diff');
+        $connectorObj = $dispatcherObject->getConnector('tables', 'get', 'diff');
 
         $dispatcherObject->process($connectorObj);
         $responseData = $connectorObj->getResponseData();
@@ -171,10 +173,8 @@ HTML;
 
         foreach ($responseData['diff'] as $tableName => $checkResult) {
             foreach ($checkResult as $resultRow) {
-
                 if ($resultRow['problem'] == TablesDiffConnector::PROBLEM_TABLE_MISSING ||
                     $resultRow['problem'] == TablesDiffConnector::PROBLEM_TABLE_REDUNDANT) {
-
                     $html .= <<<HTML
 <tr>
     <td>{$tableName}</td>
@@ -190,7 +190,6 @@ HTML;
                 $actionsHtml    = '';
 
                 foreach ($resultRow['info']['diff_data'] as $diffCode => $diffValue) {
-
                     $additionalInfo .= "<b>{$diffCode}</b>: '{$diffValue}'<br>";
                     $additionalInfo .= "<b>original:</b> '{$resultRow['info']['original_data'][$diffCode]}'";
                     $additionalInfo .= "<br>";
@@ -206,7 +205,6 @@ HTML;
                 ];
 
                 if ($resultRow['problem'] == TablesDiffConnector::PROBLEM_COLUMN_REDUNDANT) {
-
                     $linkTitle = 'Drop';
                     $urlParams['mode'] = 'drop';
                     $urlParams['column_info'] = $this->getHelper('Data')->jsonEncode(
@@ -215,15 +213,12 @@ HTML;
                 }
 
                 if ($resultRow['problem'] == TablesDiffConnector::PROBLEM_COLUMN_DIFFERENT ||
-                    $resultRow['problem'] == TablesDiffConnector::PROBLEM_COLUMN_MISSING)
-                {
+                    $resultRow['problem'] == TablesDiffConnector::PROBLEM_COLUMN_MISSING) {
                     if ($resultRow['problem'] == TablesDiffConnector::PROBLEM_COLUMN_DIFFERENT &&
-                        isset($resultRow['info']['diff_data']['key']))
-                    {
+                        isset($resultRow['info']['diff_data']['key'])) {
                         $linkTitle = 'Fix Index';
                         $urlParams['mode'] = 'index';
                     } else {
-
                         $linkTitle = 'Fix Properties';
                         $urlParams['mode'] = 'properties';
                     }
@@ -244,7 +239,7 @@ HTML;
         }
 
         $html .= '</table>';
-        return str_replace('%count%',count($responseData['diff']),$html);
+        return str_replace('%count%', count($responseData['diff']), $html);
     }
 
     /**
@@ -254,8 +249,12 @@ HTML;
     public function checkConfigsValidityAction()
     {
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('configs','get','info',
-                                                               ['magento_version' => 2]);
+        $connectorObj = $dispatcherObject->getVirtualConnector(
+            'configs',
+            'get',
+            'info',
+            ['magento_version' => 2]
+        );
         $dispatcherObject->process($connectorObj);
         $responseData = $connectorObj->getResponseData();
 
@@ -264,39 +263,36 @@ HTML;
         }
 
         $originalData = $responseData['configs_info'];
-        $currentData = array();
+        $currentData = [];
 
         foreach ($originalData as $tableName => $configInfo) {
-
-            $currentData[$tableName] = $this->getHelper('Module\Database\Structure')
+            $currentData[$tableName] = $this->getHelper('Module_Database_Structure')
                                             ->getConfigSnapshot($tableName);
         }
 
-        $differenses = array();
+        $differenses = [];
 
         foreach ($originalData as $tableName => $configInfo) {
             foreach ($configInfo as $codeHash => $item) {
-
                 if (array_key_exists($codeHash, $currentData[$tableName])) {
                     continue;
                 }
 
-                $differenses[] = array('table'    => $tableName,
+                $differenses[] = ['table'    => $tableName,
                                        'item'     => $item,
-                                       'solution' => 'insert');
+                                       'solution' => 'insert'];
             }
         }
 
         foreach ($currentData as $tableName => $configInfo) {
             foreach ($configInfo as $codeHash => $item) {
-
                 if (array_key_exists($codeHash, $originalData[$tableName])) {
                     continue;
                 }
 
-                $differenses[] = array('table'    => $tableName,
+                $differenses[] = ['table'    => $tableName,
                                        'item'     => $item,
-                                       'solution' => 'drop');
+                                       'solution' => 'drop'];
             }
         }
 
@@ -330,19 +326,15 @@ HTML;
 HTML;
 
         foreach ($differenses as $index => $row) {
-
             if ($row['solution'] == 'insert') {
-
-                $url = $this->getUrl('*/controlPanel_database/addTableRow', array(
+                $url = $this->getUrl('*/controlPanel_database/addTableRow', [
                     'table' => $row['table'],
-                ));
-
+                ]);
             } else {
-
-                $url = $this->getUrl('*/controlPanel_database/deleteTableRows', array(
+                $url = $this->getUrl('*/controlPanel_database/deleteTableRows', [
                     'table'=> $row['table'],
                     'ids'  => $row['item']['id']
-                ));
+                ]);
             }
 
             $actionWord = $row['solution'] == 'insert' ? 'Insert' : 'Drop';
@@ -361,9 +353,9 @@ new $.ajax({
 });
 
 JS;
-            $group = is_null($row['item']['group']) ? 'null' : $row['item']['group'];
-            $key   = is_null($row['item']['key'])   ? 'null' : $row['item']['key'];
-            $value = is_null($row['item']['value']) ? 'null' : $row['item']['value'];
+            $group = $row['item']['group'] === null ? 'null' : $row['item']['group'];
+            $key   = $row['item']['key'] === null   ? 'null' : $row['item']['key'];
+            $value = $row['item']['value'] === null ? 'null' : $row['item']['value'];
 
             $html .= <<<HTML
 <tr>
@@ -390,7 +382,7 @@ HTML;
         }
 
         $html .= '</table>';
-        return str_replace('%count%',count($differenses),$html);
+        return str_replace('%count%', count($differenses), $html);
     }
 
     // ---------------------------------------
@@ -410,11 +402,11 @@ HTML;
             return $this->_redirect('*/*/*', ['action' => 'checkTablesStructureValidity']);
         }
 
-        $helper = $this->getHelper('Module\Database\Repair');
+        $helper = $this->getHelper('Module_Database_Repair');
 
-        $repairMode == 'index'      && $helper->fixColumnIndex($tableName, $columnInfo);
+        $repairMode == 'index' && $helper->fixColumnIndex($tableName, $columnInfo);
         $repairMode == 'properties' && $helper->fixColumnProperties($tableName, $columnInfo);
-        $repairMode == 'drop'       && $helper->dropColumn($tableName, $columnInfo);
+        $repairMode == 'drop' && $helper->dropColumn($tableName, $columnInfo);
 
         return $this->_redirect('*/*/*', ['action' => 'checkTablesStructureValidity']);
     }
@@ -432,10 +424,10 @@ HTML;
         $basePath = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, Module::IDENTIFIER);
         $fullPath = $basePath .DIRECTORY_SEPARATOR. $filePath;
 
-        $params = array(
+        $params = [
             'content' => '',
             'path'    => $originalPath ? $originalPath : $filePath
-        );
+        ];
 
         if ($this->filesystemDriver->isExists($fullPath)) {
 
@@ -445,7 +437,7 @@ HTML;
         }
 
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('files','get','diff', $params);
+        $connectorObj = $dispatcherObject->getVirtualConnector('files', 'get', 'diff', $params);
 
         $dispatcherObject->process($connectorObj);
         $responseData = $connectorObj->getResponseData();
@@ -479,8 +471,10 @@ HTML;
         $magentoRoot = $this->fileSystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::ROOT)
                                         ->getAbsolutePath();
 
-        $output = shell_exec('php ' . $magentoRoot . DIRECTORY_SEPARATOR . 'bin/magento setup:static-content:deploy');
-        return '<pre>' . $output;
+        return '<pre>' . call_user_func(
+            'shell_exec',
+            'php ' . $magentoRoot . DIRECTORY_SEPARATOR . 'bin/magento setup:static-content:deploy'
+        );
     }
 
     /**
@@ -492,8 +486,10 @@ HTML;
         $magentoRoot = $this->fileSystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::ROOT)
                                         ->getAbsolutePath();
 
-        $output = shell_exec('php ' . $magentoRoot . DIRECTORY_SEPARATOR . 'bin/magento setup:di:compile');
-        return '<pre>' . $output;
+        return '<pre>' . call_user_func(
+            'shell_exec',
+            'php ' . $magentoRoot . DIRECTORY_SEPARATOR . 'bin/magento setup:di:compile'
+        );
     }
 
     //########################################

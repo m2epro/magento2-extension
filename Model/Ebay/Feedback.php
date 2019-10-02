@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay;
 
+/**
+ * Class Feedback
+ * @package Ess\M2ePro\Model\Ebay
+ */
 class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     const ROLE_BUYER  = 'Buyer';
@@ -20,7 +24,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Account
      */
-    private $accountModel = NULL;
+    private $accountModel = null;
 
     protected $ebayFactory;
 
@@ -36,8 +40,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct(
             $modelFactory,
@@ -64,7 +67,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function delete()
     {
         $temp = parent::delete();
-        $temp && $this->accountModel = NULL;
+        $temp && $this->accountModel = null;
         return $temp;
     }
 
@@ -75,9 +78,10 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getAccount()
     {
-        if (is_null($this->accountModel)) {
+        if ($this->accountModel === null) {
             $this->accountModel = $this->ebayFactory->getCachedObjectLoaded(
-                'Account', $this->getData('account_id')
+                'Account',
+                $this->getData('account_id')
             );
         }
 
@@ -123,22 +127,27 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function sendResponse($text, $type = self::TYPE_POSITIVE)
     {
-        $paramsConnector = array(
+        $paramsConnector = [
             'item_id'        => $this->getData('ebay_item_id'),
             'transaction_id' => $this->getData('ebay_transaction_id'),
             'text'           => $text,
             'type'           => $type,
             'target_user'    => $this->getData('buyer_name')
-        );
+        ];
 
         $this->setData('last_response_attempt_date', $this->getHelper('Data')->getCurrentGmtDate())->save();
 
         try {
-
-            $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-            $connectorObj = $dispatcherObj->getVirtualConnector('feedback', 'add', 'entity',
-                                                                $paramsConnector, NULL, NULL,
-                                                                $this->getAccount());
+            $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+            $connectorObj = $dispatcherObj->getVirtualConnector(
+                'feedback',
+                'add',
+                'entity',
+                $paramsConnector,
+                null,
+                null,
+                $this->getAccount()
+            );
 
             $dispatcherObj->process($connectorObj);
             $response = $connectorObj->getResponseData();
@@ -148,9 +157,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
                     $connectorObj->getResponse()->getMessages()->getCombinedErrorsString()
                 );
             }
-
         } catch (\Exception $e) {
-
             $synchronizationLog = $this->activeRecordFactory->getObject('Synchronization\Log');
             $synchronizationLog->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
             $synchronizationLog->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_GENERAL);
@@ -188,14 +195,14 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $collection = $this->ebayFactory->getObject('Order')->getCollection();
         $collection->getSelect()
             ->join(
-                array('oi' => $this->activeRecordFactory->getObject('Order\Item')->getResource()->getMainTable()),
+                ['oi' => $this->activeRecordFactory->getObject('Order\Item')->getResource()->getMainTable()],
                 '`oi`.`order_id` = `main_table`.`id`',
-                array()
+                []
             )
             ->join(
-                array('eoi' => $this->activeRecordFactory->getObject('Ebay\Order\Item')->getResource()->getMainTable()),
+                ['eoi' => $this->activeRecordFactory->getObject('Ebay_Order_Item')->getResource()->getMainTable()],
                 '`eoi`.`order_item_id` = `oi`.`id`',
-                array()
+                []
             );
 
         $collection->addFieldToFilter('account_id', $this->getData('account_id'));
@@ -206,7 +213,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $order = $collection->getFirstItem();
 
-        return !is_null($order->getId()) ? $order : NULL;
+        return $order->getId() !== null ? $order : null;
     }
 
     //########################################

@@ -8,11 +8,15 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation;
 
+use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor;
+
+/**
+ * Class ParentRelation
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation
+ */
 class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\LogicalUnit
 {
-    /**
-     *@var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor $processor
-     */
+    /** @var Processor $processor */
     private $processor = null;
 
     /** @var \Ess\M2ePro\Model\Listing\Product[] $childListingsProducts */
@@ -39,7 +43,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
      */
     public function getProcessor()
     {
-        if (is_null($this->processor)) {
+        if ($this->processor === null) {
             $this->processor = $this->modelFactory->getObject('Walmart\Listing\Product\Variation\Manager' .
                 '\Type\Relation\ParentRelation\Processor');
             $this->processor->setListingProduct($this->getListingProduct());
@@ -53,7 +57,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
      */
     public function getChildListingsProducts()
     {
-        if ($this->isCacheEnabled() && !is_null($this->childListingsProducts)) {
+        if ($this->isCacheEnabled() && $this->childListingsProducts !== null) {
             return $this->childListingsProducts;
         }
 
@@ -143,10 +147,12 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function resetProductAttributes($save = true)
     {
         $this->getListingProduct()->setSetting(
-            'additional_data', 'variation_product_attributes', $this->getRealMagentoAttributes()
+            'additional_data',
+            'variation_product_attributes',
+            $this->getRealMagentoAttributes()
         );
 
-        $this->setVirtualChannelAttributes(array(), false);
+        $this->setVirtualChannelAttributes([], false);
 
         $this->restoreAllRemovedProductOptions(false);
 
@@ -166,7 +172,9 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function setChannelGroupId($groupId, $save = true)
     {
         $this->getListingProduct()->setSetting(
-            'additional_data', 'variation_channel_group_id', $groupId
+            'additional_data',
+            'variation_channel_group_id',
+            $groupId
         );
 
         $save && $this->getListingProduct()->save();
@@ -175,7 +183,9 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function getChannelGroupId()
     {
         return $this->getListingProduct()->getSetting(
-            'additional_data', 'variation_channel_group_id', null
+            'additional_data',
+            'variation_channel_group_id',
+            null
         );
     }
 
@@ -194,11 +204,13 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function setChannelAttributes(array $attributes, $save = true)
     {
         $this->getListingProduct()->setSetting(
-            'additional_data', 'variation_channel_attributes', $attributes
+            'additional_data',
+            'variation_channel_attributes',
+            $attributes
         );
 
-        $this->setVirtualProductAttributes(array(), false);
-        $this->setVirtualChannelAttributes(array(), false);
+        $this->setVirtualProductAttributes([], false);
+        $this->setVirtualChannelAttributes([], false);
 
         $save && $this->getListingProduct()->save();
     }
@@ -209,11 +221,13 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function getChannelAttributes()
     {
         $attributes = $this->getListingProduct()->getSetting(
-            'additional_data', 'variation_channel_attributes', null
+            'additional_data',
+            'variation_channel_attributes',
+            null
         );
 
         if (empty($attributes)) {
-            return array();
+            return [];
         }
 
         $attributes = array_merge($attributes, array_keys($this->getVirtualChannelAttributes()));
@@ -227,7 +241,9 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function getRealChannelAttributes()
     {
         return $this->getListingProduct()->getSetting(
-            'additional_data', 'variation_channel_attributes', array()
+            'additional_data',
+            'variation_channel_attributes',
+            []
         );
     }
 
@@ -248,7 +264,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     {
         $matchedAttributes = $this->getRealMatchedAttributes();
         if (empty($matchedAttributes)) {
-            return array();
+            return [];
         }
 
         foreach ($this->getVirtualProductAttributes() as $attribute => $value) {
@@ -268,11 +284,13 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function getRealMatchedAttributes()
     {
         $matchedAttributes = $this->getListingProduct()->getSetting(
-            'additional_data', 'variation_matched_attributes', null
+            'additional_data',
+            'variation_matched_attributes',
+            null
         );
 
         if (empty($matchedAttributes)) {
-            return array();
+            return [];
         }
 
         ksort($matchedAttributes);
@@ -297,7 +315,9 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
         }
 
         $this->getListingProduct()->setSetting(
-            'additional_data', 'variation_matched_attributes', $matchedAttributes
+            'additional_data',
+            'variation_matched_attributes',
+            $matchedAttributes
         );
 
         $save && $this->getListingProduct()->save();
@@ -308,7 +328,9 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function getVirtualProductAttributes()
     {
         return $this->getListingProduct()->getSetting(
-            'additional_data', 'variation_virtual_product_attributes', array()
+            'additional_data',
+            'variation_virtual_product_attributes',
+            []
         );
     }
 
@@ -316,15 +338,18 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     {
         if (array_intersect(array_keys($attributes), $this->getRealProductAttributes())) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
-                'Virtual product attributes are intersect with real attributes');
+                'Virtual product attributes are intersect with real attributes'
+            );
         }
 
         if (!empty($attributes)) {
-            $this->setVirtualChannelAttributes(array(), false);
+            $this->setVirtualChannelAttributes([], false);
         }
 
         $this->getListingProduct()->setSetting(
-            'additional_data', 'variation_virtual_product_attributes', $attributes
+            'additional_data',
+            'variation_virtual_product_attributes',
+            $attributes
         );
 
         $save && $this->getListingProduct()->save();
@@ -350,7 +375,9 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function getVirtualChannelAttributes()
     {
         return $this->getListingProduct()->getSetting(
-            'additional_data', 'variation_virtual_channel_attributes', array()
+            'additional_data',
+            'variation_virtual_channel_attributes',
+            []
         );
     }
 
@@ -358,15 +385,18 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     {
         if (array_intersect(array_keys($attributes), $this->getRealChannelAttributes())) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
-                'Virtual channel attributes are intersect with real attributes');
+                'Virtual channel attributes are intersect with real attributes'
+            );
         }
 
         if (!empty($attributes)) {
-            $this->setVirtualProductAttributes(array(), false);
+            $this->setVirtualProductAttributes([], false);
         }
 
         $this->getListingProduct()->setSetting(
-            'additional_data', 'variation_virtual_channel_attributes', $attributes
+            'additional_data',
+            'variation_virtual_channel_attributes',
+            $attributes
         );
 
         $save && $this->getListingProduct()->save();
@@ -403,7 +433,9 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function getRemovedProductOptions()
     {
         return $this->getListingProduct()->getSetting(
-            'additional_data', 'variation_removed_product_variations', array()
+            'additional_data',
+            'variation_removed_product_variations',
+            []
         );
     }
 
@@ -427,13 +459,17 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
         }
 
         $removedProductOptions = $this->getListingProduct()->getSetting(
-            'additional_data', 'variation_removed_product_variations', array()
+            'additional_data',
+            'variation_removed_product_variations',
+            []
         );
 
         $removedProductOptions[] = $productOptions;
 
         $this->getListingProduct()->setSetting(
-            'additional_data', 'variation_removed_product_variations', $removedProductOptions
+            'additional_data',
+            'variation_removed_product_variations',
+            $removedProductOptions
         );
         $save && $this->getListingProduct()->save();
     }
@@ -456,7 +492,9 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
         }
 
         $this->getListingProduct()->setSetting(
-            'additional_data', 'variation_removed_product_variations', $removedProductOptions
+            'additional_data',
+            'variation_removed_product_variations',
+            $removedProductOptions
         );
         $save && $this->getListingProduct()->save();
     }
@@ -464,7 +502,9 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function restoreAllRemovedProductOptions($save = true)
     {
         $this->getListingProduct()->setSetting(
-            'additional_data', 'variation_removed_product_variations', array()
+            'additional_data',
+            'variation_removed_product_variations',
+            []
         );
         $save && $this->getListingProduct()->save();
     }
@@ -478,7 +518,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
      */
     public function getUsedProductOptions($freeOptionsFilter = false)
     {
-        $usedVariations = array();
+        $usedVariations = [];
 
         foreach ($this->getChildListingsProducts() as $childListingProduct) {
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child $childTypeModel */
@@ -516,17 +556,16 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     private function getUnusedOptions($currentOptions, $usedOptions)
     {
         if (empty($currentOptions)) {
-            return array();
+            return [];
         }
 
         if (empty($usedOptions)) {
             return $currentOptions;
         }
 
-        $unusedOptions = array();
+        $unusedOptions = [];
 
         foreach ($currentOptions as $id => $currentOption) {
-
             $isExist = false;
             foreach ($usedOptions as $option) {
                 if ($option != $currentOption) {
@@ -553,10 +592,10 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     {
         $magentoProductVariations = $this->getMagentoProduct()->getVariationInstance()->getVariationsTypeStandard();
 
-        $productOptions = array();
+        $productOptions = [];
 
         foreach ($magentoProductVariations['variations'] as $option) {
-            $productOption = array();
+            $productOption = [];
 
             foreach ($option as $attribute) {
                 $productOption[$attribute['attribute']] = $attribute['option'];
@@ -579,7 +618,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
      */
     public function createChildListingProduct(array $productOptions, array $channelOptions)
     {
-        $data = array(
+        $data = [
             'listing_id'           => $this->getListingProduct()->getListingId(),
             'product_id'           => $this->getListingProduct()->getProductId(),
             'status'               => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
@@ -588,7 +627,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
             'is_variation_parent'  => 0,
             'variation_parent_id'  => $this->getListingProduct()->getId(),
             'template_category_id' => $this->getWalmartListingProduct()->getTemplateCategoryId(),
-        );
+        ];
 
         /** @var \Ess\M2ePro\Model\Listing\Product $childListingProduct */
         $childListingProduct = $this->walmartFactory->getObject('Listing\Product')->setData($data);
@@ -703,7 +742,9 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function setSwatchImagesAttribute($attribute, $save = true)
     {
         $this->getListingProduct()->setSetting(
-            'additional_data', 'variation_swatch_images_attribute', $attribute
+            'additional_data',
+            'variation_swatch_images_attribute',
+            $attribute
         );
         $save && $this->getListingProduct()->save();
     }
@@ -711,7 +752,8 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function getSwatchImagesAttribute()
     {
         return $this->getListingProduct()->getSetting(
-            'additional_data', 'variation_swatch_images_attribute'
+            'additional_data',
+            'variation_swatch_images_attribute'
         );
     }
 

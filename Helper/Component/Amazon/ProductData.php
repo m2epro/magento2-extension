@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
+/**
+ * Class ProductData
+ * @package Ess\M2ePro\Helper\Component\Amazon
+ */
 class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const RECENT_MAX_COUNT = 5;
@@ -22,8 +26,7 @@ class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($helperFactory, $context);
@@ -36,20 +39,19 @@ class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
         /** @var $registryModel \Ess\M2ePro\Model\Registry */
         $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', $this->getConfigGroup(), 'key', false);
 
-        if (is_null($registryModel)) {
+        if ($registryModel === null) {
             return [];
         }
 
         $allRecent = $registryModel->getValueFromJson();
 
         if (!isset($allRecent[$marketplaceId])) {
-            return array();
+            return [];
         }
 
         $recent = $allRecent[$marketplaceId];
 
         foreach ($recent as $index => $recentProductDataNick) {
-
             if ($excludedProductDataNick == $recentProductDataNick) {
                 unset($recent[$index]);
             }
@@ -65,17 +67,16 @@ class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
 
         /** @var $registryModel \Ess\M2ePro\Model\Registry */
         $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', $key, 'key', false);
-        if (is_null($registryModel)) {
+        if ($registryModel === null) {
             $registryModel = $this->activeRecordFactory->getObject('Registry');
         } else {
             $allRecent = $registryModel->getValueFromJson();
         }
 
-        !isset($allRecent[$marketplaceId]) && $allRecent[$marketplaceId] = array();
+        !isset($allRecent[$marketplaceId]) && $allRecent[$marketplaceId] = [];
 
         $recent = $allRecent[$marketplaceId];
         foreach ($recent as $recentProductDataNick) {
-
             if ($productDataNick == $recentProductDataNick) {
                 return;
             }
@@ -88,10 +89,10 @@ class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
         $recent[] = $productDataNick;
         $allRecent[$marketplaceId] = $recent;
 
-        $registryModel->addData(array(
+        $registryModel->addData([
             'key'   => $key,
             'value' => $this->getHelper('Data')->jsonEncode($allRecent)
-        ))->save();
+        ])->save();
     }
 
     //########################################

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization;
 
 use Ess\M2ePro\Model\Amazon\Template\Synchronization as SynchronizationPolicy;
 
+/**
+ * Class ListActions
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization
+ */
 class ListActions extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization\AbstractModel
 {
     //########################################
@@ -48,23 +52,23 @@ class ListActions extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Syn
 
     private function immediatelyChangedProducts()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Immediately when Product was changed');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Immediately when Product was changed');
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstances(
-            array(\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE)
+            [\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE]
         );
 
         $lpForAdvancedRules = [];
 
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
-
-                $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -80,24 +84,21 @@ class ListActions extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Syn
                 $amazonTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
 
                 if ($amazonTemplate->isListAdvancedRulesEnabled()) {
-
                     $templateId = $amazonTemplate->getId();
                     $storeId    = $listingProduct->getListing()->getStoreId();
                     $magentoProductId = $listingProduct->getProductId();
 
                     $lpForAdvancedRules[$templateId][$storeId][$magentoProductId][] = $listingProduct;
-
                 } else {
-
                     $this->getRunner()->addProduct(
-                        $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator
+                        $listingProduct,
+                        \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                        $configurator
                     );
 
                     $this->setListAttemptData($listingProduct);
                 }
-
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -110,13 +111,13 @@ class ListActions extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Syn
 
     private function immediatelyNotCheckedProducts()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Immediately when Product was not checked');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Immediately when Product was not checked');
         $limit = $this->getConfigValue($this->getFullSettingsPath().'immediately_not_checked/', 'items_limit');
 
         /** @var $collection \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection */
         $collection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $collection->addFieldToFilter('status', \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED);
-        $collection->addFieldToFilter('tried_to_list',0);
+        $collection->addFieldToFilter('tried_to_list', 0);
 
         $collection->getSelect()->limit($limit);
 
@@ -129,14 +130,15 @@ class ListActions extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Syn
             /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
 
             try {
-
                 $listingProduct->getMagentoProduct()->enableCache();
-                $listingProduct->setData('tried_to_list',1)->save();
+                $listingProduct->setData('tried_to_list', 1)->save();
 
-                $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -152,24 +154,21 @@ class ListActions extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Syn
                 $amazonTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
 
                 if ($amazonTemplate->isListAdvancedRulesEnabled()) {
-
                     $templateId = $amazonTemplate->getId();
                     $storeId    = $listingProduct->getListing()->getStoreId();
                     $magentoProductId = $listingProduct->getProductId();
 
                     $lpForAdvancedRules[$templateId][$storeId][$magentoProductId][] = $listingProduct;
-
                 } else {
-
                     $this->getRunner()->addProduct(
-                        $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator
+                        $listingProduct,
+                        \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                        $configurator
                     );
 
                     $this->setListAttemptData($listingProduct);
                 }
-
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -187,13 +186,12 @@ class ListActions extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Syn
         $affectedListingProducts = [];
 
         try {
-
             $affectedListingProducts = $this->getInspector()->getMeetAdvancedRequirementsProducts(
-                $lpForAdvancedRules, SynchronizationPolicy::LIST_ADVANCED_RULES_PREFIX, 'list'
+                $lpForAdvancedRules,
+                SynchronizationPolicy::LIST_ADVANCED_RULES_PREFIX,
+                'list'
             );
-
         } catch (\Exception $exception) {
-
             foreach ($lpForAdvancedRules as $templateId => $productsByTemplate) {
                 foreach ($productsByTemplate as $storeId => $productsByStore) {
                     foreach ($productsByStore as $magentoProductId => $productsByMagentoProduct) {
@@ -211,16 +209,16 @@ class ListActions extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Syn
             try {
 
                 /** @var $configurator \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                    $configurator
                 );
 
                 $this->setListAttemptData($listingProduct);
-
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }

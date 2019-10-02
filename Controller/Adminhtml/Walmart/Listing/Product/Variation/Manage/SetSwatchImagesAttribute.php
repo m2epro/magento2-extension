@@ -10,7 +10,12 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Mana
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 use Ess\M2ePro\Model\Listing\Product;
+use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
+/**
+ * Class SetSwatchImagesAttribute
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage
+ */
 class SetSwatchImagesAttribute extends Main
 {
     public function execute()
@@ -18,22 +23,20 @@ class SetSwatchImagesAttribute extends Main
         $listingProductId = $this->getRequest()->getParam('product_id');
         $attribute = $this->getRequest()->getParam('attribute', null);
 
-        if (empty($listingProductId) || is_null($attribute)) {
+        if (empty($listingProductId) || $attribute === null) {
             $this->setAjaxContent('You should provide correct parameters.');
             return $this->getResult();
         }
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-        $listingProduct = $this->walmartFactory->getObjectLoaded('Listing\Product',$listingProductId);
+        $listingProduct = $this->walmartFactory->getObjectLoaded('Listing\Product', $listingProductId);
         $listingProduct->setSetting('additional_data', 'variation_swatch_images_attribute', $attribute);
         $listingProduct->save();
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
         $walmartListingProduct = $listingProduct->getChildObject();
 
-        /**
-         *@var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation $parentTypeModel
-         */
+        /** @var ParentRelation $parentTypeModel */
         $typeModel = $walmartListingProduct->getVariationManager()->getTypeModel();
 
         foreach ($typeModel->getChildListingsProducts() as $childListingProduct) {
@@ -41,19 +44,23 @@ class SetSwatchImagesAttribute extends Main
             $synchReasons = $childListingProduct->getData('synch_reasons');
 
             if ($synchReasons) {
-                $childListingProduct->setData('synch_reasons',
-                    $synchReasons . ',' . \Ess\M2ePro\Model\ResourceModel\Walmart\Template\Description::SYNCH_REASON);
+                $childListingProduct->setData(
+                    'synch_reasons',
+                    $synchReasons . ',' . \Ess\M2ePro\Model\ResourceModel\Walmart\Template\Description::SYNCH_REASON
+                );
             } else {
-                $childListingProduct->setData('synch_reasons',
-                    \Ess\M2ePro\Model\ResourceModel\Walmart\Template\Description::SYNCH_REASON);
+                $childListingProduct->setData(
+                    'synch_reasons',
+                    \Ess\M2ePro\Model\ResourceModel\Walmart\Template\Description::SYNCH_REASON
+                );
             }
 
             $childListingProduct->save();
         }
 
-        $this->setJsonContent(array(
+        $this->setJsonContent([
             'success' => true,
-        ));
+        ]);
 
         return $this->getResult();
     }

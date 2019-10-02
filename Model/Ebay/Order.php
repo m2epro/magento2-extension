@@ -39,21 +39,24 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
     //########################################
 
-    private $externalTransactionsCollection = NULL;
+    private $shipmentFactory;
+
+    private $externalTransactionsCollection = null;
 
     private $orderSender;
 
     private $invoiceSender;
 
-    private $subTotalPrice = NULL;
+    private $subTotalPrice = null;
 
-    private $grandTotalPrice = NULL;
+    private $grandTotalPrice = null;
 
     protected $shippingAddressFactory;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\Magento\Order\ShipmentFactory $shipmentFactory,
         \Ess\M2ePro\Model\Ebay\Order\ShippingAddressFactory $shippingAddressFactory,
         \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
         \Magento\Sales\Model\Order\Email\Sender\InvoiceSender $invoiceSender,
@@ -66,8 +69,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
+        $this->shipmentFactory = $shipmentFactory;
         $this->shippingAddressFactory = $shippingAddressFactory;
         $this->orderSender = $orderSender;
         $this->invoiceSender = $invoiceSender;
@@ -94,11 +97,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     //########################################
 
     /**
-     * @return \Ess\M2ePro\Model\Ebay\Order\Proxy
+     * @return \Ess\M2ePro\Model\Ebay\Order\ProxyObject
      */
     public function getProxy()
     {
-        return $this->modelFactory->getObject('Ebay\Order\Proxy', ['order' => $this]);
+        return $this->modelFactory->getObject('Ebay_Order_ProxyObject', ['order' => $this]);
     }
 
     //########################################
@@ -118,9 +121,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      */
     public function getExternalTransactionsCollection()
     {
-        if (is_null($this->externalTransactionsCollection)) {
+        if ($this->externalTransactionsCollection === null) {
             $this->externalTransactionsCollection = $this->activeRecordFactory
-                ->getObject('Ebay\Order\ExternalTransaction')
+                ->getObject('Ebay_Order_ExternalTransaction')
                 ->getCollection()
                 ->addFieldToFilter('order_id', $this->getData('order_id'));
         }
@@ -362,7 +365,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function getShippingAddress()
     {
         $shippingDetails = $this->getShippingDetails();
-        $address = isset($shippingDetails['address']) ? $shippingDetails['address'] : array();
+        $address = isset($shippingDetails['address']) ? $shippingDetails['address'] : [];
 
         return $this->shippingAddressFactory->create([
             'order' => $this->getParentObject()
@@ -377,12 +380,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         /** @var \Ess\M2ePro\Model\Order\Item[] $items */
         $items = $this->getParentObject()->getItemsCollection()->getItems();
 
-        $trackingDetails = array();
+        $trackingDetails = [];
         foreach ($items as $item) {
             $trackingDetails = array_merge($trackingDetails, $item->getChildObject()->getTrackingDetails());
         }
 
-        $existedTrackingNumbers = array();
+        $existedTrackingNumbers = [];
 
         foreach ($trackingDetails as $key => $trackingDetail) {
             if (in_array($trackingDetail['number'], $existedTrackingNumbers)) {
@@ -404,7 +407,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $shippingDetails = $this->getShippingDetails();
 
         return isset($shippingDetails['global_shipping_details'])
-            ? $shippingDetails['global_shipping_details'] : array();
+            ? $shippingDetails['global_shipping_details'] : [];
     }
 
     /**
@@ -412,7 +415,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      */
     public function isUseGlobalShippingProgram()
     {
-        return count($this->getGlobalShippingDetails()) > 0;
+        return !empty($this->getGlobalShippingDetails());
     }
 
     /**
@@ -426,7 +429,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         $globalShippingData = $this->getGlobalShippingDetails();
         $warehouseAddress = is_array($globalShippingData['warehouse_address'])
-            ? $globalShippingData['warehouse_address'] : array();
+            ? $globalShippingData['warehouse_address'] : [];
 
         return $this->shippingAddressFactory->create([
                     'order' => $this->getParentObject()
@@ -452,7 +455,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $shippingDetails = $this->getShippingDetails();
 
         return isset($shippingDetails['click_and_collect_details'])
-            ? $shippingDetails['click_and_collect_details'] : array();
+            ? $shippingDetails['click_and_collect_details'] : [];
     }
 
     // ---------------------------------------
@@ -471,7 +474,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $shippingDetails = $this->getShippingDetails();
 
         return isset($shippingDetails['in_store_pickup_details'])
-            ? $shippingDetails['in_store_pickup_details'] : array();
+            ? $shippingDetails['in_store_pickup_details'] : [];
     }
 
     // ---------------------------------------
@@ -613,7 +616,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      */
     public function getSubtotalPrice()
     {
-        if (is_null($this->subTotalPrice)) {
+        if ($this->subTotalPrice === null) {
             $subtotal = 0;
 
             foreach ($this->getParentObject()->getItemsCollection() as $item) {
@@ -632,7 +635,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      */
     public function getGrandTotalPrice()
     {
-        if (is_null($this->grandTotalPrice)) {
+        if ($this->grandTotalPrice === null) {
             $this->grandTotalPrice = $this->getSubtotalPrice();
             $this->grandTotalPrice += round((float)$this->getShippingPrice(), 2);
             $this->grandTotalPrice += round((float)$this->getTaxAmount(), 2);
@@ -648,7 +651,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     {
         $status = '';
         $this->isCheckoutCompleted() && $status = $this->getEbayAccount()->getMagentoOrdersStatusNew();
-        $this->isPaymentCompleted()  && $status = $this->getEbayAccount()->getMagentoOrdersStatusPaid();
+        $this->isPaymentCompleted() && $status = $this->getEbayAccount()->getMagentoOrdersStatusPaid();
         $this->isShippingCompleted() && $status = $this->getEbayAccount()->getMagentoOrdersStatusShipped();
 
         return $status;
@@ -661,11 +664,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      */
     public function getAssociatedStoreId()
     {
-        $storeId = NULL;
+        $storeId = null;
 
         $channelItems = $this->getParentObject()->getChannelItems();
 
-        if (count($channelItems) == 0) {
+        if (empty($channelItems)) {
             // 3rd party order
             // ---------------------------------------
             $storeId = $this->getEbayAccount()->getMagentoOrdersListingsOtherStoreId();
@@ -762,7 +765,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         }
 
         $magentoOrder = $this->getParentObject()->getMagentoOrder();
-        if (is_null($magentoOrder)) {
+        if ($magentoOrder === null) {
             return false;
         }
 
@@ -777,20 +780,21 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             return null;
         }
 
-        /** @var $proxy \Ess\M2ePro\Model\Ebay\Order\Proxy */
+        /** @var $proxy \Ess\M2ePro\Model\Ebay\Order\ProxyObject */
         $proxy = $this->getParentObject()->getProxy();
         $proxy->setStore($this->getParentObject()->getStore());
 
         foreach ($proxy->getPaymentTransactions() as $transaction) {
             try {
                 /** @var $paymentTransactionBuilder \Ess\M2ePro\Model\Magento\Order\PaymentTransaction */
-                $paymentTransactionBuilder = $this->modelFactory->getObject('Magento\Order\PaymentTransaction');
+                $paymentTransactionBuilder = $this->modelFactory->getObject('Magento_Order_PaymentTransaction');
                 $paymentTransactionBuilder->setMagentoOrder($this->getParentObject()->getMagentoOrder());
                 $paymentTransactionBuilder->setData($transaction);
                 $paymentTransactionBuilder->buildPaymentTransaction();
             } catch (\Exception $e) {
                 $this->getParentObject()->addErrorLog(
-                    'Payment Transaction was not created. Reason: %msg%', array('msg' => $e->getMessage())
+                    'Payment Transaction was not created. Reason: %msg%',
+                    ['msg' => $e->getMessage()]
                 );
             }
         }
@@ -812,7 +816,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         }
 
         $magentoOrder = $this->getParentObject()->getMagentoOrder();
-        if (is_null($magentoOrder)) {
+        if ($magentoOrder === null) {
             return false;
         }
 
@@ -838,7 +842,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $magentoOrder = $this->getParentObject()->getMagentoOrder();
 
         /** @var $invoiceBuilder \Ess\M2ePro\Model\Magento\Order\Invoice */
-        $invoiceBuilder = $this->modelFactory->getObject('Magento\Order\Invoice');
+        $invoiceBuilder = $this->modelFactory->getObject('Magento_Order_Invoice');
         $invoiceBuilder->setMagentoOrder($magentoOrder);
         $invoiceBuilder->buildInvoice();
 
@@ -867,7 +871,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         }
 
         $magentoOrder = $this->getParentObject()->getMagentoOrder();
-        if (is_null($magentoOrder)) {
+        if ($magentoOrder === null) {
             return false;
         }
 
@@ -881,7 +885,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     // ---------------------------------------
 
     /**
-     * @return \Magento\Sales\Model\Order\Shipment|null
+     * @return \Magento\Sales\Model\Order\Shipment[]|null
      */
     public function createShipments()
     {
@@ -889,11 +893,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             return null;
         }
 
-        $magentoOrder = $this->getParentObject()->getMagentoOrder();
-
         /** @var $shipmentBuilder \Ess\M2ePro\Model\Magento\Order\Shipment */
-        $shipmentBuilder = $this->modelFactory->getObject('Magento\Order\Shipment');
-        $shipmentBuilder->setMagentoOrder($magentoOrder);
+        $shipmentBuilder = $this->shipmentFactory->create($this->getParentObject()->getMagentoOrder());
+        $shipmentBuilder->setMagentoOrder($this->getParentObject()->getMagentoOrder());
         $shipmentBuilder->buildShipments();
 
         return $shipmentBuilder->getShipments();
@@ -907,12 +909,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function canCreateTracks()
     {
         $trackingDetails = $this->getShippingTrackingDetails();
-        if (count($trackingDetails) == 0) {
+        if (empty($trackingDetails)) {
             return false;
         }
 
         $magentoOrder = $this->getParentObject()->getMagentoOrder();
-        if (is_null($magentoOrder)) {
+        if ($magentoOrder === null) {
             return false;
         }
 
@@ -932,11 +934,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             return null;
         }
 
-        $tracks = array();
+        $tracks = [];
 
         try {
             /** @var $trackBuilder \Ess\M2ePro\Model\Magento\Order\Shipment\Track */
-            $trackBuilder = $this->modelFactory->getObject('Magento\Order\Shipment\Track');
+            $trackBuilder = $this->modelFactory->getObject('Magento_Order_Shipment_Track');
             $trackBuilder->setMagentoOrder($this->getParentObject()->getMagentoOrder());
             $trackBuilder->setTrackingDetails($this->getShippingTrackingDetails());
             $trackBuilder->setSupportedCarriers($this->getHelper('Component\Ebay')->getCarriers());
@@ -944,11 +946,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             $tracks = $trackBuilder->getTracks();
         } catch (\Exception $e) {
             $this->getParentObject()->addErrorLog(
-                'Tracking details were not imported. Reason: %msg%', array('msg' => $e->getMessage())
+                'Tracking details were not imported. Reason: %msg%',
+                ['msg' => $e->getMessage()]
             );
         }
 
-        if (count($tracks) > 0) {
+        if (!empty($tracks)) {
             $this->getParentObject()->addSuccessLog('Tracking details were imported.');
         }
 
@@ -957,10 +960,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
     //########################################
 
-    private function processConnector($action, array $params = array())
+    private function processConnector($action, array $params = [])
     {
         /** @var $dispatcher \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher */
-        $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Order\Dispatcher');
+        $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Order_Dispatcher');
         return $dispatcher->process($action, $this->getParentObject(), $params);
     }
 
@@ -983,7 +986,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      * @param array $params
      * @return bool
      */
-    public function updatePaymentStatus(array $params = array())
+    public function updatePaymentStatus(array $params = [])
     {
         if (!$this->canUpdatePaymentStatus()) {
             return false;
@@ -994,7 +997,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
 
         $this->activeRecordFactory->getObject('Order\Change')->create(
-            $this->getId(), $action, $creator, $component, $params
+            $this->getId(),
+            $action,
+            $creator,
+            $component,
+            $params
         );
 
         return true;
@@ -1006,7 +1013,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      * @param array $trackingDetails
      * @return bool
      */
-    public function canUpdateShippingStatus(array $trackingDetails = array())
+    public function canUpdateShippingStatus(array $trackingDetails = [])
     {
         if ($this->isShippingStatusUnknown()) {
             return false;
@@ -1028,16 +1035,15 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      * @param array $trackingDetails
      * @return bool
      */
-    public function updateShippingStatus(array $trackingDetails = array())
+    public function updateShippingStatus(array $trackingDetails = [])
     {
         if (!$this->canUpdateShippingStatus($trackingDetails)) {
             return false;
         }
 
-        $params = array();
+        $params = [];
 
         if (!empty($trackingDetails['carrier_code'])) {
-
             $trackingDetails['carrier_title'] = $this->getHelper('Component\Ebay')->getCarrierTitle(
                 $trackingDetails['carrier_code'],
                 isset($trackingDetails['carrier_title']) ? $trackingDetails['carrier_title'] : ''
@@ -1045,16 +1051,16 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         }
 
         if (!empty($trackingDetails['carrier_title'])) {
-
             if ($trackingDetails['carrier_title'] == \Ess\M2ePro\Model\Order\Shipment\Handler::CUSTOM_CARRIER_CODE &&
-                !empty($trackingDetails['shipping_method']))
-            {
+                !empty($trackingDetails['shipping_method'])) {
                 $trackingDetails['carrier_title'] = $trackingDetails['shipping_method'];
             }
 
             // remove unsupported by eBay symbols
             $trackingDetails['carrier_title'] = str_replace(
-                array('\'', '"', '+', '(', ')'), array(), $trackingDetails['carrier_title']
+                ['\'', '"', '+', '(', ')'],
+                [],
+                $trackingDetails['carrier_title']
             );
         }
 
@@ -1065,7 +1071,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
 
         $this->activeRecordFactory->getObject('Order\Change')->create(
-            $this->getId(), $action, $creator, $component, $params
+            $this->getId(),
+            $action,
+            $creator,
+            $component,
+            $params
         );
 
         return true;
@@ -1078,15 +1088,22 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         /** @var \Ess\M2ePro\Model\Order\Item $firstItem */
         $firstItem = $this->getParentObject()->getItemsCollection()->getFirstItem();
 
-        $params = array(
+        $params = [
             'item_id' => $firstItem->getChildObject()->getItemId(),
             'transaction_id' => $firstItem->getChildObject()->getTransactionId(),
-        );
+        ];
 
-        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorObj = $dispatcherObj->getVirtualConnector('orders', 'get', 'itemTransactions',
-                                                            $params, 'buyer_info',
-                                                            NULL, $this->getParentObject()->getAccount(), NULL);
+        $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        $connectorObj = $dispatcherObj->getVirtualConnector(
+            'orders',
+            'get',
+            'itemTransactions',
+            $params,
+            'buyer_info',
+            null,
+            $this->getParentObject()->getAccount(),
+            null
+        );
 
         $dispatcherObj->process($connectorObj);
         $buyerInfo = $connectorObj->getResponseData();
@@ -1098,9 +1115,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
     public function delete()
     {
-        $table = $this->activeRecordFactory->getObject('Ebay\Order\ExternalTransaction')->getResource()->getMainTable();
+        $table = $this->activeRecordFactory->getObject('Ebay_Order_ExternalTransaction')->getResource()->getMainTable();
         $this->_getResource()->getConnection()->delete(
-            $table, array('order_id = ?'=>$this->getData('order_id'))
+            $table,
+            ['order_id = ?'=>$this->getData('order_id')]
         );
 
         return parent::delete();

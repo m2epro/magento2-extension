@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search;
 
+/**
+ * Class Dispatcher
+ * @package Ess\M2ePro\Model\Amazon\Search
+ */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
     //########################################
@@ -26,7 +30,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         try {
 
             /** @var \Ess\M2ePro\Model\Amazon\Search\Custom $customSearch */
-            $customSearch = $this->modelFactory->getObject('Amazon\Search\Custom');
+            $customSearch = $this->modelFactory->getObject('Amazon_Search_Custom');
             $customSearch->setListingProduct($listingProduct);
             $customSearch->setQuery($query);
 
@@ -47,7 +51,6 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     {
         /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
         foreach ($listingsProducts as $key => $listingProduct) {
-
             if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
                 unset($listingsProducts[$key]);
                 continue;
@@ -66,7 +69,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         try {
 
             /** @var \Ess\M2ePro\Model\Amazon\Search\Settings $settingsSearch */
-            $settingsSearch = $this->modelFactory->getObject('Amazon\Search\Settings');
+            $settingsSearch = $this->modelFactory->getObject('Amazon_Search_Settings');
 
             /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
             foreach ($listingsProducts as $listingProduct) {
@@ -74,7 +77,6 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                 $settingsSearch->resetStep();
                 $settingsSearch->process();
             }
-
         } catch (\Exception $exception) {
             $this->getHelper('Module\Exception')->process($exception);
             return false;

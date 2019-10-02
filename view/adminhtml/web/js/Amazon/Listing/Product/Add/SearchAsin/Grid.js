@@ -79,7 +79,8 @@ define([
             new Ajax.Request(M2ePro.url.get('amazon_listing_product_add/viewSearchSettings'), {
                 method: 'post',
                 parameters: {
-                    id: listingId
+                    id: listingId,
+                    exclude_control_buttons: true
                 },
                 onSuccess: function (transport) {
                     if (!$('edit_search_settings_popup')) {

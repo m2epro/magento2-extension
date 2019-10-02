@@ -12,6 +12,10 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 use Ess\M2ePro\Model\Amazon\Account;
 
+/**
+ * Class ListingOther
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs
+ */
 class ListingOther extends AbstractForm
 {
     protected function _prepareForm()
@@ -24,14 +28,15 @@ class ListingOther extends AbstractForm
         $generalAttributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
 
         $attributes = $magentoAttributeHelper->filterByInputTypes(
-            $generalAttributes, array(
+            $generalAttributes,
+            [
                 'text', 'textarea', 'select'
-            )
+            ]
         );
 
         /** @var $account \Ess\M2ePro\Model\Account */
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
-        $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         if (isset($formData['other_listings_mapping_settings'])) {
             $formData['other_listings_mapping_settings'] = (array)$this->getHelper('Data')->jsonDecode(
@@ -48,15 +53,15 @@ class ListingOther extends AbstractForm
             }
         }
 
-        $defaults = array(
+        $defaults = [
             'related_store_id' => 0,
 
             'other_listings_synchronization' => Account::OTHER_LISTINGS_SYNCHRONIZATION_YES,
             'other_listings_mapping_mode' => Account::OTHER_LISTINGS_MAPPING_MODE_YES,
-            'other_listings_mapping_settings' => array(),
+            'other_listings_mapping_settings' => [],
             'other_listings_move_mode' => Account::OTHER_LISTINGS_MOVE_TO_LISTINGS_DISABLED,
             'other_listings_move_synch' => Account::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_NONE
-        );
+        ];
 
         $formData = array_merge($defaults, $formData);
         $isEdit = !!$this->getRequest()->getParam('id');
@@ -65,7 +70,8 @@ class ListingOther extends AbstractForm
             'amazon_accounts_other_listings',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(<<<HTML
+                'content' => $this->__(
+                    <<<HTML
 <p>Under this tab you can manage the 3rd Party Listings - Items that were listed directly via your Seller Central
 Account or via some other 3rd party software. Specify whether you would like to import the 3rd Party Listings,
 configure the automatic mapping and moving settings.</p><br>
@@ -143,7 +149,8 @@ HTML
                     '<p>In this section you can provide settings for automatic Mapping of the newly imported
                     3rd Party Listings to the appropriate Magento Products. </p><br>
                     <p>The imported Items are mapped based on the correspondence between Amazon Item values and
-                    Magento Product Attribute values. </p>')
+                    Magento Product Attribute values. </p>'
+                )
             ]
         );
 
@@ -152,8 +159,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                isset($mappingSettings['sku']['mode'])
+            if (isset($mappingSettings['sku']['mode'])
                 && $mappingSettings['sku']['mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE
                 && $mappingSettings['sku']['attribute'] == $attribute['code']
             ) {
@@ -202,7 +208,7 @@ HTML
                                     class="input-text admin__control-text required-entry _required">
 </div>
 HTML
-    )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
+        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
 
         $fieldset->addField(
             'mapping_sku_attribute',
@@ -218,8 +224,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                isset($mappingSettings['general_id']['mode'])
+            if (isset($mappingSettings['general_id']['mode'])
                 && $mappingSettings['general_id']['mode'] == $modeCustomAttribute
                 && $mappingSettings['general_id']['attribute'] == $attribute['code']
             ) {
@@ -267,7 +272,7 @@ HTML
                                     class="input-text admin__control-text required-entry _required">
 </div>
 HTML
-    )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
+        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
 
         $fieldset->addField(
             'mapping_general_id_attribute',
@@ -282,8 +287,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                isset($mappingSettings['title']['mode'])
+            if (isset($mappingSettings['title']['mode'])
                 && $mappingSettings['title']['mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE
                 && $mappingSettings['title']['attribute'] == $attribute['code']
             ) {
@@ -331,7 +335,7 @@ HTML
                                     class="input-text admin__control-text required-entry _required">
 </div>
 HTML
-    )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
+        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
 
         $fieldset->addField(
             'mapping_title_attribute',

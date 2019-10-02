@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 {
     protected $amazonFactory;
@@ -19,8 +23,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -52,13 +55,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 
         if ($filterSellingFormatTemplate != 0) {
             $collection->addFieldToFilter(
-                'second_table.template_selling_format_id', (int)$filterSellingFormatTemplate
+                'second_table.template_selling_format_id',
+                (int)$filterSellingFormatTemplate
             );
         }
 
         if ($filterSynchronizationTemplate != 0) {
             $collection->addFieldToFilter(
-                'second_table.template_synchronization_id', (int)$filterSynchronizationTemplate
+                'second_table.template_synchronization_id',
+                (int)$filterSynchronizationTemplate
             );
         }
         // ---------------------------------------
@@ -66,12 +71,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         // join marketplace and accounts
         // ---------------------------------------
         $collection->getSelect()
-            ->join(array('a'=> $this->activeRecordFactory->getObject('Account')->getResource()->getMainTable()),
+            ->join(
+                ['a'=> $this->activeRecordFactory->getObject('Account')->getResource()->getMainTable()],
                 '(`a`.`id` = `main_table`.`account_id`)',
-                array('account_title'=>'title'))
-            ->join(array('m'=> $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable()),
+                ['account_title'=>'title']
+            )
+            ->join(
+                ['m'=> $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable()],
                 '(`m`.`id` = `main_table`.`marketplace_id`)',
-                array('marketplace_title'=>'title'));
+                ['marketplace_title'=>'title']
+            );
         // ---------------------------------------
 
         $this->setCollection($collection);
@@ -87,127 +96,127 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
             '*/amazon_listing/index'
         );
 
-        $actions = array(
-            'manageProducts' => array(
+        $actions = [
+            'manageProducts' => [
                 'caption' => $this->__('Manage'),
                 'group'   => 'products_actions',
                 'field'   => 'id',
-                'url'     => array(
+                'url'     => [
                     'base'   => '*/amazon_listing/view',
-                    'params' => array('back' => $backUrl)
-                )
-            ),
+                    'params' => ['back' => $backUrl]
+                ]
+            ],
 
-            'addProductsFromProductsList' => array(
+            'addProductsFromProductsList' => [
                 'caption' => $this->__('Add From Products List'),
                 'group'   => 'products_actions',
                 'field'   => 'id',
-                'url'     => array(
+                'url'     => [
                     'base'   => '*/amazon_listing_product_add/index',
-                    'params' => array(
+                    'params' => [
                         'back' => $backUrl,
                         'step' => 2,
                         'source' => \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_PRODUCT
-                    )
-                )
-            ),
+                    ]
+                ]
+            ],
 
-            'addProductsFromCategories' => array(
+            'addProductsFromCategories' => [
                 'caption' => $this->__('Add From Categories'),
                 'group'   => 'products_actions',
                 'field'   => 'id',
-                'url'     => array(
+                'url'     => [
                     'base'   => '*/amazon_listing_product_add/index',
-                    'params' => array(
+                    'params' => [
                         'back' => $backUrl,
                         'step' => 2,
                         'source' => \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_CATEGORY
-                    )
-                )
-            ),
+                    ]
+                ]
+            ],
 
-            'automaticActions' => array(
+            'automaticActions' => [
                 'caption' => $this->__('Auto Add/Remove Rules'),
                 'group'   => 'products_actions',
                 'field'   => 'id',
-                'url'     => array(
+                'url'     => [
                     'base'   => '*/amazon_listing/view',
-                    'params' => array(
+                    'params' => [
                         'back' => $backUrl,
                         'auto_actions' => 1
-                    )
-                )
-            ),
+                    ]
+                ]
+            ],
 
-            'viewLog' => array(
+            'viewLog' => [
                 'caption' => $this->__('View Log'),
                 'group'   => 'other',
                 'field'   => \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
-                'url'     => array(
+                'url'     => [
                     'base'   => '*/amazon_log_listing_product/index'
-                )
-            ),
+                ]
+            ],
 
-            'clearLogs' => array(
+            'clearLogs' => [
                 'caption' => $this->__('Clear Log'),
                 'confirm' => $this->__('Are you sure?'),
                 'group'   => 'other',
                 'field'   => 'id',
-                'url'     => array(
+                'url'     => [
                     'base' => '*/listing/clearLog',
-                    'params' => array(
+                    'params' => [
                         'back' => $backUrl
-                    )
-                )
-            ),
+                    ]
+                ]
+            ],
 
-            'deleteListing' => array(
+            'deleteListing' => [
                 'caption' => $this->__('Delete Listing'),
                 'confirm' => $this->__('Are you sure?'),
                 'group'   => 'other',
                 'field'   => 'id',
-                'url'     => array(
+                'url'     => [
                     'base' => '*/amazon_listing/delete',
-                    'params' => array(
+                    'params' => [
                         'back' => $backUrl
-                    )
-                )
-            ),
+                    ]
+                ]
+            ],
 
-            'editListingTitle' => array(
+            'editListingTitle' => [
                 'caption' => $this->__('Title'),
                 'group'   => 'edit_actions',
                 'confirm' => $this->__('Are you sure?'),
                 'field'   => 'id',
                 'onclick_action' => 'EditListingTitleObj.openPopup'
-            ),
+            ],
 
-            'sellingSetting' => array(
+            'sellingSetting' => [
                 'caption' => $this->__('Selling'),
                 'group'   => 'edit_actions',
                 'field'   => 'id',
-                'url'     => array(
+                'url'     => [
                     'base'   => '*/amazon_listing/edit',
-                    'params' => array(
+                    'params' => [
                         'back' => $backUrl,
                         'tab' => 'selling'
-                    )
-                )
-            ),
+                    ]
+                ]
+            ],
 
-            'searchSetting' => array(
+            'searchSetting' => [
                 'caption' => $this->__('Search'),
                 'group'   => 'edit_actions',
                 'field'   => 'id',
-                'url'     => array(
+                'url'     => [
                     'base'   => '*/amazon_listing/edit',
-                    'params' => array(
+                    'params' => [
                         'back' => $backUrl,
                         'tab' => 'search'
-                    )
-                )
-            )
-        );
+                    ]
+                ]
+            ]
+        ];
 
         return $actions;
     }
@@ -225,7 +234,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
             $this->getHelper('Data')->escapeHtml($value) .
             '</span>';
 
-        /* @var $row \Ess\M2ePro\Model\Listing */
+        /** @var $row \Ess\M2ePro\Model\Listing */
         $accountTitle = $row->getData('account_title');
         $marketplaceTitle = $row->getData('marketplace_title');
 
@@ -263,8 +272,10 @@ HTML;
             return;
         }
 
-        $collection->getSelect()->where('main_table.title LIKE ? OR m.title LIKE ? OR a.title LIKE ?',
-                                        '%'. $value .'%');
+        $collection->getSelect()->where(
+            'main_table.title LIKE ? OR m.title LIKE ? OR a.title LIKE ?',
+            '%'. $value .'%'
+        );
     }
 
     //########################################
@@ -277,10 +288,10 @@ HTML;
 
         return $this->getUrl(
             '*/amazon_listing/view',
-            array(
+            [
                 'id' => $row->getId(),
                 'back' => $backUrl
-            )
+            ]
         );
     }
 
@@ -304,7 +315,7 @@ HTML;
         $component = \Ess\M2ePro\Helper\Component\Amazon::NICK;
 
         $this->js->add(
-<<<JS
+            <<<JS
     require([
         'M2ePro/Listing/EditTitle'
     ], function(){

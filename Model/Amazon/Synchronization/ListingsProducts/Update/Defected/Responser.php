@@ -8,14 +8,18 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Defected;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Defected
+ */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defected\ItemsResponser
 {
     protected $resourceConnection;
 
     protected $activeRecordFactory;
 
-    protected $logsActionId = NULL;
-    protected $synchronizationLog = NULL;
+    protected $logsActionId = null;
+    protected $synchronizationLog = null;
 
     // ########################################
 
@@ -26,9 +30,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        array $params = array()
-    )
-    {
+        array $params = []
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($amazonFactory, $response, $helperFactory, $modelFactory, $params);
@@ -41,7 +44,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
         parent::processResponseMessages();
 
         foreach ($this->getResponse()->getMessages()->getEntities() as $message) {
-
             if (!$message->isError() && !$message->isWarning()) {
                 continue;
             }
@@ -88,12 +90,9 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
     protected function processResponseData()
     {
         try {
-
             $this->clearAllDefectedMessages();
             $this->updateReceivedDefectedListingsProducts();
-
         } catch (\Exception $exception) {
-
             $this->getHelper('Module\Exception')->process($exception);
 
             $this->getSynchronizationLog()->addMessage(
@@ -116,15 +115,15 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $listingsProductsIds = $listingProductCollection->getAllIds();
 
-        $amazonListingProductTable = $this->activeRecordFactory->getObject('Amazon\Listing\Product')
+        $amazonListingProductTable = $this->activeRecordFactory->getObject('Amazon_Listing_Product')
             ->getResource()
             ->getMainTable();
 
-        foreach (array_chunk($listingsProductsIds,1000) as $partIds) {
+        foreach (array_chunk($listingsProductsIds, 1000) as $partIds) {
             $this->resourceConnection->getConnection()->update(
                 $amazonListingProductTable,
-                array('defected_messages' => null),
-                '`listing_product_id` IN ('.implode(',',$partIds).')'
+                ['defected_messages' => null],
+                '`listing_product_id` IN ('.implode(',', $partIds).')'
             );
         }
 
@@ -139,11 +138,12 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
 
-        $skus = array_map(function($el){ return (string)$el; }, array_keys($receivedItems));
+        $skus = array_map(function ($el) {
+            return (string)$el;
+        }, array_keys($receivedItems));
 
         //ZF-5063: Segmentaion fault on preg_replace in Zend_Db_Statement
         if (count($skus) >= 250) {
-
             foreach ($skus as &$sku) {
                 if (strpos($sku, '"') === false) {
                     continue;
@@ -153,7 +153,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
             }
         }
 
-        $listingProductCollection->addFieldToFilter('sku', array('in' => $skus));
+        $listingProductCollection->addFieldToFilter('sku', ['in' => $skus]);
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $defectedListingsProducts */
         $defectedListingsProducts = $listingProductCollection->getItems();
@@ -165,14 +165,14 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
 
             $receivedData = $receivedItems[$amazonListingProduct->getSku()];
 
-            $defectedMessage = array(
+            $defectedMessage = [
                 'attribute' => $receivedData['defected_attribute'],
                 'value'     => $receivedData['current_value'],
                 'type'      => $receivedData['defect_type'],
                 'message'   => $receivedData['message'],
-            );
+            ];
 
-            $listingProduct->setSettings('defected_messages', array($defectedMessage))->save();
+            $listingProduct->setSettings('defected_messages', [$defectedMessage])->save();
         }
     }
 
@@ -183,7 +183,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
      */
     protected function getAccount()
     {
-        return $this->getObjectByParam('Account','account_id');
+        return $this->getObjectByParam('Account', 'account_id');
     }
 
     /**
@@ -198,7 +198,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
 
     protected function getSynchronizationLog()
     {
-        if (!is_null($this->synchronizationLog)) {
+        if ($this->synchronizationLog !== null) {
             return $this->synchronizationLog;
         }
 

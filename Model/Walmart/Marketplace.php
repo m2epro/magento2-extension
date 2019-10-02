@@ -12,6 +12,10 @@
 
 namespace Ess\M2ePro\Model\Walmart;
 
+/**
+ * Class Marketplace
+ * @package Ess\M2ePro\Model\Walmart
+ */
 class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     //########################################
@@ -30,7 +34,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      * @return array|\Ess\M2ePro\Model\AbstractModel[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getWalmartItems($asObjects = false, array $filters = array())
+    public function getWalmartItems($asObjects = false, array $filters = [])
     {
         return $this->getRelatedSimpleItems('Walmart\Item', 'marketplace_id', $asObjects, $filters);
     }
@@ -41,9 +45,9 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
      * @return array|\Ess\M2ePro\Model\AbstractModel[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getDescriptionTemplates($asObjects = false, array $filters = array())
+    public function getDescriptionTemplates($asObjects = false, array $filters = [])
     {
-        return $this->getRelatedSimpleItems('Walmart\Template\Description', 'marketplace_id', $asObjects, $filters);
+        return $this->getRelatedSimpleItems('Walmart_Template_Description', 'marketplace_id', $asObjects, $filters);
     }
 
     //########################################
@@ -69,13 +73,13 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('marketplace');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
         return parent::save();
     }
 
     public function delete()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('marketplace');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
         return parent::delete();
     }
 

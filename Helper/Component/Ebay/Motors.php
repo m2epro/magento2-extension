@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Component\Ebay;
 
+/**
+ * Class Motors
+ * @package Ess\M2ePro\Helper\Component\Ebay
+ */
 class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const TYPE_EPID_MOTOR = 1;
@@ -35,8 +39,7 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->moduleConfig = $moduleConfig;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($helperFactory, $context);
@@ -49,22 +52,26 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
         switch ($type) {
             case self::TYPE_EPID_MOTOR:
                 return $this->moduleConfig->getGroupValue(
-                    '/ebay/motors/','epids_motor_attribute'
+                    '/ebay/motors/',
+                    'epids_motor_attribute'
                 );
 
             case self::TYPE_KTYPE:
                 return $this->moduleConfig->getGroupValue(
-                    '/ebay/motors/','ktypes_attribute'
+                    '/ebay/motors/',
+                    'ktypes_attribute'
                 );
 
             case self::TYPE_EPID_UK:
                 return $this->moduleConfig->getGroupValue(
-                    '/ebay/motors/','epids_uk_attribute'
+                    '/ebay/motors/',
+                    'epids_uk_attribute'
                 );
 
             case self::TYPE_EPID_DE:
                 return $this->moduleConfig->getGroupValue(
-                    '/ebay/motors/','epids_de_attribute'
+                    '/ebay/motors/',
+                    'epids_de_attribute'
                 );
         }
 
@@ -75,11 +82,11 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function parseAttributeValue($value)
     {
-        $parsedData = array(
-            'items' => array(),
-            'filters' => array(),
-            'groups' => array()
-        );
+        $parsedData = [
+            'items' => [],
+            'filters' => [],
+            'groups' => []
+        ];
 
         if (empty($value)) {
             return $parsedData;
@@ -97,7 +104,7 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
             $matches
         );
 
-        $items = array();
+        $items = [];
         foreach ($matches[0] as $item) {
             $item = explode('|', $item);
 
@@ -105,7 +112,7 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
             $item[1] = (empty($item[1])) ? '' : trim(trim($item[1], ','), '"');
             $item[2] = (empty($item[2])) ? '' : trim(trim($item[2], ','), '"');
 
-            $items[] = array($item[0],$item[1],$item[2]);
+            $items[] = [$item[0],$item[1],$item[2]];
         }
 
         foreach ($items as $item) {
@@ -123,8 +130,7 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
                 }
 
                 $parsedData['filters'][] = $item[1];
-
-            } else if ($item[0] == 'GROUP') {
+            } elseif ($item[0] == 'GROUP') {
                 if ((empty($item[1]))) {
                     continue;
                 }
@@ -134,9 +140,7 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
                 }
 
                 $parsedData['groups'][] = $item[1];
-
             } else {
-
                 if ($item[0] === 'ITEM') {
                     $itemId = $item[1];
                     $itemNote = $item[2];
@@ -155,7 +159,7 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function buildAttributeValue(array $data)
     {
-        $strs = array();
+        $strs = [];
 
         if (!empty($data['items'])) {
             $strs[] = $this->buildItemsAttributeValue($data['items']);
@@ -180,7 +184,7 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
             return '';
         }
 
-        $values = array();
+        $values = [];
         foreach ($items as $item) {
             $value = '"ITEM"|"' . $item['id'] . '"';
 
@@ -202,7 +206,7 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
             return '';
         }
 
-        $values = array();
+        $values = [];
         foreach ($filters as $id) {
             $values[] = '"FILTER"|"' . $id . '"';
         }
@@ -216,7 +220,7 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
             return '';
         }
 
-        $values = array();
+        $values = [];
         foreach ($groups as $id) {
             $values[] = '"GROUP"|"' . $id . '"';
         }
@@ -228,11 +232,11 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isTypeBasedOnEpids($type)
     {
-        if (in_array($type, array(
+        if (in_array($type, [
             self::TYPE_EPID_MOTOR,
             self::TYPE_EPID_UK,
-            self::TYPE_EPID_DE))
-        ){
+            self::TYPE_EPID_DE])
+        ) {
             return true;
         }
 
@@ -249,13 +253,13 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
     public function getDictionaryTable($type)
     {
         if ($this->isTypeBasedOnEpids($type)) {
-            return $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix(
+            return $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
                 'm2epro_ebay_dictionary_motor_epid'
             );
         }
 
         if ($this->isTypeBasedOnKtypes($type)) {
-            return $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix(
+            return $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
                 'm2epro_ebay_dictionary_motor_ktype'
             );
         }
@@ -291,14 +295,13 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
                 return self::EPID_SCOPE_DE;
 
             default:
-                return NULL;
+                return null;
         }
     }
 
     public function getEpidsTypeByMarketplace($marketplaceId)
     {
         switch ((int)$marketplaceId) {
-
             case \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_MOTORS:
                 return self::TYPE_EPID_MOTOR;
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category;
 
+/**
+ * Class Assign
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category
+ */
 class Assign extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category
 {
     public function execute()
@@ -26,14 +30,14 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Te
         }
 
         $msgType = 'success';
-        $messages = array();
+        $messages = [];
 
         $this->setCategoryTemplateForProducts($productsIds, $templateId);
         $this->runProcessorForParents($productsIds);
 
         /** @var \Ess\M2ePro\Model\Walmart\Template\Category $template */
-        $template = $this->activeRecordFactory->getObjectLoaded('Walmart\Template\Category', $templateId);
-        $template->setSynchStatusNeed($template->getDataSnapshot(),array());
+        $template = $this->activeRecordFactory->getObjectLoaded('Walmart_Template_Category', $templateId);
+        $template->setSynchStatusNeed($template->getDataSnapshot(), []);
 
         $messages[] = $this->__(
             'Category Policy was successfully assigned to %count% Products',

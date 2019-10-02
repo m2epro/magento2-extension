@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
+/**
+ * Class GetCountryRegions
+ * @package Ess\M2ePro\Controller\Adminhtml\Order
+ */
 class GetCountryRegions extends Order
 {
     protected $regionCollection;
@@ -18,8 +22,7 @@ class GetCountryRegions extends Order
     public function __construct(
         \Magento\Directory\Model\ResourceModel\Region\Collection $regionCollection,
         Context $context
-    )
-    {
+    ) {
         $this->regionCollection = $regionCollection;
 
         parent::__construct($context);
@@ -28,7 +31,7 @@ class GetCountryRegions extends Order
     public function execute()
     {
         $country = $this->getRequest()->getParam('country');
-        $regions = array();
+        $regions = [];
 
         if (!empty($country)) {
             $regionsCollection = $this->regionCollection
@@ -36,18 +39,18 @@ class GetCountryRegions extends Order
                 ->load();
 
             foreach ($regionsCollection as $region) {
-                $regions[] = array(
+                $regions[] = [
                     'id'    => $region->getData('region_id'),
                     'value' => $region->getData('code'),
                     'label' => $region->getData('default_name')
-                );
+                ];
             }
 
-            if (count($regions) > 0) {
-                array_unshift($regions, array(
+            if (!empty($regions)) {
+                array_unshift($regions, [
                     'value' => '',
                     'label' => $this->__('-- Please select --')
-                ));
+                ]);
             }
         }
 

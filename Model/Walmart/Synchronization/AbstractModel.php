@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Walmart\Synchronization
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent
 {
     protected $resourceConnection;
@@ -21,8 +25,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Synchronization\Task\Abst
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->walmartFactory = $walmartFactory;
         parent::__construct($activeRecordFactory, $helperFactory, $modelFactory);

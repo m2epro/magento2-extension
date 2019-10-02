@@ -8,39 +8,43 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details;
 
+/**
+ * Class ItemsRequester
+ * @package Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details
+ */
 abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {
     // ########################################
 
     public function getCommand()
     {
-        return array('orders','get','entitiesDetails');
+        return ['orders','get','entitiesDetails'];
     }
 
     // ########################################
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Connector\Command\Pending\Processing\Runner\Partial';
+        return 'Connector_Command_Pending_Processing_Runner_Partial';
     }
 
     // ########################################
 
     protected function getResponserParams()
     {
-        return array(
+        return [
             'account_id'     => $this->account->getId(),
             'marketplace_id' => $this->account->getChildObject()->getMarketplaceId()
-        );
+        ];
     }
 
     // ########################################
 
     protected function getRequestData()
     {
-        return array(
+        return [
             'items' => $this->params['items'],
-        );
+        ];
     }
 
     // ########################################

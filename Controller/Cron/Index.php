@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Cron;
 
 use Magento\Framework\App\Action\Context;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Cron
+ */
 class Index extends \Magento\Framework\App\Action\Action
 {
     /** @var \Ess\M2ePro\Model\Cron\Runner\Service\Controller */
@@ -24,8 +28,7 @@ class Index extends \Magento\Framework\App\Action\Action
         Context $context,
         \Ess\M2ePro\Model\Cron\Runner\Service\Controller $cronRunner,
         \Ess\M2ePro\Model\Magento\Framework\Http\NotCacheableResponseFactory $responseFactory
-    )
-    {
+    ) {
         parent::__construct($context);
         $this->cronRunner = $cronRunner;
         $this->responseFactory = $responseFactory;

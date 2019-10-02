@@ -8,14 +8,18 @@
 
 namespace Ess\M2ePro\Model;
 
+/**
+ * Class VariablesDir
+ * @package Ess\M2ePro\Model
+ */
 class VariablesDir extends AbstractModel
 {
     const BASE_NAME = 'M2ePro';
 
-    private $_fileDriver = NULL;
-    private $_childFolder = NULL;
-    private $_pathVariablesDirBase = NULL;
-    private $_pathVariablesDirChildFolder = NULL;
+    private $_fileDriver = null;
+    private $_childFolder = null;
+    private $_pathVariablesDirBase = null;
+    private $_pathVariablesDirChildFolder = null;
 
     //########################################
 
@@ -28,14 +32,13 @@ class VariablesDir extends AbstractModel
     ) {
         $this->_fileDriver = $driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
 
-        !isset($data['child_folder']) && $data['child_folder'] = NULL;
-        $data['child_folder'] === '' && $data['child_folder'] = NULL;
+        !isset($data['child_folder']) && $data['child_folder'] = null;
+        $data['child_folder'] === '' && $data['child_folder'] = null;
 
         $varDir = $filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::VAR_DIR);
         $this->_pathVariablesDirBase = $varDir->getAbsolutePath() . self::BASE_NAME;
 
-        if (!is_null($data['child_folder'])) {
-
+        if ($data['child_folder'] !== null) {
             if ($data['child_folder']{0} != DIRECTORY_SEPARATOR) {
                 $data['child_folder'] = DIRECTORY_SEPARATOR.$data['child_folder'];
             }
@@ -46,19 +49,23 @@ class VariablesDir extends AbstractModel
             $this->_pathVariablesDirChildFolder = $this->_pathVariablesDirBase.$data['child_folder'];
             $this->_pathVariablesDirBase .= DIRECTORY_SEPARATOR;
             $this->_childFolder = $data['child_folder'];
-
         } else {
-
             $this->_pathVariablesDirBase .= DIRECTORY_SEPARATOR;
             $this->_pathVariablesDirChildFolder = $this->_pathVariablesDirBase;
             $this->_childFolder = '';
         }
 
-        $this->_pathVariablesDirBase = str_replace(array('/','\\'),
-            DIRECTORY_SEPARATOR,$this->_pathVariablesDirBase);
-        $this->_pathVariablesDirChildFolder = str_replace(array('/','\\'),
-            DIRECTORY_SEPARATOR,$this->_pathVariablesDirChildFolder);
-        $this->_childFolder = str_replace(array('/','\\'),DIRECTORY_SEPARATOR,$this->_childFolder);
+        $this->_pathVariablesDirBase = str_replace(
+            ['/','\\'],
+            DIRECTORY_SEPARATOR,
+            $this->_pathVariablesDirBase
+        );
+        $this->_pathVariablesDirChildFolder = str_replace(
+            ['/','\\'],
+            DIRECTORY_SEPARATOR,
+            $this->_pathVariablesDirChildFolder
+        );
+        $this->_childFolder = str_replace(['/','\\'], DIRECTORY_SEPARATOR, $this->_childFolder);
 
         parent::__construct($helperFactory, $modelFactory, $data);
     }
@@ -113,12 +120,13 @@ class VariablesDir extends AbstractModel
         $this->createBase();
 
         if ($this->_childFolder != '') {
-
             $tempPath = $this->getBasePath();
-            $tempChildFolders = explode(DIRECTORY_SEPARATOR,
-                substr($this->_childFolder,1,strlen($this->_childFolder)-2));
+            $tempChildFolders = explode(
+                DIRECTORY_SEPARATOR,
+                substr($this->_childFolder, 1, strlen($this->_childFolder)-2)
+            );
 
-            foreach ($tempChildFolders as $key=>$value) {
+            foreach ($tempChildFolders as $key => $value) {
                 if (!$this->_fileDriver->isDirectory($tempPath.$value.DIRECTORY_SEPARATOR)) {
                     $this->_fileDriver->createDirectory($tempPath.$value.DIRECTORY_SEPARATOR, 0777);
                 }

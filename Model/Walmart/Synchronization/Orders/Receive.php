@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization\Orders;
 
+/**
+ * Class Receive
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\Orders
+ */
 class Receive extends AbstractModel
 {
     //########################################
@@ -51,8 +55,10 @@ class Receive extends AbstractModel
 
             // ---------------------------------------
             $this->getActualOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
-            $this->getActualOperationHistory()
-                 ->addTimePoint(__METHOD__.'process'.$account->getTitle(),'Get Orders from Walmart');
+            $this->getActualOperationHistory()->addTimePoint(
+                __METHOD__.'process'.$account->getTitle(),
+                'Get Orders from Walmart'
+            );
 
             $status = 'The "Receive" Action for Walmart Account "%title%" is started. Please wait...';
             $this->getActualLockItem()->setStatus(
@@ -61,32 +67,29 @@ class Receive extends AbstractModel
             // ---------------------------------------
 
             try {
-
-                $preparedResponseData = $this->receiveWalmartOrdersData($account);
-
-                if (empty($preparedResponseData)) {
+                $responseData = $this->receiveWalmartOrdersData($account);
+                if (empty($responseData)) {
                     continue;
                 }
 
                 $this->getActualOperationHistory()->addTimePoint(
-                    __METHOD__.'create_magento_orders'.$account->getTitle(), 'Create Magento Orders'
+                    __METHOD__.'create_magento_orders'.$account->getTitle(),
+                    'Create Magento Orders'
                 );
 
-                $processedWalmartOrders = array();
+                $processedWalmartOrders = [];
 
                 try {
-
                     $accountCreateDate = new \DateTime($account->getData('create_date'), new \DateTimeZone('UTC'));
 
-                    foreach ($preparedResponseData['items'] as $orderData) {
-
+                    foreach ($responseData['items'] as $orderData) {
                         $orderCreateDate = new \DateTime($orderData['purchase_date'], new \DateTimeZone('UTC'));
                         if ($orderCreateDate < $accountCreateDate) {
                             continue;
                         }
 
                         /** @var $orderBuilder \Ess\M2ePro\Model\Walmart\Order\Builder */
-                        $orderBuilder = $this->modelFactory->getObject('Walmart\Order\Builder');
+                        $orderBuilder = $this->modelFactory->getObject('Walmart_Order_Builder');
                         $orderBuilder->initialize($account, $orderData);
 
                         $order = $orderBuilder->process();
@@ -97,9 +100,7 @@ class Receive extends AbstractModel
 
                         $processedWalmartOrders[] = $order;
                     }
-
                 } catch (\Exception $exception) {
-
                     $this->getLog()->addMessage(
                         $this->getHelper('Module\Translation')->__($exception->getMessage()),
                         \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
@@ -110,9 +111,7 @@ class Receive extends AbstractModel
                 }
 
                 foreach ($processedWalmartOrders as $walmartOrder) {
-
                     try {
-
                         $iteration = 0;
 
                         /** @var $walmartOrder \Ess\M2ePro\Model\Order */
@@ -154,9 +153,7 @@ class Receive extends AbstractModel
                         if ($walmartOrder->getStatusUpdateRequired()) {
                             $walmartOrder->updateMagentoOrderStatus();
                         }
-
                     } catch (\Exception $exception) {
-
                         $this->getLog()->addMessage(
                             $this->getHelper('Module\Translation')->__($exception->getMessage()),
                             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
@@ -167,8 +164,11 @@ class Receive extends AbstractModel
                     }
                 }
 
-            } catch (\Exception $exception) {
+                // ---------------------------------------
 
+                $account->getChildObject()->setData('orders_last_synchronization', $responseData['to_create_date']);
+                $account->getChildObject()->save();
+            } catch (\Exception $exception) {
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Receive" Action for Walmart Account "%title%" was completed with error.',
                     $account->getTitle()
@@ -203,64 +203,90 @@ class Receive extends AbstractModel
 
     //########################################
 
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     * @return array|null
+     * @throws \Exception
+     */
     private function receiveWalmartOrdersData(\Ess\M2ePro\Model\Account $account)
     {
-        $createSinceTime = $account->getChildObject()->getData('orders_last_synchronization');
+        $fromDate = $this->prepareFromDate($account->getChildObject()->getData('orders_last_synchronization'));
+        $toDate = $this->prepareToDate();
 
-        $fromDate = $this->prepareFromDate($createSinceTime);
-        $toDate   = $this->prepareToDate();
+        // ----------------------------------------
 
-        if (strtotime($fromDate) >= strtotime($toDate)) {
-            $fromDate = new \DateTime($toDate, new \DateTimeZone('UTC'));
-            $fromDate->modify('- 5 minutes');
-
-            $fromDate = $fromDate->format('Y-m-d H:i:s');
+        if ($fromDate >= $toDate) {
+            $fromDate = clone $toDate;
+            $fromDate->modify('-5 minutes');
         }
 
-        $requestData = array(
-            'account'          => $account->getChildObject()->getServerHash(),
-            'from_create_date' => $fromDate,
-            'to_create_date'   => $toDate
-        );
+        // ----------------------------------------
 
-        $dispatcherObject = $this->modelFactory->getObject('Walmart\Connector\Dispatcher');
-        /** @var \Ess\M2ePro\Model\Connector\Command\RealTime $connectorObj */
-        $connectorObj = $dispatcherObject->getVirtualConnector(
-            'orders', 'get', 'items', $requestData
-        );
+        /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcherObject */
+        $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
+        $orders = [[]];
+        $breakDate = null;
 
-        $dispatcherObject->process($connectorObj);
-        $responseData = $connectorObj->getResponseData();
+        // -------------------------------------
 
-        $this->processResponseMessages($connectorObj->getResponseMessages());
-        $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$account->getTitle());
+        do {
+            $connectorObj = $dispatcherObject->getVirtualConnector('orders', 'get', 'items', [
+                'account'          => $account->getChildObject()->getData('server_hash'),
+                'from_create_date' => $fromDate->format('Y-m-d H:i:s'),
+                'to_create_date'   => $toDate->format('Y-m-d H:i:s')
+            ]);
+            $dispatcherObject->process($connectorObj);
 
-        if (!isset($responseData['items']) || !isset($responseData['to_create_date'])) {
-            $logData = array(
-                'from_create_date'  => $fromDate,
-                'to_create_date'    => $toDate,
-                'account_id'        => $account->getId(),
-                'response_data'     => $responseData,
-                'response_messages' => $connectorObj->getResponseMessages()
-            );
-            $this->getHelper('Module\Logger')->process($logData, 'Walmart orders receive task - empty response');
+            // ----------------------------------------
 
-            return array();
-        } else {
-            $account->getChildObject()->setData('orders_last_synchronization', $responseData['to_create_date'])->save();
-        }
+            $this->processResponseMessages($connectorObj->getResponseMessages());
+            $this->getActualOperationHistory()->saveTimePoint(__METHOD__ . 'get' . $account->getTitle());
 
-        return $responseData;
+            // ----------------------------------------
+
+            $responseData = $connectorObj->getResponseData();
+            if (!isset($responseData['items']) || !isset($responseData['to_create_date'])) {
+                $this->getHelper('Module\Logger')->process([
+                    'from_create_date'  => $fromDate->format('Y-m-d H:i:s'),
+                    'to_create_date'    => $toDate->format('Y-m-d H:i:s'),
+                    'account_id'        => $account->getId(),
+                    'response_data'     => $responseData,
+                    'response_messages' => $connectorObj->getResponseMessages()
+                ], 'Walmart orders receive task - empty response');
+
+                return [];
+            }
+
+            // ----------------------------------------
+
+            $fromDate = new \DateTime($responseData['to_create_date'], new \DateTimeZone('UTC'));
+            if ($breakDate !== null && $breakDate->getTimestamp() === $fromDate->getTimestamp()) {
+                break;
+            }
+
+            $orders[] = $responseData['items'];
+            $breakDate = $fromDate;
+
+            if ($this->helperFactory->getObject('Module')->isTestingEnvironment()) {
+                break;
+            }
+        } while (!empty($responseData['items']));
+
+        // ----------------------------------------
+
+        return [
+            'items'          => call_user_func_array('array_merge', $orders),
+            'to_create_date' => $responseData['to_create_date']
+        ];
     }
 
-    protected function processResponseMessages(array $messages = array())
+    protected function processResponseMessages(array $messages = [])
     {
         /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messagesSet */
-        $messagesSet = $this->modelFactory->getObject('Connector\Connection\Response\Message\Set');
+        $messagesSet = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
         $messagesSet->init($messages);
 
         foreach ($messagesSet->getEntities() as $message) {
-
             if (!$message->isError() && !$message->isWarning()) {
                 continue;
             }
@@ -298,44 +324,96 @@ class Receive extends AbstractModel
 
     //########################################
 
-    private function prepareFromDate($lastFromDate)
+    /**
+     * @param \DateTime $minPurchaseDateTime
+     * @return \DateTime|null
+     * @throws \Exception
+     */
+    private function getMinPurchaseDateTime(\DateTime $minPurchaseDateTime)
     {
-        // Get last from date
-        // ---------------------------------------
-        if (empty($lastFromDate)) {
-            $lastFromDate = new \DateTime('now', new \DateTimeZone('UTC'));
-        } else {
-            $lastFromDate = new \DateTime($lastFromDate, new \DateTimeZone('UTC'));
+        /** @var \Ess\M2ePro\Model\ResourceModel\Order\Collection $collection */
+        $collection = $this->walmartFactory->getObject('Order')->getCollection();
+        $collection->addFieldToFilter('status', [
+            'from' => \Ess\M2ePro\Model\Walmart\Order::STATUS_CREATED,
+            'to'   => \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED_PARTIALLY
+        ]);
+        $collection->addFieldToFilter('purchase_create_date', [
+            'from' => $minPurchaseDateTime->format('Y-m-d H:i:s')
+        ]);
+        $collection->getSelect()->limit(1);
+
+        /** @var \Ess\M2ePro\Model\Order $order */
+        $order = $collection->getFirstItem();
+        if ($order->getId() === null) {
+            return null;
         }
-        // ---------------------------------------
 
-        // Get min date for synch
-        // ---------------------------------------
-        $minDate = new \DateTime('now',new \DateTimeZone('UTC'));
-        $minDate->modify('-30 days');
-        // ---------------------------------------
+        $purchaseDateTime = new \DateTime(
+            $order->getChildObject()->getPurchaseCreateDate(),
+            new \DateTimeZone('UTC')
+        );
+        $purchaseDateTime->modify('-1 second');
 
-        // Prepare last date
-        // ---------------------------------------
-        if ((int)$lastFromDate->format('U') < (int)$minDate->format('U')) {
-            $lastFromDate = $minDate;
-        }
-        // ---------------------------------------
-
-        return $lastFromDate->format('Y-m-d H:i:s');
+        return $purchaseDateTime;
     }
 
+    //####################################
+
+    /**
+     * @param mixed $lastFromDate
+     * @return \DateTime
+     * @throws \Exception
+     */
+    private function prepareFromDate($lastFromDate)
+    {
+        $nowDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        // ----------------------------------------
+
+        if (!empty($lastFromDate)) {
+            $lastFromDate = new \DateTime($lastFromDate, new \DateTimeZone('UTC'));
+        }
+
+        if (empty($lastFromDate)) {
+            $lastFromDate = clone $nowDateTime;
+        }
+
+        // ----------------------------------------
+
+        $minDateTime = clone $nowDateTime;
+        $minDateTime->modify('-1 day');
+
+        if ($lastFromDate > $minDateTime) {
+            $minPurchaseDateTime = $this->getMinPurchaseDateTime($minDateTime);
+            if ($minPurchaseDateTime !== null) {
+                $lastFromDate = $minPurchaseDateTime;
+            }
+        }
+
+        // ----------------------------------------
+
+        $minDateTime = clone $nowDateTime;
+        $minDateTime->modify('-30 days');
+
+        if ((int)$lastFromDate->format('U') < (int)$minDateTime->format('U')) {
+            $lastFromDate = $minDateTime;
+        }
+
+        // ---------------------------------------
+
+        return $lastFromDate;
+    }
+
+    /**
+     * @return \DateTime
+     * @throws \Exception
+     */
     private function prepareToDate()
     {
         $operationHistory = $this->getActualOperationHistory()->getParentObject('synchronization');
-        if (!is_null($operationHistory)) {
-            $toDate = $operationHistory->getData('start_date');
-        } else {
-            $toDate = new \DateTime('now', new \DateTimeZone('UTC'));
-            $toDate = $toDate->format('Y-m-d H:i:s');
-        }
+        $toDate = $operationHistory !== null ? $operationHistory->getData('start_date') : 'now';
 
-        return $toDate;
+        return new \DateTime($toDate, new \DateTimeZone('UTC'));
     }
 
     //########################################

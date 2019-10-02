@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\HealthStatus;
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\InfoType;
 
+/**
+ * Class Manager
+ * @package Ess\M2ePro\Model\HealthStatus
+ */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\HealthStatus\Task\Result\SetFactory */
@@ -22,7 +26,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\HealthStatus\Task\Result\SetFactory $resultSetFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory);
         $this->resultSetFactory = $resultSetFactory;
     }
@@ -33,17 +37,14 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      * @param $tasksType
      * @return Task\Result\Set
      */
-    public function doCheck($tasksType = NULL)
+    public function doCheck($tasksType = null)
     {
         $resultSet = $this->resultSetFactory->create();
 
         foreach ($this->getTasks($tasksType) as $taskNick) {
-
             try {
-
                 $taskObject = $this->buildTaskObject($taskNick);
                 $resultSet->add($taskObject->process());
-
             } catch (\Throwable $throwable) {
                 $this->getHelper('Module\Exception')->process($throwable);
             } catch (\Exception $exception) {
@@ -56,17 +57,16 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    private function getTasks($tasksType = NULL)
+    private function getTasks($tasksType = null)
     {
         switch ($tasksType) {
-
             case InfoType::TYPE:
                 return $this->getInfoTasks();
 
             case IssueType::TYPE:
                 return $this->getIssueTasks();
 
-            case NULL:
+            case null:
             default:
                 return array_merge($this->getInfoTasks(), $this->getIssueTasks());
         }
@@ -80,16 +80,16 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     private function getIssueTasks()
     {
         return [
-            'Database\MysqlInfo\CrashedTables',
-            'Database\MysqlInfo\TablesStructure',
+            'Database_MysqlInfo_CrashedTables',
+            'Database_MysqlInfo_TablesStructure',
 
-            'Server\Status\GmtTime',
-            'Server\Status\SystemLogs',
+            'Server_Status_GmtTime',
+            'Server_Status_SystemLogs',
 
-            'Orders\IntervalToTheLatest\Ebay',
-            'Orders\IntervalToTheLatest\Amazon',
-            'Orders\MagentoCreationFailed\Ebay',
-            'Orders\MagentoCreationFailed\Amazon',
+            'Orders_IntervalToTheLatest_Ebay',
+            'Orders_IntervalToTheLatest_Amazon',
+            'Orders_MagentoCreationFailed_Ebay',
+            'Orders_MagentoCreationFailed_Amazon',
         ];
     }
 

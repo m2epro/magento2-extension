@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
+/**
+ * Class PickupStore
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing
+ */
 class PickupStore extends AbstractContainer
 {
     protected $localeResolver;
@@ -21,8 +25,7 @@ class PickupStore extends AbstractContainer
         \Magento\Framework\Locale\ResolverInterface $localeResolver,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
-    )
-    {
+    ) {
         $this->localeResolver = $localeResolver;
         parent::__construct($context, $data);
     }
@@ -51,7 +54,7 @@ class PickupStore extends AbstractContainer
         $this->removeButton('edit');
         // ---------------------------------------
 
-        $isExistsPickupStores = $this->activeRecordFactory->getObject('Ebay\Account\PickupStore')
+        $isExistsPickupStores = $this->activeRecordFactory->getObject('Ebay_Account_PickupStore')
             ->getCollection()
             ->addFieldToFilter('account_id', $this->listing->getAccountId())
             ->addFieldToFilter('marketplace_id', $this->listing->getMarketplaceId())
@@ -61,15 +64,16 @@ class PickupStore extends AbstractContainer
         $backUrl = $this->getUrl('*/ebay_listing/view', [
             'id' => $this->listing->getId()
         ]);
-        $this->addButton('back', array(
+        $this->addButton('back', [
             'label'     => $this->getBackButtonLabel(),
             'onclick'   => 'setLocation(\'' . $backUrl .'\')',
             'class'     => 'back',
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/ebay_account_pickupStore/new',
+        $url = $this->getUrl(
+            '*/ebay_account_pickupStore/new',
             ['account_id' => $this->listing->getAccountId()]
         );
         $currentUrl = $this->getUrl('*/*/*', ['_current' => true]);
@@ -87,7 +91,6 @@ class PickupStore extends AbstractContainer
                 'onclick' => $callback,
                 'class'   => 'add primary'
             ]);
-
         } else {
             $locale = $this->localeResolver->getLocale();
             $myStoresUrl = $this->getUrl('*/ebay_account_pickupStore/index', [
@@ -120,12 +123,12 @@ class PickupStore extends AbstractContainer
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $this->appendHelpBlock([
                 'content' => $this->__(
-                'In this section, you can <strong>review</strong> Store and Product details as well as Product Quantity
-                 and Logs.<br/>
-                 Press <strong>Assign Products to Stores</strong> button to add new Products to the selected Store for
-                 In-Store Pickup Service.<br/>
-                 If you want to <strong>unassign</strong> the Product from the Store you can use a
-                 <strong>Unassign Option</strong> from the Actions bulk at the top of the Grid.'
+                    'In this section, you can <strong>review</strong> Store and Product details as well as Product
+                    Quantity and Logs.<br/>
+                    Press <strong>Assign Products to Stores</strong> button to add new Products to the selected Store
+                    for In-Store Pickup Service.<br/>
+                    If you want to <strong>unassign</strong> the Product from the Store you can use a
+                    <strong>Unassign Option</strong> from the Actions bulk at the top of the Grid.'
                 )
             ]);
         }
@@ -142,7 +145,7 @@ class PickupStore extends AbstractContainer
         }
 
         // ---------------------------------------
-        $viewHeaderBlock = $this->createBlock('Listing\View\Header','', [
+        $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
             'data' => ['listing' => $this->listing]
         ]);
         // ---------------------------------------

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Stores;
 
+/**
+ * Class Wrapper
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Stores
+ */
 class Wrapper extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     //########################################
@@ -37,10 +41,10 @@ class Wrapper extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             ]
         ]);
 
-        $breadcrumb = $this->createBlock('Ebay\Listing\PickupStore\Breadcrumb');
+        $breadcrumb = $this->createBlock('Ebay_Listing_PickupStore_Breadcrumb');
         $breadcrumb->setSelectedStep(2);
 
-        $grid = $this->createBlock('Ebay\Listing\PickupStore\Step\Stores\Grid');
+        $grid = $this->createBlock('Ebay_Listing_PickupStore_Step_Stores_Grid');
 
         return $helpBlock->toHtml() . $breadcrumb->toHtml() . parent::_toHtml() . $grid->toHtml();
     }

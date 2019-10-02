@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Setup;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 
+/**
+ * Class LoggerFactory
+ * @package Ess\M2ePro\Setup
+ */
 class LoggerFactory
 {
     const LOGFILE_NAME = 'setup-error.log';
@@ -32,10 +36,11 @@ class LoggerFactory
 
     //########################################
 
-    public function create($channelName = 'm2epro-setup-log',
-                           $fileName = self::LOGFILE_NAME,
-                           array $data = [])
-    {
+    public function create(
+        $channelName = 'm2epro-setup-log',
+        $fileName = self::LOGFILE_NAME,
+        array $data = []
+    ) {
         $logFilePath = $this->directoryList->getPath(DirectoryList::LOG) .DIRECTORY_SEPARATOR.
                        'm2epro' .DIRECTORY_SEPARATOR. $fileName;
 
@@ -43,7 +48,8 @@ class LoggerFactory
         $streamHandler->setFormatter(new \Monolog\Formatter\LineFormatter());
 
         $logger = $this->_objectManager->create(
-            'Magento\Framework\Logger\Monolog', [
+            \Magento\Framework\Logger\Monolog::class,
+            [
                 'name'     => $channelName,
                 'handlers' => [$streamHandler]
             ]

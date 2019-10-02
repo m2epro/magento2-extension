@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Settings\MagentoInventory;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Settings\MagentoInventory
+ */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
     //########################################
@@ -21,17 +25,20 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
         }
 
         $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/product/force_qty/', 'mode',
+            '/product/force_qty/',
+            'mode',
             (int)$post['force_qty_mode']
         );
 
         $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/product/force_qty/', 'value',
+            '/product/force_qty/',
+            'value',
             (int)$post['force_qty_value']
         );
 
         $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/magento/attribute/', 'price_type_converting',
+            '/magento/attribute/',
+            'price_type_converting',
             (int)$post['price_type_converting_mode']
         );
 

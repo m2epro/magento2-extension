@@ -15,6 +15,10 @@ use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 
+/**
+ * Class InstallData
+ * @package Ess\M2ePro\Setup
+ */
 class InstallData implements InstallDataInterface
 {
     /** @var \Ess\M2ePro\Helper\Factory $helperFactory */
@@ -87,7 +91,6 @@ class InstallData implements InstallDataInterface
             $this->installAmazon();
             $this->installWalmart();
         } catch (\Exception $exception) {
-
             $this->logger->error($exception, ['source' => 'InstallData']);
             $this->helperFactory->getObject('Data\GlobalData')->setValue('is_setup_failed', true);
 
@@ -121,13 +124,22 @@ class InstallData implements InstallDataInterface
         $primaryConfigModifier->insert('/license/valid/', 'domain', null, '0 - Not valid\r\n1 - Valid');
         $primaryConfigModifier->insert('/license/valid/', 'ip', null, '0 - Not valid\r\n1 - Valid');
         $primaryConfigModifier->insert(
-            '/server/', 'application_key', '02edcc129b6128f5fa52d4ad1202b427996122b6', null
+            '/server/',
+            'application_key',
+            '02edcc129b6128f5fa52d4ad1202b427996122b6',
+            null
         );
         $primaryConfigModifier->insert(
-            '/server/', 'installation_key', $installationKey, 'Unique identifier of M2E instance'
+            '/server/',
+            'installation_key',
+            $installationKey,
+            'Unique identifier of M2E instance'
         );
         $primaryConfigModifier->insert(
-            '/server/location/1/', 'baseurl', 'https://s1.m2epro.com/', 'Support server base url'
+            '/server/location/1/',
+            'baseurl',
+            'https://s1.m2epro.com/',
+            'Support server base url'
         );
         $primaryConfigModifier->insert('/server/location/', 'default_index', 1, null);
 
@@ -154,81 +166,150 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/cron/task/request_pending_single/', 'last_access', null, 'date of last access');
         $moduleConfigModifier->insert('/cron/task/request_pending_single/', 'last_run', null, 'date of last run');
         $moduleConfigModifier->insert(
-            '/cron/task/request_pending_partial/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/cron/task/request_pending_partial/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $moduleConfigModifier->insert('/cron/task/request_pending_partial/', 'interval', '60', 'in seconds');
         $moduleConfigModifier->insert(
-            '/cron/task/request_pending_partial/', 'last_access', null, 'date of last access'
+            '/cron/task/request_pending_partial/',
+            'last_access',
+            null,
+            'date of last access'
         );
         $moduleConfigModifier->insert('/cron/task/request_pending_partial/', 'last_run', null, 'date of last run');
         $moduleConfigModifier->insert(
-            '/cron/task/connector_requester_pending_single/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/cron/task/connector_requester_pending_single/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $moduleConfigModifier->insert('/cron/task/connector_requester_pending_single/', 'interval', '60', 'in seconds');
         $moduleConfigModifier->insert(
-            '/cron/task/connector_requester_pending_single/', 'last_access', null, 'date of last access'
+            '/cron/task/connector_requester_pending_single/',
+            'last_access',
+            null,
+            'date of last access'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/connector_requester_pending_single/', 'last_run', null, 'date of last run'
+            '/cron/task/connector_requester_pending_single/',
+            'last_run',
+            null,
+            'date of last run'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/connector_requester_pending_partial/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/cron/task/connector_requester_pending_partial/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/connector_requester_pending_partial/', 'interval', '60', 'in seconds'
+            '/cron/task/connector_requester_pending_partial/',
+            'interval',
+            '60',
+            'in seconds'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/connector_requester_pending_partial/', 'last_access', null, 'date of last access'
+            '/cron/task/connector_requester_pending_partial/',
+            'last_access',
+            null,
+            'date of last access'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/connector_requester_pending_partial/', 'last_run', null, 'date of last run'
+            '/cron/task/connector_requester_pending_partial/',
+            'last_run',
+            null,
+            'date of last run'
         );
         $moduleConfigModifier->insert('/cron/task/amazon/actions/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert('/cron/task/amazon/actions/', 'interval', '60', 'in seconds');
         $moduleConfigModifier->insert('/cron/task/amazon/actions/', 'last_access', null, 'date of last access');
         $moduleConfigModifier->insert('/cron/task/amazon/actions/', 'last_run', null, 'date of last run');
         $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_update_settings/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/cron/task/amazon/repricing_update_settings/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $moduleConfigModifier->insert('/cron/task/amazon/repricing_update_settings/', 'interval', '180', 'in seconds');
         $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_update_settings/', 'last_access', null, 'date of last access'
+            '/cron/task/amazon/repricing_update_settings/',
+            'last_access',
+            null,
+            'date of last access'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_update_settings/', 'last_run', null, 'date of last run'
+            '/cron/task/amazon/repricing_update_settings/',
+            'last_run',
+            null,
+            'date of last run'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_synchronization_actual_price/', 'mode', 1, '0 - disable,\r\n1 - enable'
+            '/cron/task/amazon/repricing_synchronization_actual_price/',
+            'mode',
+            1,
+            '0 - disable,\r\n1 - enable'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_synchronization_actual_price/', 'interval', 3600, 'in seconds'
+            '/cron/task/amazon/repricing_synchronization_actual_price/',
+            'interval',
+            3600,
+            'in seconds'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_synchronization_actual_price/', 'last_run', null, 'date of last access'
+            '/cron/task/amazon/repricing_synchronization_actual_price/',
+            'last_run',
+            null,
+            'date of last access'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_synchronization_general/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/cron/task/amazon/repricing_synchronization_general/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_synchronization_general/', 'interval', '86400', 'in seconds'
+            '/cron/task/amazon/repricing_synchronization_general/',
+            'interval',
+            '86400',
+            'in seconds'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_synchronization_general/', 'last_access', null, 'date of last access'
+            '/cron/task/amazon/repricing_synchronization_general/',
+            'last_access',
+            null,
+            'date of last access'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_synchronization_general/', 'last_run', null, 'date of last run'
+            '/cron/task/amazon/repricing_synchronization_general/',
+            'last_run',
+            null,
+            'date of last run'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_inspect_products/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/cron/task/amazon/repricing_inspect_products/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_inspect_products/', 'interval', '3600', 'in seconds'
+            '/cron/task/amazon/repricing_inspect_products/',
+            'interval',
+            '3600',
+            'in seconds'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_inspect_products/', 'last_access', null, 'date of last access'
+            '/cron/task/amazon/repricing_inspect_products/',
+            'last_access',
+            null,
+            'date of last access'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_inspect_products/', 'last_run', null, 'date of last run'
+            '/cron/task/amazon/repricing_inspect_products/',
+            'last_run',
+            null,
+            'date of last run'
         );
 
         $moduleConfigModifier->insert('/cron/task/walmart/actions/', 'mode', '1', '0 - disable, \r\n1 - enable');
@@ -249,11 +330,17 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/cron/task/health_status/', 'last_access', null, 'date of last access');
         $moduleConfigModifier->insert('/cron/task/health_status/', 'last_run', null, 'date of last run');
         $moduleConfigModifier->insert(
-            '/cron/task/archive_orders_entities/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/cron/task/archive_orders_entities/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $moduleConfigModifier->insert('/cron/task/archive_orders_entities/', 'interval', '3600', 'in seconds');
         $moduleConfigModifier->insert(
-            '/cron/task/archive_orders_entities/', 'last_access', null, 'date of last access'
+            '/cron/task/archive_orders_entities/',
+            'last_access',
+            null,
+            'date of last access'
         );
         $moduleConfigModifier->insert('/cron/task/archive_orders_entities/', 'last_run', null, 'date of last run');
         $moduleConfigModifier->insert('/cron/task/issues_resolver/', 'mode', '1', '0 - disable, \r\n1 - enable');
@@ -283,21 +370,37 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/support/', 'contact_email', 'support@m2epro.com', null);
         $moduleConfigModifier->insert('/view/', 'show_block_notices', '1', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert('/view/', 'show_products_thumbnails', '1', 'Visibility thumbnails into grid');
-        $moduleConfigModifier->insert('/magento/attribute/', 'price_type_converting', '0',
-            '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert(
-            '/view/products_grid/', 'use_alternative_mysql_select', '0', '0 - disable, \r\n1 - enable'
+            '/magento/attribute/',
+            'price_type_converting',
+            '0',
+            '0 - disable, \r\n1 - enable'
         );
         $moduleConfigModifier->insert(
-            '/view/synchronization/revise_total/', 'show', '0', '0 - disable, \r\n1 - enable'
+            '/view/products_grid/',
+            'use_alternative_mysql_select',
+            '0',
+            '0 - disable, \r\n1 - enable'
+        );
+        $moduleConfigModifier->insert(
+            '/view/synchronization/revise_total/',
+            'show',
+            '0',
+            '0 - disable, \r\n1 - enable'
         );
         $moduleConfigModifier->insert('/view/ebay/notice/', 'disable_collapse', '0', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert(
-            '/view/ebay/template/selling_format/', 'show_tax_category', '0', '0 - disable, \r\n1 - enable'
+            '/view/ebay/template/selling_format/',
+            'show_tax_category',
+            '0',
+            '0 - disable, \r\n1 - enable'
         );
         $moduleConfigModifier->insert('/view/ebay/feedbacks/notification/', 'mode', '0', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert(
-            '/view/ebay/feedbacks/notification/', 'last_check', null, 'Date last check new buyers feedbacks'
+            '/view/ebay/feedbacks/notification/',
+            'last_check',
+            null,
+            'Date last check new buyers feedbacks'
         );
         $moduleConfigModifier->insert('/view/ebay/advanced/autoaction_popup/', 'shown', '0', null);
         $moduleConfigModifier->insert('/view/ebay/motors_epids_attribute/', 'listing_notification_shown', '0', null);
@@ -315,23 +418,39 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/qty/percentage/', 'rounding_greater', '0', null);
         $moduleConfigModifier->insert(
             '/order/magento/settings/',
-            'create_with_first_product_options_when_variation_unavailable', '1',
+            'create_with_first_product_options_when_variation_unavailable',
+            '1',
             '0 - disable, \r\n1 - enabled'
         );
         $moduleConfigModifier->insert(
-            '/magento/product/simple_type/', 'custom_types', '', 'Magento product custom types'
+            '/magento/product/simple_type/',
+            'custom_types',
+            '',
+            'Magento product custom types'
         );
         $moduleConfigModifier->insert(
-            '/magento/product/downloadable_type/', 'custom_types', '', 'Magento product custom types'
+            '/magento/product/downloadable_type/',
+            'custom_types',
+            '',
+            'Magento product custom types'
         );
         $moduleConfigModifier->insert(
-            '/magento/product/configurable_type/', 'custom_types', '', 'Magento product custom types'
+            '/magento/product/configurable_type/',
+            'custom_types',
+            '',
+            'Magento product custom types'
         );
         $moduleConfigModifier->insert(
-            '/magento/product/bundle_type/', 'custom_types', '', 'Magento product custom types'
+            '/magento/product/bundle_type/',
+            'custom_types',
+            '',
+            'Magento product custom types'
         );
         $moduleConfigModifier->insert(
-            '/magento/product/grouped_type/', 'custom_types', '', 'Magento product custom types'
+            '/magento/product/grouped_type/',
+            'custom_types',
+            '',
+            'Magento product custom types'
         );
         $moduleConfigModifier->insert('/health_status/notification/', 'mode', 1);
         $moduleConfigModifier->insert('/health_status/notification/', 'email', '');
@@ -347,37 +466,70 @@ class InstallData implements InstallDataInterface
         $synchronizationConfigModifier->insert('/global/', 'mode', '1', null);
         $synchronizationConfigModifier->insert('/global/magento_products/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/global/magento_products/deleted_products/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/global/magento_products/deleted_products/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/global/magento_products/deleted_products/', 'interval', '3600', 'in seconds'
+            '/global/magento_products/deleted_products/',
+            'interval',
+            '3600',
+            'in seconds'
         );
         $synchronizationConfigModifier->insert(
-            '/global/magento_products/deleted_products/', 'last_time', null, 'Last check time'
+            '/global/magento_products/deleted_products/',
+            'last_time',
+            null,
+            'Last check time'
         );
         $synchronizationConfigModifier->insert(
-            '/global/magento_products/added_products/', 'last_magento_product_id', null, null
+            '/global/magento_products/added_products/',
+            'last_magento_product_id',
+            null,
+            null
         );
         $synchronizationConfigModifier->insert(
-            '/global/magento_products/inspector/', 'mode', '0', '0 - disable, \r\n1 - enable'
+            '/global/magento_products/inspector/',
+            'mode',
+            '0',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/global/magento_products/inspector/', 'last_listing_product_id', null, null
+            '/global/magento_products/inspector/',
+            'last_listing_product_id',
+            null,
+            null
         );
         $synchronizationConfigModifier->insert(
-            '/global/magento_products/inspector/', 'min_interval_between_circles', '3600', 'in seconds'
+            '/global/magento_products/inspector/',
+            'min_interval_between_circles',
+            '3600',
+            'in seconds'
         );
         $synchronizationConfigModifier->insert(
-            '/global/magento_products/inspector/', 'max_count_times_for_full_circle', '50', null
+            '/global/magento_products/inspector/',
+            'max_count_times_for_full_circle',
+            '50',
+            null
         );
         $synchronizationConfigModifier->insert(
-            '/global/magento_products/inspector/', 'min_count_items_per_one_time', '100', null
+            '/global/magento_products/inspector/',
+            'min_count_items_per_one_time',
+            '100',
+            null
         );
         $synchronizationConfigModifier->insert(
-            '/global/magento_products/inspector/', 'max_count_items_per_one_time', '500', null
+            '/global/magento_products/inspector/',
+            'max_count_items_per_one_time',
+            '500',
+            null
         );
         $synchronizationConfigModifier->insert(
-            '/global/magento_products/inspector/', 'last_time_start_circle', null, null
+            '/global/magento_products/inspector/',
+            'last_time_start_circle',
+            null,
+            null
         );
         $synchronizationConfigModifier->insert('/global/processing/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert('/global/stop_queue/', 'mode', '1', '0 - disable, \r\n1 - enable');
@@ -385,33 +537,60 @@ class InstallData implements InstallDataInterface
         $synchronizationConfigModifier->insert('/global/stop_queue/', 'last_time', null, 'Last check time');
 
         $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/list/immediately_not_checked/', 'items_limit', '200', null
+            '/ebay/templates/synchronization/list/immediately_not_checked/',
+            'items_limit',
+            '200',
+            null
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/revise/total/', 'items_limit', '200', null
+            '/ebay/templates/synchronization/revise/total/',
+            'items_limit',
+            '200',
+            null
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/revise/need_synch/', 'items_limit', '200', null
+            '/ebay/templates/synchronization/revise/need_synch/',
+            'items_limit',
+            '200',
+            null
         );
 
         $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/list/immediately_not_checked/', 'items_limit', '200', null
+            '/amazon/templates/synchronization/list/immediately_not_checked/',
+            'items_limit',
+            '200',
+            null
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/revise/total/', 'items_limit', '200', null
+            '/amazon/templates/synchronization/revise/total/',
+            'items_limit',
+            '200',
+            null
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/revise/need_synch/', 'items_limit', '200', null
+            '/amazon/templates/synchronization/revise/need_synch/',
+            'items_limit',
+            '200',
+            null
         );
 
         $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/list/immediately_not_checked/', 'items_limit', '200', null
+            '/walmart/templates/synchronization/list/immediately_not_checked/',
+            'items_limit',
+            '200',
+            null
         );
         $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/revise/total/', 'items_limit', '200', null
+            '/walmart/templates/synchronization/revise/total/',
+            'items_limit',
+            '200',
+            null
         );
         $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/revise/need_synch/', 'items_limit', '200', null
+            '/walmart/templates/synchronization/revise/need_synch/',
+            'items_limit',
+            '200',
+            null
         );
 
         $this->getConnection()->insertMultiple($this->getFullTableName('wizard'), [
@@ -438,6 +617,14 @@ class InstallData implements InstallDataInterface
                 'step'     => null,
                 'type'     => 1,
                 'priority' => 4,
+            ],
+            [
+                'nick'     => 'migrationFromMagento1',
+                'view'     => '*',
+                'status'   => 2,
+                'step'     => null,
+                'type'     => 1,
+                'priority' => 1,
             ]
         ]);
     }
@@ -449,13 +636,17 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/component/ebay/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert(
             '/ebay/order/settings/marketplace_8/',
-            'use_first_street_line_as_company', '1',
+            'use_first_street_line_as_company',
+            '1',
             '0 - disable, \r\n1 - enable'
         );
         $moduleConfigModifier->insert('/ebay/connector/listing/', 'check_the_same_product_already_listed', '1', null);
         $moduleConfigModifier->insert('/component/ebay/variation/', 'mpn_can_be_changed', '0', null);
         $moduleConfigModifier->insert(
-            '/view/ebay/template/category/', 'use_last_specifics', '0', '0 - false, \r\n1 - true'
+            '/view/ebay/template/category/',
+            'use_last_specifics',
+            '0',
+            '0 - false, \r\n1 - true'
         );
         $moduleConfigModifier->insert('/ebay/motors/', 'epids_motor_attribute', null, null);
         $moduleConfigModifier->insert('/ebay/motors/', 'epids_uk_attribute', null, null);
@@ -472,11 +663,17 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/cron/task/ebay/actions/', 'last_access', null, 'date of last access');
         $moduleConfigModifier->insert('/cron/task/ebay/actions/', 'last_run', null, 'date of last run');
         $moduleConfigModifier->insert(
-            '/cron/task/ebay/update_accounts_preferences/', 'mode', 1, '0 - disable,\r\n1 - enable'
+            '/cron/task/ebay/update_accounts_preferences/',
+            'mode',
+            1,
+            '0 - disable,\r\n1 - enable'
         );
         $moduleConfigModifier->insert('/cron/task/ebay/update_accounts_preferences/', 'interval', 86400, 'in seconds');
         $moduleConfigModifier->insert(
-            '/cron/task/ebay/update_accounts_preferences/', 'last_run', null, 'date of last run'
+            '/cron/task/ebay/update_accounts_preferences/',
+            'last_run',
+            null,
+            'date of last run'
         );
         $moduleConfigModifier->insert('/ebay/in_store_pickup/', 'mode', 0, '0 - disable,\r\n1 - enable');
 
@@ -485,57 +682,102 @@ class InstallData implements InstallDataInterface
         $synchronizationConfigModifier->insert('/ebay/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert('/ebay/general/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/ebay/general/account_pickup_store/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/general/account_pickup_store/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/general/account_pickup_store/process/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/general/account_pickup_store/process/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/general/account_pickup_store/update/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/general/account_pickup_store/update/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert('/ebay/general/feedbacks/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/ebay/general/feedbacks/receive/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/general/feedbacks/receive/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert('/ebay/general/feedbacks/receive/', 'interval', '10800', 'in seconds');
         $synchronizationConfigModifier->insert(
-            '/ebay/general/feedbacks/receive/', 'last_time', null, 'date of last access'
+            '/ebay/general/feedbacks/receive/',
+            'last_time',
+            null,
+            'date of last access'
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/general/feedbacks/response/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/general/feedbacks/response/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert('/ebay/general/feedbacks/response/', 'interval', '10800', 'in seconds');
         $synchronizationConfigModifier->insert(
-            '/ebay/general/feedbacks/response/', 'last_time', null, 'date of last access'
+            '/ebay/general/feedbacks/response/',
+            'last_time',
+            null,
+            'date of last access'
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/general/feedbacks/response/', 'attempt_interval', '86400', 'in seconds'
+            '/ebay/general/feedbacks/response/',
+            'attempt_interval',
+            '86400',
+            'in seconds'
         );
         $synchronizationConfigModifier->insert('/ebay/listings_products/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/ebay/listings_products/remove_duplicates/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/listings_products/remove_duplicates/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/listings_products/update/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/listings_products/update/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert('/ebay/marketplaces/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/ebay/marketplaces/categories/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/marketplaces/categories/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/marketplaces/details/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/marketplaces/details/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/marketplaces/motors_epids/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/marketplaces/motors_epids/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/marketplaces/motors_ktypes/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/marketplaces/motors_ktypes/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert('/ebay/orders/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert('/ebay/orders/receive/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert('/ebay/orders/update/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/ebay/orders/cancellation/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/orders/cancellation/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert('/ebay/orders/cancellation/', 'interval', '86400', 'in seconds');
         $synchronizationConfigModifier->insert('/ebay/orders/cancellation/', 'last_time', null, 'date of last access');
@@ -543,43 +785,77 @@ class InstallData implements InstallDataInterface
         $synchronizationConfigModifier->insert('/ebay/orders/reserve_cancellation/', 'mode', '1', 'in seconds');
         $synchronizationConfigModifier->insert('/ebay/orders/reserve_cancellation/', 'interval', '3600', 'in seconds');
         $synchronizationConfigModifier->insert(
-            '/ebay/orders/reserve_cancellation/', 'last_time', null, 'Last check time'
+            '/ebay/orders/reserve_cancellation/',
+            'last_time',
+            null,
+            'Last check time'
         );
-        $synchronizationConfigModifier->insert('/ebay/orders/create_failed/', 'mode', '1',
-            '0 - disable, \r\n1 - enable');
+        $synchronizationConfigModifier->insert(
+            '/ebay/orders/create_failed/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
+        );
         $synchronizationConfigModifier->insert('/ebay/orders/create_failed/', 'interval', '300', 'in seconds');
         $synchronizationConfigModifier->insert('/ebay/orders/create_failed/', 'last_time', null, 'Last check time');
         $synchronizationConfigModifier->insert('/ebay/other_listings/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/ebay/other_listings/update/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/other_listings/update/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert('/ebay/other_listings/update/', 'interval', '3600', 'in seconds');
         $synchronizationConfigModifier->insert('/ebay/other_listings/sku/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert('/ebay/templates/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/templates/synchronization/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/list/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/templates/synchronization/list/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/relist/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/templates/synchronization/relist/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/revise/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/templates/synchronization/revise/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/revise/total/', 'last_listing_product_id', null, null
+            '/ebay/templates/synchronization/revise/total/',
+            'last_listing_product_id',
+            null,
+            null
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/revise/total/', 'start_date', null, null
+            '/ebay/templates/synchronization/revise/total/',
+            'start_date',
+            null,
+            null
         );
         $synchronizationConfigModifier->insert('/ebay/templates/synchronization/revise/total/', 'end_date', null, null);
         $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/stop/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/templates/synchronization/stop/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/ebay/templates/remove_unused/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/ebay/templates/remove_unused/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert('/ebay/templates/remove_unused/', 'interval', '86400', 'in seconds');
         $synchronizationConfigModifier->insert('/ebay/templates/remove_unused/', 'last_time', null, 'Last check time');
@@ -1479,13 +1755,15 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/component/amazon/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert(
             '/amazon/order/settings/marketplace_25/',
-            'use_first_street_line_as_company', '1',
+            'use_first_street_line_as_company',
+            '1',
             '0 - disable, \r\n1 - enable'
         );
         $moduleConfigModifier->insert('/amazon/repricing/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert(
             '/amazon/repricing/',
-            'base_url', 'https://repricer.m2epro.com/connector/m2epro/',
+            'base_url',
+            'https://repricer.m2epro.com/connector/m2epro/',
             'Repricing Tool base url'
         );
 
@@ -1496,116 +1774,216 @@ class InstallData implements InstallDataInterface
         $synchronizationConfigModifier->insert('/amazon/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert('/amazon/general/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/amazon/general/run_parent_processors/', 'interval', '300', 'in seconds'
+            '/amazon/general/run_parent_processors/',
+            'interval',
+            '300',
+            'in seconds'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/general/run_parent_processors/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/general/run_parent_processors/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/general/run_parent_processors/', 'last_time', null, 'Last check time'
+            '/amazon/general/run_parent_processors/',
+            'last_time',
+            null,
+            'Last check time'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/listings_products/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert('/amazon/listings_products/update/', 'interval', '86400', 'in seconds');
         $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/listings_products/update/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/', 'last_time', null, 'Last check time'
+            '/amazon/listings_products/update/',
+            'last_time',
+            null,
+            'Last check time'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/defected/', 'interval', '259200', 'in seconds'
+            '/amazon/listings_products/update/defected/',
+            'interval',
+            '259200',
+            'in seconds'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/defected/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/listings_products/update/defected/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/defected/', 'last_time', null, 'Last check time'
+            '/amazon/listings_products/update/defected/',
+            'last_time',
+            null,
+            'Last check time'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/blocked/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/listings_products/update/blocked/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/blocked/', 'interval', '3600', 'in seconds'
+            '/amazon/listings_products/update/blocked/',
+            'interval',
+            '3600',
+            'in seconds'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/blocked/', 'last_time', null, 'Last check time'
+            '/amazon/listings_products/update/blocked/',
+            'last_time',
+            null,
+            'Last check time'
         );
         $synchronizationConfigModifier->insert('/amazon/marketplaces/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/amazon/marketplaces/categories/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/marketplaces/categories/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/marketplaces/details/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/marketplaces/details/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/marketplaces/specifics/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/marketplaces/specifics/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert('/amazon/orders/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert('/amazon/orders/reserve_cancellation/', 'mode', '1', 'in seconds');
         $synchronizationConfigModifier->insert(
-            '/amazon/orders/reserve_cancellation/', 'interval', '3600', 'in seconds'
+            '/amazon/orders/reserve_cancellation/',
+            'interval',
+            '3600',
+            'in seconds'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/orders/reserve_cancellation/', 'last_time', null, 'Last check time'
+            '/amazon/orders/reserve_cancellation/',
+            'last_time',
+            null,
+            'Last check time'
         );
         $synchronizationConfigModifier->insert('/amazon/orders/update/', 'mode', '1', 'in seconds');
         $synchronizationConfigModifier->insert('/amazon/orders/update/', 'interval', 1800, 'in seconds');
         $synchronizationConfigModifier->insert(
-            '/amazon/orders/receive_details/', 'mode', 0, '0 - disable, \r\n1 - enable'
+            '/amazon/orders/receive_details/',
+            'mode',
+            0,
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert('/amazon/orders/receive_details/', 'interval', 7200, 'in seconds');
         $synchronizationConfigModifier->insert('/amazon/orders/receive_details/', 'last_time', null, 'Last check time');
-        $synchronizationConfigModifier->insert('/amazon/orders/create_failed/', 'mode', '1',
-            '0 - disable, \r\n1 - enable');
+        $synchronizationConfigModifier->insert(
+            '/amazon/orders/create_failed/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
+        );
         $synchronizationConfigModifier->insert('/amazon/orders/create_failed/', 'interval', 300, 'in seconds');
         $synchronizationConfigModifier->insert('/amazon/orders/create_failed/', 'last_time', null, 'Last check time');
         $synchronizationConfigModifier->insert('/amazon/other_listings/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/amazon/other_listings/update/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/other_listings/update/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert('/amazon/other_listings/update/', 'interval', '86400', 'in seconds');
         $synchronizationConfigModifier->insert('/amazon/other_listings/update/', 'last_time', null, 'Last check time');
         $synchronizationConfigModifier->insert(
-            '/amazon/other_listings/title/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/other_listings/title/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/other_listings/update/blocked/', 'last_time', null, 'Last check time'
+            '/amazon/other_listings/update/blocked/',
+            'last_time',
+            null,
+            'Last check time'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/other_listings/update/blocked/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/other_listings/update/blocked/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/other_listings/update/blocked/', 'interval', '3600', 'in seconds'
+            '/amazon/other_listings/update/blocked/',
+            'interval',
+            '3600',
+            'in seconds'
         );
         $synchronizationConfigModifier->insert('/amazon/templates/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/amazon/templates/repricing/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/templates/repricing/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/templates/synchronization/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/list/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/templates/synchronization/list/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/relist/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/templates/synchronization/relist/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/revise/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/templates/synchronization/revise/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/revise/total/', 'last_listing_product_id', null, null
+            '/amazon/templates/synchronization/revise/total/',
+            'last_listing_product_id',
+            null,
+            null
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/revise/total/', 'start_date', null, null
+            '/amazon/templates/synchronization/revise/total/',
+            'start_date',
+            null,
+            null
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/revise/total/', 'end_date', null, null
+            '/amazon/templates/synchronization/revise/total/',
+            'end_date',
+            null,
+            null
         );
         $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/stop/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/amazon/templates/synchronization/stop/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
 
         $this->getConnection()->insertMultiple($this->getFullTableName('marketplace'), [
@@ -1855,8 +2233,10 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/walmart/configuration/', 'option_images_url_mode', '0', null);
 
         $moduleConfigModifier->insert(
-            '/walmart/order/settings/marketplace_25/', 'use_first_street_line_as_company',
-            '1', '0 - disable, \r\n1 - enable'
+            '/walmart/order/settings/marketplace_25/',
+            'use_first_street_line_as_company',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
 
         $synchronizationConfigModifier = $this->getConfigModifier('synchronization');
@@ -1864,45 +2244,81 @@ class InstallData implements InstallDataInterface
         $synchronizationConfigModifier->insert('/walmart/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert('/walmart/general/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/walmart/general/run_parent_processors/', 'interval', '60', 'in seconds'
+            '/walmart/general/run_parent_processors/',
+            'interval',
+            '60',
+            'in seconds'
         );
         $synchronizationConfigModifier->insert(
-            '/walmart/general/run_parent_processors/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/walmart/general/run_parent_processors/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/walmart/general/run_parent_processors/', 'last_time', null, 'Last check time'
+            '/walmart/general/run_parent_processors/',
+            'last_time',
+            null,
+            'Last check time'
         );
 
         $synchronizationConfigModifier->insert(
-            '/walmart/listings_products/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/walmart/listings_products/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert('/walmart/listings_products/update/', 'interval', '86400', 'in seconds');
         $synchronizationConfigModifier->insert(
-            '/walmart/listings_products/update/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/walmart/listings_products/update/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/walmart/listings_products/update/', 'last_time', null, 'Last check time'
+            '/walmart/listings_products/update/',
+            'last_time',
+            null,
+            'Last check time'
         );
 
         $synchronizationConfigModifier->insert(
-            '/walmart/listings_products/update/blocked/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/walmart/listings_products/update/blocked/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/walmart/listings_products/update/blocked/', 'interval', '86400', 'in seconds'
+            '/walmart/listings_products/update/blocked/',
+            'interval',
+            '86400',
+            'in seconds'
         );
         $synchronizationConfigModifier->insert(
-            '/walmart/listings_products/update/blocked/', 'last_time', null, 'Last check time'
+            '/walmart/listings_products/update/blocked/',
+            'last_time',
+            null,
+            'Last check time'
         );
 
         $synchronizationConfigModifier->insert('/walmart/marketplaces/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/walmart/marketplaces/categories/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/walmart/marketplaces/categories/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/walmart/marketplaces/details/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/walmart/marketplaces/details/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/walmart/marketplaces/specifics/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/walmart/marketplaces/specifics/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
 
         $synchronizationConfigModifier->insert('/walmart/orders/', 'mode', '1', '0 - disable, \r\n1 - enable');
@@ -1928,26 +2344,44 @@ class InstallData implements InstallDataInterface
 
         $synchronizationConfigModifier->insert('/walmart/other_listings/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/walmart/other_listings/update/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/walmart/other_listings/update/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert('/walmart/other_listings/update/', 'interval', '60', 'in seconds');
         $synchronizationConfigModifier->insert('/walmart/other_listings/update/', 'last_time', null, 'Last check time');
 
         $synchronizationConfigModifier->insert('/walmart/templates/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/walmart/templates/synchronization/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/list/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/walmart/templates/synchronization/list/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/relist/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/walmart/templates/synchronization/relist/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/revise/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/walmart/templates/synchronization/revise/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
         $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/stop/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/walmart/templates/synchronization/stop/',
+            'mode',
+            '1',
+            '0 - disable, \r\n1 - enable'
         );
 
         $this->getConnection()->insertMultiple($this->getFullTableName('marketplace'), [
@@ -2053,7 +2487,7 @@ class InstallData implements InstallDataInterface
 
     private function getFullTableName($tableName)
     {
-        return $this->helperFactory->getObject('Module\Database\Tables')->getFullName($tableName);
+        return $this->helperFactory->getObject('Module_Database_Tables')->getFullName($tableName);
     }
 
     /**
@@ -2064,7 +2498,8 @@ class InstallData implements InstallDataInterface
     {
         $tableName = $configName . '_config';
 
-        return $this->modelFactory->getObject('Setup\Database\Modifier\Config',
+        return $this->modelFactory->getObject(
+            'Setup_Database_Modifier_Config',
             [
                 'installer' => $this->installer,
                 'tableName' => $tableName,

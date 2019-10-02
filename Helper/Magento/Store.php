@@ -8,11 +8,15 @@
 
 namespace Ess\M2ePro\Helper\Magento;
 
+/**
+ * Class Store
+ * @package Ess\M2ePro\Helper\Magento
+ */
 class Store extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    private $defaultWebsite = NULL;
-    private $defaultStoreGroup = NULL;
-    private $defaultStore = NULL;
+    private $defaultWebsite = null;
+    private $defaultStoreGroup = null;
+    private $defaultStore = null;
 
     protected $storeManager;
 
@@ -22,8 +26,7 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->storeManager = $storeManager;
         parent::__construct($helperFactory, $context);
     }
@@ -44,7 +47,7 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getDefaultWebsite()
     {
-        if (is_null($this->defaultWebsite)) {
+        if ($this->defaultWebsite === null) {
             $this->defaultWebsite = $this->storeManager->getWebsite(true);
         }
         return $this->defaultWebsite;
@@ -52,8 +55,7 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getDefaultStoreGroup()
     {
-        if (is_null($this->defaultStoreGroup)) {
-
+        if ($this->defaultStoreGroup === null) {
             $defaultWebsite = $this->getDefaultWebsite();
             $defaultStoreGroupId = $defaultWebsite->getDefaultGroupId();
 
@@ -64,8 +66,7 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getDefaultStore()
     {
-        if (is_null($this->defaultStore)) {
-
+        if ($this->defaultStore === null) {
             $defaultStoreGroup = $this->getDefaultStoreGroup();
             $defaultStoreId = $defaultStoreGroup->getDefaultStoreId();
 
@@ -117,7 +118,7 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
         try {
             $store = $this->storeManager->getStore($storeId);
         } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
-            return NULL;
+            return null;
         }
 
         return $this->storeManager->getWebsite($store->getWebsiteId());

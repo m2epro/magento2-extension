@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
+/**
+ * Class Order
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon
+ */
 class Order extends AbstractContainer
 {
     //########################################
@@ -29,7 +33,6 @@ class Order extends AbstractContainer
         $this->removeButton('save');
         $this->removeButton('edit');
         // ---------------------------------------
-
     }
 
     //########################################
@@ -75,14 +78,14 @@ HTML
 
         // ---------------------------------------
 
-        $this->setPageActionsBlock('Amazon\Order\PageActions');
+        $this->setPageActionsBlock('Amazon_Order_PageActions');
 
         return parent::_prepareLayout();
     }
 
     public function getGridHtml()
     {
-        $editItemBlock = $this->createBlock('Order\Item\Edit');
+        $editItemBlock = $this->createBlock('Order_Item_Edit');
 
         return
           $editItemBlock->toHtml()
@@ -92,7 +95,7 @@ HTML
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Controller\Adminhtml\Order\EditItem')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Controller\Adminhtml\Order\EditItem::class)
         );
 
         return parent::_beforeToHtml();

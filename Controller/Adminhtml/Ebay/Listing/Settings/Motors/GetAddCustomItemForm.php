@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
+/**
+ * Class GetAddCustomItemForm
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ */
 class GetAddCustomItemForm extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -15,7 +19,7 @@ class GetAddCustomItemForm extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\CustomForm $block */
-        $block = $this->createBlock('Ebay\Listing\View\Settings\Motors\Add\Item\CustomForm');
+        $block = $this->createBlock('Ebay_Listing_View_Settings_Motors_Add_Item_CustomForm');
 
         $this->setAjaxContent($block);
 

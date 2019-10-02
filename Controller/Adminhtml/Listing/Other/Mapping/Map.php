@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping;
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class Map
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping
+ */
 class Map extends Listing
 {
     protected $productFactory;
@@ -18,8 +22,7 @@ class Map extends Listing
     public function __construct(
         \Magento\Catalog\Model\ProductFactory $productFactory,
         Context $context
-    )
-    {
+    ) {
         $this->productFactory = $productFactory;
         parent::__construct($context);
     }
@@ -49,7 +52,9 @@ class Map extends Listing
         $productId || $productId = $tempData['entity_id'];
 
         $productOtherInstance = $this->parentFactory->getObjectLoaded(
-            $componentMode,'Listing\Other',$productOtherId
+            $componentMode,
+            'Listing\Other',
+            $productOtherId
         );
 
         $productOtherInstance->mapProduct($productId, \Ess\M2ePro\Helper\Data::INITIATOR_USER);

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Connector;
 
+/**
+ * Class Protocol
+ * @package Ess\M2ePro\Model\Connector
+ */
 abstract class Protocol extends \Ess\M2ePro\Model\AbstractModel
 {
     // ########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Renderer\Description;
 
+/**
+ * Class Gallery
+ * @package Ess\M2ePro\Block\Adminhtml\Renderer\Description
+ */
 class Gallery extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
 {
     private $galleryId;
@@ -30,7 +34,7 @@ class Gallery extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
 
     public function getGalleryId()
     {
-        if (is_null($this->galleryId)) {
+        if ($this->galleryId === null) {
             $this->galleryId = substr(sha1(
                 'gallery-'
                 . $this->getData('index_number')

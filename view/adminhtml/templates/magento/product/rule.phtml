@@ -1,5 +1,15 @@
 <?php
-$_element = $this->getElement();
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Magento\Backend\Block\Widget\Form\Renderer\Fieldset $block */
+
+$_element = $block->getElement();
 ?>
 
 <style>
@@ -37,8 +47,8 @@ $_element = $this->getElement();
         };
 
         window.<?php echo $_element->getHtmlId() ?> = new VarienRulesForm('<?php echo $_element->getHtmlId() ?>', '<?php /* @escapeNotVerified */ echo $block->getNewChildUrl() ?>');
-        <?php if ($_element->getReadonly()): ?>
-        <?php echo $_element->getHtmlId() ?>.setReadonly(true);
+        <?php if ($_element->getReadonly()) : ?>
+            <?php echo $_element->getHtmlId() ?>.setReadonly(true);
         <?php endif; ?>
 
     });

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
+/**
+ * Class AbstractWizard
+ * @package Ess\M2ePro\Block\Adminhtml\Wizard
+ */
 abstract class AbstractWizard extends AbstractContainer
 {
     protected function _prepareLayout()
@@ -21,7 +25,8 @@ abstract class AbstractWizard extends AbstractContainer
 
     protected function _beforeToHtml()
     {
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Module\Wizard'));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Helper\Module\Wizard::class));
 
         $this->jsUrl->addUrls([
             'setStep' => $this->getUrl('*/wizard_'.$this->getNick().'/setStep'),
@@ -31,10 +36,11 @@ abstract class AbstractWizard extends AbstractContainer
         $this->jsTranslator->addTranslations([
             'Step' => $this->__('Step'),
             'Note: If you close the Wizard, it never starts again. You will be required to set all Settings manually.
-            Press Cancel to continue working with Wizard.' => $this->__(
-                'Note: If you close the Wizard, it never starts again.
-                You will be required to set all Settings manually. Press Cancel to continue working with Wizard.'
-            ),
+            Press Cancel to continue working with Wizard.' =>
+                $this->__(
+                    'Note: If you close the Wizard, it never starts again.
+                    You will be required to set all Settings manually. Press Cancel to continue working with Wizard.'
+                ),
             'Completed' => $this->__('Completed'),
         ]);
 
@@ -44,7 +50,7 @@ abstract class AbstractWizard extends AbstractContainer
         );
         $status = $this->getHelper('Module\Wizard')->getStatus($this->getNick());
 
-        $this->js->add( <<<JS
+        $this->js->add(<<<JS
     require([
         'M2ePro/Wizard',
     ], function(){

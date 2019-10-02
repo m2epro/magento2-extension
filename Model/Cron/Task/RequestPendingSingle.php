@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\Cron\Task;
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Request\Pending\Single;
 
+/**
+ * Class RequestPendingSingle
+ * @package Ess\M2ePro\Model\Cron\Task
+ */
 class RequestPendingSingle extends AbstractModel
 {
     const NICK = 'request_pending_single';
@@ -47,7 +51,7 @@ class RequestPendingSingle extends AbstractModel
 
     private function removeOutdated()
     {
-        $requestPendingSingleCollection = $this->activeRecordFactory->getObject('Request\Pending\Single')
+        $requestPendingSingleCollection = $this->activeRecordFactory->getObject('Request_Pending_Single')
             ->getCollection();
         $requestPendingSingleCollection->setOnlyOutdatedItemsFilter();
         $requestPendingSingleCollection->addFieldToFilter('is_completed', 1);
@@ -62,7 +66,7 @@ class RequestPendingSingle extends AbstractModel
 
     private function completeExpired()
     {
-        $requestPendingSingleCollection = $this->activeRecordFactory->getObject('Request\Pending\Single')
+        $requestPendingSingleCollection = $this->activeRecordFactory->getObject('Request_Pending_Single')
             ->getCollection();
         $requestPendingSingleCollection->setOnlyExpiredItemsFilter();
         $requestPendingSingleCollection->addFieldToFilter('is_completed', 0);
@@ -71,18 +75,18 @@ class RequestPendingSingle extends AbstractModel
         $expiredRequestPendingSingleObjects = $requestPendingSingleCollection->getItems();
 
         foreach ($expiredRequestPendingSingleObjects as $requestPendingSingle) {
-            $this->completeRequest($requestPendingSingle, array(), array($this->getFailedMessage()->asArray()));
+            $this->completeRequest($requestPendingSingle, [], [$this->getFailedMessage()->asArray()]);
         }
     }
 
     private function executeInProgress()
     {
         $componentsInProgress = $this->activeRecordFactory
-            ->getObject('Request\Pending\Single')->getResource()->getComponentsInProgress();
+            ->getObject('Request_Pending_Single')->getResource()->getComponentsInProgress();
 
         foreach ($componentsInProgress as $component) {
             $requestPendingSingleCollection = $this->activeRecordFactory
-                ->getObject('Request\Pending\Single')->getCollection();
+                ->getObject('Request_Pending_Single')->getCollection();
             $requestPendingSingleCollection->addFieldToFilter('component', $component);
             $requestPendingSingleCollection->addFieldToFilter('is_completed', 0);
 
@@ -90,20 +94,22 @@ class RequestPendingSingle extends AbstractModel
             $serverHashesPacks = array_chunk($serverHashes, self::MAX_HASHES_PER_REQUEST);
 
             foreach ($serverHashesPacks as $serverHashesPack) {
-
                 $results = $this->getResultsFromServer($component, $serverHashesPack);
 
                 foreach ($serverHashesPack as $serverHash) {
                     /** @var \Ess\M2ePro\Model\Request\Pending\Single $requestPendingSingle */
                     $requestPendingSingle = $requestPendingSingleCollection->getItemByColumnValue(
-                        'server_hash', $serverHash
+                        'server_hash',
+                        $serverHash
                     );
 
                     if (!isset($results[$serverHash]['status']) ||
                         $results[$serverHash]['status'] == self::STATUS_NOT_FOUND
                     ) {
                         $this->completeRequest(
-                            $requestPendingSingle, array(), array($this->getFailedMessage()->asArray())
+                            $requestPendingSingle,
+                            [],
+                            [$this->getFailedMessage()->asArray()]
                         );
                         continue;
                     }
@@ -112,12 +118,12 @@ class RequestPendingSingle extends AbstractModel
                         continue;
                     }
 
-                    $data = array();
+                    $data = [];
                     if (isset($results[$serverHash]['data'])) {
                         $data = $results[$serverHash]['data'];
                     }
 
-                    $messages = array();
+                    $messages = [];
                     if (isset($results[$serverHash]['messages'])) {
                         $messages = $results[$serverHash]['messages'];
                     }
@@ -134,9 +140,13 @@ class RequestPendingSingle extends AbstractModel
     {
         $dispatcher = $this->modelFactory->getObject(ucfirst($component).'\Connector\Dispatcher');
         $connector = $dispatcher->getVirtualConnector(
-            'processing','get','results',
-            array('processing_ids' => $serverHashes),
-            'results', NULL, NULL
+            'processing',
+            'get',
+            'results',
+            ['processing_ids' => $serverHashes],
+            'results',
+            null,
+            null
         );
 
         $dispatcher->process($connector);
@@ -146,9 +156,10 @@ class RequestPendingSingle extends AbstractModel
 
     private function getFailedMessage()
     {
-        $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
-            'Request wait timeout exceeded.', Message::TYPE_ERROR
+            'Request wait timeout exceeded.',
+            Message::TYPE_ERROR
         );
 
         return $message;

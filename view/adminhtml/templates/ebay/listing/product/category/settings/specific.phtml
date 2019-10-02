@@ -1,20 +1,28 @@
 <?php
-    /** @var $this \Magento\Framework\View\TemplateEngine\Php  */
-    /** @var $block \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Specific */
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
 
-    $isCompactMode = $block->isCompactMode();
+// @codingStandardsIgnoreFile
 
-    $uniqueId      = $block->getUniqueId();
+/** @var $block \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Specific */
 
-    $requiredDetailsFields = $block->getRequiredDetailsFields();
+$isCompactMode = $block->isCompactMode();
+
+$uniqueId      = $block->getUniqueId();
+
+$requiredDetailsFields = $block->getRequiredDetailsFields();
 ?>
 
-<?php if (!$block->_isAjax): ?>
+<?php if (!$block->_isAjax) : ?>
     <?php echo '<div id="category_specific_box' . $uniqueId . '">'; ?>
 <?php endif; ?>
 
 <?php if ($requiredDetailsFields) {
-    $block->getChildBlock('messages')->addNotice($block->__('
+    $block->getChildBlock('messages')->addNotice($block->__(
+        '
                     You selected an eBay Category where %UPC% Value is required.<br/>
 
                     <strong>Note:</strong> also do not forget to check setting in eBay Catalog Identifiers block of
@@ -29,7 +37,6 @@
 <div id="<?php echo $uniqueId; ?>listing_category_specific_item_specifics_container">
 
     <?php if (!$isCompactMode) {
-
         $helpBlockContent = $block->__(
             '<p>One of the modes below can be used to set up Item Specifics for the eBay listings:</p>
             <ul>
@@ -49,7 +56,7 @@
             'content' => $helpBlockContent
         ])->toHtml();
 
-    ?>
+        ?>
 
     <div>
 
@@ -71,7 +78,7 @@
             <tr>
                 <td colspan="4" style="border-top: 0.1rem solid #d6d6d6 !important;">
 
-                    <?php if (!$isCompactMode): ?>
+                    <?php if (!$isCompactMode) : ?>
                         <div style="float: left; font-size: 12px; margin-top: 15px">
                             <?php echo $block->__('You can add your own Item Specific using a Magento Attribute or by specifying a custom Label and value for it manually.') ?>
                         </div>
@@ -85,7 +92,7 @@
             </tfoot>
         </table>
 
-    <?php if (!$isCompactMode): ?>
+    <?php if (!$isCompactMode) : ?>
     </div>
     <?php endif; ?>
 
@@ -136,7 +143,7 @@
                    href="javascript: void(0);"
                    style="display:none; float:right; font-size:11px;"
                    onclick="EbayListingProductCategorySettingsSpecific<?php echo $uniqueId; ?>Obj.addItemSpecificsCustomValueRow(this);">
-                   <?php echo $block->__('Add more'); ?>
+                    <?php echo $block->__('Add more'); ?>
                 </a>
             </div>
             <select id="<?php echo $uniqueId; ?>item_specifics_value_ebay_recommended_%i%" name="item_specifics_value_ebay_recommended_%i%" style="display: none; width: 100%;" class="M2ePro-required-when-visible item-specific admin__control-select "></select>
@@ -162,6 +169,6 @@
 
 </form>
 
-<?php if (!$block->_isAjax): ?>
+<?php if (!$block->_isAjax) : ?>
     <?php echo '</div>'; ?>
 <?php endif; ?>

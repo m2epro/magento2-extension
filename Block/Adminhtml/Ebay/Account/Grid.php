@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account;
 
 use Ess\M2ePro\Block\Adminhtml\Account\Grid as AccountGrid;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account
+ */
 class Grid extends AccountGrid
 {
     protected $ebayFactory;
@@ -19,8 +23,7 @@ class Grid extends AccountGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -38,28 +41,28 @@ class Grid extends AccountGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('id', array(
+        $this->addColumn('id', [
             'header'    => $this->__('ID'),
             'align'     => 'right',
             'width'     => '100px',
             'type'      => 'number',
             'index'     => 'id',
             'filter_index' => 'main_table.id'
-        ));
+        ]);
 
-        $this->addColumn('title', array(
+        $this->addColumn('title', [
             'header'    => $this->__('Title / Info'),
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'title',
             'escape'    => true,
             'filter_index' => 'main_table.title',
-            'frame_callback' => array($this, 'callbackColumnTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+        ]);
 
         $header = $this->__('Management');
-        $pickupStoreAccounts = $this->getHelper('Component\Ebay\PickupStore')->getEnabledAccounts();
+        $pickupStoreAccounts = $this->getHelper('Component_Ebay_PickupStore')->getEnabledAccounts();
         $isFeedbacksEnabled = $this->getHelper('View\Ebay')->isFeedbacksShouldBeShown();
         if (!empty($pickupStoreAccounts) && !$isFeedbacksEnabled) {
             $header = $this->__('My Stores');
@@ -71,16 +74,15 @@ class Grid extends AccountGrid
         $this->getHelper('Data\GlobalData')->setValue('feedbacks_enabled', $isFeedbacksEnabled);
 
         if ($this->getHelper('View\Ebay')->isFeedbacksShouldBeShown() || !empty($pickupStoreAccounts)) {
-
-            $this->addColumn('management', array(
+            $this->addColumn('management', [
                 'header'         => $header,
                 'align'          => 'center',
                 'width'          => '120px',
                 'type'           => 'text',
                 'sortable'       => false,
                 'filter'         => false,
-                'frame_callback' => array($this, 'callbackColumnManagement')
-            ));
+                'frame_callback' => [$this, 'callbackColumnManagement']
+            ]);
         }
 
         return parent::_prepareColumns();
@@ -169,7 +171,7 @@ HTML;
         }
 
         $modeWhere = '';
-        if (!is_null($mode)) {
+        if ($mode !== null) {
             $modeWhere = ' OR second_table.mode = ' . $mode;
         }
 

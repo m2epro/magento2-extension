@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View
+ */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
 {
     const VIEW_MODE_AMAZON          = 'amazon';
@@ -24,9 +28,10 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
 
     public function getTooltip()
     {
-        return $this->__(<<<HTML
+        return $this->__(
+            <<<HTML
 <p>There are several <strong>View Modes</strong> available for you:</p>
-            <ul>
+    <ul>
         <li><p><strong>Amazon</strong> - displays the Product details based on Amazon Item information.
             Using this Mode, you can filter the Product list by Amazon Item parameters, apply the mass Actions
             (i.e. List, Revise, Relist, Stop, etc.) to the Channel Items, manage ASIN/ISBN assigning.</p></li>
@@ -38,9 +43,9 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
         <li><p><strong>Magento</strong> - displays the Product details based on Magento Catalog data.
             Using this Mode, you can filter the Product list by Magento Product parameters
             (i.e. Magento QTY, Stock Status, etc).</p></li>
-            </ul>
-            <p>More detailed information you can find
-            <a href="%url%" target="_blank" class="external-link">here</a>.</p>
+    </ul>
+<p>More detailed information you can find
+<a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
             ,
             $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/nAYtAQ')

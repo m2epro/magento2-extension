@@ -11,6 +11,10 @@
  */
 namespace Ess\M2ePro\Model\Ebay\Template;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Model\Ebay\Template
+ */
 class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     const CATEGORY_MODE_NONE       = 0;
@@ -20,12 +24,12 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
-    private $marketplaceModel = NULL;
+    private $marketplaceModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Category\Source[]
      */
-    private $categorySourceModels = array();
+    private $categorySourceModels = [];
 
     protected $ebayFactory;
 
@@ -49,8 +53,7 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct(
             $modelFactory,
@@ -68,7 +71,7 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('ebay_template_category');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_category');
         return parent::save();
     }
 
@@ -85,10 +88,10 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             $specific->delete();
         }
 
-        $this->marketplaceModel = NULL;
-        $this->categorySourceModels = array();
+        $this->marketplaceModel = null;
+        $this->categorySourceModels = [];
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('ebay_template_category');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_category');
 
         return parent::delete();
     }
@@ -100,9 +103,10 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getMarketplace()
     {
-        if (is_null($this->marketplaceModel)) {
+        if ($this->marketplaceModel === null) {
             $this->marketplaceModel = $this->ebayFactory->getCachedObjectLoaded(
-                'Marketplace', $this->getMarketplaceId()
+                'Marketplace',
+                $this->getMarketplaceId()
             );
         }
 
@@ -131,7 +135,7 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             return $this->categorySourceModels[$productId];
         }
 
-        $this->categorySourceModels[$productId] = $this->modelFactory->getObject('Ebay\Template\Category\Source');
+        $this->categorySourceModels[$productId] = $this->modelFactory->getObject('Ebay_Template_Category_Source');
         $this->categorySourceModels[$productId]->setMagentoProduct($magentoProduct);
         $this->categorySourceModels[$productId]->setCategoryTemplate($this);
 
@@ -145,10 +149,14 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      * @param array $filters
      * @return array|\Ess\M2ePro\Model\Ebay\Template\Category\Specific[]
      */
-    public function getSpecifics($asObjects = false, array $filters = array())
+    public function getSpecifics($asObjects = false, array $filters = [])
     {
-        $specifics = $this->getRelatedSimpleItems('Ebay\Template\Category\Specific','template_category_id',
-                                                  $asObjects, $filters);
+        $specifics = $this->getRelatedSimpleItems(
+            'Ebay_Template_Category_Specific',
+            'template_category_id',
+            $asObjects,
+            $filters
+        );
 
         if ($asObjects) {
             /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Specific $specific */
@@ -197,12 +205,12 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getCategoryMainSource()
     {
-        return array(
+        return [
             'mode'      => $this->getData('category_main_mode'),
             'value'     => $this->getData('category_main_id'),
             'path'      => $this->getData('category_main_path'),
             'attribute' => $this->getData('category_main_attribute')
-        );
+        ];
     }
 
     /**
@@ -214,14 +222,14 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     {
         $src = $this->getCategoryMainSource();
 
-        $data = array(
+        $data = [
             'category_main_id'        => $src['value'],
             'category_main_mode'      => $src['mode'],
             'category_main_path'      => $src['path'],
             'category_main_attribute' => $src['attribute'],
-        );
+        ];
 
-        $this->getHelper('Component\Ebay\Category')->fillCategoriesPaths($data,$listing);
+        $this->getHelper('Component_Ebay_Category')->fillCategoriesPaths($data, $listing);
 
         $path = $data['category_main_path'];
         if ($withId && $src['mode'] == self::CATEGORY_MODE_EBAY) {
@@ -252,7 +260,7 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getUsedAttributes()
     {
-        $usedAttributes = array();
+        $usedAttributes = [];
 
         $categoryMainSrc = $this->getCategoryMainSource();
 
@@ -276,7 +284,7 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
         foreach ($data['specifics'] as &$specificData) {
             foreach ($specificData as &$value) {
-                !is_null($value) && !is_array($value) && $value = (string)$value;
+                $value !== null && !is_array($value) && $value = (string)$value;
             }
         }
 
@@ -288,12 +296,12 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getDefaultSettings()
     {
-        return array(
+        return [
             'category_main_id' => 0,
             'category_main_path' => '',
             'category_main_mode' => self::CATEGORY_MODE_EBAY,
             'category_main_attribute' => ''
-        );
+        ];
     }
 
     //########################################
@@ -319,12 +327,12 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'));
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id']);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################
@@ -342,5 +350,4 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     }
 
     //########################################
-
 }

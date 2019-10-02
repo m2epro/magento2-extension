@@ -10,18 +10,22 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
+/**
+ * Class GetForm
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback\Template
+ */
 class GetForm extends Account
 {
     public function execute()
     {
         $id = $this->getRequest()->getParam('id');
-        $model = $this->activeRecordFactory->getObjectLoaded('Ebay\Feedback\Template', $id, NULL, false);
+        $model = $this->activeRecordFactory->getObjectLoaded('Ebay_Feedback_Template', $id, null, false);
 
         $this->getHelper('Data\GlobalData')->setValue('edit_template', $model);
 
-        $form = $this->createBlock('Ebay\Account\Edit\Tabs\Feedback\Template\Form')->toHtml();
+        $form = $this->createBlock('Ebay_Account_Edit_Tabs_Feedback_Template_Form')->toHtml();
 
-        $title = is_null($model) ? $this->__('New Feedback Template') : $this->__('Editing Feedback Template');
+        $title = $model === null ? $this->__('New Feedback Template') : $this->__('Editing Feedback Template');
 
         $this->setJsonContent([
             'html' => $form,

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductTaxCode\Edit;
 
 use Ess\M2ePro\Model\Amazon\Template\ProductTaxCode;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductTaxCode\Edit
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     //########################################
@@ -19,18 +23,18 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         /** @var \Ess\M2ePro\Model\Amazon\Template\ShippingTemplate $model */
         $model = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
 
-        $formData = array();
+        $formData = [];
         if ($model) {
             $formData = $model->toArray();
         }
 
-        $default = array(
+        $default = [
             'title'         => '',
 
             'product_tax_code_mode' => '',
             'product_tax_code_value' => '',
             'product_tax_code_attribute' => '',
-        );
+        ];
 
         $formData = array_merge($default, $formData);
 
@@ -39,9 +43,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $attributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
 
-        $attributesByInputTypes = array(
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($attributes, array('text', 'select'))
-        );
+        $attributesByInputTypes = [
+            'text_select' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select'])
+        ];
 
         $form = $this->_formFactory->create([
             'data' => [
@@ -95,8 +99,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         foreach ($attributesByInputTypes['text_select'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['product_tax_code_mode'] == ProductTaxCode::PRODUCT_TAX_CODE_MODE_ATTRIBUTE
+            if ($formData['product_tax_code_mode'] == ProductTaxCode::PRODUCT_TAX_CODE_MODE_ATTRIBUTE
                 && $formData['product_tax_code_attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -118,7 +121,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $customValueOption['attrs']['selected'] = 'selected';
         }
 
-        $fieldset->addField('product_tax_code_mode',
+        $fieldset->addField(
+            'product_tax_code_mode',
             self::SELECT,
             [
                 'label' => $this->__('Tax Code'),
@@ -158,19 +162,21 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Amazon')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Template\ProductTaxCode')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\ProductTaxCode::class)
         );
 
         $this->jsUrl->addUrls([
             'formSubmit'    => $this->getUrl(
-                '*/amazon_template_productTaxCode/save', array('id' => $this->getRequest()->getParam('id'))
+                '*/amazon_template_productTaxCode/save',
+                ['id' => $this->getRequest()->getParam('id')]
             ),
             'formSubmitNew' => $this->getUrl('*/amazon_template_productTaxCode/save'),
             'deleteAction'  => $this->getUrl(
-                '*/amazon_template_productTaxCode/delete', array('id' => $this->getRequest()->getParam('id'))
+                '*/amazon_template_productTaxCode/delete',
+                ['id' => $this->getRequest()->getParam('id')]
             )
         ]);
 

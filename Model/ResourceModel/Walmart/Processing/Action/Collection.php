@@ -8,8 +8,11 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Processing\Action;
 
-class Collection
-    extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Walmart\Processing\Action
+ */
+class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     // ########################################
 
@@ -30,12 +33,12 @@ class Collection
      */
     public function setAccountsFilter(array $accounts)
     {
-        $accountIds = array();
+        $accountIds = [];
         foreach ($accounts as $account) {
             $accountIds[] = $account->getId();
         }
 
-        $this->addFieldToFilter('account_id', array('in' => $accountIds));
+        $this->addFieldToFilter('account_id', ['in' => $accountIds]);
 
         return $this;
     }
@@ -53,22 +56,22 @@ class Collection
     public function setRequestPendingSingleIdFilter($requestPendingSingleIds)
     {
         if (!is_array($requestPendingSingleIds)) {
-            $requestPendingSingleIds = array($requestPendingSingleIds);
+            $requestPendingSingleIds = [$requestPendingSingleIds];
         }
 
-        $this->addFieldToFilter('request_pending_single_id', array('in' => $requestPendingSingleIds));
+        $this->addFieldToFilter('request_pending_single_id', ['in' => $requestPendingSingleIds]);
         return $this;
     }
 
     public function setNotProcessedFilter()
     {
-        $this->addFieldToFilter('request_pending_single_id', array('null' => true));
+        $this->addFieldToFilter('request_pending_single_id', ['null' => true]);
         return $this;
     }
 
     public function setInProgressFilter()
     {
-        $this->addFieldToFilter('request_pending_single_id', array('notnull' => true));
+        $this->addFieldToFilter('request_pending_single_id', ['notnull' => true]);
         return $this;
     }
 
@@ -77,7 +80,7 @@ class Collection
         $dateTime = new \DateTime('now', new \DateTimeZone('UTC'));
         $dateTime->modify('- '.(int)$minutes.' minutes');
 
-        $this->addFieldToFilter('start_date', array('lt' => $dateTime->format('Y-m-d H:i:s')));
+        $this->addFieldToFilter('start_date', ['lt' => $dateTime->format('Y-m-d H:i:s')]);
 
         return $this;
     }

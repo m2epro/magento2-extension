@@ -9,6 +9,10 @@ namespace Ess\M2ePro\Setup\Update\y19_m04;
 
 use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
 
+/**
+ * Class WalmartOptionImagesURL
+ * @package Ess\M2ePro\Setup\Update\y19_m04
+ */
 class WalmartOptionImagesURL extends AbstractFeature
 {
     //########################################

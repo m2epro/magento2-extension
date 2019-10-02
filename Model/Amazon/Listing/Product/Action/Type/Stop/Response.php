@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Stop;
 
+/**
+ * Class Response
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Stop
+ */
 class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
 {
     //########################################
@@ -15,9 +19,9 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
     /**
      * @param array $params
      */
-    public function processSuccess($params = array())
+    public function processSuccess($params = [])
     {
-        $data = array();
+        $data = [];
 
         $data = $this->appendStatusChangerValue($data);
         $data = $this->appendQtyValues($data);

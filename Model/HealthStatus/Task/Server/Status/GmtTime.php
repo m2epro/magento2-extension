@@ -12,6 +12,10 @@ use Ess\M2ePro\Model\Exception;
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 
+/**
+ * Class GmtTime
+ * @package Ess\M2ePro\Model\HealthStatus\Task\Server\Status
+ */
 class GmtTime extends IssueType
 {
     const DIFF_CRITICAL_LEVEL = 30;
@@ -27,7 +31,7 @@ class GmtTime extends IssueType
         \Ess\M2ePro\Model\HealthStatus\Task\Result\Factory $resultFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory);
         $this->resultFactory = $resultFactory;
     }
@@ -37,7 +41,7 @@ class GmtTime extends IssueType
     public function process()
     {
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('server','get','gmtTime');
+        $connectorObj = $dispatcherObject->getVirtualConnector('server', 'get', 'gmtTime');
 
         $requestTimeStart = microtime(true);
         $dispatcherObject->process($connectorObj);
@@ -60,10 +64,9 @@ class GmtTime extends IssueType
         $result->setTaskResult(TaskResult::STATE_SUCCESS);
 
         if ($timeDifference >= self::DIFF_WARNING_LEVEL) {
-
             $result->setTaskResult(TaskResult::STATE_WARNING);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-<<<HTML
+            <<<HTML
 The Time value which is used by your Server and in your Magento is different from the actual Time value by
 several seconds. Your current Time value by UTC <b>%time%</b> is different from the reference one,
 that might lead to the further issues with the data updating on Channels.<br>
@@ -75,10 +78,9 @@ HTML
         }
 
         if ($timeDifference >= self::DIFF_CRITICAL_LEVEL) {
-
             $result->setTaskResult(TaskResult::STATE_CRITICAL);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-<<<HTML
+            <<<HTML
 The Time value which is used by your Server and in your Magento is different from the actual Time value that might
 be a sequence of incorrect configurations provided.
 In order to correctly synchronize/update your data on Channels, the Time value specified in your system should be

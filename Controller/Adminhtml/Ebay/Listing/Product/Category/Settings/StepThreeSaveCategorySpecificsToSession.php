@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
 
 use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
+/**
+ * Class StepThreeSaveCategorySpecificsToSession
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
+ */
 class StepThreeSaveCategorySpecificsToSession extends Settings
 {
 
@@ -24,7 +28,7 @@ class StepThreeSaveCategorySpecificsToSession extends Settings
 
         $sessionSpecificsData[$category] = array_merge(
             $sessionSpecificsData[$category],
-            array('specifics' => $categorySpecificsData['specifics'])
+            ['specifics' => $categorySpecificsData['specifics']]
         );
 
         $this->setSessionValue('specifics', $sessionSpecificsData);

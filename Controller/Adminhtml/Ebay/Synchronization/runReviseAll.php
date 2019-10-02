@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Settings;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class RunReviseAll
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization
+ */
 class RunReviseAll extends Settings
 {
     /** @var  \Magento\Framework\Stdlib\DateTime\TimezoneInterface */
@@ -22,8 +26,7 @@ class RunReviseAll extends Settings
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         Context $context
-    )
-    {
+    ) {
         $this->localeDate = $localeDate;
         parent::__construct($ebayFactory, $context);
     }
@@ -34,18 +37,22 @@ class RunReviseAll extends Settings
     {
         $startDate = $this->getHelper('Data')->getCurrentGmtDate();
 
-        $synchConfig = $this->modelFactory->getObject('Config\Manager\Synchronization');
+        $synchConfig = $this->modelFactory->getObject('Config_Manager_Synchronization');
 
         $synchConfig->setGroupValue(
-            '/ebay/templates/synchronization/revise/total/', 'start_date', $startDate
+            '/ebay/templates/synchronization/revise/total/',
+            'start_date',
+            $startDate
         );
         $synchConfig->setGroupValue(
-            '/ebay/templates/synchronization/revise/total/', 'last_listing_product_id', 0
+            '/ebay/templates/synchronization/revise/total/',
+            'last_listing_product_id',
+            0
         );
 
-        $this->setJsonContent(array(
+        $this->setJsonContent([
             'start_date' => $this->localeDate->formatDate($startDate, \IntlDateFormatter::MEDIUM)
-        ));
+        ]);
     }
 
     //########################################

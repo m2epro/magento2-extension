@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Order\View;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Order\View
+ */
 class Item extends AbstractGrid
 {
     /** @var $order \Ess\M2ePro\Model\Order */
@@ -30,11 +34,11 @@ class Item extends AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->productModel = $productModel;
         $this->resourceConnection = $resourceConnection;
         $this->walmartFactory = $walmartFactory;
+
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -60,95 +64,74 @@ class Item extends AbstractGrid
         $this->order = $this->getHelper('Data\GlobalData')->getValue('order');
     }
 
+    //########################################
+
     protected function _prepareCollection()
     {
-        $collection = $this->walmartFactory->getObject('Order\Item')
-            ->getCollection()
+        $collection = $this->walmartFactory->getObject('Order\Item')->getCollection()
             ->addFieldToFilter('order_id', $this->order->getId());
 
-        $where = [
-            'cisi.product_id = `main_table`.product_id',
-            'cisi.stock_id = '   . $this->getHelper('Magento\Stock')->getStockId($this->order->getStore()),
-            'cisi.website_id = ' . $this->getHelper('Magento\Stock')->getWebsiteId($this->order->getStore())
-        ];
-
-        $collection->getSelect()->joinLeft(
-            array(
-                'cisi' => $this->getHelper('Module\Database\Structure')
-                    ->getTableNameWithPrefix('cataloginventory_stock_item')
-            ),
-            sprintf("(%s)", implode(' AND ', $where)),
-            array('is_in_stock')
-        );
-
         $this->setCollection($collection);
-
         return parent::_prepareCollection();
     }
 
     protected function _prepareColumns()
     {
-        $this->addColumn('products', array(
+        $this->addColumn('products', [
             'header'    => $this->__('Product'),
             'align'     => 'left',
             'width'     => '*',
             'index'     => 'product_id',
-            'frame_callback' => array($this, 'callbackColumnProduct')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProduct']
+        ]);
 
-        $this->addColumn('stock_availability', array(
+        $this->addColumn('stock_availability', [
             'header'=> $this->__('Stock Availability'),
             'width' => '100px',
-            'index' => 'is_in_stock',
-            'filter_index' => 'cisi.is_in_stock',
-            'type'  => 'options',
             'sortable'  => false,
-            'options' => array(
-                1 => $this->__('In Stock'),
-                0 => $this->__('Out of Stock')
-            ),
-            'frame_callback' => array($this, 'callbackColumnStockAvailability')
-        ));
+            'frame_callback' => [$this, 'callbackColumnIsInStock']
+        ]);
 
-        $this->addColumn('original_price', array(
+        $this->addColumn('original_price', [
             'header'    => $this->__('Original Price'),
             'align'     => 'left',
             'width'     => '80px',
             'filter'    => false,
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnOriginalPrice')
-        ));
+            'frame_callback' => [$this, 'callbackColumnOriginalPrice']
+        ]);
 
-        $this->addColumn('qty', array(
+        $this->addColumn('qty', [
             'header'    => $this->__('QTY'),
             'align'     => 'left',
             'width'     => '80px',
-            'index'     => 'qty'
-        ));
+            'index'     => 'qty',
+            'frame_callback' => [$this, 'callbackColumnQty']
+        ]);
 
-        $this->addColumn('price', array(
+        $this->addColumn('price', [
             'header'    => $this->__('Price'),
             'align'     => 'left',
             'width'     => '80px',
             'index'     => 'price',
-            'frame_callback' => array($this, 'callbackColumnPrice')
-        ));
+            'frame_callback' => [$this, 'callbackColumnPrice']
+        ]);
 
-        $this->addColumn('tax_percent', array(
+        $this->addColumn('tax_percent', [
             'header'    => $this->__('Tax Percent'),
             'align'     => 'left',
             'width'     => '80px',
             'filter'    => false,
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnTaxPercent')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTaxPercent']
+        ]);
 
-        $this->addColumn('row_total', array(
+        $this->addColumn('row_total', [
             'header'    => $this->__('Row Total'),
             'align'     => 'left',
             'width'     => '80px',
-            'frame_callback' => array($this, 'callbackColumnRowTotal')
-        ));
+            'frame_callback' => [$this, 'callbackColumnRowTotal']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -157,7 +140,7 @@ class Item extends AbstractGrid
 
     protected function _afterLoadCollection()
     {
-        $cache = array();
+        $cache = [];
         $skus = [];
 
         foreach ($this->getCollection()->getItems() as $item) {
@@ -173,7 +156,7 @@ class Item extends AbstractGrid
             '*'
         );
 
-        $collection->addFieldToFilter('sku', array('in' => $skus));
+        $collection->addFieldToFilter('sku', ['in' => $skus]);
         $collection->addFieldToFilter('l.account_id', $this->order->getAccountId());
         $collection->addFieldToFilter('l.marketplace_id', $this->order->getMarketplaceId());
 
@@ -192,7 +175,7 @@ class Item extends AbstractGrid
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection $collection */
         $collection = $this->walmartFactory->getObject('Listing\Other')->getCollection();
 
-        $collection->addFieldToFilter('sku', array('in' => $skus));
+        $collection->addFieldToFilter('sku', ['in' => $skus]);
         $collection->addFieldToFilter('account_id', $this->order->getAccountId());
         $collection->addFieldToFilter('marketplace_id', $this->order->getMarketplaceId());
 
@@ -238,7 +221,8 @@ HTML;
         if (!empty($this->itemSkuToWalmartItemCache[$row->getSku()])) {
             $itemLinkText = $this->__('View on Walmart');
             $itemUrl = $this->getHelper('Component\Walmart')->getItemUrl(
-                $this->itemSkuToWalmartItemCache[$row->getSku()], $this->order->getData('marketplace_id')
+                $this->itemSkuToWalmartItemCache[$row->getSku()],
+                $this->order->getData('marketplace_id')
             );
 
             $walmartLink = <<<HTML
@@ -248,8 +232,12 @@ HTML;
 
         $productLink = '';
         if ($productId = $row->getData('product_id')) {
-            $productUrl = $this->getUrl('catalog/product/edit', array('id' => $productId));
-            $productLink = ' | <a href="'.$productUrl.'" target="_blank">'.$this->__('View').'</a>';
+            $productUrl = $this->getUrl('catalog/product/edit', [
+                'id'    => $productId,
+                'store' => $row->getOrder()->getStoreId()
+            ]);
+            !empty($walmartLink) && $walmartLink .= ' | ';
+            $productLink = '<a href="'.$productUrl.'" target="_blank">'.$this->__('View').'</a>';
         }
 
         $orderItemId = (int)$row->getId();
@@ -257,7 +245,6 @@ HTML;
 
         $editLink = '';
         if (!$row->getProductId() || $row->getMagentoProduct()->isProductWithVariations()) {
-
             if (!$row->getProductId()) {
                 $action = $this->__('Map to Magento Product');
             } else {
@@ -294,17 +281,19 @@ HTML;
 HTML;
     }
 
-    public function callbackColumnStockAvailability($value, $row, $column, $isExport)
+    public function callbackColumnIsInStock($value, $row, $column, $isExport)
     {
-        if (is_null($row->getData('is_in_stock'))) {
+        /**@var \Ess\M2ePro\Model\Order\Item $row */
+
+        if ($row->getMagentoProduct() === null) {
             return $this->__('N/A');
         }
 
-        if ((int)$row->getData('is_in_stock') <= 0) {
-            return '<span style="color: red;">'.$value.'</span>';
+        if (!$row->getMagentoProduct()->isStockAvailability()) {
+            return '<span style="color: red;">'.$this->__('Out Of Stock').'</span>';
         }
 
-        return $value;
+        return $this->__('In Stock');
     }
 
     public function callbackColumnOriginalPrice($value, $row, $column, $isExport)
@@ -319,6 +308,11 @@ HTML;
         return $formattedPrice;
     }
 
+    public function callbackColumnQty($value, $row, $column, $isExport)
+    {
+        return $row->getChildObject()->getData('qty');
+    }
+
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
         $currency = $row->getChildObject()->getData('currency');
@@ -327,7 +321,8 @@ HTML;
         }
 
         return $this->modelFactory->getObject('Currency')->formatPrice(
-            $currency, $row->getChildObject()->getData('price')
+            $currency,
+            $row->getChildObject()->getData('price')
         );
     }
 
@@ -355,7 +350,8 @@ HTML;
         $price = $aOrderItem->getPrice();
 
         return $this->modelFactory->getObject('Currency')->formatPrice(
-            $currency, $price * $aOrderItem->getQtyPurchased()
+            $currency,
+            $price * $aOrderItem->getQtyPurchased()
         );
     }
 
@@ -366,7 +362,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/orderItemGrid', array('_current' => true));
+        return $this->getUrl('*/*/orderItemGrid', ['_current' => true]);
     }
 
     //########################################

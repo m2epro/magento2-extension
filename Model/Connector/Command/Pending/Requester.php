@@ -8,23 +8,27 @@
 
 namespace Ess\M2ePro\Model\Connector\Command\Pending;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Connector\Command\Pending
+ */
 abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single $processingRunner */
-    protected $processingRunner = NULL;
+    protected $processingRunner = null;
 
-    protected $processingServerHash = NULL;
+    protected $processingServerHash = null;
 
     /** @var \Ess\M2ePro\Model\Connector\Command\Pending\Responser $responser */
-    protected $responser = NULL;
+    protected $responser = null;
 
-    protected $preparedResponseData = NULL;
+    protected $preparedResponseData = null;
 
     // ########################################
 
     protected function getProcessingRunner()
     {
-        if (!is_null($this->processingRunner)) {
+        if ($this->processingRunner !== null) {
             return $this->processingRunner;
         }
 
@@ -40,14 +44,14 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\AbstractMod
 
     protected function getResponser()
     {
-        if (!is_null($this->responser)) {
+        if ($this->responser !== null) {
             return $this->responser;
         }
 
-        return $this->responser = $this->modelFactory->getObject($this->getResponserModelName(), array(
+        return $this->responser = $this->modelFactory->getObject($this->getResponserModelName(), [
             'params' => $this->getResponserParams(),
             'response' => $this->getResponse()
-        ));
+        ]);
     }
 
     // ########################################
@@ -93,21 +97,24 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\AbstractMod
 
     // ########################################
 
-    public function eventBeforeExecuting() {}
+    public function eventBeforeExecuting()
+    {
+        return null;
+    }
 
     // ########################################
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Connector\Command\Pending\Processing\Runner\Single';
+        return 'Connector_Command_Pending_Processing_Runner_Single';
     }
 
     protected function getProcessingParams()
     {
-        return array(
+        return [
             'component'   => $this->getProtocol()->getComponent(),
             'server_hash' => $this->processingServerHash,
-        );
+        ];
     }
 
     // -----------------------------------------

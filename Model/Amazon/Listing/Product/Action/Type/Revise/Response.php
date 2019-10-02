@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise;
 
 use \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Qty as RequestQty;
 
+/**
+ * Class Response
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise
+ */
 class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
 {
     //########################################
@@ -17,13 +21,13 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
     /**
      * @param array $params
      */
-    public function processSuccess($params = array())
+    public function processSuccess($params = [])
     {
-        $data = array();
+        $data = [];
 
         if ($this->getConfigurator()->isDefaultMode()) {
             $data['synch_status'] = \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_OK;
-            $data['synch_reasons'] = NULL;
+            $data['synch_reasons'] = null;
         }
 
         if ($this->getConfigurator()->isDetailsAllowed() || $this->getConfigurator()->isImagesAllowed()) {
@@ -59,13 +63,11 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $sequenceString = '';
 
         if ($this->getConfigurator()->isQtyAllowed()) {
-
             $params = $this->getParams();
 
             if (!empty($params['switch_to']) &&
                 $params['switch_to'] ===
                     \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Qty::FULFILLMENT_MODE_AFN) {
-
                 // M2ePro\TRANSLATIONS
                 // Item was successfully switched to AFN
                 return 'Item was successfully switched to AFN';
@@ -74,7 +76,6 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
             if (!empty($params['switch_to']) &&
                 $params['switch_to'] ===
                     \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Qty::FULFILLMENT_MODE_MFN) {
-
                 // M2ePro\TRANSLATIONS
                 // Item was successfully switched to MFN
                 return 'Item was successfully switched to MFN';
@@ -117,7 +118,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
         // M2ePro\TRANSLATIONS
         // was successfully Revised
-        return ucfirst(trim($sequenceString,',')).' was successfully Revised';
+        return ucfirst(trim($sequenceString, ',')).' was successfully Revised';
     }
 
     //########################################
@@ -128,7 +129,6 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
         if (!empty($params['switch_to']) &&
             $params['switch_to'] === RequestQty::FULFILLMENT_MODE_AFN) {
-
             $data['is_afn_channel'] = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_YES;
             $data['online_qty'] = null;
             $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
@@ -138,7 +138,6 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
         if (!empty($params['switch_to']) &&
             $params['switch_to'] === RequestQty::FULFILLMENT_MODE_MFN) {
-
             $data['is_afn_channel'] = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_NO;
         }
 

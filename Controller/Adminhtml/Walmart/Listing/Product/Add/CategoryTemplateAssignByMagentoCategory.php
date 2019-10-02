@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
+/**
+ * Class CategoryTemplateAssignByMagentoCategory
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+ */
 class CategoryTemplateAssignByMagentoCategory extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
     //########################################
 
     public function execute()
     {
-        $listingProductsIds = $this->getListing()->getSetting('additional_data','adding_listing_products_ids');
+        $listingProductsIds = $this->getListing()->getSetting('additional_data', 'adding_listing_products_ids');
 
         if (empty($listingProductsIds)) {
             $this->_forward('index');
@@ -26,7 +30,7 @@ class CategoryTemplateAssignByMagentoCategory extends \Ess\M2ePro\Controller\Adm
         $this->getHelper('Data\GlobalData')->setValue('listing_for_products_add', $listing);
 
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $grid = $this->createBlock('Walmart\Listing\Product\Add\CategoryTemplate\Category\Grid');
+            $grid = $this->createBlock('Walmart_Listing_Product_Add_CategoryTemplate_Category_Grid');
             $this->setAjaxContent($grid);
 
             return $this->getResult();
@@ -37,7 +41,7 @@ class CategoryTemplateAssignByMagentoCategory extends \Ess\M2ePro\Controller\Adm
             $this->__('Set Category Policy')
         );
 
-        $this->addContent($this->createBlock('Walmart\Listing\Product\Add\CategoryTemplate\Category'));
+        $this->addContent($this->createBlock('Walmart_Listing_Product_Add_CategoryTemplate_Category'));
 
         return $this->getResult();
     }

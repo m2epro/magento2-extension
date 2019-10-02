@@ -11,6 +11,10 @@
  */
 namespace Ess\M2ePro\Model\Amazon\Order;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Model\Amazon\Order
+ */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
     // M2ePro\TRANSLATIONS
@@ -23,7 +27,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     private $productFactory;
 
     /** @var $channelItem \Ess\M2ePro\Model\Amazon\Item */
-    private $channelItem = NULL;
+    private $channelItem = null;
 
     //########################################
 
@@ -39,8 +43,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->productBuilderFactory = $productBuilderFactory;
         $this->productFactory = $productFactory;
         parent::__construct(
@@ -68,7 +71,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
 
     public function getProxy()
     {
-        return $this->modelFactory->getObject('Amazon\Order\Item\Proxy', [
+        return $this->modelFactory->getObject('Amazon_Order_Item_ProxyObject', [
             'item' => $this
         ]);
     }
@@ -98,7 +101,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
      */
     public function getChannelItem()
     {
-        if (is_null($this->channelItem)) {
+        if ($this->channelItem === null) {
             $this->channelItem = $this->activeRecordFactory->getObject('Amazon\Item')->getCollection()
                 ->addFieldToFilter('account_id', $this->getParentObject()->getOrder()->getAccountId())
                 ->addFieldToFilter('marketplace_id', $this->getParentObject()->getOrder()->getMarketplaceId())
@@ -107,7 +110,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
                 ->getFirstItem();
         }
 
-        return !is_null($this->channelItem->getId()) ? $this->channelItem : NULL;
+        return $this->channelItem->getId() !== null ? $this->channelItem : null;
     }
 
     //########################################
@@ -231,8 +234,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     {
         $channelItem = $this->getChannelItem();
 
-        if (is_null($channelItem)) {
-            return array();
+        if ($channelItem === null) {
+            return [];
         }
 
         return $channelItem->getVariationProductOptions();
@@ -245,8 +248,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     {
         $channelItem = $this->getChannelItem();
 
-        if (is_null($channelItem)) {
-            return array();
+        if ($channelItem === null) {
+            return [];
         }
 
         return $channelItem->getVariationChannelOptions();
@@ -261,7 +264,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     {
         // Item was listed by M2E
         // ---------------------------------------
-        if (!is_null($this->getChannelItem())) {
+        if ($this->getChannelItem() !== null) {
             return $this->getAmazonAccount()->isMagentoOrdersListingsStoreCustom()
                 ? $this->getAmazonAccount()->getMagentoOrdersListingsStoreId()
                 : $this->getChannelItem()->getStoreId();
@@ -289,11 +292,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     {
         $channelItem = $this->getChannelItem();
 
-        if (!is_null($channelItem) && !$this->getAmazonAccount()->isMagentoOrdersListingsModeEnabled()) {
+        if ($channelItem !== null && !$this->getAmazonAccount()->isMagentoOrdersListingsModeEnabled()) {
             return false;
         }
 
-        if (is_null($channelItem) && !$this->getAmazonAccount()->isMagentoOrdersListingsOtherModeEnabled()) {
+        if ($channelItem === null && !$this->getAmazonAccount()->isMagentoOrdersListingsOtherModeEnabled()) {
             return false;
         }
 
@@ -310,7 +313,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     {
         // Item was listed by M2E
         // ---------------------------------------
-        if (!is_null($this->getChannelItem())) {
+        if ($this->getChannelItem() !== null) {
             return $this->getChannelItem()->getProductId();
         }
         // ---------------------------------------
@@ -327,10 +330,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
                     ->getFirstItem();
 
             if ($product->getId()) {
-                $this->_eventManager->dispatch('ess_associate_amazon_order_item_to_product', array(
+                $this->_eventManager->dispatch('ess_associate_amazon_order_item_to_product', [
                     'product'    => $product,
                     'order_item' => $this->getParentObject(),
-                ));
+                ]);
 
                 return $product->getId();
             }
@@ -339,10 +342,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
 
         $product = $this->createProduct();
 
-        $this->_eventManager->dispatch('ess_associate_amazon_order_item_to_product', array(
+        $this->_eventManager->dispatch('ess_associate_amazon_order_item_to_product', [
             'product'    => $product,
             'order_item' => $this->getParentObject(),
-        ));
+        ]);
 
         return $product->getId();
     }
@@ -369,7 +372,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
             $hash = $this->getHelper('Data')->generateUniqueHash($sku, $hashLength);
 
             $isSaveStart = (bool)$this->getHelper('Module')->getConfig()->getGroupValue(
-                '/order/magento/settings/', 'save_start_of_long_sku_for_new_product'
+                '/order/magento/settings/',
+                'save_start_of_long_sku_for_new_product'
             );
 
             if ($isSaveStart) {
@@ -379,7 +383,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
             }
         }
 
-        $productData = array(
+        $productData = [
             'title'             => $this->getTitle(),
             'sku'               => $sku,
             'description'       => '',
@@ -388,7 +392,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
             'price'             => $this->getPrice(),
             'store_id'          => $storeId,
             'tax_class_id'      => $this->getAmazonAccount()->getMagentoOrdersListingsOtherProductTaxClassId()
-        );
+        ];
 
         // Create product in magento
         // ---------------------------------------
@@ -398,7 +402,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         // ---------------------------------------
 
         $this->getParentObject()->getOrder()->addSuccessLog(
-            'Product for Amazon Item "%title%" was Created in Magento Catalog.', array('!title' => $this->getTitle())
+            'Product for Amazon Item "%title%" was Created in Magento Catalog.',
+            ['!title' => $this->getTitle()]
         );
 
         return $productBuilder->getProduct();

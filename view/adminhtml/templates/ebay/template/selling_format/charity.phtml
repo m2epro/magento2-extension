@@ -1,4 +1,12 @@
 <?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
 /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity $block */
 
 $block->css->add("
@@ -64,7 +72,7 @@ $block->css->add("
         <td>
             <select name="selling_format[charity][marketplace_id][%i%]" class="admin__control-select required-entry charity-marketplace_id" onchange="EbayTemplateSellingFormatObj.charityMarketplaceChange(this)">
                 <option class="empty"></option>
-                <?php foreach ($block->getEnabledMarketplaces() as $marketplace): ?>
+                <?php foreach ($block->getEnabledMarketplaces() as $marketplace) : ?>
                     <option value="<?php echo $marketplace->getId() ?>"><?php echo $block->getHelper('Data')->escapeHtml($marketplace->getTitle()) ?></option>
                 <?php endforeach; ?>
             </select>

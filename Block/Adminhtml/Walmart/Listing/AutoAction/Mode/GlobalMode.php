@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode;
 
+/**
+ * Class GlobalMode
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode
+ */
 class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\GlobalMode
 {
     //########################################
@@ -16,7 +20,8 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
     {
         $form = $this->_formFactory->create();
 
-        $form->addField('global_mode_help_block',
+        $form->addField(
+            'global_mode_help_block',
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
@@ -30,7 +35,9 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
             ]
         );
 
-        $form->addField('auto_mode', 'hidden',
+        $form->addField(
+            'auto_mode',
+            'hidden',
             [
                 'name' => 'auto_mode',
                 'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL
@@ -39,7 +46,8 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
 
         $fieldSet = $form->addFieldset('auto_global_fieldset_container', []);
 
-        $fieldSet->addField('auto_global_adding_mode',
+        $fieldSet->addField(
+            'auto_global_adding_mode',
             self::SELECT,
             [
                 'name' => 'auto_global_adding_mode',
@@ -55,7 +63,8 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
             ]
         );
 
-        $fieldSet->addField('auto_global_adding_add_not_visible',
+        $fieldSet->addField(
+            'auto_global_adding_add_not_visible',
             self::SELECT,
             [
                 'name' => 'auto_global_adding_add_not_visible',
@@ -81,13 +90,13 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
             ]
         );
 
-        $collection = $this->activeRecordFactory->getObject('Walmart\Template\Category')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Walmart_Template_Category')->getCollection();
         $collection->addFieldToFilter('marketplace_id', $this->getListing()->getMarketplaceId());
 
         $categoryTemplates = $collection->getData();
 
         $options = [['label' => '','value' => '', 'attrs' => ['class' => 'empty']]];
-        foreach($categoryTemplates as $template) {
+        foreach ($categoryTemplates as $template) {
             $tmp = [
                 'label' => $this->escapeHtml($template['title']),
                 'value' => $template['id']
@@ -96,12 +105,13 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
             $options[] = $tmp;
         }
 
-        $url = $this->getUrl('*/walmart_template_category/new', array(
+        $url = $this->getUrl('*/walmart_template_category/new', [
             'marketplace_id'        => $this->getListing()->getMarketplaceId(),
             'close_on_save' => true
-        ));
+        ]);
 
-        $fieldSet->addField('adding_category_template_id',
+        $fieldSet->addField(
+            'adding_category_template_id',
             self::SELECT,
             [
                 'name' => 'adding_category_template_id',
@@ -115,7 +125,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
                     'Select Category Policy you want to assign to Product(s).<br><br>
                     <strong>Note:</strong> Submitting of Category data is required when you create a new offer on
                     Walmart. Category Policy must be assigned to Products before they are added to M2E Pro Listing.'
-                    )) . '<a href="javascript: void(0);"
+                )) . '<a href="javascript: void(0);"
                         style="vertical-align: inherit; margin-left: 65px;"
                         onclick="ListingAutoActionObj.addNewTemplate(\''.$url.'\',
                         ListingAutoActionObj.reloadCategoryTemplates);">'.$this->__('Add New').'
@@ -123,7 +133,8 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
             ]
         );
 
-        $fieldSet->addField('auto_global_deleting_mode',
+        $fieldSet->addField(
+            'auto_global_deleting_mode',
             self::SELECT,
             [
                 'name' => 'auto_global_deleting_mode',
@@ -149,7 +160,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Walmart\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Walmart\Listing::class)
         );
 
         $this->js->add(<<<JS

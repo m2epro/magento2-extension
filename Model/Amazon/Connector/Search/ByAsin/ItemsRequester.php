@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Search\ByAsin;
 
+/**
+ * Class ItemsRequester
+ * @package Ess\M2ePro\Model\Amazon\Connector\Search\ByAsin
+ */
 abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {
     // ########################################
 
     public function getCommand()
     {
-        return array('product','search','byAsin');
+        return ['product','search','byAsin'];
     }
 
     // ########################################

@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Model\Connector\Connection\Multiple;
 
+/**
+ * Class RequestContainer
+ * @package Ess\M2ePro\Model\Connector\Connection\Multiple
+ */
 class RequestContainer extends \Ess\M2ePro\Model\AbstractModel
 {
-    private $request = NULL;
-    private $timeout = NULL;
+    private $request = null;
+    private $timeout = null;
 
     // ########################################
 

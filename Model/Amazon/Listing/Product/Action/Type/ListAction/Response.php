@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction;
 
+/**
+ * Class Response
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction
+ */
 class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
 {
     //########################################
@@ -15,13 +19,13 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
     /**
      * @param array $params
      */
-    public function processSuccess($params = array())
+    public function processSuccess($params = [])
     {
         $generalId = $this->getGeneralId($params);
 
-        $data = array(
+        $data = [
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
-        );
+        ];
 
         $data = $this->appendStatusChangerValue($data);
         $data = $this->appendIdentifiersData($data, $generalId);
@@ -29,7 +33,6 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $variationManager = $this->getAmazonListingProduct()->getVariationManager();
 
         if (!$variationManager->isRelationParentType()) {
-
             $data['is_afn_channel'] = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_NO;
 
             $data = $this->appendQtyValues($data);
@@ -41,7 +44,9 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $this->getListingProduct()->getChildObject()->addData($data);
         $this->setVariationData($generalId);
         $this->getListingProduct()->setSetting(
-            'additional_data', 'list_date', $this->getHelper('Data')->getCurrentGmtDate()
+            'additional_data',
+            'list_date',
+            $this->getHelper('Data')->getCurrentGmtDate()
         );
 
         $this->getListingProduct()->save();
@@ -58,7 +63,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $data['sku'] = $this->getRequestData()->getSku();
 
         $isGeneralIdOwner = $this->getIsGeneralIdOwner();
-        if (!is_null($isGeneralIdOwner)) {
+        if ($isGeneralIdOwner !== null) {
             $data['is_general_id_owner'] = $isGeneralIdOwner;
         }
 
@@ -86,15 +91,15 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $typeModel = $variationManager->getTypeModel();
 
         if ($variationManager->isRelationParentType()) {
-
-            $detailsModel = $this->modelFactory->getObject('Amazon\Marketplace\Details');
+            $detailsModel = $this->modelFactory->getObject('Amazon_Marketplace_Details');
             $detailsModel->setMarketplaceId($this->getMarketplace()->getId());
 
             $channelAttributes = $detailsModel->getVariationThemeAttributes(
-                $this->getRequestData()->getProductDataNick(), $typeModel->getChannelTheme()
+                $this->getRequestData()->getProductDataNick(),
+                $typeModel->getChannelTheme()
             );
 
-            $typeModel->setChannelAttributesSets(array_fill_keys($channelAttributes, array()), false);
+            $typeModel->setChannelAttributesSets(array_fill_keys($channelAttributes, []), false);
 
             return;
         }
@@ -131,7 +136,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $channelAttributesSets = $parentTypeModel->getRealChannelAttributesSets();
         foreach ($realChannelOptions as $attribute => $value) {
             if (!isset($channelAttributesSets[$attribute])) {
-                $channelAttributesSets[$attribute] = array();
+                $channelAttributesSets[$attribute] = [];
             }
 
             if (in_array($value, $channelAttributesSets[$attribute])) {
@@ -185,7 +190,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
     private function createAmazonItem()
     {
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Linking $linkingObject */
-        $linkingObject = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Type\ListAction\Linking');
+        $linkingObject = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Type_ListAction_Linking');
         $linkingObject->setListingProduct($this->getListingProduct());
 
         $linkingObject->createAmazonItem();

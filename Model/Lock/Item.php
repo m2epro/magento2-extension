@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Lock;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Model\Lock
+ */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     //########################################
@@ -29,7 +33,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return false;
     }
 
-    public function deleteProcessingLocks($tag = false, $processingId = false) {}
+    public function deleteProcessingLocks($tag = false, $processingId = false)
+    {
+        return null;
+    }
 
     //########################################
 

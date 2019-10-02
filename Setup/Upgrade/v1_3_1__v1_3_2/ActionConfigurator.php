@@ -36,7 +36,7 @@ WHERE `model` LIKE 'Amazon\Connector\Product\%' OR
                     continue;
                 }
 
-                $params = (array)@json_decode($processing['params'], true);
+                $params = (array)json_decode($processing['params'], true);
                 if (!isset($params['responser_params']['products']) && !isset($params['responser_params']['product'])) {
                     continue;
                 }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders;
 
+/**
+ * Class Cancel
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders
+ */
 class Cancel extends AbstractModel
 {
     //########################################
@@ -70,11 +74,8 @@ class Cancel extends AbstractModel
             // ---------------------------------------
 
             try {
-
                 $this->processAccount($account);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Cancel" Action for Amazon Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -124,9 +125,9 @@ class Cancel extends AbstractModel
             ->incrementAttemptCount(array_keys($relatedChanges));
 
         /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
 
-        $failedChangesIds = array();
+        $failedChangesIds = [];
 
         foreach ($relatedChanges as $change) {
             $changeParams = $change->getParams();
@@ -142,15 +143,16 @@ class Cancel extends AbstractModel
                 continue;
             }
 
-            $connectorData = array(
+            $connectorData = [
                 'order_id'        => $change->getOrderId(),
                 'change_id'       => $change->getId(),
                 'amazon_order_id' => $changeParams['order_id'],
-            );
+            ];
 
             $connectorObj = $dispatcherObject->getCustomConnector(
-                'Amazon\Synchronization\Orders\Cancel\Requester',
-                array('order' => $connectorData), $account
+                'Amazon_Synchronization_Orders_Cancel_Requester',
+                ['order' => $connectorData],
+                $account
             );
             $dispatcherObject->process($connectorObj);
         }
@@ -175,7 +177,7 @@ class Cancel extends AbstractModel
         $changesCollection->addProcessingAttemptDateFilter(10);
         $changesCollection->addFieldToFilter('component', \Ess\M2ePro\Helper\Component\Amazon::NICK);
         $changesCollection->addFieldToFilter('action', \Ess\M2ePro\Model\Order\Change::ACTION_CANCEL);
-        $changesCollection->getSelect()->group(array('order_id'));
+        $changesCollection->getSelect()->group(['order_id']);
 
         return $changesCollection->getItems();
     }
@@ -186,8 +188,8 @@ class Cancel extends AbstractModel
     {
         $this->activeRecordFactory->getObject('Order\Change')->getResource()
             ->deleteByProcessingAttemptCount(
-               \Ess\M2ePro\Model\Order\Change::MAX_ALLOWED_PROCESSING_ATTEMPTS,
-               \Ess\M2ePro\Helper\Component\Amazon::NICK
+                \Ess\M2ePro\Model\Order\Change::MAX_ALLOWED_PROCESSING_ATTEMPTS,
+                \Ess\M2ePro\Helper\Component\Amazon::NICK
             );
     }
 

@@ -12,6 +12,10 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Helper\Module;
 use Magento\Backend\App\Action;
 
+/**
+ * Class Main
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay
+ */
 abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
 {
     protected $ebayFactory;
@@ -21,8 +25,7 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         Context $context
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct($context);
     }
@@ -43,7 +46,7 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
 
     protected function initResultPage()
     {
-        if (!is_null($this->resultPage)) {
+        if ($this->resultPage !== null) {
             return;
         }
 

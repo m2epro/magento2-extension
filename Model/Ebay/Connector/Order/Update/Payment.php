@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Order\Update;
 
+/**
+ * Class Payment
+ * @package Ess\M2ePro\Model\Ebay\Connector\Order\Update
+ */
 class Payment extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractModel
 {
     // M2ePro\TRANSLATIONS
@@ -37,7 +41,7 @@ class Payment extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractMode
             $this->activeRecordFactory
                 ->getObject('Order\Change')
                 ->getResource()
-                ->deleteByIds(array($this->getOrderChangeId()));
+                ->deleteByIds([$this->getOrderChangeId()]);
         }
     }
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Module\Support;
 
+/**
+ * Class Search
+ * @package Ess\M2ePro\Helper\Module\Support
+ */
 class Search extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $moduleConfig;
@@ -18,8 +22,7 @@ class Search extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->moduleConfig = $moduleConfig;
         parent::__construct($helperFactory, $context);
     }
@@ -29,15 +32,15 @@ class Search extends \Ess\M2ePro\Helper\AbstractHelper
     public function process($query)
     {
         if (empty($query)) {
-            return array();
+            return [];
         }
 
-        $params = array(
+        $params = [
             'query' => strip_tags($query),
             'count' => 10
-        );
+        ];
 
-        $results = array();
+        $results = [];
         $response = $this->sendRequestAsGet($params);
 
         if ($response !== false) {
@@ -54,7 +57,7 @@ class Search extends \Ess\M2ePro\Helper\AbstractHelper
         $curlObject = curl_init();
 
         $url = $this->getHelper('Module\Support')->getSupportUrl() . '/extension/search/';
-        $url = $url . '?'.http_build_query($params,'','&');
+        $url = $url . '?'.http_build_query($params, '', '&');
         curl_setopt($curlObject, CURLOPT_URL, $url);
 
         curl_setopt($curlObject, CURLOPT_FOLLOWLOCATION, true);

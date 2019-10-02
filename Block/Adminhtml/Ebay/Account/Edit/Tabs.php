@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit
+ */
 class Tabs extends AbstractTabs
 {
     protected function _construct()
@@ -28,7 +32,7 @@ class Tabs extends AbstractTabs
                 'label' => __('General'),
                 'title' => __('General'),
                 'content' => $this->createBlock(
-                    'Ebay\Account\Edit\Tabs\General'
+                    'Ebay_Account_Edit_Tabs_General'
                 )->toHtml()
             ]
         );
@@ -37,70 +41,72 @@ class Tabs extends AbstractTabs
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
 
         if ($account && $account->getId()) {
-
-            $this->addTab('listingOther', array(
+            $this->addTab('listingOther', [
                 'label' => $this->__('3rd Party Listings'),
                 'title' => $this->__('3rd Party Listings'),
                 'content' => $this->createBlock(
-                    'Ebay\Account\Edit\Tabs\ListingOther'
+                    'Ebay_Account_Edit_Tabs_ListingOther'
                 )->toHtml()
-            ));
+            ]);
 
-            $this->addTab('store', array(
+            $this->addTab('store', [
                 'label'   => $this->__('eBay Store'),
                 'title'   => $this->__('eBay Store'),
                 'content' => $this->createBlock(
-                    'Ebay\Account\Edit\Tabs\Store'
+                    'Ebay_Account_Edit_Tabs_Store'
                 )->toHtml()
-            ));
+            ]);
 
-            $this->addTab('order', array(
+            $this->addTab('order', [
                 'label'   => $this->__('Orders'),
                 'title'   => $this->__('Orders'),
                 'content' => $this->createBlock(
-                    'Ebay\Account\Edit\Tabs\Order'
+                    'Ebay_Account_Edit_Tabs_Order'
                 )->toHtml()
-            ));
+            ]);
 
-            $this->addTab('feedback', array(
+            $this->addTab('feedback', [
                 'label' => $this->__('Feedback'),
                 'title' => $this->__('Feedback'),
                 'content' => $this->createBlock(
-                    'Ebay\Account\Edit\Tabs\Feedback'
+                    'Ebay_Account_Edit_Tabs_Feedback'
                 )->toHtml()
-            ));
+            ]);
 
-            if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
-
-                $this->addTab('my_stores', array(
+            if ($this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
+                $this->addTab('my_stores', [
                     'label' => $this->__('In-Store Pickup'),
                     'title' => $this->__('In-Store Pickup'),
                     'content' => $this->createBlock(
-                        'Ebay\Account\Edit\Tabs\PickupStore'
+                        'Ebay_Account_Edit_Tabs_PickupStore'
                     )->toHtml()
-                ));
+                ]);
             }
         }
 
         $this->setActiveTab($this->getRequest()->getParam('tab', 'general'));
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Account'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Account\Feedback'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Account\Feedback\Template', [
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Account_Feedback'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Account_Feedback_Template', [
             'account_id' => $this->getRequest()->getParam('id')
         ]));
         $this->jsUrl->add(
-            $this->getUrl('*/ebay_account/beforeGetToken',array('_current' => true)), 'ebay_account/beforeGetToken'
+            $this->getUrl('*/ebay_account/beforeGetToken', ['_current' => true]),
+            'ebay_account/beforeGetToken'
         );
         $this->jsUrl->addUrls([
             'formSubmit' => $this->getUrl(
-                '*/ebay_account/save', array('_current' => true, 'id' => $this->getRequest()->getParam('id'))
+                '*/ebay_account/save',
+                ['_current' => true, 'id' => $this->getRequest()->getParam('id')]
             ),
-            'deleteAction' => $this->getUrl('*/ebay_account/delete', array('id' => $this->getRequest()->getParam('id')))
+            'deleteAction' => $this->getUrl('*/ebay_account/delete', ['id' => $this->getRequest()->getParam('id')])
         ]);
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Ebay'));
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Account'));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay::class));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Model\Ebay\Account::class));
 
         $this->jsTranslator->addTranslations([
             'The specified Title is already used for other Account. Account Title must be unique.' => $this->__(

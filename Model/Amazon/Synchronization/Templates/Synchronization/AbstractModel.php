@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\AbstractModel
 {
     protected $resourceConnection;
@@ -16,17 +20,17 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Synchronization\Te
     /**
      * @var \Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner
      */
-    protected $runner = NULL;
+    protected $runner = null;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization\Inspector
      */
-    protected $inspector = NULL;
+    protected $inspector = null;
 
     /**
      * @var \Ess\M2ePro\Model\Synchronization\Templates\ProductChanges\Manager
      */
-    protected $productChangesManager = NULL;
+    protected $productChangesManager = null;
 
     //########################################
 
@@ -36,8 +40,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Synchronization\Te
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->amazonFactory = $amazonFactory;
         parent::__construct($amazonFactory, $activeRecordFactory, $helperFactory, $modelFactory);

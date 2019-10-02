@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Helper\Module\Database;
 use Ess\M2ePro\Helper\Module;
 use Magento\Framework\Component\ComponentRegistrar;
 
+/**
+ * Class Structure
+ * @package Ess\M2ePro\Helper\Module\Database
+ */
 class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const TABLE_GROUP_CONFIGS           = 'configs';
@@ -36,6 +40,8 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 
     protected $activeRecordFactory;
 
+    protected $objectManager;
+
     //########################################
 
     public function __construct(
@@ -44,13 +50,14 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         ComponentRegistrar $componentRegistrar,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->resourceConnection     = $resourceConnection;
         $this->directoryReaderFactory = $directoryReaderFactory;
         $this->componentRegistrar     = $componentRegistrar;
         $this->activeRecordFactory    = $activeRecordFactory;
+        $this->objectManager          = $objectManager;
 
         parent::__construct($helperFactory, $context);
     }
@@ -59,7 +66,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getMySqlTables()
     {
-        return array(
+        return [
             'm2epro_primary_config',
             'm2epro_module_config',
             'm2epro_cache_config',
@@ -212,7 +219,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             'm2epro_walmart_template_selling_format_promotion',
             'm2epro_walmart_template_selling_format_shipping_override',
             'm2epro_walmart_template_synchronization'
-        );
+        ];
     }
 
     public function getHorizontalTables()
@@ -223,14 +230,12 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         // minimal amount of child tables to be a horizontal table
         $minimalAmount = 2;
 
-        $result = array();
+        $result = [];
         foreach ($mySqlTables as $mySqlTable) {
-
-            $tempComponentTables = array();
-            $mySqlTableCropped = str_replace('m2epro_','',$mySqlTable);
+            $tempComponentTables = [];
+            $mySqlTableCropped = str_replace('m2epro_', '', $mySqlTable);
 
             foreach ($components as $component) {
-
                 $needComponentTable = "m2epro_{$component}_{$mySqlTableCropped}";
 
                 if (in_array($needComponentTable, $mySqlTables)) {
@@ -253,8 +258,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
     public function getTableComponent($tableName)
     {
         foreach ($this->getHelper('Component')->getComponents() as $component) {
-
-            if (strpos(strtolower($tableName),strtolower($component)) !== false) {
+            if (strpos(strtolower($tableName), strtolower($component)) !== false) {
                 return $component;
             }
         }
@@ -264,7 +268,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getTableGroup($tableName)
     {
-        $mySqlGroups = array(
+        $mySqlGroups = [
             self::TABLE_GROUP_CONFIGS           => '/_config$/',
             self::TABLE_GROUP_ACCOUNTS          => '/_account/',
             self::TABLE_GROUP_MARKETPLACES      => '/(?<!dictionary)_marketplace$/',
@@ -278,10 +282,9 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             self::TABLE_GROUP_DICTIONARY        => '/_dictionary_/',
             self::TABLE_GROUP_ORDERS            => '/_order/',
             self::TABLE_GROUP_TEMPLATES         => '/_template_/',
-        );
+        ];
 
         foreach ($mySqlGroups as $group => $expression) {
-
             if (preg_match($expression, $tableName)) {
                 return $group;
             }
@@ -328,7 +331,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         $tableName = $this->getTableNameWithPrefix($tableName);
 
         $result = $connection->query("SHOW TABLE STATUS FROM `{$databaseName}` WHERE `name` = '{$tableName}'")
-                           ->fetch() ;
+                           ->fetch();
 
         return $result !== false;
     }
@@ -344,12 +347,10 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         $tableStatus = true;
 
         try {
-
             $tableName = $this->getTableNameWithPrefix($tableName);
             $connection->select()->from($tableName, new \Zend_Db_Expr('1'))
                      ->limit(1)
                      ->query();
-
         } catch (\Exception $e) {
             $tableStatus = false;
         }
@@ -384,7 +385,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         $tableName = $this->getTableNameWithPrefix($tableName);
 
         $dataLength = $connection->select()
-                     ->from('information_schema.tables', array(new \Zend_Db_Expr('data_length + index_length')))
+                     ->from('information_schema.tables', [new \Zend_Db_Expr('data_length + index_length')])
                      ->where('`table_name` = ?', $tableName)
                      ->where('`table_schema` = ?', $databaseName)
                      ->query()
@@ -397,7 +398,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getTablesInfo()
     {
-        $tablesInfo = array();
+        $tablesInfo = [];
         foreach ($this->getMySqlTables() as $currentTable) {
             $currentTableInfo = $this->getTableInfo($currentTable);
             $currentTableInfo && $tablesInfo[$currentTable] = $currentTableInfo;
@@ -418,12 +419,11 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             "SHOW COLUMNS FROM {$moduleTableName}"
         );
 
-        $result = array();
+        $result = [];
         $afterPosition = '';
 
         while ($row = $stmtQuery->fetch()) {
-
-            $result[strtolower($row['Field'])] = array(
+            $result[strtolower($row['Field'])] = [
                 'name'     => strtolower($row['Field']),
                 'type'     => strtolower($row['Type']),
                 'null'     => strtolower($row['Null']),
@@ -431,7 +431,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
                 'default'  => strtolower($row['Default']),
                 'extra'    => strtolower($row['Extra']),
                 'after'    => $afterPosition
-            );
+            ];
 
             $afterPosition = strtolower($row['Field']);
         }
@@ -449,7 +449,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $tablesModels = $this->getTablesModels();
         if (!isset($tablesModels[$tableName])) {
-            return NULL;
+            return null;
         }
 
         return $tablesModels[$tableName];
@@ -469,20 +469,19 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             }
 
             $modelName = preg_replace('/\.php$/', '', str_replace('/', '\\', $directoryItem));
-            $className = '\Ess\M2ePro\Model\\'.$modelName;
-
-            if (!\class_exists($className)) {
-                continue;
-            }
+            $className = '\Ess\M2ePro\Model\ResourceModel\\'.$modelName;
 
             $reflectionClass = new \ReflectionClass($className);
-            if ($reflectionClass->isAbstract()) {
+            if ($reflectionClass->isAbstract() ||
+                !$reflectionClass->isSubclassOf(\Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel::class))
+            {
                 continue;
             }
 
-            $object = $this->activeRecordFactory->getObject($modelName);
+            /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel $object */
+            $object = $this->objectManager->get($className);
 
-            $tableName = $object->getResource()->getMainTable();
+            $tableName = $object->getMainTable();
             $tableName = str_replace($this->getHelper('Magento')->getDatabaseTablesPrefix(), '', $tableName);
 
             $tablesModels[$tableName] = $modelName;
@@ -518,16 +517,15 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 
         $collection = $tableModel->getCollection()->toArray();
 
-        $result = array();
+        $result = [];
         foreach ($collection['items'] as $item) {
-
             $codeHash = strtolower($item['group']).'#'.strtolower($item['key']);
-            $result[$codeHash] = array(
+            $result[$codeHash] = [
                 'id'     => (int)$item['id'],
                 'group'  => $item['group'],
                 'key'    => $item['key'],
                 'value'  => $item['value'],
-            );
+            ];
         }
 
         return $result;
@@ -537,20 +535,19 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getStoreRelatedColumns()
     {
-        $result = array();
+        $result = [];
 
-        $simpleColumns = array('store_id', 'related_store_id');
-        $jsonColumns   = array('magento_orders_settings', 'marketplaces_data');
+        $simpleColumns = ['store_id', 'related_store_id'];
+        $jsonColumns   = ['magento_orders_settings', 'marketplaces_data'];
 
         foreach ($this->getTablesInfo() as $tableName => $tableInfo) {
             foreach ($tableInfo as $columnName => $columnInfo) {
-
                 if (in_array($columnName, $simpleColumns)) {
-                    $result[$tableName][] = array('name' => $columnName, 'type' => 'int');
+                    $result[$tableName][] = ['name' => $columnName, 'type' => 'int'];
                 }
 
                 if (in_array($columnName, $jsonColumns)) {
-                    $result[$tableName][] = array('name' => $columnName, 'type' => 'json');
+                    $result[$tableName][] = ['name' => $columnName, 'type' => 'json'];
                 }
             }
         }

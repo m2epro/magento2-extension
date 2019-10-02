@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay;
 
+/**
+ * Class Marketplace
+ * @package Ess\M2ePro\Model\Ebay
+ */
 class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
     const TRANSLATION_SERVICE_NO       = 0;
@@ -15,7 +19,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     const TRANSLATION_SERVICE_YES_FROM = 2;
     const TRANSLATION_SERVICE_YES_BOTH = 3;
 
-    private $info = NULL;
+    private $info = null;
 
     protected $moduleConfig;
 
@@ -32,8 +36,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->moduleConfig = $moduleConfig;
         parent::__construct(
             $parentFactory,
@@ -60,7 +63,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('marketplace');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
         return parent::save();
     }
 
@@ -68,15 +71,15 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     public function delete()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('marketplace');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
         return parent::delete();
     }
 
     //########################################
 
-    public function getEbayItems($asObjects = false, array $filters = array())
+    public function getEbayItems($asObjects = false, array $filters = [])
     {
-        return $this->getRelatedSimpleItems('Ebay\Item','marketplace_id',$asObjects,$filters);
+        return $this->getRelatedSimpleItems('Ebay\Item', 'marketplace_id', $asObjects, $filters);
     }
 
     //########################################
@@ -314,30 +317,30 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     {
         $connection = $this->getResource()->getConnection();
 
-        $tableCategories = $this->getHelper('Module\Database\Structure')
+        $tableCategories = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
         $dbSelect = $connection->select()
-            ->from($tableCategories,'*')
-            ->where('`marketplace_id` = ?',(int)$this->getId())
-            ->where('`category_id` = ?',(int)$categoryId);
+            ->from($tableCategories, '*')
+            ->where('`marketplace_id` = ?', (int)$this->getId())
+            ->where('`category_id` = ?', (int)$categoryId);
 
         $categories = $connection->fetchAll($dbSelect);
 
-        return count($categories) > 0 ? $categories[0] : array();
+        return !empty($categories) ? $categories[0] : [];
     }
 
     public function getChildCategories($parentId)
     {
         $connection = $this->getResource()->getConnection();
 
-        $tableCategories = $this->getHelper('Module\Database\Structure')
+        $tableCategories = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
         $dbSelect = $connection->select()
-            ->from($tableCategories,array('category_id','title','is_leaf'))
-            ->where('`marketplace_id` = ?',(int)$this->getId())
-            ->order(array('title ASC'));
+            ->from($tableCategories, ['category_id','title','is_leaf'])
+            ->where('`marketplace_id` = ?', (int)$this->getId())
+            ->order(['title ASC']);
 
         empty($parentId) ? $dbSelect->where('parent_category_id IS NULL')
                          : $dbSelect->where('parent_category_id = ?', (int)$parentId);
@@ -354,45 +357,44 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getInfo()
     {
-        if (!is_null($this->info)) {
+        if ($this->info !== null) {
             return $this->info;
         }
 
         $connection = $this->getResource()->getConnection();
 
-        $tableDictMarketplace = $this->getHelper('Module\Database\Structure')
+        $tableDictMarketplace = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_marketplace');
-        $tableDictShipping = $this->getHelper('Module\Database\Structure')
+        $tableDictShipping = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_shipping');
 
         // table m2epro_ebay_dictionary_marketplace
         // ---------------------------------------
         $dbSelect = $connection->select()
-                             ->from($tableDictMarketplace,'*')
-                             ->where('`marketplace_id` = ?',(int)$this->getId());
+                             ->from($tableDictMarketplace, '*')
+                             ->where('`marketplace_id` = ?', (int)$this->getId());
         $data = $connection->fetchRow($dbSelect);
         // ---------------------------------------
 
         if (!$data) {
-            return $this->info = array();
+            return $this->info = [];
         }
 
         // table m2epro_ebay_dictionary_shipping
         // ---------------------------------------
         $dbSelect = $connection->select()
-                             ->from($tableDictShipping,'*')
-                             ->where('`marketplace_id` = ?',(int)$this->getId())
-                             ->order(array('title ASC'));
+                             ->from($tableDictShipping, '*')
+                             ->where('`marketplace_id` = ?', (int)$this->getId())
+                             ->order(['title ASC']);
         $shippingMethods = $connection->fetchAll($dbSelect);
         // ---------------------------------------
 
         if (!$shippingMethods) {
-            $shippingMethods = array();
+            $shippingMethods = [];
         }
 
-        $categoryShippingMethods = array();
+        $categoryShippingMethods = [];
         foreach ($shippingMethods as $shippingMethod) {
-
             $category = $this->getHelper('Data')->jsonDecode($shippingMethod['category']);
 
             if (empty($category)) {
@@ -402,10 +404,10 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
             }
 
             if (!isset($categoryShippingMethods[$category['ebay_id']])) {
-                $categoryShippingMethods[$category['ebay_id']] = array(
+                $categoryShippingMethods[$category['ebay_id']] = [
                     'title'   => $category['title'],
-                    'methods' => array(),
-                );
+                    'methods' => [],
+                ];
             }
 
             $shippingMethod['data'] = $this->getHelper('Data')->jsonDecode($shippingMethod['data']);
@@ -414,7 +416,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
         // ---------------------------------------
 
-        return $this->info = array(
+        return $this->info = [
             'dispatch'                   => $this->getHelper('Data')->jsonDecode($data['dispatch']),
             'packages'                   => $this->getHelper('Data')->jsonDecode($data['packages']),
             'return_policy'              => $this->getHelper('Data')->jsonDecode($data['return_policy']),
@@ -425,7 +427,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
             'shipping_locations'         => $this->getHelper('Data')->jsonDecode($data['shipping_locations']),
             'shipping_locations_exclude' => $this->getHelper('Data')->jsonDecode($data['shipping_locations_exclude']),
             'tax_categories'             => $this->getHelper('Data')->jsonDecode($data['tax_categories'])
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -436,7 +438,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getDispatchInfo()
     {
         $info = $this->getInfo();
-        return isset($info['dispatch']) ? $info['dispatch'] : array();
+        return isset($info['dispatch']) ? $info['dispatch'] : [];
     }
 
     /**
@@ -445,7 +447,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getPackageInfo()
     {
         $info = $this->getInfo();
-        return isset($info['packages']) ? $info['packages'] : array();
+        return isset($info['packages']) ? $info['packages'] : [];
     }
 
     /**
@@ -454,7 +456,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getReturnPolicyInfo()
     {
         $info = $this->getInfo();
-        return isset($info['return_policy']) ? $info['return_policy'] : array();
+        return isset($info['return_policy']) ? $info['return_policy'] : [];
     }
 
     /**
@@ -463,7 +465,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getListingFeatureInfo()
     {
         $info = $this->getInfo();
-        return isset($info['listing_features']) ? $info['listing_features'] : array();
+        return isset($info['listing_features']) ? $info['listing_features'] : [];
     }
 
     /**
@@ -472,7 +474,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getPaymentInfo()
     {
         $info = $this->getInfo();
-        return isset($info['payments']) ? $info['payments'] : array();
+        return isset($info['payments']) ? $info['payments'] : [];
     }
 
     /**
@@ -481,7 +483,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getShippingInfo()
     {
         $info = $this->getInfo();
-        return isset($info['shipping']) ? $info['shipping'] : array();
+        return isset($info['shipping']) ? $info['shipping'] : [];
     }
 
     /**
@@ -490,7 +492,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getShippingLocationInfo()
     {
         $info = $this->getInfo();
-        return isset($info['shipping_locations']) ? $info['shipping_locations'] : array();
+        return isset($info['shipping_locations']) ? $info['shipping_locations'] : [];
     }
 
     /**
@@ -499,7 +501,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getShippingLocationExcludeInfo()
     {
         $info = $this->getInfo();
-        return isset($info['shipping_locations_exclude']) ? $info['shipping_locations_exclude'] : array();
+        return isset($info['shipping_locations_exclude']) ? $info['shipping_locations_exclude'] : [];
     }
 
     /**
@@ -508,7 +510,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getTaxCategoryInfo()
     {
         $info = $this->getInfo();
-        return isset($info['tax_categories']) ? $info['tax_categories'] : array();
+        return isset($info['tax_categories']) ? $info['tax_categories'] : [];
     }
 
     /**
@@ -517,7 +519,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getCharitiesInfo()
     {
         $info = $this->getInfo();
-        return isset($info['charities']) ? $info['charities'] : array();
+        return isset($info['charities']) ? $info['charities'] : [];
     }
 
     //########################################

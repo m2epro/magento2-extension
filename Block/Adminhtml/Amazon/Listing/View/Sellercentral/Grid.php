@@ -10,9 +10,13 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Sellercentral;
 
 use Ess\M2ePro\Model\Listing\Log;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Sellercentral
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
-    private $lockedDataCache = array();
+    private $lockedDataCache = [];
 
     private $parentAsins;
 
@@ -34,8 +38,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->amazonFactory = $amazonFactory;
         $this->localeCurrency = $localeCurrency;
@@ -66,7 +69,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         // Get collection
         // ---------------------------------------
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
@@ -76,7 +79,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $collection
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('sku')
-            ->joinStockItem(array('qty' => 'qty', 'is_in_stock' => 'is_in_stock'));
+            ->joinStockItem();
 
         // ---------------------------------------
 
@@ -84,30 +87,30 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // ---------------------------------------
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
         $collection->joinTable(
-            array('lp' => $lpTable),
+            ['lp' => $lpTable],
             'product_id=entity_id',
-            array(
+            [
                 'id'              => 'id',
                 'amazon_status'   => 'status',
                 'component_mode'  => 'component_mode',
                 'additional_data' => 'additional_data'
-            ),
-            array(
+            ],
+            [
                 'listing_id' => (int)$this->listing['id'],
-                'status' => array(
+                'status' => [
                     \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
                     \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
                     \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
                     \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN,
-                )
-            )
+                ]
+            ]
         );
 
-        $alpTable = $this->activeRecordFactory->getObject('Amazon\Listing\Product')->getResource()->getMainTable();
+        $alpTable = $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable();
         $collection->joinTable(
-            array('alp' => $alpTable),
+            ['alp' => $alpTable],
             'listing_product_id=id',
-            array(
+            [
                 'general_id'                    => 'general_id',
                 'search_settings_status'        => 'search_settings_status',
                 'amazon_sku'                    => 'sku',
@@ -133,11 +136,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'variation_parent_afn_state'       => 'variation_parent_afn_state',
                 'variation_parent_repricing_state' => 'variation_parent_repricing_state',
                 'defected_messages'                => 'defected_messages',
-            ),
+            ],
             '{{table}}.is_variation_parent = 0'
         );
 
-        $collection->getSelect()->columns(array(
+        $collection->getSelect()->columns([
             'min_online_price' => new \Zend_Db_Expr('
                 IF (
                     `alp`.`online_regular_price` IS NULL,
@@ -152,16 +155,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                     )
                 )
             ')
-        ));
+        ]);
 
-        $alprTable = $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')
+        $alprTable = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')
             ->getResource()->getMainTable();
         $collection->getSelect()->joinLeft(
-            array('malpr' => $alprTable),
+            ['malpr' => $alprTable],
             '(`alp`.`listing_product_id` = `malpr`.`listing_product_id`)',
-            array(
+            [
                 'is_repricing_disabled' => 'is_online_disabled',
-            )
+            ]
         );
 
         // ---------------------------------------
@@ -174,91 +177,91 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('product_id', array(
+        $this->addColumn('product_id', [
             'header'    => $this->__('Product ID'),
             'align'     => 'right',
             'width'     => '100px',
             'type'      => 'number',
             'index'     => 'entity_id',
-            'frame_callback' => array($this, 'callbackColumnProductId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductId']
+        ]);
 
-        $this->addColumn('name', array(
+        $this->addColumn('name', [
             'header'    => $this->__('Product Title / Product SKU'),
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'name',
             'filter_index' => 'name',
             'escape'       => false,
-            'frame_callback' => array($this, 'callbackColumnProductTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+        ]);
 
-        $this->addColumn('sku', array(
+        $this->addColumn('sku', [
             'header' => $this->__('SKU'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'text',
             'index' => 'amazon_sku',
             'filter_index' => 'amazon_sku',
-            'frame_callback' => array($this, 'callbackColumnAmazonSku')
-        ));
+            'frame_callback' => [$this, 'callbackColumnAmazonSku']
+        ]);
 
-        $this->addColumn('general_id', array(
+        $this->addColumn('general_id', [
             'header' => $this->__('ASIN / ISBN'),
             'align' => 'left',
             'width' => '140px',
             'type' => 'text',
             'index' => 'general_id',
             'filter_index' => 'general_id',
-            'frame_callback' => array($this, 'callbackColumnGeneralId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnGeneralId']
+        ]);
 
-        $this->addColumn('online_qty', array(
+        $this->addColumn('online_qty', [
             'header' => $this->__('QTY'),
             'align' => 'right',
             'width' => '70px',
             'type' => 'number',
             'index' => 'online_qty',
             'filter_index' => 'online_qty',
-            'frame_callback' => array($this, 'callbackColumnAvailableQty'),
+            'frame_callback' => [$this, 'callbackColumnAvailableQty'],
             'filter'   => 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty',
-            'filter_condition_callback' => array($this, 'callbackFilterQty')
-        ));
+            'filter_condition_callback' => [$this, 'callbackFilterQty']
+        ]);
 
-        $priceColumn = array(
+        $priceColumn = [
             'header' => $this->__('Price'),
             'align' => 'right',
             'width' => '110px',
             'type' => 'number',
             'index' => 'min_online_price',
             'filter_index' => 'min_online_price',
-            'frame_callback' => array($this, 'callbackColumnPrice'),
-            'filter_condition_callback' => array($this, 'callbackFilterPrice')
-        );
+            'frame_callback' => [$this, 'callbackColumnPrice'],
+            'filter_condition_callback' => [$this, 'callbackFilterPrice']
+        ];
 
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
             $this->listing->getAccount()->getChildObject()->isRepricing()) {
             $priceColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price';
         }
 
         $this->addColumn('online_price', $priceColumn);
 
-        $this->addColumn('status', array(
+        $this->addColumn('status', [
             'header' => $this->__('Status'),
             'width' => '155px',
             'index' => 'amazon_status',
             'filter_index' => 'amazon_status',
             'type' => 'options',
             'sortable' => false,
-            'options' => array(
+            'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => $this->__('Unknown'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Inactive (Blocked)')
-            ),
-            'frame_callback' => array($this, 'callbackColumnStatus')
-        ));
+            ],
+            'frame_callback' => [$this, 'callbackColumnStatus']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -273,88 +276,87 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         // Set mass-action
         // ---------------------------------------
-        $groups = array(
+        $groups = [
             'actions'            => $this->__('Actions'),
             'edit_fulfillment'   => $this->__('Fulfillment')
-        );
+        ];
 
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled()) {
+        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled()) {
             $groups['edit_repricing'] = $this->__('Repricing Tool');
         }
 
         $this->getMassactionBlock()->setGroups($groups);
 
-        $this->getMassactionBlock()->addItem('revise', array(
+        $this->getMassactionBlock()->addItem('revise', [
             'label'    => $this->__('Revise Item(s)'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'actions');
+        ], 'actions');
 
-        $this->getMassactionBlock()->addItem('relist', array(
+        $this->getMassactionBlock()->addItem('relist', [
             'label'    => $this->__('Relist Item(s)'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'actions');
+        ], 'actions');
 
-        $this->getMassactionBlock()->addItem('stop', array(
+        $this->getMassactionBlock()->addItem('stop', [
             'label'    => $this->__('Stop Item(s)'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'actions');
+        ], 'actions');
 
-        $this->getMassactionBlock()->addItem('stopAndRemove', array(
+        $this->getMassactionBlock()->addItem('stopAndRemove', [
             'label'    => $this->__('Stop on Channel / Remove from Listing'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'actions');
+        ], 'actions');
 
-        $this->getMassactionBlock()->addItem('deleteAndRemove', array(
+        $this->getMassactionBlock()->addItem('deleteAndRemove', [
             'label'    => $this->__('Remove from Channel & Listing'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'actions');
+        ], 'actions');
 
-        $this->getMassactionBlock()->addItem('switchToAfn', array(
+        $this->getMassactionBlock()->addItem('switchToAfn', [
             'label'    => $this->__('Switch to AFN'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'edit_fulfillment');
+        ], 'edit_fulfillment');
 
-        $this->getMassactionBlock()->addItem('switchToMfn', array(
+        $this->getMassactionBlock()->addItem('switchToMfn', [
             'label'    => $this->__('Switch to MFN'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'edit_fulfillment');
+        ], 'edit_fulfillment');
 
         /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->listing->getAccount();
 
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
             $account->getChildObject()->isRepricing()) {
-
-            $this->getMassactionBlock()->addItem('showDetails', array(
+            $this->getMassactionBlock()->addItem('showDetails', [
                 'label' => $this->__('Show Details'),
                 'url' => '',
                 'confirm' => $this->__('Are you sure?')
-            ), 'edit_repricing');
+            ], 'edit_repricing');
 
-            $this->getMassactionBlock()->addItem('addToRepricing', array(
+            $this->getMassactionBlock()->addItem('addToRepricing', [
                 'label' => $this->__('Add Item(s)'),
                 'url' => '',
                 'confirm' => $this->__('Are you sure?')
-            ), 'edit_repricing');
+            ], 'edit_repricing');
 
-            $this->getMassactionBlock()->addItem('editRepricing', array(
+            $this->getMassactionBlock()->addItem('editRepricing', [
                 'label' => $this->__('Edit Item(s)'),
                 'url' => '',
                 'confirm' => $this->__('Are you sure?')
-            ), 'edit_repricing');
+            ], 'edit_repricing');
 
-            $this->getMassactionBlock()->addItem('removeFromRepricing', array(
+            $this->getMassactionBlock()->addItem('removeFromRepricing', [
                 'label' => $this->__('Remove Item(s)'),
                 'url' => '',
                 'confirm' => $this->__('Are you sure?')
-            ), 'edit_repricing');
+            ], 'edit_repricing');
         }
         // ---------------------------------------
 
@@ -368,8 +370,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
 
         $value = '<span>'.$productTitle.'</span>';
+        $sku = $row->getData('sku');
 
-        if (is_null($sku = $row->getData('sku'))) {
+        if ($sku === null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
                 ->setProductId($row->getData('entity_id'))
                 ->getSku();
@@ -407,8 +410,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 ->getMatchedAttributes();
 
             if (!empty($matchedAttributes) && !empty($channelOptions)) {
-
-                $sortedOptions = array();
+                $sortedOptions = [];
 
                 foreach ($matchedAttributes as $magentoAttr => $amazonAttr) {
                     $sortedOptions[$amazonAttr] = $channelOptions[$amazonAttr];
@@ -450,7 +452,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             return $value;
         }
 
-        $productOptions = array();
+        $productOptions = [];
         if ($listingProduct->getChildObject()->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
             $productOptions = $listingProduct->getChildObject()->getVariationManager()
                 ->getTypeModel()->getProductOptions();
@@ -469,7 +471,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     public function callbackColumnAmazonSku($value, $row, $column, $isExport)
     {
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             $value = $this->__('N/A');
         }
 
@@ -512,7 +514,7 @@ HTML;
 
     public function callbackColumnGeneralId($value, $row, $column, $isExport)
     {
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -524,8 +526,10 @@ HTML;
                                                 margin-bottom: 5px;
                                                 font-size: 10px;
                                                 color: grey;">'.
-                $this->__('child ASIN/ISBN<br/>of parent %parent_asin%',
-                    $this->getParentAsin($row->getData('id'))) . '</span>';
+                $this->__(
+                    'child ASIN/ISBN<br/>of parent %parent_asin%',
+                    $this->getParentAsin($row->getData('id'))
+                ) . '</span>';
         }
 
         $generalIdOwnerHtml = '';
@@ -537,15 +541,6 @@ HTML;
         return <<<HTML
 <a href="{$url}" target="_blank">{$value}</a>{$parentAsinHtml}{$generalIdOwnerHtml}
 HTML;
-    }
-
-    public function callbackColumnStockAvailability($value, $row, $column, $isExport)
-    {
-        if ((int)$row->getData('is_in_stock') <= 0) {
-            return '<span style="color: red;">'.$value.'</span>';
-        }
-
-        return $value;
     }
 
     public function callbackColumnAvailableQty($value, $row, $column, $isExport)
@@ -580,7 +575,7 @@ HTML;
 HTML;
         }
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return '<i style="color:gray;">receiving...</i>';
         }
 
@@ -597,9 +592,8 @@ HTML;
 
         $repricingHtml ='';
 
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
             (bool)(int)$row->getData('is_repricing')) {
-
             $icon = 'repricing-enabled';
             $text = $this->__(
                 'This Product is used by Amazon Repricing Tool, so its Price cannot be managed via M2E Pro. <br>
@@ -625,8 +619,8 @@ HTML;
 
         $onlineBusinessPrice = $row->getData('online_business_price');
 
-        if ((is_null($onlinePrice) || $onlinePrice === '') &&
-            (is_null($onlineBusinessPrice) || $onlineBusinessPrice === '')
+        if (($onlinePrice === null || $onlinePrice === '') &&
+            ($onlineBusinessPrice === null || $onlineBusinessPrice === '')
         ) {
             if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
                 return $this->__('N/A') . $repricingHtml;
@@ -661,18 +655,20 @@ HTML;
 
         $salePrice = $row->getData('online_regular_sale_price');
         if ((float)$salePrice > 0) {
-            $currentTimestamp = strtotime($this->getHelper('Data')->getCurrentGmtDate(false,'Y-m-d 00:00:00'));
+            $currentTimestamp = strtotime($this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d 00:00:00'));
 
             $startDateTimestamp = strtotime($row->getData('online_regular_sale_price_start_date'));
             $endDateTimestamp   = strtotime($row->getData('online_regular_sale_price_end_date'));
 
             if ($currentTimestamp <= $endDateTimestamp) {
                 $fromDate = $this->_localeDate->formatDate(
-                    $row->getData('online_regular_sale_price_start_date'), \IntlDateFormatter::MEDIUM
+                    $row->getData('online_regular_sale_price_start_date'),
+                    \IntlDateFormatter::MEDIUM
                 );
 
                 $toDate = $this->_localeDate->formatDate(
-                    $row->getData('online_regular_sale_price_end_date'), \IntlDateFormatter::MEDIUM
+                    $row->getData('online_regular_sale_price_end_date'),
+                    \IntlDateFormatter::MEDIUM
                 );
 
                 $intervalHtml = <<<HTML
@@ -741,7 +737,6 @@ HTML;
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
         switch ($row->getData('amazon_status')) {
-
             case \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN:
             case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
                 $value = '<span style="color: gray;">' . $value . '</span>';
@@ -769,9 +764,7 @@ HTML;
         $tempLocks = $tempLocks['object_locks'];
 
         foreach ($tempLocks as $lock) {
-
             switch ($lock->getTag()) {
-
                 case 'list_action':
                     $value .= '<br/><span style="color: #605fff">[List in Progress...]</span>';
                     break;
@@ -806,7 +799,6 @@ HTML;
 
                 default:
                     break;
-
             }
         }
 
@@ -822,10 +814,10 @@ HTML;
         }
 
         $collection->addFieldToFilter(
-            array(
-                array('attribute'=>'sku','like'=>'%'.$value.'%'),
-                array('attribute'=>'name', 'like'=>'%'.$value.'%')
-            )
+            [
+                ['attribute'=>'sku','like'=>'%'.$value.'%'],
+                ['attribute'=>'name', 'like'=>'%'.$value.'%']
+            ]
         );
     }
 
@@ -877,7 +869,6 @@ HTML;
         $condition = '';
 
         if (isset($value['from']) || isset($value['to'])) {
-
             if (isset($value['from']) && $value['from'] != '') {
                 $condition = 'online_regular_price >= \''.(float)$value['from'].'\'';
             }
@@ -929,12 +920,10 @@ HTML;
             }
 
             $condition .= ' AND (online_regular_price IS NULL))';
-
         }
 
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
-            (isset($value['is_repricing']) && $value['is_repricing'] !== ''))
-        {
+        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+            (isset($value['is_repricing']) && $value['is_repricing'] !== '')) {
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';
             }
@@ -964,11 +953,11 @@ HTML;
         $dbSelect = $connection->select()
             ->from(
                 $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getMainTable(),
-                array('action_id','action','type','description','create_date','initiator')
+                ['action_id','action','type','description','create_date','initiator']
             )
-            ->where('`listing_product_id` = ?',$listingProductId)
+            ->where('`listing_product_id` = ?', $listingProductId)
             ->where('`action` IN (?)', $availableActionsId)
-            ->order(array('id DESC'))
+            ->order(['id DESC'])
             ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::PRODUCTS_LIMIT);
 
         $logs = $connection->fetchAll($dbSelect);
@@ -979,7 +968,7 @@ HTML;
 
         // ---------------------------------------
 
-        $summary = $this->createBlock('Listing\Log\Grid\LastActions')->setData([
+        $summary = $this->createBlock('Listing_Log_Grid_LastActions')->setData([
             'entity_id' => $listingProductId,
             'logs'      => $logs,
             'available_actions' => $this->getAvailableActions(),
@@ -1019,7 +1008,7 @@ HTML;
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
-<<<JS
+                <<<JS
     ListingGridHandlerObj.afterInitPage();
 JS
             );
@@ -1043,10 +1032,10 @@ JS
         if (!isset($this->lockedDataCache[$listingProductId])) {
             $objectLocks = $this->activeRecordFactory->getObjectLoaded('Listing\Product', $listingProductId)
                 ->getProcessingLocks();
-            $tempArray = array(
+            $tempArray = [
                 'object_locks' => $objectLocks,
                 'in_action' => !empty($objectLocks),
-            );
+            ];
             $this->lockedDataCache[$listingProductId] = $tempArray;
         }
 
@@ -1057,25 +1046,25 @@ JS
 
     private function getParentAsin($childId)
     {
-        if (is_null($this->parentAsins)) {
+        if ($this->parentAsins === null) {
             $connection = $this->resourceConnection->getConnection();
-            $tableAmazonListingProduct = $this->activeRecordFactory->getObject('Amazon\Listing\Product')
+            $tableAmazonListingProduct = $this->activeRecordFactory->getObject('Amazon_Listing_Product')
                 ->getResource()->getMainTable();
 
             $select = $connection->select();
-            $select->from(array('alp' => $tableAmazonListingProduct), array('listing_product_id','variation_parent_id'))
+            $select->from(['alp' => $tableAmazonListingProduct], ['listing_product_id','variation_parent_id'])
                 ->where('listing_product_id IN (?)', $this->getCollection()->getAllIds())
                 ->where('variation_parent_id IS NOT NULL');
 
             $parentIds = $connection->fetchPairs($select);
 
             $select = $connection->select();
-            $select->from(array('alp' => $tableAmazonListingProduct), array('listing_product_id', 'general_id'))
+            $select->from(['alp' => $tableAmazonListingProduct], ['listing_product_id', 'general_id'])
                 ->where('listing_product_id IN (?)', $parentIds);
 
             $parentAsins = $connection->fetchPairs($select);
 
-            $this->parentAsins = array();
+            $this->parentAsins = [];
             foreach ($parentIds as $childId => $parentId) {
                 $this->parentAsins[$childId] = $parentAsins[$parentId];
             }

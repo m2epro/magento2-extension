@@ -13,6 +13,10 @@ use Ess\M2ePro\Model\Exception;
 use Ess\M2ePro\Model\Setup\Database\Modifier\Table as TableModifier;
 use Magento\Framework\Module\Setup;
 
+/**
+ * Class Backup
+ * @package Ess\M2ePro\Model\Setup\Upgrade
+ */
 class Backup extends AbstractModel
 {
     const TABLE_SUFFIX = '__b';
@@ -26,22 +30,19 @@ class Backup extends AbstractModel
     private $installer;
 
     /** @var array $tablesList */
-    private $tablesList;
+    private $tablesList = [];
 
     //########################################
 
     public function __construct(
-        $versionFrom, $versionTo,
+        $versionFrom,
+        $versionTo,
         Setup $installer,
         array $tablesList,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
-        if (empty($tablesList)) {
-            throw new Exception('Tables list is empty.');
-        }
-
         $this->versionFrom = $versionFrom;
         $this->versionTo   = $versionTo;
 
@@ -69,17 +70,16 @@ class Backup extends AbstractModel
     public function create()
     {
         foreach ($this->tablesList as $table) {
-
             $this->prepareColumns($table);
 
             $backupTable = $this->getConnection()->createTableByDdl(
-                $this->helperFactory->getObject('Module\Database\Tables')->getFullName($table),
+                $this->helperFactory->getObject('Module_Database_Tables')->getFullName($table),
                 $this->getResultTableName($table)
             );
             $this->getConnection()->createTable($backupTable);
 
             $select = $this->getConnection()->select()->from(
-                $this->helperFactory->getObject('Module\Database\Tables')->getFullName($table)
+                $this->helperFactory->getObject('Module_Database_Tables')->getFullName($table)
             );
             $this->getConnection()->query(
                 $this->getConnection()->insertFromSelect($select, $this->getResultTableName($table))
@@ -98,19 +98,20 @@ class Backup extends AbstractModel
     {
         foreach ($this->tablesList as $table) {
             $this->getConnection()->dropTable(
-                $this->helperFactory->getObject('Module\Database\Tables')->getFullName($table)
+                $this->helperFactory->getObject('Module_Database_Tables')->getFullName($table)
             );
 
             $originalTable = $this->getConnection()->createTableByDdl(
                 $this->getResultTableName($table),
-                $this->helperFactory->getObject('Module\Database\Tables')->getFullName($table)
+                $this->helperFactory->getObject('Module_Database_Tables')->getFullName($table)
             );
             $this->getConnection()->createTable($originalTable);
 
             $select = $this->getConnection()->select()->from($this->getResultTableName($table));
             $this->getConnection()->query(
                 $this->getConnection()->insertFromSelect(
-                    $select, $this->helperFactory->getObject('Module\Database\Tables')->getFullName($table)
+                    $select,
+                    $this->helperFactory->getObject('Module_Database_Tables')->getFullName($table)
                 )
             );
         }
@@ -128,7 +129,7 @@ class Backup extends AbstractModel
 
     private function getResultTableName($table)
     {
-        $tableName = $this->helperFactory->getObject('Module\Database\Tables')->getFullName($table)
+        $tableName = $this->helperFactory->getObject('Module_Database_Tables')->getFullName($table)
                .self::TABLE_SUFFIX
                .'_'.str_replace('.', '', $this->versionFrom)
                .'_'.str_replace('.', '', $this->versionTo);
@@ -145,11 +146,12 @@ class Backup extends AbstractModel
     private function prepareColumns($table)
     {
         $tableInfo = $this->getConnection()->describeTable(
-            $this->helperFactory->getObject('Module\Database\Tables')->getFullName($table)
+            $this->helperFactory->getObject('Module_Database_Tables')->getFullName($table)
         );
 
         /** @var \Ess\M2ePro\Model\Setup\Database\Modifier\Table $tableModifier */
-        $tableModifier = $this->modelFactory->getObject('Setup\Database\Modifier\Table',
+        $tableModifier = $this->modelFactory->getObject(
+            'Setup_Database_Modifier_Table',
             [
                 'installer' => $this->installer,
                 'tableName' => $table,
@@ -157,7 +159,6 @@ class Backup extends AbstractModel
         );
 
         foreach ($tableInfo as $columnTitle => $columnInfo) {
-
             $this->prepareFloatUnsignedColumns($tableModifier, $columnTitle, $columnInfo);
             $this->prepareVarcharColumns($tableModifier, $columnTitle, $columnInfo);
         }
@@ -184,7 +185,7 @@ class Backup extends AbstractModel
             $columnType .= ' NOT NULL';
         }
 
-        $tableModifier->changeColumn($columnTitle, $columnType, $columnInfo['DEFAULT'], NULL, false);
+        $tableModifier->changeColumn($columnTitle, $columnType, $columnInfo['DEFAULT'], null, false);
     }
 
     /**
@@ -202,13 +203,12 @@ class Backup extends AbstractModel
         }
 
         if ($columnInfo['LENGTH'] > 255 && $columnInfo['LENGTH'] <= 500) {
-
             $columnType = 'varchar(255)';
             if (isset($columnInfo['NULLABLE']) && !$columnInfo['NULLABLE']) {
                 $columnType .= ' NOT NULL';
             }
 
-            $tableModifier->changeColumn($columnTitle, $columnType, $columnInfo['DEFAULT'], NULL, false);
+            $tableModifier->changeColumn($columnTitle, $columnType, $columnInfo['DEFAULT'], null, false);
         }
     }
 

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
+/**
+ * Class GetAddSpecificsHtml
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category
+ */
 class GetAddSpecificsHtml extends Category
 {
     //########################################
@@ -17,7 +21,7 @@ class GetAddSpecificsHtml extends Category
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Specific\Add $addBlock */
-        $addBlock = $this->createBlock('Walmart\Template\Category\Categories\Specific\Add');
+        $addBlock = $this->createBlock('Walmart_Template_Category_Categories_Specific_Add');
 
         $gridBlock = $this->prepareGridBlock();
         $addBlock->setChild('specifics_grid', $gridBlock);

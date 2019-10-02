@@ -11,6 +11,10 @@
  */
 namespace Ess\M2ePro\Model\Ebay\Listing\Product;
 
+/**
+ * Class Variation
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product
+ */
 class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
     //########################################
@@ -25,7 +29,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
 
     public function afterSave()
     {
-        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+        $this->getHelper('Data_Cache_Runtime')->removeTagValues(
             "listing_product_{$this->getListingProduct()->getId()}_variations"
         );
 
@@ -34,7 +38,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
 
     public function beforeDelete()
     {
-        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+        $this->getHelper('Data_Cache_Runtime')->removeTagValues(
             "listing_product_{$this->getListingProduct()->getId()}_variations"
         );
 
@@ -43,7 +47,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
 
     public function delete()
     {
-        if (is_null($this->getId())) {
+        if ($this->getId() === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Method require loaded instance first');
         }
 
@@ -52,7 +56,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
         }
 
         if ($this->getEbayAccount()->isPickupStoreEnabled()) {
-            $this->activeRecordFactory->getObject('Ebay\Listing\Product\PickupStore')->getResource()
+            $this->activeRecordFactory->getObject('Ebay_Listing_Product_PickupStore')->getResource()
                 ->processDeletedVariation(
                     $this->getParentObject()
                 );
@@ -221,9 +225,9 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
      * @param bool $tryToGetFromStorage
      * @return \Ess\M2ePro\Model\Listing\Product\Variation\Option[]
      */
-    public function getOptions($asObjects = false, array $filters = array(), $tryToGetFromStorage = true)
+    public function getOptions($asObjects = false, array $filters = [], $tryToGetFromStorage = true)
     {
-        return $this->getParentObject()->getOptions($asObjects,$filters,$tryToGetFromStorage);
+        return $this->getParentObject()->getOptions($asObjects, $filters, $tryToGetFromStorage);
     }
 
     //########################################
@@ -290,7 +294,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
      */
     public function setStatus($status)
     {
-        switch($status) {
+        switch ($status) {
             case \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED:
                 $status = $this->calculateStatusByQty();
                 break;
@@ -324,7 +328,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
                 break;
         }
 
-        $this->setData('status' , $status);
+        $this->setData('status', $status);
         $this->getParentObject()->save();
     }
 
@@ -335,13 +339,13 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
      */
     private function calculateStatusByQty()
     {
-        if (is_null($this->getData('online_qty'))) {
+        if ($this->getData('online_qty') === null) {
             return \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
         }
 
         if ($this->getOnlineQty() == 0) {
             return \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN;
-        } else if ($this->getOnlineQty() <= $this->getOnlineQtySold()) {
+        } elseif ($this->getOnlineQty() <= $this->getOnlineQtySold()) {
             return \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD;
         }
 
@@ -436,7 +440,6 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
         // Configurable, Grouped product
         if ($this->getListingProduct()->getMagentoProduct()->isConfigurableType() ||
             $this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
-
             foreach ($options as $option) {
                 /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
                 $sku = $option->getChildObject()->getSku();
@@ -444,8 +447,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
             }
 
         // Bundle product
-        } else if ($this->getListingProduct()->getMagentoProduct()->isBundleType()) {
-
+        } elseif ($this->getListingProduct()->getMagentoProduct()->isBundleType()) {
             foreach ($options as $option) {
                 /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
                 $sku != '' && $sku .= '-';
@@ -453,8 +455,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
             }
 
         // Simple with options product
-        } else if ($this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions()) {
-
+        } elseif ($this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions()) {
             foreach ($options as $option) {
                 /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
                 $sku != '' && $sku .= '-';
@@ -467,7 +468,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
             }
 
             // Downloadable with separated links product
-        } else if ($this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()) {
+        } elseif ($this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()) {
 
             /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
 
@@ -489,7 +490,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
     public function getQty()
     {
         /** @var $calculator \Ess\M2ePro\Model\Ebay\Listing\Product\QtyCalculator */
-        $calculator = $this->modelFactory->getObject('Ebay\Listing\Product\QtyCalculator');
+        $calculator = $this->modelFactory->getObject('Ebay_Listing_Product_QtyCalculator');
         $calculator->setProduct($this->getListingProduct());
         return $calculator->getVariationValue($this->getParentObject());
     }
@@ -503,13 +504,15 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
     {
         $src = $this->getEbaySellingFormatTemplate()->getFixedPriceSource();
 
-        $vatPercent = NULL;
+        $vatPercent = null;
         if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
         return $this->getCalculatedPrice(
-            $src, $vatPercent, $this->getEbaySellingFormatTemplate()->getFixedPriceCoefficient()
+            $src,
+            $vatPercent,
+            $this->getEbaySellingFormatTemplate()->getFixedPriceCoefficient()
         );
     }
 
@@ -522,7 +525,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
     {
         $src = $this->getEbaySellingFormatTemplate()->getPriceDiscountStpSource();
 
-        $vatPercent = NULL;
+        $vatPercent = null;
         if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
@@ -537,7 +540,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
     {
         $src = $this->getEbaySellingFormatTemplate()->getPriceDiscountMapSource();
 
-        $vatPercent = NULL;
+        $vatPercent = null;
         if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
@@ -547,10 +550,10 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
 
     // ---------------------------------------
 
-    private function getCalculatedPrice($src, $vatPercent = NULL, $coefficient = NULL)
+    private function getCalculatedPrice($src, $vatPercent = null, $coefficient = null)
     {
         /** @var $calculator \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculator */
-        $calculator = $this->modelFactory->getObject('Ebay\Listing\Product\PriceCalculator');
+        $calculator = $this->modelFactory->getObject('Ebay_Listing_Product_PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getListingProduct());
         $calculator->setVatPercent($vatPercent);
         $calculator->setCoefficient($coefficient);
@@ -566,7 +569,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
      */
     public function hasSales()
     {
-        $currentSpecifics = array();
+        $currentSpecifics = [];
 
         $options = $this->getOptions(true);
         foreach ($options as $option) {
@@ -580,7 +583,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
 
         $realEbayItemId = $this->getEbayListingProduct()->getEbayItem()->getItemId();
 
-        $tempOrdersItemsCollection = $this->activeRecordFactory->getObject('Ebay\Order\Item')->getCollection();
+        $tempOrdersItemsCollection = $this->activeRecordFactory->getObject('Ebay_Order_Item')->getCollection();
         $tempOrdersItemsCollection->addFieldToFilter('item_id', $realEbayItemId);
 
         /** @var \Ess\M2ePro\Model\Ebay\Order\Item[] $ordersItems */
@@ -589,7 +592,6 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
         $findOrderItem = false;
 
         foreach ($ordersItems as $orderItem) {
-
             $orderItemVariationOptions = $orderItem->getVariationProductOptions();
 
             if (empty($orderItemVariationOptions)) {
@@ -601,8 +603,8 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
             $orderItemVariationValues = array_map('trim', array_values($orderItemVariationOptions));
 
             if (count($currentSpecifics) == count($orderItemVariationOptions) &&
-                count(array_diff($variationKeys,$orderItemVariationKeys)) <= 0 &&
-                count(array_diff($variationValues,$orderItemVariationValues)) <= 0) {
+                count(array_diff($variationKeys, $orderItemVariationKeys)) <= 0 &&
+                count(array_diff($variationValues, $orderItemVariationValues)) <= 0) {
                 $findOrderItem = true;
                 break;
             }

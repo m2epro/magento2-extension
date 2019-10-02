@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Order\Update;
 
+/**
+ * Class Shipping
+ * @package Ess\M2ePro\Model\Ebay\Connector\Order\Update
+ */
 class Shipping extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractModel
 {
     // M2ePro\TRANSLATIONS
@@ -15,8 +19,8 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractMod
     // Tracking number "%num%" for "%code%" has been sent to eBay.
     // Shipping Status for eBay Order was updated to Shipped.
 
-    private $carrierCode = NULL;
-    private $trackingNumber = NULL;
+    private $carrierCode = null;
+    private $trackingNumber = null;
 
     // ########################################
 
@@ -75,10 +79,11 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractMod
 
         if ($this->action == \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP_TRACK) {
             $this->order->addSuccessLog(
-                'Tracking number "%num%" for "%code%" has been sent to eBay.', array(
+                'Tracking number "%num%" for "%code%" has been sent to eBay.',
+                [
                     '!num'  => $this->trackingNumber,
                     '!code' => $this->carrierCode
-                )
+                ]
             );
         }
 
@@ -92,7 +97,7 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractMod
             $this->activeRecordFactory
                 ->getObject('Order\Change')
                 ->getResource()
-                ->deleteByIds(array($this->getOrderChangeId()));
+                ->deleteByIds([$this->getOrderChangeId()]);
         }
     }
 

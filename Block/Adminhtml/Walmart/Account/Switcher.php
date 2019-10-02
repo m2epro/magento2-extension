@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Account
+ */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Account\Switcher
 {
     //########################################
@@ -26,7 +30,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Account\Switcher
         $encodedMarketplaces = $this->getHelper('Data')->jsonEncode($marketplaces);
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace\Switcher $marketplaceSwitcher */
-        $marketplaceSwitcher = $this->createBlock('Walmart\Marketplace\Switcher')->setData([
+        $marketplaceSwitcher = $this->createBlock('Walmart_Marketplace_Switcher')->setData([
             'component_mode' => $this->getData('component_mode')
         ]);
 

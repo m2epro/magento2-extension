@@ -8,16 +8,20 @@
 
 namespace Ess\M2ePro\Model\Magento\Order;
 
+/**
+ * Class Invoice
+ * @package Ess\M2ePro\Model\Magento\Order
+ */
 class Invoice extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Magento\Framework\DB\TransactionFactory  */
-    protected $transactionFactory = NULL;
+    protected $transactionFactory = null;
 
     /** @var $magentoOrder \Magento\Sales\Model\Order */
-    protected $magentoOrder       = NULL;
+    protected $magentoOrder       = null;
 
     /** @var $invoice \Magento\Sales\Model\Order\Invoice */
-    protected $invoice            = NULL;
+    protected $invoice            = null;
 
     //########################################
 
@@ -25,8 +29,7 @@ class Invoice extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->transactionFactory = $transactionFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -67,7 +70,7 @@ class Invoice extends \Ess\M2ePro\Model\AbstractModel
         $this->getHelper('Data\GlobalData')->setValue('skip_invoice_observer', true);
         // ---------------------------------------
 
-        $qtys = array();
+        $qtys = [];
         foreach ($this->magentoOrder->getAllItems() as $item) {
             $qtyToInvoice = $item->getQtyToInvoice();
 

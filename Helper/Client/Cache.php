@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Helper\Client;
 
 use Ess\M2ePro\Helper\AbstractHelper;
 
+/**
+ * Class Cache
+ * @package Ess\M2ePro\Helper\Client
+ */
 class Cache extends AbstractHelper
 {
     const BACKEND_TYPE_APC       = 'apc';

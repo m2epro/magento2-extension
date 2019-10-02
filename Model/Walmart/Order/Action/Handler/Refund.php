@@ -10,9 +10,13 @@ namespace Ess\M2ePro\Model\Walmart\Order\Action\Handler;
 
 use Ess\M2ePro\Model\Walmart\Order\Item as OrderItem;
 
+/**
+ * Class Refund
+ * @package Ess\M2ePro\Model\Walmart\Order\Action\Handler
+ */
 class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractModel
 {
-    private $params = array();
+    private $params = [];
 
     //########################################
 
@@ -33,7 +37,8 @@ class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
 
         $orderItemCollection = $this->getOrder()->getItemsCollection();
         $orderItemCollection->addFieldToFilter(
-            'status', array('in' => array(OrderItem::STATUS_SHIPPED))
+            'status',
+            ['in' => [OrderItem::STATUS_SHIPPED]]
         );
 
         if ($orderItemCollection->getSize() == 0) {
@@ -47,39 +52,41 @@ class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
 
     protected function getServerCommand()
     {
-        return array('orders', 'refund', 'entity');
+        return ['orders', 'refund', 'entity'];
     }
 
     protected function getRequestData()
     {
-        $resultItems = array();
+        $resultItems = [];
 
         foreach ($this->params['items'] as $itemData) {
 
             /** @var \Ess\M2ePro\Model\Walmart\Order\Item $orderItem */
             $orderItem = $this->activeRecordFactory->getObjectLoaded(
-                'Walmart\Order\Item', $itemData['item_id'], 'walmart_order_item_id'
+                'Walmart_Order_Item',
+                $itemData['item_id'],
+                'walmart_order_item_id'
             );
 
-            if (!is_null($orderItem) && $orderItem->getData('status') != OrderItem::STATUS_SHIPPED) {
+            if ($orderItem !== null && $orderItem->getData('status') != OrderItem::STATUS_SHIPPED) {
                 continue;
             }
 
-            $resultItems[] = array(
+            $resultItems[] = [
                 'number'  => $itemData['item_id'],
                 'qty'     => $itemData['qty'],
-                'product' => array(
+                'product' => [
                     'price' => $itemData['prices']['product'],
                     'tax'   => $itemData['taxes']['product'],
-                ),
-            );
+                ],
+            ];
         }
 
-        return array(
+        return [
             'channel_order_id' => $this->getWalmartOrder()->getWalmartOrderId(),
             'currency'         => $this->getWalmartOrder()->getCurrency(),
             'items'            => $resultItems,
-        );
+        ];
     }
 
     protected function processResult(array $responseData)
@@ -89,13 +96,15 @@ class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
             return;
         }
 
-        $itemsStatuses = array();
+        $itemsStatuses = [];
 
         foreach ($this->params['items'] as $itemData) {
 
             /** @var \Ess\M2ePro\Model\Walmart\Order\Item $orderItem */
             $orderItem = $this->activeRecordFactory->getObjectLoaded(
-                'Walmart\Order\Item', $itemData['item_id'], 'walmart_order_item_id'
+                'Walmart_Order_Item',
+                $itemData['item_id'],
+                'walmart_order_item_id'
             );
 
             /**
@@ -103,7 +112,7 @@ class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
              * So walmart_order_item_id of real OrderItem and walmart_order_item_id in request may be different.
              * Real walmart_order_item_id will match with the ID in request when the last item will be cancelled.
              */
-            if (!is_null($orderItem)) {
+            if ($orderItem !== null) {
                 $orderItem->setData('status', OrderItem::STATUS_CANCELLED)->save();
                 $itemsStatuses[$itemData['item_id']] = OrderItem::STATUS_CANCELLED;
             }
@@ -111,13 +120,12 @@ class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
 
         foreach ($this->getOrder()->getItemsCollection() as $item) {
             if (!array_key_exists($item->getChildObject()->getData('walmart_order_item_id'), $itemsStatuses)) {
-
                 $itemsStatuses[$item->getChildObject()->getData('walmart_order_item_id')] =
                     $item->getChildObject()->getData('status');
             }
         }
 
-        $orderStatus = $this->modelFactory->getObject('Walmart\Order\Helper')->getOrderStatus($itemsStatuses);
+        $orderStatus = $this->modelFactory->getObject('Walmart_Order_Helper')->getOrderStatus($itemsStatuses);
         $this->getOrder()->getChildObject()->setData('status', $orderStatus);
         $this->getOrder()->getChildObject()->save();
         $this->getOrder()->save();
@@ -132,17 +140,18 @@ class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
     /**
      * @param \Ess\M2ePro\Model\Connector\Connection\Response\Message[] $messages
      */
-    protected function processError(array $messages = array())
+    protected function processError(array $messages = [])
     {
         if (empty($messages)) {
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
-                $this->helperFactory->getObject('Module\Translation')
-                                    ->__('Order was not cancelled due to Walmart error.'),
+                $this->helperFactory->getObject('Module\Translation')->__(
+                    'Order was not cancelled due to Walmart error.'
+                ),
                 \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
             );
 
-            $messages = array($message);
+            $messages = [$message];
         }
 
         foreach ($messages as $message) {

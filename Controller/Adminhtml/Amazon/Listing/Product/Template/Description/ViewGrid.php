@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Descri
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class ViewGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description
+ */
 class ViewGrid extends Main
 {
     public function execute()
@@ -25,7 +29,7 @@ class ViewGrid extends Main
             return $this->getResult();
         }
 
-        $grid = $this->createBlock('Amazon\Listing\Product\Template\Description\Grid');
+        $grid = $this->createBlock('Amazon_Listing_Product_Template_Description_Grid');
         $grid->setCheckNewAsinAccepted($checkNewAsinAccepted);
         $grid->setProductsIds($productsIds);
         if ($mapToTemplateJsFn !== false) {

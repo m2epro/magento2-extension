@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class VatCalculationService
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs
+ */
 class VatCalculationService extends AbstractForm
 {
     //########################################
@@ -18,12 +22,12 @@ class VatCalculationService extends AbstractForm
     {
         /** @var $account \Ess\M2ePro\Model\Account */
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
-        $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
-        $defaults = array(
+        $defaults = [
             'is_vat_calculation_service_enabled'   => 0,
             'is_magento_invoice_creation_disabled' => 0,
-        );
+        ];
 
         $formData = array_merge($defaults, $formData);
         $isEdit = !!$this->getRequest()->getParam('id');
@@ -42,7 +46,7 @@ If the <strong>Disable Magento Invoice Creation</strong> option is set to <stron
 it will prevent the issue of duplicate invoices.<br /><br />
 <strong>Note:</strong> You have to be enrolled in Amazon VAT Calculation Service.'
 HTML
-)
+            )
             ]
         );
 

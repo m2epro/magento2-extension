@@ -10,18 +10,23 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tab
 
 use Ess\M2ePro\Model\Ebay\Template\Synchronization;
 
+/**
+ * Class ListRules
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs
+ */
 class ListRules extends AbstractTab
 {
     protected function _prepareForm()
     {
-        $default = $this->activeRecordFactory->getObject('Ebay\Template\Synchronization')->getListDefaultSettings();
+        $default = $this->activeRecordFactory->getObject('Ebay_Template_Synchronization')->getListDefaultSettings();
         $formData = $this->getFormData();
 
         $formData = array_merge($default, $formData);
 
         $form = $this->_formFactory->create();
 
-        $form->addField('synchronization_id',
+        $form->addField(
+            'synchronization_id',
             'hidden',
             [
                 'name' => 'synchronization[id]',
@@ -29,7 +34,8 @@ class ListRules extends AbstractTab
             ]
         );
 
-        $form->addField('synchronization_title',
+        $form->addField(
+            'synchronization_title',
             'hidden',
             [
                 'name' => 'synchronization[title]',
@@ -37,7 +43,8 @@ class ListRules extends AbstractTab
             ]
         );
 
-        $form->addField('synchronization_is_custom_template',
+        $form->addField(
+            'synchronization_is_custom_template',
             'hidden',
             [
                 'name' => 'synchronization[is_custom_template]',
@@ -45,7 +52,8 @@ class ListRules extends AbstractTab
             ]
         );
 
-        $form->addField('ebay_template_synchronization_form_data_list',
+        $form->addField(
+            'ebay_template_synchronization_form_data_list',
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
@@ -69,14 +77,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_template_synchronization_form_data_list',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_template_synchronization_form_data_list',
             [
                 'legend' => $this->__('General'),
                 'collapsable' => false
             ]
         );
 
-        $fieldset->addField('list_mode',
+        $fieldset->addField(
+            'list_mode',
             self::SELECT,
             [
                 'name' => 'synchronization[list_mode]',
@@ -89,14 +99,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_template_synchronization_form_data_list_rules',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_template_synchronization_form_data_list_rules',
             [
                 'legend' => $this->__('List Conditions'),
                 'collapsable' => false
             ]
         );
 
-        $fieldset->addField('list_status_enabled',
+        $fieldset->addField(
+            'list_status_enabled',
             self::SELECT,
             [
                 'name' => 'synchronization[list_status_enabled]',
@@ -114,7 +126,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('list_is_in_stock',
+        $fieldset->addField(
+            'list_is_in_stock',
             self::SELECT,
             [
                 'name' => 'synchronization[list_is_in_stock]',
@@ -131,7 +144,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('list_qty_magento',
+        $fieldset->addField(
+            'list_qty_magento',
             self::SELECT,
             [
                 'name' => 'synchronization[list_qty_magento]',
@@ -152,7 +166,8 @@ HTML
             ]
         )->addCustomAttribute('qty_type', 'magento');
 
-        $fieldset->addField('list_qty_magento_value',
+        $fieldset->addField(
+            'list_qty_magento_value',
             'text',
             [
                 'container_id' => 'list_qty_magento_value_container',
@@ -164,7 +179,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('list_qty_magento_value_max',
+        $fieldset->addField(
+            'list_qty_magento_value_max',
             'text',
             [
                 'container_id' => 'list_qty_magento_value_max_container',
@@ -176,7 +192,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('list_qty_calculated',
+        $fieldset->addField(
+            'list_qty_calculated',
             self::SELECT,
             [
                 'name' => 'synchronization[list_qty_calculated]',
@@ -198,7 +215,8 @@ HTML
             ]
         )->addCustomAttribute('qty_type', 'calculated');
 
-        $fieldset->addField('list_qty_calculated_value',
+        $fieldset->addField(
+            'list_qty_calculated_value',
             'text',
             [
                 'container_id' => 'list_qty_calculated_value_container',
@@ -210,7 +228,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('list_qty_calculated_value_max',
+        $fieldset->addField(
+            'list_qty_calculated_value_max',
             'text',
             [
                 'container_id' => 'list_qty_calculated_value_max_container',
@@ -222,20 +241,20 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_template_synchronization_list_advanced_filters',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_template_synchronization_list_advanced_filters',
             [
                 'legend' => $this->__('Advanced Conditions'),
                 'collapsable' => false,
                 'tooltip' => $this->__(
-                    '<p>You can provide flexible Advanced Conditions to manage when the List action should
-                    be run basing on the Attributes’ values of the Magento Product.<br> So, when all the Conditions
-                    (both general List Conditions and Advanced Conditions) are met,
-                    the Product will be listed on Channel.</p>'
+                    '<p>Define Magento Attribute value(s) based on which a product must be listed on the Channel.<br>
+                    Once both List Conditions and Advanced Conditions are met, the product will be listed.</p>'
                 )
             ]
         );
 
-        $fieldset->addField('list_advanced_rules_filters_warning',
+        $fieldset->addField(
+            'list_advanced_rules_filters_warning',
             self::MESSAGES,
             [
                 'messages' => [[
@@ -249,7 +268,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('list_advanced_rules_mode',
+        $fieldset->addField(
+            'list_advanced_rules_mode',
             self::SELECT,
             [
                 'name' => 'synchronization[list_advanced_rules_mode]',
@@ -262,7 +282,7 @@ HTML
             ]
         );
 
-        $ruleModel = $this->activeRecordFactory->getObject('Magento\Product\Rule')->setData(
+        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
             ['prefix' => Synchronization::LIST_ADVANCED_RULES_PREFIX]
         );
 
@@ -270,9 +290,10 @@ HTML
             $ruleModel->loadFromSerialized($formData['list_advanced_rules_filters']);
         }
 
-        $ruleBlock = $this->createBlock('Magento\Product\Rule')->setData(['rule_model' => $ruleModel]);
+        $ruleBlock = $this->createBlock('Magento_Product_Rule')->setData(['rule_model' => $ruleModel]);
 
-        $fieldset->addField('advanced_filter',
+        $fieldset->addField(
+            'advanced_filter',
             self::CUSTOM_CONTAINER,
             [
                 'container_id' => 'list_advanced_rules_filters_container',

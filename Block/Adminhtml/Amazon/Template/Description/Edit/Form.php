@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     //########################################
@@ -40,7 +44,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'legend' => $this->__('General'), 'collapsable' => false
         ]);
 
-        $fieldSet->addField('title', 'text',
+        $fieldSet->addField(
+            'title',
+            'text',
             [
                 'name' => 'general[title]',
                 'label' => $this->__('Title'),
@@ -52,8 +58,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $dataBlock = $this->createBlock('Amazon\Template\Description\Edit\Data');
-        $form->addField('content_html',
+        $dataBlock = $this->createBlock('Amazon_Template_Description_Edit_Data');
+        $form->addField(
+            'content_html',
             self::CUSTOM_CONTAINER,
             [
                 'text' => $dataBlock->toHtml()

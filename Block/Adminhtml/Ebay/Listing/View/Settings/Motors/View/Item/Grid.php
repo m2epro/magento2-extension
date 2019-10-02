@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Item;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Item
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     //########################################
@@ -28,8 +32,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->customCollectionFactory = $customCollectionFactory;
         $this->resourceConnection = $resourceConnection;
 
@@ -93,7 +96,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $items = [];
         foreach ($parsedValue['items'] as $id => $item) {
-
             if (!in_array($id, $existingItems)) {
                 continue;
             }
@@ -210,10 +212,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         /** @var \Ess\M2ePro\Model\ResourceModel\Collection\Custom $filteredCollection */
         $filteredCollection = $this->customCollectionFactory->create();
 
-        $value = str_replace([' ','%','\\','\''],'',$value);
+        $value = str_replace([' ','%','\\','\''], '', $value);
 
         foreach ($this->getCollection()->getItems() as $item) {
-            if (strpos($item->getData($field),$value) !== false) {
+            if (strpos($item->getData($field), $value) !== false) {
                 $filteredCollection->addItem($item);
             }
         }
@@ -266,7 +268,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
 
         if (!$this->canDisplayContainer()) {
-
             $this->js->add(<<<JS
     EbayListingViewSettingsMotorsViewItemGridObj.afterInitPage();
 JS
@@ -314,7 +315,7 @@ JS
 
     public function getMotorsType()
     {
-        if (is_null($this->motorsType)) {
+        if ($this->motorsType === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Motors type not set.');
         }
 
@@ -336,9 +337,11 @@ JS
 
     public function getListingProduct()
     {
-        if (is_null($this->listingProduct)) {
+        if ($this->listingProduct === null) {
             $this->listingProduct = $this->parentFactory->getObjectLoaded(
-                \Ess\M2ePro\Helper\Component\Ebay::NICK , 'Listing\Product', $this->getListingProductId()
+                \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                'Listing\Product',
+                $this->getListingProductId()
             );
         }
 
@@ -370,7 +373,7 @@ JS
      */
     private function getMotorsHelper()
     {
-        return $this->getHelper('Component\Ebay\Motors');
+        return $this->getHelper('Component_Ebay_Motors');
     }
 
     //########################################

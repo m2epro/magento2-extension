@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\Ktype;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\Ktype
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\Grid
 {
     protected $itemCollectionFactory;
@@ -21,8 +25,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->itemCollectionFactory = $itemCollectionFactory;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($context, $backendHelper, $data);
@@ -37,7 +40,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
         $collection->setConnection($this->resourceConnection->getConnection());
         $collection->setIdFieldName('ktype');
 
-        $table = $this->getHelper('Module\Database\Structure')
+        $table = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_ktype');
 
         $collection->getSelect()->reset()->from([

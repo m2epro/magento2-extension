@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\HealthStatus\Notification;
 
+/**
+ * Class MessageBuilder
+ * @package Ess\M2ePro\Model\HealthStatus\Notification
+ */
 class MessageBuilder extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Magento\Framework\UrlInterface */
@@ -20,7 +24,7 @@ class MessageBuilder extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory, $data);
         $this->urlBuilder = $urlBuilder;
     }

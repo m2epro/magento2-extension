@@ -64,6 +64,8 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     const _ACTION_SWITCH_TO_AFN_ON_COMPONENT = 'Switching Fulfillment to AFN';
     const ACTION_SWITCH_TO_MFN_ON_COMPONENT = 30;
     const _ACTION_SWITCH_TO_MFN_ON_COMPONENT = 'Switching Fulfillment to MFN';
+    const ACTION_RESET_BLOCKED_PRODUCT = 32;
+    const _ACTION_RESET_BLOCKED_PRODUCT = 'Reset Inactive (Blocked) Item';
 
     const ACTION_CHANGE_PRODUCT_SPECIAL_PRICE_FROM_DATE = 19;
     const _ACTION_CHANGE_PRODUCT_SPECIAL_PRICE_FROM_DATE = 'Change of Product Special Price from date in Magento Store';
@@ -99,64 +101,70 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     //########################################
 
-    public function addListingMessage($listingId,
-                                      $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
-                                      $actionId = NULL,
-                                      $action = NULL,
-                                      $description = NULL,
-                                      $type = NULL,
-                                      $priority = NULL,
-                                      array $additionalData = array())
-    {
-        $dataForAdd = $this->makeDataForAdd($listingId,
-                                            $initiator,
-                                            NULL,
-                                            NULL,
-                                            $actionId,
-                                            $action,
-                                            $description,
-                                            $type,
-                                            $priority,
-                                            $additionalData);
+    public function addListingMessage(
+        $listingId,
+        $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
+        $actionId = null,
+        $action = null,
+        $description = null,
+        $type = null,
+        $priority = null,
+        array $additionalData = []
+    ) {
+        $dataForAdd = $this->makeDataForAdd(
+            $listingId,
+            $initiator,
+            null,
+            null,
+            $actionId,
+            $action,
+            $description,
+            $type,
+            $priority,
+            $additionalData
+        );
 
         $this->createMessage($dataForAdd);
     }
 
-    public function addProductMessage($listingId,
-                                      $productId,
-                                      $listingProductId,
-                                      $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
-                                      $actionId = NULL,
-                                      $action = NULL,
-                                      $description = NULL,
-                                      $type = NULL,
-                                      $priority = NULL,
-                                      array $additionalData = array())
-    {
-        $dataForAdd = $this->makeDataForAdd($listingId,
-                                            $initiator,
-                                            $productId,
-                                            $listingProductId,
-                                            $actionId,
-                                            $action,
-                                            $description,
-                                            $type,
-                                            $priority,
-                                            $additionalData);
+    public function addProductMessage(
+        $listingId,
+        $productId,
+        $listingProductId,
+        $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
+        $actionId = null,
+        $action = null,
+        $description = null,
+        $type = null,
+        $priority = null,
+        array $additionalData = []
+    ) {
+        $dataForAdd = $this->makeDataForAdd(
+            $listingId,
+            $initiator,
+            $productId,
+            $listingProductId,
+            $actionId,
+            $action,
+            $description,
+            $type,
+            $priority,
+            $additionalData
+        );
 
         $this->createMessage($dataForAdd);
     }
 
     // ---------------------------------------
 
-    public function clearMessages($listingId = NULL)
+    public function clearMessages($listingId = null)
     {
-        $filters = array();
+        $filters = [];
 
-        if (!is_null($listingId)) {
+        if ($listingId !== null) {
             $filters['listing_id'] = $listingId;
         }
-        if (!is_null($this->componentMode)) {
+        if ($this->componentMode !== null) {
             $filters['component_mode'] = $this->componentMode;
         }
 
@@ -169,7 +177,9 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     {
         /** @var \Ess\M2ePro\Model\Listing $listing */
         $listing = $this->parentFactory->getCachedObjectLoaded(
-            $this->getComponentMode(), 'Listing', $dataForAdd['listing_id']
+            $this->getComponentMode(),
+            'Listing',
+            $dataForAdd['listing_id']
         );
 
         $dataForAdd['account_id']     = $listing->getAccountId();
@@ -191,59 +201,60 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
                  ->getId();
     }
 
-    protected function makeDataForAdd($listingId,
-                                      $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
-                                      $productId = NULL,
-                                      $listingProductId = NULL,
-                                      $actionId = NULL,
-                                      $action = NULL,
-                                      $description = NULL,
-                                      $type = NULL,
-                                      $priority = NULL,
-                                      array $additionalData = array())
-    {
-        $dataForAdd = array();
+    protected function makeDataForAdd(
+        $listingId,
+        $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
+        $productId = null,
+        $listingProductId = null,
+        $actionId = null,
+        $action = null,
+        $description = null,
+        $type = null,
+        $priority = null,
+        array $additionalData = []
+    ) {
+        $dataForAdd = [];
 
         $dataForAdd['listing_id'] = (int)$listingId;
         $dataForAdd['initiator'] = $initiator;
 
-        if (!is_null($productId)) {
+        if ($productId !== null) {
             $dataForAdd['product_id'] = (int)$productId;
         } else {
-            $dataForAdd['product_id'] = NULL;
+            $dataForAdd['product_id'] = null;
         }
 
-        if (!is_null($listingProductId)) {
+        if ($listingProductId !== null) {
             $dataForAdd['listing_product_id'] = (int)$listingProductId;
         } else {
-            $dataForAdd['listing_product_id'] = NULL;
+            $dataForAdd['listing_product_id'] = null;
         }
 
-        if (!is_null($actionId)) {
+        if ($actionId !== null) {
             $dataForAdd['action_id'] = (int)$actionId;
         } else {
             $dataForAdd['action_id'] = $this->getResource()->getNextActionId();
         }
 
-        if (!is_null($action)) {
+        if ($action !== null) {
             $dataForAdd['action'] = (int)$action;
         } else {
             $dataForAdd['action'] = self::ACTION_UNKNOWN;
         }
 
-        if (!is_null($description)) {
+        if ($description !== null) {
             $dataForAdd['description'] = $description;
         } else {
-            $dataForAdd['description'] = NULL;
+            $dataForAdd['description'] = null;
         }
 
-        if (!is_null($type)) {
+        if ($type !== null) {
             $dataForAdd['type'] = (int)$type;
         } else {
             $dataForAdd['type'] = self::TYPE_NOTICE;
         }
 
-        if (!is_null($priority)) {
+        if ($priority !== null) {
             $dataForAdd['priority'] = (int)$priority;
         } else {
             $dataForAdd['priority'] = self::PRIORITY_LOW;

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Order;
 
+/**
+ * Class Updater
+ * @package Ess\M2ePro\Model\Magento\Order
+ */
 class Updater extends \Ess\M2ePro\Model\AbstractModel
 {
     // M2ePro\TRANSLATIONS
@@ -35,8 +39,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Sales\Model\Order\AddressFactory $addressFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->customerFactory = $customerFactory;
         $this->customerAddressFactory = $customerAddressFactory;
         $this->addressFactory = $addressFactory;
@@ -147,7 +150,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         if (!$this->magentoOrder->getCustomerIsGuest()) {
             $customer = $this->getMagentoCustomer();
 
-            if (is_null($customer)) {
+            if ($customer === null) {
                 return;
             }
 
@@ -176,7 +179,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
 
         $customer = $this->getMagentoCustomer();
 
-        if (is_null($customer)) {
+        if ($customer === null) {
             return;
         }
 
@@ -204,9 +207,10 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $payment = $this->magentoOrder->getPayment();
-
         if ($payment instanceof \Magento\Sales\Model\Order\Payment) {
-            $payment->setAdditionalData(serialize($newPaymentData))->save();
+            $payment->setAdditionalData(
+                $this->getHelper('Data')->serialize($newPaymentData)
+            )->save();
         }
     }
 
@@ -228,7 +232,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        !is_array($comments) && $comments = array($comments);
+        !is_array($comments) && $comments = [$comments];
 
         $header = '<br/><b><u>' . $this->getHelper('Module\Translation')->__('M2E Pro Notes') . ':</u></b><br/><br/>';
         $comments = implode('<br/><br/>', $comments);

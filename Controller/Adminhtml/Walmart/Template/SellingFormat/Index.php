@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat
+ */
 class Index extends Template
 {
     //########################################

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account
+ */
 class Save extends Account
 {
     public function execute()
@@ -25,16 +29,16 @@ class Save extends Account
 
         // Base prepare
         // ---------------------------------------
-        $data = array();
+        $data = [];
         // ---------------------------------------
 
         // tab: general
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'title',
             'mode',
             'token_session',
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -44,10 +48,10 @@ class Save extends Account
 
         // tab: 3rd party
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'other_listings_synchronization',
             'other_listings_mapping_mode'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -59,7 +63,7 @@ class Save extends Account
             ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
             ->getColumnValues('id');
 
-        $marketplacesData = array();
+        $marketplacesData = [];
         foreach ($marketplacesIds as $marketplaceId) {
             $marketplacesData[$marketplaceId]['related_store_id'] = isset($post['related_store_id_' . $marketplaceId])
                 ? (int)$post['related_store_id_' . $marketplaceId]
@@ -71,8 +75,8 @@ class Save extends Account
 
         // Mapping
         // ---------------------------------------
-        $tempData = array();
-        $keys = array(
+        $tempData = [];
+        $keys = [
             'mapping_sku_mode',
             'mapping_sku_priority',
             'mapping_sku_attribute',
@@ -80,14 +84,14 @@ class Save extends Account
             'mapping_title_mode',
             'mapping_title_priority',
             'mapping_title_attribute'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $tempData[$key] = $post[$key];
             }
         }
 
-        $mappingSettings = array();
+        $mappingSettings = [];
 
         $temp1 = \Ess\M2ePro\Model\Ebay\Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT;
         $temp2 = \Ess\M2ePro\Model\Ebay\Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE;
@@ -120,19 +124,19 @@ class Save extends Account
 
         // tab: orders
         // ---------------------------------------
-        $data['magento_orders_settings'] = array();
+        $data['magento_orders_settings'] = [];
 
         // m2e orders settings
         // ---------------------------------------
         $tempKey = 'listing';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode',
             'store_mode',
             'store_id'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -144,14 +148,14 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'listing_other';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode',
             'product_mode',
             'product_tax_class_id',
             'store_id'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -163,17 +167,17 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'number';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
         if (!empty($tempSettings['source'])) {
             $data['magento_orders_settings'][$tempKey]['source'] = $tempSettings['source'];
         }
 
-        $prefixKeys = array(
+        $prefixKeys = [
             'mode',
             'prefix',
-        );
-        $tempSettings = !empty($tempSettings['prefix']) ? $tempSettings['prefix'] : array();
+        ];
+        $tempSettings = !empty($tempSettings['prefix']) ? $tempSettings['prefix'] : [];
         foreach ($prefixKeys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey]['prefix'][$key] = $tempSettings[$key];
@@ -185,12 +189,12 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'creation';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode',
             'reservation_days'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -202,11 +206,11 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'tax';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -218,27 +222,27 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'customer';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode',
             'id',
             'website_id',
             'group_id',
 //            'subscription_mode'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
             }
         }
 
-        $notificationsKeys = array(
+        $notificationsKeys = [
 //            'customer_created',
             'order_created',
             'invoice_created'
-        );
-        $tempSettings = !empty($tempSettings['notifications']) ? $tempSettings['notifications'] : array();
+        ];
+        $tempSettings = !empty($tempSettings['notifications']) ? $tempSettings['notifications'] : [];
         foreach ($notificationsKeys as $key) {
             if (in_array($key, $tempSettings)) {
                 $data['magento_orders_settings'][$tempKey]['notifications'][$key] = true;
@@ -250,14 +254,14 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'status_mapping';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode',
             'new',
             'paid',
             'shipped'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -269,11 +273,11 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'qty_reservation';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'days',
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -285,13 +289,13 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'in_store_pickup_statuses';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode',
             'ready_for_pickup',
             'picked_up',
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -309,7 +313,6 @@ class Save extends Account
         $temp = \Ess\M2ePro\Model\Ebay\Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM;
         if (!empty($data['magento_orders_settings']['status_mapping']['mode']) &&
             $data['magento_orders_settings']['status_mapping']['mode'] == $temp) {
-
             if (!isset($post['magento_orders_settings']['invoice_mode'])) {
                 $temp = \Ess\M2ePro\Model\Ebay\Account::MAGENTO_ORDERS_INVOICE_MODE_NO;
                 $data['magento_orders_settings']['invoice_mode'] = $temp;
@@ -327,11 +330,11 @@ class Save extends Account
 
         // tab: feedbacks
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'feedbacks_receive',
             'feedbacks_auto_response',
             'feedbacks_auto_response_only_positive'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -350,7 +353,6 @@ class Save extends Account
             $data = $this->sendDataToServer($id, $data);
             $id = $this->updateAccount($id, $data);
         } catch (\Exception $exception) {
-
             if ($this->isAjax()) {
                 $this->setJsonContent([
                     'success' => false,
@@ -376,13 +378,13 @@ class Save extends Account
         return $this->_redirect($this->getHelper('Data')->getBackUrl(
             'list',
             [],
-            array(
-                'edit' => array(
+            [
+                'edit' => [
                     'id'                => $id,
-                    'update_ebay_store' => NULL,
+                    'update_ebay_store' => null,
                     '_current'          => true
-                )
-            )
+                ]
+            ]
         ));
     }
 }

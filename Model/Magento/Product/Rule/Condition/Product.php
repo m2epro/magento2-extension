@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Product\Rule\Condition;
 
+/**
+ * Class Product
+ * @package Ess\M2ePro\Model\Magento\Product\Rule\Condition
+ */
 class Product extends AbstractModel
 {
     protected $url;
@@ -20,9 +24,9 @@ class Product extends AbstractModel
 
     protected $_isUsedForRuleProperty = 'is_used_for_promo_rules';
 
-    protected $_arrayInputTypes = array();
+    protected $_arrayInputTypes = [];
 
-    protected $_customFiltersCache = array();
+    protected $_customFiltersCache = [];
 
     //########################################
 
@@ -36,8 +40,7 @@ class Product extends AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Rule\Model\Condition\Context $context,
         array $data = []
-    )
-    {
+    ) {
         $this->url = $url;
         $this->config = $config;
         $this->attrSetCollection = $attrSetCollection;
@@ -84,14 +87,14 @@ class Product extends AbstractModel
 
             if ($attr && $attr->getFrontendInput() == 'multiselect') {
                 $value = $object->getData($attrCode);
-                $value = strlen($value) ? explode(',', $value) : array();
+                $value = strlen($value) ? explode(',', $value) : [];
                 return $this->validateAttribute($value);
             }
 
             return $this->validateAttribute($object->getData($attrCode));
         } else {
             $productStoreId = $object->getData('store_id');
-            if (is_null($productStoreId) ||
+            if ($productStoreId === null ||
                 !isset($this->_entityAttributeValues[(int)$object->getId()][(int)$productStoreId])) {
                 $productStoreId = 0;
             }
@@ -105,8 +108,8 @@ class Product extends AbstractModel
                 if (!is_int($this->getValueParsed())) {
                     $this->setValueParsed(strtotime($this->getValue()));
                 }
-            } else if ($attr && $attr->getFrontendInput() == 'multiselect') {
-                $attributeValue = strlen($attributeValue) ? explode(',', $attributeValue) : array();
+            } elseif ($attr && $attr->getFrontendInput() == 'multiselect') {
+                $attributeValue = strlen($attributeValue) ? explode(',', $attributeValue) : [];
             }
 
             return (bool)$this->validateAttribute($attributeValue);
@@ -148,11 +151,11 @@ class Product extends AbstractModel
             return '';
         }
 
-        $urlParameters = array(
+        $urlParameters = [
             'attribute' => $attribute,
             'store' => $this->getStoreId(),
             'form' => $this->getJsFormObject()
-        );
+        ];
 
         return $this->url->getUrl('*/general/getRuleConditionChooserHtml', $urlParameters);
     }
@@ -171,12 +174,12 @@ class Product extends AbstractModel
             /*
              * '{}' and '!{}' are left for back-compatibility and equal to '==' and '!='
              */
-            $this->_defaultOperatorInputByType['category'] = array('==', '!=', '{}', '!{}', '()', '!()');
+            $this->_defaultOperatorInputByType['category'] = ['==', '!=', '{}', '!{}', '()', '!()'];
             $this->_arrayInputTypes[] = 'category';
             /*
              * price and price range modification
              */
-            $this->_defaultOperatorInputByType['price'] = array('==', '!=', '>=', '>', '<=', '<', '{}', '!{}');
+            $this->_defaultOperatorInputByType['price'] = ['==', '!=', '>=', '>', '<=', '<', '{}', '!{}'];
         }
         return $this->_defaultOperatorInputByType;
     }
@@ -190,8 +193,7 @@ class Product extends AbstractModel
     {
         try {
             $obj = $this->config->getAttribute(\Magento\Catalog\Model\Product::ENTITY, $this->getAttribute());
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $obj = new \Magento\Framework\DataObject();
             $obj->setEntity($this->productFactory->create())
                 ->setFrontendInput('text');
@@ -229,9 +231,13 @@ class Product extends AbstractModel
     {
         $productAttributes = $this->getHelper('Magento\Attribute')->getAllAsObjects();
 
-        $attributes = array();
+        $attributes = [];
         foreach ($productAttributes as $attribute) {
-            /* @var $attribute \Magento\Catalog\Model\ResourceModel\Eav\Attribute */
+            /** @var $attribute \Magento\Catalog\Model\ResourceModel\Eav\Attribute */
+            if (!$attribute->isAllowedForRuleCondition() || !$this->isAllowedForRuleCondition($attribute)) {
+                continue;
+            }
+
             $attributes[$attribute->getAttributeCode()] = $attribute->getFrontendLabel();
         }
 
@@ -240,6 +246,15 @@ class Product extends AbstractModel
         $this->setAttributeOption($attributes);
 
         return $this;
+    }
+
+    /**
+     * @param \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute
+     * @return bool
+     */
+    protected function isAllowedForRuleCondition($attribute)
+    {
+        return !in_array($attribute->getAttributeCode(), ['price_type', 'sku_type', 'weight_type']);
     }
 
     /**
@@ -267,9 +282,9 @@ class Product extends AbstractModel
                 ->setEntityTypeFilter($entityTypeId)
                 ->load()
                 ->toOptionArray();
-        } else if ($this->isFilterCustom($this->getAttribute())) {
+        } elseif ($this->isFilterCustom($this->getAttribute())) {
             $selectOptions = $this->getCustomFilterInstance($this->getAttribute())->getOptions();
-        } else if (is_object($this->getAttributeObject())) {
+        } elseif (is_object($this->getAttributeObject())) {
             $attributeObject = $this->getAttributeObject();
             if ($attributeObject->usesSource()) {
                 if ($attributeObject->getFrontendInput() == 'multiselect') {
@@ -288,7 +303,7 @@ class Product extends AbstractModel
                 $this->setData('value_select_options', $selectOptions);
             }
             if (!$hashedReady) {
-                $hashedOptions = array();
+                $hashedOptions = [];
                 foreach ($selectOptions as $o) {
                     if (is_array($o['value'])) {
                         continue; // We cannot use array as index
@@ -308,10 +323,10 @@ class Product extends AbstractModel
      * @param mixed $option
      * @return string
      */
-    public function getValueOption($option=null)
+    public function getValueOption($option = null)
     {
         $this->_prepareValueOptions();
-        return $this->getData('value_option'.(!is_null($option) ? '/'.$option : ''));
+        return $this->getData('value_option'.($option !== null ? '/'.$option : ''));
     }
 
     /**
@@ -335,9 +350,10 @@ class Product extends AbstractModel
         $html = '';
 
         switch ($this->getAttribute()) {
-            case 'sku': case 'category_ids':
-            $image = $this->_assetRepo->getUrl('Ess_M2ePro::images/rule_chooser_trigger.gif');
-            break;
+            case 'sku':
+            case 'category_ids':
+                $image = $this->_assetRepo->getUrl('Ess_M2ePro::images/rule_chooser_trigger.gif');
+                break;
         }
 
         if (!empty($image)) {
@@ -482,8 +498,9 @@ class Product extends AbstractModel
         }
 
         switch ($this->getAttribute()) {
-            case 'sku': case 'category_ids':
-            return true;
+            case 'sku':
+            case 'category_ids':
+                return true;
         }
 
         if (is_object($this->getAttributeObject())) {
@@ -506,14 +523,13 @@ class Product extends AbstractModel
         $this->setAttribute(isset($arr['attribute']) ? $arr['attribute'] : false);
         $attribute = $this->getAttributeObject();
 
-        $isContainsOperator = !empty($arr['operator']) && in_array($arr['operator'], array('{}', '!{}'));
+        $isContainsOperator = !empty($arr['operator']) && in_array($arr['operator'], ['{}', '!{}']);
         if ($attribute && $attribute->getBackendType() == 'decimal' && !$isContainsOperator) {
             if (isset($arr['value'])) {
                 if (!empty($arr['operator'])
-                    && in_array($arr['operator'], array('!()', '()'))
+                    && in_array($arr['operator'], ['!()', '()'])
                     && false !== strpos($arr['value'], ',')) {
-
-                    $tmp = array();
+                    $tmp = [];
                     foreach (explode(',', $arr['value']) as $value) {
                         $tmp[] = $this->localeFormat->getNumber($value);
                     }
@@ -555,11 +571,11 @@ class Product extends AbstractModel
 
     protected function getCustomFilters()
     {
-        return array(
+        return [
             'is_in_stock' => 'Stock',
             'qty'         => 'Qty',
             'type_id'     => 'TypeId'
-        );
+        ];
     }
 
     protected function isFilterCustom($filterId)
@@ -585,7 +601,8 @@ class Product extends AbstractModel
         }
 
         $model = $this->modelFactory->getObject(
-            'Magento\Product\Rule\Custom\\'.$customFilters[$filterId], [
+            'Magento\Product\Rule\Custom\\'.$customFilters[$filterId],
+            [
                 'filterOperator'  => $this->getData('operator'),
                 'filterCondition' => $this->getData('value')
             ]

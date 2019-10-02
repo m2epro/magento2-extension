@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Magento;
 
+/**
+ * Class Stock
+ * @package Ess\M2ePro\Helper\Magento
+ */
 class Stock extends \Ess\M2ePro\Helper\AbstractHelper
 {
     /** @var \Magento\CatalogInventory\Api\StockConfigurationInterface */
@@ -19,7 +23,7 @@ class Stock extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
         \Magento\Framework\App\Helper\Context $context
-    ){
+    ) {
         $this->stockConfiguration = $stockConfiguration;
         parent::__construct($helperFactory, $context);
     }

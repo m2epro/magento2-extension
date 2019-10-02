@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\Set
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Content
+ * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\Settings
+ */
 class Content extends AbstractForm
 {
     //########################################
@@ -22,8 +26,7 @@ class Content extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->walmartFactory = $walmartFactory;
 
         parent::__construct($context, $registry, $formFactory, $data);
@@ -32,7 +35,8 @@ class Content extends AbstractForm
     protected function _prepareLayout()
     {
         $this->getLayout()->getBlock('wizard.help.block')->setContent($this->__(<<<HTML
-In this Section you can choose the Walmart Settings, on which you are going to sell your Items.
+In this section, you can configure the general settings for interaction between M2E Pro and Walmart
+Marketplaces including SKU, Product Identifiers, image URL settings.
 HTML
         ));
 
@@ -52,10 +56,11 @@ HTML
     protected function _prepareForm()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs\Main $settings */
-        $settings = $this->createBlock('Walmart\Settings\Tabs\Main');
+        $settings = $this->createBlock('Walmart_Settings_Tabs_Main');
 
         $settings->toHtml();
         $form = $settings->getForm();
+        $form->removeField('block_notice_general');
 
         $form->setData([
             'id' => 'edit_form',

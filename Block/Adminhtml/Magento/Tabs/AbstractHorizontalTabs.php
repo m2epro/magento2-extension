@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Tabs;
 
+/**
+ * Class AbstractHorizontalTabs
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Tabs
+ */
 abstract class AbstractHorizontalTabs extends AbstractTabs
 {
     protected $_template = 'Magento_Backend::widget/tabshoriz.phtml';

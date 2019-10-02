@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\General;
 
 use Ess\M2ePro\Controller\Adminhtml\Base;
 
+/**
+ * Class IsMarketplaceEnabled
+ * @package Ess\M2ePro\Controller\Adminhtml\General
+ */
 class IsMarketplaceEnabled extends Base
 {
     //########################################
@@ -17,19 +21,20 @@ class IsMarketplaceEnabled extends Base
     public function execute()
     {
         $component = $this->getRequest()->getParam('component');
-        if (is_null($component)) {
+        if ($component === null) {
             $this->setAjaxContent('Component is not specified.', false);
             return $this->getResult();
         }
 
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
-        if (is_null($marketplaceId)) {
+        if ($marketplaceId === null) {
             $this->setAjaxContent('Marketplace ID is not specified.', false);
             return $this->getResult();
         }
 
         $marketplaceObj = $this->activeRecordFactory->getObjectLoaded(
-            'Marketplace', $marketplaceId
+            'Marketplace',
+            $marketplaceId
         );
 
         $connection = $this->resourceConnection->getConnection();
@@ -45,7 +50,7 @@ class IsMarketplaceEnabled extends Base
 
         $select = $connection
             ->select()
-            ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName), 'id')
+            ->from($this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName), 'id')
             ->where('marketplace_id = ?', $marketplaceId);
 
         $result = $connection->fetchOne($select);

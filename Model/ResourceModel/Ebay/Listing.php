@@ -8,6 +8,12 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay;
 
+use Magento\Framework\DB\Select;
+
+/**
+ * Class Listing
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay
+ */
 class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $catalogProductAction;
@@ -33,8 +39,7 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         $connectionName = null
-    )
-    {
+    ) {
         $this->catalogProductAction = $catalogProductAction;
         $this->productFactory = $productFactory;
         parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
@@ -57,9 +62,9 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
         $select = $this->getConnection()
                        ->select()
-                       ->from($lpTable,new \Zend_Db_Expr('COUNT(*)'))
+                       ->from($lpTable, new \Zend_Db_Expr('COUNT(*)'))
                        ->where("`listing_id` = `{$this->getMainTable()}`.`listing_id`")
-                       ->where("`status` = ?",(int)\Ess\M2ePro\Model\Listing\Product::STATUS_SOLD);
+                       ->where("`status` = ?", (int)\Ess\M2ePro\Model\Listing\Product::STATUS_SOLD);
 
         $query = "UPDATE `{$this->getMainTable()}`
                   SET `products_sold_count` =  (".$select->__toString().")";
@@ -71,21 +76,21 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     {
         $lTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
-        $elpTable = $this->activeRecordFactory->getObject('Ebay\Listing\Product')->getResource()->getMainTable();
+        $elpTable = $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable();
 
         $select = $this->getConnection()
                        ->select()
                        ->from(
-                          array('lp' => $lpTable),
-                          new \Zend_Db_Expr('SUM(`online_qty` - `online_qty_sold`)')
+                           ['lp' => $lpTable],
+                           new \Zend_Db_Expr('SUM(`online_qty` - `online_qty_sold`)')
                        )
                        ->join(
-                          array('elp' => $elpTable),
-                          'lp.id = elp.listing_product_id',
-                          array()
+                           ['elp' => $elpTable],
+                           'lp.id = elp.listing_product_id',
+                           []
                        )
                        ->where("`listing_id` = `{$lTable}`.`id`")
-                       ->where("`status` = ?",(int)\Ess\M2ePro\Model\Listing\Product::STATUS_LISTED);
+                       ->where("`status` = ?", (int)\Ess\M2ePro\Model\Listing\Product::STATUS_LISTED);
 
         $query = "UPDATE `{$lTable}`
                   SET `items_active_count` =  IFNULL((".$select->__toString()."),0)
@@ -97,18 +102,18 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     private function updateItemsSoldCount()
     {
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
-        $elpTable = $this->activeRecordFactory->getObject('Ebay\Listing\Product')->getResource()->getMainTable();
+        $elpTable = $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable();
 
         $select = $this->getConnection()
                        ->select()
                        ->from(
-                            array('lp' => $lpTable),
-                            new \Zend_Db_Expr('SUM(`online_qty_sold`)')
+                           ['lp' => $lpTable],
+                           new \Zend_Db_Expr('SUM(`online_qty_sold`)')
                        )
                        ->join(
-                            array('elp' => $elpTable),
-                            'lp.id = elp.listing_product_id',
-                            array()
+                           ['elp' => $elpTable],
+                           'lp.id = elp.listing_product_id',
+                           []
                        )
                        ->where("`listing_id` = `{$this->getMainTable()}`.`listing_id`");
 
@@ -125,19 +130,19 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         $collection = $this->productFactory->create()->getCollection();
 
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
-        $elpTable = $this->activeRecordFactory->getObject('Ebay\Listing\Product')->getResource()->getMainTable();
+        $elpTable = $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable();
 
         $collection->joinTable(
-            array('lp' => $lpTable),
+            ['lp' => $lpTable],
             'product_id=entity_id',
-            array('id' => 'id'),
+            ['id' => 'id'],
             '{{table}}.listing_id='.(int)$listingId
         );
 
         $collection->joinTable(
-            array('elp' => $elpTable),
+            ['elp' => $elpTable],
             'listing_product_id=id',
-            array('listing_product_id' => 'listing_product_id')
+            ['listing_product_id' => 'listing_product_id']
         );
 
         return $collection;
@@ -145,17 +150,21 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     //########################################
 
-    public function updateMotorsAttributesData($listingId,
-                                               array $listingProductIds,
-                                               $attribute,
-                                               $data,
-                                               $overwrite = false) {
+    public function updateMotorsAttributesData(
+        $listingId,
+        array $listingProductIds,
+        $attribute,
+        $data,
+        $overwrite = false
+    ) {
         if (count($listingProductIds) == 0) {
             return;
         }
 
         $listing = $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Ebay::NICK, 'Listing', $listingId
+            \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'Listing',
+            $listingId
         );
         $storeId = (int)$listing->getStoreId();
 
@@ -181,7 +190,6 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         $productCollection->addAttributeToSelect($attribute);
 
         foreach ($productCollection->getItems() as $itemId => $item) {
-
             $currentAttributeValue = $item->getData($attribute);
             $newAttributeValue = $data;
 
@@ -202,20 +210,60 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public function getTemplateCategoryIds($listingId)
     {
         $lpTable  = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
-        $elpTable = $this->activeRecordFactory->getObject('Ebay\Listing\Product')->getResource()->getMainTable();
+        $elpTable = $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable();
 
         $select = $this->getConnection()
             ->select()
-            ->from(array('elp' => $elpTable))
-            ->joinLeft(array('lp' => $lpTable), 'lp.id = elp.listing_product_id')
+            ->from(['elp' => $elpTable])
+            ->joinLeft(['lp' => $lpTable], 'lp.id = elp.listing_product_id')
             ->reset(\Zend_Db_Select::COLUMNS)
-            ->columns(array('template_category_id'))
+            ->columns(['template_category_id'])
             ->where('lp.listing_id = ?', $listingId)
             ->where('template_category_id IS NOT NULL');
 
         $ids = $select->query()->fetchAll(\PDO::FETCH_COLUMN);
 
         return array_unique($ids);
+    }
+
+    //########################################
+
+    public function getUsedProductsIds($listingId)
+    {
+        $collection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
+        $collection->addFieldToFilter('listing_id', $listingId);
+
+        $collection->getSelect()->reset(Select::COLUMNS);
+        $collection->getSelect()->columns(['product_id']);
+
+        $collection->getSelect()->joinLeft(
+            [
+                'lpv' => $this->activeRecordFactory->getObject('Listing\Product\Variation')
+                                                    ->getResource()->getMainTable()
+            ],
+            'lpv.listing_product_id = main_table.id',
+            []
+        );
+        $collection->getSelect()->joinLeft(
+            [
+                'lpvo' => $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')
+                                                    ->getResource()->getMainTable()
+            ],
+            'lpvo.listing_product_variation_id = lpv.id',
+            ['variation_product_id' => 'product_id']
+        );
+
+        $products = [];
+
+        foreach ($collection->getItems() as $item) {
+            $productId = $item->getData('product_id');
+            $variationProductId = $item->getData('variation_product_id');
+
+            $products[$productId] = $productId;
+            !empty($variationProductId) && $products[$variationProductId] = $variationProductId;
+        }
+
+        return array_values($products);
     }
 
     //########################################

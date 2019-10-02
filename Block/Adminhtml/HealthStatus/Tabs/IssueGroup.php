@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs;
 
+/**
+ * Class IssueGroup
+ * @package Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs
+ */
 class IssueGroup extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     const NOTE_ELEMENT = 'Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Element\Note';
@@ -23,8 +27,7 @@ class IssueGroup extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->resultSet = $resultSet;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -37,12 +40,12 @@ class IssueGroup extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $createdFieldSets = [];
         foreach ($this->resultSet->getByKeys() as $resultItem) {
-
             if (in_array($resultItem->getFieldSetName(), $createdFieldSets)) {
                 continue;
             }
 
-            $fieldSet = $form->addFieldset('fieldset_' . strtolower($resultItem->getFieldSetName()),
+            $fieldSet = $form->addFieldset(
+                'fieldset_' . strtolower($resultItem->getFieldSetName()),
                 [
                     'legend'      => $this->__($resultItem->getFieldSetName()),
                     'collapsable' => false
@@ -50,8 +53,8 @@ class IssueGroup extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             );
 
             foreach ($this->resultSet->getByFieldSet($this->resultSet->getFieldSetKey($resultItem)) as $byFieldSet) {
-
-                $fieldSet->addField(strtolower($byFieldSet->getTaskHash()),
+                $fieldSet->addField(
+                    strtolower($byFieldSet->getTaskHash()),
                     self::NOTE_ELEMENT,
                     [
                         'label'       => $this->__($byFieldSet->getFieldName()),

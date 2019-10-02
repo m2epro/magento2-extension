@@ -11,6 +11,10 @@
  */
 namespace Ess\M2ePro\Model\Order;
 
+/**
+ * Class ShippingAddress
+ * @package Ess\M2ePro\Model\Order
+ */
 abstract class ShippingAddress extends \Magento\Framework\DataObject
 {
     protected $countryFactory;
@@ -33,8 +37,7 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
         \Magento\Directory\Helper\Data $directoryHelper,
         \Ess\M2ePro\Model\Order $order,
         array $data = []
-    )
-    {
+    ) {
         $this->countryFactory = $countryFactory;
         $this->directoryHelper = $directoryHelper;
         $this->order = $order;
@@ -47,12 +50,13 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
 
     public function getCountry()
     {
-        if (is_null($this->country)) {
+        if ($this->country === null) {
             $this->country = $this->countryFactory->create();
 
             try {
                 $this->country->loadByCode($this->getData('country_code'));
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) {
+            }
         }
 
         return $this->country;
@@ -61,10 +65,10 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
     public function getRegion()
     {
         if (!$this->getCountry()->getId()) {
-            return NULL;
+            return null;
         }
 
-        if (is_null($this->region)) {
+        if ($this->region === null) {
             $countryRegions = $this->getCountry()->getRegionCollection();
             $countryRegions->getSelect()->where('code = ? OR default_name = ?', $this->getState());
 
@@ -108,8 +112,8 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
     {
         $region = $this->getRegion();
 
-        if (is_null($region) || is_null($region->getId())) {
-            return NULL;
+        if ($region === null || $region->getId() === null) {
+            return null;
         }
 
         return $region->getId();
@@ -119,7 +123,7 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
     {
         $region = $this->getRegion();
 
-        if (is_null($region) || is_null($region->getId())) {
+        if ($region === null || $region->getId() === null) {
             return '';
         }
 

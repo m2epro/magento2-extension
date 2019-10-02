@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Connector\Command\Pending\Requester;
 
+/**
+ * Class Single
+ * @package Ess\M2ePro\Model\Connector\Command\Pending\Requester
+ */
 class Single extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Processing $processing */
@@ -28,23 +32,29 @@ class Single extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function getProcessing()
     {
-        if (!is_null($this->processing)) {
+        if ($this->processing !== null) {
             return $this->processing;
         }
 
         return $this->processing = $this->activeRecordFactory->getObjectLoaded(
-            'Processing', $this->getProcessingId(), NULL, false
+            'Processing',
+            $this->getProcessingId(),
+            null,
+            false
         );
     }
 
     public function getRequestPendingSingle()
     {
-        if (!is_null($this->requestPendingSingle)) {
+        if ($this->requestPendingSingle !== null) {
             return $this->requestPendingSingle;
         }
 
         return $this->requestPendingSingle = $this->activeRecordFactory->getObjectLoaded(
-            'Request\Pending\Single', $this->getRequestPendingSingleId(), NULL, false
+            'Request_Pending_Single',
+            $this->getRequestPendingSingleId(),
+            null,
+            false
         );
     }
 

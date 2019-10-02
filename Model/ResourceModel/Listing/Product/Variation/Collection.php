@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent\AbstractModel
 {
     //########################################
@@ -15,6 +19,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     public function _construct()
     {
         parent::_construct();
+
         $this->_init(
             'Ess\M2ePro\Model\Listing\Product\Variation',
             'Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation'

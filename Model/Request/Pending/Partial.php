@@ -70,7 +70,7 @@ class Partial extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function addResultData(array $data)
     {
-        if (is_null($this->getId())) {
+        if ($this->getId() === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Instance must be loaded first.');
         }
 

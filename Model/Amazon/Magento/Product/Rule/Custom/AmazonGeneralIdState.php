@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Custom;
 
+/**
+ * Class AmazonGeneralIdState
+ * @package Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Custom
+ */
 class AmazonGeneralIdState extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
     //########################################
@@ -77,24 +81,24 @@ class AmazonGeneralIdState extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom
     public function getOptions()
     {
         $helper = $this->helperFactory->getObject('Module\Translation');
-        return array(
-            array(
+        return [
+            [
                 'value' => \Ess\M2ePro\Model\Amazon\Listing\Product::GENERAL_ID_STATE_SET,
                 'label' => $helper->__('Set'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Amazon\Listing\Product::GENERAL_ID_STATE_NOT_SET,
                 'label' => $helper->__('Not Set'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Amazon\Listing\Product::GENERAL_ID_STATE_ACTION_REQUIRED,
                 'label' => $helper->__('Action Required'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Amazon\Listing\Product::GENERAL_ID_STATE_READY_FOR_NEW_ASIN,
                 'label' => $helper->__('Ready for New ASIN/ISBN Creation'),
-            ),
-        );
+            ],
+        ];
     }
 
     //########################################

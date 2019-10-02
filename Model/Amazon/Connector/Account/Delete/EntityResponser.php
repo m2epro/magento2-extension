@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Account\Delete;
 
+/**
+ * Class EntityResponser
+ * @package Ess\M2ePro\Model\Amazon\Connector\Account\Delete
+ */
 class EntityResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
 {
     // ########################################
@@ -17,7 +21,10 @@ class EntityResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending
         return true;
     }
 
-    protected function processResponseData() {}
+    protected function processResponseData()
+    {
+        return null;
+    }
 
     // ########################################
 }

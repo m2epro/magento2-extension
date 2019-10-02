@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Variation\Product\Manage;
 
+/**
+ * Class SetIdentifiers
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Variation\Product\Manage
+ */
 class SetIdentifiers extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     public function execute()
@@ -21,9 +25,9 @@ class SetIdentifiers extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $variation */
-        $variation = $this->ebayFactory->getObjectLoaded('Listing\Product\Variation', $variationsId);
+        $variation = $this->ebayFactory->getObjectLoaded('Listing_Product_Variation', $variationsId);
 
-        $data = array();
+        $data = [];
         foreach ($productDetails as $key => $value) {
             if (!empty($value)) {
                 $data[$key] = $value;
@@ -33,10 +37,11 @@ class SetIdentifiers extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $additionalData = $variation->getAdditionalData();
         $additionalData['product_details'] = $data;
         $variation->setData(
-            'additional_data', $this->getHelper('Data')->jsonEncode($additionalData)
+            'additional_data',
+            $this->getHelper('Data')->jsonEncode($additionalData)
         )->save();
 
-        $this->setJsonContent(array('success' => true));
+        $this->setJsonContent(['success' => true]);
         return $this->getResult();
     }
 }

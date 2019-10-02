@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Matcher\Option;
 
+/**
+ * Class Resolver
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Matcher\Option
+ */
 class Resolver extends \Ess\M2ePro\Model\AbstractModel
 {
-    private $sourceOption = array();
+    private $sourceOption = [];
 
-    private $destinationOptions = array();
+    private $destinationOptions = [];
 
-    private $matchedAttributes = array();
+    private $matchedAttributes = [];
 
     private $resolvedOption = null;
 
@@ -74,7 +78,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
                 $sourceAttribute = array_search($destinationAttribute, $this->matchedAttributes);
                 $sourceOptionNames = $this->sourceOption[$sourceAttribute];
 
-                if (count(array_intersect((array)$sourceOptionNames, (array)$destinationOptionNames)) > 0) {
+                if (!empty(array_intersect((array)$sourceOptionNames, (array)$destinationOptionNames))) {
                     $isResolved = true;
                     continue;
                 }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode;
 
+/**
+ * Class Website
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode
+ */
 class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Website
 {
     public $showCreateNewAsin = 0;
@@ -18,7 +22,8 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
     {
         $form = $this->_formFactory->create();
 
-        $form->addField('auto_mode_help_block',
+        $form->addField(
+            'auto_mode_help_block',
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
@@ -36,7 +41,9 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
             ]
         );
 
-        $form->addField('auto_mode', 'hidden',
+        $form->addField(
+            'auto_mode',
+            'hidden',
             [
                 'name' => 'auto_mode',
                 'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE
@@ -45,7 +52,8 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
 
         $fieldSet = $form->addFieldset('auto_website_fieldset_container', []);
 
-        $fieldSet->addField('auto_website_adding_mode',
+        $fieldSet->addField(
+            'auto_website_adding_mode',
             self::SELECT,
             [
                 'name' => 'auto_website_adding_mode',
@@ -61,7 +69,8 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
             ]
         );
 
-        $fieldSet->addField('auto_website_adding_add_not_visible',
+        $fieldSet->addField(
+            'auto_website_adding_add_not_visible',
             self::SELECT,
             [
                 'name' => 'auto_website_adding_add_not_visible',
@@ -87,7 +96,8 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
             ]
         );
 
-        $fieldSet->addField('auto_action_create_asin',
+        $fieldSet->addField(
+            'auto_action_create_asin',
             self::SELECT,
             [
                 'name' => 'auto_action_create_asin',
@@ -113,22 +123,23 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
         );
 
         $collection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Template\Description'
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Template\Description'
         )->getCollection();
         $collection->addFieldToFilter('marketplace_id', $this->getListing()->getMarketplaceId());
 
         $descriptionTemplates = $collection->getData();
 
-        if (count($descriptionTemplates) > 0) {
+        if (!empty($descriptionTemplates)) {
             $this->showCreateNewAsin = 1;
         }
 
-        usort($descriptionTemplates, function($a, $b) {
+        usort($descriptionTemplates, function ($a, $b) {
             return $a["is_new_asin_accepted"] < $b["is_new_asin_accepted"];
         });
 
         $options = [['label' => '','value' => '', 'attrs' => ['class' => 'empty']]];
-        foreach($descriptionTemplates as $template) {
+        foreach ($descriptionTemplates as $template) {
             $tmp = [
                 'label' => $this->escapeHtml($template['title']),
                 'value' => $template['id']
@@ -141,13 +152,14 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
             $options[] = $tmp;
         }
 
-        $url = $this->getUrl('*/amazon_template_description/new', array(
+        $url = $this->getUrl('*/amazon_template_description/new', [
             'is_new_asin_accepted'  => 1,
             'marketplace_id'        => $this->getListing()->getMarketplaceId(),
             'close_on_save' => true
-        ));
+        ]);
 
-        $fieldSet->addField('adding_description_template_id',
+        $fieldSet->addField(
+            'adding_description_template_id',
             self::SELECT,
             [
                 'name' => 'adding_description_template_id',
@@ -163,7 +175,7 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
                     <br/><br/><b>Note:</b> If chosen Description Policy doesn’t meet all the
                     Conditions for new ASIN/ISBN creation, the Products will still be added to M2E Pro Listings
                     but will not be Listed on Amazon.'
-                                    )) . '<a href="javascript: void(0);"
+                )) . '<a href="javascript: void(0);"
                                             style="vertical-align: inherit; margin-left: 65px;"
                                             onclick="ListingAutoActionObj.addNewTemplate(\''.$url.'\',
                                             ListingAutoActionObj.reloadDescriptionTemplates);">'.$this->__('Add New').'
@@ -171,7 +183,8 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
             ]
         );
 
-        $fieldSet->addField('auto_website_deleting_mode',
+        $fieldSet->addField(
+            'auto_website_deleting_mode',
             self::SELECT,
             [
                 'name' => 'auto_website_deleting_mode',
@@ -201,7 +214,7 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Listing::class)
         );
 
         $this->js->add(<<<JS

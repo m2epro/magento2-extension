@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Create;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Block\Adminhtml\StoreSwitcher;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Create
+ */
 class Form extends AbstractForm
 {
     /** @var \Ess\M2ePro\Model\Listing */
@@ -26,8 +30,7 @@ class Form extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->walmartFactory = $walmartFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -66,8 +69,7 @@ class Form extends AbstractForm
                 'value' => $formData['title'],
                 'required' => true,
                 'class' => 'M2ePro-listing-title',
-                'tooltip' => $this->__('Create a descriptive and meaningful Title for your M2E Pro Listing. <br/>
-                    This is used for reference within M2E Pro and will not appear on your Walmart Listings.')
+                'tooltip' => $this->__('Listing Title for your internal use.')
             ]
         );
 
@@ -81,7 +83,7 @@ class Form extends AbstractForm
 
         // ---------------------------------------
         $accountsCollection = $this->walmartFactory->getObject('Account')->getCollection()
-            ->setOrder('title','ASC');
+            ->setOrder('title', 'ASC');
 
         $accountsCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS)
             ->columns([
@@ -93,7 +95,7 @@ class Form extends AbstractForm
         $accountSelectionDisabled = false;
 
         $accountId = $formData['account_id'];
-        if($this->getRequest()->getParam('account_id')) {
+        if ($this->getRequest()->getParam('account_id')) {
             $accountId = $this->getRequest()->getParam('account_id');
             $fieldset->addField(
                 'account_id_hidden',
@@ -138,14 +140,14 @@ HTML
                     'onclick' => '',
                     'class' => 'primary'
                 ])->toHtml(),
-                'tooltip' => $this->__('This is the user name of your Walmart Account.')
+                'tooltip' => $this->__('Select Account under which you want to manage this Listing.')
             ]
         );
 
         // ---------------------------------------
         $marketplacesCollection = $this->walmartFactory->getObject('Marketplace')->getCollection()
-            ->setOrder('sorder','ASC')
-            ->setOrder('title','ASC');
+            ->setOrder('sorder', 'ASC')
+            ->setOrder('title', 'ASC');
 
         $marketplacesCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS)
             ->columns([
@@ -205,7 +207,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('template_selling_format_messages',
+        $fieldset->addField(
+            'template_selling_format_messages',
             self::CUSTOM_CONTAINER,
             [
                 'style' => 'display: block;',
@@ -229,11 +232,14 @@ HTML
                 'required' => true
             ]
         ]);
+
         $templateSellingFormat->setForm($form);
 
         $editPolicyTooltip = $this->getTooltipHtml($this->__(
-            'You can edit the saved Policy any time you need. However, the changes you make will automatically
-            affect all of the Products which are listed using this Policy.'
+            'At any time, you can edit the saved Policy. <br><br>
+
+            <strong>Note:</strong> The changes you made will automatically affect all of the
+            Products which were listed using this Policy.'
         ));
 
         $style = count($sellingFormatTemplates) === 0 ? '' : 'display: none';
@@ -429,28 +435,42 @@ HTML
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Account'));
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Marketplace'));
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Walmart\Listing\Create', ['_current' => true])
+            $this->getHelper('Data')->getControllerActions('Walmart_Listing_Create', ['_current' => true])
         );
 
         $this->jsUrl->add($this->getUrl('*/walmart_account/newAction', [
             'close_on_save' => true,
-            'wizard' => (bool)$this->getRequest()->getParam('wizard',false)
+            'wizard' => (bool)$this->getRequest()->getParam('wizard', false)
         ]), 'walmart_account/newAction');
 
-        $this->jsUrl->add($this->getUrl('*/template/checkMessages',
-            ['component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK]), 'templateCheckMessages');
-        $this->jsUrl->add($this->getUrl('*/walmart_template_sellingFormat/new',
-            ['wizard' => $this->getRequest()->getParam('wizard')]), 'addNewSellingFormatTemplate');
-        $this->jsUrl->add($this->getUrl('*/walmart_template_description/new',
-            ['wizard' => $this->getRequest()->getParam('wizard')]), 'addNewDescriptionTemplate');
-        $this->jsUrl->add($this->getUrl('*/walmart_template_synchronization/new',
-            ['wizard' => $this->getRequest()->getParam('wizard')]), 'addNewSynchronizationTemplate');
-        $this->jsUrl->add($this->getUrl('*/walmart_template_sellingFormat/edit',
-            ['wizard' => $this->getRequest()->getParam('wizard')]), 'editSellingFormatTemplate');
-        $this->jsUrl->add($this->getUrl('*/walmart_template_description/edit',
-            ['wizard' => $this->getRequest()->getParam('wizard')]), 'editDescriptionTemplate');
-        $this->jsUrl->add($this->getUrl('*/walmart_template_synchronization/edit',
-            ['wizard' => $this->getRequest()->getParam('wizard')]), 'editSynchronizationTemplate');
+        $this->jsUrl->add($this->getUrl(
+            '*/template/checkMessages',
+            ['component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK]
+        ), 'templateCheckMessages');
+        $this->jsUrl->add($this->getUrl(
+            '*/walmart_template_sellingFormat/new',
+            ['wizard' => $this->getRequest()->getParam('wizard')]
+        ), 'addNewSellingFormatTemplate');
+        $this->jsUrl->add($this->getUrl(
+            '*/walmart_template_description/new',
+            ['wizard' => $this->getRequest()->getParam('wizard')]
+        ), 'addNewDescriptionTemplate');
+        $this->jsUrl->add($this->getUrl(
+            '*/walmart_template_synchronization/new',
+            ['wizard' => $this->getRequest()->getParam('wizard')]
+        ), 'addNewSynchronizationTemplate');
+        $this->jsUrl->add($this->getUrl(
+            '*/walmart_template_sellingFormat/edit',
+            ['wizard' => $this->getRequest()->getParam('wizard')]
+        ), 'editSellingFormatTemplate');
+        $this->jsUrl->add($this->getUrl(
+            '*/walmart_template_description/edit',
+            ['wizard' => $this->getRequest()->getParam('wizard')]
+        ), 'editDescriptionTemplate');
+        $this->jsUrl->add($this->getUrl(
+            '*/walmart_template_synchronization/edit',
+            ['wizard' => $this->getRequest()->getParam('wizard')]
+        ), 'editSynchronizationTemplate');
         $this->jsUrl->add($this->getUrl('*/general/modelGetAll', [
             'model'=>'Template_SellingFormat',
             'id_field'=>'id',
@@ -483,7 +503,8 @@ HTML
             )
         );
         $this->jsTranslator->add(
-            'Account not found, please create it.', $this->__('Account not found, please create it.')
+            'Account not found, please create it.',
+            $this->__('Account not found, please create it.')
         );
         $this->jsTranslator->add('Add Another', $this->__('Add Another'));
         $this->jsTranslator->add(
@@ -491,16 +512,20 @@ HTML
             $this->__('Please wait while Synchronization is finished.')
         );
         $this->jsTranslator->add(
-            'Preparing to start. Please wait ...', $this->__('Preparing to start. Please wait ...')
+            'Preparing to start. Please wait ...',
+            $this->__('Preparing to start. Please wait ...')
         );
         $this->jsTranslator->add(
-            'Another Synchronization Is Already Running.', $this->__('Another Synchronization Is Already Running.')
+            'Another Synchronization Is Already Running.',
+            $this->__('Another Synchronization Is Already Running.')
         );
         $this->jsTranslator->add(
-            'Getting information. Please wait ...', $this->__('Getting information. Please wait ...')
+            'Getting information. Please wait ...',
+            $this->__('Getting information. Please wait ...')
         );
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Walmart'));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class));
 
         $this->js->add(<<<JS
 
@@ -520,6 +545,11 @@ require([
     $('store_id').observe('change', WalmartListingCreateGeneralObj.store_id_change);
     $('store_id').simulate('change');
 
+    $('account_id').observe('change', WalmartListingSettingsObj.reloadSellingFormatTemplates)
+    if ($('account_id').value) {
+        $('account_id').simulate('change');
+    }
+    
     $('template_selling_format_id').observe('change', function() {
         if ($('template_selling_format_id').value) {
             $('edit_selling_format_template_link').show();
@@ -628,7 +658,7 @@ JS
 
     protected function getListingData()
     {
-        if (!is_null($this->getRequest()->getParam('id'))) {
+        if ($this->getRequest()->getParam('id') !== null) {
             $data = array_merge($this->getListing()->getData(), $this->getListing()->getChildObject()->getData());
         } else {
             $data = $this->getDefaultFieldsValues();
@@ -645,7 +675,7 @@ JS
             throw new \Ess\M2ePro\Model\Exception('Listing is not defined');
         }
 
-        if (is_null($this->listing)) {
+        if ($this->listing === null) {
             $this->listing = $this->walmartFactory->getCachedObjectLoaded('Listing', $listingId);
         }
 

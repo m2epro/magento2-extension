@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Task;
 
+/**
+ * Class Synchronization
+ * @package Ess\M2ePro\Model\Cron\Task
+ */
 class Synchronization extends AbstractModel
 {
     const NICK = 'synchronization';
@@ -34,13 +38,13 @@ class Synchronization extends AbstractModel
         $dispatcher->setParentLockItem($this->getLockItem());
         $dispatcher->setParentOperationHistory($this->getOperationHistory());
 
-        $dispatcher->setAllowedComponents(array(
+        $dispatcher->setAllowedComponents([
             \Ess\M2ePro\Helper\Component\Ebay::NICK,
             \Ess\M2ePro\Helper\Component\Amazon::NICK,
             \Ess\M2ePro\Helper\Component\Walmart::NICK,
-        ));
+        ]);
 
-        $dispatcher->setAllowedTasksTypes(array(
+        $dispatcher->setAllowedTasksTypes([
             \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::PROCESSING,
             \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::MAGENTO_PRODUCTS,
             \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::STOP_QUEUE,
@@ -49,10 +53,10 @@ class Synchronization extends AbstractModel
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::TEMPLATES,
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::ORDERS,
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::OTHER_LISTINGS
-        ));
+        ]);
 
         $dispatcher->setInitiator($this->getInitiator());
-        $dispatcher->setParams(array());
+        $dispatcher->setParams([]);
 
         return $dispatcher->process();
     }

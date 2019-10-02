@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
+/**
+ * Class Account
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay
+ */
 abstract class Account extends Main
 {
     protected function _isAllowed()
@@ -21,23 +25,33 @@ abstract class Account extends Main
         // ---------------------------------------
         $requestMode = $data['mode'] == \Ess\M2ePro\Model\Ebay\Account::MODE_PRODUCTION ? 'production' : 'sandbox';
 
-        $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
 
         if ((bool)$id) {
-
             $model = $this->ebayFactory->getObjectLoaded('Account', $id);
 
-            $connectorObj = $dispatcherObject->getVirtualConnector('account','update','entity',
-                array('title'         => $model->getTitle(),
+            $connectorObj = $dispatcherObject->getVirtualConnector(
+                'account',
+                'update',
+                'entity',
+                ['title'         => $model->getTitle(),
                     'mode'          => $requestMode,
-                    'token_session' => $data['token_session']),
-                NULL,NULL,$id);
+                    'token_session' => $data['token_session']],
+                null,
+                null,
+                $id
+            );
         } else {
-
-            $connectorObj = $dispatcherObject->getVirtualConnector('account','add','entity',
-                array('mode' => $requestMode,
-                    'token_session' => $data['token_session']),
-                NULL,NULL,NULL);
+            $connectorObj = $dispatcherObject->getVirtualConnector(
+                'account',
+                'add',
+                'entity',
+                ['mode' => $requestMode,
+                    'token_session' => $data['token_session']],
+                null,
+                null,
+                null
+            );
         }
 
         $dispatcherObject->process($connectorObj);
@@ -79,7 +93,7 @@ abstract class Account extends Main
         // ---------------------------------------
 
         $model = $this->ebayFactory->getObject('Account');
-        if (is_null($id)) {
+        if ($id === null) {
             $model->setData($data);
         } else {
             $model->load($id);
@@ -96,16 +110,14 @@ abstract class Account extends Main
             $ebayAccount = $model->getChildObject();
             $ebayAccount->updateEbayStoreInfo();
 
-            if ($this->getHelper('Component\Ebay\Category\Store')->isExistDeletedCategories()) {
+            if ($this->getHelper('Component_Ebay_Category_Store')->isExistDeletedCategories()) {
+                $url = $this->getUrl('*/ebay_category/index', ['filter' => base64_encode('state=0')]);
 
-                $url = $this->getUrl('*/ebay_category/index', array('filter' => base64_encode('state=0')));
-
-                // M2ePro_TRANSLATIONS
-                // Some eBay Store Categories were deleted from eBay. Click <a target="_blank" href="%url%">here</a> to check.
                 $this->messageManager->addWarning(
                     $this->__(
                         'Some eBay Store Categories were deleted from eBay. Click '.
-                        '<a target="_blank" href="%url%" class="external-link">here</a> to check.', $url
+                        '<a target="_blank" href="%url%" class="external-link">here</a> to check.',
+                        $url
                     )
                 );
             }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Button;
 
+/**
+ * Class SplitButton
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Button
+ */
 class SplitButton extends \Magento\Backend\Block\Widget\Button\SplitButton
 {
     //########################################

@@ -12,6 +12,10 @@ use Ess\M2ePro\Model\AbstractModel;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Module\Setup;
 
+/**
+ * Class AbstractModifier
+ * @package Ess\M2ePro\Model\Setup\Database\Modifier
+ */
 class AbstractModifier extends AbstractModel
 {
     /** @var Setup */
@@ -20,8 +24,8 @@ class AbstractModifier extends AbstractModel
     /** @var AdapterInterface */
     protected $connection;
 
-    protected $tableName = NULL;
-    protected $queriesLog = array();
+    protected $tableName = null;
+    protected $queriesLog = [];
 
     //########################################
 
@@ -37,11 +41,11 @@ class AbstractModifier extends AbstractModel
 
         $this->helperFactory = $helperFactory;
 
-        if (!$this->getHelper('Module\Database\Tables')->isExists($tableName)) {
-            throw new \Ess\M2ePro\Model\Exception\Setup("Table does not exist.");
+        if (!$this->getHelper('Module_Database_Tables')->isExists($tableName)) {
+            throw new \Ess\M2ePro\Model\Exception\Setup("Table \"{$tableName}\" does not exist.");
         }
 
-        $this->tableName = $this->getHelper('Module\Database\Tables')->getFullName($tableName);
+        $this->tableName = $this->getHelper('Module_Database_Tables')->getFullName($tableName);
 
         parent::__construct($helperFactory, $modelFactory, $data);
     }
@@ -66,7 +70,7 @@ class AbstractModifier extends AbstractModel
 
     // ---------------------------------------
 
-    public function setQueriesLog(array $queriesLog = array())
+    public function setQueriesLog(array $queriesLog = [])
     {
         $this->queriesLog = $queriesLog;
         return $this;

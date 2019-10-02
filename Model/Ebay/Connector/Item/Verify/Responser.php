@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Item\Verify;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Ebay\Connector\Item\Verify
+ */
 class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 {
     //########################################
 
     protected function getSuccessfulMessage()
     {
-        return NULL;
+        return null;
     }
 
     //########################################
@@ -34,7 +38,10 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         }
     }
 
-    protected function processResponseData() {}
+    protected function processResponseData()
+    {
+        return null;
+    }
 
     //########################################
 }

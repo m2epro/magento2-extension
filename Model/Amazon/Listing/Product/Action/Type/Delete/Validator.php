@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Delete;
 
+/**
+ * Class Validator
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Delete
+ */
 class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
 {
     //########################################
@@ -33,13 +37,10 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
         }
 
         if ($this->getListingProduct()->isNotListed()) {
-
             if (empty($params['remove'])) {
-
                 // M2ePro\TRANSLATIONS
                 // Item is not Listed or not available
                 $this->addMessage('Item is not Listed or not available');
-
             } else {
                 if ($this->getVariationManager()->isRelationChildType() &&
                     $this->getVariationManager()->getTypeModel()->isVariationProductMatched()

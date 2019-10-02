@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping;
 
+/**
+ * Class Assign
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
+ */
 class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
 {
     public function execute()
@@ -25,38 +29,41 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
             $productsIds = explode(',', $productsIds);
         }
 
-        $messages = array();
+        $messages = [];
         $productsIdsLocked = $this->filterLockedProducts($productsIds);
 
         if (count($productsIdsLocked) < count($productsIds)) {
-            $messages[] = array(
+            $messages[] = [
                 'type' => 'warning',
                 'text' => '<p>' . $this->__(
-                        'Shipping Policy cannot be assigned to some Products
-                         because the Products are in Action'). '</p>'
-            );
+                    'Shipping Policy cannot be assigned to some Products
+                         because the Products are in Action'
+                ). '</p>'
+            ];
         }
 
         if (!empty($productsIdsLocked)) {
-            $messages[] = array(
+            $messages[] = [
                 'type' => 'success',
                 'text' => $this->__('Shipping Policy was successfully assigned.')
-            );
+            ];
 
             $this->setShippingTemplateForProducts($productsIdsLocked, $templateId, $shippingMode);
             $this->runProcessorForParents($productsIdsLocked);
 
             if ($shippingMode == \Ess\M2ePro\Model\Amazon\Account::SHIPPING_MODE_OVERRIDE) {
                 $template = $this->activeRecordFactory->getObjectLoaded(
-                    'Amazon\Template\ShippingOverride', $templateId
+                    'Amazon_Template_ShippingOverride',
+                    $templateId
                 );
             } else {
                 $template = $this->activeRecordFactory->getObjectLoaded(
-                    'Amazon\Template\ShippingTemplate', $templateId
+                    'Amazon_Template_ShippingTemplate',
+                    $templateId
                 );
             }
 
-            $template->setSynchStatusNeed($template->getDataSnapshot(), array());
+            $template->setSynchStatusNeed($template->getDataSnapshot(), []);
         }
 
         $this->setJsonContent(['messages' => $messages]);

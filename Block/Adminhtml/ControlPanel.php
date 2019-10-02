@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml;
 
+/**
+ * Class ControlPanel
+ * @package Ess\M2ePro\Block\Adminhtml
+ */
 class ControlPanel extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     //########################################

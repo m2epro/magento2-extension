@@ -8,18 +8,22 @@
 
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask;
 
+/**
+ * Class Launcher
+ * @package Ess\M2ePro\Model\Synchronization\GlobalTask
+ */
 class Launcher extends \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal
 {
     //########################################
 
     protected function getType()
     {
-        return NULL;
+        return null;
     }
 
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------

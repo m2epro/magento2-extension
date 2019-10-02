@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+/**
+ * Class GetCategorySpecificHtml
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ */
 class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -22,8 +26,8 @@ class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
         $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId);
         // ---------------------------------------
 
-        /* @var $specific \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Specific */
-        $specific = $this->createBlock('Ebay\Listing\Product\Category\Settings\Specific');
+        /** @var $specific \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Specific */
+        $specific = $this->createBlock('Ebay_Listing_Product_Category_Settings_Specific');
         $specific->setMarketplaceId($listing->getMarketplaceId());
         $specific->setCategoryMode($categoryMode);
         $specific->setCategoryValue($categoryValue);
@@ -39,7 +43,7 @@ class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
 
         // ---------------------------------------
         $wrapper = $this->createBlock(
-            'Ebay\Listing\View\Settings\Category\Specific\Wrapper'
+            'Ebay_Listing_View_Settings_Category_Specific_Wrapper'
         );
         $wrapper->setChild('specific', $specific);
         // ---------------------------------------
@@ -59,14 +63,14 @@ class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
      */
     private function identifyCategoryTemplate(array $listingProductIds, $listingId, $categoryValue, $categoryMode)
     {
-        /* @var $template \Ess\M2ePro\Model\Ebay\Template\Category|null */
-        $template       = NULL;
+        /** @var $template \Ess\M2ePro\Model\Ebay\Template\Category|null */
+        $template       = null;
         $listing        = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId);
         $templateIds    = $this->getCategoryTemplateCandidates($listingProductIds, $listingId);
         $countTemplates = count($templateIds);
 
         if ($countTemplates == 0) {
-            return NULL;
+            return null;
         }
 
         foreach ($templateIds as $templateId) {
@@ -74,7 +78,9 @@ class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
 
             if ($this->isMainCategoryWasChanged($tempTemplate, $categoryValue)) {
                 $template = $this->loadLastCategoryTemplate(
-                    $categoryMode, $categoryValue, $listing->getMarketplaceId()
+                    $categoryMode,
+                    $categoryValue,
+                    $listing->getMarketplaceId()
                 );
 
                 return $template;
@@ -82,11 +88,9 @@ class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
         }
 
         if ($countTemplates == 1) {
-
             $templateId = reset($templateIds);
             $template = $this->getCategoryTemplate($templateId);
         } else {
-
             $isDifferent = false;
             for ($i = 0; $i < $countTemplates - 1; $i++) {
                 $templateCurr = $this->getCategoryTemplate($templateIds[$i]);
@@ -112,7 +116,7 @@ class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
     private function getCategoryTemplateCandidates(array $listingProductIds, $listingId)
     {
         $templateIds = $this->activeRecordFactory
-            ->getObject('Ebay\Listing\Product')
+            ->getObject('Ebay_Listing_Product')
             ->getResource()
             ->getTemplateCategoryIds($listingProductIds);
         /**
@@ -138,7 +142,8 @@ class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
     private function getCategoryTemplate($id)
     {
         return $this->activeRecordFactory->getCachedObjectLoaded(
-            'Ebay\Template\Category', (int)$id
+            'Ebay_Template_Category',
+            (int)$id
         );
     }
 
@@ -150,12 +155,12 @@ class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
 
     private function loadLastCategoryTemplate($mode, $categoryValue, $marketplaceId)
     {
-        $templateData = array(
+        $templateData = [
             'category_main_id'        => 0,
             'category_main_mode'      => $mode,
             'category_main_attribute' => '',
             'marketplace_id'          => $marketplaceId
-        );
+        ];
 
         if ($mode == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY) {
             $templateData['category_main_id'] = $categoryValue;
@@ -164,18 +169,19 @@ class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
         }
 
         $existingTemplates = $this->activeRecordFactory
-                                    ->getObject('Ebay\Template\Category')
+                                    ->getObject('Ebay_Template_Category')
                                     ->getCollection()
-                                    ->getItemsByPrimaryCategories(array($templateData));
+                                    ->getItemsByPrimaryCategories([$templateData]);
 
         return reset($existingTemplates);
     }
 
     private function isDifferentSpecifics(array $firstSpecifics, array $secondSpecifics)
     {
-        $model = $this->activeRecordFactory->getObject('Ebay\Template\Category')->getResource();
+        $model = $this->activeRecordFactory->getObject('Ebay_Template_Category')->getResource();
         return $model->isDifferent(
-            array('specifics' => $firstSpecifics), array('specifics' => $secondSpecifics)
+            ['specifics' => $firstSpecifics],
+            ['specifics' => $secondSpecifics]
         );
     }
 }

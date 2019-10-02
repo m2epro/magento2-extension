@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Log;
 
+/**
+ * Class System
+ * @package Ess\M2ePro\Model\Log
+ */
 class System extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     //########################################

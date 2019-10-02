@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Attribute;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Magento\Attribute
+ */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
     const TYPE_TEXT            = 'text';
@@ -39,8 +43,8 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     protected $entityTypeId;
 
-    protected $options = array();
-    protected $params = array();
+    protected $options = [];
+    protected $params = [];
 
     //########################################
 
@@ -52,8 +56,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Eav\Model\Adminhtml\System\Config\Source\Inputtype\ValidatorFactory $inputTypeValidatorFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->productFactory = $productFactory;
         $this->attributeFactory = $attributeFactory;
         $this->catalogAttributeFactory = $catalogAttributeFactory;
@@ -74,11 +77,11 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     private function init()
     {
-        if (is_null($this->entityTypeId)) {
+        if ($this->entityTypeId === null) {
             $this->entityTypeId = $this->productFactory->create()->getResource()->getTypeId();
         }
 
-        if (is_null($this->inputType)) {
+        if ($this->inputType === null) {
             $this->inputType = self::TYPE_TEXT;
         }
 
@@ -91,18 +94,18 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     private function saveAttribute()
     {
         if ($this->attributeObj->getId()) {
-            return array('result' => true, 'obj' => $this->attributeObj);
+            return ['result' => true, 'obj' => $this->attributeObj];
         }
 
         if (!$this->validate()) {
-            return array('result' => false, 'error' => 'Attribute builder. Validation failed.');
+            return ['result' => false, 'error' => 'Attribute builder. Validation failed.'];
         }
 
         $this->attributeObj = $this->catalogAttributeFactory->create();
 
         $data = $this->params;
         $data['attribute_code'] = $this->code;
-        $data['frontend_label'] = array(\Magento\Store\Model\Store::DEFAULT_STORE_ID => $this->primaryLabel);
+        $data['frontend_label'] = [\Magento\Store\Model\Store::DEFAULT_STORE_ID => $this->primaryLabel];
         $data['frontend_input'] = $this->inputType;
         $data['entity_type_id'] = $this->entityTypeId;
         $data['is_user_defined']   = 1;
@@ -111,11 +114,11 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $data['backend_model'] = $this->productHelper->getAttributeBackendModelByInputType($this->inputType);
         $data['backend_type']  = $this->attributeObj->getBackendTypeByInput($this->inputType);
 
-        !isset($data['is_global'])               && $data['is_global'] = self::SCOPE_STORE;
-        !isset($data['is_configurable'])         && $data['is_configurable'] = 0;
-        !isset($data['is_filterable'])           && $data['is_filterable'] = 0;
+        !isset($data['is_global']) && $data['is_global'] = self::SCOPE_STORE;
+        !isset($data['is_configurable']) && $data['is_configurable'] = 0;
+        !isset($data['is_filterable']) && $data['is_filterable'] = 0;
         !isset($data['is_filterable_in_search']) && $data['is_filterable_in_search'] = 0;
-        !isset($data['apply_to'])                && $data['apply_to'] = array();
+        !isset($data['apply_to']) && $data['apply_to'] = [];
 
         $this->prepareOptions($data);
         $this->prepareDefault($data);
@@ -125,15 +128,15 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         try {
             $this->attributeObj->save();
         } catch (\Exception $e) {
-            return array('result' => false, 'error' => $e->getMessage());
+            return ['result' => false, 'error' => $e->getMessage()];
         }
 
-        return array('result' => true, 'obj' => $this->attributeObj);
+        return ['result' => true, 'obj' => $this->attributeObj];
     }
 
     private function validate()
     {
-        $validatorAttrCode = new \Zend_Validate_Regex(array('pattern' => '/^[a-z][a-z_0-9]{1,254}$/'));
+        $validatorAttrCode = new \Zend_Validate_Regex(['pattern' => '/^[a-z][a-z_0-9]{1,254}$/']);
         if (!$validatorAttrCode->isValid($this->code)) {
             return false;
         }
@@ -159,7 +162,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     public static function generateCodeByLabel($primaryLabel)
     {
         $attributeCode = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $primaryLabel);
-        $attributeCode = preg_replace('/[^0-9a-z]/i','_', $attributeCode);
+        $attributeCode = preg_replace('/[^0-9a-z]/i', '_', $attributeCode);
         $attributeCode = preg_replace('/_+/', '_', $attributeCode);
 
         $abc = 'abcdefghijklmnopqrstuvwxyz';
@@ -178,13 +181,11 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $options = $this->options;
 
         if (!empty($this->params['default_value'])) {
-
             if ($this->isSelectType()) {
                 $options[] = (string)$this->params['default_value'];
             }
 
             if ($this->isMultipleSelectType()) {
-
                 is_array($this->params['default_value'])
                     ? $options = array_merge($options, $this->params['default_value'])
                     : $options[] = (string)$this->params['default_value'];
@@ -193,7 +194,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
         foreach (array_unique($options) as $optionValue) {
             $code = $this->getOptionCode($optionValue);
-            $data['option']['value'][$code] = array(\Magento\Store\Model\Store::DEFAULT_STORE_ID => $optionValue);
+            $data['option']['value'][$code] = [\Magento\Store\Model\Store::DEFAULT_STORE_ID => $optionValue];
         }
     }
 
@@ -211,21 +212,18 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->isDateType() || $this->isTextAreaType() || $this->isTextType()) {
-
             $data['default_value'] = (string)$this->params['default_value'];
             return;
         }
 
         if ($this->isBooleanType()) {
-
             $data['default_value'] = (int)(strtolower($this->params['default_value']) == 'yes');
             return;
         }
 
         if ($this->isSelectType() || $this->isMultipleSelectType()) {
-
             $defaultValues = is_array($this->params['default_value']) ? $this->params['default_value']
-                                                                      : array($this->params['default_value']);
+                                                                      : [$this->params['default_value']];
 
             $data['default_value'] = null;
             foreach ($defaultValues as $value) {
@@ -262,7 +260,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    public function setParams(array $value = array())
+    public function setParams(array $value = [])
     {
         $this->params = $value;
         return $this;

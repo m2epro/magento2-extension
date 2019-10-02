@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Account
+ */
 class Save extends Account
 {
     //########################################
@@ -26,19 +30,19 @@ class Save extends Account
 
         // Base prepare
         // ---------------------------------------
-        $data = array();
+        $data = [];
         // ---------------------------------------
 
         // tab: general
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'title',
             'marketplace_id',
             'consumer_id',
             'old_private_key',
             'client_id',
             'client_secret'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -48,12 +52,12 @@ class Save extends Account
 
         // tab: 3rd party listings
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'related_store_id',
 
             'other_listings_synchronization',
             'other_listings_mapping_mode',
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -63,8 +67,8 @@ class Save extends Account
 
         // Mapping
         // ---------------------------------------
-        $tempData = array();
-        $keys = array(
+        $tempData = [];
+        $keys = [
             'mapping_sku_mode',
             'mapping_sku_priority',
             'mapping_sku_attribute',
@@ -84,23 +88,22 @@ class Save extends Account
             'mapping_title_mode',
             'mapping_title_priority',
             'mapping_title_attribute'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $tempData[$key] = $post[$key];
             }
         }
 
-        $mappingSettings = array();
+        $mappingSettings = [];
 
-        $temp = array(
+        $temp = [
             \Ess\M2ePro\Model\Walmart\Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT,
             \Ess\M2ePro\Model\Walmart\Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE,
             \Ess\M2ePro\Model\Walmart\Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID,
-        );
+        ];
 
         if (isset($tempData['mapping_sku_mode']) && in_array($tempData['mapping_sku_mode'], $temp)) {
-
             $mappingSettings['sku']['mode']     = (int)$tempData['mapping_sku_mode'];
             $mappingSettings['sku']['priority'] = (int)$tempData['mapping_sku_priority'];
 
@@ -112,7 +115,6 @@ class Save extends Account
 
         $temp1 = \Ess\M2ePro\Model\Walmart\Account::OTHER_LISTINGS_MAPPING_UPC_MODE_CUSTOM_ATTRIBUTE;
         if (isset($tempData['mapping_upc_mode']) && $tempData['mapping_upc_mode'] == $temp1) {
-
             $mappingSettings['upc']['mode']     = (int)$tempData['mapping_upc_mode'];
             $mappingSettings['upc']['priority'] = (int)$tempData['mapping_upc_priority'];
 
@@ -124,7 +126,6 @@ class Save extends Account
 
         $temp1 = \Ess\M2ePro\Model\Walmart\Account::OTHER_LISTINGS_MAPPING_GTIN_MODE_CUSTOM_ATTRIBUTE;
         if (isset($tempData['mapping_gtin_mode']) && $tempData['mapping_gtin_mode'] == $temp1) {
-
             $mappingSettings['gtin']['mode']     = (int)$tempData['mapping_gtin_mode'];
             $mappingSettings['gtin']['priority'] = (int)$tempData['mapping_gtin_priority'];
 
@@ -136,7 +137,6 @@ class Save extends Account
 
         $temp1 = \Ess\M2ePro\Model\Walmart\Account::OTHER_LISTINGS_MAPPING_WPID_MODE_CUSTOM_ATTRIBUTE;
         if (isset($tempData['mapping_wpid_mode']) && $tempData['mapping_wpid_mode'] == $temp1) {
-
             $mappingSettings['wpid']['mode']     = (int)$tempData['mapping_wpid_mode'];
             $mappingSettings['wpid']['priority'] = (int)$tempData['mapping_wpid_priority'];
 
@@ -161,19 +161,19 @@ class Save extends Account
 
         // tab: orders
         // ---------------------------------------
-        $data['magento_orders_settings'] = array();
+        $data['magento_orders_settings'] = [];
 
         // m2e orders settings
         // ---------------------------------------
         $tempKey = 'listing';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode',
             'store_mode',
             'store_id'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -185,14 +185,14 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'listing_other';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode',
             'product_mode',
             'product_tax_class_id',
             'store_id'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -204,15 +204,15 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'number';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
         $data['magento_orders_settings'][$tempKey]['source'] = $tempSettings['source'];
 
-        $prefixKeys = array(
+        $prefixKeys = [
             'mode',
             'prefix',
-        );
-        $tempSettings = !empty($tempSettings['prefix']) ? $tempSettings['prefix'] : array();
+        ];
+        $tempSettings = !empty($tempSettings['prefix']) ? $tempSettings['prefix'] : [];
         foreach ($prefixKeys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey]['prefix'][$key] = $tempSettings[$key];
@@ -224,11 +224,11 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'tax';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -240,25 +240,25 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'customer';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode',
             'id',
             'website_id',
             'group_id',
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
             }
         }
 
-        $notificationsKeys = array(
+        $notificationsKeys = [
             'order_created',
             'invoice_created'
-        );
-        $tempSettings = !empty($tempSettings['notifications']) ? $tempSettings['notifications'] : array();
+        ];
+        $tempSettings = !empty($tempSettings['notifications']) ? $tempSettings['notifications'] : [];
         foreach ($notificationsKeys as $key) {
             if (in_array($key, $tempSettings)) {
                 $data['magento_orders_settings'][$tempKey]['notifications'][$key] = true;
@@ -270,13 +270,13 @@ class Save extends Account
         // ---------------------------------------
         $tempKey = 'status_mapping';
         $tempSettings = !empty($post['magento_orders_settings'][$tempKey])
-            ? $post['magento_orders_settings'][$tempKey] : array();
+            ? $post['magento_orders_settings'][$tempKey] : [];
 
-        $keys = array(
+        $keys = [
             'mode',
             'processing',
             'shipped'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
                 $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
@@ -294,7 +294,6 @@ class Save extends Account
         $temp = \Ess\M2ePro\Model\Walmart\Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM;
         if (!empty($data['magento_orders_settings']['status_mapping']['mode']) &&
             $data['magento_orders_settings']['status_mapping']['mode'] == $temp) {
-
             $temp = \Ess\M2ePro\Model\Walmart\Account::MAGENTO_ORDERS_INVOICE_MODE_NO;
             if (!isset($post['magento_orders_settings']['invoice_mode'])) {
                 $data['magento_orders_settings']['invoice_mode'] = $temp;
@@ -310,12 +309,12 @@ class Save extends Account
         $data['magento_orders_settings'] = $this->getHelper('Data')->jsonEncode($data['magento_orders_settings']);
         // ---------------------------------------
 
-        $isEdit = !is_null($id);
+        $isEdit = $id !== null;
 
         // Add or update model
         // ---------------------------------------
         $model = $this->walmartFactory->getObject('Account');
-        if (is_null($id)) {
+        if ($id === null) {
             $model->setData($data);
         } else {
             $model->load($id);
@@ -324,7 +323,7 @@ class Save extends Account
         }
 
         $oldData = $model->getOrigData();
-        if (!is_null($id)) {
+        if ($id !== null) {
             $oldData = array_merge($oldData, $model->getChildObject()->getOrigData());
         }
 
@@ -332,7 +331,6 @@ class Save extends Account
         $model->getChildObject()->save();
 
         try {
-
             // Add or update server
             // ---------------------------------------
 
@@ -342,49 +340,53 @@ class Save extends Account
             if (!$accountObj->isSetProcessingLock('server_synchronize')) {
 
                 /** @var $dispatcherObject \Ess\M2ePro\Model\Walmart\Connector\Dispatcher */
-                $dispatcherObject = $this->modelFactory->getObject('Walmart\Connector\Dispatcher');
+                $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
 
                 if ($post['marketplace_id'] == \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA) {
-                    $requestData = array(
+                    $requestData = [
                         'title'            => $post['title'],
                         'marketplace_id'   => (int)$post['marketplace_id'],
                         'related_store_id' => (int)$post['related_store_id'],
                         'consumer_id'      => $post['consumer_id'],
                         'private_key'      => $post['old_private_key']
-                    );
+                    ];
                 } else {
-                    $requestData = array(
+                    $requestData = [
                         'title'            => $post['title'],
                         'marketplace_id'   => (int)$post['marketplace_id'],
                         'related_store_id' => (int)$post['related_store_id'],
                         'consumer_id'      => $post['consumer_id'],
                         'client_id'        => $post['client_id'],
                         'client_secret'    => $post['client_secret'],
-                    );
+                    ];
                 }
 
                 if (!$isEdit) {
                     $connectorObj = $dispatcherObject->getConnector(
-                        'account', 'add' ,'entityRequester', $requestData, $id
+                        'account',
+                        'add',
+                        'entityRequester',
+                        $requestData,
+                        $id
                     );
                     $dispatcherObject->process($connectorObj);
-
                 } else {
-
                     $requestData = array_diff_assoc($requestData, $oldData);
 
-                    if (!empty($params)) {
+                    if (!empty($requestData)) {
                         $connectorObj = $dispatcherObject->getConnector(
-                            'account', 'update' ,'entityRequester', $requestData, $id
+                            'account',
+                            'update',
+                            'entityRequester',
+                            $requestData,
+                            $id
                         );
                         $dispatcherObject->process($connectorObj);
                     }
                 }
             }
             // ---------------------------------------
-
         } catch (\Exception $exception) {
-
             $this->getHelper('Module\Exception')->process($exception);
 
             // M2ePro_TRANSLATIONS
@@ -417,19 +419,19 @@ class Save extends Account
 
         $this->messageManager->addSuccess($this->__('Account was successfully saved'));
 
-        /* @var $wizardHelper \Ess\M2ePro\Helper\Module\Wizard */
+        /** @var $wizardHelper \Ess\M2ePro\Helper\Module\Wizard */
         $wizardHelper = $this->getHelper('Module\Wizard');
 
-        $routerParams = array(
+        $routerParams = [
             'id' => $id,
             '_current' => true
-        );
+        ];
         if ($wizardHelper->isActive(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK) &&
             $wizardHelper->getStep(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK) == 'account') {
             $routerParams['wizard'] = true;
         }
 
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('list',array(),array('edit'=>$routerParams)));
+        return $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], ['edit'=>$routerParams]));
     }
 
     //########################################

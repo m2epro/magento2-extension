@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\Magento\Product;
 use Ess\M2ePro\Model\AbstractModel;
 use \Magento\Framework\App\Area;
 
+/**
+ * Class Image
+ * @package Ess\M2ePro\Model\Magento\Product
+ */
 class Image extends AbstractModel
 {
     protected $driverPool;
@@ -35,8 +39,7 @@ class Image extends AbstractModel
         \Magento\Framework\Filesystem $filesystem,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->driverPool = $driverPool;
         $this->storeManager = $storeManager;
         $this->mediaConfig = $mediaConfig;
@@ -72,7 +75,7 @@ class Image extends AbstractModel
      */
     public function getPath()
     {
-        if (is_null($this->path)) {
+        if ($this->path === null) {
             $this->path = $this->getPathByUrl();
         }
 
@@ -138,7 +141,7 @@ class Image extends AbstractModel
             return md5_file($path);
         }
 
-        return md5($url);
+        return sha1($url);
     }
 
     //----------------------------------------
@@ -200,11 +203,12 @@ class Image extends AbstractModel
     private function getBaseMediaUrl()
     {
         $shouldBeSecure = $this->getArea() == Area::AREA_FRONTEND
-            ? $this->getHelper('Component\Ebay\Images')->shouldBeUrlsSecure()
-            : NULL;
+            ? $this->getHelper('Component_Ebay_Images')->shouldBeUrlsSecure()
+            : null;
 
         return $this->storeManager->getStore($this->storeId)->getBaseUrl(
-            \Magento\Framework\UrlInterface::URL_TYPE_MEDIA, $shouldBeSecure
+            \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
+            $shouldBeSecure
         );
     }
 

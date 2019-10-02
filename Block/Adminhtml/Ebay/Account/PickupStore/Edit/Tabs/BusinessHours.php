@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class BusinessHours
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs
+ */
 class BusinessHours extends AbstractForm
 {
     //########################################
@@ -31,7 +35,8 @@ class BusinessHours extends AbstractForm
         $form = $this->_formFactory->create();
         $formData = $this->getFormData();
 
-        $form->addField('block_notice_ebay_accounts_pickup_store_business_hours',
+        $form->addField(
+            'block_notice_ebay_accounts_pickup_store_business_hours',
             self::HELP_BLOCK,
             [
                 'content' => $this->__('
@@ -45,32 +50,36 @@ class BusinessHours extends AbstractForm
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_account_pickup_store_form_data_business_hours_work_hours',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_account_pickup_store_form_data_business_hours_work_hours',
             [
                 'legend' => $this->__('Work Hours'), 'collapsable' => false
             ]
         );
 
-        $fieldset->addField('work_hours_custom_container',
+        $fieldset->addField(
+            'work_hours_custom_container',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $this->createBlock('Ebay\Account\PickupStore\Edit\Tabs\BusinessHours\WorkHours')
+                'text' => $this->createBlock('Ebay_Account_PickupStore_Edit_Tabs_BusinessHours_WorkHours')
                                ->setData(['form_data' => $formData])
                                ->toHtml(),
                 'style' => 'width: 100%'
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_account_pickup_store_form_data_business_hours_special_hours',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_account_pickup_store_form_data_business_hours_special_hours',
             [
                 'legend' => $this->__('Special Work Hours'), 'collapsable' => true
             ]
         );
 
-        $fieldset->addField('special_hours_custom_container',
+        $fieldset->addField(
+            'special_hours_custom_container',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $this->createBlock('Ebay\Account\PickupStore\Edit\Tabs\BusinessHours\SpecialHours')
+                'text' => $this->createBlock('Ebay_Account_PickupStore_Edit_Tabs_BusinessHours_SpecialHours')
                     ->setData(['form_data' => $formData])
                     ->toHtml()
             ]
@@ -91,19 +100,21 @@ class BusinessHours extends AbstractForm
 
         $formData = [];
         $model = $this->getHelper('Data\GlobalData')->getValue('temp_data');
-        if(!is_null($model)) {
+        if ($model !== null) {
             $formData = $model->toArray();
         }
 
         if (!empty($formData['business_hours'])) {
             $formData['business_hours'] = $this->prepareHoursData(
-                $formData['business_hours'], 'week_settings'
+                $formData['business_hours'],
+                'week_settings'
             );
         }
 
         if (!empty($formData['special_hours'])) {
             $formData['special_hours'] = $this->prepareHoursData(
-                $formData['special_hours'], 'date_settings'
+                $formData['special_hours'],
+                'date_settings'
             );
         }
 
@@ -114,7 +125,7 @@ class BusinessHours extends AbstractForm
 
     protected function prepareHoursData($hoursData, $key)
     {
-        $data = array();
+        $data = [];
 
         if (!empty($hoursData)) {
             $data = $this->getHelper('Data')->jsonDecode($hoursData);

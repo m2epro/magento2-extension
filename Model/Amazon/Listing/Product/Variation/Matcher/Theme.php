@@ -8,14 +8,18 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher;
 
+/**
+ * Class Theme
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher
+ */
 class Theme extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
     private $magentoProduct = null;
 
-    private $sourceAttributes = array();
+    private $sourceAttributes = [];
 
-    private $themes = array();
+    private $themes = [];
 
     private $matchedTheme = null;
 
@@ -28,7 +32,7 @@ class Theme extends \Ess\M2ePro\Model\AbstractModel
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $product)
     {
         $this->magentoProduct   = $product;
-        $this->sourceAttributes = array();
+        $this->sourceAttributes = [];
 
         return $this;
     }
@@ -66,7 +70,7 @@ class Theme extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getMatchedTheme()
     {
-        if (is_null($this->matchedTheme)) {
+        if ($this->matchedTheme === null) {
             $this->match();
         }
 
@@ -80,9 +84,9 @@ class Theme extends \Ess\M2ePro\Model\AbstractModel
         $this->validate();
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Attribute $attributeMatcher */
-        $attributeMatcher = $this->modelFactory->getObject('Amazon\Listing\Product\Variation\Matcher\Attribute');
+        $attributeMatcher = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Matcher_Attribute');
 
-        if (!is_null($this->magentoProduct)) {
+        if ($this->magentoProduct !== null) {
             if ($this->magentoProduct->isGroupedType()) {
                 $this->matchedTheme = null;
                 return $this;
@@ -110,7 +114,7 @@ class Theme extends \Ess\M2ePro\Model\AbstractModel
 
     private function validate()
     {
-        if (is_null($this->magentoProduct) && empty($this->sourceAttributes)) {
+        if ($this->magentoProduct === null && empty($this->sourceAttributes)) {
             throw new \Ess\M2ePro\Model\Exception('Magento Product and Channel Attributes were not set.');
         }
     }

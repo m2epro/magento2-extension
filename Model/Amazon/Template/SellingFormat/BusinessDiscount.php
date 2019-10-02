@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\SellingFormat;
 
+/**
+ * Class BusinessDiscount
+ * @package Ess\M2ePro\Model\Amazon\Template\SellingFormat
+ */
 class BusinessDiscount extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     const MODE_PRODUCT   = 1;
@@ -17,7 +21,7 @@ class BusinessDiscount extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
     /**
      * @var \Ess\M2ePro\Model\Template\SellingFormat
      */
-    private $sellingFormatTemplateModel = NULL;
+    private $sellingFormatTemplateModel = null;
 
     //########################################
 
@@ -32,7 +36,7 @@ class BusinessDiscount extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
     public function delete()
     {
         $temp = parent::delete();
-        $temp && $this->sellingFormatTemplateModel = NULL;
+        $temp && $this->sellingFormatTemplateModel = null;
         return $temp;
     }
 
@@ -43,9 +47,10 @@ class BusinessDiscount extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
      */
     public function getSellingFormatTemplate()
     {
-        if (is_null($this->sellingFormatTemplateModel)) {
+        if ($this->sellingFormatTemplateModel === null) {
             $this->sellingFormatTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Amazon\Template\SellingFormat', $this->getTemplateSellingFormatId()
+                'Amazon_Template_SellingFormat',
+                $this->getTemplateSellingFormatId()
             );
         }
 
@@ -136,11 +141,11 @@ class BusinessDiscount extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
 
     public function getSource()
     {
-        return array(
+        return [
             'mode'        => $this->getMode(),
             'coefficient' => $this->getCoefficient(),
             'attribute'   => $this->getAttribute(),
-        );
+        ];
     }
 
     //########################################
@@ -150,7 +155,7 @@ class BusinessDiscount extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
      */
     public function getAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         if ($this->isModeAttribute()) {
             $attributes[] = $this->getAttribute();

@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Command\Pending;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Amazon\Connector\Command\Pending
+ */
 abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {
-    private $cachedParamsObjects = array();
+    private $cachedParamsObjects = [];
 
     protected $amazonFactory;
 
@@ -21,9 +25,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        array $params = array()
-    )
-    {
+        array $params = []
+    ) {
         $this->amazonFactory = $amazonFactory;
         parent::__construct($response, $helperFactory, $modelFactory, $params);
     }
@@ -37,7 +40,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         }
 
         if (!isset($this->params[$idKey])) {
-            return NULL;
+            return null;
         }
 
         $this->cachedParamsObjects[$idKey] = $this->amazonFactory->getObjectLoaded($model, $this->params[$idKey]);

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode
+ */
 class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category
 {
     //########################################
@@ -26,7 +30,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Categ
 
     protected function prepareGroupsGrid()
     {
-        $groupGrid = $this->createBlock('Walmart\Listing\AutoAction\Mode\Category\Group\Grid');
+        $groupGrid = $this->createBlock('Walmart_Listing_AutoAction_Mode_Category_Group_Grid');
         $groupGrid->prepareGrid();
         $this->setChild('group_grid', $groupGrid);
 
@@ -38,7 +42,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Categ
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Walmart\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Walmart\Listing::class)
         );
 
         return parent::_afterToHtml($html);

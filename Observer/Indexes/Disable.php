@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Observer\Indexes;
 
+/**
+ * Class Disable
+ * @package Ess\M2ePro\Observer\Indexes
+ */
 class Disable extends \Ess\M2ePro\Observer\AbstractModel
 {
     protected $productIndex;
@@ -19,8 +23,7 @@ class Disable extends \Ess\M2ePro\Observer\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->productIndex = $productIndex;
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
     }
@@ -30,12 +33,6 @@ class Disable extends \Ess\M2ePro\Observer\AbstractModel
     public function process()
     {
         if ($this->getHelper('Magento')->isMSISupportingVersion()) {
-            foreach ($this->productIndex->getIndexes() as $code) {
-                if ($this->productIndex->enableReindex($code)) {
-                    $this->productIndex->rememberEnabledIndex($code);
-                }
-            }
-
             return;
         }
 

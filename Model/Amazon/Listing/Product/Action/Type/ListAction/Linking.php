@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction;
 use \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
 use \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
+/**
+ * Class Linking
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction
+ */
 class Linking extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -20,7 +24,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
     private $sku = null;
 
-    private $additionalData = array();
+    private $additionalData = [];
 
     protected $activeRecordFactory;
 
@@ -30,8 +34,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -116,13 +119,13 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
      */
     public function createAmazonItem()
     {
-        $data = array(
+        $data = [
             'account_id'     => $this->getListingProduct()->getListing()->getAccountId(),
             'marketplace_id' => $this->getListingProduct()->getListing()->getMarketplaceId(),
             'sku'            => $this->getSku(),
             'product_id'     => $this->getListingProduct()->getProductId(),
             'store_id'       => $this->getListingProduct()->getListing()->getStoreId(),
-        );
+        ];
 
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()
@@ -181,15 +184,15 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
     private function linkSimpleOrIndividualProduct()
     {
-        $this->getListingProduct()->addData(array(
+        $this->getListingProduct()->addData([
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
-        ));
-        $this->getAmazonListingProduct()->addData(array(
+        ]);
+        $this->getAmazonListingProduct()->addData([
             'general_id'         => $this->getGeneralId(),
             'is_isbn_general_id' => $this->getHelper('Data')->isISBN($this->getGeneralId()),
             'is_general_id_owner'   => \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO,
             'sku'                => $this->getSku(),
-        ));
+        ]);
         $this->getListingProduct()->save();
 
         $this->createAmazonItem();
@@ -199,14 +202,14 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
     private function linkChildProduct()
     {
-        $this->getListingProduct()->addData(array(
+        $this->getListingProduct()->addData([
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED
-        ));
-        $this->getAmazonListingProduct()->addData(array(
+        ]);
+        $this->getAmazonListingProduct()->addData([
             'general_id'         => $this->getGeneralId(),
             'is_isbn_general_id' => $this->getHelper('Data')->isISBN($this->getGeneralId()),
             'sku'                => $this->getSku(),
-        ));
+        ]);
 
         /** @var ChildRelation $typeModel */
         $typeModel = $this->getVariationManager()->getTypeModel();
@@ -245,11 +248,11 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        $dataForUpdate = array(
+        $dataForUpdate = [
             'general_id'         => $this->getGeneralId(),
             'is_isbn_general_id' => $this->getHelper('Data')->isISBN($this->getGeneralId()),
             'sku'                => $this->getSku(),
-        );
+        ];
 
         $descriptionTemplate = $this->getAmazonListingProduct()->getAmazonDescriptionTemplate();
         $listingProductSku = $this->getAmazonListingProduct()->getSku();
@@ -268,7 +271,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
         $typeModel->setChannelAttributesSets($data['variations']['set'], false);
 
-        $channelVariations = array();
+        $channelVariations = [];
         foreach ($data['variations']['asins'] as $generalId => $options) {
             $channelVariations[$generalId] = $options['specifics'];
         }
@@ -321,7 +324,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
     private function getSku()
     {
-        if (!is_null($this->sku)) {
+        if ($this->sku !== null) {
             return $this->sku;
         }
 
@@ -341,15 +344,20 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
     private function getDataFromAmazon()
     {
-        $params = array(
+        $params = [
             'item' => $this->generalId,
             'variation_child_modification' => 'none',
-        );
+        ];
 
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('product', 'search', 'byAsin',
-                                                               $params, 'item',
-                                                               $this->getListingProduct()->getListing()->getAccount());
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
+        $connectorObj = $dispatcherObject->getVirtualConnector(
+            'product',
+            'search',
+            'byAsin',
+            $params,
+            'item',
+            $this->getListingProduct()->getListing()->getAccount()
+        );
 
         $dispatcherObject->process($connectorObj);
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\Product;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\Product
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGrid
 {
     //########################################
@@ -33,7 +37,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
 
     protected function _prepareCollection()
     {
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->getSelect()->distinct();
@@ -57,7 +61,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
         );
         $collection->joinTable(
             [
-                'alp' => $this->activeRecordFactory->getObject('Amazon\Listing\Product')->getResource()->getMainTable()
+                'alp' => $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable()
             ],
             'listing_product_id=id',
             [
@@ -104,14 +108,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
         );
         $collection->joinTable(
             [
-                'malpr' => $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')
+                'malpr' => $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')
                     ->getResource()->getMainTable()
             ],
             'listing_product_id=listing_product_id',
             [
                 'is_repricing_disabled' => 'is_online_disabled',
             ],
-            NULL,
+            null,
             'left'
         );
 
@@ -142,8 +146,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
         $listingTitle = $this->getHelper('Data')->escapeHtml($row->getData('listing_title'));
         $listingTitle = $this->filterManager->truncate($listingTitle, ['length' => 50]);
 
-        $listingUrl = $this->getUrl('*/amazon_listing/view',
-            ['id' => $row->getData('listing_id')]);
+        $listingUrl = $this->getUrl(
+            '*/amazon_listing/view',
+            ['id' => $row->getData('listing_id')]
+        );
 
         $value = <<<HTML
 <div style="margin-bottom: 5px">{$title}</div>
@@ -175,7 +181,6 @@ HTML;
         $variationManager = $listingProduct->getChildObject()->getVariationManager();
 
         if ($variationManager->isVariationParent()) {
-
             $productAttributes = $variationManager->getTypeModel()->getProductAttributes();
 
             $virtualProductAttributes = $variationManager->getTypeModel()->getVirtualProductAttributes();
@@ -188,15 +193,11 @@ HTML;
             } else {
                 foreach ($productAttributes as $attribute) {
                     if (in_array($attribute, array_keys($virtualProductAttributes))) {
-
                         $attributesStr .= '<span style="border-bottom: 2px dotted grey">' . $attribute .
                             ' (' . $virtualProductAttributes[$attribute] . ')</span>, ';
-
-                    } else if (in_array($attribute, array_keys($virtualChannelAttributes))) {
-
+                    } elseif (in_array($attribute, array_keys($virtualChannelAttributes))) {
                         $attributesStr .= '<span>' . $attribute .
                             ' (' . $virtualChannelAttributes[$attribute] . ')</span>, ';
-
                     } else {
                         $attributesStr .= $attribute . ', ';
                     }
@@ -214,12 +215,10 @@ HTML;
         if ($variationManager->isIndividualType() &&
             $variationManager->getTypeModel()->isVariationProductMatched()
         ) {
-
             $optionsStr = '';
             $productOptions = $variationManager->getTypeModel()->getProductOptions();
 
             foreach ($productOptions as $attribute => $option) {
-
                 $attribute = $this->getHelper('Data')->escapeHtml($attribute);
                 !$option && $option = '--';
                 $option = $this->getHelper('Data')->escapeHtml($option);
@@ -269,7 +268,6 @@ HTML;
         $variationsStatuses = $row->getData('variation_child_statuses');
 
         if (empty($generalId) || empty($variationsStatuses)) {
-
             return $this->getProductStatus($sNotListed).
             $this->getLockedTag($row);
         }
@@ -277,14 +275,13 @@ HTML;
         $sortedStatuses     = [];
         $variationsStatuses = $this->getHelper('Data')->jsonDecode($variationsStatuses);
 
-        isset($variationsStatuses[$sUnknown])   && $sortedStatuses[$sUnknown]   = $variationsStatuses[$sUnknown];
+        isset($variationsStatuses[$sUnknown]) && $sortedStatuses[$sUnknown]   = $variationsStatuses[$sUnknown];
         isset($variationsStatuses[$sNotListed]) && $sortedStatuses[$sNotListed] = $variationsStatuses[$sNotListed];
-        isset($variationsStatuses[$sListed])    && $sortedStatuses[$sListed]    = $variationsStatuses[$sListed];
-        isset($variationsStatuses[$sStopped])   && $sortedStatuses[$sStopped]   = $variationsStatuses[$sStopped];
-        isset($variationsStatuses[$sBlocked])   && $sortedStatuses[$sBlocked]   = $variationsStatuses[$sBlocked];
+        isset($variationsStatuses[$sListed]) && $sortedStatuses[$sListed]    = $variationsStatuses[$sListed];
+        isset($variationsStatuses[$sStopped]) && $sortedStatuses[$sStopped]   = $variationsStatuses[$sStopped];
+        isset($variationsStatuses[$sBlocked]) && $sortedStatuses[$sBlocked]   = $variationsStatuses[$sBlocked];
 
         foreach ($sortedStatuses as $status => $productsCount) {
-
             if (empty($productsCount)) {
                 continue;
             }
@@ -333,9 +330,7 @@ HTML;
         $childCount = 0;
 
         foreach ($tempLocks as $lock) {
-
             switch ($lock->getTag()) {
-
                 case 'list_action':
                     $html .= '<br/><span style="color: #605fff">'
                         . $this->__('List in Progress')
@@ -390,7 +385,6 @@ HTML;
 
                 default:
                     break;
-
             }
         }
 
@@ -466,7 +460,6 @@ HTML;
         $where = '';
 
         if (isset($cond['from']) || isset($cond['to'])) {
-
             if (isset($cond['from']) && $cond['from'] != '') {
                 $value = $collection->getConnection()->quote($cond['from']);
                 $where .= "{$onlineCurrentPrice} >= {$value}";
@@ -481,7 +474,7 @@ HTML;
             }
         }
 
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() && isset($cond['is_repricing'])) {
+        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() && isset($cond['is_repricing'])) {
             if (!empty($where)) {
                 $where = '(' . $where . ') OR ';
             }
@@ -555,7 +548,6 @@ HTML;
     {
         $collection = $this->getCollection();
         if ($collection) {
-
             $columnIndex = $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
 
             if ($columnIndex == 'online_current_price') {

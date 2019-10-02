@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode
+ */
 class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -37,21 +41,21 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/*/',array('step' => 1, '_current' => true));
-        $this->addButton('back', array(
+        $url = $this->getUrl('*/*/', ['step' => 1, '_current' => true]);
+        $this->addButton('back', [
             'label'     => $this->__('Back'),
             'class'     => 'back',
             'onclick'   => 'setLocation(\''.$url.'\');'
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('next', array(
+        $this->addButton('next', [
             'id'        => 'ebay_listing_category_continue_btn',
             'label'     => $this->__('Continue'),
             'class'     => 'action-primary forward',
             'onclick'   => "EbayListingProductCategorySettingsModeCategoryGridObj.validate()"
-        ));
+        ]);
         // ---------------------------------------
     }
 
@@ -65,7 +69,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
 
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_category_settings');
 
-        $viewHeaderBlock = $this->createBlock('Listing\View\Header','', [
+        $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
             'data' => ['listing' => $listing]
         ]);
 

@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+/**
+ * Class AutoAction
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ */
 abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
 
     protected function getCategoryTemplate($autoMode, $groupId, $listing)
     {
-        $template = NULL;
+        $template = null;
 
         switch ($autoMode) {
             case \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL:
@@ -25,7 +29,7 @@ abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                 break;
             case \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY:
                 if ($magentoCategoryId = $this->getRequest()->getParam('magento_category_id')) {
-                    $autoCategory = $this->activeRecordFactory->getObject('Listing\Auto\Category')
+                    $autoCategory = $this->activeRecordFactory->getObject('Listing_Auto_Category')
                         ->getCollection()
                         ->addFieldToFilter('group_id', $groupId)
                         ->addFieldToFilter('category_id', $magentoCategoryId)
@@ -33,7 +37,8 @@ abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
                     if ($autoCategory->getId()) {
                         $template = $this->activeRecordFactory->getObjectLoaded(
-                            'Ebay\Listing\Auto\Category\Group', $groupId
+                            'Ebay_Listing_Auto_Category_Group',
+                            $groupId
                         )->getCategoryTemplate();
                     }
                 }
@@ -45,7 +50,7 @@ abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
     protected function getOtherCategoryTemplate($autoMode, $groupId, $listing)
     {
-        $template = NULL;
+        $template = null;
 
         switch ($autoMode) {
             case \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL:
@@ -56,7 +61,7 @@ abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                 break;
             case \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY:
                 if ($magentoCategoryId = $this->getRequest()->getParam('magento_category_id')) {
-                    $autoCategory = $this->activeRecordFactory->getObject('Listing\Auto\Category')
+                    $autoCategory = $this->activeRecordFactory->getObject('Listing_Auto_Category')
                         ->getCollection()
                         ->addFieldToFilter('group_id', $groupId)
                         ->addFieldToFilter('category_id', $magentoCategoryId)
@@ -64,7 +69,8 @@ abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
                     if ($autoCategory->getId()) {
                         $template = $this->activeRecordFactory->getObjectLoaded(
-                            'Ebay\Listing\Auto\Category\Group', $groupId
+                            'Ebay_Listing_Auto_Category_Group',
+                            $groupId
                         )->getOtherCategoryTemplate();
                     }
                 }

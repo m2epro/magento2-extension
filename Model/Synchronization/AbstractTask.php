@@ -11,24 +11,28 @@ namespace Ess\M2ePro\Model\Synchronization;
 use Ess\M2ePro\Model\Exception;
 use Ess\M2ePro\Model\Log\AbstractModel as LogModel;
 
+/**
+ * Class AbstractTask
+ * @package Ess\M2ePro\Model\Synchronization
+ */
 abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
 {
     //########################################
 
     protected $activeRecordFactory;
 
-    private $synchConfig = NULL;
+    private $synchConfig = null;
 
-    private $allowedTasksTypes = array();
+    private $allowedTasksTypes = [];
 
-    private $lockItem = NULL;
-    private $operationHistory = NULL;
+    private $lockItem = null;
+    private $operationHistory = null;
 
-    private $parentLockItem = NULL;
-    private $parentOperationHistory = NULL;
+    private $parentLockItem = null;
+    private $parentOperationHistory = null;
 
-    private $log = NULL;
-    private $params = array();
+    private $log = null;
+    private $params = [];
     private $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
 
     //########################################
@@ -37,8 +41,7 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -58,17 +61,14 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
         $result = true;
 
         try {
-
             $tempResult = $this->performActions();
 
-            if (!is_null($tempResult) && !$tempResult) {
+            if ($tempResult !== null && !$tempResult) {
                 $result = false;
             }
 
             $this->getActualLockItem()->activate();
-
         } catch (\Exception $exception) {
-
             $result = false;
 
             $this->processTaskException($exception);
@@ -82,7 +82,7 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
     protected function processTask($taskPath)
     {
         $result = $this->makeTask($taskPath)->process();
-        return is_null($result) || $result;
+        return $result === null || $result;
     }
 
     protected function makeTask($taskPath)
@@ -233,22 +233,24 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    protected function initialize() {}
+    protected function initialize()
+    {
+        return null;
+    }
 
     protected function isPossibleToRun()
     {
         if ($this->isContainerTask() &&
-            !in_array($this->getType(),$this->getAllowedTasksTypes())) {
+            !in_array($this->getType(), $this->getAllowedTasksTypes())) {
             return false;
         }
 
         $tempSettingsPath = '/';
-        foreach (array_values(array_filter(explode('/',$this->getFullSettingsPath()))) as $node) {
-
+        foreach (array_values(array_filter(explode('/', $this->getFullSettingsPath()))) as $node) {
             $tempSettingsPath .= $node.'/';
-            $tempMode = $this->getConfigValue($tempSettingsPath,'mode');
+            $tempMode = $this->getConfigValue($tempSettingsPath, 'mode');
 
-            if (!is_null($tempMode) && !$tempMode) {
+            if ($tempMode !== null && !$tempMode) {
                 return false;
             }
         }
@@ -278,15 +280,16 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if (!$this->getParentOperationHistory() || $this->isLauncherTask() || $this->isContainerTask()) {
-
-            $operationHistoryNickSuffix = str_replace('/','_',trim($this->getFullSettingsPath(),'/'));
+            $operationHistoryNickSuffix = str_replace('/', '_', trim($this->getFullSettingsPath(), '/'));
 
             $operationHistoryParentId = $this->getParentOperationHistory() ?
-                    $this->getParentOperationHistory()->getObject()->getId() : NULL;
+                    $this->getParentOperationHistory()->getObject()->getId() : null;
 
-            $this->getOperationHistory()->start('synchronization_'.$operationHistoryNickSuffix,
-                                                $operationHistoryParentId,
-                                                $this->getInitiator());
+            $this->getOperationHistory()->start(
+                'synchronization_'.$operationHistoryNickSuffix,
+                $operationHistoryParentId,
+                $this->getInitiator()
+            );
 
             $this->getOperationHistory()->makeShutdownFunction();
         }
@@ -319,7 +322,7 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
 
     protected function getOperationHistory()
     {
-        if (is_null($this->operationHistory)) {
+        if ($this->operationHistory === null) {
             $this->operationHistory = $this->activeRecordFactory
                                            ->getObject('Synchronization\OperationHistory');
         }
@@ -328,9 +331,9 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
 
     protected function getLockItem()
     {
-        if (is_null($this->lockItem)) {
-            $this->lockItem = $this->modelFactory->getObject('Synchronization\Lock\Item\Manager');
-            $operationHistoryNickSuffix = str_replace('/','_',trim($this->getFullSettingsPath(),'/'));
+        if ($this->lockItem === null) {
+            $this->lockItem = $this->modelFactory->getObject('Synchronization_Lock_Item_Manager');
+            $operationHistoryNickSuffix = str_replace('/', '_', trim($this->getFullSettingsPath(), '/'));
             $this->lockItem->setNick('synchronization_'.$operationHistoryNickSuffix);
         }
         return $this->lockItem;
@@ -408,7 +411,7 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
         if ($this->isContainerTask()) {
             $title = ucfirst($this->getType());
         } else {
-            $title = ucwords(str_replace('/',' ',trim($this->getNick(),'/')));
+            $title = ucwords(str_replace('/', ' ', trim($this->getNick(), '/')));
         }
 
         return $title;
@@ -494,7 +497,6 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
         $suffix = $this->getHelper('Module\Translation')->__('Synchronization');
 
         if ($this->isLauncherTask() || $this->isContainerTask()) {
-
             $title = $suffix;
 
             if ($this->isContainerTask()) {
@@ -512,7 +514,7 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
         $title = ($this->isLauncherTask() || $this->isContainerTask()) ?
                     $this->getTitle().' '.$suffix : $this->getTitle();
 
-        $this->getActualLockItem()->setStatus($this->getHelper('Module\Translation')->__($status,$title));
+        $this->getActualLockItem()->setStatus($this->getHelper('Module\Translation')->__($status, $title));
     }
 
     protected function configureLockItemAfterEnd()
@@ -520,7 +522,6 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
         $suffix = $this->getHelper('Module\Translation')->__('Synchronization');
 
         if ($this->isLauncherTask() || $this->isContainerTask()) {
-
             $title = $suffix;
 
             if ($this->isContainerTask()) {
@@ -538,7 +539,7 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
         $title = ($this->isLauncherTask() || $this->isContainerTask()) ?
                     $this->getTitle().' '.$suffix : $this->getTitle();
 
-        $this->getActualLockItem()->setStatus($this->getHelper('Module\Translation')->__($status,$title));
+        $this->getActualLockItem()->setStatus($this->getHelper('Module\Translation')->__($status, $title));
     }
 
     //########################################
@@ -560,7 +561,7 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        $interval = (int)$this->getConfigValue($this->getFullSettingsPath(),'interval');
+        $interval = (int)$this->getConfigValue($this->getFullSettingsPath(), 'interval');
         return strtotime($lastTime) + $interval > $this->getHelper('Data')->getCurrentGmtDate(true);
     }
 
@@ -579,20 +580,20 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
             date_default_timezone_set($oldTimezone);
         }
 
-        $this->setConfigValue($this->getFullSettingsPath(),'last_time',$time);
+        $this->setConfigValue($this->getFullSettingsPath(), 'last_time', $time);
     }
 
     protected function intervalGetLastTime()
     {
-        return $this->getConfigValue($this->getFullSettingsPath(),'last_time');
+        return $this->getConfigValue($this->getFullSettingsPath(), 'last_time');
     }
 
     //########################################
 
     private function getConfig()
     {
-        if (is_null($this->synchConfig)) {
-            $this->synchConfig = $this->modelFactory->getObject('Config\Manager\Synchronization');
+        if ($this->synchConfig === null) {
+            $this->synchConfig = $this->modelFactory->getObject('Config_Manager_Synchronization');
         }
 
         return $this->synchConfig;
@@ -614,12 +615,12 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
 
     protected function processTaskException(\Exception $exception)
     {
-        $this->getActualOperationHistory()->addContentData('exceptions', array(
+        $this->getActualOperationHistory()->addContentData('exceptions', [
             'message' => $exception->getMessage(),
             'file'    => $exception->getFile(),
             'line'    => $exception->getLine(),
             'trace'   => $exception->getTraceAsString(),
-        ));
+        ]);
 
         $this->getLog()->addMessage(
             $this->getHelper('Module\Translation')->__($exception->getMessage()),
@@ -632,12 +633,12 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
 
     protected function processTaskAccountException($message, $file, $line, $trace = null)
     {
-        $this->getActualOperationHistory()->addContentData('exceptions', array(
+        $this->getActualOperationHistory()->addContentData('exceptions', [
             'message' => $message,
             'file'    => $file,
             'line'    => $line,
             'trace'   => $trace,
-        ));
+        ]);
 
         $this->getLog()->addMessage(
             $message,

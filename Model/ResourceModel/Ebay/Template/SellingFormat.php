@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template;
 
+/**
+ * Class SellingFormat
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Template
+ */
 class SellingFormat extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
@@ -24,7 +28,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compone
 
     public function setSynchStatusNeed($newData, $oldData, $listingsProducts)
     {
-        $listingsProductsIds = array();
+        $listingsProductsIds = [];
         foreach ($listingsProducts as $listingProduct) {
             $listingsProductsIds[] = (int)$listingProduct['id'];
         }
@@ -33,26 +37,26 @@ class SellingFormat extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compone
             return;
         }
 
-        if (!$this->isDifferent($newData,$oldData)) {
+        if (!$this->isDifferent($newData, $oldData)) {
             return;
         }
 
-        $templates = array('sellingFormatTemplate');
+        $templates = ['sellingFormatTemplate'];
 
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
 
         $this->getConnection()->update(
             $lpTable,
-            array(
+            [
                 'synch_status' => \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_NEED,
                 'synch_reasons' => new \Zend_Db_Expr(
                     "IF(synch_reasons IS NULL,
-                        '".implode(',',$templates)."',
-                        CONCAT(synch_reasons,'".','.implode(',',$templates)."')
+                        '".implode(',', $templates)."',
+                        CONCAT(synch_reasons,'".','.implode(',', $templates)."')
                     )"
                 )
-            ),
-            array('id IN ('.implode(',', $listingsProductsIds).')')
+            ],
+            ['id IN ('.implode(',', $listingsProductsIds).')']
         );
     }
 
@@ -60,18 +64,18 @@ class SellingFormat extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compone
 
     public function isDifferent($newData, $oldData)
     {
-        $ignoreFields = array(
+        $ignoreFields = [
             $this->getIdFieldName(),
             'id', 'title', 'component_mode',
             'is_custom_template',
             'create_date', 'update_date'
-        );
+        ];
 
         foreach ($ignoreFields as $ignoreField) {
-            unset($newData[$ignoreField],$oldData[$ignoreField]);
+            unset($newData[$ignoreField], $oldData[$ignoreField]);
         }
 
-        return (count(array_diff_assoc($newData,$oldData)) > 0);
+        return !empty(array_diff_assoc($newData, $oldData));
     }
 
     //########################################

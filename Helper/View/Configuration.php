@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\View;
 
+/**
+ * Class Configuration
+ * @package Ess\M2ePro\Helper\View
+ */
 class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 {
     // M2ePro_TRANSLATIONS
@@ -19,6 +23,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
     const AMAZON_SECTION_COMPONENT   = 'm2epro_amazon_integration';
     const WALMART_SECTION_COMPONENT  = 'm2epro_walmart_integration';
     const ADVANCED_SECTION_COMPONENT = 'm2epro_advanced_settings';
+    const ADVANCED_SECTION_WIZARD    = 'm2epro_migration_wizard';
 
     protected $urlBuilder;
 
@@ -28,8 +33,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Backend\Model\UrlInterface $urlBuilder,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->urlBuilder = $urlBuilder;
         parent::__construct($helperFactory, $context);
     }
@@ -45,7 +49,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getComponentsUrl(array $params = [])
     {
-        return $this->urlBuilder->getUrl('adminhtml/system_config/edit',array_merge([
+        return $this->urlBuilder->getUrl('adminhtml/system_config/edit', array_merge([
             'section' => self::EBAY_SECTION_COMPONENT
         ], $params));
     }
@@ -57,14 +61,14 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getLogsClearingUrl(array $params = [])
     {
-        return $this->urlBuilder->getUrl('m2epro/ebay_settings/index',array_merge([
+        return $this->urlBuilder->getUrl('m2epro/ebay_settings/index', array_merge([
             'active_tab' => \Ess\M2ePro\Block\Adminhtml\Settings\Tabs::TAB_ID_LOGS_CLEARING
         ], $params));
     }
 
     public function getLicenseUrl(array $params = [])
     {
-        return $this->urlBuilder->getUrl('m2epro/ebay_settings/index',array_merge([
+        return $this->urlBuilder->getUrl('m2epro/ebay_settings/index', array_merge([
             'active_tab' => \Ess\M2ePro\Block\Adminhtml\Settings\Tabs::TAB_ID_LICENSE
         ], $params));
     }

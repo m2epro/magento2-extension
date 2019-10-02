@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group;
 
+/**
+ * Class Items
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group
+ */
 class Items extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     private $group;
@@ -50,8 +54,8 @@ class Items extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
      */
     public function getGroup()
     {
-        if (is_null($this->group)) {
-            $this->group = $this->activeRecordFactory->getObjectLoaded('Ebay\Motor\Group', $this->getGroupId());
+        if ($this->group === null) {
+            $this->group = $this->activeRecordFactory->getObjectLoaded('Ebay_Motor_Group', $this->getGroupId());
         }
 
         return $this->group;

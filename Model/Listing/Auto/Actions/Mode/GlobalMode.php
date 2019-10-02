@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Listing\Auto\Actions\Mode;
 
+/**
+ * Class GlobalMode
+ * @package Ess\M2ePro\Model\Listing\Auto\Actions\Mode
+ */
 class GlobalMode extends AbstractMode
 {
     //########################################
@@ -16,10 +20,10 @@ class GlobalMode extends AbstractMode
     {
         $collection = $this->activeRecordFactory->getObject('Listing')->getCollection();
 
-        $collection->addFieldToFilter('auto_mode',\Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL);
+        $collection->addFieldToFilter('auto_mode', \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL);
         $collection->addFieldToFilter(
             'auto_global_adding_mode',
-            array('neq'=>\Ess\M2ePro\Model\Listing::ADDING_MODE_NONE)
+            ['neq'=>\Ess\M2ePro\Model\Listing::ADDING_MODE_NONE]
         );
 
         foreach ($collection->getItems() as $listing) {

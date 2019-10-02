@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask;
 
+/**
+ * Class StopQueue
+ * @package Ess\M2ePro\Model\Synchronization\GlobalTask
+ */
 class StopQueue extends AbstractModel
 {
     private $itemsWereProcessed = false;
@@ -81,11 +85,11 @@ class StopQueue extends AbstractModel
     private function sendComponentRequests($component)
     {
         $items = $this->activeRecordFactory->getObject('StopQueue')->getCollection()
-                    ->addFieldToFilter('is_processed',0)
-                    ->addFieldToFilter('component_mode',$component)
+                    ->addFieldToFilter('is_processed', 0)
+                    ->addFieldToFilter('component_mode', $component)
                     ->getItems();
 
-        $accountMarketplaceItems = array();
+        $accountMarketplaceItems = [];
 
         foreach ($items as $item) {
 
@@ -93,7 +97,7 @@ class StopQueue extends AbstractModel
             $tempKey = (string)$item->getMarketplaceId().'_'.$item->getAccountHash();
 
             if (!isset($accountMarketplaceItems[$tempKey])) {
-                $accountMarketplaceItems[$tempKey] = array();
+                $accountMarketplaceItems[$tempKey] = [];
             }
 
             if (count($accountMarketplaceItems[$tempKey]) >= 100) {
@@ -104,43 +108,39 @@ class StopQueue extends AbstractModel
         }
 
         foreach ($accountMarketplaceItems as $items) {
-
             if ($component == \Ess\M2ePro\Helper\Component\Ebay::NICK) {
-
-                $parts = array_chunk($items,10);
+                $parts = array_chunk($items, 10);
 
                 foreach ($parts as $part) {
                     if (count($part) <= 0) {
                         continue;
                     }
-                    $this->sendAccountMarketplaceRequests($component,$part);
+                    $this->sendAccountMarketplaceRequests($component, $part);
                 }
-
             } else {
-                $this->sendAccountMarketplaceRequests($component,$items);
+                $this->sendAccountMarketplaceRequests($component, $items);
             }
 
             foreach ($items as $item) {
                 /** @var \Ess\M2ePro\Model\StopQueue $item */
-                $item->setData('is_processed',1)->save();
+                $item->setData('is_processed', 1)->save();
             }
         }
 
-        return count($accountMarketplaceItems) > 0;
+        return !empty($accountMarketplaceItems);
     }
 
     private function sendAccountMarketplaceRequests($component, $accountMarketplaceItems)
     {
         try {
-
-            $requestData = array(
-                'items' => array(),
-            );
+            $requestData = [
+                'items' => [],
+            ];
 
             /** @var \Ess\M2ePro\Model\StopQueue $tempItem */
             $tempItem = $accountMarketplaceItems[0];
             $requestData['account'] = $tempItem->getAccountHash();
-            if (!is_null($tempItem->getMarketplaceId())) {
+            if ($tempItem->getMarketplaceId() !== null) {
                 $requestData['marketplace'] = $tempItem->getMarketplaceId();
             }
 
@@ -164,7 +164,6 @@ class StopQueue extends AbstractModel
             $dispatcher = $this->modelFactory->getObject(ucwords($component).'\Connector\Dispatcher');
             $connectorObj = $dispatcher->getVirtualConnector($entity, $type, $name, $requestData);
             $dispatcher->process($connectorObj);
-
         } catch (\Exception $exception) {
             $this->helperFactory->getObject('Module\Exception')->process($exception);
         }

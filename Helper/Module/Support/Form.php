@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Module\Support;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Helper\Module\Support
+ */
 class Form extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $urlBuilder;
@@ -20,8 +24,7 @@ class Form extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest
-    )
-    {
+    ) {
         $this->urlBuilder = $urlBuilder;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
         parent::__construct($helperFactory, $context);
@@ -31,12 +34,11 @@ class Form extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function send($component, $fromEmail, $fromName, $subject, $description, $severity)
     {
-        $attachments = array();
+        $attachments = [];
         $uploadedFiles = $this->phpEnvironmentRequest->getFiles()->toArray();
 
         if (!empty($uploadedFiles['files'])) {
             foreach ($uploadedFiles['files'] as $key => $uploadFileInfo) {
-
                 if ('' == $uploadFileInfo['name']) {
                     continue;
                 }
@@ -53,25 +55,25 @@ class Form extends \Ess\M2ePro\Helper\AbstractHelper
 
         $toEmail = $this->getHelper('Module\Support')->getContactEmail();
         $componentTitle = $this->getHelper('Component')->getComponentTitle($component);
-        $body = $this->createBody($subject,$componentTitle,$description,$severity);
+        $body = $this->createBody($subject, $componentTitle, $description, $severity);
 
         $this->sendMailNow($toEmail, $fromEmail, $fromName, $subject, $body, $attachments);
     }
 
     public function getSummaryInfo()
     {
-        $locationInfo = array();
+        $locationInfo = [];
         $locationInfo['domain'] = $this->getHelper('Client')->getDomain();
         $locationInfo['ip'] = $this->getHelper('Client')->getIp();
         $locationInfo['directory'] = $this->getHelper('Client')->getBaseDirectory();
 
-        $platformInfo = array();
+        $platformInfo = [];
         $platformInfo['name'] = $this->getHelper('Magento')->getName();
         $platformInfo['edition'] = $this->getHelper('Magento')->getEditionName();
         $platformInfo['version'] = $this->getHelper('Magento')->getVersion();
         $platformInfo['revision'] = $this->getHelper('Magento')->getRevision();
 
-        $moduleInfo = array();
+        $moduleInfo = [];
         $moduleInfo['name'] = $this->getHelper('Module')->getName();
         $moduleInfo['version'] = $this->getHelper('Module')->getPublicVersion();
         $moduleInfo['revision'] = $this->getHelper('Module')->getRevision();
@@ -88,7 +90,7 @@ class Form extends \Ess\M2ePro\Helper\AbstractHelper
         $mysqlInfo['version'] = $this->getHelper('Client')->getMysqlVersion();
         $mysqlInfo['database'] = $this->getHelper('Magento')->getDatabaseName();
 
-        $additionalInfo = array();
+        $additionalInfo = [];
         $additionalInfo['system'] = $this->getHelper('Client')->getSystem();
         $additionalInfo['user_agent'] = $this->phpEnvironmentRequest->getServer('HTTP_USER_AGENT');
         $additionalInfo['admin'] = $this->urlBuilder->getUrl('adminhtml');
@@ -164,7 +166,7 @@ DATA;
         return $body;
     }
 
-    private function sendMailNow($toEmail, $fromEmail, $fromName, $subject, $body, array $attachments = array())
+    private function sendMailNow($toEmail, $fromEmail, $fromName, $subject, $body, array $attachments = [])
     {
         $mail = new \Zend_Mail('UTF-8');
 

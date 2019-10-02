@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order
 {
     //########################################
@@ -19,7 +23,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order
         if ($orderId) {
             $order = $this->ebayFactory->getObjectLoaded('Order', $orderId, 'id', false);
 
-            if (is_null($order)) {
+            if ($order === null) {
                 $order = $this->ebayFactory->getObject('Order');
             }
 
@@ -35,7 +39,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order
             $this->getResult()->getConfig()->getTitle()->prepend($this->__('Orders Logs & Events'));
         }
 
-        $this->addContent($this->createBlock('Ebay\Log\Order'));
+        $this->addContent($this->createBlock('Ebay_Log_Order'));
         return $this->getResult();
     }
 

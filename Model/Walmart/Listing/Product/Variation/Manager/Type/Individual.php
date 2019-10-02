@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type;
 
+/**
+ * Class Individual
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type
+ */
 class Individual extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\PhysicalUnit
 {
     //########################################

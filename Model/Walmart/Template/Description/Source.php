@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Template\Description;
 
+/**
+ * Class Source
+ * @package Ess\M2ePro\Model\Walmart\Template\Description
+ */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     const GALLERY_IMAGES_COUNT_MAX = 8;
@@ -99,8 +103,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 break;
 
             case \Ess\M2ePro\Model\Walmart\Template\Description::TITLE_MODE_CUSTOM:
-                $title = $this->getHelper('Module\Renderer\Description')->parseTemplate(
-                    $src['template'], $this->getMagentoProduct()
+                $title = $this->getHelper('Module_Renderer_Description')->parseTemplate(
+                    $src['template'],
+                    $this->getMagentoProduct()
                 );
                 break;
 
@@ -230,7 +235,6 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getWalmartDescriptionTemplate()->isMsrpRrpModeCustomAttribute()) {
-
             $src = $this->getWalmartDescriptionTemplate()->getMsrpRrpSource();
             $result = $this->getMagentoProductAttributeValue(
                 $src['custom_attribute']
@@ -262,8 +266,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 break;
 
             case \Ess\M2ePro\Model\Walmart\Template\Description::DESCRIPTION_MODE_CUSTOM:
-                $description = $this->getHelper('Module\Renderer\Description')->parseTemplate(
-                    $src['template'], $this->getMagentoProduct()
+                $description = $this->getHelper('Module_Renderer_Description')->parseTemplate(
+                    $src['template'],
+                    $this->getMagentoProduct()
                 );
                 break;
 
@@ -272,9 +277,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 break;
         }
 
-        $allowedTags = array('<p>', '<br>', '<ul>', '<li>', '<b>');
+        $allowedTags = ['<p>', '<br>', '<ul>', '<li>', '<b>'];
 
-        $description = str_replace(array('<![CDATA[', ']]>'), '', $description);
+        $description = str_replace(['<![CDATA[', ']]>'], '', $description);
         $description = strip_tags($description, implode($allowedTags));
 
         return $description;
@@ -288,15 +293,16 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     public function getKeyFeatures()
     {
         if ($this->getWalmartDescriptionTemplate()->isKeyFeaturesModeNone()) {
-            return array();
+            return [];
         }
 
-        $result = array();
+        $result = [];
         $src = $this->getWalmartDescriptionTemplate()->getKeyFeaturesSource();
 
         foreach ($src['template'] as $value) {
-            $parsedValue = $this->getHelper('Module\Renderer\Description')->parseTemplate(
-                $value, $this->getMagentoProduct()
+            $parsedValue = $this->getHelper('Module_Renderer_Description')->parseTemplate(
+                $value,
+                $this->getMagentoProduct()
             );
 
             if (empty($parsedValue)) {
@@ -315,15 +321,16 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     public function getOtherFeatures()
     {
         if ($this->getWalmartDescriptionTemplate()->isOtherFeaturesModeNone()) {
-            return array();
+            return [];
         }
 
-        $result = array();
+        $result = [];
         $src = $this->getWalmartDescriptionTemplate()->getOtherFeaturesSource();
 
         foreach ($src['template'] as $value) {
-            $parsedValue = $this->getHelper('Module\Renderer\Description')->parseTemplate(
-                $value, $this->getMagentoProduct()
+            $parsedValue = $this->getHelper('Module_Renderer_Description')->parseTemplate(
+                $value,
+                $this->getMagentoProduct()
             );
 
             if (empty($parsedValue)) {
@@ -342,10 +349,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     public function getAttributes()
     {
         if ($this->getWalmartDescriptionTemplate()->isAttributesModeNone()) {
-            return array();
+            return [];
         }
 
-        $result = array();
+        $result = [];
         $src = $this->getWalmartDescriptionTemplate()->getAttributesSource();
 
         foreach ($src['template'] as $value) {
@@ -353,8 +360,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            $result[$value['name']] = $this->getHelper('Module\Renderer\Description')->parseTemplate(
-                $value['value'], $this->getMagentoProduct()
+            $result[$value['name']] = $this->getHelper('Module_Renderer_Description')->parseTemplate(
+                $value['value'],
+                $this->getMagentoProduct()
             );
         }
 
@@ -433,7 +441,6 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getWalmartDescriptionTemplate()->isImageMainModeAttribute()) {
-
             $src = $this->getWalmartDescriptionTemplate()->getImageMainSource();
             $image = $this->getMagentoProduct()->getImage($src['attribute']);
         }
@@ -447,28 +454,26 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     public function getGalleryImages()
     {
         if ($this->getWalmartDescriptionTemplate()->isImageMainModeNone()) {
-            return array();
+            return [];
         }
 
         if (!$mainImage = $this->getMainImage()) {
-            return array();
+            return [];
         }
 
         if ($this->getWalmartDescriptionTemplate()->isGalleryImagesModeNone()) {
-            return array();
+            return [];
         }
 
-        $galleryImages = array();
+        $galleryImages = [];
         $gallerySource = $this->getWalmartDescriptionTemplate()->getGalleryImagesSource();
         $limitGalleryImages = self::GALLERY_IMAGES_COUNT_MAX;
 
         if ($this->getWalmartDescriptionTemplate()->isGalleryImagesModeProduct()) {
-
             $limitGalleryImages = (int)$gallerySource['limit'];
             $galleryImagesTemp = $this->getMagentoProduct()->getGalleryImages($limitGalleryImages + 1);
 
             foreach ($galleryImagesTemp as $image) {
-
                 if (array_key_exists($image->getHash(), $galleryImages)) {
                     continue;
                 }
@@ -478,21 +483,19 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getWalmartDescriptionTemplate()->isGalleryImagesModeAttribute()) {
-
             $limitGalleryImages = self::GALLERY_IMAGES_COUNT_MAX;
 
             $galleryImagesTemp = $this->getMagentoProduct()->getAttributeValue($gallerySource['attribute']);
             $galleryImagesTemp = (array)explode(',', $galleryImagesTemp);
 
             foreach ($galleryImagesTemp as $tempImageLink) {
-
                 $tempImageLink = trim($tempImageLink);
                 if (empty($tempImageLink)) {
                     continue;
                 }
 
                 /** @var \Ess\M2ePro\Model\Magento\Product\Image $image */
-                $image = $this->modelFactory->getObject('Magento\Product\Image');
+                $image = $this->modelFactory->getObject('Magento_Product_Image');
                 $image->setUrl($tempImageLink);
                 $image->setStoreId($this->getMagentoProduct()->getStoreId());
 
@@ -507,7 +510,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         unset($galleryImages[$mainImage->getHash()]);
 
         if (count($galleryImages) <= 0) {
-            return array($mainImage);
+            return [$mainImage];
         }
 
         $galleryImages = array_slice($galleryImages, 0, $limitGalleryImages);
@@ -532,7 +535,6 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getWalmartDescriptionTemplate()->isImageVariationDifferenceModeAttribute()) {
-
             $src = $this->getWalmartDescriptionTemplate()->getImageVariationDifferenceSource();
             $image = $this->getMagentoProduct()->getImage($src['attribute']);
         }

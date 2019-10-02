@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter;
 
+/**
+ * Class Status
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter
+ */
 class Status extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
 {
     protected $helperFactory;
@@ -19,8 +23,7 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\DB\Helper $resourceHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
 
         parent::__construct($context, $resourceHelper, $data);
@@ -61,7 +64,7 @@ HTML;
 
         $value = $this->getData('value');
 
-        if ((isset($value['value']) && !is_null($value['value'])) ||
+        if ((isset($value['value']) && $value['value'] !== null) ||
             (isset($value['is_duplicate']) && $value['is_duplicate'] == 1)) {
             return $value;
         }

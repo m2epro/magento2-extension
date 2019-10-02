@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Item;
 
 use \Magento\Backend\Block\Widget\Grid\Extended as WidgetGrid;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Item
+ */
 class Grid extends WidgetGrid
 {
 
@@ -69,19 +73,19 @@ class Grid extends WidgetGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('id', array(
+        $this->addColumn('id', [
             'header' => 'ID',
             'type'   => 'number',
             'index'  => 'id',
             'width'  => '50px'
-        ));
+        ]);
 
-        $this->addColumn('text', array(
+        $this->addColumn('text', [
             'header'       => 'Text',
             'type'         => 'text',
             'index'        => 'text',
             'width'        => '350px',
-        ));
+        ]);
 
         return parent::_prepareColumns();
     }

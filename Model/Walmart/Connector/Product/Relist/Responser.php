@@ -12,6 +12,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Connector\Product\Relist;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Walmart\Connector\Product\Relist
+ */
 class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
 {
     // ########################################
@@ -33,8 +37,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
 
         $additionalData = $this->listingProduct->getAdditionalData();
         if (!empty($additionalData['skipped_action_configurator_data'])) {
-
-            $configurator = $this->modelFactory->getObject('Walmart\Listing\Product\Action\Configurator');
+            $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
             $configurator->setData($additionalData['skipped_action_configurator_data']);
 
             unset($additionalData['skipped_action_configurator_data']);

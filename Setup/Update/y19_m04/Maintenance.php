@@ -9,6 +9,10 @@ namespace Ess\M2ePro\Setup\Update\y19_m04;
 
 use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
 
+/**
+ * Class Maintenance
+ * @package Ess\M2ePro\Setup\Update\y19_m04
+ */
 class Maintenance extends AbstractFeature
 {
     public function getBackupTables()
@@ -20,7 +24,7 @@ class Maintenance extends AbstractFeature
     {
         $select = $this->getConnection()
             ->select()
-            ->from($this->helperFactory->getObject('Module\Database\Structure')
+            ->from($this->helperFactory->getObject('Module_Database_Structure')
                 ->getTableNameWithPrefix('core_config_data'), 'value')
             ->where('scope = ?', 'default')
             ->where('scope_id = ?', 0)
@@ -28,7 +32,7 @@ class Maintenance extends AbstractFeature
 
         if ($this->getConnection()->fetchOne($select) !== false) {
             $this->getConnection()->delete(
-                $this->helperFactory->getObject('Module\Database\Structure')
+                $this->helperFactory->getObject('Module_Database_Structure')
                     ->getTableNameWithPrefix('core_config_data'),
                 [
                     'scope = ?' => 'default',

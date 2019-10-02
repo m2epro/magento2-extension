@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction;
 
+/**
+ * Class GetCategoryChooserHtml
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
+ */
 class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
 {
     //########################################
@@ -24,8 +28,8 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
         $template = $this->getCategoryTemplate($autoMode, $groupId, $listing);
         $otherTemplate = $this->getOtherCategoryTemplate($autoMode, $groupId, $listing);
 
-        /* @var $chooserBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser */
-        $chooserBlock = $this->createBlock('Ebay\Listing\Product\Category\Settings\Chooser');
+        /** @var $chooserBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser */
+        $chooserBlock = $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser');
 
         if ($autoMode == \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY) {
             $chooserBlock->setDivId('category_child_data_container');
@@ -35,7 +39,7 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
         $chooserBlock->setAccountId($listing->getAccountId());
         $chooserBlock->setMarketplaceId($listing->getMarketplaceId());
 
-        if (!is_null($template)) {
+        if ($template !== null) {
             $data = $template->getData();
             $otherTemplate && $data = array_merge($data, $otherTemplate->getData());
 

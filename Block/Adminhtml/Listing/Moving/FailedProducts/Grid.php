@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Moving\FailedProducts;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\Moving\FailedProducts
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $magentoProductCollectionFactory;
@@ -19,8 +23,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -47,17 +50,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $failedProducts = $this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('failed_products'));
 
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create()
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('type_id');
 
-        $collection->joinStockItem(array(
-            'qty'         => 'qty',
-            'is_in_stock' => 'is_in_stock'
-        ));
-        $collection->addFieldToFilter('entity_id',array('in' => $failedProducts));
+        $collection->joinStockItem();
+        $collection->addFieldToFilter('entity_id', ['in' => $failedProducts]);
 
         $this->setCollection($collection);
         return parent::_prepareCollection();
@@ -65,17 +65,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('product_id', array(
+        $this->addColumn('product_id', [
             'header'       => $this->__('Product ID'),
             'align'        => 'right',
             'type'         => 'number',
             'width'        => '100px',
             'index'        => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => array($this, 'callbackColumnProductId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductId']
+        ]);
 
-        $this->addColumn('title', array(
+        $this->addColumn('title', [
             'header'       => $this->__('Product Title / Product SKU'),
             'align'        => 'left',
             'type'         => 'text',
@@ -83,20 +83,21 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'        => 'name',
             'filter_index' => 'name',
             'escape'       => false,
-            'frame_callback' => array($this, 'callbackColumnTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+        ]);
     }
 
     //########################################
 
     public function callbackColumnProductId($productId, $product, $column, $isExport)
     {
-        $url = $this->getUrl('catalog/product/edit', array('id' => $productId));
+        $url = $this->getUrl('catalog/product/edit', ['id' => $productId]);
         $withoutImageHtml = '<a href="'.$url.'" target="_blank">'.$productId.'</a>&nbsp;';
 
         $showProductsThumbnails = (bool)(int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/view/','show_products_thumbnails'
+            '/view/',
+            'show_products_thumbnails'
         );
         if (!$showProductsThumbnails) {
             return $withoutImageHtml;
@@ -107,7 +108,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $magentoProduct->setProduct($product);
 
         $imageUrlResized = $magentoProduct->getThumbnailImage();
-        if (is_null($imageUrlResized)) {
+        if ($imageUrlResized === null) {
             return $withoutImageHtml;
         }
 
@@ -115,7 +116,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $imageHtml = $productId.'<div style="margin-top: 5px">'.
             '<img style="max-width: 100px; max-height: 100px;" src="' .$imageUrlResizedUrl. '" /></div>';
-        $withImageHtml = str_replace('>'.$productId.'<','>'.$imageHtml.'<',$withoutImageHtml);
+        $withImageHtml = str_replace('>'.$productId.'<', '>'.$imageHtml.'<', $withoutImageHtml);
 
         return $withImageHtml;
     }
@@ -125,7 +126,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $value = '<div style="margin-left: 3px">'.$this->getHelper('Data')->escapeHtml($value);
 
         $tempSku = $row->getData('sku');
-        if (is_null($tempSku)) {
+        if ($tempSku === null) {
             $tempSku = $this->modelFactory->getObject('Magento\Product')->setProductId(
                 $row->getData('entity_id')
             )->getSku();
@@ -151,10 +152,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         $collection->addFieldToFilter(
-            array(
-                array('attribute'=>'sku','like'=>'%'.$value.'%'),
-                array('attribute'=>'name', 'like'=>'%'.$value.'%')
-            )
+            [
+                ['attribute'=>'sku','like'=>'%'.$value.'%'],
+                ['attribute'=>'name', 'like'=>'%'.$value.'%']
+            ]
         );
     }
 
@@ -172,7 +173,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             el.style.padding = '4px';
         });
 JS
-);
+        );
 
         return parent::_toHtml();
     }

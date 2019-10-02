@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class Template
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay
+ */
 abstract class Template extends Main
 {
     protected $templateManager;
@@ -20,8 +24,7 @@ abstract class Template extends Main
         \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         Context $context
-    )
-    {
+    ) {
         $this->templateManager = $templateManager;
         parent::__construct($ebayFactory, $context);
     }

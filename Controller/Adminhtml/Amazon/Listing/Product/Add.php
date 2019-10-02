@@ -10,10 +10,14 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class Add
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product
+ */
 abstract class Add extends Main
 {
     protected $sessionKey = 'amazon_listing_product_add';
-    protected $listing = NULL;
+    protected $listing = null;
 
     //########################################
 
@@ -27,33 +31,33 @@ abstract class Add extends Main
         return $this;
     }
 
-    protected function getSessionValue($key = NULL)
+    protected function getSessionValue($key = null)
     {
         $sessionData = $this->getHelper('Data\Session')->getValue($this->sessionKey);
 
-        if (is_null($sessionData)) {
-            $sessionData = array();
+        if ($sessionData === null) {
+            $sessionData = [];
         }
 
-        if (is_null($key)) {
+        if ($key === null) {
             return $sessionData;
         }
 
-        return isset($sessionData[$key]) ? $sessionData[$key] : NULL;
+        return isset($sessionData[$key]) ? $sessionData[$key] : null;
     }
 
     // ---------------------------------------
 
     protected function clearSession()
     {
-        $this->getHelper('Data\Session')->setValue($this->sessionKey, NULL);
+        $this->getHelper('Data\Session')->setValue($this->sessionKey, null);
     }
 
     //########################################
 
     protected function filterProductsForNewAsin($productsIds)
     {
-        return $this->getHelper('Component\Amazon\Variation')->filterProductsNotMatchingForNewAsin($productsIds);
+        return $this->getHelper('Component_Amazon_Variation')->filterProductsNotMatchingForNewAsin($productsIds);
     }
 
     //########################################
@@ -63,7 +67,7 @@ abstract class Add extends Main
      */
     protected function getListing()
     {
-        if (is_null($this->listing)) {
+        if ($this->listing === null) {
             $this->listing = $this->amazonFactory->getObjectLoaded('Listing', $this->getRequest()->getParam('id'));
         }
 
@@ -75,15 +79,14 @@ abstract class Add extends Main
     protected function setDescriptionTemplate($productsIds, $templateId)
     {
         $connWrite = $this->resourceConnection->getConnection();
-        $tableAmazonListingProduct = $this->activeRecordFactory->getObject('Amazon\Listing\Product')
+        $tableAmazonListingProduct = $this->activeRecordFactory->getObject('Amazon_Listing_Product')
             ->getResource()->getMainTable();
 
         $productsIds = array_chunk($productsIds, 1000);
         foreach ($productsIds as $productsIdsChunk) {
-            $connWrite->update($tableAmazonListingProduct, array(
+            $connWrite->update($tableAmazonListingProduct, [
                 'template_description_id' => $templateId
-            ), '`listing_product_id` IN ('.implode(',', $productsIdsChunk).')'
-            );
+            ], '`listing_product_id` IN ('.implode(',', $productsIdsChunk).')');
         }
     }
 

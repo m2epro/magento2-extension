@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\Cron\Task;
 use Ess\M2ePro\Model\Connector\Command\Pending\Requester\Single;
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 
+/**
+ * Class ConnectorRequesterPendingSingle
+ * @package Ess\M2ePro\Model\Cron\Task
+ */
 class ConnectorRequesterPendingSingle extends AbstractModel
 {
     const NICK = 'connector_requester_pending_single';
@@ -41,14 +45,14 @@ class ConnectorRequesterPendingSingle extends AbstractModel
 
     private function removeMissedProcessingItems()
     {
-        $collection = $collection = $this->activeRecordFactory->getObject('Connector\Command\Pending\Requester\Single')
+        $collection = $collection = $this->activeRecordFactory->getObject('Connector_Command_Pending_Requester_Single')
             ->getCollection();
         $collection->getSelect()->joinLeft(
-            array('p' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_processing')),
+            ['p' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_processing')],
             'p.id = main_table.processing_id',
-            array()
+            []
         );
-        $collection->addFieldToFilter('p.id', array('null' => true));
+        $collection->addFieldToFilter('p.id', ['null' => true]);
 
         $failedItems = $collection->getItems();
         if (empty($failedItems)) {
@@ -57,7 +61,7 @@ class ConnectorRequesterPendingSingle extends AbstractModel
 
         foreach ($failedItems as $failedItem) {
             $requestPendingSingle = $failedItem->getRequestPendingSingle();
-            if (!is_null($requestPendingSingle)) {
+            if ($requestPendingSingle !== null) {
                 $requestPendingSingle->delete();
             }
 
@@ -67,37 +71,37 @@ class ConnectorRequesterPendingSingle extends AbstractModel
 
     private function completeExpiredItems()
     {
-        $collection = $this->activeRecordFactory->getObject('Connector\Command\Pending\Requester\Single')
+        $collection = $this->activeRecordFactory->getObject('Connector_Command_Pending_Requester_Single')
             ->getCollection();
         $collection->getSelect()->joinLeft(
-            array(
-                'rps' => $this->getHelper('Module\Database\Structure')
+            [
+                'rps' => $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_request_pending_single')
-            ),
+            ],
             'rps.id = main_table.request_pending_single_id',
-            array()
+            []
         );
-        $collection->addFieldToFilter('rps.id', array('null' => true));
+        $collection->addFieldToFilter('rps.id', ['null' => true]);
 
         $expiredItems = $collection->getItems();
         if (empty($expiredItems)) {
             return;
         }
 
-        $expiredMessage = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $expiredMessage = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $expiredMessage->initFromPreparedData(
             'Request wait timeout exceeded.',
             Message::TYPE_ERROR
         );
 
         foreach ($expiredItems as $expiredItem) {
-            $this->completeRequesterPendingSingle($expiredItem, array(), array($expiredMessage->asArray()));
+            $this->completeRequesterPendingSingle($expiredItem, [], [$expiredMessage->asArray()]);
         }
     }
 
     private function processCompletedItems()
     {
-        $collection = $this->activeRecordFactory->getObject('Connector\Command\Pending\Requester\Single')
+        $collection = $this->activeRecordFactory->getObject('Connector_Command_Pending_Requester_Single')
             ->getCollection();
         $collection->setCompletedRequestPendingSingleFilter();
         $collection->setNotCompletedProcessingFilter();
@@ -117,7 +121,8 @@ class ConnectorRequesterPendingSingle extends AbstractModel
 
     private function completeRequesterPendingSingle(
         Single $requesterPendingSingle,
-        array $data = array(), array $messages = array()
+        array $data = [],
+        array $messages = []
     ) {
         $processing = $requesterPendingSingle->getProcessing();
 

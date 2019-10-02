@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
@@ -18,17 +22,17 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @var array
      */
-    protected $cachedData = array();
+    protected $cachedData = [];
 
     /**
      * @var array
      */
-    protected $params = array();
+    protected $params = [];
 
     /**
      * @var array
      */
-    private $warningMessages = array();
+    private $warningMessages = [];
 
     //########################################
 
@@ -60,7 +64,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      * @param array $params
      * @return $this
      */
-    public function setParams(array $params = array())
+    public function setParams(array $params = [])
     {
         $this->params = $params;
         return $this;
@@ -188,12 +192,14 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function addNotFoundAttributesMessages($title, array $attributes)
     {
-        $attributesTitles = array();
+        $attributesTitles = [];
 
         foreach ($attributes as $attribute) {
             $attributesTitles[] = $this->getHelper('Magento\Attribute')
-                ->getAttributeLabel($attribute,
-                    $this->getListing()->getStoreId());
+                ->getAttributeLabel(
+                    $attribute,
+                    $this->getListing()->getStoreId()
+                );
         }
         // M2ePro\TRANSLATIONS
         // %attribute_title%: Attribute(s) %attributes% were not found in this Product and its value was not sent.
@@ -201,7 +207,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             $this->getHelper('Module\Translation')->__(
                 '%attribute_title%: Attribute(s) %attributes% were not found' .
                 ' in this Product and its value was not sent.',
-                $this->getHelper('Module\Translation')->__($title), implode(',', $attributesTitles)
+                $this->getHelper('Module\Translation')->__($title),
+                implode(',', $attributesTitles)
             )
         );
     }
@@ -210,7 +217,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function addWarningMessage($message)
     {
-        $this->warningMessages[md5($message)] = $message;
+        $this->warningMessages[sha1($message)] = $message;
         return $this;
     }
 

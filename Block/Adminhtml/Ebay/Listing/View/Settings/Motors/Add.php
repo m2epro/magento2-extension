@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors;
 
+/**
+ * Class Add
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
+ */
 class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     private $motorsType = null;
@@ -24,13 +28,13 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
     protected function _beforeToHtml()
     {
-        if (is_null($this->motorsType)) {
+        if ($this->motorsType === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Compatibility type was not set.');
         }
 
         //------------------------------
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Tabs $tabsBlock */
-        $tabsBlock = $this->createBlock('Ebay\Listing\View\Settings\Motors\Add\Tabs');
+        $tabsBlock = $this->createBlock('Ebay_Listing_View_Settings_Motors_Add_Tabs');
         $tabsBlock->setMotorsType($this->getMotorsType());
         $this->setChild('motor_add_tabs', $tabsBlock);
         //------------------------------
@@ -59,11 +63,11 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         //------------------------------
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Ebay\Motors')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay\Motors::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Motor\Group')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Motor\Group::class)
         );
 
         $this->jsTranslator->addTranslations([
@@ -118,12 +122,12 @@ JS
 
     public function isMotorsTypeKtype()
     {
-        return $this->getHelper('Component\Ebay\Motors')->isTypeBasedOnKtypes($this->getMotorsType());
+        return $this->getHelper('Component_Ebay_Motors')->isTypeBasedOnKtypes($this->getMotorsType());
     }
 
     public function isMotorsTypeEpid()
     {
-        return $this->getHelper('Component\Ebay\Motors')->isTypeBasedOnEpids($this->getMotorsType());
+        return $this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType());
     }
 
     // Add Custom Compatible Vehicle

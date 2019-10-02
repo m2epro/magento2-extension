@@ -1,5 +1,14 @@
 <?php
-    /** @var \Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SystemRequirements $this */
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SystemRequirements $block */
+
 ?>
 
 <div id="system-requirements">
@@ -12,7 +21,7 @@
         </tr>
         </thead>
         <tbody>
-            <?php foreach($this->getManager()->getChecks() as $check) { ?>
+            <?php foreach ($block->getManager()->getChecks() as $check) { ?>
                 <tr>
                     <td class="label">
                         <label><?php echo $check->getRenderer()->getTitle(); ?></label>

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Observer\Walmart\Order;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Observer\Walmart\Order
+ */
 class Item extends \Ess\M2ePro\Observer\AbstractModel
 {
     protected $walartFactory;
@@ -19,8 +23,7 @@ class Item extends \Ess\M2ePro\Observer\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->walartFactory = $walartFactory;
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
     }
@@ -48,19 +51,19 @@ class Item extends \Ess\M2ePro\Observer\AbstractModel
             /** @var \Ess\M2ePro\Model\Listing\Other $otherListing */
             $otherListing = reset($otherListings);
 
-            if (!is_null($otherListing->getProductId())) {
+            if ($otherListing->getProductId() !== null) {
                 return;
             }
 
             $otherListing->mapProduct($product->getId(), \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
         } else {
-            $dataForAdd = array(
+            $dataForAdd = [
                 'account_id'     => $orderItem->getOrder()->getAccountId(),
                 'marketplace_id' => $orderItem->getOrder()->getMarketplaceId(),
                 'sku'            => $walmartOrderItem->getSku(),
                 'product_id'     => $product->getId(),
                 'store_id'       => $walmartOrderItem->getWalmartOrder()->getAssociatedStoreId(),
-            );
+            ];
 
             $this->activeRecordFactory->getObject('Walmart\Item')->setData($dataForAdd)->save();
         }

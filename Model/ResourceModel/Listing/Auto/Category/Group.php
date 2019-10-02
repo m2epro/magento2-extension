@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category;
 
+/**
+ * Class Group
+ * @package Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category
+ */
 class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {
     //########################################
@@ -19,36 +23,36 @@ class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Paren
 
     //########################################
 
-    public function getCategoriesFromOtherGroups($listingId, $groupId = NULL)
+    public function getCategoriesFromOtherGroups($listingId, $groupId = null)
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category\Group\Collection $groupCollection */
-        $groupCollection = $this->activeRecordFactory->getObject('Listing\Auto\Category\Group')->getCollection();
+        $groupCollection = $this->activeRecordFactory->getObject('Listing_Auto_Category_Group')->getCollection();
         $groupCollection->addFieldToFilter('main_table.listing_id', (int)$listingId);
 
         if ($groupId) {
-            $groupCollection->addFieldToFilter('main_table.id', array('neq' => (int)$groupId));
+            $groupCollection->addFieldToFilter('main_table.id', ['neq' => (int)$groupId]);
         }
 
         $groupIds = $groupCollection->getAllIds();
         if (count($groupIds) == 0) {
-            return array();
+            return [];
         }
 
-        $collection = $this->activeRecordFactory->getObject('Listing\Auto\Category')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Listing_Auto_Category')->getCollection();
         $collection->getSelect()->joinInner(
-            array('melacg' => $this->getMainTable()),
+            ['melacg' => $this->getMainTable()],
             'main_table.group_id = melacg.id',
-            array('group_title' => 'title')
+            ['group_title' => 'title']
         );
-        $collection->getSelect()->where('main_table.group_id IN ('.implode(',',$groupIds).')');
+        $collection->getSelect()->where('main_table.group_id IN ('.implode(',', $groupIds).')');
 
-        $data = array();
+        $data = [];
 
         foreach ($collection as $item) {
-            $data[$item->getData('category_id')] = array(
+            $data[$item->getData('category_id')] = [
                 'id' => $item->getData('group_id'),
                 'title' => $item->getData('group_title')
-            );
+            ];
         }
 
         return $data;
@@ -58,12 +62,12 @@ class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Paren
 
     public function isEmpty($groupId)
     {
-        $autoCategoryTable = $this->activeRecordFactory->getObject('Listing\Auto\Category')->getResource()
+        $autoCategoryTable = $this->activeRecordFactory->getObject('Listing_Auto_Category')->getResource()
             ->getMainTable();
         $select = $this->getConnection()
             ->select()
             ->from(
-                array('mlac' => $autoCategoryTable)
+                ['mlac' => $autoCategoryTable]
             )
             ->where('mlac.group_id = ?', $groupId);
         $result = $this->getConnection()->fetchAll($select);

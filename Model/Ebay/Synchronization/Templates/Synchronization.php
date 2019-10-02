@@ -11,17 +11,21 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\Templates;
 use Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Inspector;
 use Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner;
 
+/**
+ * Class Synchronization
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\Templates
+ */
 class Synchronization extends AbstractModel
 {
     /**
      * @var Runner
      */
-    protected $runner = NULL;
+    protected $runner = null;
 
     /**
      * @var Inspector
      */
-    protected $inspector = NULL;
+    protected $inspector = null;
 
     //########################################
 
@@ -79,15 +83,15 @@ class Synchronization extends AbstractModel
     {
         parent::beforeStart();
 
-        $this->runner = $this->modelFactory->getObject('Synchronization\Templates\Synchronization\Runner');
-        $this->runner->setConnectorModel('Ebay\Connector\Item\Dispatcher');
+        $this->runner = $this->modelFactory->getObject('Synchronization_Templates_Synchronization_Runner');
+        $this->runner->setConnectorModel('Ebay_Connector_Item_Dispatcher');
         $this->runner->setMaxProductsPerStep(100);
 
         $this->runner->setLockItem($this->getActualLockItem());
         $this->runner->setPercentsStart($this->getPercentsStart() + $this->getPercentsInterval()/2);
         $this->runner->setPercentsEnd($this->getPercentsEnd());
 
-        $this->inspector = $this->modelFactory->getObject('Ebay\Synchronization\Templates\Synchronization\Inspector');
+        $this->inspector = $this->modelFactory->getObject('Ebay_Synchronization_Templates_Synchronization_Inspector');
     }
 
     protected function afterEnd()
@@ -125,7 +129,7 @@ class Synchronization extends AbstractModel
 
     private function executeRunner()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Apply Products changes on eBay');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Apply Products changes on eBay');
 
         $this->getRunner()->execute();
 

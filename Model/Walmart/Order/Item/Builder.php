@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Order\Item;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Walmart\Order\Item
+ */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
     private $walmartFactory;

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon;
 
+/**
+ * Class GetGlobalMessages
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon
+ */
 class GetGlobalMessages extends Main
 {
     //########################################
@@ -28,7 +32,8 @@ class GetGlobalMessages extends Main
         }
 
         $messages = $this->getMessageManager()->getMessages(
-            true, \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP
+            true,
+            \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP
         )->getItems();
 
         foreach ($messages as &$message) {

@@ -241,7 +241,8 @@ define([
 
             outOfStockControlTr.hide();
 
-            if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Helper\\Component\\Ebay::LISTING_DURATION_GTC')) {
+            if ($('listing_type').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::LISTING_TYPE_FIXED') &&
+                this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Helper\\Component\\Ebay::LISTING_DURATION_GTC')) {
                 outOfStockControlTr.show();
                 outOfStockControlMode.value = M2ePro.formData.outOfStockControl;
             } else {

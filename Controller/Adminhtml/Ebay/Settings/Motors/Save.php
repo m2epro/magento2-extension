@@ -10,13 +10,17 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Settings;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors
+ */
 class Save extends Settings
 {
     //########################################
 
     public function execute()
     {
-        $motorsAttributes = array();
+        $motorsAttributes = [];
 
         if ($motorsEpidsMotorAttribute = $this->getRequest()->getParam('motors_epids_motor_attribute')) {
             $motorsAttributes[] = $motorsEpidsMotorAttribute;
@@ -32,7 +36,6 @@ class Save extends Settings
         }
 
         if (count($motorsAttributes) != count(array_unique($motorsAttributes))) {
-
             $this->setJsonContent([
                 'success' => false,
                 'messages' => [
@@ -42,17 +45,25 @@ class Save extends Settings
             return $this->getResult();
         }
 
-        $this->getHelper('module')->getConfig()->setGroupValue(
-            '/ebay/motors/', 'epids_motor_attribute', $motorsEpidsMotorAttribute
+        $this->getHelper('Module')->getConfig()->setGroupValue(
+            '/ebay/motors/',
+            'epids_motor_attribute',
+            $motorsEpidsMotorAttribute
         );
-        $this->getHelper('module')->getConfig()->setGroupValue(
-            '/ebay/motors/', 'epids_uk_attribute', $motorsEpidsUkAttribute
+        $this->getHelper('Module')->getConfig()->setGroupValue(
+            '/ebay/motors/',
+            'epids_uk_attribute',
+            $motorsEpidsUkAttribute
         );
-        $this->getHelper('module')->getConfig()->setGroupValue(
-            '/ebay/motors/', 'epids_de_attribute', $motorsEpidsDeAttribute
+        $this->getHelper('Module')->getConfig()->setGroupValue(
+            '/ebay/motors/',
+            'epids_de_attribute',
+            $motorsEpidsDeAttribute
         );
-        $this->getHelper('module')->getConfig()->setGroupValue(
-            '/ebay/motors/', 'ktypes_attribute', $motorsKtypesAttribute
+        $this->getHelper('Module')->getConfig()->setGroupValue(
+            '/ebay/motors/',
+            'ktypes_attribute',
+            $motorsKtypesAttribute
         );
 
         $this->setAjaxContent($this->getHelper('Data')->jsonEncode([

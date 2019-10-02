@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Form\Element;
 
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
+/**
+ * Class Separator
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Form\Element
+ */
 class Separator extends AbstractElement
 {
     protected function _construct()

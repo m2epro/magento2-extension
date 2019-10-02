@@ -10,14 +10,18 @@ namespace Ess\M2ePro\Block\Adminhtml\Order\Item;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Order\Item
+ */
 class Edit extends AbstractContainer
 {
     protected function _prepareLayout()
     {
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Order'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Log\Order'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Log\Order'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Log\Order'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Log_Order'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Log_Order'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart_Log_Order'));
 
         $this->jsTranslator->addTranslations([
             'Please enter correct Product ID or SKU.' => $this->__('Please enter correct Product ID or SKU.'),

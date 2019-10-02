@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Item\Relist;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Ebay\Connector\Item\Relist
+ */
 class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
 {
     //########################################
 
     protected function getCommand()
     {
-        return array('item','update','relist');
+        return ['item','update','relist'];
     }
 
     protected function getActionType()

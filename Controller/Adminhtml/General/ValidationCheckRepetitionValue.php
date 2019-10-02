@@ -10,16 +10,20 @@ namespace Ess\M2ePro\Controller\Adminhtml\General;
 
 use Ess\M2ePro\Controller\Adminhtml\General;
 
+/**
+ * Class ValidationCheckRepetitionValue
+ * @package Ess\M2ePro\Controller\Adminhtml\General
+ */
 class ValidationCheckRepetitionValue extends General
 {
     public function execute()
     {
-        $model = $this->getRequest()->getParam('model','');
+        $model = $this->getRequest()->getParam('model', '');
 
         $component = $this->getRequest()->getParam('component');
 
-        $dataField = $this->getRequest()->getParam('data_field','');
-        $dataValue = $this->getRequest()->getParam('data_value','');
+        $dataField = $this->getRequest()->getParam('data_field', '');
+        $dataValue = $this->getRequest()->getParam('data_value', '');
 
         if ($model == '' || $dataField == '' || $dataValue == '') {
             $this->setJsonContent(['result'=>false]);
@@ -29,14 +33,14 @@ class ValidationCheckRepetitionValue extends General
         $collection = $this->activeRecordFactory->getObject($model)->getCollection();
 
         if ($dataField != '' && $dataValue != '') {
-            $collection->addFieldToFilter($dataField, array('in'=>array($dataValue)));
+            $collection->addFieldToFilter($dataField, ['in'=>[$dataValue]]);
         }
 
-        $idField = $this->getRequest()->getParam('id_field','id');
-        $idValue = $this->getRequest()->getParam('id_value','');
+        $idField = $this->getRequest()->getParam('id_field', 'id');
+        $idValue = $this->getRequest()->getParam('id_value', '');
 
         if ($idField != '' && $idValue != '') {
-            $collection->addFieldToFilter($idField, array('nin'=>array($idValue)));
+            $collection->addFieldToFilter($idField, ['nin'=>[$idValue]]);
         }
 
         if ($component) {

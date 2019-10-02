@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add;
 
+/**
+ * Class NoteForm
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add
+ */
 class NoteForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     //########################################
@@ -18,7 +22,8 @@ class NoteForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'id' => 'motors_note'
         ]]);
 
-        $form->addField('filter_form_help_block',
+        $form->addField(
+            'filter_form_help_block',
             self::HELP_BLOCK,
             [
                 'content' => $this->__('
@@ -35,7 +40,8 @@ class NoteForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('note',
+        $fieldset->addField(
+            'note',
             'textarea',
             [
                 'name' => 'note',

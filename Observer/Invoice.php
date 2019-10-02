@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Observer;
 
+/**
+ * Class Invoice
+ * @package Ess\M2ePro\Observer
+ */
 class Invoice extends AbstractModel
 {
     protected $ebayFactory;
@@ -23,8 +27,7 @@ class Invoice extends AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         $this->messageManager = $messageManager;
         $this->urlBuilder = $urlBuilder;

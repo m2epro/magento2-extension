@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs;
 
+/**
+ * Class Specifics
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs
+ */
 class Specifics extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $_template = 'amazon/template/description/tabs/specifics.phtml';
@@ -90,7 +94,7 @@ class Specifics extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
 CSS
-);
+        );
         $this->jsTranslator->addTranslations([
             'Add Specifics'        => $this->__('Add Specifics'),
             'Remove this specific' => $this->__('Remove this specific'),

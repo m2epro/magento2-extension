@@ -129,11 +129,13 @@ define([
             $('list_mode').observe('change', WalmartTemplateSynchronizationObj.listMode_change).simulate('change');
             $('list_qty_magento').observe('change', WalmartTemplateSynchronizationObj.listQty_change).simulate('change');
             $('list_qty_calculated').observe('change', WalmartTemplateSynchronizationObj.listQty_change).simulate('change');
+            $('list_advanced_rules_mode').observe('change', WalmartTemplateSynchronizationObj.listAdvancedRules_change).simulate('change');
 
             //relist
             $('relist_mode').observe('change', WalmartTemplateSynchronizationObj.relistMode_change).simulate('change');
             $('relist_qty_magento').observe('change', WalmartTemplateSynchronizationObj.relistQty_change).simulate('change');
             $('relist_qty_calculated').observe('change', WalmartTemplateSynchronizationObj.relistQty_change).simulate('change');
+            $('relist_advanced_rules_mode').observe('change', WalmartTemplateSynchronizationObj.relistAdvancedRules_change).simulate('change');
 
             //revise
             $('revise_update_qty')
@@ -154,6 +156,7 @@ define([
             $('stop_mode').observe('change', WalmartTemplateSynchronizationObj.stopMode_change).simulate('change');
             $('stop_qty_magento').observe('change', WalmartTemplateSynchronizationObj.stopQty_change).simulate('change');
             $('stop_qty_calculated').observe('change', WalmartTemplateSynchronizationObj.stopQty_change).simulate('change');
+            $('stop_advanced_rules_mode').observe('change', WalmartTemplateSynchronizationObj.stopAdvancedRules_change).simulate('change');
         },
 
         // ---------------------------------------
@@ -201,6 +204,20 @@ define([
             }
         },
 
+        stopAdvancedRules_change: function()
+        {
+            var rulesContainer = $('stop_advanced_rules_filters_container'),
+                warningContainer = $('stop_advanced_rules_filters_warning');
+
+            rulesContainer.hide();
+            warningContainer.hide();
+
+            if (this.value == 1) {
+                rulesContainer.show();
+                warningContainer.show();
+            }
+        },
+
         // ---------------------------------------
 
         listMode_change: function()
@@ -235,6 +252,20 @@ define([
                 item.innerHTML = M2ePro.translator.translate('Min Quantity');
                 valueContainer.show();
                 valueMaxContainer.show();
+            }
+        },
+
+        listAdvancedRules_change: function()
+        {
+            var rulesContainer = $('list_advanced_rules_filters_container'),
+                warningContainer = $('list_advanced_rules_filters_warning');
+
+            rulesContainer.hide();
+            warningContainer.hide();
+
+            if (this.value == 1) {
+                rulesContainer.show();
+                warningContainer.show();
             }
         },
 
@@ -275,6 +306,20 @@ define([
                 item.innerHTML = M2ePro.translator.translate('Min Quantity');
                 valueContainer.show();
                 valueMaxContainer.show();
+            }
+        },
+
+        relistAdvancedRules_change: function()
+        {
+            var rulesContainer = $('relist_advanced_rules_filters_container'),
+                warningContainer = $('relist_advanced_rules_filters_warning');
+
+            rulesContainer.hide();
+            warningContainer.hide();
+
+            if (this.value == 1) {
+                rulesContainer.show();
+                warningContainer.show();
             }
         },
 

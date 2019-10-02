@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingTemplate\Edit;
 
 use Ess\M2ePro\Model\Amazon\Template\ShippingTemplate;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingTemplate\Edit
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $formData;
@@ -21,18 +25,18 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         /** @var \Ess\M2ePro\Model\Amazon\Template\ShippingTemplate $model */
         $model = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
 
-        $this->formData = array();
+        $this->formData = [];
         if ($model) {
             $this->formData = $model->toArray();
         }
 
-        $default = array(
+        $default = [
             'title'         => '',
 
             'template_name_mode' => '',
             'template_name_value' => '',
             'template_name_attribute' => '',
-        );
+        ];
 
         $this->formData = array_merge($default, $this->formData);
 
@@ -49,9 +53,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
         $attributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
-        $attributesByInputTypes = array(
+        $attributesByInputTypes = [
             'text_select' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select'])
-        );
+        ];
 
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_shipping_template_general',
@@ -85,8 +89,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $preparedAttributes = [];
         foreach ($attributesByInputTypes['text_select'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $this->formData['template_name_mode'] == ShippingTemplate::TEMPLATE_NAME_ATTRIBUTE
+            if ($this->formData['template_name_mode'] == ShippingTemplate::TEMPLATE_NAME_ATTRIBUTE
                 && $this->formData['template_name_attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -98,7 +101,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ];
         }
 
-        $fieldset->addField('template_name_mode',
+        $fieldset->addField(
+            'template_name_mode',
             self::SELECT,
             [
                 'container_id' => 'template_name_mode_tr',
@@ -120,14 +124,16 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
-        $fieldset->addField('template_name_attribute',
+        $fieldset->addField(
+            'template_name_attribute',
             'hidden',
             [
                 'name' => 'template_name_attribute',
             ]
         );
 
-        $fieldset->addField('template_name_value',
+        $fieldset->addField(
+            'template_name_value',
             'text',
             [
                 'container_id' => 'template_name_custom_value_tr',
@@ -147,7 +153,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _prepareLayout()
     {
         $this->appendHelpBlock([
-            'content' => $this->__('
+            'content' => $this->__(
+                '
         The Shipping Template Policy allows to provide Shipping Settings for the Items being listed to Amazon.
         So you should provide a Channel Template Name which you would like to be used.<br />
         More detailed information about ability to work with this Page
@@ -162,11 +169,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Amazon')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Template\ShippingTemplate')
+            $this->getHelper('Data')
+                ->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\ShippingTemplate::class)
         );
 
         $this->jsUrl->addUrls([

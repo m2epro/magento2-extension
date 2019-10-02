@@ -13,6 +13,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Template;
 
+/**
+ * Class SellingFormat
+ * @package Ess\M2ePro\Model\Walmart\Template
+ */
 class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     const QTY_MODIFICATION_MODE_OFF = 0;
@@ -64,7 +68,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     /**
      * @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Source[]
      */
-    private $sellingFormatSourceModels = array();
+    private $sellingFormatSourceModels = [];
 
     //########################################
 
@@ -136,7 +140,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
         }
 
         $this->sellingFormatSourceModels[$productId] = $this->modelFactory->getObject(
-            'Walmart\Template\SellingFormat\Source'
+            'Walmart_Template_SellingFormat_Source'
         );
         $this->sellingFormatSourceModels[$productId]->setMagentoProduct($magentoProduct);
         $this->sellingFormatSourceModels[$productId]->setSellingFormatTemplate($this->getParentObject());
@@ -151,9 +155,10 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getMarketplace()
     {
-        if (is_null($this->marketplaceModel)) {
+        if ($this->marketplaceModel === null) {
             $this->marketplaceModel = $this->walmartFactory->getCachedObjectLoaded(
-                'Marketplace', $this->getMarketplaceId()
+                'Marketplace',
+                $this->getMarketplaceId()
             );
         }
 
@@ -176,7 +181,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getListings($asObjects = false, array $filters = array())
+    public function getListings($asObjects = false, array $filters = [])
     {
         return $this->getRelatedComponentItems('Listing', 'template_selling_format_id', $asObjects, $filters);
     }
@@ -189,10 +194,14 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      * @return array|\Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getPromotions($asObjects = false, array $filters = array())
+    public function getPromotions($asObjects = false, array $filters = [])
     {
-        $services = $this->getRelatedSimpleItems('Walmart\Template\SellingFormat\Promotion',
-            'template_selling_format_id', $asObjects, $filters);
+        $services = $this->getRelatedSimpleItems(
+            'Walmart_Template_SellingFormat_Promotion',
+            'template_selling_format_id',
+            $asObjects,
+            $filters
+        );
 
         if ($asObjects) {
             /** @var $service \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion */
@@ -210,10 +219,14 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      * @return array|\Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getShippingOverrides($asObjects = false, array $filters = array())
+    public function getShippingOverrides($asObjects = false, array $filters = [])
     {
-        $shippingOverrides = $this->getRelatedSimpleItems('Walmart\Template\SellingFormat\ShippingOverride',
-            'template_selling_format_id', $asObjects, $filters);
+        $shippingOverrides = $this->getRelatedSimpleItems(
+            'Walmart_Template_SellingFormat_ShippingOverride',
+            'template_selling_format_id',
+            $asObjects,
+            $filters
+        );
 
         if ($asObjects) {
             /** @var $shippingOverride \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride */
@@ -298,7 +311,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getQtySource()
     {
-        return array(
+        return [
             'mode'                  => $this->getQtyMode(),
             'value'                 => $this->getQtyNumber(),
             'attribute'             => $this->getData('qty_custom_attribute'),
@@ -306,7 +319,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
             'qty_min_posted_value'  => $this->getQtyMinPostedValue(),
             'qty_max_posted_value'  => $this->getQtyMaxPostedValue(),
             'qty_percentage'        => $this->getQtyPercentage()
-        );
+        ];
     }
 
     /**
@@ -314,7 +327,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getQtyAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getQtySource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE) {
@@ -420,11 +433,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getPriceSource()
     {
-        return array(
+        return [
             'mode'        => $this->getPriceMode(),
             'coefficient' => $this->getPriceCoefficient(),
             'attribute'   => $this->getData('price_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -432,7 +445,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getPriceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getPriceSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
@@ -489,10 +502,10 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getMapPriceSource()
     {
-        return array(
+        return [
             'mode'      => $this->getMapPriceMode(),
             'attribute' => $this->getData('map_price_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -500,7 +513,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getMapPriceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getMapPriceSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
@@ -588,11 +601,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getSaleTimeStartDateSource()
     {
-        return array(
+        return [
             'mode'      => $this->getSaleTimeStartDateMode(),
             'value'     => $this->getSaleTimeStartDateValue(),
             'attribute' => $this->getData('sale_time_start_date_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -600,7 +613,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getSaleTimeStartDateAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         if ($this->isSaleTimeStartDateModeNone()) {
             return $attributes;
@@ -659,11 +672,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getSaleTimeEndDateSource()
     {
-        return array(
+        return [
             'mode'      => $this->getSaleTimeEndDateMode(),
             'value'     => $this->getSaleTimeEndDateValue(),
             'attribute' => $this->getData('sale_time_end_date_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -671,7 +684,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getSaleTimeEndDateAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         if ($this->isSaleTimeEndDateModeNone()) {
             return $attributes;
@@ -753,11 +766,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getLagTimeSource()
     {
-        return array(
+        return [
             'mode'      => $this->getLagTimeMode(),
             'value'     => (int)$this->getData('lag_time_value'),
             'attribute' => $this->getData('lag_time_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -765,7 +778,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getLagTimeAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getLagTimeSource();
 
         if ($src['mode'] == self::LAG_TIME_MODE_CUSTOM_ATTRIBUTE) {
@@ -807,16 +820,16 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getProductTaxCodeSource()
     {
-        return array(
+        return [
             'mode'      => $this->getProductTaxCodeMode(),
             'value'     => $this->getData('product_tax_code_custom_value'),
             'attribute' => $this->getData('product_tax_code_custom_attribute')
-        );
+        ];
     }
 
     public function getProductTaxCodeAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getProductTaxCodeSource();
 
         if ($src['mode'] == self::PRODUCT_TAX_CODE_MODE_ATTRIBUTE) {
@@ -857,11 +870,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getItemWeightSource()
     {
-        return array(
+        return [
             'mode'             => $this->getItemWeightMode(),
             'custom_value'     => $this->getData('item_weight_custom_value'),
             'custom_attribute' => $this->getData('item_weight_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -869,7 +882,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getItemWeightAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getItemWeightSource();
 
         if ($src['mode'] == self::WEIGHT_MODE_CUSTOM_ATTRIBUTE) {
@@ -926,11 +939,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getMustShipAloneSource()
     {
-        return array(
+        return [
             'mode'      => $this->getMustShipAloneMode(),
             'value'     => $this->getData('must_ship_alone_value'),
             'attribute' => $this->getData('must_ship_alone_custom_attribute'),
-        );
+        ];
     }
 
     /**
@@ -938,7 +951,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getMustShipAloneAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getMustShipAloneSource();
 
         if ($src['mode'] == self::MUST_SHIP_ALONE_MODE_CUSTOM_ATTRIBUTE) {
@@ -995,11 +1008,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getShipsInOriginalPackagingModeSource()
     {
-        return array(
+        return [
             'mode'      => $this->getShipsInOriginalPackagingModeMode(),
             'value'     => $this->getData('ships_in_original_packaging_value'),
             'attribute' => $this->getData('ships_in_original_packaging_custom_attribute'),
-        );
+        ];
     }
 
     /**
@@ -1007,7 +1020,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getShipsInOriginalPackagingModeAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getShipsInOriginalPackagingModeSource();
 
         if ($src['mode'] == self::SHIPS_IN_ORIGINAL_PACKAGING_MODE_CUSTOM_ATTRIBUTE) {
@@ -1032,8 +1045,8 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getAttributesTemplate()
     {
-        return is_null($this->getData('attributes'))
-            ? array() : $this->getHelper('Data')->jsonDecode($this->getData('attributes'));
+        return $this->getData('attributes') === null
+            ? [] : $this->getHelper('Data')->jsonDecode($this->getData('attributes'));
     }
 
     /**
@@ -1057,10 +1070,10 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
      */
     public function getAttributesSource()
     {
-        return array(
+        return [
             'mode'     => $this->getAttributesMode(),
             'template' => $this->getAttributesTemplate()
-        );
+        ];
     }
 
     /**
@@ -1071,15 +1084,15 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
         $src = $this->getAttributesSource();
 
         if ($src['mode'] == self::ATTRIBUTES_MODE_NONE) {
-            return array();
+            return [];
         }
 
-        $attributes = array();
+        $attributes = [];
 
         if ($src['mode'] == self::ATTRIBUTES_MODE_CUSTOM) {
-            $match = array();
+            $match = [];
 
-            $templateValues = array();
+            $templateValues = [];
             foreach ($src['template'] as $item) {
                 $templateValues[] = $item['value'];
             }
@@ -1102,7 +1115,8 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
         $attributeHelper = $this->getHelper('Magento\Attribute');
 
         $isPriceConvertEnabled = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/magento/attribute/', 'price_type_converting'
+            '/magento/attribute/',
+            'price_type_converting'
         );
 
         if ($this->isPriceModeProduct() || $this->isPriceModeSpecial()) {
@@ -1124,7 +1138,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
         }
 
         foreach ($this->getPromotions(true) as $promotion) {
-
             if ($promotion->isPriceModeProduct() || $promotion->isPriceModeSpecial()) {
                 return true;
             }
@@ -1145,7 +1158,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
         }
 
         foreach ($this->getShippingOverrides(true) as $service) {
-
             if ($isPriceConvertEnabled && $service->isCostModeCustomAttribute() &&
                 $attributeHelper->isAttributeInputTypePrice($service->getCostAttribute())) {
                 return true;
@@ -1221,7 +1233,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('listing_id',array('in' => $listingCollection->getSelect()));
+        $listingProductCollection->addFieldToFilter('listing_id', ['in' => $listingCollection->getSelect()]);
 
         if ($onlyPhysicalUnits) {
             $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
@@ -1237,12 +1249,12 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'), true);
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id'], true);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     public function isCacheEnabled()

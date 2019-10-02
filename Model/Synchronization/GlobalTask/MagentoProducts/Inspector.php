@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts;
 
+/**
+ * Class Inspector
+ * @package Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts
+ */
 class Inspector extends AbstractModel
 {
     //########################################
@@ -58,7 +62,6 @@ class Inspector extends AbstractModel
         }
 
         if (count($listingsProducts) <= 0) {
-
             $lastTime = strtotime($this->getLastTimeStartCircle());
             $interval = $this->getMinIntervalBetweenCircles();
 
@@ -74,7 +77,6 @@ class Inspector extends AbstractModel
         $totalItems = count($listingsProducts);
 
         foreach ($listingsProducts as $listingProduct) {
-
             $this->updateListingsProductChange($listingProduct);
 
             if ((++$tempIndex)%20 == 0) {
@@ -92,11 +94,11 @@ class Inspector extends AbstractModel
 
     private function prepareBaseValues()
     {
-        if (is_null($this->getLastListingProductId())) {
+        if ($this->getLastListingProductId() === null) {
             $this->setLastListingProductId(0);
         }
 
-        if (is_null($this->getLastTimeStartCircle())) {
+        if ($this->getLastTimeStartCircle() === null) {
             $this->resetLastTimeStartCircle();
         }
     }
@@ -105,49 +107,51 @@ class Inspector extends AbstractModel
 
     private function getMinIntervalBetweenCircles()
     {
-        return (int)$this->getConfigValue($this->getFullSettingsPath(),'min_interval_between_circles');
+        return (int)$this->getConfigValue($this->getFullSettingsPath(), 'min_interval_between_circles');
     }
 
     private function getMaxCountTimesForFullCircle()
     {
-        return (int)$this->getConfigValue($this->getFullSettingsPath(),'max_count_times_for_full_circle');
+        return (int)$this->getConfigValue($this->getFullSettingsPath(), 'max_count_times_for_full_circle');
     }
 
     // ---------------------------------------
 
     private function getMinCountItemsPerOneTime()
     {
-        return (int)$this->getConfigValue($this->getFullSettingsPath(),'min_count_items_per_one_time');
+        return (int)$this->getConfigValue($this->getFullSettingsPath(), 'min_count_items_per_one_time');
     }
 
     private function getMaxCountItemsPerOneTime()
     {
-        return (int)$this->getConfigValue($this->getFullSettingsPath(),'max_count_items_per_one_time');
+        return (int)$this->getConfigValue($this->getFullSettingsPath(), 'max_count_items_per_one_time');
     }
 
     // ---------------------------------------
 
     private function getLastListingProductId()
     {
-        return $this->getConfigValue($this->getFullSettingsPath(),'last_listing_product_id');
+        return $this->getConfigValue($this->getFullSettingsPath(), 'last_listing_product_id');
     }
 
     private function setLastListingProductId($listingProductId)
     {
-        $this->setConfigValue($this->getFullSettingsPath(),'last_listing_product_id',(int)$listingProductId);
+        $this->setConfigValue($this->getFullSettingsPath(), 'last_listing_product_id', (int)$listingProductId);
     }
 
     // ---------------------------------------
 
     private function getLastTimeStartCircle()
     {
-        return $this->getConfigValue($this->getFullSettingsPath(),'last_time_start_circle');
+        return $this->getConfigValue($this->getFullSettingsPath(), 'last_time_start_circle');
     }
 
     private function resetLastTimeStartCircle()
     {
         $this->setConfigValue(
-            $this->getFullSettingsPath(),'last_time_start_circle',$this->getHelper('Data')->getCurrentGmtDate()
+            $this->getFullSettingsPath(),
+            'last_time_start_circle',
+            $this->getHelper('Data')->getCurrentGmtDate()
         );
     }
 
@@ -185,7 +189,7 @@ class Inspector extends AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
         $collection->getSelect()
             ->where("`id` > ".(int)$this->getLastListingProductId())
-            ->order(array('id ASC'))
+            ->order(['id ASC'])
             ->limit($limit);
 
         return $collection->getItems();

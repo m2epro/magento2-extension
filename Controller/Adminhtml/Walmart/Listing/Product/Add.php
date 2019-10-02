@@ -10,10 +10,14 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
+/**
+ * Class Add
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product
+ */
 abstract class Add extends Main
 {
     protected $sessionKey = 'walmart_listing_product_add';
-    protected $listing = NULL;
+    protected $listing = null;
 
     //########################################
 
@@ -27,26 +31,26 @@ abstract class Add extends Main
         return $this;
     }
 
-    protected function getSessionValue($key = NULL)
+    protected function getSessionValue($key = null)
     {
         $sessionData = $this->getHelper('Data\Session')->getValue($this->sessionKey);
 
-        if (is_null($sessionData)) {
-            $sessionData = array();
+        if ($sessionData === null) {
+            $sessionData = [];
         }
 
-        if (is_null($key)) {
+        if ($key === null) {
             return $sessionData;
         }
 
-        return isset($sessionData[$key]) ? $sessionData[$key] : NULL;
+        return isset($sessionData[$key]) ? $sessionData[$key] : null;
     }
 
     // ---------------------------------------
 
     protected function clearSession()
     {
-        $this->getHelper('Data\Session')->setValue($this->sessionKey, NULL);
+        $this->getHelper('Data\Session')->setValue($this->sessionKey, null);
     }
 
     //########################################
@@ -56,7 +60,7 @@ abstract class Add extends Main
      */
     protected function getListing()
     {
-        if (is_null($this->listing)) {
+        if ($this->listing === null) {
             $this->listing = $this->walmartFactory->getObjectLoaded('Listing', $this->getRequest()->getParam('id'));
         }
 
@@ -68,15 +72,14 @@ abstract class Add extends Main
     protected function setCategoryTemplate($productsIds, $templateId)
     {
         $connWrite = $this->resourceConnection->getConnection();
-        $tableWalmartListingProduct = $this->activeRecordFactory->getObject('Walmart\Listing\Product')
+        $tableWalmartListingProduct = $this->activeRecordFactory->getObject('Walmart_Listing_Product')
             ->getResource()->getMainTable();
 
         $productsIds = array_chunk($productsIds, 1000);
         foreach ($productsIds as $productsIdsChunk) {
-            $connWrite->update($tableWalmartListingProduct, array(
+            $connWrite->update($tableWalmartListingProduct, [
                 'template_category_id' => $templateId
-            ), '`listing_product_id` IN ('.implode(',', $productsIdsChunk).')'
-            );
+            ], '`listing_product_id` IN ('.implode(',', $productsIdsChunk).')');
         }
     }
 
@@ -88,7 +91,7 @@ abstract class Add extends Main
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection()
-            ->addFieldToFilter('id', array('in' => $ids));
+            ->addFieldToFilter('id', ['in' => $ids]);
 
         foreach ($collection->getItems() as $listingProduct) {
             /**@var \Ess\M2ePro\Model\Listing\Product $listingProduct */

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Log;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Log
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 {
     protected $listingProductPickupStoreStateId;
@@ -29,7 +33,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         // ---------------------------------------
 
         $this->listingProductPickupStoreStateId = (int)$this->getRequest()->getParam(
-            'listing_product_pickup_store_state', 0
+            'listing_product_pickup_store_state',
+            0
         );
         $this->isAjax = $this->getHelper('Data')->jsonEncode($this->getRequest()->isXmlHttpRequest());
     }
@@ -38,9 +43,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
     protected function _prepareCollection()
     {
-        $pickupStoreCollection = $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\Log')->getCollection();
+        $pickupStoreCollection = $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_Log')->getCollection();
         $pickupStoreCollection->addFieldToFilter(
-            'account_pickup_store_state_id', $this->listingProductPickupStoreStateId
+            'account_pickup_store_state_id',
+            $this->listingProductPickupStoreStateId
         );
 
         // Set collection to grid
@@ -137,7 +143,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
     protected function getActionTitles()
     {
-        return $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\Log')->getActionsTitles();
+        return $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_Log')->getActionsTitles();
     }
 
     //########################################

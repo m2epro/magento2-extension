@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Cron\Runner;
 
 use \Ess\M2ePro\Helper\Module\Cron as CronHelper;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Model\Cron\Runner
+ */
 class Switcher extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var array  */
@@ -31,7 +35,6 @@ class Switcher extends \Ess\M2ePro\Model\AbstractModel
 
         // switch to a new runner by higher priority
         if ($currentPriority > $configPriority) {
-
             $helper->setRunner($currentRunner->getNick());
             $helper->setLastRunnerChange($this->getHelper('Data')->getCurrentGmtDate());
 
@@ -43,15 +46,13 @@ class Switcher extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($currentRunner instanceof Service\AbstractModel &&
-            $helper->isLastAccessMoreThan(Service\AbstractModel::MAX_INACTIVE_TIME))
-        {
+            $helper->isLastAccessMoreThan(Service\AbstractModel::MAX_INACTIVE_TIME)) {
             $currentRunner->resetTasksStartFrom();
         }
 
         //switch to a new runner by inactivity
         if ($currentPriority < $configPriority && $currentPriority > 0 &&
-            $helper->isLastAccessMoreThan(Service\AbstractModel::MAX_INACTIVE_TIME))
-        {
+            $helper->isLastAccessMoreThan(Service\AbstractModel::MAX_INACTIVE_TIME)) {
             $helper->setRunner($currentRunner->getNick());
             $helper->setLastRunnerChange($this->getHelper('Data')->getCurrentGmtDate());
         }

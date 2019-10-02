@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Translation\Connector;
 
+/**
+ * Class Dispatcher
+ * @package Ess\M2ePro\Model\Translation\Connector
+ */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $nameBuilder;
@@ -20,8 +24,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->nameBuilder = $nameBuilder;
         $this->parentFactory = $parentFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -29,62 +32,72 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     //####################################
 
-    public function getConnector($entity, $type, $name, array $params = array(), $account = NULL)
+    public function getConnector($entity, $type, $name, array $params = [], $account = null)
     {
         $classParts = ['Translation\Connector'];
 
         !empty($entity) && $classParts[] = $entity;
-        !empty($type)   && $classParts[] = $type;
-        !empty($name)   && $classParts[] = $name;
+        !empty($type) && $classParts[] = $type;
+        !empty($name) && $classParts[] = $name;
 
         $className = $this->nameBuilder->buildClassName($classParts);
 
         if (is_int($account) || is_string($account)) {
             $account = $this->parentFactory->getCachedObjectLoaded(
-                \Ess\M2ePro\Helper\Component\Ebay::NICK, 'Account',(int)$account
+                \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                'Account',
+                (int)$account
             );
         }
 
         /** @var \Ess\M2ePro\Model\Connector\Command\AbstractModel $connectorObject */
-        $connectorObject = $this->modelFactory->getObject($className, array(
+        $connectorObject = $this->modelFactory->getObject($className, [
             'params' => $params,
             'account' => $account
-        ));
+        ]);
         $connectorObject->setProtocol($this->getProtocol());
 
         return $connectorObject;
     }
 
-    public function getCustomConnector($modelName, array $params = array(), $account = NULL)
+    public function getCustomConnector($modelName, array $params = [], $account = null)
     {
         if (is_int($account) || is_string($account)) {
             $account = $this->parentFactory->getCachedObjectLoaded(
-                \Ess\M2ePro\Helper\Component\Ebay::NICK, 'Account',(int)$account
+                \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                'Account',
+                (int)$account
             );
         }
 
         /** @var \Ess\M2ePro\Model\Connector\Command\AbstractModel $connectorObject */
-        $connectorObject = $this->modelFactory->getObject($modelName, array(
+        $connectorObject = $this->modelFactory->getObject($modelName, [
             'params' => $params,
             'account' => $account
-        ));
+        ]);
         $connectorObject->setProtocol($this->getProtocol());
 
         return $connectorObject;
     }
 
-    public function getVirtualConnector($entity, $type, $name,
-                                        array $requestData = array(), $responseDataKey = NULL,
-                                        $account = NULL)
-    {
-        $virtualConnector = $this->modelFactory->getObject('Connector\Command\RealTime\Virtual');
+    public function getVirtualConnector(
+        $entity,
+        $type,
+        $name,
+        array $requestData = [],
+        $responseDataKey = null,
+        $account = null
+    ) {
+        $virtualConnector = $this->modelFactory->getObject('Connector_Command_RealTime_Virtual');
         $virtualConnector->setProtocol($this->getProtocol());
-        $virtualConnector->setCommand(array($entity, $type, $name));
+        $virtualConnector->setCommand([$entity, $type, $name]);
         $virtualConnector->setResponseDataKey($responseDataKey);
 
         if (is_int($account) || is_string($account)) {
             $account = $this->parentFactory->getCachedObjectLoaded(
-                \Ess\M2ePro\Helper\Component\Ebay::NICK, 'Account', (int)$account
+                \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                'Account',
+                (int)$account
             );
         }
 
@@ -108,7 +121,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     private function getProtocol()
     {
-        return $this->modelFactory->getObject('Translation\Connector\Protocol');
+        return $this->modelFactory->getObject('Translation_Connector_Protocol');
     }
 
     //####################################

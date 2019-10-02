@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task;
 
+/**
+ * Class License
+ * @package Ess\M2ePro\Model\Servicing\Task
+ */
 class License extends \Ess\M2ePro\Model\Servicing\Task
 {
     //########################################
@@ -27,7 +31,7 @@ class License extends \Ess\M2ePro\Model\Servicing\Task
      */
     public function getRequestData()
     {
-        return array();
+        return [];
     }
 
     public function processResponseData(array $data)
@@ -37,7 +41,6 @@ class License extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         if (isset($data['validation']) && is_array($data['validation'])) {
-
             $this->updateValidationMainData($data['validation']);
 
             if (isset($data['validation']['validation']) && is_array($data['validation']['validation'])) {
@@ -83,7 +86,7 @@ class License extends \Ess\M2ePro\Model\Servicing\Task
         $primaryConfig = $this->getHelper('Primary')->getConfig();
 
         if (array_key_exists('domain', $isValidData)) {
-            $primaryConfig->setGroupValue('/license/valid/', 'domain',(int)$isValidData['domain']);
+            $primaryConfig->setGroupValue('/license/valid/', 'domain', (int)$isValidData['domain']);
         }
 
         if (array_key_exists('ip', $isValidData)) {

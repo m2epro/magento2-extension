@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon;
 
 use Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid;
 
+/**
+ * Class Template
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon
+ */
 class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -43,7 +47,8 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
 
     protected function _prepareLayout()
     {
-        $content = $this->__('
+        $content = $this->__(
+            '
             In this Section you can Create, Edit and Delete the Selling Policy,
             Synchronization Policy, Description Policy, Shipping Template Policy,
             Shipping Override Policy, Product Tax Code Policy.<br/><br/>
@@ -68,7 +73,6 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
 
             More detailed information about Policy configuration can be found
             <a href="%url%" target="_blank" class="external-link">here</a>.',
-
             $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/8gEtAQ')
         );
 

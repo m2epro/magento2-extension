@@ -11,6 +11,7 @@ namespace Ess\M2ePro\Observer\Shipment;
 /**
  * This event was added for temporary fix in walmart integration,
  *  because sales_order_shipment_save_after providing ShipmentItem before it was saved, so it doesn't have ID.
+ * TODO - make all integrations work with this event
  */
 class Item extends \Ess\M2ePro\Observer\AbstractModel
 {
@@ -25,8 +26,7 @@ class Item extends \Ess\M2ePro\Observer\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->messageManager = $messageManager;
         $this->urlBuilder = $urlBuilder;
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
@@ -53,7 +53,7 @@ class Item extends \Ess\M2ePro\Observer\AbstractModel
             return;
         }
 
-        if (is_null($order)) {
+        if ($order === null) {
             return;
         }
 
@@ -64,15 +64,14 @@ class Item extends \Ess\M2ePro\Observer\AbstractModel
         /**
          * fix for walmart integration
          */
-        if ($order->getComponentMode() != \Ess\M2ePro\Helper\Component\Walmart::NICK)
-        {
+        if ($order->getComponentMode() != \Ess\M2ePro\Helper\Component\Walmart::NICK) {
             return;
         }
 
         $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
 
         /** @var $shipmentHandler \Ess\M2ePro\Model\Order\Shipment\Handler */
-        $shipmentHandler = $this->modelFactory->getObject('Order\Shipment\Handler')
+        $shipmentHandler = $this->modelFactory->getObject('Order_Shipment_Handler')
                                               ->factory($order->getComponentMode());
         $shipmentHandler->handle($order, $shipment);
     }

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Walmart\Synchronization\OtherListings;
 
 use Ess\M2ePro\Model\Processing\Runner;
 
+/**
+ * Class Update
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\OtherListings
+ */
 class Update extends AbstractModel
 {
     //########################################
@@ -50,19 +54,22 @@ class Update extends AbstractModel
             return false;
         }
 
-        if (!in_array(\Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::LISTINGS_PRODUCTS,
-            $this->getAllowedTasksTypes())) {
+        if (!in_array(
+            \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::LISTINGS_PRODUCTS,
+            $this->getAllowedTasksTypes()
+        )) {
             return parent::intervalIsLocked();
         }
 
         $operationHistory = $this->getActualOperationHistory()->getParentObject('synchronization_walmart');
-        if (is_null($operationHistory)) {
+        if ($operationHistory === null) {
             return parent::intervalIsLocked();
         }
 
         $synchronizationStartTime = $operationHistory->getData('start_date');
         $updateListingsProductsLastTime = $this->getConfigValue(
-            '/walmart/listings_products/update/', 'last_time'
+            '/walmart/listings_products/update/',
+            'last_time'
         );
 
         return strtotime($synchronizationStartTime) > strtotime($updateListingsProductsLastTime);
@@ -73,8 +80,10 @@ class Update extends AbstractModel
     protected function performActions()
     {
         $accountsCollection = $this->walmartFactory->getObject('Account')->getCollection();
-        $accountsCollection->addFieldToFilter('other_listings_synchronization',
-           \Ess\M2ePro\Model\Walmart\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES);
+        $accountsCollection->addFieldToFilter(
+            'other_listings_synchronization',
+            \Ess\M2ePro\Model\Walmart\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES
+        );
 
         $accounts = $accountsCollection->getItems();
 
@@ -99,24 +108,21 @@ class Update extends AbstractModel
             );
 
             if (!$this->isLockedAccount($account)) {
-
                 $this->getActualOperationHistory()->addTimePoint(
                     __METHOD__.'process'.$account->getId(),
                     'Process Account '.$account->getTitle()
                 );
 
                 try {
-
-                    $dispatcherObject = $this->modelFactory->getObject('Walmart\Connector\Dispatcher');
+                    $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
                     $connectorObj = $dispatcherObject->getCustomConnector(
-                        'Walmart\Synchronization\OtherListings\Update\Requester',
-                        [], $account
+                        'Walmart_Synchronization_OtherListings_Update_Requester',
+                        [],
+                        $account
                     );
 
                     $dispatcherObject->process($connectorObj);
-
                 } catch (\Exception $exception) {
-
                     $message = $this->getHelper('Module\Translation')->__(
                         'The "3rd Party Listings" Action for Walmart Account "%account%" was completed with error.',
                         $account->getTitle()
@@ -148,7 +154,7 @@ class Update extends AbstractModel
     private function isLockedAccount(\Ess\M2ePro\Model\Account $account)
     {
         /** @var $lockItem \Ess\M2ePro\Model\Lock\Item\Manager */
-        $lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+        $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
         $lockItem->setNick(Update\ProcessingRunner::LOCK_ITEM_PREFIX.'_'.$account->getId());
         $lockItem->setMaxInactiveTime(Runner::MAX_LIFETIME);
 

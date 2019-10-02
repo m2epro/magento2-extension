@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon;
 
+/**
+ * Class Template
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon
+ */
 abstract class Template extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
     //########################################

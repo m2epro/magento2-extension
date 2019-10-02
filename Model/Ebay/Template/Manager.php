@@ -8,11 +8,15 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template;
 
+/**
+ * Class Manager
+ * @package Ess\M2ePro\Model\Ebay\Template
+ */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {
-    private $ownerObject = NULL;
-    private $templateNick = NULL;
-    private $resultObject = NULL;
+    private $ownerObject = null;
+    private $templateNick = null;
+    private $resultObject = null;
 
     const MODE_PARENT   = 0;
     const MODE_CUSTOM   = 1;
@@ -40,8 +44,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -107,7 +110,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function setTemplate($nick)
     {
-        if (!in_array(strtolower($nick),$this->getAllTemplates())) {
+        if (!in_array(strtolower($nick), $this->getAllTemplates())) {
             throw new \Ess\M2ePro\Model\Exception('Policy nick is out of knowledge range.');
         }
         $this->templateNick = strtolower($nick);
@@ -121,14 +124,14 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getAllTemplates()
     {
-        return array(
+        return [
             self::TEMPLATE_RETURN_POLICY,
             self::TEMPLATE_SHIPPING,
             self::TEMPLATE_PAYMENT,
             self::TEMPLATE_DESCRIPTION,
             self::TEMPLATE_SELLING_FORMAT,
             self::TEMPLATE_SYNCHRONIZATION
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -138,7 +141,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isFlatTemplate()
     {
-        return in_array($this->getTemplate(),$this->getFlatTemplates());
+        return in_array($this->getTemplate(), $this->getFlatTemplates());
     }
 
     /**
@@ -146,11 +149,11 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getFlatTemplates()
     {
-        return array(
+        return [
             self::TEMPLATE_RETURN_POLICY,
             self::TEMPLATE_SHIPPING,
             self::TEMPLATE_PAYMENT,
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -160,7 +163,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isHorizontalTemplate()
     {
-        return in_array($this->getTemplate(),$this->getHorizontalTemplates());
+        return in_array($this->getTemplate(), $this->getHorizontalTemplates());
     }
 
     /**
@@ -168,11 +171,11 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getHorizontalTemplates()
     {
-        return array(
+        return [
             self::TEMPLATE_SELLING_FORMAT,
             self::TEMPLATE_SYNCHRONIZATION,
             self::TEMPLATE_DESCRIPTION
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -190,11 +193,11 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getMarketplaceDependentTemplates()
     {
-        return array(
+        return [
             self::TEMPLATE_PAYMENT,
             self::TEMPLATE_SHIPPING,
             self::TEMPLATE_RETURN_POLICY,
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -204,7 +207,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isTrackingAttributesTemplate()
     {
-        return in_array($this->getTemplate(),$this->getTrackingAttributesTemplates());
+        return in_array($this->getTemplate(), $this->getTrackingAttributesTemplates());
     }
 
     /**
@@ -212,13 +215,13 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getTrackingAttributesTemplates()
     {
-        return array(
+        return [
             self::TEMPLATE_RETURN_POLICY,
             self::TEMPLATE_SHIPPING,
             self::TEMPLATE_PAYMENT,
             self::TEMPLATE_DESCRIPTION,
             self::TEMPLATE_SELLING_FORMAT
-        );
+        ];
     }
 
     //########################################
@@ -255,7 +258,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getIdColumnNameByMode($mode)
     {
-        $name = NULL;
+        $name = null;
 
         switch ($mode) {
             case self::MODE_TEMPLATE:
@@ -273,8 +276,8 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     {
         $idColumnName = $this->getIdColumnNameByMode($this->getModeValue());
 
-        if (is_null($idColumnName)) {
-            return NULL;
+        if ($idColumnName === null) {
+            return null;
         }
 
         return $this->getOwnerObject()->getData($idColumnName);
@@ -302,11 +305,11 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function getParentResultObject()
     {
         if ($this->isListingOwner()) {
-            return NULL;
+            return null;
         }
 
         /** @var \Ess\M2ePro\Model\Ebay\Template\Manager $manager */
-        $manager = $this->modelFactory->getObject('Ebay\Template\Manager');
+        $manager = $this->modelFactory->getObject('Ebay_Template_Manager');
         $manager->setTemplate($this->getTemplate());
         $manager->setOwnerObject($this->getOwnerObject()->getEbayListing());
 
@@ -317,8 +320,8 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     {
         $id = $this->getCustomIdValue();
 
-        if (is_null($id)) {
-            return NULL;
+        if ($id === null) {
+            return null;
         }
 
         return $this->makeResultObject($id);
@@ -328,8 +331,8 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     {
         $id = $this->getTemplateIdValue();
 
-        if (is_null($id)) {
-            return NULL;
+        if ($id === null) {
+            return null;
         }
 
         return $this->makeResultObject($id);
@@ -343,11 +346,13 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->isHorizontalTemplate()) {
             $object = $this->ebayFactory->getCachedObjectLoaded(
-                $modelName, $id
+                $modelName,
+                $id
             );
         } else {
             $object = $this->activeRecordFactory->getCachedObjectLoaded(
-                $modelName, $id
+                $modelName,
+                $id
             );
         }
 
@@ -384,7 +389,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     public function getResultObject()
     {
-        if (!is_null($this->resultObject)) {
+        if ($this->resultObject !== null) {
             return $this->resultObject;
         }
 
@@ -400,7 +405,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             $this->resultObject = $this->getTemplateResultObject();
         }
 
-        if (is_null($this->resultObject)) {
+        if ($this->resultObject === null) {
             throw new \Ess\M2ePro\Model\Exception('Unable to get result object.');
         }
 
@@ -415,17 +420,17 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getTemplateModelName()
     {
-        $name = NULL;
+        $name = null;
 
         switch ($this->getTemplate()) {
             case self::TEMPLATE_PAYMENT:
-                $name = 'Ebay\Template\Payment';
+                $name = 'Ebay_Template_Payment';
                 break;
             case self::TEMPLATE_SHIPPING:
-                $name = 'Ebay\Template\Shipping';
+                $name = 'Ebay_Template_Shipping';
                 break;
             case self::TEMPLATE_RETURN_POLICY:
-                $name = 'Ebay\Template\ReturnPolicy';
+                $name = 'Ebay_Template_ReturnPolicy';
                 break;
             case self::TEMPLATE_SELLING_FORMAT:
                 $name = 'Template\SellingFormat';
@@ -438,7 +443,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
                 break;
         }
 
-        if (is_null($name)) {
+        if ($name === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
                 sprintf('Template nick "%s" is unknown.', $this->getTemplate())
             );
@@ -449,7 +454,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     public function getTemplateModel($returnChildModel = false)
     {
-        $model = NULL;
+        $model = null;
 
         switch ($this->getTemplate()) {
             case self::TEMPLATE_PAYMENT:
@@ -470,7 +475,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
                 break;
         }
 
-        if (is_null($model)) {
+        if ($model === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
                 sprintf('Template nick "%s" is unknown.', $this->getTemplate())
             );
@@ -481,7 +486,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     public function getTemplateCollection()
     {
-        $collection = NULL;
+        $collection = null;
 
         switch ($this->getTemplate()) {
             case self::TEMPLATE_PAYMENT:
@@ -497,7 +502,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
                 break;
         }
 
-        if (is_null($collection)) {
+        if ($collection === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
                 sprintf('Template nick "%s" is unknown.', $this->getTemplate())
             );
@@ -508,30 +513,30 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     public function getTemplateBuilder()
     {
-        $model = NULL;
+        $model = null;
 
         switch ($this->getTemplate()) {
             case self::TEMPLATE_PAYMENT:
-                $model = $this->modelFactory->getObject('Ebay\Template\Payment\Builder');
+                $model = $this->modelFactory->getObject('Ebay_Template_Payment_Builder');
                 break;
             case self::TEMPLATE_SHIPPING:
-                $model = $this->modelFactory->getObject('Ebay\Template\Shipping\Builder');
+                $model = $this->modelFactory->getObject('Ebay_Template_Shipping_Builder');
                 break;
             case self::TEMPLATE_RETURN_POLICY:
-                $model = $this->modelFactory->getObject('Ebay\Template\ReturnPolicy\Builder');
+                $model = $this->modelFactory->getObject('Ebay_Template_ReturnPolicy_Builder');
                 break;
             case self::TEMPLATE_SELLING_FORMAT:
-                $model = $this->modelFactory->getObject('Ebay\Template\SellingFormat\Builder');
+                $model = $this->modelFactory->getObject('Ebay_Template_SellingFormat_Builder');
                 break;
             case self::TEMPLATE_DESCRIPTION:
-                $model = $this->modelFactory->getObject('Ebay\Template\Description\Builder');
+                $model = $this->modelFactory->getObject('Ebay_Template_Description_Builder');
                 break;
             case self::TEMPLATE_SYNCHRONIZATION:
-                $model = $this->modelFactory->getObject('Ebay\Template\Synchronization\Builder');
+                $model = $this->modelFactory->getObject('Ebay_Template_Synchronization_Builder');
                 break;
         }
 
-        if (is_null($model)) {
+        if ($model === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
                 sprintf('Template nick "%s" is unknown.', $this->getTemplate())
             );
@@ -573,16 +578,15 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     public function getTemplatesFromData($data)
     {
-        $resultTemplates = array();
+        $resultTemplates = [];
 
         foreach ($this->getAllTemplates() as $template) {
-
             $this->setTemplate($template);
 
             $templateMode = $data[$this->getModeColumnName()];
 
             if ($templateMode == self::MODE_PARENT) {
-                $listing = $this->ebayFactory->getCachedObjectLoaded('Listing',$data['listing_id']);
+                $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $data['listing_id']);
                 $templateMode = $listing->getChildObject()->getData($this->getModeColumnName());
                 $templateId   = $listing->getChildObject()->getData($this->getIdColumnNameByMode($templateMode));
             } else {
@@ -597,7 +601,8 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
                     ->getChildObject();
             } else {
                 $templateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                    $templateModelName, $templateId
+                    $templateModelName,
+                    $templateId
                 );
             }
 

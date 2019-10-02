@@ -36,7 +36,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     /**
      * @var null|int
      */
-    private $operationHistoryId = NULL;
+    private $operationHistoryId = null;
 
     /**
      * @var int
@@ -84,26 +84,28 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     //########################################
 
-    public function addMessage($description = NULL, $type = NULL, $priority = NULL, array $additionalData = array())
+    public function addMessage($description = null, $type = null, $priority = null, array $additionalData = [])
     {
-        $dataForAdd = $this->makeDataForAdd($description,
-                                            $type,
-                                            $priority,
-                                            $additionalData);
+        $dataForAdd = $this->makeDataForAdd(
+            $description,
+            $type,
+            $priority,
+            $additionalData
+        );
 
         $this->createMessage($dataForAdd);
     }
 
     //########################################
 
-    public function clearMessages($task = NULL)
+    public function clearMessages($task = null)
     {
-        $filters = array();
+        $filters = [];
 
-        if (!is_null($task)) {
+        if ($task !== null) {
             $filters['task'] = $task;
         }
-        if (!is_null($this->componentMode)) {
+        if ($this->componentMode !== null) {
             $filters['component_mode'] = $this->componentMode;
         }
 
@@ -125,24 +127,27 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
             ->getId();
     }
 
-    protected function makeDataForAdd($description = NULL, $type = NULL, $priority = NULL,
-                                      array $additionalData = array())
-    {
-        $dataForAdd = array();
+    protected function makeDataForAdd(
+        $description = null,
+        $type = null,
+        $priority = null,
+        array $additionalData = []
+    ) {
+        $dataForAdd = [];
 
-        if (!is_null($description)) {
+        if ($description !== null) {
             $dataForAdd['description'] = $this->getHelper('Module\Translation')->__($description);
         } else {
-            $dataForAdd['description'] = NULL;
+            $dataForAdd['description'] = null;
         }
 
-        if (!is_null($type)) {
+        if ($type !== null) {
             $dataForAdd['type'] = (int)$type;
         } else {
             $dataForAdd['type'] = self::TYPE_NOTICE;
         }
 
-        if (!is_null($priority)) {
+        if ($priority !== null) {
             $dataForAdd['priority'] = (int)$priority;
         } else {
             $dataForAdd['priority'] = self::PRIORITY_LOW;

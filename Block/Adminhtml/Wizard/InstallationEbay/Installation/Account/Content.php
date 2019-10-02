@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay\Installation\Accoun
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Content
+ * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay\Installation\Account
+ */
 class Content extends AbstractForm
 {
     //########################################
@@ -32,8 +36,7 @@ class Content extends AbstractForm
 On this step, you should link your eBay Account with your M2E Pro.<br/><br/>
 You can proceed with both Live and Sandbox eBay Environments. Live environment is set by default.
 HTML
-        )
-);
+        ));
 
         parent::_prepareLayout();
     }
@@ -62,7 +65,8 @@ HTML
                         'type' => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
                         'content' => $this->__(
                             'If you do not have an existing account, you can click
-                            <a href="%url%" target="_blank" class="external-link">here</a> to register one.', $url
+                            <a href="%url%" target="_blank" class="external-link">here</a> to register one.',
+                            $url
                         )
                     ]
                 ]

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class ToolsModule
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs
+ */
 class ToolsModule extends AbstractBlock
 {
     //########################################
@@ -30,7 +34,7 @@ class ToolsModule extends AbstractBlock
 
     protected function _beforeToHtml()
     {
-        $this->setChild('tabs', $this->createBlock('ControlPanel\Tabs\ToolsModule\Tabs'));
+        $this->setChild('tabs', $this->createBlock('ControlPanel_Tabs_ToolsModule_Tabs'));
         return parent::_beforeToHtml();
     }
 

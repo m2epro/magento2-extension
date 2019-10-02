@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
+/**
+ * Class CategoryTemplateAssignType
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+ */
 class CategoryTemplateAssignType extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
     //########################################
@@ -36,13 +40,15 @@ class CategoryTemplateAssignType extends \Ess\M2ePro\Controller\Adminhtml\Walmar
         $listingAdditionalData['category_template_mode'] = $mode;
 
         $listing->setData(
-            'additional_data', $this->getHelper('Data')->jsonEncode($listingAdditionalData)
+            'additional_data',
+            $this->getHelper('Data')->jsonEncode($listingAdditionalData)
         )->save();
 
         if ($mode == 'same' && !empty($categoryTemplateId)) {
             /** @var \Ess\M2ePro\Model\Walmart\Template\Category $categoryTemplate */
             $categoryTemplate = $this->activeRecordFactory->getObjectLoaded(
-                'Walmart\Template\Category', $categoryTemplateId
+                'Walmart_Template_Category',
+                $categoryTemplateId
             );
 
             if (!$categoryTemplate->isEmpty()) {
@@ -50,26 +56,26 @@ class CategoryTemplateAssignType extends \Ess\M2ePro\Controller\Adminhtml\Walmar
                     $this->setCategoryTemplate($listingProductsIds, $categoryTemplateId);
                 }
 
-                return $this->_redirect('*/walmart_listing_product_add/index', array(
+                return $this->_redirect('*/walmart_listing_product_add/index', [
                     '_current' => true,
                     'step' => 4
-                ));
+                ]);
             }
 
             unset($listingAdditionalData['category_template_mode']);
 
             $listing->setData(
-                'additional_data', $this->getHelper('Data')->jsonEncode($listingAdditionalData)
+                'additional_data',
+                $this->getHelper('Data')->jsonEncode($listingAdditionalData)
             )->save();
-
-        } else if ($mode == 'category') {
-            return $this->_redirect('*/*/categoryTemplateAssignByMagentoCategory', array(
+        } elseif ($mode == 'category') {
+            return $this->_redirect('*/*/categoryTemplateAssignByMagentoCategory', [
                 '_current' => true,
-            ));
-        } else if ($mode == 'manually') {
-            return $this->_redirect('*/*/categoryTemplateAssignManually', array(
+            ]);
+        } elseif ($mode == 'manually') {
+            return $this->_redirect('*/*/categoryTemplateAssignManually', [
                 '_current' => true,
-            ));
+            ]);
         }
 
         $this->_forward('index');

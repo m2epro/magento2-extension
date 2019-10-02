@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter;
 
+/**
+ * Class AttributesOptions
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter
+ */
 class AttributesOptions extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
 {
     //########################################
@@ -45,7 +49,7 @@ class AttributesOptions extends \Magento\Backend\Block\Widget\Grid\Column\Filter
 
     protected function _renderOption($option, $value)
     {
-        $selected = (($option['label'] == $value && (!is_null($value))) ? ' selected="selected"' : '' );
+        $selected = (($option['label'] == $value && ($value !== null)) ? ' selected="selected"' : '' );
         return '<option value="'. $this->escapeHtml($option['label']).'"'.$selected.'>' .
             $this->escapeHtml($option['label']).'</option>';
     }
@@ -78,12 +82,12 @@ class AttributesOptions extends \Magento\Backend\Block\Widget\Grid\Column\Filter
     public function getCondition()
     {
         $values = $this->getValue();
-        $conditions = array();
+        $conditions = [];
         foreach ($values as $value) {
-            $conditions[] = array(
+            $conditions[] = [
                 'regexp' => '"variation_product_options":[^}]*' .
                             $value['attr'] . '[[:space:]]*":"[[:space:]]*' . $value['value'] . '[[:space:]]*'
-            );
+            ];
         }
         return $conditions;
     }

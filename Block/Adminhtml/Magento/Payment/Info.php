@@ -11,12 +11,16 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Payment;
 use Ess\M2ePro\Helper\Component\Amazon;
 use Ess\M2ePro\Helper\Component\Ebay;
 
+/**
+ * Class Info
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Payment
+ */
 class Info extends \Magento\Payment\Block\Info
 {
     protected $orderFactory;
     protected $helperFactory;
 
-    private $order = NULL;
+    private $order = null;
 
     protected $_template = 'Ess_M2ePro::magento/order/payment/info.phtml';
 
@@ -56,11 +60,11 @@ class Info extends \Magento\Payment\Block\Info
      */
     public function getOrder()
     {
-        if (!is_null($this->order)) {
+        if ($this->order !== null) {
             return $this->order;
         }
 
-        $orderId = $this->getInfo()->getAdditionalInformation('order_id');
+        $orderId = $this->getInfo()->getData('parent_id');
         if (empty($orderId)) {
             return null;
         }
@@ -94,9 +98,9 @@ class Info extends \Magento\Payment\Block\Info
             return $url;
         }
 
-        return $this->getUrl('m2epro/amazon_order/goToAmazon', array(
+        return $this->getUrl('m2epro/amazon_order/goToAmazon', [
             'magento_order_id' => $this->getOrder()->getId()
-        ));
+        ]);
     }
 
     public function getChannelFinalFee()
@@ -119,9 +123,9 @@ class Info extends \Magento\Payment\Block\Info
     public function getTransactions()
     {
         $transactions = !$this->getIsSecureMode()
-            ? $this->getInfo()->getAdditionalInformation('transactions') : array();
+            ? $this->getInfo()->getAdditionalInformation('transactions') : [];
 
-        return is_array($transactions) ? $transactions : array();
+        return is_array($transactions) ? $transactions : [];
     }
 
     //########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Variation;
 
+/**
+ * Class Option
+ * @package Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Variation
+ */
 class Option extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;

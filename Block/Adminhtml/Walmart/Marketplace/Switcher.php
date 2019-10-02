@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace
+ */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher
 {
     //########################################
@@ -17,11 +21,11 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher
         parent::loadItems();
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Switcher $accountSwitcher */
-        $accountSwitcher = $this->createBlock('Walmart\Account\Switcher')->setData([
+        $accountSwitcher = $this->createBlock('Walmart_Account_Switcher')->setData([
             'component_mode' => $this->getData('component_mode')
         ]);
 
-        if (!is_null($accountSwitcher->getSelectedParam())) {
+        if ($accountSwitcher->getSelectedParam() !== null) {
             $this->hasDefaultOption = false;
             $this->setIsDisabled(true);
         }

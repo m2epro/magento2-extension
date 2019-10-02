@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\NewTemplate;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\NewTemplate
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected function _prepareForm()
@@ -24,7 +28,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]]
         );
 
-        $form->addField('new_template_form_help_block',
+        $form->addField(
+            'new_template_form_help_block',
             self::HELP_BLOCK,
             [
                 'content' => $this->__(

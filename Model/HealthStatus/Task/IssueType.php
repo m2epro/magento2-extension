@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\HealthStatus\Task;
 
+/**
+ * Class IssueType
+ * @package Ess\M2ePro\Model\HealthStatus\Task
+ */
 abstract class IssueType extends AbstractModel
 {
     const TYPE = 'issue';

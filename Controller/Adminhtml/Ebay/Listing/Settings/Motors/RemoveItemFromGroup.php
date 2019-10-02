@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
+/**
+ * Class RemoveItemFromGroup
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ */
 class RemoveItemFromGroup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -22,15 +26,15 @@ class RemoveItemFromGroup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         /** @var \Ess\M2ePro\Model\Ebay\Motor\Group $model */
-        $model = $this->activeRecordFactory->getObjectLoaded('Ebay\Motor\Group', $groupId);
+        $model = $this->activeRecordFactory->getObjectLoaded('Ebay_Motor_Group', $groupId);
         $items = $model->getItems();
 
         foreach ($itemsIds as $itemId) {
             unset($items[$itemId]);
         }
 
-        if (count($items) > 0) {
-            $model->setItemsData($this->getHelper('Component\Ebay\Motors')->buildItemsAttributeValue($items));
+        if (!empty($items)) {
+            $model->setItemsData($this->getHelper('Component_Ebay_Motors')->buildItemsAttributeValue($items));
             $model->save();
         } else {
             $model->delete();

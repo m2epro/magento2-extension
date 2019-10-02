@@ -1,4 +1,15 @@
-<?php /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit\Form\DiscountTable $block */ ?>
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit\Form\DiscountTable $block */
+
+?>
 
 <div id="business_discounts_not_set_table" style="display: none; width: 100%">
 
@@ -58,7 +69,7 @@
                 <option value="<?php echo \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_SPECIAL; ?>"><?php echo $block->__('Special Price'); ?></option>
 
                 <optgroup class="M2ePro-custom-attribute-optgroup" label="Magento Attribute">
-                    <?php foreach($block->getAttributes() as $attribute) : ?>
+                    <?php foreach ($block->getAttributes() as $attribute) : ?>
                         <option attribute_code="<?php echo $attribute['code']; ?>" value="<?php echo \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_ATTRIBUTE; ?>">
                             <?php echo $block->getHelper('Data')->escapeHtml($attribute['label']); ?>
                         </option>

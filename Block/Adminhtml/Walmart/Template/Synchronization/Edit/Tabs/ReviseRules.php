@@ -11,15 +11,19 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Walmart\Template\Synchronization;
 
+/**
+ * Class ReviseRules
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs
+ */
 class ReviseRules extends AbstractForm
 {
     protected function _prepareForm()
     {
         $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
-        $formData = !is_null($template)
+        $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $defaults = array(
+        $defaults = [
             'revise_update_qty'                              =>
                 Synchronization::REVISE_UPDATE_QTY_YES,
             'revise_update_qty_max_applied_value_mode'       =>
@@ -34,7 +38,7 @@ class ReviseRules extends AbstractForm
                 Synchronization::REVISE_UPDATE_PRICE_MAX_ALLOWED_DEVIATION_DEFAULT,
             'revise_update_promotions'                       =>
                 Synchronization::REVISE_UPDATE_PROMOTIONS_NONE,
-        );
+        ];
 
         $formData = array_merge($defaults, $formData);
 
@@ -50,16 +54,15 @@ class ReviseRules extends AbstractForm
 Define the Revise Conditions based on which M2E Pro will automatically revise your Items on Walmart.
 </p><br>
 
-<p>Selected Item properties will be automatically updated when any changes are made to
-the Policy settings that define these Item properties or Magento Attribute values
-used for these Item properties in the Policy template.</p>
+<p>Selected Item properties will be automatically updated when any changes are made to the Policy
+settings that define these Item properties or Magento Attribute values used for these Item properties
+in the Policy template.</p><br>
 
-<p>The detailed information can be found
-    <a href="%url%" target="_blank" class="external-link">here</a>.
+<p><strong>Note:</strong> M2E Pro Listing Synchronization must be enabled under
+<i>Walmart Integration > Configuration > Settings > Synchronization</i>. Otherwise,
+Synchronization Rules will not take effect.
 </p>
 HTML
-                    ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/UABhAQ')
                 )
             ]
         );
@@ -72,7 +75,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('revise_update_qty',
+        $fieldset->addField(
+            'revise_update_qty',
             self::SELECT,
             [
                 'name' => 'revise_update_qty',
@@ -83,13 +87,15 @@ HTML
                     Synchronization::REVISE_UPDATE_QTY_YES => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
-                    'Automatically revises Item Quantity, Production Time and Restock Date in Walmart Listing
-                    when there are changes made in Magento to at least one mentioned parameter.'
+                    'Automatically revises Item Quantity and Lag Time on Walmart when any changes are made
+                    to the Selling Policy settings that define these Item properties or Magento Attribute
+                    values used for these Item properties in the Selling Policy.'
                 )
             ]
         );
 
-        $fieldset->addField('revise_update_qty_max_applied_value_mode',
+        $fieldset->addField(
+            'revise_update_qty_max_applied_value_mode',
             self::SELECT,
             [
                 'container_id' => 'revise_update_qty_max_applied_value_mode_tr',
@@ -101,9 +107,8 @@ HTML
                     Synchronization::REVISE_MAX_AFFECTED_QTY_MODE_ON => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
-                    'Updates Walmart QTY only when the Condition you set below is met.
-                    <br/><br/><b>Note:</b> By using this Option you can significantly increase Synchronization
-                    performance.'
+                    'Enable to narrow the conditions under which the Item Quantity should be revised.
+                    This allows optimizing the sync process.'
                 )
             ]
         );
@@ -119,7 +124,8 @@ HTML
                 'class' => 'M2ePro-validate-qty',
                 'required' => true,
                 'tooltip' => $this->__(
-                    'The value should not be too high (i.e. 100). Recommended value is in range 10 - 20.'
+                    'Set the Item Quantity limit at which the Revise Action should be triggered.
+                    It is recommended to keep this value relatively low, between 10 and 20 Items.'
                 )
             ]
         );
@@ -130,7 +136,8 @@ HTML
             []
         );
 
-        $fieldset->addField('revise_update_price',
+        $fieldset->addField(
+            'revise_update_price',
             self::SELECT,
             [
                 'name' => 'revise_update_price',
@@ -141,13 +148,15 @@ HTML
                     Synchronization::REVISE_UPDATE_PRICE_YES => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
-                    'Automatically revises Item Price, Minimum Advertised Price, Sale Price and Business Price
-                    in Walmart Listing when there are changes made in Magento to at least one mentioned parameter.'
+                    'Automatically revises Item Price on Walmart when any changes are made to the
+                    Selling Policy settings that define this Item property or Magento Attribute values
+                    used for this Item property in the Selling Policy.'
                 )
             ]
         );
 
-        $fieldset->addField('revise_update_price_max_allowed_deviation_mode',
+        $fieldset->addField(
+            'revise_update_price_max_allowed_deviation_mode',
             self::SELECT,
             [
                 'container_id' => 'revise_update_price_max_allowed_deviation_mode_tr',
@@ -158,7 +167,10 @@ HTML
                     Synchronization::REVISE_MAX_ALLOWED_PRICE_DEVIATION_MODE_OFF => $this->__('No'),
                     Synchronization::REVISE_MAX_ALLOWED_PRICE_DEVIATION_MODE_ON => $this->__('Yes'),
                 ],
-                'tooltip' => $this->__('Updates Walmart Price only when the Condition you set below is met.')
+                'tooltip' => $this->__(
+                    'Enable to narrow the conditions under which the Item Price should be revised.
+                    This allows optimizing the sync process.'
+                )
             ]
         );
 
@@ -172,7 +184,8 @@ HTML
             $priceDeviationValue >= 5 && $percentageStep = 1;
         }
 
-        $fieldset->addField('revise_update_price_max_allowed_deviation',
+        $fieldset->addField(
+            'revise_update_price_max_allowed_deviation',
             self::SELECT,
             [
                 'container_id' => 'revise_update_price_max_allowed_deviation_tr',
@@ -180,21 +193,23 @@ HTML
                 'label' => $this->__('Revise When Deviation More or Equal than'),
                 'value' => $formData['revise_update_price_max_allowed_deviation'],
                 'values' => $preparedValues,
-                'tooltip' => $this->__('
-                    It is a Percent Value of Maximum possible Deviation between Magento Price
-                    (Selling Policy settings) and Walmart Item Price, that can be ignored.<br/><br/>
-                    <strong>For example</strong>, your Magento Price is 23.25$. According to
-                    Selling Policy Settings Item Price is equal to Magento Price.
-                    The "Revise When Deviation More or Equal than" Option is specified to 1%.<br/>
-                    1) If Magento Price was changed to 23.26$, possible Deviation Value (0.23$) is
-                    <strong>more</strong> than Price change (0.1$), so the Price <strong>will not be Revised</strong>
-                    on Walmart.<br/>
-                    2) If Magento Price was changed to 23.5$, possible Deviation Value (0.23$) is
-                    <strong>less</strong> than Price change (0.25$), so the Price
-                    <strong>will be Revised</strong> on Walmart.<br/><br/>
-                    After Successful Revise new Magento Price (in this case is 23.5$)
-                    will be used for further Deviation count.
-                ')
+                'tooltip' => $this->__(
+                    'Specify the percentage value of maximum possible deviation between Item Price
+                    in Selling Policy and on Walmart that can be ignored. <br><br>
+
+                    For example, your Magento Product Price is 23.25$. According to Selling Policy,
+                    the Item Price is equal to Magento Product Price. The Revise When Deviation More or Equal
+                    than option is set to 1% which equals to 0.23$. <br>
+                    - If Magento Product Price is increased to 23.26$, i.e. by 0.1$, the Price value will not
+                    be revised on Walmart as this Price change is within the allowable deviation, i.e. 0.23$.
+                    <br>
+                    - If Magento Product Price is increased to 23.5$, i.e. by 0.25$, the Price value will be
+                    revised on Walmart as this Price change exceeds the allowable deviation, i.e. 0.23$.
+                    <br>
+                    After Walmart Item Price is successfully revised, the allowable deviation will be calculated
+                    based on the new Price value which equals to 23.5$ in our example.
+                    '
+                )
             ]
         );
 
@@ -204,7 +219,8 @@ HTML
             []
         );
 
-        $fieldset->addField('revise_update_promotions',
+        $fieldset->addField(
+            'revise_update_promotions',
             self::SELECT,
             [
                 'name' => 'revise_update_promotions',

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Custom;
 
+/**
+ * Class WalmartStartDate
+ * @package Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Custom
+ */
 class WalmartStartDate extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
     //########################################

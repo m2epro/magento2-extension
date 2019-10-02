@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Produc
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode;
 
+/**
+ * Class ViewGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode
+ */
 class ViewGrid extends ProductTaxCode
 {
     public function execute()
@@ -25,7 +29,7 @@ class ViewGrid extends ProductTaxCode
             $productsIds = explode(',', $productsIds);
         }
 
-        $grid = $this->createBlock('Amazon\Listing\Product\Template\ProductTaxCode\Grid');
+        $grid = $this->createBlock('Amazon_Listing_Product_Template_ProductTaxCode_Grid');
         $grid->setProductsIds($productsIds);
 
         $this->setAjaxContent($grid->toHtml());

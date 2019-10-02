@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search\Custom\ByAsin;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Amazon\Search\Custom\ByAsin
+ */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByAsin\ItemsRequester
 {
     //########################################

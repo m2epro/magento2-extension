@@ -8,8 +8,12 @@
 
 namespace Ess\M2ePro\Model\Order;
 
+use \Ess\M2ePro\Model\Ebay\Order\Item as EbayItem;
+use \Ess\M2ePro\Model\Amazon\Order\Item as AmazonItem;
+use \Ess\M2ePro\Model\Walmart\Order\Item as WalmartItem;
+
 /**
- * @method \Ess\M2ePro\Model\Amazon\Order\Item|\Ess\M2ePro\Model\Ebay\Order\Item|\Ess\M2ePro\Model\Walmart\Order\Item getChildObject()
+ * @method EbayItem|AmazonItem|WalmartItem getChildObject()
  */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
@@ -19,12 +23,12 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
     // Order Import does not support product type: %type%.
 
     /** @var \Ess\M2ePro\Model\Order */
-    private $order = NULL;
+    private $order;
 
     /** @var \Ess\M2ePro\Model\Magento\Product */
-    private $magentoProduct = NULL;
+    private $magentoProduct;
 
-    private $proxy = NULL;
+    private $proxy;
 
     //########################################
 
@@ -55,7 +59,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
             return false;
         }
 
-        $this->order = NULL;
+        $this->order = null;
 
         $this->deleteChildInstance();
 
@@ -90,7 +94,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 
     public function getAssociatedOptions()
     {
-        return $this->getSetting('product_details', 'associated_options', array());
+        return $this->getSetting('product_details', 'associated_options', []);
     }
 
     public function setAssociatedProducts(array $products)
@@ -101,7 +105,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 
     public function getAssociatedProducts()
     {
-        return $this->getSetting('product_details', 'associated_products', array());
+        return $this->getSetting('product_details', 'associated_products', []);
     }
 
     public function setReservedProducts(array $products)
@@ -112,7 +116,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 
     public function getReservedProducts()
     {
-        return $this->getSetting('product_details', 'reserved_products', array());
+        return $this->getSetting('product_details', 'reserved_products', []);
     }
 
     //########################################
@@ -133,9 +137,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
      */
     public function getOrder()
     {
-        if (is_null($this->order)) {
+        if ($this->order === null) {
             $this->order = $this->parentFactory->getObjectLoaded(
-                $this->getComponentMode(), 'Order', $this->getOrderId()
+                $this->getComponentMode(),
+                'Order',
+                $this->getOrderId()
             );
         }
 
@@ -151,7 +157,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
             return $this;
         }
 
-        if (is_null($this->magentoProduct)) {
+        if ($this->magentoProduct === null) {
             $this->magentoProduct = $this->modelFactory->getObject('Magento\Product');
         }
         $this->magentoProduct->setProduct($product);
@@ -161,8 +167,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 
     public function getProduct()
     {
-        if (is_null($this->getProductId())) {
-            return NULL;
+        if ($this->getProductId() === null) {
+            return null;
         }
 
         return $this->getMagentoProduct()->getProduct();
@@ -170,11 +176,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 
     public function getMagentoProduct()
     {
-        if (is_null($this->getProductId())) {
-            return NULL;
+        if ($this->getProductId() === null) {
+            return null;
         }
 
-        if (is_null($this->magentoProduct)) {
+        if ($this->magentoProduct === null) {
             $this->magentoProduct = $this->modelFactory->getObject('Magento\Product');
             $this->magentoProduct
                 ->setStoreId($this->getOrder()->getStoreId())
@@ -188,7 +194,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 
     public function getProxy()
     {
-        if (is_null($this->proxy)) {
+        if ($this->proxy === null) {
             $this->proxy = $this->getChildObject()->getProxy();
         }
 
@@ -201,7 +207,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
     {
         $channelItem = $this->getChildObject()->getChannelItem();
 
-        if (is_null($channelItem)) {
+        if ($channelItem === null) {
             return $this->getOrder()->getStoreId();
         }
 
@@ -211,7 +217,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
             return $storeId;
         }
 
-        if (is_null($this->getProductId())) {
+        if ($this->getProductId() === null) {
             return $this->getHelper('Magento\Store')->getDefaultStoreId();
         }
 
@@ -235,7 +241,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
      */
     public function associateWithProduct()
     {
-        if (is_null($this->getProductId()) || !$this->getMagentoProduct()->exists()) {
+        if ($this->getProductId() === null || !$this->getMagentoProduct()->exists()) {
             $this->assignProduct($this->getChildObject()->getAssociatedProductId());
         }
 
@@ -243,9 +249,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 
         if (!in_array($this->getMagentoProduct()->getTypeId(), $supportedProductTypes)) {
             $message = $this->getHelper('Module\Log')->encodeDescription(
-                'Order Import does not support Product type: %type%.', array(
+                'Order Import does not support Product type: %type%.',
+                [
                     'type' => $this->getMagentoProduct()->getTypeId()
-                )
+                ]
             );
 
             throw new \Ess\M2ePro\Model\Exception($message);
@@ -331,7 +338,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
         $existOptionsIds = array_keys($existOptions);
         $foundOptionsIds = array_keys($productDetails['associated_options']);
 
-        if (count($existOptions) == 0 && count($existProducts) == 0) {
+        if (empty($existOptions) && empty($existProducts)) {
             // options mapping invoked for the first time, use found options
             $this->setAssociatedOptions($productDetails['associated_options']);
 
@@ -344,7 +351,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
             return;
         }
 
-        if (count(array_diff($foundOptionsIds, $existOptionsIds)) > 0) {
+        if (!empty(array_diff($foundOptionsIds, $existOptionsIds))) {
             // options were already mapped, but not all of them
             throw new \Ess\M2ePro\Model\Exception\Logic('Selected Options do not match the Product Options.');
         }
@@ -367,7 +374,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
         $orderItemOptions  = (array)$this->getChildObject()->getVariationOptions();
 
         /** @var $optionsFinder \Ess\M2ePro\Model\Order\Item\OptionsFinder */
-        $optionsFinder = $this->modelFactory->getObject('Order\Item\OptionsFinder');
+        $optionsFinder = $this->modelFactory->getObject('Order_Item_OptionsFinder');
         $optionsFinder->setProduct($magentoProduct)
                       ->setMagentoOptions($magentoOptions)
                       ->addChannelOptions($storedItemOptions);
@@ -391,7 +398,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
             return $this->getChildObject()->prepareMagentoOptions($options);
         }
 
-       return $options;
+        return $options;
     }
 
     //########################################
@@ -404,8 +411,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 
         if (!$magentoProduct->exists()) {
             $this->setData('product_id', null);
-            $this->setAssociatedProducts(array());
-            $this->setAssociatedOptions(array());
+            $this->setAssociatedProducts([]);
+            $this->setAssociatedOptions([]);
             $this->save();
 
             throw new \InvalidArgumentException('Product does not exist.');
@@ -428,14 +435,14 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
             throw new \Ess\M2ePro\Model\Exception\Logic('Product does not exist.');
         }
 
-        if (count($associatedProducts) == 0
-            || (!$magentoProduct->isGroupedType() && count($associatedOptions) == 0)
+        if (empty($associatedProducts)
+            || (!$magentoProduct->isGroupedType() && empty($associatedOptions))
         ) {
             throw new \InvalidArgumentException('Required Options were not selected.');
         }
 
         if ($magentoProduct->isGroupedType()) {
-            $associatedOptions = array();
+            $associatedOptions = [];
             $associatedProducts = reset($associatedProducts);
         }
 
@@ -454,8 +461,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
     public function unassignProduct()
     {
         $this->setData('product_id', null);
-        $this->setAssociatedProducts(array());
-        $this->setAssociatedOptions(array());
+        $this->setAssociatedProducts([]);
+        $this->setAssociatedOptions([]);
 
         if ($this->getOrder()->getReserve()->isPlaced()) {
             $this->getOrder()->getReserve()->cancel();

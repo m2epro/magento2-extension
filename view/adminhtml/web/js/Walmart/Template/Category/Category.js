@@ -36,6 +36,9 @@ define([
             $('marketplace_id').observe('change', WalmartTemplateCategoryObj.onChangeMarketplace);
 
             $('edit_category_link').observe('click', WalmartTemplateCategoryObj.onClickEditCategory);
+
+            $('product_data_nick').observe('change', WalmartTemplateCategoryObj.onProductDataNickChange)
+                .simulate('change');
         },
 
         initValidation: function()
@@ -154,6 +157,14 @@ define([
             WalmartTemplateCategoryCategoriesChooserObj.showEditCategoryPopUp();
         },
 
+        onProductDataNickChange: function()
+        {
+            $('magento_block_template_category_edit_specifics').hide();
+            if (this.value != '') {
+                $('magento_block_template_category_edit_specifics').show();
+            }
+        },
+
         // ---------------------------------------
 
         setCategory: function(categoryInfo, notSetProductTypeForceIfOnlyOne)
@@ -186,6 +197,7 @@ define([
             var self = this;
 
             this.categoryProductDataNickHiddenInput.value = productDataNick;
+            this.categoryProductDataNickHiddenInput.simulate('change');
 
             this.updateWarningMessagesVisibility();
 
@@ -215,6 +227,7 @@ define([
         resetProductDataNick: function()
         {
             this.categoryProductDataNickHiddenInput.value = '';
+            this.categoryProductDataNickHiddenInput.simulate('change');
             this.specificHandler.reset();
         },
 

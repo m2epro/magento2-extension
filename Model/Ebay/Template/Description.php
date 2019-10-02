@@ -102,7 +102,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Description\Source[]
      */
-    private $descriptionSourceModels = array();
+    private $descriptionSourceModels = [];
 
     //########################################
 
@@ -117,8 +117,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->driverPool = $driverPool;
         parent::__construct(
             $parentFactory,
@@ -163,14 +162,18 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
         return (bool)$this->activeRecordFactory->getObject('Ebay\Listing')
                             ->getCollection()
-                            ->addFieldToFilter('template_description_mode',
-                                               \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE)
+                            ->addFieldToFilter(
+                                'template_description_mode',
+                                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                            )
                             ->addFieldToFilter('template_description_id', $this->getId())
                             ->getSize() ||
-               (bool)$this->activeRecordFactory->getObject('Ebay\Listing\Product')
+               (bool)$this->activeRecordFactory->getObject('Ebay_Listing_Product')
                             ->getCollection()
-                            ->addFieldToFilter('template_description_mode',
-                                               \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE)
+                            ->addFieldToFilter(
+                                'template_description_mode',
+                                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                            )
                             ->addFieldToFilter('template_description_id', $this->getId())
                             ->getSize();
     }
@@ -179,7 +182,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_description');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_description');
         return parent::save();
     }
 
@@ -203,9 +206,9 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         // ---------------------------------------
 
         $temp = parent::delete();
-        $temp && $this->descriptionSourceModels = array();
+        $temp && $this->descriptionSourceModels = [];
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_description');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_description');
 
         return $temp;
     }
@@ -224,7 +227,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
             return $this->descriptionSourceModels[$productId];
         }
 
-        $this->descriptionSourceModels[$productId] = $this->modelFactory->getObject('Ebay\Template\Description\Source');
+        $this->descriptionSourceModels[$productId] = $this->modelFactory->getObject('Ebay_Template_Description_Source');
         $this->descriptionSourceModels[$productId]->setMagentoProduct($magentoProduct);
         $this->descriptionSourceModels[$productId]->setDescriptionTemplate($this->getParentObject());
 
@@ -272,10 +275,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getTitleSource()
     {
-        return array(
+        return [
             'mode'     => $this->getTitleMode(),
             'template' => $this->getData('title_template')
-        );
+        ];
     }
 
     /**
@@ -283,13 +286,13 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getTitleAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getTitleSource();
 
         if ($src['mode'] == self::TITLE_MODE_PRODUCT) {
             $attributes[] = 'name';
         } else {
-            $match = array();
+            $match = [];
             preg_match_all('/#([a-zA-Z_0-9]+?)#/', $src['template'], $match);
             $match && $attributes = $match[1];
         }
@@ -328,10 +331,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getSubTitleSource()
     {
-        return array(
+        return [
             'mode'     => $this->getSubTitleMode(),
             'template' => $this->getData('subtitle_template')
-        );
+        ];
     }
 
     /**
@@ -339,11 +342,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getSubTitleAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getSubTitleSource();
 
         if ($src['mode'] == self::SUBTITLE_MODE_CUSTOM) {
-            $match = array();
+            $match = [];
             preg_match_all('/#([a-zA-Z_0-9]+?)#/', $src['template'], $match);
             $match && $attributes = $match[1];
         }
@@ -390,10 +393,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getDescriptionSource()
     {
-        return array(
+        return [
             'mode'     => $this->getDescriptionMode(),
             'template' => $this->getData('description_template')
-        );
+        ];
     }
 
     /**
@@ -401,7 +404,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getDescriptionAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getDescriptionSource();
 
         if ($src['mode'] == self::DESCRIPTION_MODE_PRODUCT) {
@@ -423,11 +426,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getConditionSource()
     {
-        return array(
+        return [
             'mode'      => (int)$this->getData('condition_mode'),
             'value'     => (int)$this->getData('condition_value'),
             'attribute' => $this->getData('condition_attribute')
-        );
+        ];
     }
 
     /**
@@ -435,7 +438,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getConditionAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getConditionSource();
 
         if ($src['mode'] == self::CONDITION_MODE_ATTRIBUTE) {
@@ -452,10 +455,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getConditionNoteSource()
     {
-        return array(
+        return [
             'mode'      => (int)$this->getData('condition_note_mode'),
             'template'  => $this->getData('condition_note_template')
-        );
+        ];
     }
 
     /**
@@ -463,11 +466,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getConditionNoteAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getConditionNoteSource();
 
         if ($src['mode'] == self::CONDITION_NOTE_MODE_CUSTOM) {
-            $match = array();
+            $match = [];
             preg_match_all('/#([a-zA-Z_0-9]+?)#/', $src['template'], $match);
             $match && $attributes = $match[1];
         }
@@ -537,7 +540,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     public function getProductDetailsMode($type)
     {
-        if (!in_array($type, array('isbn', 'epid', 'upc', 'ean', 'brand', 'mpn'))) {
+        if (!in_array($type, ['isbn', 'epid', 'upc', 'ean', 'brand', 'mpn'])) {
             throw new \InvalidArgumentException('Unknown Product details name');
         }
 
@@ -545,7 +548,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
         if (!is_array($productDetails) || !isset($productDetails[$type]) ||
             !isset($productDetails[$type]['mode'])) {
-            return NULL;
+            return null;
         }
 
         return $productDetails[$type]['mode'];
@@ -553,7 +556,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     public function getProductDetailAttribute($type)
     {
-        if (!in_array($type, array('isbn', 'epid', 'upc', 'ean', 'brand', 'mpn'))) {
+        if (!in_array($type, ['isbn', 'epid', 'upc', 'ean', 'brand', 'mpn'])) {
             throw new \InvalidArgumentException('Unknown Product details name');
         }
 
@@ -561,7 +564,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
         if (!is_array($productDetails) || !isset($productDetails[$type]) ||
             $this->isProductDetailsModeNone($type) || !isset($productDetails[$type]['attribute'])) {
-            return NULL;
+            return null;
         }
 
         return $productDetails[$type]['attribute'];
@@ -572,7 +575,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getProductDetailAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         $temp = $this->getProductDetailAttribute('isbn');
         $temp && $attributes[] = $temp;
@@ -615,7 +618,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getEnhancements()
     {
-        return $this->getData('enhancement') ? explode(',', $this->getData('enhancement')) : array();
+        return $this->getData('enhancement') ? explode(',', $this->getData('enhancement')) : [];
     }
 
     // ---------------------------------------
@@ -733,10 +736,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getImageMainSource()
     {
-        return array(
+        return [
             'mode'     => $this->getImageMainMode(),
             'attribute' => $this->getData('image_main_attribute')
-        );
+        ];
     }
 
     /**
@@ -744,12 +747,12 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getImageMainAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getImageMainSource();
 
         if ($src['mode'] == self::IMAGE_MAIN_MODE_PRODUCT) {
             $attributes[] = 'image';
-        } else if ($src['mode'] == self::IMAGE_MAIN_MODE_ATTRIBUTE) {
+        } elseif ($src['mode'] == self::IMAGE_MAIN_MODE_ATTRIBUTE) {
             $attributes[] = $src['attribute'];
         }
 
@@ -795,11 +798,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getGalleryImagesSource()
     {
-        return array(
+        return [
             'mode'     => $this->getGalleryImagesMode(),
             'attribute' => $this->getData('gallery_images_attribute'),
             'limit' => $this->getData('gallery_images_limit')
-        );
+        ];
     }
 
     /**
@@ -807,12 +810,12 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getGalleryImagesAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getGalleryImagesSource();
 
         if ($src['mode'] == self::GALLERY_IMAGES_MODE_PRODUCT) {
             $attributes[] = 'media_gallery';
-        } else if ($src['mode'] == self::GALLERY_IMAGES_MODE_ATTRIBUTE) {
+        } elseif ($src['mode'] == self::GALLERY_IMAGES_MODE_ATTRIBUTE) {
             $attributes[] = $src['attribute'];
         }
 
@@ -858,11 +861,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getVariationImagesSource()
     {
-        return array(
+        return [
             'mode'     => $this->getVariationImagesMode(),
             'attribute' => $this->getData('variation_images_attribute'),
             'limit' => $this->getData('variation_images_limit')
-        );
+        ];
     }
 
     /**
@@ -870,12 +873,12 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getVariationImagesAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getVariationImagesSource();
 
         if ($src['mode'] == self::VARIATION_IMAGES_MODE_PRODUCT) {
             $attributes[] = 'media_gallery';
-        } else if ($src['mode'] == self::VARIATION_IMAGES_MODE_ATTRIBUTE) {
+        } elseif ($src['mode'] == self::VARIATION_IMAGES_MODE_ATTRIBUTE) {
             $attributes[] = $src['attribute'];
         }
 
@@ -935,20 +938,20 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     public function getWatermarkHash()
     {
-        $settingNamePath = array(
+        $settingNamePath = [
             'hashes',
             'current'
-        );
+        ];
 
         return $this->getSetting('watermark_settings', $settingNamePath);
     }
 
     public function getWatermarkPreviousHash()
     {
-        $settingNamePath = array(
+        $settingNamePath = [
             'hashes',
             'previous'
-        );
+        ];
 
         return $this->getSetting('watermark_settings', $settingNamePath);
     }
@@ -1099,7 +1102,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getDefaultSettings()
     {
-        return array(
+        return [
 
             'title_mode' => self::TITLE_MODE_PRODUCT,
             'title_template' => '',
@@ -1117,16 +1120,16 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
             'condition_note_mode' => self::CONDITION_NOTE_MODE_NONE,
             'condition_note_template' => '',
 
-            'product_details' => $this->getHelper('Data')->jsonEncode(array(
-                'isbn'  => array('mode' => self::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''),
-                'epid'  => array('mode' => self::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''),
-                'upc'   => array('mode' => self::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''),
-                'ean'   => array('mode' => self::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''),
-                'brand' => array('mode' => self::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''),
-                'mpn'   => array('mode' => self::PRODUCT_DETAILS_MODE_DOES_NOT_APPLY, 'attribute' => ''),
+            'product_details' => $this->getHelper('Data')->jsonEncode([
+                'isbn'  => ['mode' => self::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''],
+                'epid'  => ['mode' => self::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''],
+                'upc'   => ['mode' => self::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''],
+                'ean'   => ['mode' => self::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''],
+                'brand' => ['mode' => self::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''],
+                'mpn'   => ['mode' => self::PRODUCT_DETAILS_MODE_DOES_NOT_APPLY, 'attribute' => ''],
                 'include_description' => 1,
                 'include_image'       => 1,
-            )),
+            ]),
 
             'editor_type' => self::EDITOR_TYPE_SIMPLE,
             'cut_long_titles' => self::CUT_LONG_TITLE_ENABLED,
@@ -1145,24 +1148,24 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
             'variation_images_attribute' => '',
             'default_image_url' => '',
 
-            'variation_configurable_images' => $this->getHelper('Data')->jsonEncode(array()),
+            'variation_configurable_images' => $this->getHelper('Data')->jsonEncode([]),
             'use_supersize_images' => self::USE_SUPERSIZE_IMAGES_NO,
 
             'watermark_mode' => self::WATERMARK_MODE_NO,
 
-            'watermark_settings' => $this->getHelper('Data')->jsonEncode(array(
+            'watermark_settings' => $this->getHelper('Data')->jsonEncode([
                 'position' => self::WATERMARK_POSITION_TOP,
                 'scale' => self::WATERMARK_SCALE_MODE_NONE,
                 'transparent' => self::WATERMARK_TRANSPARENT_MODE_NO,
 
-                'hashes' => array(
+                'hashes' => [
                     'current'  => '',
                     'previous' => '',
-                )
-            )),
+                ]
+            ]),
 
-            'watermark_image' => NULL
-        );
+            'watermark_image' => null
+        ];
     }
 
     //########################################
@@ -1174,23 +1177,28 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getAffectedListingsProducts($asArrays = true, $columns = '*')
     {
-        $templateManager = $this->modelFactory->getObject('Ebay\Template\Manager');
+        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
         $templateManager->setTemplate(\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION);
 
         $listingsProducts = $templateManager->getAffectedOwnerObjects(
-           \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING_PRODUCT, $this->getId(), $asArrays, $columns
+            \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING_PRODUCT,
+            $this->getId(),
+            $asArrays,
+            $columns
         );
 
         $listings = $templateManager->getAffectedOwnerObjects(
-           \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING, $this->getId(), false
+            \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING,
+            $this->getId(),
+            false
         );
 
         foreach ($listings as $listing) {
-
             $tempListingsProducts = $listing->getChildObject()
                                             ->getAffectedListingsProductsByTemplate(
-                                               \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION,
-                                                $asArrays, $columns
+                                                \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION,
+                                                $asArrays,
+                                                $columns
                                             );
 
             foreach ($tempListingsProducts as $listingProduct) {
@@ -1205,12 +1213,12 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'));
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id']);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

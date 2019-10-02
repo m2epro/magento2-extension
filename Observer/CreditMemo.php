@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Observer;
 
+/**
+ * Class CreditMemo
+ * @package Ess\M2ePro\Observer
+ */
 class CreditMemo extends AbstractModel
 {
     protected $amazonFactory;
@@ -23,8 +27,7 @@ class CreditMemo extends AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         $this->urlBuilder = $urlBuilder;
         $this->messageManager = $messageManager;
@@ -48,12 +51,12 @@ class CreditMemo extends AbstractModel
                 return;
             }
 
-            if (is_null($order)) {
+            if ($order === null) {
                 return;
             }
 
             if ($order->getComponentMode() == \Ess\M2ePro\Helper\Component\Walmart::NICK) {
-                $this->modelFactory->getObject('Walmart\Order\CreditMemo\Handler')->handle($order, $creditmemo);
+                $this->modelFactory->getObject('Walmart_Order_CreditMemo_Handler')->handle($order, $creditmemo);
                 return;
             }
 
@@ -70,7 +73,7 @@ class CreditMemo extends AbstractModel
 
             $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
 
-            $itemsForCancel = array();
+            $itemsForCancel = [];
 
             foreach ($creditmemo->getAllItems() as $creditmemoItem) {
                 /** @var \Magento\Sales\Model\Order\Creditmemo\Item $creditmemoItem */
@@ -80,10 +83,8 @@ class CreditMemo extends AbstractModel
                     continue;
                 }
 
-                $additionalData = @unserialize($additionalData);
-                if (!is_array($additionalData) ||
-                    empty($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items'])
-                ) {
+                $additionalData = $this->getHelper('Data')->unserialize($additionalData);
+                if (empty($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items'])) {
                     continue;
                 }
 
@@ -102,7 +103,7 @@ class CreditMemo extends AbstractModel
                     /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
                     $orderItem = $amazonOrderItemCollection->getFirstItem();
 
-                    if (is_null($orderItem) || !$orderItem->getId()) {
+                    if ($orderItem === null || !$orderItem->getId()) {
                         continue;
                     }
 
@@ -119,25 +120,22 @@ class CreditMemo extends AbstractModel
                         $tax = $amazonOrderItem->getTaxAmount();
                     }
 
-                    $itemsForCancel[] = array(
+                    $itemsForCancel[] = [
                         'item_id'  => $amazonOrderItemId,
                         'qty'      => $creditmemoItem->getQty(),
-                        'prices'   => array(
+                        'prices'   => [
                             'product' => $price,
-                        ),
-                        'taxes'    => array(
+                        ],
+                        'taxes'    => [
                             'product' => $tax,
-                        ),
-                    );
+                        ],
+                    ];
                 }
             }
 
             $amazonOrder->refund($itemsForCancel);
-
         } catch (\Exception $exception) {
-
             $this->getHelper('Module\Exception')->process($exception);
-
         }
     }
 

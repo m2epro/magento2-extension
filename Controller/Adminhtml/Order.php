@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml;
 
+/**
+ * Class Order
+ * @package Ess\M2ePro\Controller\Adminhtml
+ */
 abstract class Order extends Base
 {
     protected function _isAllowed()
@@ -20,15 +24,15 @@ abstract class Order extends Base
     {
         $optionsData = $this->getRequest()->getParam('option_id');
 
-        if (is_null($optionsData) || count($optionsData) == 0) {
-            return array();
+        if ($optionsData === null || count($optionsData) == 0) {
+            return [];
         }
 
         foreach ($optionsData as $optionId => $optionData) {
             $optionData = $this->getHelper('Data')->jsonDecode($optionData);
 
             if (!isset($optionData['value_id']) || !isset($optionData['product_ids'])) {
-                return array();
+                return [];
             }
 
             $optionsData[$optionId] = $optionData;

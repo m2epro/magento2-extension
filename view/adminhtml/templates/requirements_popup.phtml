@@ -1,3 +1,16 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\RequirementsPopup $block */
+
+?>
+
 <style>
 
     .form-list tr {
@@ -11,7 +24,7 @@
 
         <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
             <div class="hor-scroll">
-                <?php echo $this->getChildHtml('requirements') ?>
+                <?php echo $block->getChildHtml('requirements') ?>
             </div>
         </div>
 

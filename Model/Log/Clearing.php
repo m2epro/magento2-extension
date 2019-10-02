@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Log;
 
+/**
+ * Class Clearing
+ * @package Ess\M2ePro\Model\Log
+ */
 class Clearing extends \Ess\M2ePro\Model\AbstractModel
 {
     const LOG_LISTINGS          = 'listings';
@@ -26,8 +30,7 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -42,8 +45,8 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
 
         $config = $this->getHelper('Module')->getConfig();
 
-        $mode = $config->getGroupValue('/logs/clearing/'.$log.'/','mode');
-        $days = $config->getGroupValue('/logs/clearing/'.$log.'/','days');
+        $mode = $config->getGroupValue('/logs/clearing/'.$log.'/', 'mode');
+        $days = $config->getGroupValue('/logs/clearing/'.$log.'/', 'days');
 
         $mode = (int)$mode;
         $days = (int)$days;
@@ -53,7 +56,7 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $minTime = $this->getMinTimeByDays($days);
-        $this->clearLogByMinTime($log,$minTime);
+        $this->clearLogByMinTime($log, $minTime);
 
         return true;
     }
@@ -67,7 +70,7 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
         $timestamp = $this->getHelper('Data')->getCurrentGmtDate(true);
         $minTime = $this->getHelper('Data')->getDate($timestamp+60*60*24*365*10);
 
-        $this->clearLogByMinTime($log,$minTime);
+        $this->clearLogByMinTime($log, $minTime);
 
         return true;
     }
@@ -84,17 +87,17 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
         $days = (int)$days;
 
         if ($mode < 0 || $mode > 1) {
-           $mode = 0;
+            $mode = 0;
         }
 
         if ($days <= 0) {
-           $days = 90;
+            $days = 90;
         }
 
         $config = $this->getHelper('Module')->getConfig();
 
-        $config->setGroupValue('/logs/clearing/'.$log.'/','mode', $mode);
-        $config->setGroupValue('/logs/clearing/'.$log.'/','days', $days);
+        $config->setGroupValue('/logs/clearing/'.$log.'/', 'mode', $mode);
+        $config->setGroupValue('/logs/clearing/'.$log.'/', 'days', $days);
 
         return true;
     }
@@ -122,17 +125,17 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
         $day = $dateTimeArray['mday'];
         $year = $dateTimeArray['year'];
 
-        $timeStamp = mktime($hours,$minutes,$seconds,$month,$day - $days, $year);
+        $timeStamp = mktime($hours, $minutes, $seconds, $month, $day - $days, $year);
 
         return $this->getHelper('Data')->getDate($timeStamp);
     }
 
     private function clearLogByMinTime($log, $minTime)
     {
-        $resourceModel = NULL;
-        $connection = NULL;
+        $resourceModel = null;
+        $connection = null;
 
-        switch($log) {
+        switch ($log) {
             case self::LOG_LISTINGS:
                 $resourceModel = $this->activeRecordFactory
                               ->getObject('Listing\Log')
@@ -140,7 +143,7 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
                 break;
             case self::LOG_OTHER_LISTINGS:
                 $resourceModel = $this->activeRecordFactory
-                              ->getObject('Listing\Other\Log')
+                              ->getObject('Listing_Other_Log')
                               ->getResource();
                 break;
             case self::LOG_SYNCHRONIZATIONS:
@@ -155,7 +158,7 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
                 break;
             case self::LOG_EBAY_PICKUP_STORE:
                 $resourceModel = $this->activeRecordFactory
-                              ->getObject('Ebay\Account\PickupStore\Log')
+                              ->getObject('Ebay_Account_PickupStore_Log')
                               ->getResource();
                 break;
         }
@@ -163,13 +166,12 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
         $table = $resourceModel->getMainTable();
         $connection = $resourceModel->getConnection();
 
-        if (is_null($table) || is_null($connection)) {
+        if ($table === null || $connection === null) {
             return;
         }
 
         $connection->delete($table, [
-            ' `create_date` < ? OR `create_date` IS NULL ' => (string)$minTime]
-        );
+            ' `create_date` < ? OR `create_date` IS NULL ' => (string)$minTime]);
     }
 
     //########################################

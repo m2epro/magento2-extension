@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity;
 
+/**
+ * Class Search
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity
+ */
 class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     //########################################
@@ -30,18 +34,18 @@ class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
         $buttonBlock = $this->createBlock('Magento\Button')
-            ->setData(array(
+            ->setData([
                 'id'    => 'searchCharity_submit',
                 'class' => 'action primary',
                 'label' => $this->__('Search'),
                 'onclick' => 'EbayTemplateSellingFormatObj.searchCharity()'
-            ));
+            ]);
         $this->setChild('submit_button', $buttonBlock);
         // ---------------------------------------
 
         $this->setChild(
             'search_charity_warning',
-            $this->getLayout()->createBlock('Magento\Framework\View\Element\Messages')
+            $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class)
                 ->addWarning($this->__('If you do not see the organization you were looking for,
                 try to enter another keywords and run the Search again.'))
         );

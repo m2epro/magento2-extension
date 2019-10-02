@@ -7,6 +7,10 @@
 
 namespace Ess\M2ePro\Observer\Import;
 
+/**
+ * Class Bunch
+ * @package Ess\M2ePro\Observer\Import
+ */
 class Bunch extends \Ess\M2ePro\Observer\AbstractModel
 {
     //########################################
@@ -22,8 +26,7 @@ class Bunch extends \Ess\M2ePro\Observer\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\PublicServices\Product\SqlChange $publicService,
         \Magento\Catalog\Model\Product $magentoProduct
-    )
-    {
+    ) {
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
         $this->publicService  = $publicService;
         $this->magentoProduct = $magentoProduct;

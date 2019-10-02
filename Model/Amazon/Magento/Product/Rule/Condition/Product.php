@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Condition;
 
+/**
+ * Class Product
+ * @package Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Condition
+ */
 class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
 {
     //########################################
 
     protected function getCustomFilters()
     {
-        $amazonFilters = array(
+        $amazonFilters = [
             'amazon_sku'               => 'AmazonSku',
             'amazon_general_id'        => 'AmazonGeneralId',
             'amazon_online_qty'        => 'AmazonOnlineQty',
@@ -24,7 +28,7 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
             'amazon_is_repricing'      => 'AmazonIsRepricing',
             'amazon_status'            => 'AmazonStatus',
             'amazon_general_id_state'  => 'AmazonGeneralIdState'
-        );
+        ];
 
         return array_merge_recursive(
             parent::getCustomFilters(),
@@ -53,7 +57,8 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
         }
 
         $model = $this->modelFactory->getObject(
-            'Amazon\Magento\Product\Rule\Custom\\'.$customFilters[$filterId], [
+            'Amazon\Magento\Product\Rule\Custom\\'.$customFilters[$filterId],
+            [
                 'filterOperator'  => $this->getData('operator'),
                 'filterCondition' => $this->getData('value')
             ]
@@ -113,93 +118,97 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
         $result = false;
 
         switch ($op) {
-            case '==': case '!=':
-            if (is_array($value)) {
-                if (is_array($validatedValue)) {
-                    $result = array_intersect($value, $validatedValue);
-                    $result = !empty($result);
+            case '==':
+            case '!=':
+                if (is_array($value)) {
+                    if (is_array($validatedValue)) {
+                        $result = array_intersect($value, $validatedValue);
+                        $result = !empty($result);
+                    } else {
+                        return false;
+                    }
                 } else {
-                    return false;
-                }
-            } else {
-                if (is_array($validatedValue)) {
-
-                    // hack for amazon status
-                    if ($this->getAttribute() == 'amazon_status') {
-                        if ($op == '==') {
-                            $result = !empty($validatedValue[$value]);
-                        } else {
-                            $result = true;
-                            foreach ($validatedValue as $status => $childrenCount) {
-                                if ($status != $value && !empty($childrenCount)) {
-                                    // will be true at the end of this method
-                                    $result = false;
-                                    break;
+                    if (is_array($validatedValue)) {
+                        // hack for amazon status
+                        if ($this->getAttribute() == 'amazon_status') {
+                            if ($op == '==') {
+                                $result = !empty($validatedValue[$value]);
+                            } else {
+                                $result = true;
+                                foreach ($validatedValue as $status => $childrenCount) {
+                                    if ($status != $value && !empty($childrenCount)) {
+                                        // will be true at the end of this method
+                                        $result = false;
+                                        break;
+                                    }
                                 }
                             }
+                        } else {
+                            $result = count($validatedValue) == 1 && array_shift($validatedValue) == $value;
                         }
                     } else {
-                        $result = count($validatedValue) == 1 && array_shift($validatedValue) == $value;
-                    }
-                } else {
-                    $result = $this->_compareValues($validatedValue, $value);
-                }
-            }
-            break;
-
-            case '<=': case '>':
-            if (!is_scalar($validatedValue)) {
-                return false;
-            } else {
-                $result = $validatedValue <= $value;
-            }
-            break;
-
-            case '>=': case '<':
-            if (!is_scalar($validatedValue)) {
-                return false;
-            } else {
-                $result = $validatedValue >= $value;
-            }
-            break;
-
-            case '{}': case '!{}':
-            if (is_scalar($validatedValue) && is_array($value)) {
-                foreach ($value as $item) {
-                    if (stripos($validatedValue,$item)!==false) {
-                        $result = true;
-                        break;
+                        $result = $this->_compareValues($validatedValue, $value);
                     }
                 }
-            } elseif (is_array($value)) {
-                if (is_array($validatedValue)) {
-                    $result = array_intersect($value, $validatedValue);
-                    $result = !empty($result);
-                } else {
+                break;
+
+            case '<=':
+            case '>':
+                if (!is_scalar($validatedValue)) {
                     return false;
-                }
-            } else {
-                if (is_array($validatedValue)) {
-                    $result = in_array($value, $validatedValue);
                 } else {
-                    $result = $this->_compareValues($value, $validatedValue, false);
+                    $result = $validatedValue <= $value;
                 }
-            }
-            break;
+                break;
 
-            case '()': case '!()':
-            if (is_array($validatedValue)) {
-                $result = count(array_intersect($validatedValue, (array)$value))>0;
-            } else {
-                $value = (array)$value;
-                foreach ($value as $item) {
-                    if ($this->_compareValues($validatedValue, $item)) {
-                        $result = true;
-                        break;
+            case '>=':
+            case '<':
+                if (!is_scalar($validatedValue)) {
+                    return false;
+                } else {
+                    $result = $validatedValue >= $value;
+                }
+                break;
+
+            case '{}':
+            case '!{}':
+                if (is_scalar($validatedValue) && is_array($value)) {
+                    foreach ($value as $item) {
+                        if (stripos($validatedValue, $item)!==false) {
+                            $result = true;
+                            break;
+                        }
+                    }
+                } elseif (is_array($value)) {
+                    if (is_array($validatedValue)) {
+                        $result = array_intersect($value, $validatedValue);
+                        $result = !empty($result);
+                    } else {
+                        return false;
+                    }
+                } else {
+                    if (is_array($validatedValue)) {
+                        $result = in_array($value, $validatedValue);
+                    } else {
+                        $result = $this->_compareValues($value, $validatedValue, false);
                     }
                 }
-            }
-            break;
+                break;
+
+            case '()':
+            case '!()':
+                if (is_array($validatedValue)) {
+                    $result = count(array_intersect($validatedValue, (array)$value))>0;
+                } else {
+                    $value = (array)$value;
+                    foreach ($value as $item) {
+                        if ($this->_compareValues($validatedValue, $item)) {
+                            $result = true;
+                            break;
+                        }
+                    }
+                }
+                break;
         }
 
         if ('!=' == $op || '>' == $op || '<' == $op || '!{}' == $op || '!()' == $op) {

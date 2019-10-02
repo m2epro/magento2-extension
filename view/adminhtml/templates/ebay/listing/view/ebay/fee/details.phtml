@@ -1,6 +1,17 @@
 <?php
-    $fees = $block->getFees();
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee\Details $block */
+
+$fees = $block->getFees();
 ?>
+
 <style type="text/css">
     #fees-table {
         border: 1px solid #D6D6D6 !important;
@@ -33,11 +44,11 @@
             <div class="cell"><?php echo $block->__('Name') ?></div>
             <div class="cell"><?php echo $block->__('Fee') ?></div>
         </div>
-        <?php foreach ($fees as $feeCode => $fee): ?>
-            <?php if ($feeCode != 'listing_fee'): ?>
+        <?php foreach ($fees as $feeCode => $fee) : ?>
+            <?php if ($feeCode != 'listing_fee') : ?>
                 <div class="row">
-                    <div class="cell label"><?php echo $block->__($this->getHelper('Data')->escapeHtml($fee['label'])) ?>:</div>
-                    <div class="cell value"><?php echo $this->getHelper('Data')->escapeHtml($fee['value']) ?></div>
+                    <div class="cell label"><?php echo $block->__($block->getHelper('Data')->escapeHtml($fee['label'])) ?>:</div>
+                    <div class="cell value"><?php echo $block->getHelper('Data')->escapeHtml($fee['value']) ?></div>
                 </div>
             <?php endif; ?>
         <?php endforeach; ?>

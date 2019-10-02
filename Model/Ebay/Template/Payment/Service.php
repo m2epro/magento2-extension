@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Payment;
 
+/**
+ * Class Service
+ * @package Ess\M2ePro\Model\Ebay\Template\Payment
+ */
 class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Payment
      */
-    private $paymentTemplateModel = NULL;
+    private $paymentTemplateModel = null;
 
     //########################################
 
@@ -28,7 +32,7 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function delete()
     {
         $temp = parent::delete();
-        $temp && $this->paymentTemplateModel = NULL;
+        $temp && $this->paymentTemplateModel = null;
         return $temp;
     }
 
@@ -39,10 +43,10 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getPaymentTemplate()
     {
-        if (is_null($this->paymentTemplateModel)) {
-
+        if ($this->paymentTemplateModel === null) {
             $this->paymentTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Ebay\Template\Payment', $this->getTemplatePaymentId()
+                'Ebay_Template_Payment',
+                $this->getTemplatePaymentId()
             );
         }
 

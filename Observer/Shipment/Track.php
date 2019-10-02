@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Observer\Shipment;
 
+/**
+ * Class Track
+ * @package Ess\M2ePro\Observer\Shipment
+ */
 class Track extends \Ess\M2ePro\Observer\AbstractModel
 {
     //########################################
@@ -15,7 +19,6 @@ class Track extends \Ess\M2ePro\Observer\AbstractModel
     public function process()
     {
         try {
-
             if ($this->getHelper('Data\GlobalData')->getValue('skip_shipment_observer')) {
                 return;
             }
@@ -31,13 +34,15 @@ class Track extends \Ess\M2ePro\Observer\AbstractModel
             try {
                 /** @var $order \Ess\M2ePro\Model\Order */
                 $order = $this->activeRecordFactory->getObjectLoaded(
-                    'Order', $magentoOrderId, 'magento_order_id'
+                    'Order',
+                    $magentoOrderId,
+                    'magento_order_id'
                 );
             } catch (\Exception $e) {
                 return;
             }
 
-            if (is_null($order)) {
+            if ($order === null) {
                 return;
             }
 
@@ -51,14 +56,11 @@ class Track extends \Ess\M2ePro\Observer\AbstractModel
 
             /** @var $shipmentHandler \Ess\M2ePro\Model\Order\Shipment\Handler */
             $shipmentHandler = $this->modelFactory
-                                    ->getObject('Order\Shipment\Handler')
+                                    ->getObject('Order_Shipment_Handler')
                                     ->factory($order->getComponentMode());
             $shipmentHandler->handle($order, $shipment);
-
         } catch (\Exception $exception) {
-
             $this->getHelper('Module\Exception')->process($exception);
-
         }
     }
 

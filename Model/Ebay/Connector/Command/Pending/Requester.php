@@ -8,17 +8,21 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Command\Pending;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Ebay\Connector\Command\Pending
+ */
 abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\Pending\Requester
 {
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
-    protected $marketplace = NULL;
+    protected $marketplace = null;
 
     /**
      * @var \Ess\M2ePro\Model\Account
      */
-    protected $account = NULL;
+    protected $account = null;
 
     // ########################################
 
@@ -28,10 +32,9 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\Pending\Req
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params
-    )
-    {
-        $this->marketplace = (!is_null($marketplace->getId())) ? $marketplace : NULL;
-        $this->account = (!is_null($account->getId())) ? $account : NULL;
+    ) {
+        $this->marketplace = ($marketplace->getId() !== null) ? $marketplace : null;
+        $this->account = ($account->getId() !== null) ? $account : null;
 
         parent::__construct($helperFactory, $modelFactory, $params);
     }
@@ -44,10 +47,10 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\Pending\Req
 
         $requestData = $request->getData();
 
-        if (!is_null($this->marketplace)) {
+        if ($this->marketplace !== null) {
             $requestData['marketplace'] = $this->marketplace->getNativeId();
         }
-        if (!is_null($this->account)) {
+        if ($this->account !== null) {
             $requestData['account'] = $this->account->getChildObject()->getServerHash();
         }
 
@@ -62,10 +65,10 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\Pending\Req
     {
         $params = parent::getProcessingParams();
 
-        if (!is_null($this->marketplace)) {
+        if ($this->marketplace !== null) {
             $params['marketplace_id'] = $this->marketplace->getId();
         }
-        if (!is_null($this->account)) {
+        if ($this->account !== null) {
             $params['account_id'] = $this->account->getId();
         }
 
@@ -76,10 +79,10 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\Pending\Req
     {
         $params = parent::getResponserParams();
 
-        if (!is_null($this->marketplace)) {
+        if ($this->marketplace !== null) {
             $params['marketplace_id'] = $this->marketplace->getId();
         }
-        if (!is_null($this->account)) {
+        if ($this->account !== null) {
             $params['account_id'] = $this->account->getId();
         }
 

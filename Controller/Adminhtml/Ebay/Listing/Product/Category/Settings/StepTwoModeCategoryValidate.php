@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
 
 use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
+/**
+ * Class StepTwoModeCategoryValidate
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
+ */
 class StepTwoModeCategoryValidate extends Settings
 {
 
@@ -33,7 +37,6 @@ class StepTwoModeCategoryValidate extends Settings
 
         $isValid = true;
         foreach ($sessionData as $categoryData) {
-
             if ($categoryData['category_main_mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY) {
                 $key = 'category_main_id';
             } else {

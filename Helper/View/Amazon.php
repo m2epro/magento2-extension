@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\View;
 
+/**
+ * Class Amazon
+ * @package Ess\M2ePro\Helper\View
+ */
 class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 {
     // M2ePro_TRANSLATIONS
@@ -30,8 +34,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Backend\Model\Auth\Session $authSession,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->urlBuilder = $urlBuilder;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->authSession = $authSession;

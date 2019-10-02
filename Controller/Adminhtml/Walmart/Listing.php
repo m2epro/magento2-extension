@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
+/**
+ * Class Listing
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart
+ */
 abstract class Listing extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {
     //########################################

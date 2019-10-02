@@ -8,17 +8,21 @@
 
 namespace Ess\M2ePro\Model\Walmart\Connector\Product;
 
+/**
+ * Class ProcessingRunner
+ * @package Ess\M2ePro\Model\Walmart\Connector\Product
+ */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-    private $listingProduct = NULL;
+    private $listingProduct = null;
 
     // ########################################
 
     public function processSuccess()
     {
         // listing product can be removed during processing action
-        if (is_null($this->getListingProduct()->getId())) {
+        if ($this->getListingProduct()->getId() === null) {
             return true;
         }
 
@@ -28,7 +32,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
     public function processExpired()
     {
         // listing product can be removed during processing action
-        if (is_null($this->getListingProduct()->getId())) {
+        if ($this->getListingProduct()->getId() === null) {
             return;
         }
 
@@ -38,7 +42,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
     public function complete()
     {
         // listing product can be removed during processing action
-        if (is_null($this->getListingProduct()->getId())) {
+        if ($this->getListingProduct()->getId() === null) {
             $this->getProcessingObject()->delete();
             return;
         }
@@ -53,15 +57,15 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $params = $this->getParams();
 
         /** @var \Ess\M2ePro\Model\Walmart\Processing\Action $processingAction */
-        $processingAction = $this->activeRecordFactory->getObject('Walmart\Processing\Action');
-        $processingAction->setData(array(
+        $processingAction = $this->activeRecordFactory->getObject('Walmart_Processing_Action');
+        $processingAction->setData([
             'account_id'    => $params['account_id'],
             'processing_id' => $this->getProcessingObject()->getId(),
             'related_id'    => $params['listing_product_id'],
             'type'          => $this->getProcessingActionType(),
             'request_data'  => $this->getHelper('Data')->jsonEncode($params['request_data']),
             'start_date'    => $params['start_date'],
-        ));
+        ]);
         $processingAction->save();
     }
 
@@ -74,7 +78,8 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $this->getListingProduct()->addProcessingLock(null, $this->getProcessingObject()->getId());
         $this->getListingProduct()->addProcessingLock('in_action', $this->getProcessingObject()->getId());
         $this->getListingProduct()->addProcessingLock(
-            $params['lock_identifier'] . '_action', $this->getProcessingObject()->getId()
+            $params['lock_identifier'] . '_action',
+            $this->getProcessingObject()->getId()
         );
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
@@ -87,7 +92,8 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
             $parentListingProduct->addProcessingLock(null, $this->getProcessingObject()->getId());
             $parentListingProduct->addProcessingLock(
-                'child_products_in_action', $this->getProcessingObject()->getId()
+                'child_products_in_action',
+                $this->getProcessingObject()->getId()
             );
         }
 
@@ -103,7 +109,8 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $this->getListingProduct()->deleteProcessingLocks(null, $this->getProcessingObject()->getId());
         $this->getListingProduct()->deleteProcessingLocks('in_action', $this->getProcessingObject()->getId());
         $this->getListingProduct()->deleteProcessingLocks(
-            $params['lock_identifier'] . '_action', $this->getProcessingObject()->getId()
+            $params['lock_identifier'] . '_action',
+            $this->getProcessingObject()->getId()
         );
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
@@ -116,7 +123,8 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
             $parentListingProduct->deleteProcessingLocks(null, $this->getProcessingObject()->getId());
             $parentListingProduct->deleteProcessingLocks(
-                'child_products_in_action', $this->getProcessingObject()->getId()
+                'child_products_in_action',
+                $this->getProcessingObject()->getId()
             );
         }
 
@@ -145,7 +153,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
     protected function getListingProduct()
     {
-        if (!is_null($this->listingProduct)) {
+        if ($this->listingProduct !== null) {
             return $this->listingProduct;
         }
 
@@ -154,7 +162,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Walmart::NICK, 'Listing\Product')
                                           ->getCollection();
-        $collection->addFieldToFilter('id', array('in' => $params['listing_product_id']));
+        $collection->addFieldToFilter('id', ['in' => $params['listing_product_id']]);
 
         return $this->listingProduct = $collection->getFirstItem();
     }

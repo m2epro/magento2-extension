@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection;
 
+/**
+ * Class Cron
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection
+ */
 class Cron extends AbstractInspection
 {
     //########################################
@@ -42,17 +46,17 @@ class Cron extends AbstractInspection
         $this->cronGet = 'GET '.$baseUrl.'cron.php';
 
         $cronLastRunTime = $this->getHelper('Module\Cron')->getLastRun();
-        if (!is_null($cronLastRunTime)) {
+        if ($cronLastRunTime !== null) {
             $this->cronLastRunTime = $cronLastRunTime;
-            $this->cronIsNotWorking = $this->getHelper('Module\Cron')->isLastRunMoreThan(12,true);
+            $this->cronIsNotWorking = $this->getHelper('Module\Cron')->isLastRunMoreThan(12, true);
         }
 
-        $cronServiceIps = array();
+        $cronServiceIps = [];
 
         for ($i = 1; $i < 100; $i++) {
-            $serviceHostName = $modConfig->getGroupValue('/cron/service/','hostname_'.$i);
+            $serviceHostName = $modConfig->getGroupValue('/cron/service/', 'hostname_'.$i);
 
-            if (is_null($serviceHostName)) {
+            if ($serviceHostName === null) {
                 break;
             }
 
@@ -61,9 +65,9 @@ class Cron extends AbstractInspection
 
         $this->cronServiceIps = implode(', ', $cronServiceIps);
 
-        $this->isMagentoCronDisabled    = (bool)(int)$modConfig->getGroupValue('/cron/magento/','disabled');
-        $this->isControllerCronDisabled = (bool)(int)$modConfig->getGroupValue('/cron/service_controller/','disabled');
-        $this->isPubCronDisabled        = (bool)(int)$modConfig->getGroupValue('/cron/service_pub/','disabled');
+        $this->isMagentoCronDisabled    = (bool)(int)$modConfig->getGroupValue('/cron/magento/', 'disabled');
+        $this->isControllerCronDisabled = (bool)(int)$modConfig->getGroupValue('/cron/service_controller/', 'disabled');
+        $this->isPubCronDisabled        = (bool)(int)$modConfig->getGroupValue('/cron/service_pub/', 'disabled');
 
         return parent::_beforeToHtml();
     }

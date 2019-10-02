@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Listing;
 
+/**
+ * Class Other
+ * @package Ess\M2ePro\Model\ResourceModel\Walmart\Listing
+ */
 class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
@@ -40,9 +44,9 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
     //########################################
 
     public function getProductsDataBySkus(
-        array $skus = array(),
-        array $filters = array(),
-        array $columns = array()
+        array $skus = [],
+        array $filters = [],
+        array $columns = []
     ) {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection $listingOtherCollection */
         $listingOtherCollection = $this->walmartFactory->getObject('Listing\Other')->getCollection();
@@ -51,7 +55,7 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
             $skus = array_map(function ($el) {
                 return (string)$el;
             }, $skus);
-            $listingOtherCollection->addFieldToFilter('sku', array('in' => array_unique($skus)));
+            $listingOtherCollection->addFieldToFilter('sku', ['in' => array_unique($skus)]);
         }
 
         if (!empty($filters)) {

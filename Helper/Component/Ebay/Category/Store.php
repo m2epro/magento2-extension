@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Component\Ebay\Category;
 
+/**
+ * Class Store
+ * @package Ess\M2ePro\Helper\Component\Ebay\Category
+ */
 class Store extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $modelFactory;
@@ -23,8 +27,7 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayParentFactory = $ebayParentFactory;
         $this->resourceConnection = $resourceConnection;
@@ -38,11 +41,10 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
         $account = $this->ebayParentFactory->getCachedObjectLoaded('Account', $accountId);
         $categories = $account->getChildObject()->getEbayStoreCategories();
 
-        $pathData = array();
+        $pathData = [];
 
         while (true) {
-
-            $currentCategory = NULL;
+            $currentCategory = null;
 
             foreach ($categories as $category) {
                 if ($category['category_id'] == $categoryId) {
@@ -51,7 +53,7 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
                 }
             }
 
-            if (is_null($currentCategory)) {
+            if ($currentCategory === null) {
                 break;
             }
 
@@ -72,9 +74,10 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getSameTemplatesData($ids)
     {
-        return $this->getHelper('Component\Ebay\Category')->getSameTemplatesData(
-            $ids, $this->activeRecordFactory->getObject('Ebay\Template\OtherCategory')->getResource()->getMainTable(),
-            array('category_secondary','store_category_main','store_category_secondary')
+        return $this->getHelper('Component_Ebay_Category')->getSameTemplatesData(
+            $ids,
+            $this->activeRecordFactory->getObject('Ebay_Template_OtherCategory')->getResource()->getMainTable(),
+            ['category_secondary','store_category_main','store_category_secondary']
         );
     }
 
@@ -83,46 +86,46 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
         /** @var $connection \Magento\Framework\DB\Adapter\AdapterInterface */
         $connection = $this->resourceConnection->getConnection();
 
-        $etocTable = $this->activeRecordFactory->getObject('Ebay\Template\OtherCategory')
+        $etocTable = $this->activeRecordFactory->getObject('Ebay_Template_OtherCategory')
             ->getResource()->getMainTable();
-        $eascTable = $this->getHelper('Module\Database\Structure')
+        $eascTable = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
 
         $primarySelect = $connection->select();
         $primarySelect->from(
-                array('primary_table' => $etocTable)
-            )
+            ['primary_table' => $etocTable]
+        )
             ->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns(array(
+            ->columns([
                 'store_category_main_id as category_id',
                 'account_id',
-            ))
+            ])
             ->where('store_category_main_mode = ?', \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY)
-            ->group(array('category_id', 'account_id'));
+            ->group(['category_id', 'account_id']);
 
         $secondarySelect = $connection->select();
         $secondarySelect->from(
-                array('secondary_table' => $etocTable)
-            )
+            ['secondary_table' => $etocTable]
+        )
             ->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns(array(
+            ->columns([
                 'store_category_secondary_id as category_id',
                 'account_id',
-            ))
+            ])
             ->where('store_category_secondary_mode = ?', \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY)
-            ->group(array('category_id', 'account_id'));
+            ->group(['category_id', 'account_id']);
 
         $unionSelect = $connection->select();
-        $unionSelect->union(array(
+        $unionSelect->union([
             $primarySelect,
             $secondarySelect,
-        ));
+        ]);
 
         $mainSelect = $connection->select();
         $mainSelect->reset()
-            ->from(array('main_table' => $unionSelect))
+            ->from(['main_table' => $unionSelect])
             ->joinLeft(
-                array('easc' => $eascTable),
+                ['easc' => $eascTable],
                 'easc.account_id = main_table.account_id
                     AND easc.category_id = main_table.category_id'
             )

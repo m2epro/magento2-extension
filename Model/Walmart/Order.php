@@ -6,13 +6,16 @@
  * @license    Commercial use is forbidden
  */
 
+namespace Ess\M2ePro\Model\Walmart;
+
+/**
+ * Class Order
+ * @package Ess\M2ePro\Model\Walmart
+ */
 /**
  * @method \Ess\M2ePro\Model\Order getParentObject()
  * @method \Ess\M2ePro\Model\ResourceModel\Walmart\Order getResource()
  */
-
-namespace Ess\M2ePro\Model\Walmart;
-
 class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     // M2ePro\TRANSLATIONS
@@ -23,6 +26,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     const STATUS_SHIPPED_PARTIALLY = 2;
     const STATUS_SHIPPED = 3;
     const STATUS_CANCELED = 5;
+
+    private $shipmentFactory;
 
     private $subTotalPrice = null;
 
@@ -37,6 +42,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\Magento\Order\ShipmentFactory $shipmentFactory,
         \Ess\M2ePro\Model\Walmart\Order\ShippingAddressFactory $shippingAddressFactory,
         \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
         \Magento\Sales\Model\Order\Email\Sender\InvoiceSender $invoiceSender,
@@ -51,12 +57,23 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
+        $this->shipmentFactory = $shipmentFactory;
         $this->shippingAddressFactory = $shippingAddressFactory;
         $this->orderSender = $orderSender;
         $this->invoiceSender = $invoiceSender;
 
-        parent::__construct($walmartFactory, $parentFactory, $modelFactory, $activeRecordFactory, $helperFactory,
-            $context, $registry, $resource, $resourceCollection, $data);
+        parent::__construct(
+            $walmartFactory,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
     }
 
     //########################################
@@ -70,11 +87,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     //########################################
 
     /**
-     * @return \Ess\M2ePro\Model\Walmart\Order\Proxy
+     * @return \Ess\M2ePro\Model\Walmart\Order\ProxyObject
      */
     public function getProxy()
     {
-        return $this->modelFactory->getObject('Walmart\Order\Proxy', ['order' => $this]);
+        return $this->modelFactory->getObject('Walmart_Order_ProxyObject', ['order' => $this]);
     }
 
     //########################################
@@ -191,6 +208,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
             return 0;
         }
 
+        if ($this->getSubtotalPrice() <= 0) {
+            return 0;
+        }
+
         $taxRate = ($taxAmount / $this->getSubtotalPrice()) * 100;
 
         return round($taxRate, 4);
@@ -203,6 +224,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     {
         $taxAmount = $this->getShippingPriceTaxAmount();
         if ($taxAmount <= 0) {
+            return 0;
+        }
+
+        if ($this->getShippingPrice() <= 0) {
             return 0;
         }
 
@@ -260,7 +285,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
      */
     public function getSubtotalPrice()
     {
-        if (is_null($this->subTotalPrice)) {
+        if ($this->subTotalPrice === null) {
             $this->subTotalPrice = $this->getResource()->getItemsTotal($this->getId());
         }
 
@@ -272,7 +297,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
      */
     public function getGrandTotalPrice()
     {
-        if (is_null($this->grandTotalPrice)) {
+        if ($this->grandTotalPrice === null) {
             $this->grandTotalPrice = $this->getSubtotalPrice();
             $this->grandTotalPrice += $this->getProductPriceTaxAmount();
             $this->grandTotalPrice += $this->getShippingPrice();
@@ -336,7 +361,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
      */
     public function isReservable()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -356,6 +381,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     public function canAcknowledgeOrder()
     {
         foreach ($this->getParentObject()->getItemsCollection()->getItems() as $item) {
+            /**@var \Ess\M2ePro\Model\Walmart\Order\Item $item */
             if (!$item->canCreateMagentoOrder()) {
                 return false;
             }
@@ -402,7 +428,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         }
 
         $magentoOrder = $this->getParentObject()->getMagentoOrder();
-        if (is_null($magentoOrder)) {
+        if ($magentoOrder === null) {
             return false;
         }
 
@@ -430,7 +456,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         // Create invoice
         // ---------------------------------------
         /** @var $invoiceBuilder \Ess\M2ePro\Model\Magento\Order\Invoice */
-        $invoiceBuilder = $this->modelFactory->getObject('Magento\Order\Invoice');
+        $invoiceBuilder = $this->modelFactory->getObject('Magento_Order_Invoice');
         $invoiceBuilder->setMagentoOrder($magentoOrder);
         $invoiceBuilder->buildInvoice();
         // ---------------------------------------
@@ -460,7 +486,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         }
 
         $magentoOrder = $this->getParentObject()->getMagentoOrder();
-        if (is_null($magentoOrder)) {
+        if ($magentoOrder === null) {
             return false;
         }
 
@@ -474,7 +500,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     // ---------------------------------------
 
     /**
-     * @return \Magento\Sales\Model\Order\Shipment|null
+     * @return \Magento\Sales\Model\Order\Shipment[]|null
      */
     public function createShipments()
     {
@@ -482,15 +508,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
             return null;
         }
 
-        $magentoOrder = $this->getParentObject()->getMagentoOrder();
-
-        // Create shipment
-        // ---------------------------------------
         /** @var $shipmentBuilder \Ess\M2ePro\Model\Magento\Order\Shipment */
-        $shipmentBuilder = $this->modelFactory->getObject('Magento\Order\Shipment');
-        $shipmentBuilder->setMagentoOrder($magentoOrder);
+        $shipmentBuilder = $this->shipmentFactory->create($this->getParentObject()->getMagentoOrder());
+        $shipmentBuilder->setMagentoOrder($this->getParentObject()->getMagentoOrder());
         $shipmentBuilder->buildShipments();
-        // ---------------------------------------
 
         return $shipmentBuilder->getShipments();
     }
@@ -515,20 +536,19 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
      * @param array $items
      * @return bool
      */
-    public function updateShippingStatus(array $trackingDetails = array(), array $items = array())
+    public function updateShippingStatus(array $trackingDetails = [], array $items = [])
     {
         if (!$this->canUpdateShippingStatus()) {
             return false;
         }
 
         if (empty($trackingDetails['tracking_number'])) {
-
             $this->getParentObject()->addErrorLog(
                 'Walmart Order was not shipped. Reason: %msg%',
-                array(
+                [
                     'msg' => 'Order status was not updated to Shipped on Walmart because a tracking number
                                 is missing. Please insert the valid tracking number into the Order shipment.'
-                )
+                ]
             );
             return false;
         }
@@ -538,7 +558,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         }
 
         if (!empty($trackingDetails['carrier_code'])) {
-
             $trackingDetails['carrier_title'] = $this->getHelper('Component\Walmart')->getCarrierTitle(
                 $trackingDetails['carrier_code'],
                 isset($trackingDetails['carrier_title']) ? $trackingDetails['carrier_title'] : ''
@@ -546,18 +565,17 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         }
 
         if (!empty($trackingDetails['carrier_title'])) {
-
             if ($trackingDetails['carrier_title'] == \Ess\M2ePro\Model\Order\Shipment\Handler::CUSTOM_CARRIER_CODE &&
                 !empty($trackingDetails['shipping_method'])) {
                 $trackingDetails['carrier_title'] = $trackingDetails['shipping_method'];
             }
         }
 
-        $params = array(
+        $params = [
             'walmart_order_id' => $this->getWalmartOrderId(),
             'fulfillment_date' => $trackingDetails['fulfillment_date'],
-            'items'            => array()
-        );
+            'items'            => []
+        ];
 
         foreach ($items as $item) {
             if (!isset($item['walmart_order_item_id']) || !isset($item['qty'])) {
@@ -568,16 +586,16 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
                 continue;
             }
 
-            $params['items'][] = array(
+            $params['items'][] = [
                 'walmart_order_item_id' => $item['walmart_order_item_id'],
                 'qty'                   => (int)$item['qty'],
-                'tracking_details'      => array(
+                'tracking_details'      => [
                     'ship_date' => $trackingDetails['fulfillment_date'],
                     'method'    => $this->getShippingService(),
                     'carrier'   => $trackingDetails['carrier_title'],
                     'number'    => $trackingDetails['tracking_number'],
-                ),
-            );
+                ],
+            ];
         }
 
         $orderId = $this->getParentObject()->getId();
@@ -598,7 +616,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
             $this->updateOrderChange($change, $params);
         } else {
             $this->activeRecordFactory->getObject('Order\Change')->create(
-                $orderId, $action, $creatorType, $component, $params
+                $orderId,
+                $action,
+                $creatorType,
+                $component,
+                $params
             );
         }
 
@@ -617,10 +639,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
                 if ($newItem['walmart_order_item_id'] === $existingItem['walmart_order_item_id']) {
                     $newQtyTotal = $newItem['qty'] + $existingItem['qty'];
 
-                    $maxQtyTotal = $this->activeRecordFactory->getObject('Walmart\Order\Item')->getCollection()
+                    $maxQtyTotal = $this->activeRecordFactory->getObject('Walmart_Order_Item')->getCollection()
                         ->addFieldToFilter(
                             'walmart_order_item_id',
-                            $existingItem['walmart_order_item_id'])
+                            $existingItem['walmart_order_item_id']
+                        )
                         ->getFirstItem()
                         ->getQty();
                     $newQtyTotal >= $maxQtyTotal && $newQtyTotal = $maxQtyTotal;
@@ -654,17 +677,17 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function refund(array $items = array())
+    public function refund(array $items = [])
     {
         if (!$this->canRefund()) {
             return false;
         }
 
-        $params = array(
+        $params = [
             'order_id' => $this->getWalmartOrderId(),
             'currency' => $this->getCurrency(),
             'items'    => $items,
-        );
+        ];
 
         $orderId = $this->getParentObject()->getId();
         $creatorType = \Ess\M2ePro\Model\Order\Change::CREATOR_TYPE_OBSERVER;
@@ -675,12 +698,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
             if (empty($items)) {
                 $this->getParentObject()->addErrorLog(
                     'Walmart Order was not refunded. Reason: %msg%',
-                    array(
+                    [
                         'msg' => 'Refund request was not submitted.
                                     To be processed through Walmart API, the refund must be applied to certain products
                                     in an order. Please indicate the number of each line item, that need to be refunded,
                                     in Credit Memo form.'
-                    )
+                    ]
                 );
                 return false;
             }
@@ -689,7 +712,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         }
 
         $this->activeRecordFactory->getObject('Order\Change')->create(
-            $orderId, $action, $creatorType, $component, $params
+            $orderId,
+            $action,
+            $creatorType,
+            $component,
+            $params
         );
 
         return true;

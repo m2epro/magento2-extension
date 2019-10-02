@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Plugin\HealthStatus\Magento\Framework\App;
 use Magento\Framework\Message\MessageInterface;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
+/**
+ * Class FrontController
+ * @package Ess\M2ePro\Plugin\HealthStatus\Magento\Framework\App
+ */
 class FrontController extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     const MESSAGE_IDENTIFIER = 'm2epro_health_status_front_controller_message';
@@ -44,16 +48,15 @@ class FrontController extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     protected function processDispatch($interceptor, \Closure $callback, $arguments)
     {
-        $request = isset($arguments[0]) ? $arguments[0] : NULL;
+        $request = isset($arguments[0]) ? $arguments[0] : null;
 
         if (!($request instanceof \Magento\Framework\App\Request\Http)) {
             return $callback(...$arguments);
         }
 
         if ($this->shouldBeAdded($request)) {
-
             $currentStatus  = $this->modelFactory->getObject('HealthStatus\CurrentStatus');
-            $messageBuilder = $this->modelFactory->getObject('HealthStatus\Notification\MessageBuilder');
+            $messageBuilder = $this->modelFactory->getObject('HealthStatus_Notification_MessageBuilder');
 
             switch ($currentStatus->get()) {
                 case Result::STATE_NOTICE:
@@ -95,7 +98,7 @@ class FrontController extends \Ess\M2ePro\Plugin\AbstractPlugin
         }
 
         $currentStatus = $this->modelFactory->getObject('HealthStatus\CurrentStatus');
-        $notificationSettings = $this->modelFactory->getObject('HealthStatus\Notification\Settings');
+        $notificationSettings = $this->modelFactory->getObject('HealthStatus_Notification_Settings');
 
         if (!$notificationSettings->isModeMagentoPages()) {
             return false;

@@ -1,29 +1,40 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
 <table class="form-list" cellspacing="0" cellpadding="0">
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Total Tables'); ?>: </label>
+            <label><?php echo $block->__('Total Tables'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->mySqlTotal['magento_tables']; ?>
+            <?php echo $block->mySqlTotal['magento_tables']; ?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Total Module Tables'); ?>: </label>
+            <label><?php echo $block->__('Total Module Tables'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->mySqlTotal['module_tables']; ?>
+            <?php echo $block->mySqlTotal['module_tables']; ?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Total Module Records'); ?>: </label>
+            <label><?php echo $block->__('Total Module Records'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->mySqlTotal['module_records']; ?>
+            <?php echo $block->mySqlTotal['module_records']; ?>
         </td>
     </tr>
 

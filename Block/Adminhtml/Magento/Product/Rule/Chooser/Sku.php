@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\Chooser;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
+/**
+ * Class Sku
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\Chooser
+ */
 class Sku extends AbstractGrid
 {
     protected $_eavAttSetCollection;
@@ -26,8 +30,7 @@ class Sku extends AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->_eavAttSetCollection = $eavAttSetCollection;
         $this->_catalogType = $catalogType;
         $this->_cpCollection = $cpCollection;

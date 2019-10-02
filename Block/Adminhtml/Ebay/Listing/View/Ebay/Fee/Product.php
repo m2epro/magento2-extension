@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee;
 
+/**
+ * Class Product
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee
+ */
 class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     //########################################
@@ -46,7 +50,7 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     protected function _beforeToHtml()
     {
         // ---------------------------------------
-        $details = $this->createBlock('Ebay\Listing\View\Ebay\Fee\Details');
+        $details = $this->createBlock('Ebay_Listing_View_Ebay_Fee_Details');
         $details->setData('fees', $this->getFees());
         $details->setData('product_name', $this->getData('product_name'));
 

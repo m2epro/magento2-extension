@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper;
 
+/**
+ * Class Component
+ * @package Ess\M2ePro\Helper
+ */
 class Component extends AbstractHelper
 {
     //########################################
@@ -161,7 +165,7 @@ class Component extends AbstractHelper
 
     public function getComponentTitle($component)
     {
-        $title = NULL;
+        $title = null;
 
         switch ($component) {
             case Component\Ebay::NICK:

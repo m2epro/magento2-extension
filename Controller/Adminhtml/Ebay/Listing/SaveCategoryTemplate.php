@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+/**
+ * Class SaveCategoryTemplate
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ */
 class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     /** @var \Magento\Framework\DB\TransactionFactory  */
-    protected $transactionFactory = NULL;
+    protected $transactionFactory = null;
 
     //########################################
 
@@ -19,8 +23,7 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
-    )
-    {
+    ) {
         $this->transactionFactory = $transactionFactory;
         parent::__construct($ebayFactory, $context);
     }
@@ -51,21 +54,25 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->getHelper('Component\Ebay\Category')->fillCategoriesPaths($categoryTemplateData, $listing);
+        $this->getHelper('Component_Ebay_Category')->fillCategoriesPaths($categoryTemplateData, $listing);
 
         $builderData = $categoryTemplateData;
         $builderData['account_id'] = $listing->getAccountId();
         $builderData['marketplace_id'] = $listing->getMarketplaceId();
 
         // ---------------------------------------
-        $builder = $this->modelFactory->getObject('Ebay\Template\Category\Builder');
+        $builder = $this->modelFactory->getObject('Ebay_Template_Category_Builder');
         $categoryTemplate = $builder->build($builderData);
         // ---------------------------------------
-        $builder = $this->modelFactory->getObject('Ebay\Template\OtherCategory\Builder');
+        $builder = $this->modelFactory->getObject('Ebay_Template_OtherCategory_Builder');
         $otherCategoryTemplate = $builder->build($builderData);
         // ---------------------------------------
 
-        $this->assignTemplatesToProducts($categoryTemplate->getId(),$otherCategoryTemplate->getId(),$listingProductIds);
+        $this->assignTemplatesToProducts(
+            $categoryTemplate->getId(),
+            $otherCategoryTemplate->getId(),
+            $listingProductIds
+        );
 
         $this->setAjaxContent('1', false);
         return $this->getResult();
@@ -80,14 +87,14 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         $collection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
-        $collection->addFieldToFilter('id', array('in' => $productsIds));
+        $collection->addFieldToFilter('id', ['in' => $productsIds]);
         // ---------------------------------------
 
         if ($collection->getSize() == 0) {
             return;
         }
 
-        $snapshots   = array();
+        $snapshots   = [];
         $transaction = $this->transactionFactory->create();
 
         try {

@@ -8,14 +8,18 @@
 
 namespace Ess\M2ePro\Model\Connector;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Connector
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     const API_VERSION = 1;
 
-    protected $requestTime = NULL;
+    protected $requestTime = null;
 
-    protected $serverBaseUrl = NULL;
-    protected $serverHostName = NULL;
+    protected $serverBaseUrl = null;
+    protected $serverHostName = null;
 
     protected $tryToResendOnError = true;
     protected $tryToSwitchEndpointOnError = true;
@@ -25,11 +29,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function process()
     {
         try {
-
             $this->requestTime = $this->getHelper('Data')->getCurrentGmtDate();
 
             $result = $this->sendRequest();
-
         } catch (\Exception $exception) {
             $this->getHelper('Client')->updateMySqlConnection();
             throw $exception;
@@ -85,8 +87,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     }
 
      /**
-     * @return boolean
-     */
+      * @return boolean
+      */
     public function isTryToResendOnError()
     {
         return $this->tryToResendOnError;

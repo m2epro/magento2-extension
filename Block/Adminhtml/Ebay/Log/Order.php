@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Log;
 
+/**
+ * Class Order
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Log
+ */
 class Order extends \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractContainer
 {
     //########################################

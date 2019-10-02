@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay;
 
+/**
+ * Class Feedback
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay
+ */
 class Feedback extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################

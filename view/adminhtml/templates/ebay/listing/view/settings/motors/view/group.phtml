@@ -1,3 +1,16 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group $block */
+
+?>
+
 <?php echo $block->createBlock('HelpBlock')->setData([
     'content' => $block->__('
         In this Block you can see the list of the saved Groups of ePID(s)/kType(s) or
@@ -7,5 +20,5 @@
 ])->toHtml() ?>
 
 <div id="motors">
-    <?php echo $this->getChildHtml('view_group_grid'); ?>
+    <?php echo $block->getChildHtml('view_group_grid'); ?>
 </div>

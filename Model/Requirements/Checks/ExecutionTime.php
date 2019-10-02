@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Requirements\Checks;
 
+/**
+ * Class ExecutionTime
+ * @package Ess\M2ePro\Model\Requirements\Checks
+ */
 class ExecutionTime extends AbstractCheck
 {
     //########################################

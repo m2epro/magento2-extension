@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Moving;
 
+/**
+ * Class TryToMoveToListing
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing\Moving
+ */
 class TryToMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
 {
     //########################################
@@ -21,13 +25,17 @@ class TryToMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
         $listingId = (int)$this->getRequest()->getParam('listingId');
 
         $listingInstance = $this->parentFactory->getCachedObjectLoaded(
-            $componentMode,'Listing',$listingId
+            $componentMode,
+            'Listing',
+            $listingId
         );
 
-        $failedProducts = array();
+        $failedProducts = [];
         foreach ($selectedProducts as $selectedProduct) {
             $listingProductInstance = $this->parentFactory->getObjectLoaded(
-                $componentMode,'Listing\Product',$selectedProduct
+                $componentMode,
+                'Listing\Product',
+                $selectedProduct
             );
 
             if (!$this->productCanBeMoved($listingProductInstance->getProductId(), $listingInstance)) {
@@ -36,12 +44,12 @@ class TryToMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
         }
 
         if (count($failedProducts) == 0) {
-            $this->setJsonContent(array('result' => 'success'));
+            $this->setJsonContent(['result' => 'success']);
         } else {
-            $this->setJsonContent(array(
+            $this->setJsonContent([
                 'result' => 'fail',
                 'failed_products' => $failedProducts
-            ));
+            ]);
         }
 
         return $this->getResult();

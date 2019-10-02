@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Context;
 
 use Magento\Backend\Block\Context;
 
+/**
+ * Class Block
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Context
+ */
 class Block extends Context
 {
     /** @var \Ess\M2ePro\Helper\Factory */
@@ -47,8 +51,7 @@ class Block extends Context
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
         \Magento\Framework\Translate\Inline\StateInterface $inlineTranslation,
         \Magento\Framework\AuthorizationInterface $authorization
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;

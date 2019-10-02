@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model;
 
+/**
+ * Class Processing
+ * @package Ess\M2ePro\Model
+ */
 class Processing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     //####################################

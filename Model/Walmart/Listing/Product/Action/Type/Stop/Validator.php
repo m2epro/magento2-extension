@@ -8,6 +8,12 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Stop;
 
+use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child;
+
+/**
+ * Class Validator
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Stop
+ */
 class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Validator
 {
     //########################################
@@ -19,10 +25,6 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
     public function validate()
     {
         if (!$this->validateMagentoProductType()) {
-            return false;
-        }
-
-        if (!$this->validateSku()) {
             return false;
         }
 
@@ -44,13 +46,10 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
         }
 
         if (!$this->getListingProduct()->isListed() || !$this->getListingProduct()->isStoppable()) {
-
             if (empty($params['remove'])) {
-
                 // M2ePro\TRANSLATIONS
                 // Item is not Listed or not available
                 $this->addMessage('Item is not active or not available');
-
             } else {
                 $variationManager = $this->getWalmartListingProduct()->getVariationManager();
 
@@ -63,6 +62,7 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
 
                     $this->parentWalmartListingProductForProcess = $parentWalmartListingProduct;
 
+                    /** @var Child $childTypeModel */
                     $childTypeModel = $variationManager->getTypeModel();
 
                     if ($childTypeModel->isVariationProductMatched()) {
@@ -73,14 +73,20 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
                 }
 
                 if (!$this->getListingProduct()->isNotListed()) {
-                    $this->getListingProduct()
-                         ->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED)->save();
+                    $this->getListingProduct()->setData(
+                        'status',
+                        \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
+                    )->save();
                 }
 
                 $this->getListingProduct()->delete();
                 $this->getListingProduct()->isDeleted(true);
             }
 
+            return false;
+        }
+
+        if (!$this->validateSku()) {
             return false;
         }
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Marketplaces;
 
+/**
+ * Class Categories
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\Marketplaces
+ */
 class Categories extends AbstractModel
 {
     //########################################
@@ -52,8 +56,10 @@ class Categories extends AbstractModel
         for ($i = 0; $i < 100; $i++) {
             $this->getActualLockItem()->setPercents($this->getPercentsStart());
 
-            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'get'.$marketplace->getId(),
-                'Get Categories from Amazon, part № ' . $partNumber);
+            $this->getActualOperationHistory()->addTimePoint(
+                __METHOD__.'get'.$marketplace->getId(),
+                'Get Categories from Amazon, part № ' . $partNumber
+            );
             $response = $this->receiveFromAmazon($marketplace, $partNumber);
             $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$marketplace->getId());
 
@@ -67,8 +73,10 @@ class Categories extends AbstractModel
             $this->getActualLockItem()->setPercents($this->getPercentsStart() + $this->getPercentsInterval()/2);
             $this->getActualLockItem()->activate();
 
-            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'save'.$marketplace->getId(),
-                'Save Categories to DB');
+            $this->getActualOperationHistory()->addTimePoint(
+                __METHOD__.'save'.$marketplace->getId(),
+                'Save Categories to DB'
+            );
             $this->saveCategoriesToDb($marketplace, $response['data']);
             $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'save'.$marketplace->getId());
 
@@ -77,7 +85,7 @@ class Categories extends AbstractModel
 
             $partNumber = $response['next_part'];
 
-            if (is_null($partNumber)) {
+            if ($partNumber === null) {
                 break;
             }
         }
@@ -89,17 +97,22 @@ class Categories extends AbstractModel
 
     protected function receiveFromAmazon(\Ess\M2ePro\Model\Marketplace $marketplace, $partNumber)
     {
-        $dispatcherObj = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
-        $connectorObj  = $dispatcherObj->getVirtualConnector('marketplace','get','categories',
-                                                             array('part_number' => $partNumber,
-                                                                   'marketplace' => $marketplace->getNativeId()),
-                                                             NULL,NULL);
+        $dispatcherObj = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
+        $connectorObj  = $dispatcherObj->getVirtualConnector(
+            'marketplace',
+            'get',
+            'categories',
+            ['part_number' => $partNumber,
+                                                                   'marketplace' => $marketplace->getNativeId()],
+            null,
+            null
+        );
 
         $dispatcherObj->process($connectorObj);
         $response = $connectorObj->getResponseData();
 
-        if (is_null($response) || empty($response['data'])) {
-            $response = array();
+        if ($response === null || empty($response['data'])) {
+            $response = [];
         }
 
         $dataCount = isset($response['data']) ? count($response['data']) : 0;
@@ -111,19 +124,19 @@ class Categories extends AbstractModel
     protected function deleteAllCategories(\Ess\M2ePro\Model\Marketplace $marketplace)
     {
         $connWrite = $this->resourceConnection->getConnection();
-        $tableCategories = $this->getHelper('Module\Database\Structure')
+        $tableCategories = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_amazon_dictionary_category');
 
-        $connWrite->delete($tableCategories,array('marketplace_id = ?' => $marketplace->getId()));
+        $connWrite->delete($tableCategories, ['marketplace_id = ?' => $marketplace->getId()]);
     }
 
     protected function deleteAllProductDataInfo(\Ess\M2ePro\Model\Marketplace $marketplace)
     {
         $connWrite = $this->resourceConnection->getConnection();
-        $tableCategories = $this->getHelper('Module\Database\Structure')
+        $tableCategories = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_amazon_dictionary_category_product_data');
 
-        $connWrite->delete($tableCategories,array('marketplace_id = ?' => $marketplace->getId()));
+        $connWrite->delete($tableCategories, ['marketplace_id = ?' => $marketplace->getId()]);
     }
 
     protected function saveCategoriesToDb(\Ess\M2ePro\Model\Marketplace $marketplace, array $categories)
@@ -134,36 +147,35 @@ class Categories extends AbstractModel
         }
 
         $connWrite = $this->resourceConnection->getConnection();
-        $tableCategories = $this->getHelper('Module\Database\Structure')
+        $tableCategories = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_amazon_dictionary_category');
 
         $iteration            = 0;
         $iterationsForOneStep = 1000;
         $percentsForOneStep   = ($this->getPercentsInterval()/2) / ($totalCountCategories/$iterationsForOneStep);
-        $insertData           = array();
+        $insertData           = [];
 
         for ($i = 0; $i < $totalCountCategories; $i++) {
-
             $data = $categories[$i];
 
             $isLeaf = $data['is_leaf'];
-            $insertData[] = array(
+            $insertData[] = [
                 'marketplace_id'     => $marketplace->getId(),
                 'category_id'        => $data['id'],
                 'parent_category_id' => $data['parent_id'],
-                'browsenode_id'      => ($isLeaf ? $data['browsenode_id'] : NULL),
+                'browsenode_id'      => ($isLeaf ? $data['browsenode_id'] : null),
                 'product_data_nicks' => (
-                    $isLeaf ? $this->getHelper('Data')->jsonEncode($data['product_data_nicks']) : NULL
+                    $isLeaf ? $this->getHelper('Data')->jsonEncode($data['product_data_nicks']) : null
                 ),
                 'title'              => $data['title'],
                 'path'               => $data['path'],
-                'keywords'           => ($isLeaf ? $this->getHelper('Data')->jsonEncode($data['keywords']) : NULL),
+                'keywords'           => ($isLeaf ? $this->getHelper('Data')->jsonEncode($data['keywords']) : null),
                 'is_leaf'            => $isLeaf,
-            );
+            ];
 
             if (count($insertData) >= 100 || $i >= ($totalCountCategories - 1)) {
                 $connWrite->insertMultiple($tableCategories, $insertData);
-                $insertData = array();
+                $insertData = [];
             }
 
             if (++$iteration % $iterationsForOneStep == 0) {
@@ -182,13 +194,15 @@ class Categories extends AbstractModel
 
         $tempString = $this->getHelper('Module\Log')->encodeDescription(
             'The "Categories" Action for %amazon% Marketplace: "%mrk%" has been successfully completed.',
-            array('!amazon' => $this->getHelper('Component\Amazon')->getTitle(),
-                  'mrk'     => $marketplace->getTitle())
+            ['!amazon' => $this->getHelper('Component\Amazon')->getTitle(),
+                  'mrk'     => $marketplace->getTitle()]
         );
 
-        $this->getLog()->addMessage($tempString,
-                                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
-                                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW);
+        $this->getLog()->addMessage(
+            $tempString,
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+        );
     }
 
     //########################################

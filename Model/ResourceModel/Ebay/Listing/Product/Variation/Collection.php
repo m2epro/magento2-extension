@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Variation;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Variation
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Child\AbstractModel
 {
     //########################################

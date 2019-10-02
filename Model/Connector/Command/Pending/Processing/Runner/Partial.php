@@ -8,22 +8,26 @@
 
 namespace Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner;
 
+/**
+ * Class Partial
+ * @package Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner
+ */
 class Partial extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner
 {
     const MAX_PROCESSING_PACKS_COUNT = 3;
 
     /** @var \Ess\M2ePro\Model\Request\Pending\Partial $requestPendingPartial */
-    private $requestPendingPartial = NULL;
+    private $requestPendingPartial = null;
 
     // ##################################
 
     protected function getResponse()
     {
-        if (!is_null($this->response)) {
+        if ($this->response !== null) {
             return $this->response;
         }
 
-        $this->response = $this->modelFactory->getObject('Connector\Connection\Response');
+        $this->response = $this->modelFactory->getObject('Connector_Connection_Response');
 
         $params = $this->getParams();
         if (!empty($params['request_time'])) {
@@ -43,7 +47,7 @@ class Partial extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Run
 
                 if (empty($data)) {
                     if ($this->getMessages()) {
-                        $this->getResponse()->initFromPreparedResponse(array(), $this->getMessages());
+                        $this->getResponse()->initFromPreparedResponse([], $this->getMessages());
                         $this->getResponser(true)->process();
                     }
 
@@ -86,7 +90,7 @@ class Partial extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Run
 
         $params = $this->getParams();
 
-        $requestPendingPartialCollection = $this->activeRecordFactory->getObject('Request\Pending\Partial')
+        $requestPendingPartialCollection = $this->activeRecordFactory->getObject('Request_Pending_Partial')
             ->getCollection();
         $requestPendingPartialCollection->addFieldToFilter('component', $params['component']);
         $requestPendingPartialCollection->addFieldToFilter('server_hash', $params['server_hash']);
@@ -95,24 +99,24 @@ class Partial extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Run
         $requestPendingPartial = $requestPendingPartialCollection->getFirstItem();
 
         if (!$requestPendingPartial->getId()) {
-            $requestPendingPartial->setData(array(
+            $requestPendingPartial->setData([
                 'component'       => $params['component'],
                 'server_hash'     => $params['server_hash'],
                 'next_part'       => 1,
                 'expiration_date' => $this->getHelper('Data')->getDate(
                     $this->getHelper('Data')->getCurrentGmtDate(true)+self::PENDING_REQUEST_MAX_LIFE_TIME
                 )
-            ));
+            ]);
 
             $requestPendingPartial->save();
         }
 
-        $requesterPartial = $this->activeRecordFactory->getObject('Connector\Command\Pending\Requester\Partial');
-        $requesterPartial->setData(array(
+        $requesterPartial = $this->activeRecordFactory->getObject('Connector_Command_Pending_Requester_Partial');
+        $requesterPartial->setData([
             'processing_id'              => $this->getProcessingObject()->getId(),
             'request_pending_partial_id' => $requestPendingPartial->getId(),
             'next_data_part_number'      => 1,
-        ));
+        ]);
 
         $requesterPartial->save();
     }
@@ -121,8 +125,8 @@ class Partial extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Run
 
     private function getNextData()
     {
-        if (is_null($this->getRequestPendingPartialObject())) {
-            return array();
+        if ($this->getRequestPendingPartialObject() === null) {
+            return [];
         }
 
         return $this->getRequestPendingPartialObject()->getResultData($this->getNextDataPartNumber());
@@ -130,8 +134,8 @@ class Partial extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Run
 
     private function getMessages()
     {
-        if (is_null($this->getRequestPendingPartialObject())) {
-            return array();
+        if ($this->getRequestPendingPartialObject() === null) {
+            return [];
         }
 
         return $this->getRequestPendingPartialObject()->getResultMessages();
@@ -141,23 +145,26 @@ class Partial extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Run
 
     protected function getRequestPendingPartialObject()
     {
-        if (!is_null($this->requestPendingPartial)) {
+        if ($this->requestPendingPartial !== null) {
             return $this->requestPendingPartial;
         }
 
         $resultData = $this->getProcessingObject()->getResultData();
         if (empty($resultData['request_pending_partial_id'])) {
-            return NULL;
+            return null;
         }
 
         $requestPendingPartialId = (int)$resultData['request_pending_partial_id'];
 
         $requestPendingPartial = $this->activeRecordFactory->getObjectLoaded(
-            'Request\Pending\Partial', $requestPendingPartialId, NULL, false
+            'Request_Pending_Partial',
+            $requestPendingPartialId,
+            null,
+            false
         );
 
-        if (is_null($requestPendingPartial) || !$requestPendingPartial->getId()) {
-            return NULL;
+        if ($requestPendingPartial === null || !$requestPendingPartial->getId()) {
+            return null;
         }
 
         return $this->requestPendingPartial = $requestPendingPartial;

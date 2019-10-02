@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tabs;
 
+/**
+ * Class Synchronization
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tabs
+ */
 class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     //########################################
@@ -40,10 +44,10 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $this->setChild('help', $helpBlock);
 
         // ---------------------------------------
-        $data = array(
+        $data = [
             'template_nick' => \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION,
-        );
-        $switcherBlock = $this->createBlock('Ebay\Listing\Template\Switcher');
+        ];
+        $switcherBlock = $this->createBlock('Ebay_Listing_Template_Switcher');
         $switcherBlock->setData($data);
 
         $this->setChild('synchronization', $switcherBlock);
@@ -65,8 +69,7 @@ CSS
 
         return parent::_toHtml()
             . $this->getChildHtml('help')
-            . $this->getChildHtml('synchronization')
-        ;
+            . $this->getChildHtml('synchronization');
     }
 
     //########################################

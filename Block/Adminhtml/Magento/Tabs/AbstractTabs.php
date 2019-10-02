@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Tabs;
 use Magento\Backend\Block\Widget\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
+/**
+ * Class AbstractTabs
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Tabs
+ */
 abstract class AbstractTabs extends Tabs
 {
     use Traits\BlockTrait;
@@ -33,8 +37,7 @@ abstract class AbstractTabs extends Tabs
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
         \Magento\Backend\Model\Auth\Session $authSession,
         array $data = []
-    )
-    {
+    ) {
         $this->helperFactory = $context->getHelperFactory();
         $this->modelFactory = $context->getModelFactory();
         $this->activeRecordFactory = $context->getActiveRecordFactory();

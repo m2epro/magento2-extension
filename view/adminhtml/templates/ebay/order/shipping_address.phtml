@@ -1,4 +1,15 @@
-<?php /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Order\Edit\ShippingAddress $block */ ?>
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Order\Edit\ShippingAddress $block */
+
+?>
 
 <table class="order-info form-list">
     <tbody>
@@ -23,8 +34,7 @@
 
     <?php $buyerTaxId = $block->getOrder()->getChildObject()->getBuyerTaxId(); ?>
 
-    <?php if (!empty($buyerTaxId)): ?>
-
+    <?php if (!empty($buyerTaxId)) : ?>
         <tr>
             <td class="label"><?php echo $block->__('Tax ID');?></td>
             <td class="value">
@@ -51,7 +61,7 @@
         </td>
     </tr>
 
-    <?php if (!$block->getOrder()->getChildObject()->isUseClickAndCollect() && !$block->getOrder()->getChildObject()->isUseInStorePickup()): ?>
+    <?php if (!$block->getOrder()->getChildObject()->isUseClickAndCollect() && !$block->getOrder()->getChildObject()->isUseInStorePickup()) : ?>
         <tr>
             <td class="label"><?php echo $block->__('Address'); ?></td>
             <td class="value">
@@ -59,17 +69,16 @@
 
                     <?php echo $block->getHelper('Data')->escapeHtml($block->getOrder()->getChildObject()->getBuyerName()) ?>
 
-                    <?php if (!empty($block->getShippingAddress())): ?>
-
-                        <?php if (!empty($block->getShippingAddress()['street'][0])): ?>
+                    <?php if (!empty($block->getShippingAddress())) : ?>
+                        <?php if (!empty($block->getShippingAddress()['street'][0])) : ?>
                             <br/><?php echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][0]); ?>
                         <?php endif; ?>
 
-                        <?php if (!empty($block->getShippingAddress()['street'][1])): ?>
+                        <?php if (!empty($block->getShippingAddress()['street'][1])) : ?>
                             <br/><?php echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][1]); ?>
                         <?php endif; ?>
 
-                        <?php if (!empty($block->getShippingAddress()['city'])): ?>
+                        <?php if (!empty($block->getShippingAddress()['city'])) : ?>
                             <?php
                                 $addressData = array_filter([
                                     $block->getShippingAddress()['city'],
@@ -80,7 +89,7 @@
                             <br/><?php echo $block->getHelper('Data')->escapeHtml(implode(', ', $addressData)) ?>
                         <?php endif; ?>
 
-                        <?php if (!empty($block->getShippingAddress()['country_name'])): ?>
+                        <?php if (!empty($block->getShippingAddress()['country_name'])) : ?>
                             <br/>
                             <?php
                             if (!empty($block->getShippingAddress()['country_name'])) {
@@ -91,7 +100,7 @@
                             ?>
                         <?php endif; ?>
 
-                        <?php if (!empty($block->getShippingAddress()['phone']) && stripos($block->getShippingAddress()['phone'], 'Invalid Request') === false): ?>
+                        <?php if (!empty($block->getShippingAddress()['phone']) && stripos($block->getShippingAddress()['phone'], 'Invalid Request') === false) : ?>
                             <br/><?php echo 'T: ' . $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['phone']); ?>
                         <?php endif; ?>
 

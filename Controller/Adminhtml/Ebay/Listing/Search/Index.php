@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Search;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Search
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     protected function _isAllowed()
@@ -21,9 +25,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $listingType = $this->getRequest()->getParam('listing_type', false);
 
             if ($listingType == \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_LISTING_OTHER) {
-                $gridBlock = 'Ebay\Listing\Search\Other\Grid';
+                $gridBlock = 'Ebay_Listing_Search_Other_Grid';
             } else {
-                $gridBlock = 'Ebay\Listing\Search\Product\Grid';
+                $gridBlock = 'Ebay_Listing_Search_Product_Grid';
             }
 
             $this->setAjaxContent(
@@ -32,7 +36,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             return $this->getResult();
         }
 
-        $this->addContent($this->createBlock('Ebay\Listing\Search'));
+        $this->addContent($this->createBlock('Ebay_Listing_Search'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Search Products'));
         $this->setPageHelpLink('x/6gEtAQ');
 

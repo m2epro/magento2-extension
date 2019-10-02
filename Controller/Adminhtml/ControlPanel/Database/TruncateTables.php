@@ -8,17 +8,20 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database;
 
+/**
+ * Class TruncateTables
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database
+ */
 class TruncateTables extends Table
 {
     public function execute()
     {
-        $tables = $this->getRequest()->getParam('tables', array());
-        !is_array($tables) && $tables = array($tables);
+        $tables = $this->getRequest()->getParam('tables', []);
+        !is_array($tables) && $tables = [$tables];
 
         foreach ($tables as $table) {
-
             $this->resourceConnection->getConnection()->truncateTable(
-                $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($table)
+                $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($table)
             );
             $this->afterTableAction($table);
         }

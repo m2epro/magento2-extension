@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Log\Listing\Other;
 
+/**
+ * Class AbstractView
+ * @package Ess\M2ePro\Block\Adminhtml\Log\Listing\Other
+ */
 abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\AbstractView
 {
     //#######################################
@@ -18,30 +22,36 @@ abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
 
         if ($isListings) {
             $accountTitle = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Account', $this->accountSwitcherBlock->getSelectedParam()
+                'Account',
+                $this->accountSwitcherBlock->getSelectedParam()
             )->getTitle();
 
             $accountTitle = $this->filterManager->truncate(
-                $accountTitle, ['length' => 15]
+                $accountTitle,
+                ['length' => 15]
             );
 
             $marketplaceTitle = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Marketplace', $this->marketplaceSwitcherBlock->getSelectedParam()
+                'Marketplace',
+                $this->marketplaceSwitcherBlock->getSelectedParam()
             )->getTitle();
 
             return
                 '<div class="static-switcher-block">'
                 . $this->getStaticFilterHtml(
-                    $this->accountSwitcherBlock->getLabel(), $accountTitle
+                    $this->accountSwitcherBlock->getLabel(),
+                    $accountTitle
                 )
                 . $this->getStaticFilterHtml(
-                    $this->marketplaceSwitcherBlock->getLabel(), $marketplaceTitle
+                    $this->marketplaceSwitcherBlock->getLabel(),
+                    $marketplaceTitle
                 )
                 . '</div>';
         }
 
         $listingId = $this->getRequest()->getParam(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid::LISTING_ID_FIELD, false
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid::LISTING_ID_FIELD,
+            false
         );
 
         /** @var \Ess\M2ePro\Model\Listing\Other $listingOther */
@@ -51,19 +61,21 @@ abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             $listingOther = $this->activeRecordFactory->getObjectLoaded('Listing\Other', $listingId, null, false);
         }
 
-        if (!is_null($listingOther)) {
-
+        if ($listingOther !== null) {
             $accountTitle = $this->filterManager->truncate(
-                $listingOther->getAccount()->getTitle(), ['length' => 15]
+                $listingOther->getAccount()->getTitle(),
+                ['length' => 15]
             );
 
             return
                 '<div class="static-switcher-block">'
                 . $this->getStaticFilterHtml(
-                    $this->accountSwitcherBlock->getLabel(), $accountTitle
+                    $this->accountSwitcherBlock->getLabel(),
+                    $accountTitle
                 )
                 . $this->getStaticFilterHtml(
-                    $this->marketplaceSwitcherBlock->getLabel(), $listingOther->getMarketplace()->getTitle()
+                    $this->marketplaceSwitcherBlock->getLabel(),
+                    $listingOther->getMarketplace()->getTitle()
                 )
                 . '</div>';
         }

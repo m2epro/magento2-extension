@@ -12,6 +12,10 @@
 
 namespace Ess\M2ePro\Model\Walmart;
 
+/**
+ * Class Account
+ * @package Ess\M2ePro\Model\Walmart
+ */
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     const OTHER_LISTINGS_SYNCHRONIZATION_NO = 0;
@@ -117,13 +121,13 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
         $this->marketplaceModel = null;
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('account');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
         return parent::delete();
     }
 
     //########################################
 
-    public function getWalmartItems($asObjects = false, array $filters = array())
+    public function getWalmartItems($asObjects = false, array $filters = [])
     {
         return $this->getRelatedSimpleItems('Walmart\Item', 'account_id', $asObjects, $filters);
     }
@@ -135,9 +139,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getMarketplace()
     {
-        if (is_null($this->marketplaceModel)) {
+        if ($this->marketplaceModel === null) {
             $this->marketplaceModel = $this->walmartFactory->getCachedObjectLoaded(
-                'Marketplace', $this->getMarketplaceId()
+                'Marketplace',
+                $this->getMarketplaceId()
             );
         }
 
@@ -208,7 +213,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     public function getDecodedInfo()
     {
         $tempInfo = $this->getInfo();
-        return is_null($tempInfo) ? null : $this->getHelper('Data')->jsonDecode($tempInfo);
+        return $tempInfo === null ? null : $this->getHelper('Data')->jsonDecode($tempInfo);
     }
 
     //########################################
@@ -245,9 +250,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getOtherListingsMappingSkuMode()
     {
-        $setting = $this->getSetting('other_listings_mapping_settings',
-            array('sku', 'mode'),
-            self::OTHER_LISTINGS_MAPPING_SKU_MODE_NONE);
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['sku', 'mode'],
+            self::OTHER_LISTINGS_MAPPING_SKU_MODE_NONE
+        );
 
         return (int)$setting;
     }
@@ -257,17 +264,21 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getOtherListingsMappingSkuPriority()
     {
-        $setting = $this->getSetting('other_listings_mapping_settings',
-            array('sku', 'priority'),
-            self::OTHER_LISTINGS_MAPPING_SKU_DEFAULT_PRIORITY);
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['sku', 'priority'],
+            self::OTHER_LISTINGS_MAPPING_SKU_DEFAULT_PRIORITY
+        );
 
         return (int)$setting;
     }
 
     public function getOtherListingsMappingSkuAttribute()
     {
-        $setting = $this->getSetting('other_listings_mapping_settings',
-            array('sku', 'attribute'));
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['sku', 'attribute']
+        );
 
         return $setting;
     }
@@ -279,9 +290,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getOtherListingsMappingUpcMode()
     {
-        $setting = $this->getSetting('other_listings_mapping_settings',
-            array('upc', 'mode'),
-            self::OTHER_LISTINGS_MAPPING_UPC_MODE_NONE);
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['upc', 'mode'],
+            self::OTHER_LISTINGS_MAPPING_UPC_MODE_NONE
+        );
 
         return (int)$setting;
     }
@@ -291,17 +304,21 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getOtherListingsMappingUpcPriority()
     {
-        $setting = $this->getSetting('other_listings_mapping_settings',
-            array('upc', 'priority'),
-            self::OTHER_LISTINGS_MAPPING_UPC_DEFAULT_PRIORITY);
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['upc', 'priority'],
+            self::OTHER_LISTINGS_MAPPING_UPC_DEFAULT_PRIORITY
+        );
 
         return (int)$setting;
     }
 
     public function getOtherListingsMappingUpcAttribute()
     {
-        $setting = $this->getSetting('other_listings_mapping_settings',
-            array('upc', 'attribute'));
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['upc', 'attribute']
+        );
 
         return $setting;
     }
@@ -313,9 +330,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getOtherListingsMappingGtinMode()
     {
-        $setting = $this->getSetting('other_listings_mapping_settings',
-            array('gtin', 'mode'),
-            self::OTHER_LISTINGS_MAPPING_GTIN_MODE_NONE);
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['gtin', 'mode'],
+            self::OTHER_LISTINGS_MAPPING_GTIN_MODE_NONE
+        );
 
         return (int)$setting;
     }
@@ -325,17 +344,21 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getOtherListingsMappingGtinPriority()
     {
-        $setting = $this->getSetting('other_listings_mapping_settings',
-            array('gtin', 'priority'),
-            self::OTHER_LISTINGS_MAPPING_GTIN_DEFAULT_PRIORITY);
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['gtin', 'priority'],
+            self::OTHER_LISTINGS_MAPPING_GTIN_DEFAULT_PRIORITY
+        );
 
         return (int)$setting;
     }
 
     public function getOtherListingsMappingGtinAttribute()
     {
-        $setting = $this->getSetting('other_listings_mapping_settings',
-            array('gtin', 'attribute'));
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['gtin', 'attribute']
+        );
 
         return $setting;
     }
@@ -347,9 +370,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getOtherListingsMappingWpidMode()
     {
-        $setting = $this->getSetting('other_listings_mapping_settings',
-            array('wpid', 'mode'),
-            self::OTHER_LISTINGS_MAPPING_WPID_MODE_NONE);
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['wpid', 'mode'],
+            self::OTHER_LISTINGS_MAPPING_WPID_MODE_NONE
+        );
 
         return (int)$setting;
     }
@@ -359,17 +384,21 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getOtherListingsMappingWpidPriority()
     {
-        $setting = $this->getSetting('other_listings_mapping_settings',
-            array('wpid', 'priority'),
-            self::OTHER_LISTINGS_MAPPING_WPID_DEFAULT_PRIORITY);
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['wpid', 'priority'],
+            self::OTHER_LISTINGS_MAPPING_WPID_DEFAULT_PRIORITY
+        );
 
         return (int)$setting;
     }
 
     public function getOtherListingsMappingWpidAttribute()
     {
-        $setting = $this->getSetting('other_listings_mapping_settings',
-            array('wpid', 'attribute'));
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['wpid', 'attribute']
+        );
 
         return $setting;
     }
@@ -381,9 +410,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getOtherListingsMappingTitleMode()
     {
-        $setting = $this->getSetting('other_listings_mapping_settings',
-            array('title', 'mode'),
-            self::OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE);
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['title', 'mode'],
+            self::OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE
+        );
 
         return (int)$setting;
     }
@@ -393,16 +424,18 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getOtherListingsMappingTitlePriority()
     {
-        $setting = $this->getSetting('other_listings_mapping_settings',
-            array('title', 'priority'),
-            self::OTHER_LISTINGS_MAPPING_TITLE_DEFAULT_PRIORITY);
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['title', 'priority'],
+            self::OTHER_LISTINGS_MAPPING_TITLE_DEFAULT_PRIORITY
+        );
 
         return (int)$setting;
     }
 
     public function getOtherListingsMappingTitleAttribute()
     {
-        $setting = $this->getSetting('other_listings_mapping_settings', array('title', 'attribute'));
+        $setting = $this->getSetting('other_listings_mapping_settings', ['title', 'attribute']);
 
         return $setting;
     }
@@ -546,8 +579,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersListingsModeEnabled()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('listing', 'mode'),
-            self::MAGENTO_ORDERS_LISTINGS_MODE_YES);
+        $setting = $this->getSetting(
+            'magento_orders_settings',
+            ['listing', 'mode'],
+            self::MAGENTO_ORDERS_LISTINGS_MODE_YES
+        );
 
         return $setting == self::MAGENTO_ORDERS_LISTINGS_MODE_YES;
     }
@@ -557,8 +593,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersListingsStoreCustom()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('listing', 'store_mode'),
-            self::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT);
+        $setting = $this->getSetting(
+            'magento_orders_settings',
+            ['listing', 'store_mode'],
+            self::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT
+        );
 
         return $setting == self::MAGENTO_ORDERS_LISTINGS_STORE_MODE_CUSTOM;
     }
@@ -568,7 +607,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getMagentoOrdersListingsStoreId()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('listing', 'store_id'), 0);
+        $setting = $this->getSetting('magento_orders_settings', ['listing', 'store_id'], 0);
 
         return (int)$setting;
     }
@@ -580,8 +619,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersListingsOtherModeEnabled()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('listing_other', 'mode'),
-            self::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES);
+        $setting = $this->getSetting(
+            'magento_orders_settings',
+            ['listing_other', 'mode'],
+            self::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES
+        );
 
         return $setting == self::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES;
     }
@@ -591,7 +633,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getMagentoOrdersListingsOtherStoreId()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('listing_other', 'store_id'), 0);
+        $setting = $this->getSetting('magento_orders_settings', ['listing_other', 'store_id'], 0);
 
         return (int)$setting;
     }
@@ -601,8 +643,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersListingsOtherProductImportEnabled()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('listing_other', 'product_mode'),
-            self::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT);
+        $setting = $this->getSetting(
+            'magento_orders_settings',
+            ['listing_other', 'product_mode'],
+            self::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT
+        );
 
         return $setting == self::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT;
     }
@@ -612,7 +657,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getMagentoOrdersListingsOtherProductTaxClassId()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('listing_other', 'product_tax_class_id'));
+        $setting = $this->getSetting('magento_orders_settings', ['listing_other', 'product_tax_class_id']);
 
         return (int)$setting;
     }
@@ -622,7 +667,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     public function getMagentoOrdersNumberSource()
     {
         $setting = $this->getSetting(
-            'magento_orders_settings', array('number', 'source'), self::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO
+            'magento_orders_settings',
+            ['number', 'source'],
+            self::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO
         );
         return $setting;
     }
@@ -651,14 +698,16 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     public function isMagentoOrdersNumberPrefixEnable()
     {
         $setting = $this->getSetting(
-            'magento_orders_settings', array('number', 'prefix', 'mode'), self::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_NO
+            'magento_orders_settings',
+            ['number', 'prefix', 'mode'],
+            self::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_NO
         );
         return $setting == self::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_YES;
     }
 
     public function getMagentoOrdersNumberPrefix()
     {
-        return $this->getSetting('magento_orders_settings', array('number', 'prefix', 'prefix'), '');
+        return $this->getSetting('magento_orders_settings', ['number', 'prefix', 'prefix'], '');
     }
 
     // ---------------------------------------
@@ -668,7 +717,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getQtyReservationDays()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('qty_reservation', 'days'));
+        $setting = $this->getSetting('magento_orders_settings', ['qty_reservation', 'days']);
 
         return (int)$setting;
     }
@@ -680,7 +729,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersTaxModeNone()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('tax', 'mode'));
+        $setting = $this->getSetting('magento_orders_settings', ['tax', 'mode']);
 
         return $setting == self::MAGENTO_ORDERS_TAX_MODE_NONE;
     }
@@ -690,7 +739,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersTaxModeChannel()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('tax', 'mode'));
+        $setting = $this->getSetting('magento_orders_settings', ['tax', 'mode']);
 
         return $setting == self::MAGENTO_ORDERS_TAX_MODE_CHANNEL;
     }
@@ -700,7 +749,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersTaxModeMagento()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('tax', 'mode'));
+        $setting = $this->getSetting('magento_orders_settings', ['tax', 'mode']);
 
         return $setting == self::MAGENTO_ORDERS_TAX_MODE_MAGENTO;
     }
@@ -710,7 +759,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersTaxModeMixed()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('tax', 'mode'));
+        $setting = $this->getSetting('magento_orders_settings', ['tax', 'mode']);
 
         return $setting == self::MAGENTO_ORDERS_TAX_MODE_MIXED;
     }
@@ -722,8 +771,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersCustomerGuest()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('customer', 'mode'),
-            self::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST);
+        $setting = $this->getSetting(
+            'magento_orders_settings',
+            ['customer', 'mode'],
+            self::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST
+        );
 
         return $setting == self::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST;
     }
@@ -733,8 +785,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersCustomerPredefined()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('customer', 'mode'),
-            self::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST);
+        $setting = $this->getSetting(
+            'magento_orders_settings',
+            ['customer', 'mode'],
+            self::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST
+        );
 
         return $setting == self::MAGENTO_ORDERS_CUSTOMER_MODE_PREDEFINED;
     }
@@ -744,8 +799,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersCustomerNew()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('customer', 'mode'),
-            self::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST);
+        $setting = $this->getSetting(
+            'magento_orders_settings',
+            ['customer', 'mode'],
+            self::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST
+        );
 
         return $setting == self::MAGENTO_ORDERS_CUSTOMER_MODE_NEW;
     }
@@ -755,7 +813,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getMagentoOrdersCustomerId()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('customer', 'id'));
+        $setting = $this->getSetting('magento_orders_settings', ['customer', 'id']);
 
         return (int)$setting;
     }
@@ -765,8 +823,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersCustomerNewSubscribed()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('customer', 'subscription_mode'),
-            self::MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_NO);
+        $setting = $this->getSetting(
+            'magento_orders_settings',
+            ['customer', 'subscription_mode'],
+            self::MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_NO
+        );
 
         return $setting == self::MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_YES;
     }
@@ -776,7 +837,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersCustomerNewNotifyWhenCreated()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('customer', 'notifications', 'customer_created'));
+        $setting = $this->getSetting('magento_orders_settings', ['customer', 'notifications', 'customer_created']);
 
         return (bool)$setting;
     }
@@ -786,7 +847,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersCustomerNewNotifyWhenOrderCreated()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('customer', 'notifications', 'order_created'));
+        $setting = $this->getSetting('magento_orders_settings', ['customer', 'notifications', 'order_created']);
 
         return (bool)$setting;
     }
@@ -796,7 +857,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersCustomerNewNotifyWhenInvoiceCreated()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('customer', 'notifications', 'invoice_created'));
+        $setting = $this->getSetting('magento_orders_settings', ['customer', 'notifications', 'invoice_created']);
 
         return (bool)$setting;
     }
@@ -806,7 +867,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getMagentoOrdersCustomerNewWebsiteId()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('customer', 'website_id'));
+        $setting = $this->getSetting('magento_orders_settings', ['customer', 'website_id']);
 
         return (int)$setting;
     }
@@ -816,7 +877,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getMagentoOrdersCustomerNewGroupId()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('customer', 'group_id'));
+        $setting = $this->getSetting('magento_orders_settings', ['customer', 'group_id']);
 
         return (int)$setting;
     }
@@ -828,8 +889,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function isMagentoOrdersStatusMappingDefault()
     {
-        $setting = $this->getSetting('magento_orders_settings', array('status_mapping', 'mode'),
-            self::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT);
+        $setting = $this->getSetting(
+            'magento_orders_settings',
+            ['status_mapping', 'mode'],
+            self::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT
+        );
 
         return $setting == self::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT;
     }
@@ -840,7 +904,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             return self::MAGENTO_ORDERS_STATUS_MAPPING_PROCESSING;
         }
 
-        return $this->getSetting('magento_orders_settings', array('status_mapping', 'processing'));
+        return $this->getSetting('magento_orders_settings', ['status_mapping', 'processing']);
     }
 
     public function getMagentoOrdersStatusShipped()
@@ -849,7 +913,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             return self::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED;
         }
 
-        return $this->getSetting('magento_orders_settings', array('status_mapping', 'shipped'));
+        return $this->getSetting('magento_orders_settings', ['status_mapping', 'shipped']);
     }
 
     // ---------------------------------------

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Log;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\ResourceModel\Log
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     const ACTION_KEY = 'last_action_id';
@@ -23,11 +27,11 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
     {
         $connection = $this->getConnection();
 
-        $table = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_module_config');
+        $table = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_module_config');
         $groupConfig = '/logs/'.$this->getConfigGroupSuffix().'/';
 
         $lastActionId = (int)$connection->select()
-            ->from($table,'value')
+            ->from($table, 'value')
             ->where('`group` = ?', $groupConfig)
             ->where('`key` = ?', self::ACTION_KEY)
             ->query()->fetchColumn();
@@ -36,16 +40,16 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
 
         $connection->update(
             $table,
-            array('value' => $nextActionId),
-            array('`group` = ?' => $groupConfig, '`key` = ?' => 'last_action_id')
+            ['value' => $nextActionId],
+            ['`group` = ?' => $groupConfig, '`key` = ?' => 'last_action_id']
         );
 
         return $nextActionId;
     }
 
-    public function clearMessages($filters = array())
+    public function clearMessages($filters = [])
     {
-        $where = array();
+        $where = [];
         foreach ($filters as $column => $value) {
             $where[$column.' = ?'] = $value;
         }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper;
 
+/**
+ * Class Data
+ * @package Ess\M2ePro\Helper
+ */
 class Data extends AbstractHelper
 {
     const STATUS_ERROR      = 1;
@@ -25,6 +29,10 @@ class Data extends AbstractHelper
     protected $urlBuilder;
     protected $localeDate;
     protected $timezone;
+    protected $objectManager;
+
+    protected $serializerInterface;
+    protected $phpSerialize;
 
     //########################################
 
@@ -34,13 +42,22 @@ class Data extends AbstractHelper
         \Magento\Framework\Stdlib\DateTime\DateTime $localeDate,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezone,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
-    )
-    {
-        $this->dir = $dir;
-        $this->urlBuilder = $urlBuilder;
-        $this->localeDate = $localeDate;
-        $this->timezone   = $timezone;
+        \Magento\Framework\App\Helper\Context $context,
+        \Magento\Framework\ObjectManagerInterface $objectManager
+    ) {
+        $this->dir           = $dir;
+        $this->urlBuilder    = $urlBuilder;
+        $this->localeDate    = $localeDate;
+        $this->timezone      = $timezone;
+        $this->objectManager = $objectManager;
+        $this->phpSerialize  = \Zend\Serializer\Serializer::getDefaultAdapter();
+
+        if (interface_exists(\Magento\Framework\Serialize\SerializerInterface::class)) {
+            $this->serializerInterface = $this->objectManager->get(
+                \Magento\Framework\Serialize\SerializerInterface::class
+            );
+        }
+
         parent::__construct($helperFactory, $context);
     }
 
@@ -127,12 +144,13 @@ class Data extends AbstractHelper
 
     // ---------------------------------------
 
-    public function parseTimestampFromLocalizedFormat($localDate,
-                                                      $localIntlDateFormat = \IntlDateFormatter::SHORT,
-                                                      $localIntlTimeFormat = \IntlDateFormatter::SHORT,
-                                                      $localTimezone = NULL)
-    {
-        is_null($localTimezone) && $localTimezone = $this->timezone->getConfigTimezone();
+    public function parseTimestampFromLocalizedFormat(
+        $localDate,
+        $localIntlDateFormat = \IntlDateFormatter::SHORT,
+        $localIntlTimeFormat = \IntlDateFormatter::SHORT,
+        $localTimezone = null
+    ) {
+        $localTimezone === null && $localTimezone = $this->timezone->getConfigTimezone();
 
         $pattern = '';
         if ($localIntlDateFormat != \IntlDateFormatter::NONE) {
@@ -159,21 +177,23 @@ class Data extends AbstractHelper
 
     public function escapeJs($string)
     {
-        return str_replace(array("\\"  , "\n"  , "\r" , "\""  , "'"),
-                           array("\\\\", "\\n" , "\\r", "\\\"", "\\'"),
-                           $string);
+        return str_replace(
+            ["\\"  , "\n"  , "\r" , "\""  , "'"],
+            ["\\\\", "\\n" , "\\r", "\\\"", "\\'"],
+            $string
+        );
     }
 
     public function escapeHtml($data, $allowedTags = null, $flags = ENT_COMPAT)
     {
         if (is_array($data)) {
-            $result = array();
+            $result = [];
             foreach ($data as $item) {
                 $result[] = $this->escapeHtml($item, $allowedTags, $flags);
             }
         } else {
             // process single item
-            if (strlen($data)) {
+            if ($data !== '') {
                 if (is_array($allowedTags) && !empty($allowedTags)) {
                     $allowed = implode('|', $allowedTags);
 
@@ -201,13 +221,13 @@ class Data extends AbstractHelper
     public function deEscapeHtml($data, $flags = ENT_COMPAT)
     {
         if (is_array($data)) {
-            $result = array();
+            $result = [];
             foreach ($data as $item) {
                 $result[] = $this->deEscapeHtml($item, $flags);
             }
         } else {
             // process single item
-            if (strlen($data)) {
+            if ($data !== '') {
                 $result = htmlspecialchars_decode($data, $flags);
             } else {
                 $result = $data;
@@ -221,8 +241,8 @@ class Data extends AbstractHelper
     public function convertStringToSku($title)
     {
         $skuVal = strtolower($title);
-        $skuVal = str_replace(array(" ", ":", ",", ".", "?", "*", "+", "(", ")", "&", "%", "$", "#", "@",
-                                    "!", '"', "'", ";", "\\", "|", "/", "<", ">"), "-", $skuVal);
+        $skuVal = str_replace([" ", ":", ",", ".", "?", "*", "+", "(", ")", "&", "%", "$", "#", "@",
+                                    "!", '"', "'", ";", "\\", "|", "/", "<", ">"], "-", $skuVal);
 
         return $skuVal;
     }
@@ -230,7 +250,7 @@ class Data extends AbstractHelper
     public function stripInvisibleTags($text)
     {
         $text = preg_replace(
-            array(
+            [
                 // Remove invisible content
                 '/<head[^>]*?>.*?<\/head>/siu',
                 '/<style[^>]*?>.*?<\/style>/siu',
@@ -251,13 +271,14 @@ class Data extends AbstractHelper
                 '/<\/?((form)|(button)|(fieldset)|(legend)|(input))/iu',
                 '/<\/?((label)|(select)|(optgroup)|(option)|(textarea))/iu',
                 '/<\/?((frameset)|(frame)|(iframe))/iu',
-            ),
-            array(
+            ],
+            [
                 ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
                 "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0",
                 "\n\$0", "\n\$0",
-            ),
-            $text);
+            ],
+            $text
+        );
 
         return $text;
     }
@@ -268,7 +289,7 @@ class Data extends AbstractHelper
             foreach ($data as $key => $value) {
                 $data[$key] = $this->normalizeToUtfEncoding($value);
             }
-        } else if (is_string($data)) {
+        } elseif (is_string($data)) {
             return utf8_encode($data);
         }
 
@@ -281,12 +302,11 @@ class Data extends AbstractHelper
         mb_internal_encoding('UTF-8');
 
         if (mb_strlen($string) <= $neededLength) {
-
             mb_internal_encoding($oldEncoding);
             return $string;
         }
 
-        $longWords = array();
+        $longWords = [];
         foreach (explode(' ', $string) as $word) {
             if (mb_strlen($word) >= $longWord && !preg_match('/[0-9]/', $word)) {
                 $longWords[$word] = mb_strlen($word) - $minWordLen;
@@ -301,14 +321,12 @@ class Data extends AbstractHelper
         $needToBeReduced = mb_strlen($string) - $neededLength + (count($longWords) * mb_strlen($atEndOfWord));
 
         if ($canBeReduced < $needToBeReduced) {
-
             mb_internal_encoding($oldEncoding);
             return $string;
         }
 
         $weightOfOneLetter = $needToBeReduced / $canBeReduced;
         foreach ($longWords as $word => $canBeReducedForWord) {
-
             $willReduced = ceil($weightOfOneLetter * $canBeReducedForWord);
             $reducedWord = mb_substr($word, 0, mb_strlen($word) - $willReduced) . $atEndOfWord;
 
@@ -327,13 +345,13 @@ class Data extends AbstractHelper
      * @param array $data
      * @return array
      */
-    public function toLowerCaseRecursive(array $data = array())
+    public function toLowerCaseRecursive(array $data = [])
     {
-        if (count($data) == 0) {
+        if (empty($data)) {
             return $data;
         }
 
-        $lowerCasedData = array();
+        $lowerCasedData = [];
 
         foreach ($data as $key => $value) {
             if (is_array($value)) {
@@ -364,16 +382,18 @@ class Data extends AbstractHelper
             return 'false';
         }
 
-        $encoded = @json_encode($data);
+        $encoded = json_encode($data);
         if ($encoded !== false) {
             return $encoded;
         }
 
         $this->helperFactory->getObject('Module\Logger')->process(
-            ['source' => serialize($data)], 'json_encode() failed', false
+            ['source' => $this->serialize($data)],
+            'json_encode() failed',
+            false
         );
 
-        $encoded = @json_encode($this->normalizeToUtfEncoding($data));
+        $encoded = json_encode($this->normalizeToUtfEncoding($data));
         if ($encoded !== false) {
             return $encoded;
         }
@@ -388,10 +408,13 @@ class Data extends AbstractHelper
         }
 
         if (!$throwError) {
-            return NULL;
+            return null;
         }
 
-        throw new \Ess\M2ePro\Model\Exception\Logic('Unable to encode to JSON.', ['source' => serialize($data)]);
+        throw new \Ess\M2ePro\Model\Exception\Logic(
+            'Unable to encode to JSON.',
+            ['source' => $this->serialize($data)]
+        );
     }
 
     /**
@@ -405,34 +428,34 @@ class Data extends AbstractHelper
      */
     public function jsonDecode($data, $throwError = false)
     {
-        if (is_null($data) || $data === '' || strtolower($data) === 'null') {
-            return NULL;
+        if ($data === null || $data === '' || strtolower($data) === 'null') {
+            return null;
         }
 
-        $decoded = @json_decode($data, true);
-        if (!is_null($decoded)) {
+        $decoded = json_decode($data, true);
+        if ($decoded !== null) {
             return $decoded;
         }
 
         $this->helperFactory->getObject('Module\Logger')->process(
-            ['source' => serialize($data)], 'json_decode() failed', false
+            ['source' => $this->serialize($data)],
+            'json_decode() failed',
+            false
         );
 
         try {
-
             $previousValue = \Zend_Json::$useBuiltinEncoderDecoder;
             \Zend_Json::$useBuiltinEncoderDecoder = true;
             $decoded = \Zend_Json::decode($data);
             \Zend_Json::$useBuiltinEncoderDecoder = $previousValue;
-
         } catch (\Exception $e) {
-            $decoded = NULL;
+            $decoded = null;
         }
 
-        if (is_null($decoded) && $throwError) {
-
+        if ($decoded === null && $throwError) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
-                'Unable to decode JSON.', ['source' => $data]
+                'Unable to decode JSON.',
+                ['source' => $data]
             );
         }
 
@@ -441,16 +464,48 @@ class Data extends AbstractHelper
 
     //########################################
 
+    /**
+     * @param array|string $data
+     * @return string
+     * The return value can be json (in version > 2.2.0) or serialized string
+     */
+    public function serialize($data)
+    {
+        if ($this->serializerInterface !== null) {
+            return $this->serializerInterface->serialize($data);
+        }
+
+        return $this->phpSerialize->serialize($data);
+    }
+
+    /**
+     * @param string $data
+     * @return array|string|null
+     * $data can be json (in version > 2.2.0) or serialized string
+     */
+    public function unserialize($data)
+    {
+        if (preg_match('/^(a|s):[0-9]+:.+/', $data)) {
+            return $this->phpSerialize->unserialize($data);
+        }
+
+        return $this->serializerInterface->unserialize($data);
+    }
+
+    //########################################
+
     public function getClassConstants($class)
     {
-        if (stripos($class,'\Ess\M2ePro\\') === false) {
+        $class = '\\' . ltrim($class, '\\');
+
+        if (stripos($class, '\Ess\M2ePro\\') === false) {
             throw new \Ess\M2ePro\Model\Exception('Class name must begin with "\Ess\M2ePro"');
         }
 
         $reflectionClass = new \ReflectionClass($class);
         $tempConstants = $reflectionClass->getConstants();
 
-        $constants = array();
+        $constants = [];
         foreach ($tempConstants as $key => $value) {
             $constants[$class.'::'.strtoupper($key)] = $value;
         }
@@ -458,22 +513,25 @@ class Data extends AbstractHelper
         return $constants;
     }
 
-    public function getControllerActions($controllerClass, array $params = array())
+    public function getControllerActions($controllerClass, array $params = [])
     {
+        // fix for Magento2 sniffs that forcing to use ::class
+        $controllerClass = str_replace('_', '\\', $controllerClass);
+
         $classRoute = str_replace('\\', '_', $controllerClass);
         $classRoute = implode('_', array_map('lcfirst', explode('_', $classRoute)));
 
         if (!$this->getHelper('Module')->isDevelopmentEnvironment()) {
+            $cachedActions = $this->getHelper('Data_Cache_Permanent')->getValue('controller_actions_' . $classRoute);
 
-            $cachedActions = $this->getHelper('Data\Cache\Permanent')->getValue('controller_actions_' . $classRoute);
-
-            if ($cachedActions !== NULL) {
+            if ($cachedActions !== null) {
                 return $this->getActionsUrlsWithParameters($cachedActions, $params);
             }
         }
 
         $controllersDir = $this->dir->getDir(
-            \Ess\M2ePro\Helper\Module::IDENTIFIER, \Magento\Framework\Module\Dir::MODULE_CONTROLLER_DIR
+            \Ess\M2ePro\Helper\Module::IDENTIFIER,
+            \Magento\Framework\Module\Dir::MODULE_CONTROLLER_DIR
         );
         $controllerDir = $controllersDir . '/Adminhtml/' . str_replace('\\', '/', $controllerClass);
 
@@ -481,11 +539,9 @@ class Data extends AbstractHelper
         $controllerActions = array_diff(scandir($controllerDir), ['..', '.']);
 
         foreach ($controllerActions as $controllerAction) {
-
             $temp = explode('.php', $controllerAction);
 
-            if (count($temp) > 1) {
-
+            if (!empty($temp)) {
                 $action = $temp[0];
                 $action{0} = strtolower($action{0});
 
@@ -494,7 +550,7 @@ class Data extends AbstractHelper
         }
 
         if (!$this->getHelper('Module')->isDevelopmentEnvironment()) {
-            $this->getHelper('Data\Cache\Permanent')->setValue('controller_actions_' . $classRoute, $actions);
+            $this->getHelper('Data_Cache_Permanent')->setValue('controller_actions_' . $classRoute, $actions);
         }
 
         return $this->getActionsUrlsWithParameters($actions, $params);
@@ -513,10 +569,10 @@ class Data extends AbstractHelper
 
     //########################################
 
-    public function generateUniqueHash($strParam = NULL, $maxLength = NULL)
+    public function generateUniqueHash($strParam = null, $maxLength = null)
     {
-        $hash = sha1(rand(1,1000000).microtime(true).(string)$strParam);
-        (int)$maxLength > 0 && $hash = substr($hash,0,(int)$maxLength);
+        $hash = sha1(rand(1, 1000000).microtime(true).(string)$strParam);
+        (int)$maxLength > 0 && $hash = substr($hash, 0, (int)$maxLength);
         return $hash;
     }
 
@@ -526,10 +582,10 @@ class Data extends AbstractHelper
             return false;
         }
 
-        $preparedData = array();
+        $preparedData = [];
 
         foreach ($keysToCheck as $key) {
-            $preparedData[$key] = array();
+            $preparedData[$key] = [];
         }
 
         foreach ($data as $item) {
@@ -550,7 +606,7 @@ class Data extends AbstractHelper
 
     public function getMainStatus($statuses)
     {
-        foreach (array(self::STATUS_ERROR, self::STATUS_WARNING) as $status) {
+        foreach ([self::STATUS_ERROR, self::STATUS_WARNING] as $status) {
             if (in_array($status, $statuses)) {
                 return $status;
             }
@@ -561,15 +617,16 @@ class Data extends AbstractHelper
 
     //########################################
 
-    public function makeBackUrlParam($backIdOrRoute, array $backParams = array())
+    public function makeBackUrlParam($backIdOrRoute, array $backParams = [])
     {
-        $paramsString = count($backParams) > 0 ? '|'.http_build_query($backParams,'','&') : '';
+        $paramsString = !empty($backParams) ? '|'.http_build_query($backParams, '', '&') : '';
         return base64_encode($backIdOrRoute.$paramsString);
     }
 
-    public function getBackUrlParam($defaultBackIdOrRoute = 'index',
-                                    array $defaultBackParams = array())
-    {
+    public function getBackUrlParam(
+        $defaultBackIdOrRoute = 'index',
+        array $defaultBackParams = []
+    ) {
         $requestParams = $this->_getRequest()->getParams();
         return isset($requestParams['back']) ? $requestParams['back']
                                              : $this->makeBackUrlParam($defaultBackIdOrRoute, $defaultBackParams);
@@ -577,26 +634,27 @@ class Data extends AbstractHelper
 
     // ---------------------------------------
 
-    public function getBackUrl($defaultBackIdOrRoute = 'index',
-                               array $defaultBackParams = array(),
-                               array $extendedRoutersParams = array())
-    {
-        $back = $this->getBackUrlParam($defaultBackIdOrRoute,$defaultBackParams);
+    public function getBackUrl(
+        $defaultBackIdOrRoute = 'index',
+        array $defaultBackParams = [],
+        array $extendedRoutersParams = []
+    ) {
+        $back = $this->getBackUrlParam($defaultBackIdOrRoute, $defaultBackParams);
         $back = base64_decode($back);
 
-        $params = array();
+        $params = [];
 
-        if (strpos($back,'|') !== false) {
-            $route = substr($back,0,strpos($back,'|'));
-            parse_str(substr($back,strpos($back,'|')+1),$params);
+        if (strpos($back, '|') !== false) {
+            $route = substr($back, 0, strpos($back, '|'));
+            parse_str(substr($back, strpos($back, '|')+1), $params);
         } else {
             $route = $back;
         }
 
-        $extendedRoutersParamsTemp = array();
+        $extendedRoutersParamsTemp = [];
         foreach ($extendedRoutersParams as $extRouteName => $extParams) {
             if ($route == $extRouteName) {
-                $params = array_merge($params,$extParams);
+                $params = array_merge($params, $extParams);
             } else {
                 $extendedRoutersParamsTemp[$route] = $params;
             }
@@ -610,7 +668,7 @@ class Data extends AbstractHelper
 
         foreach ($extendedRoutersParams as $extRouteName => $extParams) {
             if ($route == $extRouteName) {
-                $params = array_merge($params,$extParams);
+                $params = array_merge($params, $extParams);
             }
         }
 
@@ -639,7 +697,7 @@ class Data extends AbstractHelper
         for ($i = 0; $i < 10; $i++) {
             if ($string[$i] == "X" || $string[$i] == "x") {
                 $a += 10 * intval(10 - $i);
-            } else if (is_numeric($string[$i])) {
+            } elseif (is_numeric($string[$i])) {
                 $a += intval($string[$i]) * intval(10 - $i);
             } else {
                 return false;
@@ -654,13 +712,17 @@ class Data extends AbstractHelper
             return false;
         }
 
-        if (substr($string,0,3) != '978') {
+        if (substr($string, 0, 3) != '978') {
             return false;
         }
 
         $check = 0;
-        for ($i = 0; $i < 13; $i += 2) $check += (int)substr($string, $i, 1);
-        for ($i = 1; $i < 12; $i += 2) $check += 3 * substr($string, $i, 1);
+        for ($i = 0; $i < 13; $i += 2) {
+            $check += (int)substr($string, $i, 1);
+        }
+        for ($i = 1; $i < 12; $i += 2) {
+            $check += 3 * substr($string, $i, 1);
+        }
 
         return $check % 10 == 0;
     }
@@ -674,35 +736,35 @@ class Data extends AbstractHelper
 
     public function isUPC($upc)
     {
-        return $this->isWorldWideId($upc,'UPC');
+        return $this->isWorldWideId($upc, 'UPC');
     }
 
     public function isEAN($ean)
     {
-        return $this->isWorldWideId($ean,'EAN');
+        return $this->isWorldWideId($ean, 'EAN');
     }
 
     // ---------------------------------------
 
-    private function isWorldWideId($worldWideId,$type)
+    private function isWorldWideId($worldWideId, $type)
     {
-        $adapters = array(
-            'UPC' => array(
+        $adapters = [
+            'UPC' => [
                 '12' => 'Upca'
-            ),
-            'EAN' => array(
+            ],
+            'EAN' => [
                 '13' => 'Ean13'
-            ),
-            'GTIN' => array(
+            ],
+            'GTIN' => [
                 '12' => 'Gtin12',
                 '13' => 'Gtin13',
                 '14' => 'Gtin14'
-            )
-        );
+            ]
+        ];
 
         $length = strlen($worldWideId);
 
-        if (!isset($adapters[$type],$adapters[$type][$length])) {
+        if (!isset($adapters[$type], $adapters[$type][$length])) {
             return false;
         }
 

@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Grid\Column\Filter;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Grid\Column\Filter
+ */
 class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AbstractFilter
 {
     //########################################
 
     protected function _renderOption($option, $value)
     {
-        $selected = (($option['value'] == $value && (!is_null($value))) ? ' selected="selected"' : '' );
+        $selected = (($option['value'] == $value && ($value !== null)) ? ' selected="selected"' : '' );
         return '<option value="'. $this->escapeHtml($option['value']).'"'.$selected.'>'
                     .$this->escapeHtml($option['label'])
               .'</option>';
@@ -36,7 +40,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Ab
         }
 
         //eBay Catalog Primary Category Assigned
-        $label = $this->getHelper('Component\Ebay\Category')
+        $label = $this->getHelper('Component_Ebay_Category')
             ->getCategoryTitle(\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN);
         $label = $this->__('%1% Assigned', $label);
 
@@ -75,20 +79,20 @@ HTML;
 
     protected function _getOptions()
     {
-        return array(
-            array(
+        return [
+            [
                 'label' => $this->__('Any'),
                 'value' => ''
-            ),
-            array(
+            ],
+            [
                 'label' => $this->__('Yes'),
                 'value' => 1
-            ),
-            array(
+            ],
+            [
                 'label' => $this->__('No'),
                 'value' => 0
-            ),
-        );
+            ],
+        ];
     }
 
     //########################################

@@ -8,14 +8,18 @@
 
 namespace Ess\M2ePro\Model\Connector\Command\Pending;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Connector\Command\Pending
+ */
 abstract class Responser extends \Ess\M2ePro\Model\AbstractModel
 {
-    protected $params = array();
+    protected $params = [];
 
     /** @var \Ess\M2ePro\Model\Connector\Connection\Response $response */
-    protected $response = NULL;
+    protected $response = null;
 
-    protected $preparedResponseData = array();
+    protected $preparedResponseData = [];
 
     // ########################################
 
@@ -23,9 +27,8 @@ abstract class Responser extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        array $params = array()
-    )
-    {
+        array $params = []
+    ) {
         $this->params   = $params;
         $this->response = $response;
         parent::__construct($helperFactory, $modelFactory);
@@ -45,7 +48,7 @@ abstract class Responser extends \Ess\M2ePro\Model\AbstractModel
         $this->processResponseMessages();
 
         if (!$this->isNeedProcessResponse()) {
-            return NULL;
+            return null;
         }
 
         if (!$this->validateResponse()) {
@@ -67,9 +70,15 @@ abstract class Responser extends \Ess\M2ePro\Model\AbstractModel
 
     // ########################################
 
-    public function failDetected($messageText) {}
+    public function failDetected($messageText)
+    {
+        return null;
+    }
 
-    public function eventAfterExecuting() {}
+    public function eventAfterExecuting()
+    {
+        return null;
+    }
 
     //-----------------------------------------
 
@@ -89,7 +98,10 @@ abstract class Responser extends \Ess\M2ePro\Model\AbstractModel
 
     // ########################################
 
-    protected function processResponseMessages() {}
+    protected function processResponseMessages()
+    {
+        return null;
+    }
 
     // ########################################
 }

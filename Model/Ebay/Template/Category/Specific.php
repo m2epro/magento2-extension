@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Category;
 
+/**
+ * Class Specific
+ * @package Ess\M2ePro\Model\Ebay\Template\Category
+ */
 class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     const MODE_ITEM_SPECIFICS = 1;
@@ -30,12 +34,12 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Category
      */
-    private $categoryTemplateModel = NULL;
+    private $categoryTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Category\Specific\Source[]
      */
-    private $categorySpecificSourceModels = array();
+    private $categorySpecificSourceModels = [];
 
     //########################################
 
@@ -50,8 +54,8 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function delete()
     {
         $temp = parent::delete();
-        $temp && $this->categoryTemplateModel = NULL;
-        $temp && $this->categorySpecificSourceModels = array();
+        $temp && $this->categoryTemplateModel = null;
+        $temp && $this->categorySpecificSourceModels = [];
         return $temp;
     }
 
@@ -62,10 +66,10 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getCategoryTemplate()
     {
-        if (is_null($this->categoryTemplateModel)) {
-
+        if ($this->categoryTemplateModel === null) {
             $this->categoryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Ebay\Template\Category', $this->getTemplateCategoryId()
+                'Ebay_Template_Category',
+                $this->getTemplateCategoryId()
             );
         }
 
@@ -95,7 +99,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         }
 
         $this->categorySpecificSourceModels[$productId] = $this->modelFactory->getObject(
-            'Ebay\Template\Category\Specific\Source'
+            'Ebay_Template_Category_Specific_Source'
         );
         $this->categorySpecificSourceModels[$productId]->setMagentoProduct($magentoProduct);
         $this->categorySpecificSourceModels[$productId]->setCategorySpecificTemplate($this);
@@ -208,7 +212,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getUsedAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         if ($this->isCustomAttributeValueMode() || $this->isCustomLabelAttributeValueMode()) {
             $attributes[] = $this->getData('value_custom_attribute');

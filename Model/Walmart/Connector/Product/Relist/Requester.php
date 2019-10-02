@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Walmart\Connector\Product\Relist;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Walmart\Connector\Product\Relist
+ */
 class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
 {
     // ########################################
 
     public function getCommand()
     {
-        return array('product', 'update', 'entities');
+        return ['product', 'update', 'entities'];
     }
 
     // ########################################
@@ -50,7 +54,7 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
      */
     protected function filterChildListingProductsByStatus(array $listingProducts)
     {
-        $resultListingProducts = array();
+        $resultListingProducts = [];
 
         foreach ($listingProducts as $childListingProduct) {
             if (!$childListingProduct->isStopped() || !$childListingProduct->isRelistable()) {

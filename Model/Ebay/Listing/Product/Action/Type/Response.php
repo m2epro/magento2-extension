@@ -10,32 +10,36 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type;
 
 use \Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
 
+/**
+ * Class Response
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type
+ */
 abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
      * @var array
      */
-    private $params = array();
+    private $params = [];
 
     /**
      * @var \Ess\M2ePro\Model\Listing\Product
      */
-    private $listingProduct = NULL;
+    private $listingProduct = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator
      */
-    private $configurator = NULL;
+    private $configurator = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\RequestData
      */
-    protected $requestData = NULL;
+    protected $requestData = null;
 
     /**
      * @var array
      */
-    protected $requestMetaData = array();
+    protected $requestMetaData = [];
 
     protected $activeRecordFactory;
 
@@ -45,15 +49,14 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
 
     //########################################
 
-    abstract public function processSuccess(array $response, array $responseParams = array());
+    abstract public function processSuccess(array $response, array $responseParams = []);
 
     //########################################
 
@@ -72,7 +75,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param array $params
      */
-    public function setParams(array $params = array())
+    public function setParams(array $params = [])
     {
         $this->params = $params;
     }
@@ -234,17 +237,16 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function createEbayItem($itemId)
     {
-        $data = array(
+        $data = [
             'account_id'     => $this->getAccount()->getId(),
             'marketplace_id' => $this->getMarketplace()->getId(),
             'item_id'        => (double)$itemId,
             'product_id'     => (int)$this->getListingProduct()->getProductId(),
             'store_id'       => (int)$this->getListing()->getStoreId()
-        );
+        ];
 
         if ($this->getRequestData()->isVariationItem() && $this->getRequestData()->getVariations()) {
-
-            $variations = array();
+            $variations = [];
             $requestMetadata = $this->getRequestMetaData();
 
             foreach ($this->getRequestData()->getVariations() as $variation) {
@@ -252,10 +254,10 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
                 $productOptions = $variation['specifics'];
 
                 if (empty($requestMetadata['variations_specifics_replacements'])) {
-                    $variations[] = array(
+                    $variations[] = [
                         'product_options' => $productOptions,
                         'channel_options' => $channelOptions,
-                    );
+                    ];
 
                     continue;
                 }
@@ -269,10 +271,10 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
                     unset($productOptions[$channelValue]);
                 }
 
-                $variations[] = array(
+                $variations[] = [
                     'product_options' => $productOptions,
                     'channel_options' => $channelOptions,
-                );
+                ];
             }
 
             $data['variations'] = $this->getHelper('Data')->jsonEncode($variations);
@@ -295,12 +297,10 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
         $requestMetadata     = $this->getRequestMetaData();
         $variationIdsIndexes = !empty($requestMetadata['variation_ids_indexes'])
-            ? $requestMetadata['variation_ids_indexes'] : array();
+            ? $requestMetadata['variation_ids_indexes'] : [];
 
         foreach ($this->getListingProduct()->getVariations(true) as $variation) {
-
             if ($this->getRequestData()->hasVariations()) {
-
                 if (!isset($variationIdsIndexes[$variation->getId()])) {
                     continue;
                 }
@@ -312,12 +312,12 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
                     continue;
                 }
 
-                $data = array(
+                $data = [
                     'online_sku'   => $requestVariation['sku'],
                     'online_price' => $requestVariation['price'],
                     'add'          => 0,
                     'delete'       => 0,
-                );
+                ];
 
                 /** @var EbayVariation $ebayVariation */
                 $ebayVariation = $variation->getChildObject();
@@ -328,7 +328,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
                 $variation->getChildObject()->addData($data)->save();
 
                 if (!empty($requestVariation['details'])) {
-
                     $additionalData = $variation->getAdditionalData();
                     $additionalData['online_product_details'] = $requestVariation['details'];
 
@@ -372,7 +371,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         $metadata = $this->getRequestMetaData();
 
         if ($metadata["is_listing_type_fixed"]) {
-            $data['online_bids'] = NULL;
+            $data['online_bids'] = null;
         } else {
             $data['online_bids'] = 0;
         }
@@ -386,7 +385,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->getRequestData()->hasVariations()) {
             $data['online_qty'] = $this->getRequestData()->getVariationQty();
-        } else if ($this->getRequestData()->hasQty()) {
+        } elseif ($this->getRequestData()->hasQty()) {
             $data['online_qty'] = $this->getRequestData()->getQty();
         }
 
@@ -398,13 +397,11 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         $metadata = $this->getRequestMetaData();
 
         if ($metadata["is_listing_type_fixed"]) {
-
-            $data['online_start_price'] = NULL;
-            $data['online_reserve_price'] = NULL;
-            $data['online_buyitnow_price'] = NULL;
+            $data['online_start_price'] = null;
+            $data['online_reserve_price'] = null;
+            $data['online_buyitnow_price'] = null;
 
             if ($this->getRequestData()->hasVariations()) {
-
                 if (!$this->getRequestData()->hasOutOfStockControlResult()) {
                     $calculateWithEmptyQty = $this->getEbayListingProduct()->getOutOfStockControl();
                 } else {
@@ -412,13 +409,10 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
                 }
 
                 $data['online_current_price'] = $this->getRequestData()->getVariationPrice($calculateWithEmptyQty);
-
-            } else if ($this->getRequestData()->hasPriceFixed()) {
+            } elseif ($this->getRequestData()->hasPriceFixed()) {
                 $data['online_current_price'] = $this->getRequestData()->getPriceFixed();
             }
-
         } else {
-
             if ($this->getRequestData()->hasPriceStart()) {
                 $data['online_start_price'] = $this->getRequestData()->getPriceStart();
                 $data['online_current_price'] = $this->getRequestData()->getPriceStart();
@@ -449,8 +443,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getRequestData()->hasPrimaryCategory()) {
-
-            $tempPath = $this->getHelper('Component\Ebay\Category\Ebay')->getPath(
+            $tempPath = $this->getHelper('Component_Ebay_Category_Ebay')->getPath(
                 $this->getRequestData()->getPrimaryCategory(),
                 $this->getMarketplace()->getId()
             );
@@ -521,11 +514,9 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if (!isset($responseParams['is_images_upload_error']) || !$responseParams['is_images_upload_error']) {
-
             $metadata = $this->getRequestMetaData();
 
             if ($this->getRequestData()->hasImages()) {
-
                 $key = 'ebay_product_images_hash';
                 $imagesData = $this->getRequestData()->getImages();
 
@@ -535,7 +526,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             }
 
             if ($this->getRequestData()->hasVariationsImages()) {
-
                 $key = 'ebay_product_variation_images_hash';
 
                 if (!empty($metadata[$key])) {
@@ -584,7 +574,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $variations = isset($response['variations_that_can_not_be_deleted'])
-            ? $response['variations_that_can_not_be_deleted'] : array();
+            ? $response['variations_that_can_not_be_deleted'] : [];
 
         $data['additional_data']['variations_that_can_not_be_deleted'] = $variations;
 
@@ -610,7 +600,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
     protected function runAccountPickupStoreStateUpdater()
     {
-        $pickupStoreStateUpdater = $this->modelFactory->getObject('Ebay\Listing\Product\PickupStore\State\Updater');
+        $pickupStoreStateUpdater = $this->modelFactory->getObject('Ebay_Listing_Product_PickupStore_State_Updater');
         $pickupStoreStateUpdater->setListingProduct($this->getListingProduct());
         $pickupStoreStateUpdater->process();
     }

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation;
 
 use Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation;
 
+/**
+ * Class Account
+ * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation
+ */
 class Account extends Installation
 {
     //########################################
@@ -46,7 +50,6 @@ JS
         return
             '<div id="progress_bar"></div>' .
             '<div id="content_container">' . parent::_toHtml() . '</div>';
-
     }
 
     //########################################

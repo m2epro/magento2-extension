@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay;
 
+/**
+ * Class Marketplace
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay
+ */
 class Marketplace extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;

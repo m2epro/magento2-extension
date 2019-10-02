@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Inventory\Get;
 
+/**
+ * Class ItemsRequester
+ * @package Ess\M2ePro\Model\Amazon\Connector\Inventory\Get
+ */
 class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {
     // ########################################
 
     public function getRequestData()
     {
-        $requestData = array();
+        $requestData = [];
         if (isset($this->params['full_items_data'])) {
             $requestData['full_items_data'] = $this->params['full_items_data'];
         }
@@ -24,7 +28,7 @@ class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\
 
     public function getCommand()
     {
-        return array('inventory','get','items');
+        return ['inventory','get','items'];
     }
 
     // ########################################

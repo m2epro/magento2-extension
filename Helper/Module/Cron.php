@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Helper\Module;
 
+/**
+ * Class Cron
+ * @package Ess\M2ePro\Helper\Module
+ */
 class Cron extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    const RUNNER_MAGENTO             = 'magento';
-    const RUNNER_DEVELOPER           = 'developer';
+    const RUNNER_MAGENTO            = 'magento';
+    const RUNNER_DEVELOPER          = 'developer';
     const RUNNER_SERVICE_CONTROLLER = 'service_controller';
     const RUNNER_SERVICE_PUB        = 'service_pub';
 
@@ -30,8 +34,7 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->moduleConfig = $moduleConfig;
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
@@ -103,7 +106,7 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
         $isHours && $interval *= 3600;
 
         $lastRunnerChange = $this->getLastRunnerChange();
-        if (is_null($lastRunnerChange)) {
+        if ($lastRunnerChange === null) {
             return false;
         }
 
@@ -119,7 +122,7 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function setLastAccess($value)
     {
-        return $this->setConfigValue('last_access',$value);
+        return $this->setConfigValue('last_access', $value);
     }
 
     // ---------------------------------------
@@ -129,7 +132,7 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
         $isHours && $interval *= 3600;
 
         $lastAccess = $this->getLastAccess();
-        if (is_null($lastAccess)) {
+        if ($lastAccess === null) {
             return false;
         }
 
@@ -145,7 +148,7 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function setLastRun($value)
     {
-        return $this->setConfigValue('last_run',$value);
+        return $this->setConfigValue('last_run', $value);
     }
 
     // ---------------------------------------
@@ -155,7 +158,7 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
         $isHours && $interval *= 3600;
 
         $lastRun = $this->getLastRun();
-        if (is_null($lastRun)) {
+        if ($lastRun === null) {
             return false;
         }
 

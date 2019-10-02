@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Synchronization\Log;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Synchronization\Log
+ */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
 {
     //########################################
 
     public function execute()
     {
-        $this->setAjaxContent($this->createBlock('Amazon\Synchronization\Log\Grid'));
+        $this->setAjaxContent($this->createBlock('Amazon_Synchronization_Log_Grid'));
 
         return $this->getResult();
     }

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\General;
 
 use Ess\M2ePro\Controller\Adminhtml\General;
 
+/**
+ * Class CreateAttribute
+ * @package Ess\M2ePro\Controller\Adminhtml\General
+ */
 class CreateAttribute extends General
 {
     protected $entityAttributeSetFactory;
@@ -19,8 +23,7 @@ class CreateAttribute extends General
     public function __construct(
         \Magento\Eav\Model\Entity\Attribute\SetFactory $entityAttributeSetFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
-    )
-    {
+    ) {
         $this->entityAttributeSetFactory = $entityAttributeSetFactory;
         parent::__construct($context);
     }
@@ -30,7 +33,7 @@ class CreateAttribute extends General
     public function execute()
     {
         /** @var \Ess\M2ePro\Model\Magento\Attribute\Builder $model */
-        $model = $this->modelFactory->getObject('Magento\Attribute\Builder');
+        $model = $this->modelFactory->getObject('Magento_Attribute_Builder');
 
         $model->setLabel($this->getRequest()->getParam('store_label'))
             ->setCode($this->getRequest()->getParam('code'))
@@ -41,12 +44,11 @@ class CreateAttribute extends General
         $attributeResult = $model->save();
 
         if (!isset($attributeResult['result']) || !$attributeResult['result']) {
-
             $this->setJsonContent($attributeResult);
             return $this->getResult();
         }
 
-        foreach ($this->getRequest()->getParam('attribute_sets', array()) as $seId) {
+        foreach ($this->getRequest()->getParam('attribute_sets', []) as $seId) {
 
             /** @var \Magento\Eav\Model\Entity\Attribute\Set $set */
             $set = $this->entityAttributeSetFactory->create()->load($seId);
@@ -56,14 +58,13 @@ class CreateAttribute extends General
             }
 
             /** @var \Ess\M2ePro\Model\Magento\Attribute\Relation $model */
-            $model = $this->modelFactory->getObject('Magento\Attribute\Relation');
+            $model = $this->modelFactory->getObject('Magento_Attribute_Relation');
             $model->setAttributeObj($attributeResult['obj'])
                 ->setAttributeSetObj($set);
 
             $setResult = $model->save();
 
             if (!isset($setResult['result']) || !$setResult['result']) {
-
                 $this->setJsonContent($setResult);
                 return $this->getResult();
             }

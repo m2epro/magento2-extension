@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Order\Receive;
 
+/**
+ * Class Items
+ * @package Ess\M2ePro\Model\Ebay\Connector\Order\Receive
+ */
 class Items extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 {
     const TIMEOUT_ERRORS_COUNT_TO_RISE = 3;
@@ -25,8 +29,7 @@ class Items extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params = []
-    )
-    {
+    ) {
         $this->cacheConfig = $cacheConfig;
         parent::__construct($marketplace, $account, $helperFactory, $modelFactory, $params);
     }
@@ -35,15 +38,15 @@ class Items extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 
     protected function getCommand()
     {
-        return array('orders', 'get', 'items');
+        return ['orders', 'get', 'items'];
     }
 
     protected function getRequestData()
     {
-        $data = array(
+        $data = [
             'from_update_date' => $this->params['from_update_date'],
             'to_update_date' => $this->params['to_update_date']
-        );
+        ];
 
         if (!empty($this->params['job_token'])) {
             $data['job_token'] = $this->params['job_token'];
@@ -59,14 +62,10 @@ class Items extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
         $cacheConfigGroup = '/ebay/synchronization/orders/receive/timeout';
 
         try {
-
             parent::process();
-
         } catch (\Ess\M2ePro\Model\Exception\Connection $exception) {
-
             $data = $exception->getAdditionalData();
             if (!empty($data['curl_error_number']) && $data['curl_error_number'] == CURLE_OPERATION_TIMEOUTED) {
-
                 $fails = (int)$this->cacheConfig->getGroupValue($cacheConfigGroup, 'fails');
                 $fails++;
 
@@ -74,7 +73,6 @@ class Items extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
                 $rise += self::TIMEOUT_RISE_ON_ERROR;
 
                 if ($fails >= self::TIMEOUT_ERRORS_COUNT_TO_RISE && $rise <= self::TIMEOUT_RISE_MAX_VALUE) {
-
                     $fails = 0;
                     $this->cacheConfig->setGroupValue($cacheConfigGroup, 'rise', $rise);
                 }

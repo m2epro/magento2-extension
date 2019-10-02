@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Delete;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Delete
+ */
 class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Request
 {
     //########################################
@@ -17,9 +21,9 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
      */
     protected function getActionData()
     {
-        return array(
+        return [
             'sku' => $this->getAmazonListingProduct()->getSku()
-        );
+        ];
     }
 
     //########################################

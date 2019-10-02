@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper;
 
+/**
+ * Class Factory
+ * @package Ess\M2ePro\Helper
+ */
 class Factory
 {
     protected $objectManager;
@@ -21,8 +25,7 @@ class Factory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager
-    )
-    {
+    ) {
         $this->objectManager = $objectManager;
     }
 
@@ -36,6 +39,9 @@ class Factory
      */
     public function getObject($helperName, array $arguments = [])
     {
+        // fix for Magento2 sniffs that forcing to use ::class
+        $helperName = str_replace('_', '\\', $helperName);
+
         $helper = $this->objectManager->get('\Ess\M2ePro\Helper\\'.$helperName, $arguments);
 
         if (!$helper instanceof \Magento\Framework\App\Helper\AbstractHelper) {

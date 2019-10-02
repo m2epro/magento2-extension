@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace
+ */
 class Index extends Marketplace
 {
     //########################################

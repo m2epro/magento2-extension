@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Connector\Command\Pending\Requester;
 
+/**
+ * Class Partial
+ * @package Ess\M2ePro\Model\Connector\Command\Pending\Requester
+ */
 class Partial extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Processing $processing */
@@ -28,23 +32,29 @@ class Partial extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function getProcessing()
     {
-        if (!is_null($this->processing)) {
+        if ($this->processing !== null) {
             return $this->processing;
         }
 
         return $this->processing = $this->activeRecordFactory->getObjectLoaded(
-            'Processing', $this->getProcessingId(), NULL, false
+            'Processing',
+            $this->getProcessingId(),
+            null,
+            false
         );
     }
 
     public function getRequestPendingPartial()
     {
-        if (!is_null($this->requestPendingPartial)) {
+        if ($this->requestPendingPartial !== null) {
             return $this->requestPendingPartial;
         }
 
         return $this->requestPendingPartial = $this->activeRecordFactory->getObjectLoaded(
-            'Request\Pending\Partial', $this->getRequestPendingPartialId(), NULL, false
+            'Request_Pending_Partial',
+            $this->getRequestPendingPartialId(),
+            null,
+            false
         );
     }
 

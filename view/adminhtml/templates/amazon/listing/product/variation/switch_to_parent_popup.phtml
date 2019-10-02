@@ -1,3 +1,16 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\SwitchToParentPopup $block */
+
+?>
+
 <div id="switch_to_parent_popup">
     <style>
         .list {
@@ -12,7 +25,8 @@
         'no_hide' => true,
         'always_show' => true,
         'style' => 'margin-bottom: 0px',
-        'content' => $block->__('M2E Pro is able to work with Magento Variational Products in two different Modes:
+        'content' => $block->__(
+            'M2E Pro is able to work with Magento Variational Products in two different Modes:
             <ul class="list">
                 <li>Selling Magento Variational Product as an Amazon Product with Parent/Child relation;</li>
                 <li>Selling certain Variation of Magento Product as Individual Amazon Product.</li>

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Indexer\Listing\Product;
 
+/**
+ * Class VariationParent
+ * @package Ess\M2ePro\Model\Amazon\Indexer\Listing\Product
+ */
 class VariationParent extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     //########################################

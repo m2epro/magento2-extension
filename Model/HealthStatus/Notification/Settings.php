@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\HealthStatus\Notification;
 
+/**
+ * Class Settings
+ * @package Ess\M2ePro\Model\HealthStatus\Notification
+ */
 class Settings extends \Ess\M2ePro\Model\AbstractModel
 {
     const MODE_DISABLED                    = 0;
@@ -26,7 +30,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory, $data);
         $this->moduleConfig  = $moduleConfig;
     }

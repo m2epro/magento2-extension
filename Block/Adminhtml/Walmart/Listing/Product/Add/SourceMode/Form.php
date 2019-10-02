@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     //########################################
@@ -21,13 +25,14 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]]
         );
 
-        $form->addField('soruce_mode_help_block',
+        $form->addField(
+            'soruce_mode_help_block',
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
-                    '<p>After an M2E Pro listing is successfully configured, you can add Magento Products into it.</p>
-                    <p>You are able to select the products either from the entire Magento catalog or a certain
-                    Magento category. To proceed, choose your option below. </p>'
+                    'After you set up M2E Pro Listing, you can add Magento Products into it.
+                    You are able to select the products either from the entire Magento catalog or a
+                    certain Magento category. To proceed, choose your option below.'
                 )
             ]
         );
@@ -39,7 +44,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         $defaultSource = $this->getRequest()
-            ->getParam('source',\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_PRODUCT);
+            ->getParam('source', \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_PRODUCT);
 
         $fieldset->addField(
             'block-title',

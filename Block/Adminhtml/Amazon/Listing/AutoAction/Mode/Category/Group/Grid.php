@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category\Group;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category\Group
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\Group\Grid
 {
     //########################################
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/amazon_listing_autoAction/getCategoryGroupGrid', array('_current' => true));
+        return $this->getUrl('*/amazon_listing_autoAction/getCategoryGroupGrid', ['_current' => true]);
     }
 
     //########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Lock;
 
+/**
+ * Class Transactional
+ * @package Ess\M2ePro\Model\ResourceModel\Lock
+ */
 class Transactional extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################

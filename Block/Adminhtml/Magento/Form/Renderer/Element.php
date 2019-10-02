@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Form\Renderer;
 use Magento\Backend\Block\Widget\Form\Renderer\Fieldset\Element as MagentoElement;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
+/**
+ * Class Element
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Form\Renderer
+ */
 class Element extends MagentoElement
 {
     /** @var \Ess\M2ePro\Helper\Factory */
@@ -21,7 +25,7 @@ class Element extends MagentoElement
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
-    ){
+    ) {
         $this->helperFactory = $context->getHelperFactory();
         parent::__construct($context, $data);
     }
@@ -52,7 +56,7 @@ HTML;
 
         $tooltip = $element->getData('tooltip');
 
-        if (is_null($tooltip)) {
+        if ($tooltip === null) {
             $element->addClass('m2epro-field-without-tooltip');
             return parent::render($element);
         }
@@ -76,10 +80,12 @@ HTML;
      *
      * Starting from version 2.2.3 Magento forcibly escapes content of tooltips. But we are using HTML there
      */
-    public function escapeHtml($data, $allowedTags = NULL)
+    public function escapeHtml($data, $allowedTags = null)
     {
         return $this->helperFactory->getObject('Data')->escapeHtml(
-            $data, ['div', 'a', 'strong', 'br', 'i', 'b', 'ul', 'li', 'p'], ENT_NOQUOTES
+            $data,
+            ['div', 'a', 'strong', 'br', 'i', 'b', 'ul', 'li', 'p'],
+            ENT_NOQUOTES
         );
     }
 

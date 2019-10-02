@@ -30,7 +30,7 @@ class SaveOnlineIdentifiers extends AbstractFeature
 
         while ($row = $queryStmt->fetch()) {
 
-            $additionalData = (array)@json_decode($row['additional_data'], true);
+            $additionalData = (array)json_decode($row['additional_data'], true);
             $additionalData['online_product_details']['mpn'] = $additionalData['ebay_mpn_value'];
             unset($additionalData['ebay_mpn_value']);
             $additionalData = json_encode($additionalData);

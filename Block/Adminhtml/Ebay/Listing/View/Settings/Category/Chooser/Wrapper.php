@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Category\Chooser;
 
+/**
+ * Class Wrapper
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Category\Chooser
+ */
 class Wrapper extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     //########################################
@@ -26,7 +30,7 @@ class Wrapper extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     protected function _toHtml()
     {
-        $breadcrumb = $this->createBlock('Ebay\Listing\View\Settings\Category\Breadcrumb');
+        $breadcrumb = $this->createBlock('Ebay_Listing_View_Settings_Category_Breadcrumb');
         $breadcrumb->setSelectedStep(1);
 
         return $breadcrumb->toHtml() . parent::_toHtml();

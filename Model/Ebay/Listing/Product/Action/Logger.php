@@ -8,22 +8,26 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action;
 
+/**
+ * Class Logger
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action
+ */
 class Logger extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $action = \Ess\M2ePro\Model\Listing\Log::ACTION_UNKNOWN;
 
-    protected $actionId = NULL;
+    protected $actionId = null;
     protected $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
 
     protected $storeMode = false;
-    protected $storedMessages = array();
+    protected $storedMessages = [];
 
     protected $status = \Ess\M2ePro\Helper\Data::STATUS_SUCCESS;
 
     /**
      * @var \Ess\M2ePro\Model\Listing\Log
      */
-    private $listingLog = NULL;
+    private $listingLog = null;
 
     protected $activeRecordFactory;
 
@@ -33,8 +37,7 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-    )
-    {
+    ) {
         parent::__construct($helperFactory, $modelFactory);
         $this->activeRecordFactory = $activeRecordFactory;
     }
@@ -127,30 +130,32 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
      * @param \Ess\M2ePro\Model\Connector\Connection\Response\Message $message
      * @param int $priority
      */
-    public function logListingProductMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct,
-                                             \Ess\M2ePro\Model\Connector\Connection\Response\Message $message,
-                                             $priority = \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM)
-    {
+    public function logListingProductMessage(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        \Ess\M2ePro\Model\Connector\Connection\Response\Message $message,
+        $priority = \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+    ) {
         if ($this->storeMode) {
-
-            $this->storedMessages[] = array(
+            $this->storedMessages[] = [
                 'type' => $this->initLogType($message),
                 'text' => $message->getText(),
-            );
+            ];
 
             return;
         }
 
         $this->getListingLog()
-            ->addProductMessage($listingProduct->getListingId() ,
-                                $listingProduct->getProductId() ,
-                                $listingProduct->getId() ,
-                                $this->initiator ,
-                                $this->actionId ,
-                                $this->action ,
-                                $message->getText(),
-                                $this->initLogType($message),
-                                $priority);
+            ->addProductMessage(
+                $listingProduct->getListingId(),
+                $listingProduct->getProductId(),
+                $listingProduct->getId(),
+                $this->initiator,
+                $this->actionId,
+                $this->action,
+                $message->getText(),
+                $this->initLogType($message),
+                $priority
+            );
     }
 
     //########################################
@@ -189,7 +194,7 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
      */
     private function getListingLog()
     {
-        if (is_null($this->listingLog)) {
+        if ($this->listingLog === null) {
 
             /** @var \Ess\M2ePro\Model\Listing\Log $listingLog */
             $listingLog = $this->activeRecordFactory->getObject('Listing\Log');

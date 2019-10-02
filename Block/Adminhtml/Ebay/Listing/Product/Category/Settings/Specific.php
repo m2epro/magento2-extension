@@ -8,18 +8,22 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
+/**
+ * Class Specific
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings
+ */
 class Specific extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     protected $_marketplaceId = null;
     protected $_categoryMode = null;
     protected $_categoryValue = null;
 
-    protected $_internalData = array();
+    protected $_internalData = [];
     protected $_uniqueId = '';
     protected $_isCompactMode = false;
 
-    protected $_attributes = array();
-    protected $_selectedSpecifics = array();
+    protected $_attributes = [];
+    protected $_selectedSpecifics = [];
 
     //########################################
 
@@ -43,37 +47,37 @@ class Specific extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
         // ---------------------------------------
         $buttonBlock = $this->createBlock('Magento\Button')
-            ->setData(array(
+            ->setData([
                 'label'   => $this->__('Remove'),
                 'onclick' => 'EbayListingProductCategorySettingsSpecific'.$uniqueId.'Obj.removeSpecific(this);',
                 'class'   => 'scalable delete remove_custom_specific_button',
                 'style' => 'display: none'
-            ));
+            ]);
         $this->setChild('remove_custom_specific_button', $buttonBlock);
         // ---------------------------------------
 
         // ---------------------------------------
         $buttonBlock = $this->createBlock('Magento\Button')
-            ->setData(array(
+            ->setData([
                 'label'   => $this->__('Add Custom Specific'),
                 'onclick' => 'EbayListingProductCategorySettingsSpecific'.$uniqueId.'Obj.addCustomSpecificRow();',
                 'class' => 'action primary add_custom_specific_button'
-            ));
+            ]);
         $this->setChild('add_custom_specific_button', $buttonBlock);
         // ---------------------------------------
 
         // ---------------------------------------
         $buttonBlock = $this->createBlock('Magento\Button')
-            ->setData(array(
+            ->setData([
                 'label'   => $this->__('Remove'),
                 'onclick' => 'EbayListingProductCategorySettingsSpecific'
                              .$uniqueId.'Obj.removeItemSpecificsCustomValue(this);',
                 'class'   => 'action remove_item_specifics_custom_value_button',
-            ));
+            ]);
         $this->setChild('remove_item_specifics_custom_value_button', $buttonBlock);
         // ---------------------------------------
 
-        $this->setChild('messages', $this->getLayout()->createBlock('Magento\Framework\View\Element\Messages'));
+        $this->setChild('messages', $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class));
 
         $this->setChild('specifics_help_block', $this->createBlock('HelpBlock'));
     }
@@ -89,13 +93,15 @@ class Specific extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Category'));
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\View\Ebay'));
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Ebay'));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Helper\View\Ebay::class));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay::class));
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Template\Category')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Category::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Template\Category\Specific')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Category\Specific::class)
         );
 
         $uniqueId = $this->getUniqueId();
@@ -148,7 +154,7 @@ require([
 });
 
 JS
-);
+        );
 
         return parent::_toHtml();
     }
@@ -175,7 +181,7 @@ JS
 
     public function setCategoryMode($categoryMode)
     {
-       $this->_categoryMode = $categoryMode;
+        $this->_categoryMode = $categoryMode;
         return $this;
     }
 
@@ -248,7 +254,6 @@ JS
     public function setSelectedSpecifics(array $specifics)
     {
         foreach ($specifics as $specific) {
-
             if ($specific['mode'] == \Ess\M2ePro\Model\Ebay\Template\Category\Specific::MODE_CUSTOM_ITEM_SPECIFICS) {
                 $specific['value_custom_value'] = $this->getHelper('Data')->jsonDecode($specific['value_custom_value']);
                 $this->_selectedSpecifics[] = $specific;
@@ -293,14 +298,15 @@ JS
     public function getDictionarySpecifics()
     {
         if ($this->getCategoryMode() == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE) {
-            return array();
+            return [];
         }
 
-        $specifics = $this->getHelper('Component\Ebay\Category\Ebay')->getSpecifics(
-            $this->getCategoryValue(), $this->getMarketplaceId()
+        $specifics = $this->getHelper('Component_Ebay_Category_Ebay')->getSpecifics(
+            $this->getCategoryValue(),
+            $this->getMarketplaceId()
         );
 
-        return is_null($specifics) ? array() : $specifics;
+        return $specifics === null ? [] : $specifics;
     }
 
     public function getEbaySelectedSpecifics()
@@ -321,19 +327,19 @@ JS
 
     public function getRequiredDetailsFields()
     {
-        $features = $this->getHelper('Component\Ebay\Category\Ebay')->getFeatures(
-            $this->getCategoryValue(), $this->getMarketplaceId()
+        $features = $this->getHelper('Component_Ebay_Category_Ebay')->getFeatures(
+            $this->getCategoryValue(),
+            $this->getMarketplaceId()
         );
 
         if (empty($features)) {
-            return array();
+            return [];
         }
 
         $statusRequired = \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay::PRODUCT_IDENTIFIER_STATUS_REQUIRED;
 
-        $requiredFields = array();
-        foreach (array('ean','upc','isbn') as $identifier) {
-
+        $requiredFields = [];
+        foreach (['ean','upc','isbn'] as $identifier) {
             $key = $identifier.'_enabled';
             if (!isset($features[$key]) || $features[$key] != $statusRequired) {
                 continue;
@@ -350,10 +356,10 @@ JS
     protected function filterSelectedSpecificsByMode($mode)
     {
         if (count($this->getSelectedSpecifics()) == 0) {
-            return array();
+            return [];
         }
 
-        $customSpecifics = array();
+        $customSpecifics = [];
         foreach ($this->getSelectedSpecifics() as $selectedSpecific) {
             if ($selectedSpecific['mode'] != $mode) {
                 continue;

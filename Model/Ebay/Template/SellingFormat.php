@@ -12,6 +12,10 @@
  */
 namespace Ess\M2ePro\Model\Ebay\Template;
 
+/**
+ * Class SellingFormat
+ * @package Ess\M2ePro\Model\Ebay\Template
+ */
 class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
     const LISTING_TYPE_AUCTION      = 1;
@@ -69,7 +73,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\SellingFormat\Source[]
      */
-    private $sellingSourceModels = array();
+    private $sellingSourceModels = [];
 
     //########################################
 
@@ -101,14 +105,18 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
 
         return (bool)$this->activeRecordFactory->getObject('Ebay\Listing')
                             ->getCollection()
-                            ->addFieldToFilter('template_selling_format_mode',
-                                               \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE)
+                            ->addFieldToFilter(
+                                'template_selling_format_mode',
+                                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                            )
                             ->addFieldToFilter('template_selling_format_id', $this->getId())
                             ->getSize() ||
-               (bool)$this->activeRecordFactory->getObject('Ebay\Listing\Product')
+               (bool)$this->activeRecordFactory->getObject('Ebay_Listing_Product')
                             ->getCollection()
-                            ->addFieldToFilter('template_selling_format_mode',
-                                               \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE)
+                            ->addFieldToFilter(
+                                'template_selling_format_mode',
+                                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                            )
                             ->addFieldToFilter('template_selling_format_id', $this->getId())
                             ->getSize();
     }
@@ -117,7 +125,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_sellingformat');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_sellingformat');
         return parent::save();
     }
 
@@ -129,9 +137,9 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
             return false;
         }
 
-        $this->sellingSourceModels = array();
+        $this->sellingSourceModels = [];
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_sellingformat');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_sellingformat');
 
         return parent::delete();
     }
@@ -150,7 +158,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
             return $this->sellingSourceModels[$productId];
         }
 
-        $this->sellingSourceModels[$productId] = $this->modelFactory->getObject('Ebay\Template\SellingFormat\Source');
+        $this->sellingSourceModels[$productId] = $this->modelFactory->getObject('Ebay_Template_SellingFormat_Source');
         $this->sellingSourceModels[$productId]->setMagentoProduct($magentoProduct);
         $this->sellingSourceModels[$productId]->setSellingFormatTemplate($this->getParentObject());
 
@@ -196,10 +204,10 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getListingTypeSource()
     {
-        return array(
+        return [
             'mode'      => $this->getListingType(),
             'attribute' => $this->getData('listing_type_attribute')
-        );
+        ];
     }
 
     /**
@@ -207,7 +215,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getListingTypeAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getListingTypeSource();
 
         if ($src['mode'] == self::LISTING_TYPE_ATTRIBUTE) {
@@ -239,11 +247,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
             $mode = self::DURATION_TYPE_ATTRIBUTE;
         }
 
-        return array(
+        return [
             'mode'     => (int)$mode,
             'value'     => (int)$this->getDurationMode(),
             'attribute' => $this->getData('duration_attribute')
-        );
+        ];
     }
 
     /**
@@ -251,7 +259,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getDurationAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getDurationSource();
 
         if ($src['mode'] == self::DURATION_TYPE_ATTRIBUTE) {
@@ -344,7 +352,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getQtySource()
     {
-        return array(
+        return [
             'mode'      => $this->getQtyMode(),
             'value'     => $this->getQtyNumber(),
             'attribute' => $this->getData('qty_custom_attribute'),
@@ -352,7 +360,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
             'qty_min_posted_value'      => $this->getQtyMinPostedValue(),
             'qty_max_posted_value'      => $this->getQtyMaxPostedValue(),
             'qty_percentage'            => $this->getQtyPercentage()
-        );
+        ];
     }
 
     /**
@@ -360,7 +368,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getQtyAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getQtySource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE) {
@@ -445,11 +453,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getTaxCategorySource()
     {
-        return array(
+        return [
             'mode'      => $this->getData('tax_category_mode'),
             'value'     => $this->getData('tax_category_value'),
             'attribute' => $this->getData('tax_category_attribute')
-        );
+        ];
     }
 
     /**
@@ -548,11 +556,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getFixedPriceSource()
     {
-        return array(
+        return [
             'mode'        => $this->getFixedPriceMode(),
             'coefficient' => $this->getFixedPriceCoefficient(),
             'attribute'   => $this->getData('fixed_price_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -560,7 +568,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getFixedPriceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getFixedPriceSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
@@ -622,11 +630,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getStartPriceSource()
     {
-        return array(
+        return [
             'mode'        => $this->getStartPriceMode(),
             'coefficient' => $this->getStartPriceCoefficient(),
             'attribute'   => $this->getData('start_price_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -634,7 +642,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getStartPriceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getStartPriceSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
@@ -696,11 +704,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getReservePriceSource()
     {
-        return array(
+        return [
             'mode'        => $this->getReservePriceMode(),
             'coefficient' => $this->getReservePriceCoefficient(),
             'attribute'   => $this->getData('reserve_price_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -708,7 +716,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getReservePriceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getReservePriceSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
@@ -770,11 +778,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getBuyItNowPriceSource()
     {
-        return array(
+        return [
             'mode'      => $this->getBuyItNowPriceMode(),
             'coefficient' => $this->getBuyItNowPriceCoefficient(),
             'attribute' => $this->getData('buyitnow_price_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -782,7 +790,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getBuyItNowPriceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getBuyItNowPriceSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
@@ -839,10 +847,10 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getPriceDiscountStpSource()
     {
-        return array(
+        return [
             'mode'      => $this->getPriceDiscountStpMode(),
             'attribute' => $this->getData('price_discount_stp_attribute')
-        );
+        ];
     }
 
     /**
@@ -850,7 +858,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getPriceDiscountStpAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getPriceDiscountStpSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
@@ -911,7 +919,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
         $soldOffEbayFlag = false;
 
         switch ($this->getPriceDiscountStpType()) {
-
             case self::PRICE_DISCOUNT_STP_TYPE_SOLD_ON_EBAY:
                 $soldOnEbayFlag = true;
                 break;
@@ -926,10 +933,10 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
                 break;
         }
 
-        return array(
+        return [
             'sold_on_ebay'  => $soldOnEbayFlag,
             'sold_off_ebay' => $soldOffEbayFlag
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -979,10 +986,10 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getPriceDiscountMapSource()
     {
-        return array(
+        return [
             'mode'      => $this->getPriceDiscountMapMode(),
             'attribute' => $this->getData('price_discount_map_attribute')
-        );
+        ];
     }
 
     /**
@@ -990,7 +997,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getPriceDiscountMapAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getPriceDiscountMapSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
@@ -1042,13 +1049,13 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     public function usesConvertiblePrices()
     {
         $isPriceConvertEnabled = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/magento/attribute/', 'price_type_converting'
+            '/magento/attribute/',
+            'price_type_converting'
         );
 
         $attributeHelper = $this->getHelper('Magento\Attribute');
 
         if ($this->isListingTypeFixed() || $this->isListingTypeAttribute()) {
-
             if ($this->isFixedPriceModeProduct() || $this->isFixedPriceModeSpecial()) {
                 return true;
             }
@@ -1062,7 +1069,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
             }
 
             if ($isPriceConvertEnabled) {
-
                 if ($this->isFixedPriceModeAttribute() &&
                     $attributeHelper->isAttributeInputTypePrice($this->getData('fixed_price_custom_attribute'))) {
                     return true;
@@ -1097,7 +1103,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
         }
 
         if ($isPriceConvertEnabled) {
-
             if ($this->isStartPriceModeAttribute() &&
                 $attributeHelper->isAttributeInputTypePrice($this->getData('start_price_custom_attribute'))) {
                 return true;
@@ -1115,13 +1120,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
         }
 
         if ($this->isBestOfferEnabled()) {
-
             if ($this->isBestOfferAcceptModePercentage() || $this->isBestOfferRejectModePercentage()) {
                 return true;
             }
 
             if ($isPriceConvertEnabled) {
-
                 if ($this->isBestOfferAcceptModeAttribute() &&
                     $attributeHelper->isAttributeInputTypePrice($this->getData('best_offer_accept_attribute'))) {
                     return true;
@@ -1191,11 +1194,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getBestOfferAcceptSource()
     {
-        return array(
+        return [
             'mode' => $this->getBestOfferAcceptMode(),
             'value' => $this->getBestOfferAcceptValue(),
             'attribute' => $this->getData('best_offer_accept_attribute')
-        );
+        ];
     }
 
     /**
@@ -1203,7 +1206,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getBestOfferAcceptAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getBestOfferAcceptSource();
 
         if ($src['mode'] == self::BEST_OFFER_ACCEPT_MODE_ATTRIBUTE) {
@@ -1257,11 +1260,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getBestOfferRejectSource()
     {
-        return array(
+        return [
             'mode' => $this->getBestOfferRejectMode(),
             'value' => $this->getBestOfferRejectValue(),
             'attribute' => $this->getData('best_offer_reject_attribute')
-        );
+        ];
     }
 
     /**
@@ -1269,7 +1272,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getBestOfferRejectAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getBestOfferRejectSource();
 
         if ($src['mode'] == self::BEST_OFFER_REJECT_MODE_ATTRIBUTE) {
@@ -1284,7 +1287,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     public function getCharity()
     {
         if (empty($this->getData('charity'))) {
-            return NULL;
+            return null;
         }
 
         return $this->getHelper('Data')->jsonDecode($this->getData('charity'));
@@ -1343,7 +1346,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getDefaultSettings()
     {
-        return array(
+        return [
 
             'listing_type' => self::LISTING_TYPE_FIXED,
             'listing_type_attribute' => '',
@@ -1411,7 +1414,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
 
             'charity' => '',
             'ignore_variations' => 0
-        );
+        ];
     }
 
     //########################################
@@ -1423,23 +1426,28 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function getAffectedListingsProducts($asArrays = true, $columns = '*')
     {
-        $templateManager = $this->modelFactory->getObject('Ebay\Template\Manager');
+        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
         $templateManager->setTemplate(\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT);
 
         $listingsProducts = $templateManager->getAffectedOwnerObjects(
-           \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING_PRODUCT, $this->getId(), $asArrays, $columns
+            \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING_PRODUCT,
+            $this->getId(),
+            $asArrays,
+            $columns
         );
 
         $listings = $templateManager->getAffectedOwnerObjects(
-           \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING, $this->getId(), false
+            \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING,
+            $this->getId(),
+            false
         );
 
         foreach ($listings as $listing) {
-
             $tempListingsProducts = $listing->getChildObject()
                                             ->getAffectedListingsProductsByTemplate(
                                                 \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT,
-                                                $asArrays, $columns
+                                                $asArrays,
+                                                $columns
                                             );
 
             foreach ($tempListingsProducts as $listingProduct) {
@@ -1454,12 +1462,12 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'));
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id']);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

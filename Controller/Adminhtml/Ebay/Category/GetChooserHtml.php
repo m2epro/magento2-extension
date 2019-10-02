@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
+/**
+ * Class GetChooserHtml
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Category
+ */
 class GetChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {
 
@@ -26,14 +30,14 @@ class GetChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $selectCallback = $this->getRequest()->getParam('select_callback');
         $unSelectCallback = $this->getRequest()->getParam('unselect_callback');
 
-        $selectedCategories = array();
-        if (!is_null($selectedCategoriesJson)) {
+        $selectedCategories = [];
+        if ($selectedCategoriesJson !== null) {
             $selectedCategories = $this->getHelper('Data')->jsonDecode($selectedCategoriesJson);
         }
         // ---------------------------------------
 
-        $ebayCategoryTypes = $this->getHelper('Component\Ebay\Category')->getEbayCategoryTypes();
-        $storeCategoryTypes = $this->getHelper('Component\Ebay\Category')->getStoreCategoryTypes();
+        $ebayCategoryTypes = $this->getHelper('Component_Ebay_Category')->getEbayCategoryTypes();
+        $storeCategoryTypes = $this->getHelper('Component_Ebay_Category')->getStoreCategoryTypes();
 
         foreach ($selectedCategories as $type => &$selectedCategory) {
             if (!empty($selectedCategory['path'])) {
@@ -43,7 +47,7 @@ class GetChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
             switch ($selectedCategory['mode']) {
                 case \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY:
                     if (in_array($type, $ebayCategoryTypes)) {
-                        $selectedCategory['path'] = $this->getHelper('Component\Ebay\Category\Ebay')
+                        $selectedCategory['path'] = $this->getHelper('Component_Ebay_Category_Ebay')
                             ->getPath(
                                 $selectedCategory['value'],
                                 $marketplaceId
@@ -51,14 +55,14 @@ class GetChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
                         $selectedCategory['path'] .= ' (' . $selectedCategory['value'] . ')';
 
-                        $this->getHelper('Component\Ebay\Category')
+                        $this->getHelper('Component_Ebay_Category')
                             ->addRecent(
                                 $selectedCategory['value'],
                                 $marketplaceId,
                                 $type
                             );
                     } elseif (in_array($type, $storeCategoryTypes)) {
-                        $selectedCategory['path'] = $this->getHelper('Component\Ebay\Category\Store')
+                        $selectedCategory['path'] = $this->getHelper('Component_Ebay_Category_Store')
                             ->getPath(
                                 $selectedCategory['value'],
                                 $accountId
@@ -66,7 +70,7 @@ class GetChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
                         $selectedCategory['path'] .= ' (' . $selectedCategory['value'] . ')';
 
-                        $this->getHelper('Component\Ebay\Category')
+                        $this->getHelper('Component_Ebay_Category')
                             ->addRecent(
                                 $selectedCategory['value'],
                                 $accountId,
@@ -88,7 +92,7 @@ class GetChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
         // ---------------------------------------
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser $chooserBlock */
-        $chooserBlock = $this->createBlock('Ebay\Listing\Product\Category\Settings\Chooser');
+        $chooserBlock = $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser');
         $chooserBlock->setMarketplaceId($marketplaceId);
         $chooserBlock->setDivId($divId);
         if (!empty($accountId)) {

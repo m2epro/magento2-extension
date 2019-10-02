@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Template;
 
+/**
+ * Class Description
+ * @package Ess\M2ePro\Model\Template
+ */
 class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
     //########################################
@@ -22,7 +26,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
 
     public function save($reloadOnCreate = false)
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_description');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_description');
         return parent::save($reloadOnCreate);
     }
 
@@ -34,7 +38,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
             return false;
         }
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_description');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_description');
 
         return parent::delete();
     }

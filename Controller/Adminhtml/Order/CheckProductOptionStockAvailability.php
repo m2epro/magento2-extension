@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
+/**
+ * Class CheckProductOptionStockAvailability
+ * @package Ess\M2ePro\Controller\Adminhtml\Order
+ */
 class CheckProductOptionStockAvailability extends Order
 {
     public function execute()
@@ -21,11 +25,11 @@ class CheckProductOptionStockAvailability extends Order
         $optionsData = $this->getProductOptionsDataFromPost();
 
         if (count($optionsData) == 0 || !$orderItem->getId()) {
-            $this->setJsonContent(array('is_in_stock' => false));
+            $this->setJsonContent(['is_in_stock' => false]);
             return $this->getResult();
         }
 
-        $associatedProducts = array();
+        $associatedProducts = [];
 
         foreach ($optionsData as $optionId => $optionData) {
             $optionId = (int)$optionId;
@@ -40,17 +44,16 @@ class CheckProductOptionStockAvailability extends Order
         );
 
         foreach ($associatedProducts as $productId) {
-
             $magentoProductTemp = $this->modelFactory->getObject('Magento\Product');
             $magentoProductTemp->setProductId($productId);
 
             if (!$magentoProductTemp->isStockAvailability()) {
-                $this->setJsonContent(array('is_in_stock' => false));
+                $this->setJsonContent(['is_in_stock' => false]);
                 return $this->getResult();
             }
         }
 
-        $this->setJsonContent(array('is_in_stock' => true));
+        $this->setJsonContent(['is_in_stock' => true]);
 
         return $this->getResult();
     }

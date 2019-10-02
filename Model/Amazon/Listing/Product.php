@@ -50,12 +50,12 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager
      */
-    protected $variationManager = NULL;
+    protected $variationManager = null;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing
      */
-    protected $repricingModel = NULL;
+    protected $repricingModel = null;
 
     //########################################
 
@@ -112,7 +112,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $this->getRepricing()->delete();
         }
 
-        $this->variationManager = NULL;
+        $this->variationManager = null;
 
         return parent::delete();
     }
@@ -125,7 +125,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $magentoProduct = $this->getMagentoProduct();
 
         if ($magentoProduct->isProductWithVariations() && !$variationManager->isVariationProduct()) {
-
             $this->setData('is_variation_product', 1);
             $variationManager->setRelationParentType();
             $variationManager->getTypeModel()->resetProductAttributes(false);
@@ -253,7 +252,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         }
 
         return $this->activeRecordFactory->getCachedObjectLoaded(
-            'Amazon\Template\ShippingTemplate', $this->getTemplateShippingTemplateId()
+            'Amazon_Template_ShippingTemplate',
+            $this->getTemplateShippingTemplateId()
         );
     }
 
@@ -291,7 +291,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         }
 
         return $this->activeRecordFactory->getCachedObjectLoaded(
-            'Amazon\Template\ShippingOverride', $this->getTemplateShippingOverrideId()
+            'Amazon_Template_ShippingOverride',
+            $this->getTemplateShippingOverrideId()
         );
     }
 
@@ -315,7 +316,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         }
 
         return $this->activeRecordFactory->getCachedObjectLoaded(
-            'Amazon\Template\ProductTaxCode', $this->getTemplateProductTaxCodeId()
+            'Amazon_Template_ProductTaxCode',
+            $this->getTemplateProductTaxCodeId()
         );
     }
 
@@ -353,7 +355,9 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         }
 
         return $this->parentFactory->getCachedObjectLoaded(
-            $this->getComponentMode(), 'Template\Description', $this->getTemplateDescriptionId()
+            $this->getComponentMode(),
+            'Template\Description',
+            $this->getTemplateDescriptionId()
         );
     }
 
@@ -407,13 +411,14 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
         if ($this->getMagentoProduct()->isConfigurableType() ||
             $this->getMagentoProduct()->isGroupedType()) {
-
             $variations = $this->getVariations(true);
             if (count($variations) <= 0) {
-                throw new \Ess\M2ePro\Model\Exception\Logic('There are no variations for a variation product.',
-                                                     array(
+                throw new \Ess\M2ePro\Model\Exception\Logic(
+                    'There are no variations for a variation product.',
+                    [
                                                          'listing_product_id' => $this->getId()
-                                                     ));
+                    ]
+                );
             }
             $variation  = reset($variations);
             $options    = $variation->getOptions(true);
@@ -453,7 +458,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     /**
      * @return \Ess\M2ePro\Model\Amazon\Item
-    */
+     */
     public function getAmazonItem()
     {
         return $this->activeRecordFactory->getObject('Amazon\Item')->getCollection()
@@ -466,8 +471,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     public function getVariationManager()
     {
-        if (is_null($this->variationManager)) {
-            $this->variationManager = $this->modelFactory->getObject('Amazon\Listing\Product\Variation\Manager');
+        if ($this->variationManager === null) {
+            $this->variationManager = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Manager');
             $this->variationManager->setListingProduct($this->getParentObject());
         }
 
@@ -480,9 +485,9 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      * @param bool $tryToGetFromStorage
      * @return array
      */
-    public function getVariations($asObjects = false, array $filters = array(), $tryToGetFromStorage = true)
+    public function getVariations($asObjects = false, array $filters = [], $tryToGetFromStorage = true)
     {
-        return $this->getParentObject()->getVariations($asObjects,$filters,$tryToGetFromStorage);
+        return $this->getParentObject()->getVariations($asObjects, $filters, $tryToGetFromStorage);
     }
 
     //########################################
@@ -492,9 +497,12 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getRepricing()
     {
-        if (is_null($this->repricingModel)) {
+        if ($this->repricingModel === null) {
             $this->repricingModel = $this->activeRecordFactory->getObjectLoaded(
-                'Amazon\Listing\Product\Repricing', $this->getId(), NULL, false
+                'Amazon_Listing_Product_Repricing',
+                $this->getId(),
+                null,
+                false
             );
         }
 
@@ -506,7 +514,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function isRepricingUsed()
     {
-        return $this->isRepricing() && !is_null($this->getRepricing());
+        return $this->isRepricing() && $this->getRepricing() !== null;
     }
 
     /**
@@ -752,7 +760,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     public function isAllowedForBusinessCustomers()
     {
-        if (!$this->getHelper('Component\Amazon\Business')->isEnabled()) {
+        if (!$this->getHelper('Component_Amazon_Business')->isEnabled()) {
             return false;
         }
 
@@ -779,22 +787,23 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     {
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
-
             $variations = $this->getVariations(true);
             if (count($variations) <= 0) {
-                throw new \Ess\M2ePro\Model\Exception\Logic('There are no variations for a variation product.',
-                    array(
+                throw new \Ess\M2ePro\Model\Exception\Logic(
+                    'There are no variations for a variation product.',
+                    [
                         'listing_product_id' => $this->getId()
-                    ));
+                    ]
+                );
             }
-            /* @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
             $variation = reset($variations);
 
             return $variation->getChildObject()->getQty($magentoMode);
         }
 
         /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\QtyCalculator */
-        $calculator = $this->modelFactory->getObject('Amazon\Listing\Product\QtyCalculator');
+        $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_QtyCalculator');
         $calculator->setProduct($this->getParentObject());
         $calculator->setIsMagentoMode($magentoMode);
 
@@ -811,20 +820,21 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getRegularPrice()
     {
         if (!$this->isAllowedForRegularCustomers()) {
-            return NULL;
+            return null;
         }
 
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
-
             $variations = $this->getVariations(true);
             if (count($variations) <= 0) {
-                throw new \Ess\M2ePro\Model\Exception\Logic('There are no variations for a variation product.',
-                    array(
+                throw new \Ess\M2ePro\Model\Exception\Logic(
+                    'There are no variations for a variation product.',
+                    [
                         'listing_product_id' => $this->getId()
-                    ));
+                    ]
+                );
             }
-            /* @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
             $variation = reset($variations);
 
             return $variation->getChildObject()->getRegularPrice();
@@ -833,7 +843,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $src = $this->getAmazonSellingFormatTemplate()->getRegularPriceSource();
 
         /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
-        $calculator = $this->modelFactory->getObject('Amazon\Listing\Product\PriceCalculator');
+        $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getParentObject());
         $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getRegularPriceCoefficient());
         $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getRegularPriceVatPercent());
@@ -849,20 +859,21 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getRegularMapPrice()
     {
         if (!$this->isAllowedForRegularCustomers()) {
-            return NULL;
+            return null;
         }
 
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
-
             $variations = $this->getVariations(true);
             if (count($variations) <= 0) {
-                throw new \Ess\M2ePro\Model\Exception('There are no variations for a variation product.',
-                                                     array(
+                throw new \Ess\M2ePro\Model\Exception(
+                    'There are no variations for a variation product.',
+                    [
                                                          'listing_product_id' => $this->getId()
-                                                     ));
+                    ]
+                );
             }
-            /* @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
             $variation = reset($variations);
 
             return $variation->getChildObject()->getRegularMapPrice();
@@ -871,7 +882,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $src = $this->getAmazonSellingFormatTemplate()->getRegularMapPriceSource();
 
         /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
-        $calculator = $this->modelFactory->getObject('Amazon\Listing\Product\PriceCalculator');
+        $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getParentObject());
 
         return $calculator->getProductValue();
@@ -887,20 +898,21 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getRegularSalePrice()
     {
         if (!$this->isAllowedForRegularCustomers()) {
-            return NULL;
+            return null;
         }
 
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
-
             $variations = $this->getVariations(true);
             if (count($variations) <= 0) {
-                throw new \Ess\M2ePro\Model\Exception('There are no variations for a variation product.',
-                                                     array(
+                throw new \Ess\M2ePro\Model\Exception(
+                    'There are no variations for a variation product.',
+                    [
                                                          'listing_product_id' => $this->getId()
-                                                     ));
+                    ]
+                );
             }
-            /* @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
             $variation = reset($variations);
 
             return $variation->getChildObject()->getRegularSalePrice();
@@ -909,7 +921,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $src = $this->getAmazonSellingFormatTemplate()->getRegularSalePriceSource();
 
         /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
-        $calculator = $this->modelFactory->getObject('Amazon\Listing\Product\PriceCalculator');
+        $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getParentObject());
         $calculator->setIsSalePrice(true);
         $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getRegularSalePriceCoefficient());
@@ -940,7 +952,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $startDateTimestamp = strtotime($startDate);
         $endDateTimestamp = strtotime($endDate);
 
-        $currentTimestamp = strtotime($this->getHelper('Data')->getCurrentGmtDate(false,'Y-m-d 00:00:00'));
+        $currentTimestamp = strtotime($this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d 00:00:00'));
 
         if ($currentTimestamp > $endDateTimestamp ||
             $startDateTimestamp >= $endDateTimestamp
@@ -948,11 +960,11 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return false;
         }
 
-        return array(
+        return [
             'price'      => $salePrice,
             'start_date' => $startDate,
             'end_date'   => $endDate
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -962,7 +974,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         if ($this->getAmazonSellingFormatTemplate()->isRegularSalePriceModeSpecial() &&
             $this->getMagentoProduct()->isGroupedType()) {
             $magentoProduct = $this->getActualMagentoProduct();
-        } else if ($this->getAmazonSellingFormatTemplate()->isRegularPriceVariationModeParent()) {
+        } elseif ($this->getAmazonSellingFormatTemplate()->isRegularPriceVariationModeParent()) {
             $magentoProduct = $this->getMagentoProduct();
         } else {
             $magentoProduct = $this->getActualMagentoProduct();
@@ -986,7 +998,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return false;
         }
 
-        return $this->getHelper('Data')->getDate($date,false,'Y-m-d 00:00:00');
+        return $this->getHelper('Data')->getDate($date, false, 'Y-m-d 00:00:00');
     }
 
     private function getRegularSalePriceEndDate()
@@ -994,7 +1006,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         if ($this->getAmazonSellingFormatTemplate()->isRegularSalePriceModeSpecial() &&
             $this->getMagentoProduct()->isGroupedType()) {
             $magentoProduct = $this->getActualMagentoProduct();
-        } else if ($this->getAmazonSellingFormatTemplate()->isRegularPriceVariationModeParent()) {
+        } elseif ($this->getAmazonSellingFormatTemplate()->isRegularPriceVariationModeParent()) {
             $magentoProduct = $this->getMagentoProduct();
         } else {
             $magentoProduct = $this->getActualMagentoProduct();
@@ -1003,13 +1015,11 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $date = null;
 
         if ($this->getAmazonSellingFormatTemplate()->isRegularSalePriceModeSpecial()) {
-
             $date = $magentoProduct->getSpecialPriceToDate();
 
             $tempDate = new \DateTime($date, new \DateTimeZone('UTC'));
             $tempDate->modify('-1 day');
             $date = $this->getHelper('Data')->getDate($tempDate->format('U'));
-
         } else {
             $src = $this->getAmazonSellingFormatTemplate()->getRegularSalePriceEndDateSource();
 
@@ -1024,7 +1034,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return false;
         }
 
-        return $this->getHelper('Data')->getDate($date,false,'Y-m-d 00:00:00');
+        return $this->getHelper('Data')->getDate($date, false, 'Y-m-d 00:00:00');
     }
 
     // ---------------------------------------
@@ -1037,20 +1047,21 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getBusinessPrice()
     {
         if (!$this->isAllowedForBusinessCustomers()) {
-            return NULL;
+            return null;
         }
 
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
-
             $variations = $this->getVariations(true);
             if (count($variations) <= 0) {
-                throw new \Ess\M2ePro\Model\Exception('There are no variations for a variation product.',
-                     array(
+                throw new \Ess\M2ePro\Model\Exception(
+                    'There are no variations for a variation product.',
+                    [
                          'listing_product_id' => $this->getId()
-                     ));
+                    ]
+                );
             }
-            /* @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
             $variation = reset($variations);
 
             return $variation->getChildObject()->getBusinessPrice();
@@ -1059,7 +1070,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $src = $this->getAmazonSellingFormatTemplate()->getBusinessPriceSource();
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
-        $calculator = $this->modelFactory->getObject('Amazon\Listing\Product\PriceCalculator');
+        $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getParentObject());
         $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getBusinessPriceCoefficient());
         $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getBusinessPriceVatPercent());
@@ -1075,24 +1086,25 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getBusinessDiscounts()
     {
         if (!$this->isAllowedForBusinessCustomers()) {
-            return NULL;
+            return null;
         }
 
         if ($this->getAmazonSellingFormatTemplate()->isBusinessDiscountsModeNone()) {
-            return array();
+            return [];
         }
 
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
-
             $variations = $this->getVariations(true);
             if (count($variations) <= 0) {
-                throw new \Ess\M2ePro\Model\Exception\Logic('There are no variations for a variation product.',
-                    array(
+                throw new \Ess\M2ePro\Model\Exception\Logic(
+                    'There are no variations for a variation product.',
+                    [
                         'listing_product_id' => $this->getId()
-                    ));
+                    ]
+                );
             }
-            /* @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
             $variation = reset($variations);
 
             return $variation->getChildObject()->getBusinessDiscounts();
@@ -1104,41 +1116,44 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
                 ->getWebsite($this->getListing()->getStoreId())->getId();
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
-            $calculator = $this->modelFactory->getObject('Amazon\Listing\Product\PriceCalculator');
+            $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
             $calculator->setSource($src)->setProduct($this->getParentObject());
-            $calculator->setSourceModeMapping(array(
+            $calculator->setSourceModeMapping([
                 \Ess\M2ePro\Model\Listing\Product\PriceCalculator::MODE_TIER =>
                     \Ess\M2ePro\Model\Amazon\Template\SellingFormat::BUSINESS_DISCOUNTS_MODE_TIER,
-            ));
+            ]);
             $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getBusinessDiscountsTierCoefficient());
             $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getBusinessPriceVatPercent());
 
             return array_slice(
-                $calculator->getProductValue(), 0, self::BUSINESS_DISCOUNTS_MAX_RULES_COUNT_ALLOWED, true
+                $calculator->getProductValue(),
+                0,
+                self::BUSINESS_DISCOUNTS_MAX_RULES_COUNT_ALLOWED,
+                true
             );
         }
 
         /** @var \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount[] $businessDiscounts */
         $businessDiscounts = $this->getAmazonSellingFormatTemplate()->getBusinessDiscounts(true);
         if (empty($businessDiscounts)) {
-            return array();
+            return [];
         }
 
-        $resultValue = array();
+        $resultValue = [];
 
         foreach ($businessDiscounts as $businessDiscount) {
 
             /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
-            $calculator = $this->modelFactory->getObject('Amazon\Listing\Product\PriceCalculator');
+            $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
             $calculator->setSource($businessDiscount->getSource())->setProduct($this->getParentObject());
-            $calculator->setSourceModeMapping(array(
+            $calculator->setSourceModeMapping([
                 \Ess\M2ePro\Model\Listing\Product\PriceCalculator::MODE_PRODUCT   =>
                     \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_PRODUCT,
                 \Ess\M2ePro\Model\Listing\Product\PriceCalculator::MODE_SPECIAL   =>
                     \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_SPECIAL,
                 \Ess\M2ePro\Model\Listing\Product\PriceCalculator::MODE_ATTRIBUTE =>
                     \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_ATTRIBUTE,
-            ));
+            ]);
             $calculator->setCoefficient($businessDiscount->getCoefficient());
             $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getBusinessPriceVatPercent());
 
@@ -1154,36 +1169,36 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     //########################################
 
-    public function listAction(array $params = array())
+    public function listAction(array $params = [])
     {
         return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $params);
     }
 
-    public function relistAction(array $params = array())
+    public function relistAction(array $params = [])
     {
         return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_RELIST, $params);
     }
 
-    public function reviseAction(array $params = array())
+    public function reviseAction(array $params = [])
     {
         return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $params);
     }
 
-    public function stopAction(array $params = array())
+    public function stopAction(array $params = [])
     {
         return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_STOP, $params);
     }
 
-    public function deleteAction(array $params = array())
+    public function deleteAction(array $params = [])
     {
         return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_DELETE, $params);
     }
 
     // ---------------------------------------
 
-    protected function processDispatcher($action, array $params = array())
+    protected function processDispatcher($action, array $params = [])
     {
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Product\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Product_Dispatcher');
         return $dispatcherObject->process($action, $this->getId(), $params);
     }
 
@@ -1194,7 +1209,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $attributes = $this->getListing()->getTrackingAttributes();
 
         $descriptionTemplate = $this->getDescriptionTemplate();
-        if (!is_null($descriptionTemplate)) {
+        if ($descriptionTemplate !== null) {
             $attributes = array_merge($attributes, $descriptionTemplate->getTrackingAttributes());
         }
 
@@ -1218,23 +1233,31 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function setSynchStatusNeed($newData, $oldData)
     {
         $this->getResource()->setSynchStatusNeedByDescriptionTemplate(
-            $newData, $oldData, $this->getParentObject()->getData()
+            $newData,
+            $oldData,
+            $this->getParentObject()->getData()
         );
 
-        $modelName = 'Amazon\Template\ShippingOverride';
+        $modelName = 'Amazon_Template_ShippingOverride';
         $fieldName = 'template_shipping_override_id';
 
         if ($this->getAccount()->getChildObject()->isShippingModeTemplate()) {
-            $modelName = 'Amazon\Template\ShippingTemplate';
+            $modelName = 'Amazon_Template_ShippingTemplate';
             $fieldName = 'template_shipping_template_id';
         }
 
         $this->getResource()->setSynchStatusNeedByShippingTemplate(
-            $newData, $oldData, $this->getParentObject()->getData(), $modelName, $fieldName
+            $newData,
+            $oldData,
+            $this->getParentObject()->getData(),
+            $modelName,
+            $fieldName
         );
 
         $this->getResource()->setSynchStatusNeedByProductTaxCodeTemplate(
-            $newData, $oldData, $this->getParentObject()->getData()
+            $newData,
+            $oldData,
+            $this->getParentObject()->getData()
         );
     }
 
@@ -1242,7 +1265,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     public function clearParentIndexer()
     {
-        $manager = $this->modelFactory->getObject('Indexer\Listing\Product\VariationParent\Manager', [
+        $manager = $this->modelFactory->getObject('Indexer_Listing_Product_VariationParent_Manager', [
             'listing' => $this->getListing()
         ]);
         $manager->markInvalidated();
@@ -1253,18 +1276,16 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function afterSave()
     {
         if ($this->isObjectCreatingState()) {
-
             $this->clearParentIndexer();
         } else {
 
             /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Indexer\Listing\Product\VariationParent $resource */
             $resource = $this->activeRecordFactory->getObject(
-                'Amazon\Indexer\Listing\Product\VariationParent'
+                'Amazon_Indexer_Listing_Product_VariationParent'
             )->getResource();
 
             foreach ($resource->getTrackedFields() as $fieldName) {
                 if ($this->getData($fieldName) != $this->getOrigData($fieldName)) {
-
                     $this->clearParentIndexer();
                     break;
                 }

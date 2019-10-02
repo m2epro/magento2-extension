@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
 use Ess\M2ePro\Model\Walmart\Account as WalmartAccount;
 
+/**
+ * Class EnableMarketplace
+ * @package Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart
+ */
 class EnableMarketplace extends InstallationWalmart
 {
     public function execute()
@@ -25,7 +29,8 @@ class EnableMarketplace extends InstallationWalmart
 
         /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
         $marketplace = $this->walmartFactory->getCachedObjectLoaded(
-            'Marketplace', $marketplaceId
+            'Marketplace',
+            $marketplaceId
         );
         $marketplace->setData('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)->save();
 

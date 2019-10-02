@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
 
 use Ess\M2ePro\Model\Listing;
 
+/**
+ * Class Add
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
+ */
 class Add extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {
     //########################################
@@ -23,7 +27,7 @@ class Add extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         $productsIds = array_unique($productsIds);
         $productsIds = array_filter($productsIds);
 
-        $ids = array();
+        $ids = [];
         foreach ($productsIds as $productId) {
             $listingProduct = $listing->addProduct($productId, \Ess\M2ePro\Helper\Data::INITIATOR_USER);
             if ($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product) {
@@ -33,9 +37,10 @@ class Add extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 
         // ---------------------------------------
         $existingIds = $listing->getChildObject()->getAddedListingProductsIds();
-        $existingIds = array_values(array_unique(array_merge($existingIds,$ids)));
+        $existingIds = array_values(array_unique(array_merge($existingIds, $ids)));
         $listing->getChildObject()->setData(
-            'product_add_ids', $this->getHelper('Data')->jsonEncode($existingIds)
+            'product_add_ids',
+            $this->getHelper('Data')->jsonEncode($existingIds)
         )->save();
         // ---------------------------------------
 

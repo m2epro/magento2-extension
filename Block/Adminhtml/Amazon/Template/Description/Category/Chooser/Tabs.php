@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser
+ */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs
 {
     //########################################
@@ -34,7 +38,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
             'label'   => $this->__('Recently Used'),
             'title'   => $this->__('Recently Used'),
             'content' => $this->createBlock(
-                'Amazon\\Template\\Description\\Category\\Chooser\\Tabs\\Recent'
+                'Amazon_Template_Description_Category_Chooser_Tabs_Recent'
             )->toHtml(),
             'active'  => true
         ]);
@@ -43,7 +47,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
             'label'   => $this->__('Browse'),
             'title'   => $this->__('Browse'),
             'content' => $this->createBlock(
-                'Amazon\\Template\\Description\\Category\\Chooser\\Tabs\\Browse'
+                'Amazon_Template_Description_Category_Chooser_Tabs_Browse'
             )->toHtml(),
             'active'  => $this->isNeedToHideRecent() ? true : false
         ]);
@@ -52,7 +56,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
             'label'   => $this->__('Search'),
             'title'   => $this->__('Search'),
             'content' => $this->createBlock(
-                'Amazon\\Template\\Description\\Category\\Chooser\\Tabs\\Search'
+                'Amazon_Template_Description_Category_Chooser_Tabs_Search'
             )->toHtml()
         ]);
 

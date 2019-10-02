@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model;
 
+/**
+ * Class ArchivedEntity
+ * @package Ess\M2ePro\Model
+ */
 class ArchivedEntity extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     //########################################
@@ -20,7 +24,10 @@ class ArchivedEntity extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     //########################################
 
-    public function deleteProcessingLocks($tag = false, $processingId = false) {}
+    public function deleteProcessingLocks($tag = false, $processingId = false)
+    {
+        return null;
+    }
 
     //########################################
 

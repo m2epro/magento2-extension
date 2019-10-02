@@ -12,6 +12,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Connector\Product\Revise;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Walmart\Connector\Product\Revise
+ */
 class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
 {
     // ########################################
@@ -19,19 +23,6 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
     protected function getSuccessfulMessage()
     {
         return $this->getResponseObject()->getSuccessfulMessage();
-    }
-
-    public function eventAfterExecuting()
-    {
-        parent::eventAfterExecuting();
-
-        if ($this->isSuccess) {
-            return;
-        }
-
-        $additionalData = $this->listingProduct->getAdditionalData();
-        $additionalData['need_full_synchronization_template_recheck'] = true;
-        $this->listingProduct->setSettings('additional_data', $additionalData)->save();
     }
 
     // ########################################

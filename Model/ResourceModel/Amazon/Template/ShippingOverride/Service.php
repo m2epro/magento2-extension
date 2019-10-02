@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Template\ShippingOverride;
 
+/**
+ * Class Service
+ * @package Ess\M2ePro\Model\ResourceModel\Amazon\Template\ShippingOverride
+ */
 class Service extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################

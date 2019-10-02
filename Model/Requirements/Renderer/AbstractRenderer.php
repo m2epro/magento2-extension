@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Requirements\Renderer;
 
+/**
+ * Class AbstractRenderer
+ * @package Ess\M2ePro\Model\Requirements\Renderer
+ */
 abstract class AbstractRenderer extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Requirements\Checks\AbstractCheck */
@@ -20,7 +24,7 @@ abstract class AbstractRenderer extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Requirements\Checks\AbstractCheck $checkObject,
         array $data = []
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
         $this->checkObject = $checkObject;

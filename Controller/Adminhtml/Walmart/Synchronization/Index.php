@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Settings;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization
+ */
 class Index extends Settings
 {
     //########################################

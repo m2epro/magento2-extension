@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class Congratulation
+ * @package Ess\M2ePro\Block\Adminhtml\Wizard
+ */
 class Congratulation extends AbstractBlock
 {
     protected function _toHtml()

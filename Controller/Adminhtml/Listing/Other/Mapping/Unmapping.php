@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping;
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class Unmapping
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping
+ */
 class Unmapping extends Listing
 {
     public function execute()
@@ -32,11 +36,13 @@ class Unmapping extends Listing
 
         foreach ($productArray as $productId) {
             $listingOtherProductInstance = $this->parentFactory->getObjectLoaded(
-                $componentMode, 'Listing\Other', $productId
+                $componentMode,
+                'Listing\Other',
+                $productId
             );
 
             if (!$listingOtherProductInstance->getId() ||
-                is_null($listingOtherProductInstance->getData('product_id'))) {
+                $listingOtherProductInstance->getData('product_id') === null) {
                 continue;
             }
 

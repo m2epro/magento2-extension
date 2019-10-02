@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Marketplace;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Block\Adminhtml\Marketplace
+ */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
 {
     protected $paramName = 'marketplace';
@@ -26,12 +30,12 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
             ->setOrder('component_mode', 'ASC')
             ->setOrder('sorder', 'ASC');
 
-        if (!is_null($this->getData('component_mode'))) {
+        if ($this->getData('component_mode') !== null) {
             $collection->addFieldToFilter('component_mode', $this->getData('component_mode'));
         }
 
         if (!$collection->getSize()) {
-            $this->items = array();
+            $this->items = [];
             return;
         }
 
@@ -40,14 +44,14 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
             $this->setIsDisabled(true);
         }
 
-        $items = array();
+        $items = [];
 
         foreach ($collection->getItems() as $marketplace) {
             /** @var $marketplace \Ess\M2ePro\Model\Marketplace */
-            $items[$marketplace->getComponentMode()]['value'][] = array(
+            $items[$marketplace->getComponentMode()]['value'][] = [
                 'value' => $marketplace->getId(),
                 'label' => $marketplace->getTitle()
-            );
+            ];
         }
 
         $this->items = $items;

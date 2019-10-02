@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom;
 
+/**
+ * Class EbayItemId
+ * @package Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom
+ */
 class EbayItemId extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
     //########################################

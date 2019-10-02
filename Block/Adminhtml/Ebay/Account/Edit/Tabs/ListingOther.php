@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Account;
 
+/**
+ * Class ListingOther
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs
+ */
 class ListingOther extends AbstractForm
 {
     protected $ebayFactory;
@@ -21,8 +25,7 @@ class ListingOther extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
 
         parent::__construct($context, $registry, $formFactory, $data);
@@ -36,42 +39,28 @@ class ListingOther extends AbstractForm
         $generalAttributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
 
         $attributes = $magentoAttributeHelper->filterByInputTypes(
-            $generalAttributes, array(
+            $generalAttributes,
+            [
                 'text', 'textarea', 'select'
-            )
+            ]
         );
 
         // ---------------------------------------
 
         // ---------------------------------------
-//        $back = $this->getHelper('Module')->makeBackUrlParam('*/adminhtml_ebay_account/edit', array(
-//            'id' => $this->getRequest()->getParam('id'),
-//            'tab' => 'listingOther'
-//        ));
-//        $url = $this->getUrl('*/adminhtml_ebay_listing_other_synchronization/edit', array('back' => $back));
-//        $data = array(
-//            'label'   => $this->__('Synchronization Settings'),
-//            'onclick' => 'window.open(\'' . $url . '\', \'_blank\')',
-//            'class'   => 'button_link'
-//        );
-//        $buttonBlock = $this->getLayout()->createBlock('adminhtml/widget_button')->setData($data);
-//        $this->setChild('ebay_other_listings_synchronization_settings', $buttonBlock);
-        // ---------------------------------------
-
-        // ---------------------------------------
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account')
-            ? $this->getHelper('Data\GlobalData')->getValue('edit_account') : array();
-        $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+            ? $this->getHelper('Data\GlobalData')->getValue('edit_account') : [];
+        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         $marketplacesData = $formData['marketplaces_data'];
         $marketplacesData = !empty($marketplacesData)
-            ? $this->getHelper('Data')->jsonDecode($marketplacesData) : array();
+            ? $this->getHelper('Data')->jsonDecode($marketplacesData) : [];
 
         $marketplaces = $this->ebayFactory->getObject('Marketplace')
             ->getCollection()
             ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
-            ->setOrder('sorder','ASC')
-            ->setOrder('title','ASC')
+            ->setOrder('sorder', 'ASC')
+            ->setOrder('title', 'ASC')
             ->toArray();
         $marketplaces = $marketplaces['items'];
 
@@ -87,11 +76,11 @@ class ListingOther extends AbstractForm
             $formData[$key] = (array)$this->getHelper('Data')->jsonDecode($formData[$key]);
         }
 
-        $defaults = array(
+        $defaults = [
             'other_listings_synchronization' => Account::OTHER_LISTINGS_SYNCHRONIZATION_YES,
             'other_listings_mapping_mode' => Account::OTHER_LISTINGS_MAPPING_MODE_NO,
-            'other_listings_mapping_settings' => array()
-        );
+            'other_listings_mapping_settings' => []
+        ];
         $formData = array_merge($defaults, $formData);
 
         $form = $this->_formFactory->create();
@@ -100,16 +89,19 @@ class ListingOther extends AbstractForm
             'ebay_accounts_other_listings',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(<<<HTML
+                'content' => $this->__(
+                    <<<HTML
 <p>This tab of the Account settings contains main configurations for the 3rd Party Listing management.
 You can set preferences whether you would like to import 3rd Party Listings
 (Items that were Listed on eBay either directly on the channel or with the help of other than M2E Pro tool),
 automatically map them to Magento Product, etc.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
-                ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/LAItAQ'))
-        ]);
+                    ,
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/LAItAQ')
+                )
+            ]
+        );
 
         $fieldset = $form->addFieldset(
             'general',
@@ -177,8 +169,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                isset($mappingSettings['sku']['mode'])
+            if (isset($mappingSettings['sku']['mode'])
                 && $mappingSettings['sku']['mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE
                 && $mappingSettings['sku']['attribute'] == $attribute['code']
             ) {
@@ -241,8 +232,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                isset($mappingSettings['title']['mode'])
+            if (isset($mappingSettings['title']['mode'])
                 && $mappingSettings['title']['mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE
                 && $mappingSettings['title']['attribute'] == $attribute['code']
             ) {
@@ -290,7 +280,7 @@ HTML
                                     class="input-text admin__control-text required-entry _required">
 </div>
 HTML
-    )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
+        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
 
         $fieldset->addField(
             'mapping_title_attribute',

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request;
 
+/**
+ * Class Description
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request
+ */
 class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\AbstractModel
 {
     const PRODUCT_DETAILS_DOES_NOT_APPLY = 'Does Not Apply';
@@ -20,7 +24,7 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
     /**
      * @var \Ess\M2ePro\Model\Template\Description
      */
-    private $descriptionTemplate = NULL;
+    private $descriptionTemplate = null;
 
     //########################################
 
@@ -29,17 +33,16 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
      */
     public function getRequestData()
     {
-        $data = array();
+        $data = [];
 
         if ($this->getConfigurator()->isGeneralAllowed()) {
-
             $data = array_merge(
-                array(
+                [
                     'hit_counter'          => $this->getEbayDescriptionTemplate()->getHitCounterType(),
                     'listing_enhancements' => $this->getEbayDescriptionTemplate()->getEnhancements(),
                     'item_condition_note'  => $this->getConditionNoteData(),
                     'product_details'      => $this->getProductDetailsData()
-                ),
+                ],
                 $this->getConditionData()
             );
         }
@@ -61,16 +64,16 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
     public function getTitleData()
     {
         if (!$this->getConfigurator()->isTitleAllowed()) {
-            return array();
+            return [];
         }
 
         $this->searchNotFoundAttributes();
         $data = $this->getDescriptionSource()->getTitle();
         $this->processNotFoundAttributes('Title');
 
-        return array(
+        return [
             'title' => $data
-        );
+        ];
     }
 
     /**
@@ -79,16 +82,16 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
     public function getSubtitleData()
     {
         if (!$this->getConfigurator()->isSubtitleAllowed()) {
-            return array();
+            return [];
         }
 
         $this->searchNotFoundAttributes();
         $data = $this->getDescriptionSource()->getSubTitle();
         $this->processNotFoundAttributes('Subtitle');
 
-        return array(
+        return [
             'subtitle' => $data
-        );
+        ];
     }
 
     /**
@@ -97,7 +100,7 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
     public function getDescriptionData()
     {
         if (!$this->getConfigurator()->isDescriptionAllowed()) {
-            return array();
+            return [];
         }
 
         $this->searchNotFoundAttributes();
@@ -107,9 +110,9 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
 
         $this->processNotFoundAttributes('Description');
 
-        return array(
+        return [
             'description' => $data
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -120,16 +123,15 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
     public function getImagesData()
     {
         if (!$this->getConfigurator()->isImagesAllowed()) {
-            return array();
+            return [];
         }
 
         $this->searchNotFoundAttributes();
 
-        $links = array();
+        $links = [];
         $galleryImages = $this->getDescriptionSource()->getGalleryImages();
 
         foreach ($galleryImages as $image) {
-
             if (!$image->getUrl()) {
                 continue;
             }
@@ -138,21 +140,23 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
         }
 
         if (!empty($galleryImages)) {
-            $this->addMetaData('ebay_product_images_hash',
-                               $this->getHelper('Component\Ebay\Images')->getHash($galleryImages));
+            $this->addMetaData(
+                'ebay_product_images_hash',
+                $this->getHelper('Component_Ebay_Images')->getHash($galleryImages)
+            );
         }
 
-        $data = array(
+        $data = [
             'gallery_type' => $this->getEbayDescriptionTemplate()->getGalleryType(),
             'images'       => $links,
             'supersize'    => $this->getEbayDescriptionTemplate()->isUseSupersizeImagesEnabled()
-        );
+        ];
 
         $this->processNotFoundAttributes('Main Image / Gallery Images');
 
-        return array(
+        return [
             'images' => $data
-        );
+        ];
     }
 
     //########################################
@@ -163,13 +167,12 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
     public function getProductDetailsData()
     {
         if ($this->getIsVariationItem()) {
-            return array();
+            return [];
         }
 
-        $data = array();
+        $data = [];
 
-        foreach (array('isbn','epid','upc','ean','brand','mpn') as $tempType) {
-
+        foreach (['isbn','epid','upc','ean','brand','mpn'] as $tempType) {
             if ($this->getEbayDescriptionTemplate()->isProductDetailsModeNone($tempType)) {
                 continue;
             }
@@ -214,12 +217,12 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
         $data = $this->getDescriptionSource()->getCondition();
 
         if (!$this->processNotFoundAttributes('Condition')) {
-            return array();
+            return [];
         }
 
-        return array(
+        return [
             'item_condition' => $data
-        );
+        ];
     }
 
     /**
@@ -241,7 +244,7 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
      */
     private function getDescriptionTemplate()
     {
-        if (is_null($this->descriptionTemplate)) {
+        if ($this->descriptionTemplate === null) {
             $this->descriptionTemplate = $this->getListingProduct()
                                               ->getChildObject()
                                               ->getDescriptionTemplate();
@@ -275,9 +278,9 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
 
         if (empty($data['brand'])) {
             unset($data['mpn']);
-        } else if ($data['brand'] == self::PRODUCT_DETAILS_UNBRANDED) {
+        } elseif ($data['brand'] == self::PRODUCT_DETAILS_UNBRANDED) {
             $data['mpn'] = self::PRODUCT_DETAILS_DOES_NOT_APPLY;
-        } else if (empty($data['mpn'])) {
+        } elseif (empty($data['mpn'])) {
             $data['mpn'] = self::PRODUCT_DETAILS_DOES_NOT_APPLY;
         }
 
@@ -292,7 +295,7 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
 
         $categoryId = $this->getEbayListingProduct()->getCategoryTemplateSource()->getMainCategory();
         $marketplaceId = $this->getMarketplace()->getId();
-        $categoryFeatures = $this->getHelper('Component\Ebay\Category\Ebay')
+        $categoryFeatures = $this->getHelper('Component_Ebay_Category_Ebay')
                                    ->getFeatures($categoryId, $marketplaceId);
 
         if (empty($categoryFeatures)) {
@@ -301,15 +304,13 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
 
         $statusDisabled =\Ess\M2ePro\Helper\Component\Ebay\Category\Ebay::PRODUCT_IDENTIFIER_STATUS_DISABLED;
 
-        foreach (array('ean','upc','isbn','epid') as $identifier) {
-
+        foreach (['ean','upc','isbn','epid'] as $identifier) {
             $key = $identifier.'_enabled';
             if (!isset($categoryFeatures[$key]) || $categoryFeatures[$key] != $statusDisabled) {
                 continue;
             }
 
             if (isset($data[$identifier])) {
-
                 unset($data[$identifier]);
 
                 // M2ePro\TRANSLATIONS

@@ -11,15 +11,19 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Template\Synchronization;
 
+/**
+ * Class StopRules
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs
+ */
 class StopRules extends AbstractForm
 {
     protected function _prepareForm()
     {
         $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
-        $formData = !is_null($template)
+        $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $defaults = array(
+        $defaults = [
             'stop_status_disabled' => Synchronization::STOP_STATUS_DISABLED_YES,
             'stop_out_off_stock' => Synchronization::STOP_OUT_OFF_STOCK_YES,
 
@@ -33,7 +37,7 @@ class StopRules extends AbstractForm
 
             'stop_advanced_rules_mode'    => Synchronization::ADVANCED_RULES_MODE_NONE,
             'stop_advanced_rules_filters' => null
-        );
+        ];
         $formData = array_merge($defaults, $formData);
 
         $isEdit = !!$this->getRequest()->getParam('id');
@@ -44,7 +48,8 @@ class StopRules extends AbstractForm
             'amazon_template_synchronization_stop',
             self::HELP_BLOCK,
             [
-                'content' => $this->__('Stop Rules define the Conditions when Amazon Items Listing must be
+                'content' => $this->__(
+                    'Stop Rules define the Conditions when Amazon Items Listing must be
     inactivated, depending on Magento Product state.<br/><br/>
     <b>Note:</b> If all Stop Conditions are set to <i>No</i> or <i>No Action</i>,
     then the Stop Option for Amazon Items is disabled.<br/>
@@ -65,7 +70,8 @@ class StopRules extends AbstractForm
             ]
         );
 
-        $fieldset->addField('stop_status_disabled',
+        $fieldset->addField(
+            'stop_status_disabled',
             self::SELECT,
             [
                 'name' => 'stop_status_disabled',
@@ -81,7 +87,8 @@ class StopRules extends AbstractForm
             ]
         );
 
-        $fieldset->addField('stop_out_off_stock',
+        $fieldset->addField(
+            'stop_out_off_stock',
             self::SELECT,
             [
                 'name' => 'stop_out_off_stock',
@@ -98,7 +105,8 @@ class StopRules extends AbstractForm
             ]
         );
 
-        $fieldset->addField('stop_qty_magento',
+        $fieldset->addField(
+            'stop_qty_magento',
             self::SELECT,
             [
                 'name' => 'stop_qty_magento',
@@ -141,7 +149,8 @@ class StopRules extends AbstractForm
             ]
         );
 
-        $fieldset->addField('stop_qty_calculated',
+        $fieldset->addField(
+            'stop_qty_calculated',
             self::SELECT,
             [
                 'name' => 'stop_qty_calculated',
@@ -185,20 +194,20 @@ class StopRules extends AbstractForm
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_amazon_template_synchronization_stop_advanced_filters',
+        $fieldset = $form->addFieldset(
+            'magento_block_amazon_template_synchronization_stop_advanced_filters',
             [
                 'legend' => $this->__('Advanced Conditions'),
                 'collapsable' => false,
                 'tooltip' => $this->__(
-                    '<p>You can provide flexible Advanced Conditions to manage when the Stop action should be
-                    run basing on the Attributes’ values of the Magento Product.<br> So, when at least one of the
-                    Conditions (both general List Conditions and Advanced Conditions) is met,
-                    the Product will be stopped on Channel.</p>'
+                    '<p>Define Magento Attribute value(s) based on which a product must be stopped on the Channel.<br>
+                    Once at least one Stop or Advanced Condition is met, the product will be stopped.</p>'
                 )
             ]
         );
 
-        $fieldset->addField('stop_advanced_rules_filters_warning',
+        $fieldset->addField(
+            'stop_advanced_rules_filters_warning',
             self::MESSAGES,
             [
                 'messages' => [[
@@ -212,7 +221,8 @@ class StopRules extends AbstractForm
             ]
         );
 
-        $fieldset->addField('stop_advanced_rules_mode',
+        $fieldset->addField(
+            'stop_advanced_rules_mode',
             self::SELECT,
             [
                 'name' => 'stop_advanced_rules_mode',
@@ -225,7 +235,7 @@ class StopRules extends AbstractForm
             ]
         );
 
-        $ruleModel = $this->activeRecordFactory->getObject('Magento\Product\Rule')->setData(
+        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
             ['prefix' => Synchronization::STOP_ADVANCED_RULES_PREFIX]
         );
 
@@ -233,9 +243,10 @@ class StopRules extends AbstractForm
             $ruleModel->loadFromSerialized($formData['stop_advanced_rules_filters']);
         }
 
-        $ruleBlock = $this->createBlock('Magento\Product\Rule')->setData(['rule_model' => $ruleModel]);
+        $ruleBlock = $this->createBlock('Magento_Product_Rule')->setData(['rule_model' => $ruleModel]);
 
-        $fieldset->addField('advanced_filter',
+        $fieldset->addField(
+            'advanced_filter',
             self::CUSTOM_CONTAINER,
             [
                 'container_id' => 'stop_advanced_rules_filters_container',

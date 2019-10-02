@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class TableCellsPopup
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table
+ */
 class TableCellsPopup extends AbstractBlock
 {
     const MODE_CREATE = 'create';
@@ -29,8 +33,7 @@ class TableCellsPopup extends AbstractBlock
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Ess\M2ePro\Model\ControlPanel\Database\TableModelFactory $databaseTableFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->databaseTableFactory = $databaseTableFactory;
         parent::__construct($context, $data);
     }

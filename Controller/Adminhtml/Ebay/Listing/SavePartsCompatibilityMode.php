@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+/**
+ * Class SavePartsCompatibilityMode
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ */
 class SavePartsCompatibilityMode extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     public function execute()
@@ -15,8 +19,7 @@ class SavePartsCompatibilityMode extends \Ess\M2ePro\Controller\Adminhtml\Ebay\L
         $listingId = $this->getRequest()->getParam('listing_id');
         $mode = $this->getRequest()->getParam('mode');
 
-        if (is_null($listingId)) {
-
+        if ($listingId === null) {
             $this->setAjaxContent('0', false);
             return $this->getResult();
         }

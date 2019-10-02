@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Info;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class Actual
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Info
+ */
 class Actual extends AbstractBlock
 {
     //########################################
@@ -61,9 +65,9 @@ class Actual extends AbstractBlock
 
         $cronLastRunTime = $this->getHelper('Module\Cron')->getLastRun();
 
-        if (!is_null($cronLastRunTime)) {
+        if ($cronLastRunTime !== null) {
             $this->cronLastRunTime = $cronLastRunTime;
-            $this->cronIsNotWorking = $this->getHelper('Module\Cron')->isLastRunMoreThan(12,true);
+            $this->cronIsNotWorking = $this->getHelper('Module\Cron')->isLastRunMoreThan(12, true);
         }
         // ---------------------------------------
 

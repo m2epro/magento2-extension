@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
 {
     //########################################
@@ -17,11 +21,11 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
         $listing = $this->initListing();
 
         if ($this->isAjax()) {
-            $this->setAjaxContent($this->createBlock('Ebay\Listing\PickupStore\Grid'));
+            $this->setAjaxContent($this->createBlock('Ebay_Listing_PickupStore_Grid'));
             return $this->getResult();
         }
 
-        $this->addContent($this->createBlock('Ebay\Listing\PickupStore'));
+        $this->addContent($this->createBlock('Ebay_Listing_PickupStore'));
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('In-Store Pickup "%s%"', $listing->getTitle())
         );

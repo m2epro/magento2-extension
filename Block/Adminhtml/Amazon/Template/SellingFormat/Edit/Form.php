@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Template\SellingFormat;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit
+ */
 class Form extends AbstractForm
 {
     protected $customerGroup;
@@ -23,8 +27,7 @@ class Form extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->customerGroup = $customerGroup;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -35,15 +38,15 @@ class Form extends AbstractForm
     {
         /** @var \Ess\M2ePro\Model\Template\SellingFormat $template */
         $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
-        $formData = !is_null($template)
+        $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
         $attributes = $this->getHelper('Magento\Attribute')->getGeneralFromAllAttributeSets();
 
         $formData['discount_rules'] = $template && $template->getId() ?
-            $template->getChildObject()->getBusinessDiscounts() : array();
+            $template->getChildObject()->getBusinessDiscounts() : [];
 
-        $default = array(
+        $default = [
             'title' => '',
 
             'is_regular_customer_allowed' => 1,
@@ -91,10 +94,10 @@ class Form extends AbstractForm
 
             'business_discounts_mode' => 0,
             'business_discounts_tier_coefficient' => '',
-            'business_discounts_tier_customer_group_id' => NULL,
+            'business_discounts_tier_customer_group_id' => null,
 
-            'discount_rules' => array()
-        );
+            'discount_rules' => []
+        ];
 
         $formData = array_merge($default, $formData);
 
@@ -124,12 +127,12 @@ class Form extends AbstractForm
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
 
-        $attributesByInputTypes = array(
-            'text' => $magentoAttributeHelper->filterByInputTypes($attributes, array('text')),
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($attributes, array('text', 'select')),
-            'text_price' => $magentoAttributeHelper->filterByInputTypes($attributes, array('text', 'price')),
-            'text_date' => $magentoAttributeHelper->filterByInputTypes($attributes, array('text', 'date')),
-        );
+        $attributesByInputTypes = [
+            'text' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text']),
+            'text_select' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select']),
+            'text_price' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'price']),
+            'text_date' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'date']),
+        ];
 
         $groups = $this->customerGroup->getCollection()->toArray();
 
@@ -146,14 +149,16 @@ class Form extends AbstractForm
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_amazon_template_selling_format_general',
+        $fieldset = $form->addFieldset(
+            'magento_block_amazon_template_selling_format_general',
             [
                 'legend' => $this->__('General'),
                 'collapsable' => false
             ]
         );
 
-        $fieldset->addField('title',
+        $fieldset->addField(
+            'title',
             'text',
             [
                 'name' => 'title',
@@ -164,29 +169,33 @@ class Form extends AbstractForm
             ]
         );
 
-        $fieldset->addField('local_timezone',
+        $fieldset->addField(
+            'local_timezone',
             'hidden',
             [
                 'value' => $this->_localeDate->getConfigTimezone()
             ]
         );
 
-        $fieldset->addField('local_date_format',
+        $fieldset->addField(
+            'local_date_format',
             'hidden',
             [
                 'value' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT)
             ]
         );
 
-        if ($this->getHelper('Component\Amazon\Business')->isEnabled()) {
-            $fieldset = $form->addFieldset('magento_block_amazon_template_selling_format_business',
+        if ($this->getHelper('Component_Amazon_Business')->isEnabled()) {
+            $fieldset = $form->addFieldset(
+                'magento_block_amazon_template_selling_format_business',
                 [
                     'legend' => $this->__('Selling Type'),
                     'collapsable' => false
                 ]
             );
 
-            $fieldset->addField('is_regular_customer_allowed',
+            $fieldset->addField(
+                'is_regular_customer_allowed',
                 'select',
                 [
                     'label' => $this->__('B2C Enabled'),
@@ -204,7 +213,8 @@ class Form extends AbstractForm
                 ]
             );
 
-            $fieldset->addField('is_business_customer_allowed',
+            $fieldset->addField(
+                'is_business_customer_allowed',
                 'select',
                 [
                     'label' => $this->__('B2B Pricing'),
@@ -223,7 +233,8 @@ class Form extends AbstractForm
             );
         }
 
-        $fieldset = $form->addFieldset('magento_block_amazon_template_selling_format_qty',
+        $fieldset = $form->addFieldset(
+            'magento_block_amazon_template_selling_format_qty',
             [
                 'legend' => $this->__('Quantity'),
                 'collapsable' => false
@@ -237,8 +248,7 @@ class Form extends AbstractForm
             ]
         ];
 
-        if (
-            $formData['qty_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE
+        if ($formData['qty_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE
             && !$magentoAttributeHelper->isExistInAttributesArray($formData['qty_custom_attribute'], $attributes)
             && $formData['qty_custom_attribute'] != ''
         ) {
@@ -254,8 +264,7 @@ class Form extends AbstractForm
 
         foreach ($attributesByInputTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['qty_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE
+            if ($formData['qty_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE
                 && $formData['qty_custom_attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -267,7 +276,8 @@ class Form extends AbstractForm
             ];
         }
 
-        $fieldset->addField('qty_mode',
+        $fieldset->addField(
+            'qty_mode',
             self::SELECT,
             [
                 'container_id' => 'qty_mode_tr',
@@ -293,7 +303,8 @@ class Form extends AbstractForm
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
-        $fieldset->addField('qty_custom_attribute',
+        $fieldset->addField(
+            'qty_custom_attribute',
             'hidden',
             [
                 'name' => 'qty_custom_attribute',
@@ -301,7 +312,8 @@ class Form extends AbstractForm
             ]
         );
 
-        $fieldset->addField('qty_custom_value',
+        $fieldset->addField(
+            'qty_custom_value',
             'text',
             [
                 'container_id' => 'qty_custom_value_tr',
@@ -321,7 +333,8 @@ class Form extends AbstractForm
             ];
         }
 
-        $fieldset->addField('qty_percentage',
+        $fieldset->addField(
+            'qty_percentage',
             self::SELECT,
             [
                 'container_id' => 'qty_percentage_tr',
@@ -333,11 +346,13 @@ class Form extends AbstractForm
                     'Sets the percentage for calculation of Items number to be Listed on Amazon basing on
                     Product Quantity or Magento Attribute. <br/><br/>
                     E.g., if QTY percentage is set to 10% and Product Quantity is 100,
-                    the Quantity to be Listed on Amazon will be calculated as <br/> 100 * 10% = 10.')
+                    the Quantity to be Listed on Amazon will be calculated as <br/> 100 * 10% = 10.'
+                )
             ]
         );
 
-        $fieldset->addField('qty_modification_mode',
+        $fieldset->addField(
+            'qty_modification_mode',
             'select',
             [
                 'container_id' => 'qty_modification_mode_tr',
@@ -352,7 +367,8 @@ class Form extends AbstractForm
             ]
         );
 
-        $fieldset->addField('qty_min_posted_value',
+        $fieldset->addField(
+            'qty_min_posted_value',
             'text',
             [
                 'container_id' => 'qty_min_posted_value_tr',
@@ -369,7 +385,8 @@ class Form extends AbstractForm
             ]
         );
 
-        $fieldset->addField('qty_max_posted_value',
+        $fieldset->addField(
+            'qty_max_posted_value',
             'text',
             [
                 'container_id' => 'qty_max_posted_value_tr',
@@ -386,11 +403,12 @@ class Form extends AbstractForm
             ]
         );
 
-        $priceTitle = $this->getHelper('Component\Amazon\Business')->isEnabled() ?
+        $priceTitle = $this->getHelper('Component_Amazon_Business')->isEnabled() ?
             $this->__('Price (B2C)') :
             $this->__('Price');
 
-        $fieldset = $form->addFieldset('magento_block_amazon_template_selling_format_prices',
+        $fieldset = $form->addFieldset(
+            'magento_block_amazon_template_selling_format_prices',
             [
                 'legend' => $priceTitle,
                 'collapsable' => false
@@ -400,8 +418,7 @@ class Form extends AbstractForm
         $preparedAttributes = [];
         foreach ($attributesByInputTypes['text_price'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['regular_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+            if ($formData['regular_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
                 && $formData['regular_price_custom_attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -430,7 +447,8 @@ class Form extends AbstractForm
             $this->__('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)')
         );
 
-        $fieldset->addField('regular_price_mode',
+        $fieldset->addField(
+            'regular_price_mode',
             self::SELECT,
             [
                 'label' => $this->__('Price'),
@@ -458,7 +476,8 @@ class Form extends AbstractForm
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
-        $fieldset->addField('regular_price_custom_attribute',
+        $fieldset->addField(
+            'regular_price_custom_attribute',
             'hidden',
             [
                 'name' => 'regular_price_custom_attribute',
@@ -466,7 +485,8 @@ class Form extends AbstractForm
             ]
         );
 
-        $fieldset->addField('regular_price_variation_mode',
+        $fieldset->addField(
+            'regular_price_variation_mode',
             self::SELECT,
             [
                 'label' => $this->__('Variation Price Source'),
@@ -486,8 +506,7 @@ class Form extends AbstractForm
         $preparedAttributes = [];
         foreach ($attributesByInputTypes['text_price'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['regular_map_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+            if ($formData['regular_map_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
                 && $formData['regular_map_price_custom_attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -499,7 +518,8 @@ class Form extends AbstractForm
             ];
         }
 
-        $fieldset->addField('regular_map_price_mode',
+        $fieldset->addField(
+            'regular_map_price_mode',
             self::SELECT,
             [
                 'label' => $this->__('Minimum Advertised Price'),
@@ -530,7 +550,8 @@ class Form extends AbstractForm
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
-        $fieldset->addField('regular_map_price_custom_attribute',
+        $fieldset->addField(
+            'regular_map_price_custom_attribute',
             'hidden',
             [
                 'name' => 'regular_map_price_custom_attribute',
@@ -541,8 +562,7 @@ class Form extends AbstractForm
         $preparedAttributes = [];
         foreach ($attributesByInputTypes['text_price'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['regular_sale_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+            if ($formData['regular_sale_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
                 && $formData['regular_sale_price_custom_attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -571,7 +591,8 @@ class Form extends AbstractForm
             $this->__('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)')
         );
 
-        $fieldset->addField('regular_sale_price_mode',
+        $fieldset->addField(
+            'regular_sale_price_mode',
             self::SELECT,
             [
                 'label' => $this->__('Sale Price'),
@@ -605,7 +626,8 @@ class Form extends AbstractForm
                 { width: 160px !important; left: 0px !important; }'
         );
 
-        $fieldset->addField('regular_sale_price_custom_attribute',
+        $fieldset->addField(
+            'regular_sale_price_custom_attribute',
             'hidden',
             [
                 'name' => 'regular_sale_price_custom_attribute',
@@ -616,8 +638,7 @@ class Form extends AbstractForm
         $preparedAttributes = [];
         foreach ($attributesByInputTypes['text_date'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['regular_sale_price_start_date_mode'] == SellingFormat::DATE_ATTRIBUTE
+            if ($formData['regular_sale_price_start_date_mode'] == SellingFormat::DATE_ATTRIBUTE
                 && $formData['regular_sale_price_start_date_custom_attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -629,7 +650,8 @@ class Form extends AbstractForm
             ];
         }
 
-        $fieldset->addField('regular_sale_price_start_date_mode',
+        $fieldset->addField(
+            'regular_sale_price_start_date_mode',
             self::SELECT,
             [
                 'container_id' => 'regular_sale_price_start_date_mode_tr',
@@ -653,7 +675,8 @@ class Form extends AbstractForm
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,date');
 
-        $fieldset->addField('regular_sale_price_start_date_custom_attribute',
+        $fieldset->addField(
+            'regular_sale_price_start_date_custom_attribute',
             'hidden',
             [
                 'name' => 'regular_sale_price_start_date_custom_attribute',
@@ -661,7 +684,8 @@ class Form extends AbstractForm
             ]
         );
 
-        $fieldset->addField('regular_sale_price_start_date_value',
+        $fieldset->addField(
+            'regular_sale_price_start_date_value',
             'date',
             [
                 'container_id' => 'regular_sale_price_start_date_value_tr',
@@ -675,8 +699,7 @@ class Form extends AbstractForm
         $preparedAttributes = [];
         foreach ($attributesByInputTypes['text_date'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['regular_sale_price_end_date_mode'] == SellingFormat::DATE_ATTRIBUTE
+            if ($formData['regular_sale_price_end_date_mode'] == SellingFormat::DATE_ATTRIBUTE
                 && $formData['regular_sale_price_end_date_custom_attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -688,7 +711,8 @@ class Form extends AbstractForm
             ];
         }
 
-        $fieldset->addField('regular_sale_price_end_date_mode',
+        $fieldset->addField(
+            'regular_sale_price_end_date_mode',
             self::SELECT,
             [
                 'container_id' => 'regular_sale_price_end_date_mode_tr',
@@ -712,7 +736,8 @@ class Form extends AbstractForm
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,date');
 
-        $fieldset->addField('regular_sale_price_end_date_custom_attribute',
+        $fieldset->addField(
+            'regular_sale_price_end_date_custom_attribute',
             'hidden',
             [
                 'name' => 'regular_sale_price_end_date_custom_attribute',
@@ -720,7 +745,8 @@ class Form extends AbstractForm
             ]
         );
 
-        $fieldset->addField('regular_sale_price_end_date_value',
+        $fieldset->addField(
+            'regular_sale_price_end_date_value',
             'date',
             [
                 'container_id' => 'regular_sale_price_end_date_value_tr',
@@ -731,7 +757,8 @@ class Form extends AbstractForm
             ]
         );
 
-        $fieldset->addField('regular_sale_price_end_date_value_validation',
+        $fieldset->addField(
+            'regular_sale_price_end_date_value_validation',
             'text',
             [
                 'name'  => 'regular_sale_price_end_date_value_validation',
@@ -739,7 +766,8 @@ class Form extends AbstractForm
             ]
         );
 
-        $fieldset->addField('regular_price_increase_vat_percent',
+        $fieldset->addField(
+            'regular_price_increase_vat_percent',
             self::SELECT,
             [
                 'label' => $this->__('Add VAT Percentage'),
@@ -767,7 +795,8 @@ class Form extends AbstractForm
             ]
         );
 
-        $fieldset->addField('regular_price_vat_percent',
+        $fieldset->addField(
+            'regular_price_vat_percent',
             'text',
             [
                 'container_id' => 'regular_price_vat_percent_tr',
@@ -779,9 +808,10 @@ class Form extends AbstractForm
             ]
         );
 
-        if ($this->getHelper('Component\Amazon\Business')->isEnabled()) {
+        if ($this->getHelper('Component_Amazon_Business')->isEnabled()) {
 
-            $fieldset = $form->addFieldset('magento_block_amazon_template_selling_format_business_prices',
+            $fieldset = $form->addFieldset(
+                'magento_block_amazon_template_selling_format_business_prices',
                 [
                     'legend' => $this->__('Price (B2B)'),
                     'collapsable' => false
@@ -791,8 +821,7 @@ class Form extends AbstractForm
             $preparedAttributes = [];
             foreach ($attributesByInputTypes['text_price'] as $attribute) {
                 $attrs = ['attribute_code' => $attribute['code']];
-                if (
-                    $formData['business_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+                if ($formData['business_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
                     && $formData['business_price_custom_attribute'] == $attribute['code']
                 ) {
                     $attrs['selected'] = 'selected';
@@ -821,7 +850,8 @@ class Form extends AbstractForm
                 $this->__('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)')
             );
 
-            $fieldset->addField('business_price_mode',
+            $fieldset->addField(
+                'business_price_mode',
                 self::SELECT,
                 [
                     'label' => $this->__('Price'),
@@ -849,7 +879,8 @@ class Form extends AbstractForm
                 ]
             )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
-            $fieldset->addField('business_price_custom_attribute',
+            $fieldset->addField(
+                'business_price_custom_attribute',
                 'hidden',
                 [
                     'name' => 'business_price_custom_attribute',
@@ -857,7 +888,8 @@ class Form extends AbstractForm
                 ]
             );
 
-            $fieldset->addField('business_price_variation_mode',
+            $fieldset->addField(
+                'business_price_variation_mode',
                 self::SELECT,
                 [
                     'label' => $this->__('Variation Price Source'),
@@ -874,7 +906,8 @@ class Form extends AbstractForm
                 ]
             );
 
-            $fieldset->addField('business_price_increase_vat_percent',
+            $fieldset->addField(
+                'business_price_increase_vat_percent',
                 self::SELECT,
                 [
                     'label' => $this->__('Add VAT Percentage'),
@@ -900,7 +933,8 @@ class Form extends AbstractForm
                 ]
             );
 
-            $fieldset->addField('business_price_vat_percent',
+            $fieldset->addField(
+                'business_price_vat_percent',
                 'text',
                 [
                     'container_id' => 'business_price_vat_percent_tr',
@@ -947,7 +981,8 @@ class Form extends AbstractForm
                 $this->__('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)')
             );
 
-            $fieldset->addField('business_discounts_mode',
+            $fieldset->addField(
+                'business_discounts_mode',
                 self::SELECT,
                 [
                     'label' => $this->__('Discounts'),
@@ -971,7 +1006,8 @@ class Form extends AbstractForm
                 $values[$group['customer_group_id']] = $group['customer_group_code'];
             }
 
-            $fieldset->addField('business_discounts_tier_customer_group_id',
+            $fieldset->addField(
+                'business_discounts_tier_customer_group_id',
                 self::SELECT,
                 [
                     'container_id' => 'business_discounts_tier_customer_group_id_tr',
@@ -985,11 +1021,13 @@ class Form extends AbstractForm
                 ]
             );
 
-            $discountTableBlock = $this->createBlock('Amazon\Template\SellingFormat\Edit\Form\DiscountTable')->setData([
+            $discountTableBlock = $this->createBlock('Amazon_Template_SellingFormat_Edit_Form_DiscountTable')->setData([
                 'attributes' => $attributesByInputTypes['text_price']
             ]);
 
-            $fieldset->addField('business_discounts_table_container', self::CUSTOM_CONTAINER,
+            $fieldset->addField(
+                'business_discounts_table_container',
+                self::CUSTOM_CONTAINER,
                 [
                     'text' => $discountTableBlock->toHtml(),
                     'css_class' => 'm2epro-fieldset-table',
@@ -998,22 +1036,24 @@ class Form extends AbstractForm
         }
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Template\SellingFormat')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Template\SellingFormat::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Template\SellingFormat')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\SellingFormat::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Amazon')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
         );
 
         $this->jsUrl->addUrls([
             'formSubmit'    => $this->getUrl(
-                '*/amazon_template_sellingFormat/save', array('_current' => true)
+                '*/amazon_template_sellingFormat/save',
+                ['_current' => true]
             ),
             'formSubmitNew' => $this->getUrl('*/amazon_template_sellingFormat/save'),
             'deleteAction'  => $this->getUrl(
-                '*/amazon_template_sellingFormat/delete', array('_current' => true)
+                '*/amazon_template_sellingFormat/delete',
+                ['_current' => true]
             )
         ]);
 
@@ -1027,40 +1067,46 @@ class Form extends AbstractForm
             'Business Product Price for Amazon Listing(s).' =>
                 $this->__('Business Product Price for Amazon Listing(s).'),
             'The Price of Products in Amazon Listing(s).<br/><b>Note:</b>
-            The Final Price is only used for Simple Products.' => $this->__(
-                'The Price of Products in Amazon Listing(s).
-                 <br/><b>Note:</b> The Final Price is only used for Simple Products.'
-            ),
+            The Final Price is only used for Simple Products.' =>
+                $this->__(
+                    'The Price of Products in Amazon Listing(s).
+                    <br/><b>Note:</b> The Final Price is only used for Simple Products.'
+                ),
 
-            'The Price, at which you want to sell your Product(s) at specific time.' => $this->__(
-                'The Price, at which you want to sell your Product(s) at specific time.'
-            ),
+            'The Price, at which you want to sell your Product(s) at specific time.' =>
+                $this->__(
+                    'The Price, at which you want to sell your Product(s) at specific time.'
+                ),
             'The Price, at which you want to sell your Product(s) at specific time.
-            <br/><b>Note:</b> The Final Price is only used for Simple Products.' => $this->__(
-                'The Price, at which you want to sell your Product(s) at specific time.
-                <br/><b>Note:</b> The Final Price is only used for Simple Products.'
-            ),
+            <br/><b>Note:</b> The Final Price is only used for Simple Products.' =>
+                $this->__(
+                    'The Price, at which you want to sell your Product(s) at specific time.
+                    <br/><b>Note:</b> The Final Price is only used for Simple Products.'
+                ),
 
             'Add Selling Policy' => $this->__('Add Selling Policy'),
-            'The specified Title is already used for other Policy. Policy Title must be unique.' => $this->__(
-                'The specified Title is already used for other Policy. Policy Title must be unique.'
-            ),
-            'You should select Attribute Sets first and press Confirm Button.' => $this->__(
-                'You should select Attribute Sets first and press Confirm Button.'
-            ),
+            'The specified Title is already used for other Policy. Policy Title must be unique.' =>
+                $this->__(
+                    'The specified Title is already used for other Policy. Policy Title must be unique.'
+                ),
+            'You should select Attribute Sets first and press Confirm Button.' =>
+                $this->__(
+                    'You should select Attribute Sets first and press Confirm Button.'
+                ),
             'Coefficient is not valid.' => $this->__('Coefficient is not valid.'),
 
             'Wrong value. Only integer numbers.' => $this->__('Wrong value. Only integer numbers.'),
-            'Wrong value. Must be no more than 30. Max applicable length is 6 characters, including the decimal '
-            . '(e.g., 12.345).' => $this->__(
-                'Wrong value. Must be no more than 30. Max applicable length is 6 characters, including the decimal '
-                .'(e.g., 12.345).'
+            'wrong_value_more_than_30' => $this->__(
+                'Wrong value. Must be no more than 30. Max applicable length is 6 characters,
+                 including the decimal (e.g., 12.345).'
             ),
             'At least one Selling Type should be enabled.' => $this->__('At least one Selling Type should be enabled.'),
             'The Quantity value should be unique.' => $this->__('The Quantity value should be unique.'),
-            'You should specify a unique pair of Magento Attribute and Price Change value for each Discount Rule.'
-                => $this->__('You should specify a unique pair of Magento Attribute and Price Change value
-                              for each Discount Rule.'),
+            'You should specify a unique pair of Magento Attribute and Price Change value for each Discount Rule.' =>
+                $this->__(
+                    'You should specify a unique pair of Magento Attribute and Price Change value
+                    for each Discount Rule.'
+                ),
             'You should add at least one Discount Rule.' => $this->__('You should add at least one Discount Rule.')
         ]);
 
@@ -1141,8 +1187,7 @@ JS
                 will be set <strong>From</strong> this moment <strong>To</strong>
                 the year ahead.<br/><br/>
 
-                <strong>Note:</strong> Attributes must contain only Numeric Values.'
-            )
+                <strong>Note:</strong> Attributes must contain only Numeric Values.')
         ]);
 
         parent::_prepareLayout();

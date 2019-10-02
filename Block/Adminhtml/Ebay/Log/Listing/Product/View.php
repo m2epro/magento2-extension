@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Product;
 
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractView;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Product
+ */
 class View extends AbstractView
 {
     //########################################

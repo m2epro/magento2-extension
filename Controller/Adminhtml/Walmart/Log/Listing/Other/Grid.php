@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing\Other;
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\View;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing\Other
+ */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
 {
     //########################################
@@ -21,8 +25,7 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         Context $context
-    )
-    {
+    ) {
         $this->nameBuilder = $nameBuilder;
 
         parent::__construct($walmartFactory, $context);
@@ -31,13 +34,14 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
     public function execute()
     {
         $listingId = $this->getRequest()->getParam(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid::LISTING_ID_FIELD, false
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid::LISTING_ID_FIELD,
+            false
         );
 
         if ($listingId) {
             $listingOther = $this->walmartFactory->getObjectLoaded('Listing\Other', $listingId, null, false);
 
-            if (is_null($listingOther)) {
+            if ($listingOther === null) {
                 $this->setJsonContent([
                     'status' => false,
                     'message' => $this->__('3rd Party Listing does not exist.')
@@ -50,17 +54,18 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
             \Ess\M2ePro\Helper\View\Walmart::NICK . '_log_listing_view_mode'
         );
 
-        if (is_null($sessionViewMode)) {
+        if ($sessionViewMode === null) {
             $sessionViewMode = View\Switcher::VIEW_MODE_SEPARATED;
         }
 
         $viewMode = $this->getRequest()->getParam(
-            'view_mode', $sessionViewMode
+            'view_mode',
+            $sessionViewMode
         );
 
         $gridClass = $this->nameBuilder->buildClassName([
             \Ess\M2ePro\Helper\View\Walmart::NICK,
-            'Log\Listing\Other\View',
+            'Log_Listing_Other_View',
             $viewMode,
             'Grid'
         ]);

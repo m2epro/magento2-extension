@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser
+ */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     protected $_template = 'amazon/template/description/category/chooser/edit.phtml';
@@ -44,7 +48,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs $tabsBlock */
         $tabsBlock = $this->createBlock(
-            'Amazon\\Template\\Description\\Category\\Chooser\\Tabs'
+            'Amazon_Template_Description_Category_Chooser_Tabs'
         );
 
         return parent::_toHtml() .

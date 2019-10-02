@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\Other;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\Other
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
 {
     //########################################
@@ -98,16 +102,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
             . '&nbsp;' . $marketplace->getTitle();
 
         $sku = $row->getData('sku');
-        if (is_null($sku) && !is_null($row->getData('product_id'))) {
-
+        if ($sku === null && $row->getData('product_id') !== null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
                 ->setProductId($row->getData('product_id'))
                 ->getSku();
         }
 
-        if (is_null($sku)) {
+        if ($sku === null) {
             $sku = '<i style="color:gray;">' . $this->__('receiving') . '...</i>';
-        } else if ($sku === '') {
+        } elseif ($sku === '') {
             $sku = '<i style="color:gray;">' . $this->__('none') . '</i>';
         } else {
             $sku = $this->getHelper('Data')->escapeHtml($sku);
@@ -178,8 +181,8 @@ HTML;
         }
 
         $collection->addFieldToFilter(new \Zend_Db_Expr(
-            'second_table.online_qty - second_table.online_qty_sold'), $cond
-        );
+            'second_table.online_qty - second_table.online_qty_sold'
+        ), $cond);
     }
 
     protected function callbackFilterPrice($collection, $column)

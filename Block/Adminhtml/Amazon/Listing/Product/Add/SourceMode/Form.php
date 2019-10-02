@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     //########################################
@@ -21,7 +25,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]]
         );
 
-        $form->addField('soruce_mode_help_block',
+        $form->addField(
+            'soruce_mode_help_block',
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
@@ -41,7 +46,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         $defaultSource = $this->getRequest()
-            ->getParam('source',\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_PRODUCT);
+            ->getParam('source', \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_PRODUCT);
 
         $fieldset->addField(
             'block-title',

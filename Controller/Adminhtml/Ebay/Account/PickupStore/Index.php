@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {
     //########################################
@@ -19,14 +23,15 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
         }
 
         if ($this->isAjax()) {
-            $this->setAjaxContent($this->createBlock('Ebay\Account\PickupStore\Grid'));
+            $this->setAjaxContent($this->createBlock('Ebay_Account_PickupStore_Grid'));
             return $this->getResult();
         }
 
         $account = $this->ebayFactory->getObjectLoaded(
-            'Account', (int)$this->getRequest()->getParam('account_id')
+            'Account',
+            (int)$this->getRequest()->getParam('account_id')
         );
-        $this->addContent($this->createBlock('Ebay\Account\PickupStore'));
+        $this->addContent($this->createBlock('Ebay_Account_PickupStore'));
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('My Stores for account "%s%"', $account->getTitle())
         );

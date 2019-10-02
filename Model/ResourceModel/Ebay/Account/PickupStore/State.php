@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Account\PickupStore;
 
+/**
+ * Class State
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Account\PickupStore
+ */
 class State extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
@@ -23,10 +27,10 @@ class State extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
     {
         $this->getConnection()->update(
             $this->getMainTable(),
-            array(
+            [
                 'is_in_processing' => 1,
-            ),
-            array('id IN (?)' => $itemIds)
+            ],
+            ['id IN (?)' => $itemIds]
         );
     }
 
@@ -34,10 +38,10 @@ class State extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
     {
         $this->getConnection()->update(
             $this->getMainTable(),
-            array(
+            [
                 'is_in_processing' => 0,
-            ),
-            array('id IN (?)' => $itemIds)
+            ],
+            ['id IN (?)' => $itemIds]
         );
     }
 

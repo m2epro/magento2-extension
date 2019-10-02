@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Category\Specific;
 
+/**
+ * Class Source
+ * @package Ess\M2ePro\Model\Ebay\Template\Category\Specific
+ */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
@@ -30,8 +34,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\App\Config\ScopeConfigInterface $config,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->storeManager = $storeManager;
         $this->config = $config;
         parent::__construct($helperFactory, $modelFactory);
@@ -101,7 +104,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     public function getValues()
     {
-        $valueData = array();
+        $valueData = [];
 
         if ($this->getCategorySpecificTemplate()->isNoneValueMode()) {
             $valueData[] = '--';
@@ -132,12 +135,11 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
         if (empty($categoryId) || empty($marketplaceId) || strpos($valueTemp, ',') === false ||
             $this->getMagentoProduct()->getAttributeFrontendInput($attributeCode) !== 'multiselect') {
-
             $valueData[] = $valueTemp;
             return $valueData;
         }
 
-        $specifics = $this->getHelper('Component\Ebay\Category\Ebay')
+        $specifics = $this->getHelper('Component_Ebay_Category_Ebay')
             ->getSpecifics($categoryId, $marketplaceId);
 
         if (empty($specifics)) {
@@ -146,10 +148,8 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         foreach ($specifics as $specific) {
-
             if ($specific['title'] === $this->getCategorySpecificTemplate()->getData('attribute_title') &&
-                in_array($specific['type'],array('select_multiple_or_text','select_multiple'))) {
-
+                in_array($specific['type'], ['select_multiple_or_text','select_multiple'])) {
                 foreach (explode(',', $valueTemp) as $val) {
                     $valueData[] =  trim($val);
                 }
@@ -167,9 +167,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     private function getAttributeLabel()
     {
         return $this->getHelper('Magento\Attribute')->getAttributeLabel(
-                    $this->getCategorySpecificTemplate()->getData('value_custom_attribute'),
-                    $this->getMagentoProduct()->getStoreId()
-                );
+            $this->getCategorySpecificTemplate()->getData('value_custom_attribute'),
+            $this->getMagentoProduct()->getStoreId()
+        );
     }
 
     private function getAttributeValue($attributeCode)

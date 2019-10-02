@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\Manual;
 
+/**
+ * Class SkipPopup
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\Manual
+ */
 class SkipPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     //########################################

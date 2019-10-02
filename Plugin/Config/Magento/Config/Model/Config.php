@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Plugin\Config\Magento\Config\Model;
 
+/**
+ * Class Config
+ * @package Ess\M2ePro\Plugin\Config\Magento\Config\Model
+ */
 class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     //########################################
@@ -39,8 +43,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
             \Ess\M2ePro\Helper\View\Configuration::ADVANCED_SECTION_COMPONENT
         ];
 
-        if (
-            !isset($saveData['section']) ||
+        if (!isset($saveData['section']) ||
             !in_array($saveData['section'], $availableSections)
         ) {
             return $callback(...$arguments);
@@ -50,28 +53,32 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
         if (isset($groups['ebay_mode']['fields']['ebay_mode_field']['value'])) {
             $this->helperFactory->getObject('Module')->getConfig()->setGroupValue(
-                '/component/ebay/', 'mode',
+                '/component/ebay/',
+                'mode',
                 (int)$groups['ebay_mode']['fields']['ebay_mode_field']['value']
             );
         }
 
         if (isset($groups['amazon_mode']['fields']['amazon_mode_field']['value'])) {
             $this->helperFactory->getObject('Module')->getConfig()->setGroupValue(
-                '/component/amazon/', 'mode',
+                '/component/amazon/',
+                'mode',
                 (int)$groups['amazon_mode']['fields']['amazon_mode_field']['value']
             );
         }
 
         if (isset($groups['walmart_mode']['fields']['walmart_mode_field']['value'])) {
             $this->helperFactory->getObject('Module')->getConfig()->setGroupValue(
-                '/component/walmart/', 'mode',
+                '/component/walmart/',
+                'mode',
                 (int)$groups['walmart_mode']['fields']['walmart_mode_field']['value']
             );
         }
 
         if (isset($groups['module_mode']['fields']['module_mode_field']['value'])) {
             $this->helperFactory->getObject('Module')->getConfig()->setGroupValue(
-                null, 'is_disabled',
+                null,
+                'is_disabled',
                 (int)$groups['module_mode']['fields']['module_mode_field']['value']
             );
         }

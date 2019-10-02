@@ -8,6 +8,12 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization;
 
+use Ess\M2ePro\Model\Walmart\Template\Synchronization as SynchronizationPolicy;
+
+/**
+ * Class Relist
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization
+ */
 class Relist extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization\AbstractModel
 {
     //########################################
@@ -45,22 +51,23 @@ class Relist extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
 
     private function immediatelyChangedProducts()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Immediately when Product was changed');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Immediately when Product was changed');
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstances(
-            array(\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE)
+            [\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE]
         );
 
         $changedListingsProducts = array_merge($changedListingsProducts, $this->getPendingListingProducts());
 
+        $lpForAdvancedRules = [];
+
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
-
-                $configurator = $this->modelFactory->getObject('Walmart\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
                 $configurator->reset();
                 $configurator->allowQty();
+                $configurator->allowLagTime();
 
                 /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
                 $walmartListingProduct = $listingProduct->getChildObject();
@@ -77,7 +84,9 @@ class Relist extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
                 }
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -88,18 +97,78 @@ class Relist extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchro
                     continue;
                 }
 
-                $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST, $configurator
-                );
+                /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
+                $walmartListingProduct = $listingProduct->getChildObject();
+                $walmartTemplate = $walmartListingProduct->getWalmartSynchronizationTemplate();
 
+                if ($walmartTemplate->isRelistAdvancedRulesEnabled()) {
+                    $templateId = $walmartTemplate->getId();
+                    $storeId    = $listingProduct->getListing()->getStoreId();
+                    $magentoProductId = $listingProduct->getProductId();
+
+                    $lpForAdvancedRules[$templateId][$storeId][$magentoProductId][] = $listingProduct;
+                } else {
+                    $this->getRunner()->addProduct(
+                        $listingProduct,
+                        \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST,
+                        $configurator
+                    );
+                }
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
 
+        $this->processAdvancedConditions($lpForAdvancedRules);
+
         $this->getActualOperationHistory()->saveTimePoint(__METHOD__);
+    }
+
+    //########################################
+
+    private function processAdvancedConditions($lpForAdvancedRules)
+    {
+        $affectedListingProducts = [];
+
+        try {
+            $affectedListingProducts = $this->getInspector()->getMeetAdvancedRequirementsProducts(
+                $lpForAdvancedRules,
+                SynchronizationPolicy::RELIST_ADVANCED_RULES_PREFIX,
+                'relist'
+            );
+        } catch (\Exception $exception) {
+            foreach ($lpForAdvancedRules as $templateId => $productsByTemplate) {
+                foreach ($productsByTemplate as $storeId => $productsByStore) {
+                    foreach ($productsByStore as $magentoProductId => $productsByMagentoProduct) {
+                        foreach ($productsByMagentoProduct as $lProduct) {
+                            $this->logError($lProduct, $exception, false);
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach ($affectedListingProducts as $listingProduct) {
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+
+            try {
+
+                /** @var $configurator \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator */
+                $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
+                $configurator->reset();
+                $configurator->allowQty();
+
+                $this->getRunner()->addProduct(
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST,
+                    $configurator
+                );
+            } catch (\Exception $exception) {
+                $this->logError($listingProduct, $exception, false);
+                continue;
+            }
+        }
     }
 
     //########################################

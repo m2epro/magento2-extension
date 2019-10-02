@@ -16,7 +16,7 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
-    private $marketplaceModel = NULL;
+    private $marketplaceModel = null;
 
     protected $amazonFactory;
 
@@ -32,8 +32,7 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         parent::__construct(
             $modelFactory,
@@ -67,7 +66,7 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
             return true;
         }
 
-        return (bool)$this->activeRecordFactory->getObject('Amazon\Listing\Product')
+        return (bool)$this->activeRecordFactory->getObject('Amazon_Listing_Product')
             ->getCollection()
             ->addFieldToFilter('template_shipping_override_id', $this->getId())
             ->getSize();
@@ -77,7 +76,7 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('amazon_template_shippingoverride');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('amazon_template_shippingoverride');
         return parent::save();
     }
 
@@ -94,9 +93,9 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
             $service->delete();
         }
 
-        $this->marketplaceModel = NULL;
+        $this->marketplaceModel = null;
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('amazon_template_shippingoverride');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('amazon_template_shippingoverride');
         return parent::delete();
     }
 
@@ -107,9 +106,10 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
      */
     public function getMarketplace()
     {
-        if (is_null($this->marketplaceModel)) {
+        if ($this->marketplaceModel === null) {
             $this->marketplaceModel = $this->amazonFactory->getCachedObjectLoaded(
-                'Marketplace', $this->getMarketplaceId()
+                'Marketplace',
+                $this->getMarketplaceId()
             );
         }
 
@@ -132,10 +132,14 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
      * @return array|\Ess\M2ePro\Model\ActiveRecord\AbstractModel[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getServices($asObjects = false, array $filters = array())
+    public function getServices($asObjects = false, array $filters = [])
     {
-        $services = $this->getRelatedSimpleItems('Amazon\Template\ShippingOverride\Service',
-                                                 'template_shipping_override_id', $asObjects, $filters);
+        $services = $this->getRelatedSimpleItems(
+            'Amazon_Template_ShippingOverride_Service',
+            'template_shipping_override_id',
+            $asObjects,
+            $filters
+        );
 
         if ($asObjects) {
             /** @var $service \Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service */
@@ -181,11 +185,11 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
      */
     public function getTrackingAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         $services = $this->getServices(true);
         foreach ($services as $service) {
-            $attributes = array_merge($attributes,$service->getTrackingAttributes());
+            $attributes = array_merge($attributes, $service->getTrackingAttributes());
         }
 
         return array_unique($attributes);
@@ -196,11 +200,11 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
      */
     public function getUsedAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         $services = $this->getServices(true);
         foreach ($services as $service) {
-            $attributes = array_merge($attributes,$service->getUsedAttributes());
+            $attributes = array_merge($attributes, $service->getUsedAttributes());
         }
 
         return array_unique($attributes);
@@ -219,7 +223,7 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
 
         foreach ($data['services'] as &$serviceData) {
             foreach ($serviceData as &$value) {
-                !is_null($value) && !is_array($value) && $value = (string)$value;
+                $value !== null && !is_array($value) && $value = (string)$value;
             }
         }
         unset($value);
@@ -255,12 +259,12 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'), true);
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id'], true);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

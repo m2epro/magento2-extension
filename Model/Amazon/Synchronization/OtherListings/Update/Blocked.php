@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update;
 
 use Ess\M2ePro\Model\Processing\Runner;
 
+/**
+ * Class Blocked
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update
+ */
 class Blocked extends \Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\AbstractModel
 {
     //########################################
@@ -48,8 +52,10 @@ class Blocked extends \Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Abs
     protected function performActions()
     {
         $accountsCollection = $this->amazonFactory->getObject('Account')->getCollection();
-        $accountsCollection->addFieldToFilter('other_listings_synchronization',
-           \Ess\M2ePro\Model\Amazon\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES);
+        $accountsCollection->addFieldToFilter(
+            'other_listings_synchronization',
+            \Ess\M2ePro\Model\Amazon\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES
+        );
 
         $accounts = $accountsCollection->getItems();
 
@@ -75,16 +81,16 @@ class Blocked extends \Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Abs
             );
 
             if (!$this->isLockedAccount($account) && !$this->isLockedAccountInterval($account)) {
-
                 $this->getActualOperationHistory()->addTimePoint(
                     __METHOD__.'process'.$account->getId(),
                     'Process Account '.$account->getTitle()
                 );
 
-                $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+                $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
                 $connectorObj = $dispatcherObject->getCustomConnector(
-                    'Amazon\Synchronization\OtherListings\Update\Blocked\Requester',
-                    array(), $account
+                    'Amazon_Synchronization_OtherListings_Update_Blocked_Requester',
+                    [],
+                    $account
                 );
 
                 $dispatcherObject->process($connectorObj);
@@ -112,7 +118,7 @@ class Blocked extends \Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Abs
     private function isLockedAccount(\Ess\M2ePro\Model\Account $account)
     {
         /** @var $lockItem \Ess\M2ePro\Model\Lock\Item\Manager */
-        $lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+        $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
         $lockItem->setNick(Blocked\ProcessingRunner::LOCK_ITEM_PREFIX.'_'.$account->getId());
         $lockItem->setMaxInactiveTime(Runner::MAX_LIFETIME);
 

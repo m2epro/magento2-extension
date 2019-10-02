@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
+/**
+ * Class Magento
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools
+ */
 class Magento extends Command
 {
     protected $fullModuleList;
@@ -25,7 +29,7 @@ class Magento extends Command
         \Magento\Framework\Module\ModuleList $moduleList,
         \Magento\Framework\Module\PackageInfo $packageInfo,
         \Magento\Framework\Interception\PluginListInterface $pluginList
-    ){
+    ) {
         parent::__construct($context);
         $this->fullModuleList = $fullModuleList;
         $this->moduleList     = $moduleList;
@@ -126,7 +130,6 @@ HTML;
         ksort($fullModulesList);
 
         foreach ($fullModulesList as $module) {
-
             $status = $this->moduleList->has($module['name'])
                 ? '<span style="color: forestgreen">Enabled</span>'
                 : '<span style="color: orangered">Disabled</span>';
@@ -175,17 +178,14 @@ HTML;
         ksort($fullPluginsList);
 
         foreach ($fullPluginsList as $targetModel => $pluginsList) {
-
             $rowSpan = count($pluginsList);
 
             foreach ($pluginsList as $pluginIndex => $plugin) {
-
                 $methods = implode(', ', $plugin['methods']);
                 $status = $plugin['disabled'] ? '<span style="color: orangered">Disabled</span>'
                                               : '<span style="color: forestgreen">Enabled</span>';
 
                 if ($pluginIndex == 0) {
-
                     $html .= <<<HTML
 <tr>
     <td rowspan="{$rowSpan}">{$targetModel}</td>
@@ -195,10 +195,8 @@ HTML;
 </tr>
 HTML;
                 } else {
-
                     $html .= <<<HTML
 <tr>
-
     <td>{$plugin['class']}</td>
     <td>{$status}</td>
     <td>{$methods}</td>
@@ -227,13 +225,12 @@ HTML;
             )
         );
 
-        $loggers = array();
+        $loggers = [];
         foreach ($recursiveIteratorIterator as $splFileInfo) {
             /**@var \SplFileInfo $splFileInfo */
 
             if (!$splFileInfo->isFile() ||
-                !in_array($splFileInfo->getExtension(), array('php', 'phtml')))
-            {
+                !in_array($splFileInfo->getExtension(), ['php', 'phtml'])) {
                 continue;
             }
 
@@ -254,16 +251,15 @@ HTML;
 
             $content = explode("\n", $content);
             foreach ($content as $line => $contentRow) {
-
                 if (strpos($contentRow, 'Module\Logger') === false) {
                     continue;
                 }
 
-                $loggers[] = array(
+                $loggers[] = [
                     'path' => $splFileObject->getRealPath(),
                     'line' => $line + 1,
                     'code' => implode("\n", array_slice($content, $line - 2, 7)),
-                );
+                ];
             }
         }
 
@@ -281,7 +277,7 @@ HTML;
 <div style="max-width: 1280px; margin: 0 auto;">
     <h2 style="text-align: center; margin-bottom: 0; padding-top: 25px">M2ePro Loggers in Magento files
         <span style="color: #808080; font-size: 15px">(%count% entries)</span>
-</h2>
+    </h2>
 <br/>
 HTML;
         foreach ($loggers as $logger) {

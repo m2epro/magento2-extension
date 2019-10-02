@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Condition;
 
+/**
+ * Class Product
+ * @package Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Condition
+ */
 class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
 {
     //########################################
 
     protected function getCustomFilters()
     {
-        $walmartFilters = array(
+        $walmartFilters = [
             'walmart_sku'                  => 'WalmartSku',
             'walmart_gtin'                 => 'WalmartGtin',
             'walmart_upc'                  => 'WalmartUpc',
@@ -29,7 +33,7 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
             'walmart_status'               => 'WalmartStatus',
             'walmart_details_data_changed' => 'WalmartDetailsDataChanged',
             'walmart_online_price_invalid' => 'WalmartOnlinePriceInvalid',
-        );
+        ];
 
         return array_merge_recursive(
             parent::getCustomFilters(),
@@ -59,9 +63,13 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
         }
 
         /** @var \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel $model */
-        $model = $this->modelFactory->getObject('Walmart\Magento\Product\Rule\Custom_' . $customFilters[$filterId]);
-        $model->setFilterOperator($this->getData('operator'))
-            ->setFilterCondition($this->getData('value'));
+        $model = $this->modelFactory->getObject(
+            'Walmart\Magento\Product\Rule\Custom\\' . $customFilters[$filterId],
+            [
+                'filterOperator'  => $this->getData('operator'),
+                'filterCondition' => $this->getData('value')
+            ]
+        );
 
         $isReadyToCache && $this->_customFiltersCache[$filterId] = $model;
         return $model;
@@ -128,7 +136,6 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
                     }
                 } else {
                     if (is_array($validatedValue)) {
-
                         // hack for walmart status
                         if ($this->getAttribute() == 'walmart_status') {
                             if ($op == '==') {
@@ -198,7 +205,7 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
             case '()':
             case '!()':
                 if (is_array($validatedValue)) {
-                    $result = count(array_intersect($validatedValue, (array)$value)) > 0;
+                    $result = !empty(array_intersect($validatedValue, (array)$value));
                 } else {
                     $value = (array)$value;
                     foreach ($value as $item) {

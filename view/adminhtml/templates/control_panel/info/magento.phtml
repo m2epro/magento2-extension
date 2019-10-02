@@ -1,29 +1,40 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
 <table class="form-list" cellspacing="0" cellpadding="0">
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Edition'); ?>: </label>
+            <label><?php echo $block->__('Edition'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->platformMode; ?>
+            <?php echo $block->platformMode; ?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Version'); ?>: </label>
+            <label><?php echo $block->__('Version'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->platformVersion; ?>
+            <?php echo $block->platformVersion; ?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Add Secret Key to URLs'); ?>: </label>
+            <label><?php echo $block->__('Add Secret Key to URLs'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->platformIsSecretKey ? $this->__('Enabled') : $this->__('Disabled'); ?>
+            <?php echo $block->platformIsSecretKey ? $block->__('Enabled') : $block->__('Disabled'); ?>
         </td>
     </tr>
 

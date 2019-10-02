@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
+/**
+ * Class Marketplace
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart
+ */
 abstract class Marketplace extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {
     //########################################

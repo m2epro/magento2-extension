@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode;
 
+/**
+ * Class GlobalMode
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode
+ */
 class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\GlobalMode
 {
     public $showCreateNewAsin = 0;
@@ -19,7 +23,8 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
         $form = $this->_formFactory->create();
         $selectElementType = 'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select';
 
-        $form->addField('global_mode_help_block',
+        $form->addField(
+            'global_mode_help_block',
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
@@ -36,7 +41,9 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
             ]
         );
 
-        $form->addField('auto_mode', 'hidden',
+        $form->addField(
+            'auto_mode',
+            'hidden',
             [
                 'name' => 'auto_mode',
                 'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL
@@ -45,7 +52,9 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
 
         $fieldSet = $form->addFieldset('auto_global_fieldset_container', []);
 
-        $fieldSet->addField('auto_global_adding_mode', $selectElementType,
+        $fieldSet->addField(
+            'auto_global_adding_mode',
+            $selectElementType,
             [
                 'name' => 'auto_global_adding_mode',
                 'label' => $this->__('New Product Added to Magento'),
@@ -60,7 +69,9 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
             ]
         );
 
-        $fieldSet->addField('auto_global_adding_add_not_visible', $selectElementType,
+        $fieldSet->addField(
+            'auto_global_adding_add_not_visible',
+            $selectElementType,
             [
                 'name' => 'auto_global_adding_add_not_visible',
                 'label' => $this->__('Add not Visible Individually Products'),
@@ -85,7 +96,8 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
             ]
         );
 
-        $fieldSet->addField('auto_action_create_asin',
+        $fieldSet->addField(
+            'auto_action_create_asin',
             self::SELECT,
             [
                 'name' => 'auto_action_create_asin',
@@ -111,22 +123,23 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
         );
 
         $collection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Template\Description'
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Template\Description'
         )->getCollection();
         $collection->addFieldToFilter('marketplace_id', $this->getListing()->getMarketplaceId());
 
         $descriptionTemplates = $collection->getData();
 
-        if (count($descriptionTemplates) > 0) {
+        if (!empty($descriptionTemplates)) {
             $this->showCreateNewAsin = 1;
         }
 
-        usort($descriptionTemplates, function($a, $b) {
+        usort($descriptionTemplates, function ($a, $b) {
             return $a["is_new_asin_accepted"] < $b["is_new_asin_accepted"];
         });
 
         $options = [['label' => '','value' => '', 'attrs' => ['class' => 'empty']]];
-        foreach($descriptionTemplates as $template) {
+        foreach ($descriptionTemplates as $template) {
             $tmp = [
                 'label' => $this->escapeHtml($template['title']),
                 'value' => $template['id']
@@ -139,13 +152,14 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
             $options[] = $tmp;
         }
 
-        $url = $this->getUrl('*/amazon_template_description/new', array(
+        $url = $this->getUrl('*/amazon_template_description/new', [
             'is_new_asin_accepted'  => 1,
             'marketplace_id'        => $this->getListing()->getMarketplaceId(),
             'close_on_save' => true
-        ));
+        ]);
 
-        $fieldSet->addField('adding_description_template_id',
+        $fieldSet->addField(
+            'adding_description_template_id',
             self::SELECT,
             [
                 'name' => 'adding_description_template_id',
@@ -156,12 +170,12 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
                 'field_extra_attributes' => 'id="auto_action_amazon_add_and_assign_description_template"',
                 'required' => true,
                 'after_element_html' => $this->getTooltipHtml($this->__(
-                            'Creation of new ASIN/ISBN will be performed based on specified Description Policy.
+                    'Creation of new ASIN/ISBN will be performed based on specified Description Policy.
                             Only the Description Policies set for new ASIN/ISBN creation are available for choosing.
                             <br/><br/><b>Note:</b> If chosen Description Policy doesn’t meet all the
                             Conditions for new ASIN/ISBN creation, the Products will still be added to M2E Pro Listings
                             but will not be Listed on Amazon.'
-                        )) . '<a href="javascript: void(0);"
+                )) . '<a href="javascript: void(0);"
                             style="vertical-align: inherit; margin-left: 65px;"
                             onclick="ListingAutoActionObj.addNewTemplate(\''.$url.'\',
                             ListingAutoActionObj.reloadDescriptionTemplates);">'.$this->__('Add New').'
@@ -169,7 +183,8 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
             ]
         );
 
-        $fieldSet->addField('auto_global_deleting_mode',
+        $fieldSet->addField(
+            'auto_global_deleting_mode',
             self::SELECT,
             [
                 'name' => 'auto_global_deleting_mode',
@@ -195,7 +210,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Listing::class)
         );
 
         $this->js->add(<<<JS

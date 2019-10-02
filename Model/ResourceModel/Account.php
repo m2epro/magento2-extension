@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel;
 
+/**
+ * Class Account
+ * @package Ess\M2ePro\Model\ResourceModel
+ */
 class Account extends ActiveRecord\Component\Parent\AbstractModel
 {
     //########################################

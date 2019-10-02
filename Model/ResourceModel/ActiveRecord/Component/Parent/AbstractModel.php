@@ -8,41 +8,45 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent;
 
-use  Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel as ParentActiveRecordAbstract;
-use  Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel as ChildActiveRecordAbstract;
+use Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel as ParentActiveRecordAbstract;
+use Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel as ChildActiveRecordAbstract;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\AbstractModel
 {
     //########################################
 
     public function getChildModel($childMode)
     {
-        if (is_null($childMode)) {
-            return NULL;
+        if ($childMode === null) {
+            return null;
         }
         $className = $this->getHelper('Client')->getClassName($this);
-        return str_replace('Ess\M2ePro\Model\ResourceModel',ucwords($childMode), $className);
+        return str_replace('Ess\M2ePro\Model\ResourceModel', ucwords($childMode), $className);
     }
 
     public function getChildTable($childMode)
     {
-        if (is_null($childMode)) {
-            return NULL;
+        if ($childMode === null) {
+            return null;
         }
 
-        return str_replace('m2epro_','m2epro_'.$childMode.'_',$this->getMainTable());
+        return str_replace('m2epro_', 'm2epro_'.$childMode.'_', $this->getMainTable());
     }
 
     public function getChildPrimary($childMode)
     {
-        if (is_null($childMode)) {
-            return NULL;
+        if ($childMode === null) {
+            return null;
         }
 
         $secondTable = $this->getChildTable($childMode);
 
-        $primaryName = substr($secondTable,strpos($secondTable,'m2epro_'.$childMode.'_'));
-        return substr($primaryName,strlen('m2epro_'.$childMode.'_')).'_id';
+        $primaryName = substr($secondTable, strpos($secondTable, 'm2epro_'.$childMode.'_'));
+        return substr($primaryName, strlen('m2epro_'.$childMode.'_')).'_id';
     }
 
     //########################################
@@ -53,7 +57,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
 
         $select = parent::_getLoadSelect($field, $value, $object);
 
-        if (is_null($object->getChildMode())) {
+        if ($object->getChildMode() === null) {
             return $select;
         }
 
@@ -72,7 +76,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
 
         $result = parent::_afterLoad($object);
 
-        if (is_null($object->getChildMode())) {
+        if ($object->getChildMode() === null) {
             return $result;
         }
 
@@ -87,7 +91,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
         $childObject = $this->activeRecordFactory->getObject($this->getChildModel($object->getChildMode()));
 
         $childColumnsData = $this->getConnection()->describeTable($this->getChildTable($object->getChildMode()));
-        foreach($childColumnsData as $columnData) {
+        foreach ($childColumnsData as $columnData) {
             $childObject->setData($columnData['COLUMN_NAME'], $data[$columnData['COLUMN_NAME']]);
             unset($data[$columnData['COLUMN_NAME']]);
         }
@@ -115,8 +119,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
             return $result;
         }
 
-        if (is_null($object->getChildMode())) {
-
+        if ($object->getChildMode() === null) {
             if ($object->getData('reload_on_create')) {
                 $object->load($object->getId());
             }
@@ -132,7 +135,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
         $object->unsetData();
         $parentColumnsInfo = $this->getConnection()->describeTable($this->getMainTable());
 
-        foreach($parentColumnsInfo as $columnInfo) {
+        foreach ($parentColumnsInfo as $columnInfo) {
             if (in_array($columnInfo['COLUMN_NAME'], $dataColumns)) {
                 $object->setData($columnInfo['COLUMN_NAME'], $data[$columnInfo['COLUMN_NAME']]);
             }
@@ -142,7 +145,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
         $childObject = $this->activeRecordFactory->getObject($this->getChildModel($object->getChildMode()));
         $childColumnsInfo = $this->getConnection()->describeTable($this->getChildTable($object->getChildMode()));
 
-        foreach($childColumnsInfo as $columnInfo) {
+        foreach ($childColumnsInfo as $columnInfo) {
             if (in_array($columnInfo['COLUMN_NAME'], $dataColumns)) {
                 $childObject->setData($columnInfo['COLUMN_NAME'], $data[$columnInfo['COLUMN_NAME']]);
             }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Order;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Order
+ */
 class Item extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;

@@ -11,6 +11,10 @@
  */
 namespace Ess\M2ePro\Model\Ebay\Template;
 
+/**
+ * Class Shipping
+ * @package Ess\M2ePro\Model\Ebay\Template
+ */
 class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     const COUNTRY_MODE_CUSTOM_VALUE         = 1;
@@ -37,17 +41,17 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
-    private $marketplaceModel = NULL;
+    private $marketplaceModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated
      */
-    private $calculatedShippingModel = NULL;
+    private $calculatedShippingModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Source[]
      */
-    private $shippingSourceModels = array();
+    private $shippingSourceModels = [];
 
     protected $ebayFactory;
 
@@ -71,8 +75,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct(
             $modelFactory,
@@ -110,14 +113,18 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
         return (bool)$this->activeRecordFactory->getObject('Ebay\Listing')
                             ->getCollection()
-                            ->addFieldToFilter('template_shipping_mode',
-                                               \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE)
+                            ->addFieldToFilter(
+                                'template_shipping_mode',
+                                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                            )
                             ->addFieldToFilter('template_shipping_id', $this->getId())
                             ->getSize() ||
-               (bool)$this->activeRecordFactory->getObject('Ebay\Listing\Product')
+               (bool)$this->activeRecordFactory->getObject('Ebay_Listing_Product')
                             ->getCollection()
-                            ->addFieldToFilter('template_shipping_mode',
-                                               \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE)
+                            ->addFieldToFilter(
+                                'template_shipping_mode',
+                                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                            )
                             ->addFieldToFilter('template_shipping_id', $this->getId())
                             ->getSize();
     }
@@ -126,7 +133,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('ebay_template_shipping');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_shipping');
         return parent::save();
     }
 
@@ -139,7 +146,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         }
 
         $calculatedShippingObject = $this->getCalculatedShipping();
-        if (!is_null($calculatedShippingObject)) {
+        if ($calculatedShippingObject !== null) {
             $calculatedShippingObject->delete();
         }
 
@@ -148,11 +155,11 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             $service->delete();
         }
 
-        $this->marketplaceModel = NULL;
-        $this->calculatedShippingModel = NULL;
-        $this->shippingSourceModels = array();
+        $this->marketplaceModel = null;
+        $this->calculatedShippingModel = null;
+        $this->shippingSourceModels = [];
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('ebay_template_shipping');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_shipping');
 
         return parent::delete();
     }
@@ -164,9 +171,10 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getMarketplace()
     {
-        if (is_null($this->marketplaceModel)) {
+        if ($this->marketplaceModel === null) {
             $this->marketplaceModel = $this->ebayFactory->getCachedObjectLoaded(
-                'Marketplace', $this->getMarketplaceId()
+                'Marketplace',
+                $this->getMarketplaceId()
             );
         }
 
@@ -195,7 +203,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             return $this->shippingSourceModels[$productId];
         }
 
-        $this->shippingSourceModels[$productId] = $this->modelFactory->getObject('Ebay\Template\Shipping\Source');
+        $this->shippingSourceModels[$productId] = $this->modelFactory->getObject('Ebay_Template_Shipping_Source');
         $this->shippingSourceModels[$productId]->setMagentoProduct($magentoProduct);
         $this->shippingSourceModels[$productId]->setShippingTemplate($this);
 
@@ -209,15 +217,14 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getCalculatedShipping()
     {
-        if (is_null($this->calculatedShippingModel)) {
-
+        if ($this->calculatedShippingModel === null) {
             try {
                 $this->calculatedShippingModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                    'Ebay\Template\Shipping\Calculated', $this->getId()
+                    'Ebay_Template_Shipping_Calculated',
+                    $this->getId()
                 );
 
                 $this->calculatedShippingModel->setShippingTemplate($this);
-
             } catch (\Exception $exception) {
                 return $this->calculatedShippingModel;
             }
@@ -243,11 +250,18 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      * @return array|\Ess\M2ePro\Model\Ebay\Template\Shipping\Service[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getServices($asObjects = false, array $filters = array(),
-                                array $sort = array('priority'=> \Magento\Framework\Data\Collection::SORT_ORDER_ASC))
-    {
-        $services = $this->getRelatedSimpleItems('Ebay\Template\Shipping\Service','template_shipping_id',
-                                                 $asObjects, $filters, $sort);
+    public function getServices(
+        $asObjects = false,
+        array $filters = [],
+        array $sort = ['priority'=> \Magento\Framework\Data\Collection::SORT_ORDER_ASC]
+    ) {
+        $services = $this->getRelatedSimpleItems(
+            'Ebay_Template_Shipping_Service',
+            'template_shipping_id',
+            $asObjects,
+            $filters,
+            $sort
+        );
 
         if ($asObjects) {
             /** @var $service \Ess\M2ePro\Model\Ebay\Template\Shipping\Service */
@@ -319,11 +333,11 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getCountrySource()
     {
-        return array(
+        return [
             'mode'      => $this->getCountryMode(),
             'value'     => $this->getCountryCustomValue(),
             'attribute' => $this->getCountryCustomAttribute()
-        );
+        ];
     }
 
     /**
@@ -331,7 +345,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getCountryAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getCountrySource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\Shipping::COUNTRY_MODE_CUSTOM_ATTRIBUTE) {
@@ -366,11 +380,11 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getPostalCodeSource()
     {
-        return array(
+        return [
             'mode'      => $this->getPostalCodeMode(),
             'value'     => $this->getPostalCodeCustomValue(),
             'attribute' => $this->getPostalCodeCustomAttribute()
-        );
+        ];
     }
 
     /**
@@ -378,7 +392,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getPostalCodeAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getPostalCodeSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\Shipping::POSTAL_CODE_MODE_CUSTOM_ATTRIBUTE) {
@@ -413,11 +427,11 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getAddressSource()
     {
-        return array(
+        return [
             'mode'      => $this->getAddressMode(),
             'value'     => $this->getAddressCustomValue(),
             'attribute' => $this->getAddressCustomAttribute()
-        );
+        ];
     }
 
     /**
@@ -425,7 +439,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getAddressAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getAddressSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\Shipping::ADDRESS_MODE_CUSTOM_ATTRIBUTE) {
@@ -521,13 +535,13 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     {
         $data = $this->getData('local_shipping_discount_profile_id');
 
-        if (is_null($data)) {
-            return NULL;
+        if ($data === null) {
+            return null;
         }
 
         $data = $this->getHelper('Data')->jsonDecode($data);
 
-        return !isset($data[$accountId]) ? NULL : $data[$accountId];
+        return !isset($data[$accountId]) ? null : $data[$accountId];
     }
 
     // ---------------------------------------
@@ -580,13 +594,13 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     {
         $data = $this->getData('international_shipping_discount_profile_id');
 
-        if (is_null($data)) {
-            return NULL;
+        if ($data === null) {
+            return null;
         }
 
         $data = $this->getHelper('Data')->jsonDecode($data);
 
-        return !isset($data[$accountId]) ? NULL : $data[$accountId];
+        return !isset($data[$accountId]) ? null : $data[$accountId];
     }
 
     // ---------------------------------------
@@ -598,7 +612,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     {
         $excludedLocations = $this->getData('excluded_locations');
         is_string($excludedLocations) && $excludedLocations = $this->getHelper('Data')->jsonDecode($excludedLocations);
-        return is_array($excludedLocations) ? $excludedLocations : array();
+        return is_array($excludedLocations) ? $excludedLocations : [];
     }
 
     /**
@@ -612,7 +626,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             return (float)$tempData;
         }
 
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------
@@ -656,7 +670,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getLocalShippingServices()
     {
-        $returns = array();
+        $returns = [];
 
         $services = $this->getServices(true);
         foreach ($services as $service) {
@@ -676,7 +690,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getInternationalShippingServices()
     {
-        $returns = array();
+        $returns = [];
 
         $services = $this->getServices(true);
         foreach ($services as $service) {
@@ -698,16 +712,16 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getTrackingAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         $calculatedShippingObject = $this->getCalculatedShipping();
-        if (!is_null($calculatedShippingObject)) {
-            $attributes = array_merge($attributes,$calculatedShippingObject->getTrackingAttributes());
+        if ($calculatedShippingObject !== null) {
+            $attributes = array_merge($attributes, $calculatedShippingObject->getTrackingAttributes());
         }
 
         $services = $this->getServices(true);
         foreach ($services as $service) {
-            $attributes = array_merge($attributes,$service->getTrackingAttributes());
+            $attributes = array_merge($attributes, $service->getTrackingAttributes());
         }
 
         return array_unique($attributes);
@@ -718,16 +732,16 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getUsedAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         $calculatedShippingObject = $this->getCalculatedShipping();
-        if (!is_null($calculatedShippingObject)) {
-            $attributes = array_merge($attributes,$calculatedShippingObject->getUsedAttributes());
+        if ($calculatedShippingObject !== null) {
+            $attributes = array_merge($attributes, $calculatedShippingObject->getUsedAttributes());
         }
 
         $services = $this->getServices(true);
         foreach ($services as $service) {
-            $attributes = array_merge($attributes,$service->getUsedAttributes());
+            $attributes = array_merge($attributes, $service->getUsedAttributes());
         }
 
         return array_unique($attributes);
@@ -740,17 +754,17 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $data = parent::getDataSnapshot();
 
         $data['services'] = $this->getServices();
-        $data['calculated_shipping'] = $this->getCalculatedShipping()?$this->getCalculatedShipping()->getData():array();
+        $data['calculated_shipping'] = $this->getCalculatedShipping()?$this->getCalculatedShipping()->getData():[];
 
         foreach ($data['services'] as &$serviceData) {
             foreach ($serviceData as &$value) {
-                !is_null($value) && !is_array($value) && $value = (string)$value;
+                $value !== null && !is_array($value) && $value = (string)$value;
             }
         }
         unset($value);
 
         foreach ($data['calculated_shipping'] as &$value) {
-            !is_null($value) && !is_array($value) && $value = (string)$value;
+            $value !== null && !is_array($value) && $value = (string)$value;
         }
 
         return $data;
@@ -769,7 +783,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getDefaultSettingsAdvancedMode()
     {
-        return array(
+        return [
             'country_mode' => self::COUNTRY_MODE_CUSTOM_VALUE,
             'country_custom_value' => 'US',
             'country_custom_attribute' => '',
@@ -781,20 +795,20 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             'address_custom_attribute' => '',
 
             'dispatch_time' => 1,
-            'cash_on_delivery_cost' => NULL,
+            'cash_on_delivery_cost' => null,
             'global_shipping_program' => 0,
             'cross_border_trade' => self::CROSS_BORDER_TRADE_NONE,
-            'excluded_locations' => $this->getHelper('Data')->jsonEncode(array()),
+            'excluded_locations' => $this->getHelper('Data')->jsonEncode([]),
 
             'local_shipping_mode' =>  self::SHIPPING_TYPE_FLAT,
             'local_shipping_discount_mode' => 0,
-            'local_shipping_discount_profile_id' => $this->getHelper('Data')->jsonEncode(array()),
+            'local_shipping_discount_profile_id' => $this->getHelper('Data')->jsonEncode([]),
             'local_shipping_rate_table_mode' => 0,
             'click_and_collect_mode' => 1,
 
             'international_shipping_mode' => self::SHIPPING_TYPE_NO_INTERNATIONAL,
             'international_shipping_discount_mode' => 0,
-            'international_shipping_discount_profile_id' => $this->getHelper('Data')->jsonEncode(array()),
+            'international_shipping_discount_profile_id' => $this->getHelper('Data')->jsonEncode([]),
             'international_shipping_rate_table_mode' => 0,
 
             // CALCULATED SHIPPING
@@ -818,12 +832,12 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             'weight_major' => '',
             'weight_attribute' => '',
 
-            'local_handling_cost' => NULL,
-            'international_handling_cost' => NULL,
+            'local_handling_cost' => null,
+            'international_handling_cost' => null,
             // ---------------------------------------
 
-            'services' => array()
-        );
+            'services' => []
+        ];
     }
 
     //########################################
@@ -835,23 +849,28 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getAffectedListingsProducts($asArrays = true, $columns = '*')
     {
-        $templateManager = $this->modelFactory->getObject('Ebay\Template\Manager');
+        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
         $templateManager->setTemplate(\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING);
 
         $listingsProducts = $templateManager->getAffectedOwnerObjects(
-           \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING_PRODUCT, $this->getId(), $asArrays, $columns
+            \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING_PRODUCT,
+            $this->getId(),
+            $asArrays,
+            $columns
         );
 
         $listings = $templateManager->getAffectedOwnerObjects(
-           \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING, $this->getId(), false
+            \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING,
+            $this->getId(),
+            false
         );
 
         foreach ($listings as $listing) {
-
             $tempListingsProducts = $listing->getChildObject()
                                             ->getAffectedListingsProductsByTemplate(
                                                 \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING,
-                                                $asArrays, $columns
+                                                $asArrays,
+                                                $columns
                                             );
 
             foreach ($tempListingsProducts as $listingProduct) {
@@ -866,12 +885,12 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'));
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id']);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

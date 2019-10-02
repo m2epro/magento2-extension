@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Account\Delete;
 
+/**
+ * Class ProcessingRunner
+ * @package Ess\M2ePro\Model\Amazon\Connector\Account\Delete
+ */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {
     //########################################
@@ -20,10 +24,12 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Account', $params['account_id']
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Account',
+            $params['account_id']
         );
 
-        $account->addProcessingLock(NULL, $this->getProcessingObject()->getId());
+        $account->addProcessingLock(null, $this->getProcessingObject()->getId());
         $account->addProcessingLock('server_synchronize', $this->getProcessingObject()->getId());
         $account->addProcessingLock('deleting_from_server', $this->getProcessingObject()->getId());
     }
@@ -37,13 +43,16 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         try {
             /** @var \Ess\M2ePro\Model\Account $account */
             $account = $this->parentFactory->getCachedObjectLoaded(
-                \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Account', $params['account_id']
+                \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                'Account',
+                $params['account_id']
             );
 
-            $account->deleteProcessingLocks(NULL, $this->getProcessingObject()->getId());
+            $account->deleteProcessingLocks(null, $this->getProcessingObject()->getId());
             $account->deleteProcessingLocks('server_synchronize', $this->getProcessingObject()->getId());
             $account->deleteProcessingLocks('deleting_from_server', $this->getProcessingObject()->getId());
-        } catch (\Exception $exception) {}
+        } catch (\Exception $exception) {
+        }
     }
 
     //########################################

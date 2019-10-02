@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon;
 
+/**
+ * Class Account
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon
+ */
 class Account extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -47,7 +51,7 @@ Channel Order management, Magento Order creation rules, etc.</p><br>
 <p><strong>Note:</strong> M2E Pro Amazon Account can be deleted only if it is not being used
 for any of M2E Pro Listings.</p>
 HTML
-)
+        )
         ]);
 
         return parent::_prepareLayout();

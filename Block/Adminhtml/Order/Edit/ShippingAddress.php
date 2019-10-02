@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Order\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class ShippingAddress
+ * @package Ess\M2ePro\Block\Adminhtml\Order\Edit
+ */
 abstract class ShippingAddress extends AbstractBlock
 {
     protected $shippingAddress = null;
@@ -24,7 +28,7 @@ abstract class ShippingAddress extends AbstractBlock
 
     public function getShippingAddress()
     {
-        if (is_null($this->shippingAddress)) {
+        if ($this->shippingAddress === null) {
             /** @var $shippingAddress \Ess\M2ePro\Model\Amazon\Order\ShippingAddress */
             $shippingAddress = $this->getOrder()->getShippingAddress();
 

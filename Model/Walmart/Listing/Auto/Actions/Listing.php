@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Auto\Actions;
 
+/**
+ * Class Listing
+ * @package Ess\M2ePro\Model\Walmart\Listing\Auto\Actions
+ */
 class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 {
     //########################################
@@ -23,17 +27,16 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             return;
         }
 
-        $listingsProducts = $this->getListing()->getProducts(true, array('product_id' => (int)$product->getId()));
+        $listingsProducts = $this->getListing()->getProducts(true, ['product_id' => (int)$product->getId()]);
 
         if (count($listingsProducts) <= 0) {
             return;
         }
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $parentsForRemove */
-        $parentsForRemove = array();
+        $parentsForRemove = [];
 
         foreach ($listingsProducts as $listingProduct) {
-
             if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
                 return;
             }
@@ -49,7 +52,6 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             }
 
             try {
-
                 if ($deletingMode == \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP) {
                     $listingProduct->isStoppable() &&
                     $this->activeRecordFactory->getObject('StopQueue')->add($listingProduct);
@@ -58,13 +60,13 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
                 if ($deletingMode == \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE) {
                     $listingProduct->isStoppable() &&
                     $this->activeRecordFactory->getObject('StopQueue')->add($listingProduct);
-                    $listingProduct->addData(array(
+                    $listingProduct->addData([
                         'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED
-                    ))->save();
+                    ])->save();
                     $listingProduct->delete();
                 }
-
-            } catch (\Exception $exception) {}
+            } catch (\Exception $exception) {
+            }
         }
 
         if (empty($parentsForRemove)) {
@@ -88,13 +90,18 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         \Magento\Catalog\Model\Product $product,
         \Ess\M2ePro\Model\Listing\Auto\Category\Group $categoryGroup
     ) {
-        $logData = array(
+        $logData = [
             'reason'     => __METHOD__,
             'rule_id'    => $categoryGroup->getId(),
             'rule_title' => $categoryGroup->getTitle(),
+        ];
+        $listingProduct = $this->getListing()->addProduct(
+            $product,
+            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+            false,
+            true,
+            $logData
         );
-        $listingProduct = $this->getListing()->addProduct($product, \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-            false, true, $logData);
 
         if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
             return;
@@ -103,9 +110,9 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Auto\Category\Group $walmartCategoryGroup */
         $walmartCategoryGroup = $categoryGroup->getChildObject();
 
-        $params = array(
+        $params = [
             'template_category_id' => $walmartCategoryGroup->getAddingCategoryTemplateId(),
-        );
+        ];
 
         $this->processAddedListingProduct($listingProduct, $params);
     }
@@ -118,13 +125,17 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
     public function addProductByGlobalListing(
         \Magento\Catalog\Model\Product $product,
         \Ess\M2ePro\Model\Listing $listing
-    )
-    {
-        $logData = array(
+    ) {
+        $logData = [
             'reason' => __METHOD__,
+        ];
+        $listingProduct = $this->getListing()->addProduct(
+            $product,
+            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+            false,
+            true,
+            $logData
         );
-        $listingProduct = $this->getListing()->addProduct($product, \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-            false, true, $logData);
 
         if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
             return;
@@ -135,9 +146,9 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         /** @var \Ess\M2ePro\Model\Walmart\Listing $walmartListing */
         $walmartListing = $listing->getChildObject();
 
-        $params = array(
+        $params = [
             'template_category_id' => $walmartListing->getAutoGlobalAddingCategoryTemplateId(),
-        );
+        ];
 
         $this->processAddedListingProduct($listingProduct, $params);
     }
@@ -150,13 +161,17 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
     public function addProductByWebsiteListing(
         \Magento\Catalog\Model\Product $product,
         \Ess\M2ePro\Model\Listing $listing
-    )
-    {
-        $logData = array(
+    ) {
+        $logData = [
             'reason' => __METHOD__,
+        ];
+        $listingProduct = $this->getListing()->addProduct(
+            $product,
+            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+            false,
+            true,
+            $logData
         );
-        $listingProduct = $this->getListing()->addProduct($product, \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-            false, true, $logData);
 
         if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
             return;
@@ -165,9 +180,9 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         /** @var \Ess\M2ePro\Model\Walmart\Listing $walmartListing */
         $walmartListing = $listing->getChildObject();
 
-        $params = array(
+        $params = [
             'template_category_id' => $walmartListing->getAutoWebsiteAddingCategoryTemplateId(),
-        );
+        ];
 
         $this->processAddedListingProduct($listingProduct, $params);
     }

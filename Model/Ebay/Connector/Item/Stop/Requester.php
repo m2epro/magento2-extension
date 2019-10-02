@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Item\Stop;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Ebay\Connector\Item\Stop
+ */
 class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
 {
     //########################################
 
     protected function getCommand()
     {
-        return array('item','update','end');
+        return ['item','update','end'];
     }
 
     protected function getActionType()
@@ -40,7 +44,10 @@ class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
 
     //########################################
 
-    public function initializeVariations() {}
+    public function initializeVariations()
+    {
+        return null;
+    }
 
     //########################################
 }

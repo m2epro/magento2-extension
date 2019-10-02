@@ -11,18 +11,23 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tab
 use Ess\M2ePro\Model\Ebay\Template\Synchronization;
 use Magento\Framework\Message\MessageInterface;
 
+/**
+ * Class RelistRules
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs
+ */
 class RelistRules extends AbstractTab
 {
     protected function _prepareForm()
     {
-        $default = $this->activeRecordFactory->getObject('Ebay\Template\Synchronization')->getRelistDefaultSettings();
+        $default = $this->activeRecordFactory->getObject('Ebay_Template_Synchronization')->getRelistDefaultSettings();
         $formData = $this->getFormData();
 
         $formData = array_merge($default, $formData);
 
         $form = $this->_formFactory->create();
 
-        $form->addField('ebay_template_synchronization_form_data_relist',
+        $form->addField(
+            'ebay_template_synchronization_form_data_relist',
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
@@ -44,14 +49,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_template_synchronization_form_data_relist_filters',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_template_synchronization_form_data_relist_filters',
             [
                 'legend' => $this->__('General'),
                 'collapsable' => false
             ]
         );
 
-        $fieldset->addField('relist_mode',
+        $fieldset->addField(
+            'relist_mode',
             self::SELECT,
             [
                 'name' => 'synchronization[relist_mode]',
@@ -68,7 +75,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_filter_user_lock',
+        $fieldset->addField(
+            'relist_filter_user_lock',
             self::SELECT,
             [
                 'container_id' => 'relist_filter_user_lock_tr_container',
@@ -86,7 +94,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_send_data',
+        $fieldset->addField(
+            'relist_send_data',
             self::SELECT,
             [
                 'container_id' => 'relist_send_data_tr_container',
@@ -106,14 +115,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_template_synchronization_form_data_relist_rules',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_template_synchronization_form_data_relist_rules',
             [
                 'legend' => $this->__('Relist Conditions'),
                 'collapsable' => false
             ]
         );
 
-        $fieldset->addField('relist_messages',
+        $fieldset->addField(
+            'relist_messages',
             self::MESSAGES,
             [
                 'messages' => [
@@ -130,7 +141,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_status_enabled',
+        $fieldset->addField(
+            'relist_status_enabled',
             self::SELECT,
             [
                 'name' => 'synchronization[relist_status_enabled]',
@@ -150,7 +162,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_is_in_stock',
+        $fieldset->addField(
+            'relist_is_in_stock',
             self::SELECT,
             [
                 'name' => 'synchronization[relist_is_in_stock]',
@@ -169,7 +182,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_qty_magento',
+        $fieldset->addField(
+            'relist_qty_magento',
             self::SELECT,
             [
                 'name' => 'synchronization[relist_qty_magento]',
@@ -191,7 +205,8 @@ HTML
             ]
         )->addCustomAttribute('qty_type', 'magento');
 
-        $fieldset->addField('relist_qty_magento_value',
+        $fieldset->addField(
+            'relist_qty_magento_value',
             'text',
             [
                 'container_id' => 'relist_qty_magento_value_container',
@@ -203,7 +218,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_qty_magento_value_max',
+        $fieldset->addField(
+            'relist_qty_magento_value_max',
             'text',
             [
                 'container_id' => 'relist_qty_magento_value_max_container',
@@ -215,7 +231,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_qty_calculated',
+        $fieldset->addField(
+            'relist_qty_calculated',
             self::SELECT,
             [
                 'name' => 'synchronization[relist_qty_calculated]',
@@ -237,7 +254,8 @@ HTML
             ]
         )->addCustomAttribute('qty_type', 'calculated');
 
-        $fieldset->addField('relist_qty_calculated_value',
+        $fieldset->addField(
+            'relist_qty_calculated_value',
             'text',
             [
                 'container_id' => 'relist_qty_calculated_value_container',
@@ -249,7 +267,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_qty_calculated_value_max',
+        $fieldset->addField(
+            'relist_qty_calculated_value_max',
             'text',
             [
                 'container_id' => 'relist_qty_calculated_value_max_container',
@@ -261,20 +280,20 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_template_synchronization_relist_advanced_filters',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_template_synchronization_relist_advanced_filters',
             [
                 'legend' => $this->__('Advanced Conditions'),
                 'collapsable' => false,
                 'tooltip' => $this->__(
-                    '<p>You can provide flexible Advanced Conditions to manage when the Relist action should
-                    be run basing on the Attributes’ values of the Magento Product.<br> So, when all the Conditions
-                    (both general List Conditions and Advanced Conditions) are met,
-                    the Product will be relisted on Channel.</p>'
+                    '<p>Define Magento Attribute value(s) based on which a product must be relisted on the Channel.<br>
+                    Once both Relist Conditions and Advanced Conditions are met, the product will be relisted.</p>'
                 )
             ]
         );
 
-        $fieldset->addField('relist_advanced_rules_filters_warning',
+        $fieldset->addField(
+            'relist_advanced_rules_filters_warning',
             self::MESSAGES,
             [
                 'messages' => [[
@@ -289,7 +308,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_advanced_rules_mode',
+        $fieldset->addField(
+            'relist_advanced_rules_mode',
             self::SELECT,
             [
                 'name' => 'synchronization[relist_advanced_rules_mode]',
@@ -302,7 +322,7 @@ HTML
             ]
         );
 
-        $ruleModel = $this->activeRecordFactory->getObject('Magento\Product\Rule')->setData(
+        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
             ['prefix' => Synchronization::RELIST_ADVANCED_RULES_PREFIX]
         );
 
@@ -310,9 +330,10 @@ HTML
             $ruleModel->loadFromSerialized($formData['relist_advanced_rules_filters']);
         }
 
-        $ruleBlock = $this->createBlock('Magento\Product\Rule')->setData(['rule_model' => $ruleModel]);
+        $ruleBlock = $this->createBlock('Magento_Product_Rule')->setData(['rule_model' => $ruleModel]);
 
-        $fieldset->addField('advanced_filter',
+        $fieldset->addField(
+            'advanced_filter',
             self::CUSTOM_CONTAINER,
             [
                 'container_id' => 'relist_advanced_rules_filters_container',

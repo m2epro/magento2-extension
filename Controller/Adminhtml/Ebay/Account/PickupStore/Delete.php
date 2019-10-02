@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore;
 
+/**
+ * Class Delete
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore
+ */
 class Delete extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {
     //########################################
@@ -24,7 +28,7 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
         }
 
         /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore $model */
-        $model = $this->activeRecordFactory->getObjectLoaded('Ebay\Account\PickupStore', $id);
+        $model = $this->activeRecordFactory->getObjectLoaded('Ebay_Account_PickupStore', $id);
         $params = ['account_id' => $model->getAccountId()];
 
         if (!$model->getId()) {
@@ -38,23 +42,26 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
         }
 
         try {
-
-            $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+            $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
-                'store', 'delete', 'entity',
-                array(
+                'store',
+                'delete',
+                'entity',
+                [
                     'location_id' => $model->getLocationId()
-                ), NULL, NULL, $model->getAccountId()
+                ],
+                null,
+                null,
+                $model->getAccountId()
             );
 
             $dispatcherObject->process($connectorObj);
-
         } catch (\Exception $exception) {
-
             $this->getHelper('Module\Exception')->process($exception);
 
             $this->getMessageManager()->addErrorMessage($this->__(
-                'The Store has not been deleted. Reason: %error_message%', $exception->getMessage()
+                'The Store has not been deleted. Reason: %error_message%',
+                $exception->getMessage()
             ));
 
             return $this->_redirect('*/ebay_account_pickupStore/index', $params);

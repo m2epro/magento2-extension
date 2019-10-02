@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Edit\Policy;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Edit\Policy
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
 
@@ -25,7 +29,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $templateNick = $this->getRequest()->getParam('templateNick');
 
         $switcherBlock = $this->createBlock(
-            'Ebay\Listing\Template\Switcher','',
+            'Ebay_Listing_Template_Switcher',
+            '',
             ['data' => [
                 'template_nick' => $templateNick,
                 'policy_localization' => $this->getData('policy_localization'),
@@ -33,7 +38,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]]
         );
 
-        $form->addField('template_wrapper',
+        $form->addField(
+            'template_wrapper',
             self::CUSTOM_CONTAINER,
             [
                 'text' => $switcherBlock->toHtml()

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Task;
 
+/**
+ * Class Servicing
+ * @package Ess\M2ePro\Model\Cron\Task
+ */
 class Servicing extends AbstractModel
 {
     const NICK = 'servicing';

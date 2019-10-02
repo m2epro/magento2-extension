@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Magento\Product;
 
+/**
+ * Class Rule
+ * @package Ess\M2ePro\Model\Amazon\Magento\Product
+ */
 class Rule extends \Ess\M2ePro\Model\Magento\Product\Rule
 {
     //########################################
@@ -17,7 +21,7 @@ class Rule extends \Ess\M2ePro\Model\Magento\Product\Rule
      */
     public function getConditionClassName()
     {
-        return 'Amazon\Magento\Product\Rule\Condition\Combine';
+        return 'Amazon_Magento_Product_Rule_Condition_Combine';
     }
 
     //########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Variation;
 
+/**
+ * Class Updater
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Variation
+ */
 class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 {
     protected $ebayFactory;
@@ -18,8 +22,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -41,11 +44,10 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
         if (empty($rawMagentoVariations['set']) || !is_array($rawMagentoVariations['set']) ||
             empty($rawMagentoVariations['variations']) || !is_array($rawMagentoVariations['variations'])) {
-
-            $rawMagentoVariations = array(
-                'set'        => array(),
-                'variations' => array()
-            );
+            $rawMagentoVariations = [
+                'set'        => [],
+                'variations' => []
+            ];
         }
 
         $rawMagentoVariations = $this->getHelper('Component\Ebay')
@@ -60,13 +62,13 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
         $currentVariations = $this->prepareCurrentVariations($listingProduct->getVariations(true));
 
-        $addedVariations = $this->getAddedVariations($magentoVariations,$currentVariations);
-        $deletedVariations = $this->getDeletedVariations($magentoVariations,$currentVariations);
+        $addedVariations = $this->getAddedVariations($magentoVariations, $currentVariations);
+        $deletedVariations = $this->getDeletedVariations($magentoVariations, $currentVariations);
 
-        $this->addNewVariations($listingProduct,$addedVariations);
+        $this->addNewVariations($listingProduct, $addedVariations);
         $this->markAsDeletedVariations($deletedVariations);
 
-        $this->saveVariationsData($listingProduct,$rawMagentoVariations);
+        $this->saveVariationsData($listingProduct, $rawMagentoVariations);
     }
 
     //########################################
@@ -74,7 +76,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
     protected function saveVariationsData(\Ess\M2ePro\Model\Listing\Product $listingProduct, $variationsData)
     {
         $additionalData = $listingProduct->getData('additional_data');
-        $additionalData = is_null($additionalData) ? array()
+        $additionalData = $additionalData === null ? []
                                                    : (array)$this->getHelper('Data')->jsonDecode($additionalData);
 
         if (isset($variationsData['set'])) {
@@ -93,9 +95,10 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
     //########################################
 
-    private function inspectAndFixProductOptionsIds(\Ess\M2ePro\Model\Listing\Product $listingProduct,
-                                                    $magentoVariations)
-    {
+    private function inspectAndFixProductOptionsIds(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        $magentoVariations
+    ) {
         /** @var \Ess\M2ePro\Model\Listing\Product\Variation[] $listingProductVariations */
         $listingProductVariations = $listingProduct->getVariations(true);
 
@@ -104,11 +107,9 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         }
 
         foreach ($listingProductVariations as $listingProductVariation) {
-
             $listingProductVariationOptions = $listingProductVariation->getOptions();
 
             foreach ($magentoVariations as $magentoVariation) {
-
                 $magentoVariationOptions = $magentoVariation['options'];
 
                 if (!$this->isEqualVariations($magentoVariationOptions, $listingProductVariationOptions)) {
@@ -117,7 +118,6 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
                 foreach ($listingProductVariationOptions as $listingProductVariationOption) {
                     foreach ($magentoVariationOptions as $magentoVariationOption) {
-
                         if ($listingProductVariationOption['attribute'] != $magentoVariationOption['attribute'] ||
                             $listingProductVariationOption['option'] != $magentoVariationOption['option']) {
                             continue;
@@ -129,7 +129,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
                         $listingProductVariationOption['product_id'] = $magentoVariationOption['product_id'];
 
-                        $this->ebayFactory->getObject('Listing\Product\Variation\Option')
+                        $this->ebayFactory->getObject('Listing_Product_Variation_Option')
                             ->setData($listingProductVariationOption)->save();
                     }
                 }
@@ -139,15 +139,14 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
     private function getAddedVariations($magentoVariations, $currentVariations)
     {
-        $result = array();
+        $result = [];
 
         foreach ($magentoVariations as $mVariation) {
-
             $isExistVariation = false;
-            $cVariationExist = NULL;
+            $cVariationExist = null;
 
             foreach ($currentVariations as $cVariation) {
-                if ($this->isEqualVariations($mVariation['options'],$cVariation['options'])) {
+                if ($this->isEqualVariations($mVariation['options'], $cVariation['options'])) {
                     $isExistVariation = true;
                     $cVariationExist = $cVariation;
                     break;
@@ -168,11 +167,10 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
     private function getDeletedVariations($magentoVariations, $currentVariations)
     {
-        $result = array();
-        $foundedVariations = array();
+        $result = [];
+        $foundedVariations = [];
 
         foreach ($currentVariations as $cVariation) {
-
             if ((bool)$cVariation['variation']['delete']) {
                 continue;
             }
@@ -181,8 +179,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
             $variationHash = $this->getVariationHash($cVariation);
 
             foreach ($magentoVariations as $mVariation) {
-                if ($this->isEqualVariations($mVariation['options'],$cVariation['options'])) {
-
+                if ($this->isEqualVariations($mVariation['options'], $cVariation['options'])) {
                     // so it is a duplicated variation. have to be deleted
                     if (in_array($variationHash, $foundedVariations)) {
                         $result[] = $cVariation;
@@ -208,18 +205,17 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
     private function addNewVariations(\Ess\M2ePro\Model\Listing\Product $listingProduct, $addedVariations)
     {
         foreach ($addedVariations as $aVariation) {
-
             if (isset($aVariation['variation']['id'])) {
-
                 $status = $aVariation['variation']['status'];
 
-                $dataForUpdate = array(
+                $dataForUpdate = [
                     'add'    => $status == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED ? 1 : 0,
                     'delete' => 0
-                );
+                ];
 
                 $listingProductVariation = $this->ebayFactory->getObjectLoaded(
-                    'Listing\Product\Variation', $aVariation['variation']['id']
+                    'Listing_Product_Variation',
+                    $aVariation['variation']['id']
                 );
                 $listingProductVariation->getChildObject()->addData($dataForUpdate);
                 $listingProductVariation->save();
@@ -227,27 +223,26 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
                 continue;
             }
 
-            $dataForAdd = array(
+            $dataForAdd = [
                 'listing_product_id' => $listingProduct->getId(),
                 'add'                => 1,
                 'delete'             => 0,
                 'status'             => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
-            );
+            ];
 
-            $newVariationId = $this->ebayFactory->getObject('Listing\Product\Variation')
+            $newVariationId = $this->ebayFactory->getObject('Listing_Product_Variation')
                 ->addData($dataForAdd)->save()->getId();
 
             foreach ($aVariation['options'] as $aOption) {
-
-                $dataForAdd = array(
+                $dataForAdd = [
                     'listing_product_variation_id' => $newVariationId,
                     'product_id'                   => $aOption['product_id'],
                     'product_type'                 => $aOption['product_type'],
                     'attribute'                    => $aOption['attribute'],
                     'option'                       => $aOption['option']
-                );
+                ];
 
-                $this->ebayFactory->getObject('Listing\Product\Variation\Option')->addData($dataForAdd)->save();
+                $this->ebayFactory->getObject('Listing_Product_Variation_Option')->addData($dataForAdd)->save();
             }
         }
     }
@@ -255,23 +250,20 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
     private function markAsDeletedVariations($deletedVariations)
     {
         foreach ($deletedVariations as $dVariation) {
-
             if ($dVariation['variation']['status'] == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-
                 $this->ebayFactory->getObjectLoaded(
-                    'Listing\Product\Variation',
+                    'Listing_Product_Variation',
                     $dVariation['variation']['id']
                 )->delete();
-
             } else {
-
-                $dataForUpdate = array(
+                $dataForUpdate = [
                     'add'    => 0,
                     'delete' => 1
-                );
+                ];
 
                 $listingProductVariation = $this->ebayFactory->getObjectLoaded(
-                    'Listing\Product\Variation', $dVariation['variation']['id']
+                    'Listing_Product_Variation',
+                    $dVariation['variation']['id']
                 );
                 $listingProductVariation->getChildObject()->addData($dataForUpdate);
                 $listingProductVariation->save();
@@ -283,17 +275,17 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
     private function prepareMagentoVariations($variations)
     {
-        $result = array();
+        $result = [];
 
         if (isset($variations['variations'])) {
             $variations = $variations['variations'];
         }
 
         foreach ($variations as $variation) {
-            $result[] = array(
-                'variation' => array(),
+            $result[] = [
+                'variation' => [],
                 'options' => $variation
-            );
+            ];
         }
 
         return $result;
@@ -301,7 +293,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
     private function prepareCurrentVariations($variations)
     {
-        $result = array();
+        $result = [];
 
         foreach ($variations as $variation) {
 
@@ -310,10 +302,10 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
             $tmpVariationData = $variation->getData();
             $tmpVariationData = array_merge($tmpVariationData, $variation->getChildObject()->getData());
 
-            $temp = array(
+            $temp = [
                 'variation' => $tmpVariationData,
-                'options' => array()
-            );
+                'options' => []
+            ];
 
             foreach ($variation->getOptions(false) as $option) {
                 $temp['options'][] = $option;
@@ -334,7 +326,6 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         }
 
         foreach ($magentoVariation as $mOption) {
-
             $haveOption = false;
 
             foreach ($currentVariation as $cOption) {
@@ -355,7 +346,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
     private function getVariationHash($variation)
     {
-        $hash = array();
+        $hash = [];
 
         foreach ($variation['options'] as $option) {
             $hash[] = trim($option['attribute']) .'-'. trim($option['option']);

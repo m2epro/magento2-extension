@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\HealthStatus;
 
 use Ess\M2ePro\Model\HealthStatus\Task\Result\Set;
 
+/**
+ * Class CurrentStatus
+ * @package Ess\M2ePro\Model\HealthStatus
+ */
 class CurrentStatus extends \Ess\M2ePro\Model\AbstractModel
 {
     const DETAILS_REGISTRY_KEY = '/health_status/details/';
@@ -28,7 +32,7 @@ class CurrentStatus extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         array $data = []
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory, $data);
         $this->cacheConfig = $cacheConfig;
         $this->activeRecordFactory = $activeRecordFactory;
@@ -44,7 +48,9 @@ class CurrentStatus extends \Ess\M2ePro\Model\AbstractModel
     public function set(Set $resultSet)
     {
         $this->cacheConfig->setGroupValue(
-            '/health_status/', 'current_status', (int)$resultSet->getWorstState()
+            '/health_status/',
+            'current_status',
+            (int)$resultSet->getWorstState()
         );
 
         $details = [];
@@ -56,7 +62,10 @@ class CurrentStatus extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::DETAILS_REGISTRY_KEY, 'key', false
+            'Registry',
+            self::DETAILS_REGISTRY_KEY,
+            'key',
+            false
         );
 
         !$registry && $registry = $this->activeRecordFactory->getObject('Registry');

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Order\ExternalTransaction;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Order\ExternalTransaction
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     //########################################

@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
+/**
+ * Class JsUrlRenderer
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Renderer
+ */
 class JsUrlRenderer extends AbstractRenderer
 {
     protected $jsUrls = [];
 
     public function add($url, $alias = null)
     {
-        if (is_null($alias)) {
+        if ($alias === null) {
             $alias = $url;
         }
         $this->jsUrls[$alias] = $url;
@@ -38,5 +42,4 @@ class JsUrlRenderer extends AbstractRenderer
 
         return "M2ePro.url.add({$urls});";
     }
-
 }

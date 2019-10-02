@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Task;
 
+/**
+ * Class IssuesResolver
+ * @package Ess\M2ePro\Model\Cron\Task
+ */
 class IssuesResolver extends AbstractModel
 {
     const NICK = 'issues_resolver';
@@ -43,15 +47,14 @@ class IssuesResolver extends AbstractModel
             'p.id = main_table.processing_id',
             []
         );
-        $collection->addFieldToFilter('p.id', array('null' => true));
+        $collection->addFieldToFilter('p.id', ['null' => true]);
 
         $logData = [];
         foreach ($collection->getItems() as $item) {
             /**@var \Ess\M2ePro\Model\Processing\Lock $item */
 
             if (!isset($logData[$item->getModelName()][$item->getObjectId()]) ||
-                !in_array($item->getTag(), $logData[$item->getModelName()][$item->getObjectId()]))
-            {
+                !in_array($item->getTag(), $logData[$item->getModelName()][$item->getObjectId()])) {
                 $logData[$item->getModelName()][$item->getObjectId()][] = $item->getTag();
             }
 
@@ -60,7 +63,9 @@ class IssuesResolver extends AbstractModel
 
         if (!empty($logData)) {
             $this->helperFactory->getObject('Module\Logger')->process(
-                $logData, 'Processing Locks Records were broken and removed', false
+                $logData,
+                'Processing Locks Records were broken and removed',
+                false
             );
         }
     }

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Location
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs
+ */
 class Location extends AbstractForm
 {
     protected $ebayFactory;
@@ -22,8 +26,7 @@ class Location extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -47,7 +50,8 @@ class Location extends AbstractForm
         $form = $this->_formFactory->create();
         $formData = $this->getFormData();
 
-        $form->addField('block_notice_ebay_accounts_pickup_store_location',
+        $form->addField(
+            'block_notice_ebay_accounts_pickup_store_location',
             self::HELP_BLOCK,
             [
                 'content' => $this->__('
@@ -62,7 +66,8 @@ class Location extends AbstractForm
             ]
         );
 
-        $form->addField('check_location_validation',
+        $form->addField(
+            'check_location_validation',
             'text',
             [
                 'name' => 'check_location_validation',
@@ -70,7 +75,8 @@ class Location extends AbstractForm
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_account_pickup_store_form_data_location_general',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_account_pickup_store_form_data_location_general',
             [
                 'legend' => $this->__('General'), 'collapsable' => false
             ]
@@ -81,15 +87,15 @@ class Location extends AbstractForm
         $tempMarketplaces = $this->ebayFactory->getObject('Marketplace')->getCollection()
             ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
             ->addFieldToFilter('is_in_store_pickup', 1)
-            ->setOrder('sorder','ASC')
-            ->setOrder('title','ASC');
+            ->setOrder('sorder', 'ASC')
+            ->setOrder('title', 'ASC');
 
         $countries = [['label' => '', 'value' => '']];
         foreach ($tempMarketplaces->getItems() as $marketplace) {
 
             /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
 
-            $tmpCountry = $this->getHelper('Component\Ebay\PickupStore')
+            $tmpCountry = $this->getHelper('Component_Ebay_PickupStore')
                                ->convertMarketplaceToCountry($marketplace->getChildObject()->getData());
 
             if (!$tmpCountry) {
@@ -109,7 +115,8 @@ class Location extends AbstractForm
             $countries[] = $tmp;
         }
 
-        $fieldset->addField('country',
+        $fieldset->addField(
+            'country',
             self::SELECT,
             [
                 'name' => 'country',
@@ -125,7 +132,8 @@ class Location extends AbstractForm
             ]
         );
 
-        $fieldset->addField('region_hidden',
+        $fieldset->addField(
+            'region_hidden',
             'hidden',
             [
                 'name' => 'region_hidden',
@@ -133,7 +141,8 @@ class Location extends AbstractForm
             ]
         );
 
-        $fieldset->addField('region_container',
+        $fieldset->addField(
+            'region_container',
             self::CUSTOM_CONTAINER,
             [
                 'label' => $this->__('Region'),
@@ -141,7 +150,8 @@ class Location extends AbstractForm
             ]
         );
 
-        $fieldset->addField('city',
+        $fieldset->addField(
+            'city',
             'text',
             [
                 'name' => 'city',
@@ -152,7 +162,8 @@ class Location extends AbstractForm
             ]
         );
 
-        $fieldset->addField('address_1',
+        $fieldset->addField(
+            'address_1',
             'text',
             [
                 'name' => 'address_1',
@@ -163,7 +174,8 @@ class Location extends AbstractForm
             ]
         );
 
-        $fieldset->addField('address_2',
+        $fieldset->addField(
+            'address_2',
             'text',
             [
                 'name' => 'address_2',
@@ -173,7 +185,8 @@ class Location extends AbstractForm
             ]
         );
 
-        $fieldset->addField('postal_code',
+        $fieldset->addField(
+            'postal_code',
             'text',
             [
                 'name' => 'postal_code',
@@ -184,13 +197,15 @@ class Location extends AbstractForm
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_account_pickup_store_form_data_location_additional',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_account_pickup_store_form_data_location_additional',
             [
                 'legend' => $this->__('Additional'), 'collapsable' => true
             ]
         );
 
-        $fieldset->addField('latitude',
+        $fieldset->addField(
+            'latitude',
             'text',
             [
                 'name' => 'latitude',
@@ -205,7 +220,8 @@ class Location extends AbstractForm
             ]
         );
 
-        $fieldset->addField('longitude',
+        $fieldset->addField(
+            'longitude',
             'text',
             [
                 'name' => 'longitude',
@@ -225,7 +241,8 @@ class Location extends AbstractForm
             $googleMapHref = 'https://www.google.com/maps/place/'.$formData['latitude'].','.$formData['longitude'];
         }
 
-        $fieldset->addField('get_geocord_custom_container',
+        $fieldset->addField(
+            'get_geocord_custom_container',
             self::CUSTOM_CONTAINER,
             [
                 'text' => $this->createBlock('Magento\Button')
@@ -248,7 +265,8 @@ class Location extends AbstractForm
             $utcOffsets[] = ['value' => $offsetValue, 'label' => $offsetValue];
         }
 
-        $fieldset->addField('utc_offset',
+        $fieldset->addField(
+            'utc_offset',
             self::SELECT,
             [
                 'name' => 'utc_offset',
@@ -282,7 +300,7 @@ class Location extends AbstractForm
         ];
 
         $model = $this->getHelper('Data\GlobalData')->getValue('temp_data');
-        if(is_null($model)) {
+        if ($model === null) {
             return $default;
         }
 

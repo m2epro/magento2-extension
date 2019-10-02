@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
+/**
+ * Class GetCategoriesJson
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
+ */
 class GetCategoriesJson extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {
     //########################################
@@ -15,10 +19,10 @@ class GetCategoriesJson extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
     public function execute()
     {
         $tempSession = $this->getSessionValue('source_categories');
-        $selectedProductsIds = !isset($tempSession['products_ids']) ? array() : $tempSession['products_ids'];
+        $selectedProductsIds = !isset($tempSession['products_ids']) ? [] : $tempSession['products_ids'];
 
-        /* @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tree */
-        $treeBlock = $this->createBlock('Amazon\Listing\Product\Add\SourceMode\Category\Tree', '', [
+        /** @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tree */
+        $treeBlock = $this->createBlock('Amazon_Listing_Product_Add_SourceMode_Category_Tree', '', [
             'data' => [
                 'tree_settings' => [
                     'show_products_amount' => true,

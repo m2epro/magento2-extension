@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other;
 
+/**
+ * Class Removing
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
+ */
 class Removing extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
 {
     public function execute()
@@ -22,26 +26,27 @@ class Removing extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
         $productArray = explode(',', $productIds);
 
         if (empty($productArray)) {
-            $this->setAjaxContent('0' , false);
+            $this->setAjaxContent('0', false);
             return $this->getResult();
         }
 
         foreach ($productArray as $productId) {
             $listingOther = $this->amazonFactory->getObjectLoaded(
-                'Listing\Other', $productId
+                'Listing\Other',
+                $productId
             );
 
-            if (!is_null($listingOther->getProductId())) {
+            if ($listingOther->getProductId() !== null) {
                 $listingOther->unmapProduct(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
             }
 
             /** @var \Ess\M2ePro\Model\Listing\Other\Log $tempLog */
-            $tempLog = $this->activeRecordFactory->getObject('Listing\Other\Log');
+            $tempLog = $this->activeRecordFactory->getObject('Listing_Other_Log');
             $tempLog->setComponentMode($listingOther->getComponentMode());
             $tempLog->addProductMessage(
                 $listingOther->getId(),
                 \Ess\M2ePro\Helper\Data::INITIATOR_USER,
-                NULL,
+                null,
                 \Ess\M2ePro\Model\Listing\Other\Log::ACTION_DELETE_ITEM,
                 'Item was successfully Deleted',
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,

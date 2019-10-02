@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
+/**
+ * Class Delete
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Account
+ */
 class Delete extends Account
 {
     public function execute()
@@ -23,7 +27,7 @@ class Delete extends Account
         }
 
         $accountCollection = $this->activeRecordFactory->getObject('Account')->getCollection();
-        $accountCollection->addFieldToFilter('id', array('in' => $ids));
+        $accountCollection->addFieldToFilter('id', ['in' => $ids]);
 
         $accounts = $accountCollection->getItems();
 
@@ -43,18 +47,19 @@ class Delete extends Account
             }
 
             try {
-
-                $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+                $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
 
                 if ($dispatcherObject) {
-
-                    $connectorObj = $dispatcherObject->getConnector('account','delete','entityRequester',
-                        array(), $account);
+                    $connectorObj = $dispatcherObject->getConnector(
+                        'account',
+                        'delete',
+                        'entityRequester',
+                        [],
+                        $account
+                    );
                     $dispatcherObject->process($connectorObj);
                 }
-
             } catch (\Exception $e) {
-
                 $account->deleteProcessings();
                 $account->deleteProcessingLocks();
                 $account->delete();

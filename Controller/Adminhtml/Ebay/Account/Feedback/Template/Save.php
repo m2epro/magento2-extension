@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback\Template
+ */
 class Save extends Account
 {
     public function execute()
@@ -22,12 +26,12 @@ class Save extends Account
 
         // Base prepare
         // ---------------------------------------
-        $data = array();
+        $data = [];
 
-        $keys = array(
+        $keys = [
             'account_id',
             'body'
-        );
+        ];
 
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -36,11 +40,11 @@ class Save extends Account
         }
 
         /** @var \Ess\M2ePro\Model\Ebay\Feedback\Template $model */
-        $model = $this->activeRecordFactory->getObjectLoaded('Ebay\Feedback\Template', $id, NULL, false);
+        $model = $this->activeRecordFactory->getObjectLoaded('Ebay_Feedback_Template', $id, null, false);
 
-        if (is_null($model)) {
+        if ($model === null) {
             /** @var \Ess\M2ePro\Model\Ebay\Feedback\Template $model */
-            $model = $this->activeRecordFactory->getObject('Ebay\Feedback\Template');
+            $model = $this->activeRecordFactory->getObject('Ebay_Feedback_Template');
         }
 
         $model->addData($data)->save();

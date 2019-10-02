@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Renderer\Description;
 
+/**
+ * Class Image
+ * @package Ess\M2ePro\Block\Adminhtml\Renderer\Description
+ */
 class Image extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
 {
     private $imageId;
@@ -30,7 +34,7 @@ class Image extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
 
     public function getImageId()
     {
-        if (is_null($this->imageId)) {
+        if ($this->imageId === null) {
             $this->imageId = substr(sha1(
                 'image-'
                 . $this->getData('index_number')

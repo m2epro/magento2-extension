@@ -10,12 +10,16 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings;
 
 use Ess\M2ePro\Model\Ebay\Template\Manager;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
     /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute */
-    private $motorsAttribute = NULL;
+    private $motorsAttribute = null;
 
-    private $productsMotorsData = array();
+    private $productsMotorsData = [];
 
     protected $resourceConnection;
     protected $productFactory;
@@ -34,8 +38,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->productFactory = $productFactory;
         $this->templateManager = $templateManager;
@@ -61,8 +64,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->showAdvancedFilterProductsOption = false;
 
         if ($this->isMotorsAvailable()) {
-
-            $attributeCode = $this->getHelper('Component\Ebay\Motors')->getAttribute($this->getMotorsType());
+            $attributeCode = $this->getHelper('Component_Ebay_Motors')->getAttribute($this->getMotorsType());
             $this->motorsAttribute = $this->productFactory->create()->getResource()->getAttribute($attributeCode);
         }
     }
@@ -74,7 +76,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // ---------------------------------------
         // Get collection
         // ---------------------------------------
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
@@ -102,7 +104,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             '{{table}}.listing_id='.(int)$this->listing->getId()
         );
 
-        $elpTable = $this->activeRecordFactory->getObject('Ebay\Listing\Product')->getResource()->getMainTable();
+        $elpTable = $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable();
         $collection->joinTable(
             ['elp' => $elpTable],
             'listing_product_id=id',
@@ -157,11 +159,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             [
                 'item_id' => 'item_id',
             ],
-            NULL,
+            null,
             'left'
         );
 
-        $etcTable = $this->activeRecordFactory->getObject('Ebay\Template\Category')->getResource()->getMainTable();
+        $etcTable = $this->activeRecordFactory->getObject('Ebay_Template_Category')->getResource()->getMainTable();
         $collection->joinTable(
             ['etc' => $etcTable],
             'id=template_category_id',
@@ -171,10 +173,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'category_main_path'      => 'category_main_path',
                 'category_main_attribute' => 'category_main_attribute',
             ],
-            NULL,
+            null,
             'left'
         );
-        $etocTable = $this->activeRecordFactory->getObject('Ebay\Template\OtherCategory')
+        $etocTable = $this->activeRecordFactory->getObject('Ebay_Template_OtherCategory')
             ->getResource()->getMainTable();
         $collection->joinTable(
             ['etoc' => $etocTable],
@@ -195,25 +197,29 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'store_category_secondary_path'      => 'store_category_secondary_path',
                 'store_category_secondary_attribute' => 'store_category_secondary_attribute',
             ],
-            NULL,
+            null,
             'left'
         );
 
         if ($this->motorsAttribute) {
             $collection->joinAttribute(
                 $this->motorsAttribute->getAttributeCode(),
-                $this->motorsAttribute, 'entity_id', NULL, 'left', $this->getStoreId()
+                $this->motorsAttribute,
+                'entity_id',
+                null,
+                'left',
+                $this->getStoreId()
             );
 
             $collection->joinTable(
-                array(
-                    'eea' => $this->getHelper('Module\Database\Structure')
+                [
+                    'eea' => $this->getHelper('Module_Database_Structure')
                         ->getTableNameWithPrefix('eav_entity_attribute')
-                ),
+                ],
                 'attribute_set_id=attribute_set_id',
-                array(
+                [
                     'is_motors_attribute_in_product_attribute_set' => 'entity_attribute_id',
-                ),
+                ],
                 '{{table}}.attribute_id = ' . $this->motorsAttribute->getAttributeId(),
                 'left'
             );
@@ -266,12 +272,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'type'      => 'options',
                 'index'     => $this->motorsAttribute->getAttributeCode(),
                 'sortable'  => false,
-                'options'   => array(
+                'options'   => [
                     1 => $this->__('Filled'),
                     0 => $this->__('Empty')
-                ),
-                'frame_callback' => array($this, 'callbackColumnMotorsAttribute'),
-                'filter_condition_callback' => array($this, 'callbackFilterMotorsAttribute'),
+                ],
+                'frame_callback' => [$this, 'callbackColumnMotorsAttribute'],
+                'filter_condition_callback' => [$this, 'callbackFilterMotorsAttribute'],
             ]);
         }
 
@@ -424,7 +430,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $value = '<span>'.$this->getHelper('Data')->escapeHtml($value).'</span>';
 
         $sku = $row->getData('sku');
-        if (is_null($sku)) {
+        if ($sku === null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
                 ->setProductId($row->getData('entity_id'))
                 ->getSku();
@@ -440,7 +446,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
 
             $productAttributes = isset($additionalData['variations_sets'])
-                ? array_keys($additionalData['variations_sets']) : array();
+                ? array_keys($additionalData['variations_sets']) : [];
 
             $value .= '<div style="font-size: 11px; font-weight: bold; color: grey; margin: 7px 0 0 7px">';
             $value .= implode(', ', $productAttributes);
@@ -454,27 +460,39 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         $value = '';
 
-        $categories = $this->getHelper('Component\Ebay\Category')->getCategoryTitles();
+        $categories = $this->getHelper('Component_Ebay_Category')->getCategoryTitles();
 
         if ($row->getData('category_main_mode') == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE) {
             $value .= $this->getCategoryInfoHtml(
-                $this->getHelper('Component\Ebay\Category')->getCategoryTitle(
+                $this->getHelper('Component_Ebay_Category')->getCategoryTitle(
                     \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN
                 ),
                 '<span style="color: red">'.$this->__('Not Set').'</span>'
             );
         } else {
-            $value .= $this->getEbayCategoryInfoHtml($row,'category_main',
-                $categories[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN]);
+            $value .= $this->getEbayCategoryInfoHtml(
+                $row,
+                'category_main',
+                $categories[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN]
+            );
         }
 
-        $value .= $this->getEbayCategoryInfoHtml($row,'category_secondary',
-            $categories[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY]);
+        $value .= $this->getEbayCategoryInfoHtml(
+            $row,
+            'category_secondary',
+            $categories[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY]
+        );
 
-        $value .= $this->getStoreCategoryInfoHtml($row,'category_main',
-            $categories[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN]);
-        $value .= $this->getStoreCategoryInfoHtml($row,'category_secondary',
-            $categories[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]);
+        $value .= $this->getStoreCategoryInfoHtml(
+            $row,
+            'category_main',
+            $categories[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN]
+        );
+        $value .= $this->getStoreCategoryInfoHtml(
+            $row,
+            'category_secondary',
+            $categories[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]
+        );
         $value .= '<br/>';
 
         $templatesNames = [
@@ -488,7 +506,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $productTemplatesHtml = '';
         foreach ($templatesNames as $templateNick => $templateTitle) {
-
             $templateMode = $row->getData('template_' .$templateNick . '_mode');
 
             if ($templateMode == Manager::MODE_PARENT) {
@@ -497,11 +514,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
             $templateLink = '';
             if ($templateMode == Manager::MODE_CUSTOM) {
-
                 $templateLink = '<span>' . $this->__('Custom Settings') . '</span>';
-
-            } else if ($templateMode == Manager::MODE_TEMPLATE) {
-
+            } elseif ($templateMode == Manager::MODE_TEMPLATE) {
                 $id = (int)$row->getData('template_' .$templateNick. '_id');
                 $url = $this->getUrl('m2epro/ebay_template/edit', [
                     'id' => $id,
@@ -561,7 +575,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             $showAll = true;
         }
 
-        if ($this->getHelper('Component\Ebay\Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
+        if ($this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
             $motorsTypeTitle = 'ePIDs';
         } else {
             $motorsTypeTitle = 'kTypes';
@@ -640,8 +654,9 @@ HTML;
 
     public function callbackFilterTitle($collection, $column)
     {
-        if (!is_null($inputValue = $column->getFilter()->getValue())) {
+        $inputValue = $column->getFilter()->getValue();
 
+        if ($inputValue !== null) {
             $fieldsToFilter = [
                 ['attribute'=>'sku','like'=>'%'.$inputValue.'%'],
                 ['attribute'=>'name','like'=>'%'.$inputValue.'%']
@@ -653,8 +668,9 @@ HTML;
 
     public function callbackFilterCategory($collection, $column)
     {
-        if (!is_null($inputValue = $column->getFilter()->getValue('input'))) {
+        $inputValue = $column->getFilter()->getValue('input');
 
+        if ($inputValue !== null) {
             $fieldsToFilter = [
                 ['attribute'=>'category_main_path','like'=>'%'.$inputValue.'%'],
                 ['attribute'=>'category_secondary_path','like'=>'%'.$inputValue.'%'],
@@ -672,11 +688,13 @@ HTML;
             $collection->addFieldToFilter($fieldsToFilter);
         }
 
-        if (!is_null($selectValue = $column->getFilter()->getValue('select'))) {
+        $selectValue = $column->getFilter()->getValue('select');
+
+        if ($selectValue !== null) {
             $collection->addFieldToFilter('template_category_id', [($selectValue ? 'notnull' : 'null') => true]);
         }
 
-        if (!is_null($column->getFilter()->getValue('checkbox'))) {
+        if ($column->getFilter()->getValue('checkbox') !== null) {
             $allTemplates = $this->templateManager->getAllTemplates();
 
             foreach ($allTemplates as $templateNick) {
@@ -689,7 +707,7 @@ HTML;
     {
         $value = $column->getFilter()->getValue();
 
-        if (is_null($value)) {
+        if ($value === null) {
             return;
         }
 
@@ -700,10 +718,11 @@ HTML;
         $attributeCode = $this->motorsAttribute->getAttributeCode();
 
         if ($value == 1) {
-            $collection->addFieldToFilter($attributeCode,array('notnull'=>true));
-            $collection->addFieldToFilter($attributeCode,array('neq'=>''));
+            $collection->addFieldToFilter($attributeCode, ['notnull'=>true]);
+            $collection->addFieldToFilter($attributeCode, ['neq'=>'']);
             $collection->addFieldToFilter(
-                'is_motors_attribute_in_product_attribute_set',array('notnull'=>true)
+                'is_motors_attribute_in_product_attribute_set',
+                ['notnull'=>true]
             );
         } else {
             $collection->addFieldToFilter(
@@ -757,12 +776,11 @@ HTML;
         $helper = $this->getHelper('Data');
         $mode = $row->getData($modeNick.'_mode');
 
-        if (is_null($mode) || $mode == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE) {
+        if ($mode === null || $mode == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE) {
             return '';
         }
 
         if ($mode == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE) {
-
             $category = $this->__('Magento Attribute'). ' > ';
             $category.= $helper->escapeHtml(
                 $this->getHelper('Magento\Attribute')->getAttributeLabel(
@@ -770,7 +788,6 @@ HTML;
                     $this->listing->getStoreId()
                 )
             );
-
         } else {
             $category = $helper->escapeHtml($row->getData($modeNick.'_path')).' ('.$row->getData($modeNick.'_id').')';
         }
@@ -788,7 +805,6 @@ HTML;
         }
 
         if ($mode == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE) {
-
             $category = $this->__('Magento Attribute'). ' > ';
             $category .= $helper->escapeHtml(
                 $this->getHelper('Magento\Attribute')->getAttributeLabel(
@@ -796,7 +812,6 @@ HTML;
                     $this->listing->getStoreId()
                 )
             );
-
         } else {
             $category = $helper->escapeHtml($row->getData('store_'.$modeNick.'_path')).
                         ' ('.$row->getData('store_'.$modeNick.'_id').')';
@@ -839,7 +854,7 @@ HTML;
         }
 
         if ($this->isMotorEpidsAvailable()) {
-            return $this->getHelper('Component\Ebay\Motors')->getEpidsTypeByMarketplace(
+            return $this->getHelper('Component_Ebay_Motors')->getEpidsTypeByMarketplace(
                 $this->listing->getMarketplaceId()
             );
         }
@@ -960,7 +975,6 @@ HTML;
     protected function _toHtml()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
-
             $this->js->add(<<<JS
             EbayListingViewSettingsGridObj.afterInitPage();
 JS
@@ -973,8 +987,8 @@ JS
         $helper = $this->getHelper('Data');
 
         // ---------------------------------------
-        $this->jsPhp->addConstants($helper->getClassConstants('\Ess\M2ePro\Helper\Component\Ebay\Category'));
-        $this->jsPhp->addConstants($helper->getClassConstants('\Ess\M2ePro\Model\Ebay\Template\Manager'));
+        $this->jsPhp->addConstants($helper->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay\Category::class));
+        $this->jsPhp->addConstants($helper->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Manager::class));
         // ---------------------------------------
 
         // ---------------------------------------
@@ -993,7 +1007,8 @@ JS
                 \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD =>
                     $this->listing->getId(),
                 'back' => $helper->makeBackUrlParam(
-                    '*/ebay_listing/view', ['id' => $this->listing->getId()]
+                    '*/ebay_listing/view',
+                    ['id' => $this->listing->getId()]
                 )
             ]),
             'logViewUrl'
@@ -1019,7 +1034,7 @@ JS
             'ebay_template/saveListingProductsPolicy'
         );
 
-        $this->jsUrl->addUrls($helper->getControllerActions('Ebay\Listing\Settings\Motors'));
+        $this->jsUrl->addUrls($helper->getControllerActions('Ebay_Listing_Settings_Motors'));
         // ---------------------------------------
 
         // M2ePro_TRANSLATIONS
@@ -1032,7 +1047,7 @@ JS
         $taskCompletedErrorMessage = '"%task_title%" Task has completed with errors. '
             .' <a target="_blank" href="%url%">View Log</a> for details.';
 
-        if ($this->getHelper('Component\Ebay\Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
+        if ($this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
             $motorsTypeTitle = 'ePID';
         } else {
             $motorsTypeTitle = 'kType';
@@ -1055,12 +1070,14 @@ JS
             'Payment for Translation Service' => $this->__('Payment for Translation Service'),
             'Payment for Translation Service. Help' => $this->__('Payment for Translation Service'),
             'Specify a sum to be credited to an Account.' =>
-                $this->__('Specify a sum to be credited to an Account.'
+                $this->__(
+                    'Specify a sum to be credited to an Account.'
                            .' If you are planning to order more Items for Translation in future,'
                            .' you can credit the sum greater than the one needed for current Translation.'
                            .' Click <a href="%url%" target="_blank">here</a> to find out more.',
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl(
-                    'x/BQAJAQ#SellonanothereBaySite-Account')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl(
+                        'x/BQAJAQ#SellonanothereBaySite-Account'
+                    )
                 ),
             'Amount to Pay.' => $this->__('Amount to Pay'),
             'Insert amount to be credited to an Account' => $this->__('Insert amount to be credited to an Account.'),
@@ -1070,7 +1087,7 @@ JS
             'Save as Group' => $this->__('Save as Group'),
             'Set Note' => $this->__('Set Note'),
             'View Items' => $this->__('Selected %items_title%s', $motorsTypeTitle),
-            'Selected Items' => $this->__('Selected %items_title%s',$motorsTypeTitle),
+            'Selected Items' => $this->__('Selected %items_title%s', $motorsTypeTitle),
             'Remove' => $this->__('Remove'),
             'Motor Item' => $motorsTypeTitle,
             'View Groups' => $this->__('Selected Groups'),
@@ -1110,7 +1127,7 @@ JS
             'Add New Listing' => $this->__('Add New Listing')
         ]);
 
-        $temp = $this->getHelper('Data\Session')->getValue('products_ids_for_list',true);
+        $temp = $this->getHelper('Data\Session')->getValue('products_ids_for_list', true);
         $productsIdsForList = empty($temp) ? '' : $temp;
 
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
@@ -1122,7 +1139,7 @@ JS
         }
 
         $this->js->add(
-<<<JS
+            <<<JS
     M2ePro.productsIdsForList = '{$productsIdsForList}';
 
     M2ePro.customData.componentMode = '{$component}';
@@ -1132,7 +1149,7 @@ JS
         );
 
         $this->js->addOnReadyJs(
-<<<JS
+            <<<JS
     require([
         'EbayListingAutoActionInstantiation',
         'M2ePro/Ebay/Listing/View/Settings/Grid',
@@ -1154,14 +1171,14 @@ JS
         // ---------------------------------------
         if ($this->getRequest()->getParam('auto_actions')) {
             $this->js->add(
-<<<JS
+                <<<JS
 require([
     'EbayListingAutoActionInstantiation'
 ], function() {
     ListingAutoActionObj.loadAutoActionHtml();
 });
 JS
-);
+            );
         }
         // ---------------------------------------
 
@@ -1172,15 +1189,15 @@ JS
 
     private function prepareExistingMotorsData()
     {
-        $motorsHelper = $this->getHelper('Component\Ebay\Motors');
+        $motorsHelper = $this->getHelper('Component_Ebay_Motors');
 
         $products = $this->getCollection()->getItems();
 
-        $productsMotorsData = array();
+        $productsMotorsData = [];
 
-        $items = array();
-        $filters = array();
-        $groups = array();
+        $items = [];
+        $filters = [];
+        $groups = [];
 
         foreach ($products as $product) {
             if (!$product->getData('is_motors_attribute_in_product_attribute_set')) {
@@ -1206,7 +1223,7 @@ JS
             ->select()
             ->from(
                 $motorsHelper->getDictionaryTable($this->getMotorsType()),
-                array($typeIdentifier)
+                [$typeIdentifier]
             )
             ->where('`'.$typeIdentifier.'` IN (?)', $items);
 
@@ -1218,13 +1235,13 @@ JS
         //-------------------------------
 
         //-------------------------------
-        $filtersTable = $this->getHelper('Module\Database\Structure')
+        $filtersTable = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_motor_filter');
         $select = $this->resourceConnection->getConnection()
             ->select()
             ->from(
                 $filtersTable,
-                array('id')
+                ['id']
             )
             ->where('`id` IN (?)', $filters);
 
@@ -1232,12 +1249,12 @@ JS
         //-------------------------------
 
         //-------------------------------
-        $groupsTable = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_ebay_motor_group');
+        $groupsTable = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_ebay_motor_group');
         $select = $this->resourceConnection->getConnection()
             ->select()
             ->from(
                 $groupsTable,
-                array('id')
+                ['id']
             )
             ->where('`id` IN (?)', $groups);
 
@@ -1245,7 +1262,6 @@ JS
         //-------------------------------
 
         foreach ($productsMotorsData as $productId => $productMotorsData) {
-
             foreach ($productMotorsData['items'] as $item => $itemData) {
                 if (!in_array($item, $existedItems)) {
                     unset($productsMotorsData[$productId]['items'][$item]);

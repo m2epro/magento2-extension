@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search\Settings\ByAsin;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Amazon\Search\Settings\ByAsin
+ */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByAsin\ItemsResponser
 {
     protected $activeRecordFactory;
@@ -52,7 +56,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByAsin\ItemsRe
             $this->getListingProduct()->getProductId(),
             $this->getListingProduct()->getId(),
             \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
-            NULL,
+            null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_UNKNOWN,
             $messageText,
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
@@ -73,14 +77,14 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByAsin\ItemsRe
         $responseData = $this->getPreparedResponseData();
 
         /** @var \Ess\M2ePro\Model\Amazon\Search\Settings $settingsSearch */
-        $settingsSearch = $this->modelFactory->getObject('Amazon\Search\Settings');
+        $settingsSearch = $this->modelFactory->getObject('Amazon_Search_Settings');
         $settingsSearch->setListingProduct($this->getListingProduct());
         $settingsSearch->setStep($this->params['step']);
         if (!empty($responseData)) {
-            $settingsSearch->setStepData(array(
+            $settingsSearch->setStepData([
                 'params' => $this->params,
                 'result' => $responseData,
-            ));
+            ]);
         }
 
         $settingsSearch->process();

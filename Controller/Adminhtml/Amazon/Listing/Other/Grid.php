@@ -8,11 +8,15 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
+ */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
 {
     public function execute()
     {
-        $this->setAjaxContent($this->createBlock('Amazon\Listing\Other\View\Grid'));
+        $this->setAjaxContent($this->createBlock('Amazon_Listing_Other_View_Grid'));
         return $this->getResult();
     }
 }

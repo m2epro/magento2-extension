@@ -10,14 +10,18 @@ namespace Ess\M2ePro\Model\Walmart\Synchronization\OtherListings\Update;
 
 use \Ess\M2ePro\Model\Walmart\Listing\Other;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\OtherListings\Update
+ */
 class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsResponser
 {
     protected $resourceConnection;
 
     protected $activeRecordFactory;
 
-    protected $logsActionId = NULL;
-    protected $synchronizationLog = NULL;
+    protected $logsActionId = null;
+    protected $synchronizationLog = null;
 
     // ########################################
 
@@ -28,9 +32,8 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        array $params = array()
-    )
-    {
+        array $params = []
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($walmartFactory, $response, $helperFactory, $modelFactory, $params);
@@ -43,7 +46,6 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
         parent::processResponseMessages();
 
         foreach ($this->getResponse()->getMessages()->getEntities() as $message) {
-
             if (!$message->isError() && !$message->isWarning()) {
                 continue;
             }
@@ -92,12 +94,9 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
         $receivedItems = $this->getReceivedOnlyOtherListings();
 
         try {
-
             $this->updateReceivedOtherListings($receivedItems);
             $this->createNotExistedOtherListings($receivedItems);
-
         } catch (\Exception $exception) {
-
             $this->getHelper('Module\Exception')->process($exception);
 
             $this->getSynchronizationLog()->addMessage(
@@ -115,11 +114,10 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
         /** @var $stmtTemp \Zend_Db_Statement_Pdo */
         $stmtTemp = $this->getPdoStatementExistingListings(true);
 
-        $tempLog = $this->activeRecordFactory->getObject('Listing\Other\Log');
+        $tempLog = $this->activeRecordFactory->getObject('Listing_Other_Log');
         $tempLog->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK);
 
         while ($existingItem = $stmtTemp->fetch()) {
-
             if (!isset($receivedItems[$existingItem['wpid']])) {
                 continue;
             }
@@ -131,9 +129,9 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
                 $receivedItem['status_change_reason']
             );
 
-            $newData = array(
-                'upc'                   => !empty($receivedItem['upc']) ? (string)$receivedItem['upc'] : NULL,
-                'gtin'                  => !empty($receivedItem['gtin']) ? (string)$receivedItem['gtin'] : NULL,
+            $newData = [
+                'upc'                   => !empty($receivedItem['upc']) ? (string)$receivedItem['upc'] : null,
+                'gtin'                  => !empty($receivedItem['gtin']) ? (string)$receivedItem['gtin'] : null,
                 'wpid'                  => (string)$receivedItem['wpid'],
                 'item_id'               => (string)$receivedItem['item_id'],
                 'sku'                   => (string)$receivedItem['sku'],
@@ -145,15 +143,17 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
                 'lifecycle_status'      => (string)$receivedItem['lifecycle_status'],
                 'status_change_reasons' => $this->getHelper('Data')->jsonEncode($receivedItem['status_change_reason']),
                 'is_online_price_invalid' => $isOnlinePriceInvalid,
-            );
+            ];
 
             $newData['status'] = $this->getHelper('Component\Walmart')->getResultProductStatus(
-                $receivedItem['publish_status'], $receivedItem['lifecycle_status'], $newData['online_qty']
+                $receivedItem['publish_status'],
+                $receivedItem['lifecycle_status'],
+                $newData['online_qty']
             );
 
-            $existingData = array(
-                'upc'                   => !empty($existingItem['upc']) ? (string)$existingItem['upc'] : NULL,
-                'gtin'                  => !empty($existingItem['gtin']) ? (string)$existingItem['gtin'] : NULL,
+            $existingData = [
+                'upc'                   => !empty($existingItem['upc']) ? (string)$existingItem['upc'] : null,
+                'gtin'                  => !empty($existingItem['gtin']) ? (string)$existingItem['gtin'] : null,
                 'wpid'                  => (string)$existingItem['wpid'],
                 'item_id'               => (string)$existingItem['item_id'],
                 'sku'                   => (string)$existingItem['sku'],
@@ -166,13 +166,13 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
                 'status_change_reasons' => (string)$existingItem['status_change_reasons'],
                 'status'                => (int)$existingItem['status'],
                 'is_online_price_invalid' => (bool)$existingItem['is_online_price_invalid'],
-            );
+            ];
 
             if ($newData == $existingData) {
                 continue;
             }
 
-            $tempLogMessages = array();
+            $tempLogMessages = [];
 
             if (isset($newData['online_price'], $existingData['online_price']) &&
                 $newData['online_price'] != $existingData['online_price']) {
@@ -185,7 +185,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
                 );
             }
 
-            if (!is_null($newData['online_qty']) && $newData['online_qty'] != $existingData['online_qty']) {
+            if ($newData['online_qty'] !== null && $newData['online_qty'] != $existingData['online_qty']) {
                 // M2ePro_TRANSLATIONS
                 // Item QTY was successfully changed from %from% to %to%.
                 $tempLogMessages[] = $this->getHelper('Module\Translation')->__(
@@ -227,7 +227,8 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
             }
 
             $listingOtherObj = $this->walmartFactory->getObjectLoaded(
-                'Listing\Other',(int)$existingItem['listing_other_id']
+                'Listing\Other',
+                (int)$existingItem['listing_other_id']
             );
 
             $listingOtherObj->addData($newData);
@@ -242,7 +243,6 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
         $stmtTemp = $this->getPdoStatementExistingListings(false);
 
         while ($existingItem = $stmtTemp->fetch()) {
-
             if (!isset($receivedItems[$existingItem['wpid']])) {
                 continue;
             }
@@ -251,14 +251,13 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
         }
 
         /** @var $logModel \Ess\M2ePro\Model\Listing\Other\Log */
-        $logModel = $this->activeRecordFactory->getObject('Listing\Other\Log');
+        $logModel = $this->activeRecordFactory->getObject('Listing_Other_Log');
         $logModel->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK);
 
         /** @var $mappingModel \Ess\M2ePro\Model\Walmart\Listing\Other\Mapping */
-        $mappingModel = $this->modelFactory->getObject('Walmart\Listing\Other\Mapping');
+        $mappingModel = $this->modelFactory->getObject('Walmart_Listing_Other_Mapping');
 
         foreach ($receivedItems as $receivedItem) {
-
             if (isset($receivedItem['founded'])) {
                 continue;
             }
@@ -268,13 +267,13 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
                 $receivedItem['status_change_reason']
             );
 
-            $newData = array(
+            $newData = [
                 'account_id'     => $this->getAccount()->getId(),
                 'marketplace_id' => $this->getMarketplace()->getId(),
                 'product_id'     => null,
 
-                'upc'     => !empty($receivedItem['upc']) ? (string)$receivedItem['upc'] : NULL,
-                'gtin'    => !empty($receivedItem['gtin']) ? (string)$receivedItem['gtin'] : NULL,
+                'upc'     => !empty($receivedItem['upc']) ? (string)$receivedItem['upc'] : null,
+                'gtin'    => !empty($receivedItem['gtin']) ? (string)$receivedItem['gtin'] : null,
                 'wpid'    => (string)$receivedItem['wpid'],
                 'item_id' => (string)$receivedItem['item_id'],
 
@@ -289,10 +288,12 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
                 'lifecycle_status'      => (string)$receivedItem['lifecycle_status'],
                 'status_change_reasons' => $this->getHelper('Data')->jsonEncode($receivedItem['status_change_reason']),
                 'is_online_price_invalid' => $isOnlinePriceInvalid,
-            );
+            ];
 
             $newData['status'] = $this->getHelper('Component\Walmart')->getResultProductStatus(
-                $receivedItem['publish_status'], $receivedItem['lifecycle_status'], $newData['online_qty']
+                $receivedItem['publish_status'],
+                $receivedItem['lifecycle_status'],
+                $newData['online_qty']
             );
 
             $newData['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT;
@@ -302,15 +303,17 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
             $listingOtherModel->setData($newData);
             $listingOtherModel->save();
 
-            $logModel->addProductMessage($listingOtherModel->getId(),
-                                         \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-                                         NULL,
-                                         \Ess\M2ePro\Model\Listing\Other\Log::ACTION_ADD_ITEM,
-                                         // M2ePro\TRANSLATIONS
+            $logModel->addProductMessage(
+                $listingOtherModel->getId(),
+                \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+                null,
+                \Ess\M2ePro\Model\Listing\Other\Log::ACTION_ADD_ITEM,
+                // M2ePro\TRANSLATIONS
                                          // Item was successfully Added
                                          'Item was successfully Added',
-                                         \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-                                         \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW);
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+            );
 
             if (!$this->getAccount()->getChildObject()->isOtherListingsMappingEnabled()) {
                 continue;
@@ -326,12 +329,12 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
     protected function getReceivedOnlyOtherListings()
     {
         $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(array('second_table.wpid'));
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(['second_table.wpid']);
 
         $listingTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
 
-        $collection->getSelect()->join(array('l' => $listingTable), 'main_table.listing_id = l.id', array());
-        $collection->getSelect()->where('l.account_id = ?',(int)$this->getAccount()->getId());
+        $collection->getSelect()->join(['l' => $listingTable], 'main_table.listing_id = l.id', []);
+        $collection->getSelect()->where('l.account_id = ?', (int)$this->getAccount()->getId());
 
         /** @var $stmtTemp \Zend_Db_Statement_Pdo */
         $stmtTemp = $this->resourceConnection->getConnection()->query($collection->getSelect()->__toString());
@@ -340,7 +343,6 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
         $receivedItems = $responseData['data'];
 
         while ($existListingProduct = $stmtTemp->fetch()) {
-
             if (empty($existListingProduct['wpid'])) {
                 continue;
             }
@@ -356,19 +358,19 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
     protected function getPdoStatementExistingListings($withData = false)
     {
         $collection = $this->walmartFactory->getObject('Listing\Other')->getCollection();
-        $collection->getSelect()->where('`main_table`.`account_id` = ?',(int)$this->params['account_id']);
+        $collection->getSelect()->where('`main_table`.`account_id` = ?', (int)$this->params['account_id']);
 
-        $tempColumns = array('second_table.wpid');
+        $tempColumns = ['second_table.wpid'];
 
         if ($withData) {
-            $tempColumns = array('main_table.status',
+            $tempColumns = ['main_table.status',
                                  'second_table.sku','second_table.title',
                                  'second_table.online_price','second_table.online_qty',
                                  'second_table.publish_status', 'second_table.lifecycle_status',
                                  'second_table.status_change_reasons', 'second_table.channel_url',
                                  'second_table.upc', 'second_table.gtin', 'second_table.ean', 'second_table.wpid',
                                  'second_table.item_id', 'second_table.listing_other_id',
-                                 'second_table.is_online_price_invalid');
+                                 'second_table.is_online_price_invalid'];
         }
 
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns($tempColumns);
@@ -386,7 +388,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
      */
     protected function getAccount()
     {
-        return $this->getObjectByParam('Account','account_id');
+        return $this->getObjectByParam('Account', 'account_id');
     }
 
     /**
@@ -401,17 +403,17 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
 
     protected function getLogsActionId()
     {
-        if (!is_null($this->logsActionId)) {
+        if ($this->logsActionId !== null) {
             return $this->logsActionId;
         }
 
-        return $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Other\Log')
+        return $this->logsActionId = $this->activeRecordFactory->getObject('Listing_Other_Log')
                                           ->getResource()->getNextActionId();
     }
 
     protected function getSynchronizationLog()
     {
-        if (!is_null($this->synchronizationLog)) {
+        if ($this->synchronizationLog !== null) {
             return $this->synchronizationLog;
         }
 

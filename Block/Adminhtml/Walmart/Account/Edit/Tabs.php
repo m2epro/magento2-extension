@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit
+ */
 class Tabs extends AbstractTabs
 {
     protected function _construct()
@@ -25,23 +29,23 @@ class Tabs extends AbstractTabs
         /** @var $account \Ess\M2ePro\Model\Account */
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
 
-        $this->addTab('general', array(
+        $this->addTab('general', [
             'label'   => $this->__('General'),
             'title'   => $this->__('General'),
-            'content' => $this->createBlock('Walmart\Account\Edit\Tabs\General')->toHtml(),
-        ));
+            'content' => $this->createBlock('Walmart_Account_Edit_Tabs_General')->toHtml(),
+        ]);
 
-        $this->addTab('listingOther', array(
+        $this->addTab('listingOther', [
             'label'   => $this->__('3rd Party Listings'),
             'title'   => $this->__('3rd Party Listings'),
-            'content' => $this->createBlock('Walmart\Account\Edit\Tabs\ListingOther')->toHtml(),
-        ));
+            'content' => $this->createBlock('Walmart_Account_Edit_Tabs_ListingOther')->toHtml(),
+        ]);
 
-        $this->addTab('orders', array(
+        $this->addTab('orders', [
             'label'   => $this->__('Orders'),
             'title'   => $this->__('Orders'),
-            'content' => $this->createBlock('Walmart\Account\Edit\Tabs\Order')->toHtml(),
-        ));
+            'content' => $this->createBlock('Walmart_Account_Edit_Tabs_Order')->toHtml(),
+        ]);
 
         $this->setActiveTab($this->getRequest()->getParam('tab', 'general'));
 

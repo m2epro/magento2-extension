@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 
+/**
+ * Class UpdateShippingStatus
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Order
+ */
 class UpdateShippingStatus extends Order
 {
     public function execute()
@@ -25,10 +29,10 @@ class UpdateShippingStatus extends Order
         /** @var \Ess\M2ePro\Model\Order[] $orders */
         $orders = $this->amazonFactory->getObject('Order')
             ->getCollection()
-            ->addFieldToFilter('id', array('in' => $ids))
+            ->addFieldToFilter('id', ['in' => $ids])
             ->getItems();
 
-        $canUpdateShippingStatuses = array();
+        $canUpdateShippingStatuses = [];
         $wasPrimeOrder = false;
         foreach ($orders as $order) {
             if ($order->getChildObject()->isPrime()) {
@@ -43,14 +47,12 @@ class UpdateShippingStatus extends Order
                 $this->__('Updating Amazon Order(s) Status to Shipped in Progress...')
             );
         }
-        if (in_array(true, $canUpdateShippingStatuses, true) && $wasPrimeOrder)
-        {
+        if (in_array(true, $canUpdateShippingStatuses, true) && $wasPrimeOrder) {
             $this->messageManager->addWarning(
                 $this->__('Some Amazon Order(s) can not be updated for Shipped Status.')
             );
         }
-        if (!in_array(true, $canUpdateShippingStatuses, true))
-        {
+        if (!in_array(true, $canUpdateShippingStatuses, true)) {
             $this->messageManager->addError(
                 $this->__('Amazon Order(s) can not be updated for Shipped Status.')
             );

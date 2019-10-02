@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Helper\Magento;
 use Ess\M2ePro\Model\Exception;
 use \Ess\M2ePro\Model\Magento\Product as ProductModel;
 
+/**
+ * Class Product
+ * @package Ess\M2ePro\Helper\Magento
+ */
 class Product extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const TYPE_SIMPLE       = 'simple';
@@ -21,7 +25,7 @@ class Product extends \Ess\M2ePro\Helper\AbstractHelper
 
     const SKU_MAX_LENGTH = 64;
 
-    private $cacheLoadedProducts = array();
+    private $cacheLoadedProducts = [];
 
     protected $productFactory;
     protected $catalogInventoryConfiguration;
@@ -35,8 +39,7 @@ class Product extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->productFactory = $productFactory;
         $this->catalogInventoryConfiguration = $catalogInventoryConfiguration;
         $this->modelFactory = $modelFactory;
@@ -72,16 +75,15 @@ class Product extends \Ess\M2ePro\Helper\AbstractHelper
 
     // ---------------------------------------
 
-    public function getOriginKnownTypes($byLogicType = NULL)
+    public function getOriginKnownTypes($byLogicType = null)
     {
         if ($byLogicType && !in_array($byLogicType, $this->getLogicTypes())) {
             throw new Exception('Unknown logic type.');
         }
 
-        $cache = $this->getHelper('Data\Cache\Runtime');
+        $cache = $this->getHelper('Data_Cache_Runtime');
 
         if (!$byLogicType) {
-
             if ($cache->getValue(__METHOD__)) {
                 return $cache->getValue(__METHOD__);
             }
@@ -130,8 +132,9 @@ class Product extends \Ess\M2ePro\Helper\AbstractHelper
             throw new Exception('Unknown logic type.');
         }
 
-        $customTypes = $this->modelFactory->getObject('Config\Manager\Module')->getGroupValue(
-            "/magento/product/{$byLogicType}_type/", "custom_types"
+        $customTypes = $this->modelFactory->getObject('Config_Manager_Module')->getGroupValue(
+            "/magento/product/{$byLogicType}_type/",
+            "custom_types"
         );
 
         if (empty($customTypes)) {
@@ -169,7 +172,7 @@ class Product extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getCachedAndLoadedProduct($product, $storeId = NULL)
+    public function getCachedAndLoadedProduct($product, $storeId = null)
     {
         if ($product instanceof \Magento\Catalog\Model\Product) {
             return $product;
@@ -184,7 +187,7 @@ class Product extends \Ess\M2ePro\Helper\AbstractHelper
 
         /** @var \Magento\Catalog\Model\Product $product */
         $product = $this->productFactory->create();
-        !is_null($storeId) && $product->setStoreId((int)$storeId);
+        $storeId !== null && $product->setStoreId((int)$storeId);
         $product->load($productId);
 
         return $this->cacheLoadedProducts[$cacheKey] = $product;
@@ -211,11 +214,11 @@ class Product extends \Ess\M2ePro\Helper\AbstractHelper
 
         if ($this->isSimpleType($productType) ||
             $this->isDownloadableType($productType)) {
-            return array($productId);
+            return [$productId];
         }
 
         if ($this->isBundleType($productType)) {
-            $bundleAssociatedProducts = array();
+            $bundleAssociatedProducts = [];
 
             foreach ($associatedProducts as $key => $productIds) {
                 $bundleAssociatedProducts[$key] = reset($productIds);
@@ -225,7 +228,7 @@ class Product extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if ($this->isConfigurableType($productType)) {
-            $configurableAssociatedProducts = array();
+            $configurableAssociatedProducts = [];
 
             foreach ($associatedProducts as $productIds) {
                 if (count($configurableAssociatedProducts) == 0) {
@@ -247,7 +250,7 @@ class Product extends \Ess\M2ePro\Helper\AbstractHelper
             return array_values($associatedProducts);
         }
 
-        return array();
+        return [];
     }
 
     //########################################

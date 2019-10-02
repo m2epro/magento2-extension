@@ -13,6 +13,10 @@ use Ess\M2ePro\Helper\Module\License;
 use Ess\M2ePro\Model\Servicing\Dispatcher;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
+/**
+ * Class Main
+ * @package Ess\M2ePro\Controller\Adminhtml
+ */
 abstract class Main extends Base
 {
     private $systemRequirementsChecked = false;
@@ -39,18 +43,18 @@ abstract class Main extends Base
         $this->addNotificationMessages();
 
         if ($request->isGet() && !$request->isPost() && !$request->isXmlHttpRequest()) {
-
             try {
                 $this->getHelper('Client')->updateBackupConnectionData(false);
-            } catch (\Exception $exception) {}
+            } catch (\Exception $exception) {
+            }
 
             try {
 
                 /** @var Dispatcher $dispatcher */
                 $dispatcher = $this->modelFactory->getObject('Servicing\Dispatcher');
                 $dispatcher->process(Dispatcher::DEFAULT_INTERVAL, $dispatcher->getFastTasks());
-
-            } catch (\Exception $exception) {}
+            } catch (\Exception $exception) {
+            }
         }
 
         return true;
@@ -76,7 +80,6 @@ abstract class Main extends Base
         if ($this->getRequest()->isGet() &&
             !$this->getRequest()->isPost() &&
             !$this->getRequest()->isXmlHttpRequest()) {
-
             if ($this->isContentLocked()) {
                 return $this;
             }
@@ -90,7 +93,6 @@ abstract class Main extends Base
         if ($this->getRequest()->isGet() &&
             !$this->getRequest()->isPost() &&
             !$this->getRequest()->isXmlHttpRequest()) {
-
             if ($this->isContentLocked()) {
                 return $this;
             }
@@ -147,7 +149,6 @@ abstract class Main extends Base
         if ($this->getRequest()->isGet() &&
             !$this->getRequest()->isPost() &&
             !$this->getRequest()->isXmlHttpRequest()) {
-
             $staticNotification = $this->addStaticContentNotification();
             $browserNotification = $this->addBrowserNotifications();
             $healthStatusNotifications = $this->addHealthStatusNotifications();
@@ -175,8 +176,6 @@ abstract class Main extends Base
 
     protected function addBrowserNotifications()
     {
-// M2ePro_TRANSLATIONS
-// We are sorry, Internet Explorer browser is not supported. Please, use another browser (Mozilla Firefox, Google Chrome, etc.).
         if ($this->getHelper('Client')->isBrowserIE()) {
             $this->getMessageManager()->addError($this->__(
                 'We are sorry, Internet Explorer browser is not supported. Please, use'.
@@ -214,7 +213,7 @@ abstract class Main extends Base
     protected function addHealthStatusNotifications()
     {
         $currentStatus = $this->modelFactory->getObject('HealthStatus\CurrentStatus');
-        $notificationSettings = $this->modelFactory->getObject('HealthStatus\Notification\Settings');
+        $notificationSettings = $this->modelFactory->getObject('HealthStatus_Notification_Settings');
 
         if (!$notificationSettings->isModeExtensionPages()) {
             return false;
@@ -224,7 +223,7 @@ abstract class Main extends Base
             return false;
         }
 
-        $messageBuilder = $this->modelFactory->getObject('HealthStatus\Notification\MessageBuilder');
+        $messageBuilder = $this->modelFactory->getObject('HealthStatus_Notification_MessageBuilder');
 
         switch ($currentStatus->get()) {
             case Result::STATE_NOTICE:
@@ -257,9 +256,7 @@ abstract class Main extends Base
         $messages = $this->getHelper('Module')->getServerMessages();
 
         foreach ($messages as $message) {
-
             if (isset($message['text']) && isset($message['type']) && $message['text'] != '') {
-
                 switch ($message['type']) {
                     case \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_ERROR:
                         $this->getMessageManager()->addError(
@@ -306,11 +303,8 @@ abstract class Main extends Base
         if ($this->getHelper('Module')->isReadyToWork() &&
             $this->getHelper('Module\Cron')->isLastRunMoreThan(1, true) &&
             !$this->getHelper('Module')->isDevelopmentEnvironment()) {
-
             $url = $this->getHelper('Module\Support')->getKnowledgebaseArticleUrl('cron-running');
 
-            // M2ePro_TRANSLATIONS
-            // Attention! AUTOMATIC Synchronization is not running at the moment. It does not allow M2E Pro to work correctly.<br/>Please check this <a href="%url% target="_blank" class="external-link">article</a> for the details on how to resolve the problem.
             $message  = 'Attention! AUTOMATIC Synchronization is not running at the moment.';
             $message .= ' It does not allow M2E Pro to work correctly.';
             $message .= '<br/>Please check this <a href="%url%" target="_blank" class="external-link">article</a>';
@@ -318,7 +312,8 @@ abstract class Main extends Base
             $message = $this->getHelper('Module\Translation')->__($message, $url);
 
             $this->getMessageManager()->addError(
-                $message, \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP
+                $message,
+                \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP
             );
         }
     }
@@ -331,7 +326,6 @@ abstract class Main extends Base
         $licenseHelper = $this->getHelper('Module\License');
 
         if (!$licenseHelper->getKey() || !$licenseHelper->getDomain() || !$licenseHelper->getIp()) {
-
             $params = [];
             $this->getBlockerWizardNick() && $params['wizard'] = '1';
             $url = $this->getHelper('View\Configuration')->getLicenseUrl($params);
@@ -354,16 +348,13 @@ abstract class Main extends Base
         $licenseHelper = $this->getHelper('Module\License');
 
         if (!$licenseHelper->isValidDomain()) {
-
             $params = [];
             $this->getBlockerWizardNick() && $params['wizard'] = '1';
             $url = $this->getHelper('View\Configuration')->getLicenseUrl($params);
 
-// M2ePro_TRANSLATIONS
-// M2E Pro License Key Validation is failed for this Domain. Go to the <a href="%url%" target="_blank">License Page</a>.
             $message = 'M2E Pro License Key Validation is failed for this Domain. ';
             $message .= 'Go to the <a href="%url%" target="_blank">License Page</a>.';
-            $message = $this->__($message,$url);
+            $message = $this->__($message, $url);
 
             $this->getMessageManager()->addError($message, self::GLOBAL_MESSAGES_GROUP);
 
@@ -371,7 +362,6 @@ abstract class Main extends Base
         }
 
         if (!$licenseHelper->isValidIp()) {
-
             $params = [];
             $this->getBlockerWizardNick() && $params['wizard'] = '1';
             $url = $this->getHelper('View\Configuration')->getLicenseUrl($params);
@@ -396,7 +386,6 @@ abstract class Main extends Base
         $licenseHelper = $this->getHelper('Module\License');
 
         if (!$licenseHelper->getStatus()) {
-
             $params = [];
             $this->getBlockerWizardNick() && $params['wizard'] = '1';
             $url = $this->getHelper('View\Configuration')->getLicenseUrl($params);
@@ -420,8 +409,9 @@ abstract class Main extends Base
             return;
         }
 
-        $skipMessageForVersion = $this->modelFactory->getObject('Config\Manager\Cache')->getGroupValue(
-            '/global/notification/message/', 'skip_static_content_validation_message'
+        $skipMessageForVersion = $this->modelFactory->getObject('Config_Manager_Cache')->getGroupValue(
+            '/global/notification/message/',
+            'skip_static_content_validation_message'
         );
 
         if (version_compare($skipMessageForVersion, $this->getHelper('Module')->getPublicVersion(), '==')) {
@@ -446,7 +436,8 @@ abstract class Main extends Base
             return;
         }
 
-        $url = $this->getUrl('*/general/skipStaticContentValidationMessage',
+        $url = $this->getUrl(
+            '*/general/skipStaticContentValidationMessage',
             [
                 'skip_message' => true,
                 'back' => base64_encode($this->getUrl('*/*/*', ['_current' => true]))

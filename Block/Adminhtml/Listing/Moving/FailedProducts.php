@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Moving;
 
+/**
+ * Class FailedProducts
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\Moving
+ */
 class FailedProducts extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     protected $_template = 'listing/moving/failedProducts.phtml';
@@ -21,7 +25,8 @@ class FailedProducts extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContain
         $this->setChild(
             'failedProducts_grid',
             $this->createBlock(
-                'Listing\Moving\FailedProducts\Grid','',
+                'Listing_Moving_FailedProducts_Grid',
+                '',
                 ['data' => ['grid_url' => $this->getData('grid_url')]]
             )
         );

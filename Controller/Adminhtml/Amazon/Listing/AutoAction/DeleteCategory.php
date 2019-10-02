@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction;
 
+/**
+ * Class DeleteCategory
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
+ */
 class DeleteCategory extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
 {
     //########################################
@@ -17,7 +21,7 @@ class DeleteCategory extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Aut
         $groupId = $this->getRequest()->getParam('group_id');
         $categoryId = $this->getRequest()->getParam('category_id');
 
-        $category = $this->activeRecordFactory->getObject('Listing\Auto\Category')
+        $category = $this->activeRecordFactory->getObject('Listing_Auto_Category')
             ->getCollection()
             ->addFieldToFilter('group_id', (int)$groupId)
             ->addFieldToFilter('category_id', (int)$categoryId)
@@ -29,8 +33,8 @@ class DeleteCategory extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Aut
 
         $category->delete();
 
-        if ($this->activeRecordFactory->getObject('Listing\Auto\Category\Group')->getResource()->isEmpty($groupId)) {
-            $this->activeRecordFactory->getObject('Listing\Auto\Category\Group')->load($groupId)->delete();
+        if ($this->activeRecordFactory->getObject('Listing_Auto_Category_Group')->getResource()->isEmpty($groupId)) {
+            $this->activeRecordFactory->getObject('Listing_Auto_Category_Group')->load($groupId)->delete();
         }
     }
 

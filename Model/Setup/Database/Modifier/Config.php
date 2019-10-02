@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Setup\Database\Modifier;
 
 use Ess\M2ePro\Model\Setup\Database\Modifier\Config\Entity;
 
+/**
+ * Class Config
+ * @package Ess\M2ePro\Model\Setup\Database\Modifier
+ */
 class Config extends AbstractModifier
 {
     //########################################
@@ -29,7 +33,7 @@ class Config extends AbstractModifier
                       ->from($this->tableName)
                       ->where('`key` = ?', $key);
 
-        if (is_null($group)) {
+        if ($group === null) {
             $query->where('`group` IS NULL');
         } else {
             $query->where('`group` = ?', $group);
@@ -45,7 +49,7 @@ class Config extends AbstractModifier
      */
     public function getEntity($group, $key)
     {
-        return $this->modelFactory->getObject('Setup\Database\Modifier\Config\Entity', [
+        return $this->modelFactory->getObject('Setup_Database_Modifier_Config_Entity', [
             'configModifier' => $this,
             'group'          => $group,
             'key'            => $key,
@@ -59,7 +63,7 @@ class Config extends AbstractModifier
      * @param string|null $key
      * @return bool
      */
-    public function isExists($group, $key = NULL)
+    public function isExists($group, $key = null)
     {
         $group = $this->prepareGroup($group);
         $key   = $this->prepareKey($key);
@@ -68,13 +72,13 @@ class Config extends AbstractModifier
                       ->select()
                       ->from($this->tableName);
 
-        if (is_null($group)) {
+        if ($group === null) {
             $query->where('`group` IS NULL');
         } else {
             $query->where('`group` = ?', $group);
         }
 
-        if (!is_null($key)) {
+        if ($key !== null) {
             $query->where('`key` = ?', $key);
         }
 
@@ -90,19 +94,19 @@ class Config extends AbstractModifier
      * @param string|null $notice
      * @return $this|int
      */
-    public function insert($group, $key, $value = NULL, $notice = NULL)
+    public function insert($group, $key, $value = null, $notice = null)
     {
         if ($this->isExists($group, $key)) {
             return $this;
         }
 
-        $preparedData = array(
+        $preparedData = [
             'group' => $this->prepareGroup($group),
             'key'   => $this->prepareKey($key),
-        );
+        ];
 
-        !is_null($value) && $preparedData['value'] = $value;
-        !is_null($notice) && $preparedData['notice'] = $notice;
+        $value !== null && $preparedData['value'] = $value;
+        $notice !== null && $preparedData['notice'] = $notice;
 
         $preparedData['update_date'] = $this->getCurrentDateTime();
         $preparedData['create_date'] = $this->getCurrentDateTime();
@@ -119,12 +123,12 @@ class Config extends AbstractModifier
     public function update($field, $value, $where)
     {
         $field == 'group' && $value = $this->prepareGroup($value);
-        $field == 'key'   && $value = $this->prepareKey($value);
+        $field == 'key' && $value = $this->prepareKey($value);
 
-        $preparedData = array(
+        $preparedData = [
             $field        => $value,
             'update_date' => $this->getCurrentDateTime()
-        );
+        ];
 
         return $this->connection->update($this->tableName, $preparedData, $where);
     }
@@ -134,7 +138,7 @@ class Config extends AbstractModifier
      * @param string|null $key
      * @return $this|int
      */
-    public function delete($group, $key = NULL)
+    public function delete($group, $key = null)
     {
         if (!$this->isExists($group, $key)) {
             return $this;
@@ -143,13 +147,13 @@ class Config extends AbstractModifier
         $group = $this->prepareGroup($group);
         $key   = $this->prepareKey($key);
 
-        if (is_null($group)) {
-            $where = array('`group` IS NULL');
+        if ($group === null) {
+            $where = ['`group` IS NULL'];
         } else {
-            $where = array('`group` = ?' => $group);
+            $where = ['`group` = ?' => $group];
         }
 
-        if (!is_null($key)) {
+        if ($key !== null) {
             $where['`key` = ?'] = $key;
         }
 
@@ -192,8 +196,8 @@ class Config extends AbstractModifier
 
     public function removeDuplicates()
     {
-        $tempData = array();
-        $deleteData = array();
+        $tempData = [];
+        $deleteData = [];
 
         $configRows = $this->connection
                            ->query("SELECT `id`, `group`, `key`
@@ -202,7 +206,6 @@ class Config extends AbstractModifier
                            ->fetchAll();
 
         foreach ($configRows as $configRow) {
-
             $tempName = strtolower($configRow['group'] .'|'. $configRow['key']);
 
             if (in_array($tempName, $tempData)) {
@@ -223,7 +226,7 @@ class Config extends AbstractModifier
 
     private function prepareGroup($group)
     {
-        if (is_null($group)) {
+        if ($group === null) {
             return $group;
         }
 
@@ -232,7 +235,7 @@ class Config extends AbstractModifier
 
     private function prepareKey($key)
     {
-        if (is_null($key)) {
+        if ($key === null) {
             return $key;
         }
 

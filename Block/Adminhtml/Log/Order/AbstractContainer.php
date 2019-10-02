@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Log\Order;
 
+/**
+ * Class AbstractContainer
+ * @package Ess\M2ePro\Block\Adminhtml\Log\Order
+ */
 abstract class AbstractContainer extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //#######################################
@@ -70,16 +74,19 @@ HTML;
             $order = $this->activeRecordFactory->getObjectLoaded('Order', $orderId);
 
             $accountTitle = $this->filterManager->truncate(
-                $order->getAccount()->getTitle(), ['length' => 15]
+                $order->getAccount()->getTitle(),
+                ['length' => 15]
             );
 
             return
                 '<div class="static-switcher-block">'
                 . $this->getStaticFilterHtml(
-                    $accountSwitcherBlock->getLabel(), $accountTitle
+                    $accountSwitcherBlock->getLabel(),
+                    $accountTitle
                 )
                 . $this->getStaticFilterHtml(
-                    $marketplaceSwitcherBlock->getLabel(), $order->getMarketplace()->getTitle()
+                    $marketplaceSwitcherBlock->getLabel(),
+                    $order->getMarketplace()->getTitle()
                 )
                 . '</div>';
         }

@@ -8,11 +8,18 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search\Custom\ByIdentifier;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Amazon\Search\Custom\ByIdentifier
+ */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByIdentifier\ItemsResponser
 {
     //########################################
 
-    protected function processResponseData() {}
+    protected function processResponseData()
+    {
+        return null;
+    }
 
     //########################################
 }

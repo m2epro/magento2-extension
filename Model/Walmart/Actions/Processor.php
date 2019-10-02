@@ -15,6 +15,10 @@ use Ess\M2ePro\Model\Exception\Logic;
 use Ess\M2ePro\Model\Request\Pending\Single;
 use Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel as AbstractCollection;
 
+/**
+ * Class Processor
+ * @package Ess\M2ePro\Model\Walmart\Actions
+ */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
     const PENDING_REQUEST_MAX_LIFE_TIME = 86400;
@@ -27,7 +31,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     protected $resource;
 
-    protected $alreadyProcessedItemIds = array();
+    protected $alreadyProcessedItemIds = [];
 
     //####################################
 
@@ -38,8 +42,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Magento\Framework\App\ResourceConnection $resource,
         $data = []
-    )
-    {
+    ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
         $this->activeRecordFactory = $activeRecordFactory;
@@ -86,13 +89,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     private function removeMissedProcessingActions()
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Processing\Action\Collection $actionCollection */
-        $actionCollection = $this->activeRecordFactory->getObject('Walmart\Processing\Action')->getCollection();
+        $actionCollection = $this->activeRecordFactory->getObject('Walmart_Processing_Action')->getCollection();
         $actionCollection->getSelect()->joinLeft(
-            array('p' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_processing')),
+            ['p' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_processing')],
             'p.id = main_table.processing_id',
-            array()
+            []
         );
-        $actionCollection->addFieldToFilter('p.id', array('null' => true));
+        $actionCollection->addFieldToFilter('p.id', ['null' => true]);
 
         /** @var Action[] $actions */
         $actions = $actionCollection->getItems();
@@ -105,42 +108,44 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     private function completeExpiredActions()
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Processing\Action\Collection $actionCollection */
-        $actionCollection = $this->activeRecordFactory->getObject('Walmart\Processing\Action')->getCollection();
-        $actionCollection->addFieldToFilter('request_pending_single_id', array('notnull' => true));
+        $actionCollection = $this->activeRecordFactory->getObject('Walmart_Processing_Action')->getCollection();
+        $actionCollection->addFieldToFilter('request_pending_single_id', ['notnull' => true]);
         $actionCollection->getSelect()->joinLeft(
-            array(
-                'rps' => $this->getHelper('Module\Database\Structure')
+            [
+                'rps' => $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_request_pending_single')
-            ),
+            ],
             'rps.id = main_table.request_pending_single_id',
-            array()
+            []
         );
-        $actionCollection->addFieldToFilter('rps.id', array('null' => true));
+        $actionCollection->addFieldToFilter('rps.id', ['null' => true]);
 
         /** @var Action[] $actions */
         $actions = $actionCollection->getItems();
 
         /** @var Message $message */
-        $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
-            'Request wait timeout exceeded.', Message::TYPE_ERROR
+            'Request wait timeout exceeded.',
+            Message::TYPE_ERROR
         );
 
         foreach ($actions as $actionItem) {
-            $this->completeAction($actionItem, array('errors' => array($message->asArray())));
+            $this->completeAction($actionItem, ['errors' => [$message->asArray()]]);
         }
     }
 
     private function completeNeedSynchRulesCheckActions()
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Processing\Action\Collection $actionCollection */
-        $actionCollection = $this->activeRecordFactory->getObject('Walmart\Processing\Action')->getCollection();
+        $actionCollection = $this->activeRecordFactory->getObject('Walmart_Processing_Action')->getCollection();
+        $actionCollection->setNotProcessedFilter();
         $actionCollection->getSelect()->joinLeft(
-            array(
-                'lp' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing_product')
-            ),
+            [
+                'lp' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_listing_product')
+            ],
             'lp.id = main_table.related_id',
-            array('need_synch_rules_check')
+            ['need_synch_rules_check']
         );
         $actionCollection->addFieldToFilter('need_synch_rules_check', true);
 
@@ -151,7 +156,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
 
         /** @var Message $message */
-        $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
             'There was no need for this action. It was skipped. New action request with updated Product
             information will be performed automatically.',
@@ -159,14 +164,14 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         );
 
         foreach ($actions as $action) {
-            $this->completeAction($action, array('errors' => array($message->asArray())));
+            $this->completeAction($action, ['errors' => [$message->asArray()]]);
         }
     }
 
     private function executeCompletedRequestsPendingSingle()
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Processing\Action $actionResource */
-        $actionResource = $this->activeRecordFactory->getObject('Walmart\Processing\Action')->getResource();
+        $actionResource = $this->activeRecordFactory->getObject('Walmart_Processing_Action')->getResource();
         $requestIds = $actionResource->getUniqueRequestPendingSingleIds();
 
         if (empty($requestIds)) {
@@ -174,8 +179,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
 
         /** @var AbstractCollection $pendingSingleCollection */
-        $pendingSingleCollection = $this->activeRecordFactory->getObject('Request\Pending\Single')->getCollection();
-        $pendingSingleCollection->addFieldToFilter('id', array('in' => $requestIds));
+        $pendingSingleCollection = $this->activeRecordFactory->getObject('Request_Pending_Single')->getCollection();
+        $pendingSingleCollection->addFieldToFilter('id', ['in' => $requestIds]);
         $pendingSingleCollection->addFieldToFilter('is_completed', 1);
 
         /** @var Single[] $pendingSingleObjects */
@@ -188,7 +193,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             /** @var AbstractCollection $actionCollection */
 
             /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Processing\Action\Collection $actionCollection */
-            $actionCollection = $this->activeRecordFactory->getObject('Walmart\Processing\Action')->getCollection();
+            $actionCollection = $this->activeRecordFactory->getObject('Walmart_Processing_Action')->getCollection();
             $actionCollection->setRequestPendingSingleIdFilter($requestId);
             $actionCollection->setInProgressFilter();
 
@@ -199,13 +204,12 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             $resultMessages = $pendingSingle->getResultMessages();
 
             foreach ($actions as $action) {
-
                 $relatedId = $action->getRelatedId();
 
                 $resultActionData = $this->getResponseData($resultData, $relatedId);
 
                 if (empty($resultActionData['errors'])) {
-                    $resultActionData['errors'] = array();
+                    $resultActionData['errors'] = [];
                 }
 
                 if (!empty($resultMessages)) {
@@ -240,7 +244,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     private function executeAction($actionType, Account $account)
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Processing\Action\Collection $actionCollection */
-        $actionCollection = $this->activeRecordFactory->getObject('Walmart\Processing\Action')->getCollection();
+        $actionCollection = $this->activeRecordFactory->getObject('Walmart_Processing_Action')->getCollection();
         $actionCollection->setNotProcessedFilter();
         $actionCollection->setActionTypeFilter($actionType);
         $actionCollection->setAccountsFilter([$account]);
@@ -251,7 +255,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        $dispatcherObject = $this->modelFactory->getObject('Walmart\Connector\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
         $command = $this->getCommand($actionType);
 
         /** @var Action[] $actions */
@@ -260,8 +264,12 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $requestData['account'] = $account->getChildObject()->getServerHash();
 
         $connectorObj = $dispatcherObject->getVirtualConnector(
-            $command[0], $command[1], $command[2],
-            $requestData, null, null
+            $command[0],
+            $command[1],
+            $command[2],
+            $requestData,
+            null,
+            null
         );
 
         try {
@@ -277,16 +285,15 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
         if (empty($responseData['processing_id'])) {
             foreach ($actions as $action) {
-
                 $messages = $this->getResponseMessages($responseData, $responseMessages, $action->getRelatedId());
-                $this->completeAction($action, array('errors' => $messages));
+                $this->completeAction($action, ['errors' => $messages]);
             }
 
             return;
         }
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Processing\Action $actionResource */
-        $actionResource = $this->activeRecordFactory->getObject('Walmart\Processing\Action')->getResource();
+        $actionResource = $this->activeRecordFactory->getObject('Walmart_Processing_Action')->getResource();
 
         $actionResource->markAsInProgress(
             $actionCollection->getColumnValues('id'),
@@ -307,10 +314,10 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     {
         switch ($actionType) {
             case Action::TYPE_PRODUCT_ADD:
-                return array('product', 'add', 'entities');
+                return ['product', 'add', 'entities'];
 
             case Action::TYPE_PRODUCT_UPDATE:
-                return array('product', 'update', 'entities');
+                return ['product', 'update', 'entities'];
 
             default:
                 throw new Logic('Unknown action type.');
@@ -325,13 +332,14 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     private function processFailedActionsRequest($actions, $messageText)
     {
-        $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
-            $messageText, Message::TYPE_ERROR
+            $messageText,
+            Message::TYPE_ERROR
         );
 
         foreach ($actions as $action) {
-            $this->completeAction($action, array('errors' => array($message->asArray())));
+            $this->completeAction($action, ['errors' => [$message->asArray()]]);
         }
     }
 
@@ -341,14 +349,14 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     private function buildRequestPendingSingle($serverHash)
     {
-        $requestPendingSingle = $this->activeRecordFactory->getObject('Request\Pending\Single');
-        $requestPendingSingle->setData(array(
+        $requestPendingSingle = $this->activeRecordFactory->getObject('Request_Pending_Single');
+        $requestPendingSingle->setData([
             'component'       => \Ess\M2ePro\Helper\Component\Walmart::NICK,
             'server_hash'     => $serverHash,
             'expiration_date' => $this->helperFactory->getObject('Data')->getDate(
                 $this->helperFactory->getObject('Data')->getCurrentGmtDate(true) + self::PENDING_REQUEST_MAX_LIFE_TIME
             )
-        ));
+        ]);
         $requestPendingSingle->save();
 
         return $requestPendingSingle;
@@ -358,7 +366,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     private function getResponseData(array $responseData, $relatedId)
     {
-        $itemData = array();
+        $itemData = [];
 
         if (!empty($responseData[$relatedId.'-id'])) {
             $itemData = $responseData[$relatedId.'-id'];
@@ -376,18 +384,18 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     private function getRequestData(array $actions)
     {
-        $requestData = array();
+        $requestData = [];
 
         foreach ($actions as $action) {
             $requestData[$action->getRelatedId()] = $action->getRequestData();
         }
 
-        return array('items' => $requestData);
+        return ['items' => $requestData];
     }
 
     //####################################
 
-    private function completeAction(Action $action, array $data, $requestTime = NULL)
+    private function completeAction(Action $action, array $data, $requestTime = null)
     {
         $processing = $action->getProcessing();
 
@@ -396,7 +404,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $processing->setSettings('result_data', $data);
         $processing->setData('is_completed', 1);
 
-        if (!is_null($requestTime)) {
+        if ($requestTime !== null) {
             $processingParams = $processing->getParams();
             $processingParams['request_time'] = $requestTime;
             $processing->setSettings('params', $processingParams);

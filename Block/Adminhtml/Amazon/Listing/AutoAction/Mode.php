@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction;
 
+/**
+ * Class Mode
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction
+ */
 class Mode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode
 {
     //########################################
@@ -16,7 +20,6 @@ class Mode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode
     {
         return $this->getHelper('Module\Support')
             ->getDocumentationArticleUrl('x/kAYtAQ');
-
     }
 
     //########################################

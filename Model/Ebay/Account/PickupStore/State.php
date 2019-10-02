@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Account\PickupStore;
 
+/**
+ * Class State
+ * @package Ess\M2ePro\Model\Ebay\Account\PickupStore
+ */
 class State extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     const IN_STOCK      = 'IN_STOCK';
@@ -16,7 +20,7 @@ class State extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     //########################################
 
     /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore $accountPickupStore */
-    private $accountPickupStore = NULL;
+    private $accountPickupStore = null;
 
     //########################################
 
@@ -30,12 +34,12 @@ class State extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function getAccountPickupStore()
     {
-        if (!is_null($this->accountPickupStore)) {
+        if ($this->accountPickupStore !== null) {
             return $this->accountPickupStore;
         }
 
         return $this->accountPickupStore = $this->activeRecordFactory
-            ->getCachedObjectLoaded('Ebay\Account\PickupStore', $this->getAccountPickupStoreId());
+            ->getCachedObjectLoaded('Ebay_Account_PickupStore', $this->getAccountPickupStoreId());
     }
 
     //########################################

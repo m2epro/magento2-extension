@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Quote;
 
+/**
+ * Class Manager
+ * @package Ess\M2ePro\Model\Magento\Quote
+ */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Magento\Quote\Api\CartRepositoryInterface  */
@@ -31,8 +35,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Quote\Model\QuoteManagement $quoteManagement,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Sales\Model\OrderFactory $orderFactory
-    )
-    {
+    ) {
         parent::__construct($helperFactory, $modelFactory);
 
         $this->quoteRepository = $quoteRepository;
@@ -65,7 +68,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             $order = $this->quoteManagement->submit($quote);
             return $order;
         } catch (\Exception $e) {
-
             $order = $this->orderFactory
                           ->create()
                           ->loadByIncrementIdAndStoreId(

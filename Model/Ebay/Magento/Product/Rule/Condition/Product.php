@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Condition;
 
+/**
+ * Class Product
+ * @package Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Condition
+ */
 class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
 {
     //########################################
@@ -17,7 +21,7 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
      */
     protected function getCustomFilters()
     {
-        $ebayFilters = array(
+        $ebayFilters = [
             'ebay_status' => 'EbayStatus',
             'ebay_item_id' => 'EbayItemId',
             'ebay_available_qty' => 'EbayAvailableQty',
@@ -32,7 +36,7 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
             'ebay_online_category_path' => 'EbayCategoryPath',
             'ebay_start_date' => 'EbayStartDate',
             'ebay_end_date' => 'EbayEndDate',
-        );
+        ];
 
         return array_merge_recursive(
             parent::getCustomFilters(),
@@ -61,7 +65,8 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
         }
 
         $model = $this->modelFactory->getObject(
-            'Ebay\Magento\Product\Rule\Custom\\'.$customFilters[$filterId], [
+            'Ebay\Magento\Product\Rule\Custom\\'.$customFilters[$filterId],
+            [
                 'filterOperator'  => $this->getData('operator'),
                 'filterCondition' => $this->getData('value')
             ]

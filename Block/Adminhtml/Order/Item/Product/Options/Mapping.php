@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Options;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
+/**
+ * Class Mapping
+ * @package Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Options
+ */
 class Mapping extends AbstractContainer
 {
     protected $_template = 'order/item/product/options/mapping.phtml';
@@ -32,12 +36,9 @@ class Mapping extends AbstractContainer
         $title = $this->__('Custom Options');
 
         if ($this->magentoProduct->isBundleType()) {
-
             $title = $this->__('Bundle Items');
-
         } elseif ($this->magentoProduct->isGroupedType() ||
                   $this->magentoProduct->isConfigurableType()) {
-
             $title = $this->__('Associated Products');
         }
 
@@ -72,10 +73,10 @@ class Mapping extends AbstractContainer
     protected function _beforeToHtml()
     {
         // ---------------------------------------
-        $channelOptions = array();
+        $channelOptions = [];
 
         foreach ($this->getOrderItem()->getChildObject()->getVariationChannelOptions() as $attribute => $value) {
-            $channelOptions[] = array('label' => $attribute, 'value' => $value);
+            $channelOptions[] = ['label' => $attribute, 'value' => $value];
         }
 
         $this->setData('channel_options', $channelOptions);
@@ -84,31 +85,29 @@ class Mapping extends AbstractContainer
         // ---------------------------------------
         $this->magentoProduct = $this->getOrderItem()->getMagentoProduct();
 
-        $magentoOptions = array();
+        $magentoOptions = [];
         $magentoVariations = $this->magentoProduct->getVariationInstance()->getVariationsTypeRaw();
 
         if ($this->magentoProduct->isGroupedType()) {
-
             $magentoOptionLabel = $this->__(
                 \Ess\M2ePro\Model\Magento\Product\Variation::GROUPED_PRODUCT_ATTRIBUTE_LABEL
             );
 
-            $magentoOption = array(
+            $magentoOption = [
                 'option_id' => 0,
                 'label' => $magentoOptionLabel,
-                'values' => array()
-            );
+                'values' => []
+            ];
 
             foreach ($magentoVariations as $key => $magentoVariation) {
-                $magentoOption['values'][] = array(
+                $magentoOption['values'][] = [
                     'value_id' => $key,
                     'label' => $magentoVariation->getName(),
-                    'product_ids' => array($magentoVariation->getId())
-                );
+                    'product_ids' => [$magentoVariation->getId()]
+                ];
             }
 
             $magentoOptions[] = $magentoOption;
-
         } else {
             foreach ($magentoVariations as $magentoVariation) {
                 $magentoOptionLabel = array_shift($magentoVariation['labels']);
@@ -116,11 +115,11 @@ class Mapping extends AbstractContainer
                     $magentoOptionLabel = $this->__('N/A');
                 }
 
-                $magentoOption = array(
+                $magentoOption = [
                     'option_id' => $magentoVariation['option_id'],
                     'label' => $magentoOptionLabel,
-                    'values' => array()
-                );
+                    'values' => []
+                ];
 
                 foreach ($magentoVariation['values'] as $magentoOptionValue) {
                     $magentoValueLabel = array_shift($magentoOptionValue['labels']);
@@ -128,11 +127,11 @@ class Mapping extends AbstractContainer
                         $magentoValueLabel = $this->__('N/A');
                     }
 
-                    $magentoOption['values'][] = array(
+                    $magentoOption['values'][] = [
                         'value_id' => $magentoOptionValue['value_id'],
                         'label' => $magentoValueLabel,
                         'product_ids' => $magentoOptionValue['product_ids']
-                    );
+                    ];
                 }
 
                 $magentoOptions[] = $magentoOption;
@@ -143,7 +142,8 @@ class Mapping extends AbstractContainer
         // ---------------------------------------
 
         $this->setChild(
-            'product_mapping_options_help_block', $this->createBlock('HelpBlock')->setData([
+            'product_mapping_options_help_block',
+            $this->createBlock('HelpBlock')->setData([
                 'content' => $this->__(
                     'As M2E Pro was not able to find appropriate Option in Magento Product you are supposed
                     find and Map it manualy.
@@ -157,7 +157,7 @@ class Mapping extends AbstractContainer
 
         $this->setChild(
             'product_mapping_options_out_of_stock_message',
-            $this->getLayout()->createBlock('Magento\Framework\View\Element\Messages')
+            $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class)
                 ->addWarning($this->__('Selected Product Option is Out of Stock.'))
         );
 

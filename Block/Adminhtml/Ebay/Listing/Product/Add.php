@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product;
 
+/**
+ * Class Add
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product
+ */
 class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -40,39 +44,39 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         // ---------------------------------------
 
-        if ((bool)$this->getRequest()->getParam('listing_creation',false)) {
-            $url = $this->getUrl('*/*/sourceMode', array('_current' => true));
+        if ((bool)$this->getRequest()->getParam('listing_creation', false)) {
+            $url = $this->getUrl('*/*/sourceMode', ['_current' => true]);
         } else {
-            $url = $this->getUrl('*/ebay_listing/view',array(
+            $url = $this->getUrl('*/ebay_listing/view', [
                 'id' => $this->getRequest()->getParam('id'),
-            ));
+            ]);
 
             if ($backParam = $this->getRequest()->getParam('back')) {
                 $url = $this->getHelper('Data')->getBackUrl();
             }
         }
 
-        $this->addButton('back', array(
+        $this->addButton('back', [
             'label'     => $this->__('Back'),
             'class'     => 'back',
             'onclick'   => 'setLocation(\''.$url.'\')'
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('auto_action', array(
+        $this->addButton('auto_action', [
             'label'     => $this->__('Auto Add/Remove Rules'),
             'class'     => 'action-primary',
             'onclick'   => 'ListingAutoActionObj.loadAutoActionHtml();'
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('continue', array(
+        $this->addButton('continue', [
             'label'     => $this->__('Continue'),
             'class'     => 'action-primary forward',
             'onclick'   => 'ListingProductAddObj.continue();'
-        ));
+        ]);
         // ---------------------------------------
 
         $this->jsTranslator->addTranslations([
@@ -83,7 +87,7 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         ]);
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
 
         return parent::_prepareLayout();
@@ -91,12 +95,12 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
     public function getGridHtml()
     {
-        $viewHeaderBlock = $this->createBlock('Listing\View\Header','', [
+        $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
             'data' => ['listing' => $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add')]
         ]);
 
         $hideOthersListingsProductsFilterBlock = $this->createBlock(
-            'Listing\Product\ShowOthersListingsProductsFilter'
+            'Listing_Product_ShowOthersListingsProductsFilter'
         )->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'controller' => 'ebay_listing_product_add'
@@ -115,10 +119,8 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             '<div id="add_products_container">' .
             parent::_toHtml() .
             '</div>'
-           . $this->getAutoactionPopupHtml()
-//            $this->getSettingsPopupHtml()
-            ;
-        }
+           . $this->getAutoactionPopupHtml();
+    }
 
     //########################################
 
@@ -139,63 +141,6 @@ Click <b>Start Configure</b> to create a Rule or <b>Cancel</b> if you do not wan
 </div>
 HTML;
     }
-//
-//    //########################################
-//
-//    private function getSettingsPopupHtml()
-//    {
-//        $helper = Mage::helper('M2ePro');
-//
-//        // ---------------------------------------
-//        $onclick = <<<JS
-//ListingProductAddObj.settingsPopupYesClick();
-//JS;
-//        $data = array(
-//            'label'   => $this->__('Yes'),
-//            'onclick' => $onclick
-//        );
-//        $yesButton = $this->getLayout()->createBlock('adminhtml/widget_button')->setData($data);
-//        // ---------------------------------------
-//
-//        // ---------------------------------------
-//        $onclick = <<<JS
-//ListingProductAddObj.settingsPopupNoClick();
-//JS;
-//        $data = array(
-//            'label'   => $this->__('No'),
-//            'onclick' => $onclick
-//        );
-//        $noButton = $this->getLayout()->createBlock('adminhtml/widget_button')->setData($data);
-//        // ---------------------------------------
-//
-//        // M2ePro_TRANSLATIONS
-//        // Choose <b>Yes</b> if you want to override the Default Settings for this M2E Pro Listing and to choose Different Settings for certain Products.
-//        return <<<HTML
-//<div id="settings_popup_content" style="display: none">
-//    <div style="margin: 10px; height: 150px">
-//        <h3>{$this->__('Do you want to customize the M2E Pro Listing Settings for some Products?')}</h3>
-//        <br/>
-//        <p>{$this->__('Choose <b>Yes</b> if you want to override the Default Settings for this M2E Pro Listing '.
-//            'and to choose Different Settings for certain Products.')}</p>
-//    </div>
-//
-//    <div class="clear"></div>
-//    <div class="left">
-//        <div style="margin-left: 20px">
-//            <input id="remember_checkbox" type="checkbox">
-//            &nbsp;&nbsp;
-//            <label for="remember_checkbox">{$this->__('Remember my choice')}</label>
-//        </div>
-//    </div>
-//    <div class="right">
-//        {$yesButton->toHtml()}
-//        <div style="display: inline-block;"></div>
-//        {$noButton->toHtml()}
-//    </div>
-//    <div class="clear"></div>
-//</div>
-//HTML;
-//    }
 
     //########################################
 }

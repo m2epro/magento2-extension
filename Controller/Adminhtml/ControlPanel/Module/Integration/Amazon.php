@@ -11,7 +11,12 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 use Ess\M2ePro\Helper\Component\Amazon as AmazonHelper;
+use Ess\M2ePro\Model\Amazon\Account;
 
+/**
+ * Class Amazon
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration
+ */
 class Amazon extends Command
 {
     private $synchConfig;
@@ -41,12 +46,61 @@ class Amazon extends Command
     //########################################
 
     /**
+     * @title "Reset 3rd Party"
+     * @description "Clear all 3rd party items for all Accounts"
+     */
+    public function resetOtherListingsAction()
+    {
+        $listingOther = $this->parentFactory->getObject(AmazonHelper::NICK, 'Listing\Other');
+        $amazonListingOther = $this->activeRecordFactory->getObject('Amazon_Listing_Other');
+
+        $stmt = $listingOther->getResourceCollection()->getSelect()->query();
+
+        $SKUs = [];
+        foreach ($stmt as $row) {
+            $listingOther->setData($row);
+            $amazonListingOther->setData($row);
+
+            $listingOther->setChildObject($amazonListingOther);
+            $amazonListingOther->setParentObject($listingOther);
+            $SKUs[] = $amazonListingOther->getSku();
+
+            $listingOther->delete();
+        }
+
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_amazon_item');
+        foreach (array_chunk($SKUs, 1000) as $chunkSKUs) {
+            $this->resourceConnection->getConnection()->delete($tableName, ['sku IN (?)' => $chunkSKUs]);
+        }
+
+        $accountsCollection = $this->parentFactory->getObject(AmazonHelper::NICK, 'Account')->getCollection();
+        $accountsCollection->addFieldToFilter(
+            'other_listings_synchronization',
+            Account::OTHER_LISTINGS_SYNCHRONIZATION_YES
+        );
+
+        foreach ($accountsCollection->getItems() as $account) {
+            $additionalData = (array)$this->getHelper('Data')
+                ->jsonDecode($account->getAdditionalData());
+
+            unset($additionalData['is_amazon_other_listings_full_items_data_already_received'],
+                $additionalData['last_other_listing_products_synchronization']
+            );
+
+            $account->setSettings('additional_data', $additionalData)->save();
+        }
+
+        $this->getMessageManager()->addSuccess('Successfully removed.');
+        $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
+    }
+
+    /**
      * @title "Show Duplicates"
      * @description "[listing_id/sku]"
      */
     public function showAmazonDuplicatesAction()
     {
-        $structureHelper = $this->getHelper('Module\Database\Structure');
+        $structureHelper = $this->getHelper('Module_Database_Structure');
 
         $lp = $structureHelper->getTableNameWithPrefix('m2epro_listing_product');
         $alp = $structureHelper->getTableNameWithPrefix('m2epro_amazon_listing_product');
@@ -54,47 +108,58 @@ class Amazon extends Command
 
         $subQuery = $this->resourceConnection->getConnection()
             ->select()
-            ->from(array('malp' => $alp),
-                   array('general_id', 'sku'))
-            ->joinInner(array('mlp' => $lp),
+            ->from(
+                ['malp' => $alp],
+                ['general_id', 'sku']
+            )
+            ->joinInner(
+                ['mlp' => $lp],
                 'mlp.id = malp.listing_product_id',
-                array('listing_id',
+                ['listing_id',
                     'product_id',
                     new \Zend_Db_Expr('COUNT(product_id) - 1 AS count_of_duplicates'),
                     new \Zend_Db_Expr('MAX(mlp.id) AS save_this_id'),
-                ))
-            ->group(array('mlp.product_id', 'malp.sku'))
+                ]
+            )
+            ->group(['mlp.product_id', 'malp.sku'])
             ->having(new \Zend_Db_Expr('count_of_duplicates > 0'));
 
         $query = $this->resourceConnection->getConnection()
             ->select()
-            ->from(array('malp' => $alp),
-                   array('listing_product_id'))
-            ->joinInner(array('mlp' => $lp),
-                        'mlp.id = malp.listing_product_id',
-                        array('status'))
-            ->joinInner(array('templ_table' => $subQuery),
-                        'malp.sku = templ_table.sku AND mlp.listing_id = templ_table.listing_id')
+            ->from(
+                ['malp' => $alp],
+                ['listing_product_id']
+            )
+            ->joinInner(
+                ['mlp' => $lp],
+                'mlp.id = malp.listing_product_id',
+                ['status']
+            )
+            ->joinInner(
+                ['templ_table' => $subQuery],
+                'malp.sku = templ_table.sku AND mlp.listing_id = templ_table.listing_id'
+            )
             ->where('malp.listing_product_id <> templ_table.save_this_id')
             ->query();
 
         $removed = 0;
-        $duplicated = array();
+        $duplicated = [];
 
         while ($row = $query->fetch()) {
-
             if ((bool)$this->getRequest()->getParam('remove', false)) {
-
                 $this->resourceConnection->getConnection()->delete(
-                    $lp, array('id = ?' => $row['listing_product_id'])
+                    $lp,
+                    ['id = ?' => $row['listing_product_id']]
                 );
 
                 $this->resourceConnection->getConnection()->delete(
-                    $alp, array('listing_product_id = ?' => $row['listing_product_id'])
+                    $alp,
+                    ['listing_product_id = ?' => $row['listing_product_id']]
                 );
 
                 $this->resourceConnection->getConnection()->delete(
-                    $alpr, array('listing_product_id = ?' => $row['listing_product_id'])
+                    $alpr,
+                    ['listing_product_id = ?' => $row['listing_product_id']]
                 );
 
                 $removed++;
@@ -105,7 +170,6 @@ class Amazon extends Command
         }
 
         if (count($duplicated) <= 0) {
-
             $message = 'There are no duplicates.';
             $removed > 0 && $message .= ' Removed: ' . $removed;
 

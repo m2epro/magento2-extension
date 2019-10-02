@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\OtherListings\Update;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\OtherListings\Update
+ */
 class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResponser
 {
     protected $activeRecordFactory;
-    protected $synchronizationLog = NULL;
+    protected $synchronizationLog = null;
 
     //########################################
 
@@ -22,8 +26,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResp
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params = []
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($ebayFactory, $response, $helperFactory, $modelFactory, $params);
     }
@@ -35,7 +38,6 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResp
         parent::processResponseMessages();
 
         foreach ($this->getResponse()->getMessages()->getEntities() as $message) {
-
             if (!$message->isError() && !$message->isWarning()) {
                 continue;
             }
@@ -84,12 +86,10 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResp
         try {
 
             /** @var $updatingModel \Ess\M2ePro\Model\Ebay\Listing\Other\Updating */
-            $updatingModel = $this->modelFactory->getObject('Ebay\Listing\Other\Updating');
+            $updatingModel = $this->modelFactory->getObject('Ebay_Listing_Other_Updating');
             $updatingModel->initialize($this->getAccount());
             $updatingModel->processResponseData($this->getPreparedResponseData());
-
         } catch (\Exception $exception) {
-
             $this->getHelper('Module\Exception')->process($exception);
 
             $this->getSynchronizationLog()->addMessage(
@@ -107,7 +107,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResp
      */
     protected function getAccount()
     {
-        return $this->getObjectByParam('Account','account_id');
+        return $this->getObjectByParam('Account', 'account_id');
     }
 
     /**
@@ -115,14 +115,14 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResp
      */
     protected function getMarketplace()
     {
-        return $this->getObjectByParam('Marketplace','marketplace_id');
+        return $this->getObjectByParam('Marketplace', 'marketplace_id');
     }
 
     // ---------------------------------------
 
     protected function getSynchronizationLog()
     {
-        if (!is_null($this->synchronizationLog)) {
+        if ($this->synchronizationLog !== null) {
             return $this->synchronizationLog;
         }
 

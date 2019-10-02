@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class Template
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product
+ */
 abstract class Template extends Main
 {
     //########################################
@@ -22,7 +26,6 @@ abstract class Template extends Main
         $productsIds = [];
         $productsIdsParam = array_chunk($productsIdsParam, 1000);
         foreach ($productsIdsParam as $productsIdsParamChunk) {
-
             $select = $connection->select();
             $select->from(['lo' => $table], ['object_id'])
                 ->where('model_name = "Listing\Product"')
@@ -49,11 +52,11 @@ abstract class Template extends Main
     protected function runProcessorForParents($productsIds)
     {
         $connection = $this->resourceConnection->getConnection();
-        $tableAmazonListingProduct = $this->activeRecordFactory->getObject('Amazon\Listing\Product')
+        $tableAmazonListingProduct = $this->activeRecordFactory->getObject('Amazon_Listing_Product')
             ->getResource()->getMainTable();
 
         $select = $connection->select();
-        $select->from(array('alp' => $tableAmazonListingProduct), array('listing_product_id'))
+        $select->from(['alp' => $tableAmazonListingProduct], ['listing_product_id'])
             ->where('listing_product_id IN (?)', $productsIds)
             ->where('is_variation_parent = ?', 1);
 

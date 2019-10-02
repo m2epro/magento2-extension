@@ -12,6 +12,10 @@ use Ess\M2ePro\Model\Ebay\Processing\Action;
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Exception\Logic;
 
+/**
+ * Class Processor
+ * @package Ess\M2ePro\Model\Ebay\Actions
+ */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
     const ACTION_MAX_LIFE_TIME = 86400;
@@ -32,7 +36,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     const MAX_TOTAL_EXECUTION_TIME      = 180;
 
     /** @var \Ess\M2ePro\Model\Lock\Item\Manager|null */
-    private $lockItem = NULL;
+    private $lockItem = null;
 
     protected $activeRecordFactory;
 
@@ -49,8 +53,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Framework\App\ResourceConnection $resource,
         $data = []
-    )
-    {
+    ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
         $this->activeRecordFactory = $activeRecordFactory;
@@ -92,13 +95,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     private function removeMissedProcessingActions()
     {
-        $actionCollection = $this->activeRecordFactory->getObject('Ebay\Processing\Action')->getCollection();
+        $actionCollection = $this->activeRecordFactory->getObject('Ebay_Processing_Action')->getCollection();
         $actionCollection->getSelect()->joinLeft(
-            array('p' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_processing')),
+            ['p' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_processing')],
             'p.id = main_table.processing_id',
-            array()
+            []
         );
-        $actionCollection->addFieldToFilter('p.id', array('null' => true));
+        $actionCollection->addFieldToFilter('p.id', ['null' => true]);
 
         /** @var Action[] $actions */
         $actions = $actionCollection->getItems();
@@ -113,11 +116,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     private function completeNeedSynchRulesCheckActions()
     {
-        $actionCollection = $this->activeRecordFactory->getObject('Ebay\Processing\Action')->getCollection();
+        $actionCollection = $this->activeRecordFactory->getObject('Ebay_Processing_Action')->getCollection();
         $actionCollection->getSelect()->joinLeft(
-            array(
-                'lp' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing_product')
-            ),
+            [
+                'lp' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_listing_product')
+            ],
             'lp.id = main_table.related_id',
             'need_synch_rules_check'
         );
@@ -131,7 +134,9 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($actions as $action) {
             $this->completeAction(
-                $action, array(), array($this->getNeedSynchRulesCheckActionMessage())
+                $action,
+                [],
+                [$this->getNeedSynchRulesCheckActionMessage()]
             );
         }
     }
@@ -141,8 +146,9 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $minimumAllowedDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $minimumAllowedDate->modify('- '.self::ACTION_MAX_LIFE_TIME.' seconds');
 
-        $actionCollection = $this->activeRecordFactory->getObject('Ebay\Processing\Action')->getCollection();;
-        $actionCollection->addFieldToFilter('create_date', array('lt' => $minimumAllowedDate->format('Y-m-d H:i:s')));
+        $actionCollection = $this->activeRecordFactory->getObject('Ebay_Processing_Action')->getCollection();
+        ;
+        $actionCollection->addFieldToFilter('create_date', ['lt' => $minimumAllowedDate->format('Y-m-d H:i:s')]);
 
         /** @var Action[] $expiredActions */
         $expiredActions = $actionCollection->getItems();
@@ -150,14 +156,15 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        $expiredMessage = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $expiredMessage = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $expiredMessage->initFromPreparedData(
-            'Request wait timeout exceeded.', Message::TYPE_ERROR
+            'Request wait timeout exceeded.',
+            Message::TYPE_ERROR
         );
         $expiredMessage = $expiredMessage->asArray();
 
         foreach ($expiredActions as $expiredAction) {
-            $this->completeAction($expiredAction, array(), array($expiredMessage));
+            $this->completeAction($expiredAction, [], [$expiredMessage]);
         }
     }
 
@@ -168,7 +175,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     private function getActionsForExecute()
     {
-        $actionCollection = $this->activeRecordFactory->getObject('Ebay\Processing\Action')->getCollection();
+        $actionCollection = $this->activeRecordFactory->getObject('Ebay_Processing_Action')->getCollection();
         $actionCollection->getSelect()->order('priority DESC');
         $actionCollection->getSelect()->order('start_date ASC');
         $actionCollection->getSelect()->limit(self::MAX_SELECT_ACTIONS_COUNT);
@@ -176,10 +183,10 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $connRead = $this->resource->getConnection();
         $statement = $connRead->query($actionCollection->getSelect());
 
-        $actions = array();
+        $actions = [];
 
         while (($actionData = $statement->fetch()) !== false) {
-            $action = $this->activeRecordFactory->getObject('Ebay\Processing\Action');
+            $action = $this->activeRecordFactory->getObject('Ebay_Processing_Action');
             $action->setData($actionData);
 
             if ($this->isActionCanBeAdded($action, $actions)) {
@@ -201,17 +208,20 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     private function executeSerial(array $actions)
     {
-        $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+        $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
 
         foreach ($actions as $action) {
             $this->getLockItem()->activate();
 
             $listingProduct = $this->ebayFactory->getObjectLoaded(
-                'Listing\Product', $action->getRelatedId(), 'id', false
+                'Listing\Product',
+                $action->getRelatedId(),
+                'id',
+                false
             );
 
             if ($listingProduct->getId() && $listingProduct->needSynchRulesCheck()) {
-                $this->completeAction($action, array(), array($this->getNeedSynchRulesCheckActionMessage()));
+                $this->completeAction($action, [], [$this->getNeedSynchRulesCheckActionMessage()]);
                 continue;
             }
 
@@ -219,9 +229,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             /** @var \Ess\M2ePro\Model\Connector\Command\RealTime\Virtual $connector */
             $connector = $dispatcher->getVirtualConnector(
-                $command[0], $command[1], $command[2],
-                $action->getRequestData(), NULL,
-                $action->getMarketplaceId(), $action->getAccountId(),
+                $command[0],
+                $command[1],
+                $command[2],
+                $action->getRequestData(),
+                null,
+                $action->getMarketplaceId(),
+                $action->getAccountId(),
                 $action->getRequestTimeOut()
             );
 
@@ -229,7 +243,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             $this->completeAction(
                 $action,
-                $connector->getResponseData(), $connector->getResponseMessages(),
+                $connector->getResponseData(),
+                $connector->getResponseMessages(),
                 $connector->getRequestTime()
             );
         }
@@ -241,7 +256,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     private function executeParallel(array $actions)
     {
-        $dispatcher = $this->modelFactory->getObject('Ebay\Actions\Processor\Connector\Multiple\Dispatcher');
+        /** @var \Ess\M2ePro\Model\Ebay\Actions\Processor\Connector\Multiple\Dispatcher $dispatcher */
+        $dispatcher = $this->modelFactory->getObject('Ebay_Actions_Processor_Connector_Multiple_Dispatcher');
 
         foreach ($this->groupForParallelExecution($actions, true) as $actionsPacks) {
             foreach ($actionsPacks as $actionsPack) {
@@ -252,22 +268,26 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 $listingsProducts = $this->getListingsProducts($actionsPack);
 
                 /** @var Processor\Connector\Multiple\Command\VirtualWithoutCall[] $connectors */
-                $connectors = array();
+                $connectors = [];
 
                 foreach ($actionsPack as $action) {
                     if (isset($listingsProducts[$action->getRelatedId()]) &&
                         $listingsProducts[$action->getRelatedId()]->needSynchRulesCheck()) {
-                        $this->completeAction($action, array(), array($this->getNeedSynchRulesCheckActionMessage()));
+                        $this->completeAction($action, [], [$this->getNeedSynchRulesCheckActionMessage()]);
                         continue;
                     }
 
                     $command = $this->getCommand($action);
 
                     $connectors[$action->getId()] = $dispatcher->getCustomVirtualConnector(
-                        'Ebay\Actions\Processor\Connector\Multiple\Command\VirtualWithoutCall',
-                        $command[0], $command[1], $command[2],
-                        $action->getRequestData(), NULL,
-                        $action->getMarketplaceId(), $action->getAccountId(),
+                        'Ebay_Actions_Processor_Connector_Multiple_Command_VirtualWithoutCall',
+                        $command[0],
+                        $command[1],
+                        $command[2],
+                        $action->getRequestData(),
+                        null,
+                        $action->getMarketplaceId(),
+                        $action->getAccountId(),
                         $action->getRequestTimeOut()
                     );
                 }
@@ -278,8 +298,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
                 $dispatcher->processMultiple($connectors, true);
 
-                $systemErrorsMessages = array();
-                $isServerInMaintenanceMode = NULL;
+                $systemErrorsMessages = [];
+                $isServerInMaintenanceMode = null;
 
                 foreach ($connectors as $actionId => $connector) {
                     foreach ($actionsPack as $action) {
@@ -292,7 +312,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                         if ($response->getMessages()->hasSystemErrorEntity()) {
                             $systemErrorsMessages[] = $response->getMessages()->getCombinedSystemErrorsString();
 
-                            if (is_null($isServerInMaintenanceMode) && $response->isServerInMaintenanceMode()) {
+                            if ($isServerInMaintenanceMode === null && $response->isServerInMaintenanceMode()) {
                                 $isServerInMaintenanceMode = true;
                             }
                             continue;
@@ -300,7 +320,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
                         $this->completeAction(
                             $action,
-                            $connector->getResponseData(), $connector->getResponseMessages(),
+                            $connector->getResponseData(),
+                            $connector->getResponseMessages(),
                             $connector->getRequestTime()
                         );
 
@@ -312,7 +333,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                     throw new \Ess\M2ePro\Model\Exception($this->getHelper('Module\Translation')->__(
                         "Internal Server Error(s) [%error_message%]",
                         $this->getCombinedErrorMessage($systemErrorsMessages)
-                    ), array(), 0, !$isServerInMaintenanceMode);
+                    ), [], 0, !$isServerInMaintenanceMode);
                 }
             }
         }
@@ -322,24 +343,25 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     private function getCombinedErrorMessage(array $systemErrorsMessages)
     {
-        $combinedErrorMessages = array();
+        $combinedErrorMessages = [];
         foreach ($systemErrorsMessages as $systemErrorMessage) {
-            $key = md5($systemErrorMessage);
+            $key = sha1($systemErrorMessage);
 
             if (isset($combinedErrorMessages[$key])) {
                 $combinedErrorMessages[$key]["count"] += 1;
                 continue;
             }
 
-            $combinedErrorMessages[$key] = array(
+            $combinedErrorMessages[$key] = [
                 "message" => $systemErrorMessage,
                 "count" => 1
-            );
+            ];
         }
 
         $message = "";
         foreach ($combinedErrorMessages as $combinedErrorMessage) {
-            $message .= sprintf("%s (%s)<br>",
+            $message .= sprintf(
+                "%s (%s)<br>",
                 $combinedErrorMessage["message"],
                 $combinedErrorMessage["count"]
             );
@@ -387,7 +409,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        foreach($this->groupForParallelExecution($actions, false) as $actionsGroups) {
+        foreach ($this->groupForParallelExecution($actions, false) as $actionsGroups) {
             foreach ($actionsGroups as $actionsGroup) {
                 if (count($actionsGroup) < self::MAX_PARALLEL_EXECUTION_PACK_SIZE) {
                     return false;
@@ -441,19 +463,18 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     private function groupForParallelExecution(array $actions, $needDistribute = false)
     {
-        $groupedByTimeActions = array();
+        $groupedByTimeActions = [];
 
         foreach ($actions as $action) {
             $commandRequestTime = $this->getCommandRequestTime($this->getCommand($action));
             $groupedByTimeActions[$commandRequestTime][] = $action;
         }
 
-        $resultGroupedActions = array();
+        $resultGroupedActions = [];
 
         $totalSerialExecutionTime = $this->calculateSerialExecutionTime($actions);
 
         foreach ($groupedByTimeActions as $commandRequestTime => $groupActions) {
-
             $packSize = self::MAX_PARALLEL_EXECUTION_PACK_SIZE;
 
             if ($needDistribute) {
@@ -483,13 +504,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getListingsProducts(array $actions)
     {
-        $listingsProductsIds = array();
+        $listingsProductsIds = [];
         foreach ($actions as $action) {
             $listingsProductsIds[] = $action->getRelatedId();
         }
 
         $listingProductCollection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('id', array('in' => $listingsProductsIds));
+        $listingProductCollection->addFieldToFilter('id', ['in' => $listingsProductsIds]);
 
         return $listingProductCollection->getItems();
     }
@@ -500,16 +521,16 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     {
         switch ($action->getType()) {
             case Action::TYPE_LISTING_PRODUCT_LIST:
-                return array('item', 'add', 'single');
+                return ['item', 'add', 'single'];
 
             case Action::TYPE_LISTING_PRODUCT_REVISE:
-                return array('item', 'update', 'revise');
+                return ['item', 'update', 'revise'];
 
             case Action::TYPE_LISTING_PRODUCT_RELIST:
-                return array('item', 'update', 'relist');
+                return ['item', 'update', 'relist'];
 
             case Action::TYPE_LISTING_PRODUCT_STOP:
-                return array('item', 'update', 'end');
+                return ['item', 'update', 'end'];
 
             default:
                 throw new Logic('Unknown action type.');
@@ -519,14 +540,14 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     private function getCommandRequestTime($command)
     {
         switch ($command) {
-            case array('item', 'add', 'single'):
-            case array('item', 'update', 'relist'):
+            case ['item', 'add', 'single']:
+            case ['item', 'update', 'relist']:
                 return 3;
 
-            case array('item', 'update', 'revise'):
+            case ['item', 'update', 'revise']:
                 return 4;
 
-            case array('item', 'update', 'end'):
+            case ['item', 'update', 'end']:
                 return 1;
 
             default:
@@ -538,7 +559,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     private function getNeedSynchRulesCheckActionMessage()
     {
-        $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
             'There was no need for this action. It was skipped. New action request with updated Product
             information will be performed automatically.',
@@ -548,7 +569,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         return $message->asArray();
     }
 
-    private function completeAction(Action $action, array $data, array $messages, $requestTime = NULL)
+    private function completeAction(Action $action, array $data, array $messages, $requestTime = null)
     {
         $processing = $action->getProcessing();
 
@@ -558,7 +579,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $processing->setSettings('result_messages', $messages);
         $processing->setData('is_completed', 1);
 
-        if (!is_null($requestTime)) {
+        if ($requestTime !== null) {
             $processingParams = $processing->getParams();
             $processingParams['request_time'] = $requestTime;
             $processing->setSettings('params', $processingParams);

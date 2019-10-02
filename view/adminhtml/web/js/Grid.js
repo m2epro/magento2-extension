@@ -51,7 +51,7 @@ define([
                 var checkbox = $(cells[0]).select('input');
                 checkbox = checkbox[0];
 
-                if (checkbox.value == rowId) {
+                if (checkbox && checkbox.value == rowId) {
                     return trim(cells[cellIndex].innerHTML);
                 }
             }

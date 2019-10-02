@@ -34,7 +34,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\Order\Proxy $proxyOrder,
+        \Ess\M2ePro\Model\Order\ProxyObject $proxyOrder,
         \Ess\M2ePro\Model\Currency $currency,
         \Magento\Directory\Model\CurrencyFactory $magentoCurrencyFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -43,8 +43,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Magento\Quote\Manager $quoteManager
-    )
-    {
+    ) {
         $this->proxyOrder             = $proxyOrder;
         $this->currency               = $currency;
         $this->magentoCurrencyFactory = $magentoCurrencyFactory;
@@ -57,7 +56,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     public function __destruct()
     {
-        if (is_null($this->storeConfigurator)) {
+        if ($this->storeConfigurator === null) {
             return;
         }
 
@@ -89,8 +88,13 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             return $this->quote;
             // ---------------------------------------
         } catch (\Exception $e) {
+
             // Remove ordered items from customer cart
-            $this->quote->setIsActive(false)->save();
+            $this->quote->setIsActive(false);
+            $this->quote->removeAllAddresses();
+            $this->quote->removeAllItems();
+
+            $this->quote->save();
             throw $e;
         }
     }
@@ -198,7 +202,8 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     private function configureStore()
     {
         $this->storeConfigurator = $this->modelFactory->getObject(
-            'Magento\Quote\Store\Configurator', ['quote' => $this->quote, 'proxyOrder' => $this->proxyOrder]
+            'Magento_Quote_Store_Configurator',
+            ['quote' => $this->quote, 'proxyOrder' => $this->proxyOrder]
         );
 
         $this->storeConfigurator->prepareStoreConfigForOrder();
@@ -218,11 +223,10 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     private function initializeQuoteItems()
     {
         foreach ($this->proxyOrder->getItems() as $item) {
-
             $this->clearQuoteItemsCache();
 
             /** @var $quoteItemBuilder \Ess\M2ePro\Model\Magento\Quote\Item */
-            $quoteItemBuilder = $this->modelFactory->getObject('Magento\Quote\Item', [
+            $quoteItemBuilder = $this->modelFactory->getObject('Magento_Quote_Item', [
                 'quote' => $this->quote,
                 'proxyItem' => $item
             ]);
@@ -255,6 +259,9 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                 $quoteItem->setOriginalPrice($productOriginalPrice);
                 $quoteItem->setBaseOriginalPrice($productOriginalPrice);
                 $quoteItem->setNoDiscount(1);
+                foreach ($quoteItem->getChildren() as $itemChildren) {
+                    $itemChildren->getProduct()->setTaxClassId($quoteItem->getProduct()->getTaxClassId());
+                }
 
                 $giftMessageId = $quoteItemBuilder->getGiftMessageId();
                 if (!empty($giftMessageId)) {
@@ -284,7 +291,6 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     private function clearQuoteItemsCache()
     {
         foreach ($this->quote->getAllAddresses() as $address) {
-
             $address->unsetData('cached_items_all');
             $address->unsetData('cached_items_nominal');
             $address->unsetData('cached_items_nonnominal');

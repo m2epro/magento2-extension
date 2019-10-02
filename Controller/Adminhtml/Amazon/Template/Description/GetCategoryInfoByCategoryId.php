@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
+/**
+ * Class GetCategoryInfoByCategoryId
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description
+ */
 class GetCategoryInfoByCategoryId extends Description
 {
     //########################################
@@ -18,7 +22,7 @@ class GetCategoryInfoByCategoryId extends Description
     {
         $category = $this->resourceConnection->getConnection()->select()
             ->from(
-                $this->getHelper('Module\Database\Structure')
+                $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_amazon_dictionary_category')
             )
             ->where('marketplace_id = ?', $this->getRequest()->getPost('marketplace_id'))

@@ -13,6 +13,10 @@ use Magento\Backend\Block\Widget\Context;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
+/**
+ * Class Widget
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Context
+ */
 class Widget extends Context
 {
     use Traits\RendererTrait;
@@ -51,7 +55,8 @@ class Widget extends Context
         \Magento\Framework\View\Asset\Repository $assetRepo,
         \Magento\Framework\View\ConfigInterface $viewConfig,
         \Magento\Framework\App\Cache\StateInterface $cacheState,
-        \Psr\Log\LoggerInterface $logger, \Magento\Framework\Escaper $escaper,
+        \Psr\Log\LoggerInterface $logger,
+        \Magento\Framework\Escaper $escaper,
         \Magento\Framework\Filter\FilterManager $filterManager,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
         \Magento\Framework\Translate\Inline\StateInterface $inlineTranslation,
@@ -70,8 +75,7 @@ class Widget extends Context
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         Button\ButtonList $buttonList,
         Button\ToolbarInterface $toolbar
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;

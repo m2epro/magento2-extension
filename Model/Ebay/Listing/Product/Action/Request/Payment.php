@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request;
 
+/**
+ * Class Payment
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request
+ */
 class Payment extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\AbstractModel
 {
     const PAYPAL = 'PayPal';
@@ -15,7 +19,7 @@ class Payment extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Payment
      */
-    private $paymentTemplate = NULL;
+    private $paymentTemplate = null;
 
     //########################################
 
@@ -24,15 +28,15 @@ class Payment extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
      */
     public function getRequestData()
     {
-        $data = array(
+        $data = [
             'methods' => $this->getMethodsData()
-        );
+        ];
 
         if ($payPalData = $this->getPayPalData($data['methods'])) {
             $data['paypal'] = $payPalData;
         }
 
-        return array('payment'=>$data);
+        return ['payment'=>$data];
     }
 
     //########################################
@@ -42,7 +46,7 @@ class Payment extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
      */
     public function getMethodsData()
     {
-        $methods = array();
+        $methods = [];
 
         if ($this->getPaymentTemplate()->isPayPalEnabled()) {
             $methods[] = self::PAYPAL;
@@ -60,14 +64,14 @@ class Payment extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
 
     public function getPayPalData($methods)
     {
-        if (!in_array(self::PAYPAL,$methods)) {
+        if (!in_array(self::PAYPAL, $methods)) {
             return false;
         }
 
-        return array(
+        return [
             'email' => $this->getPaymentTemplate()->getPayPalEmailAddress(),
             'immediate_payment' => $this->getPaymentTemplate()->isPayPalImmediatePaymentEnabled()
-        );
+        ];
     }
 
     //########################################
@@ -77,7 +81,7 @@ class Payment extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
      */
     private function getPaymentTemplate()
     {
-        if (is_null($this->paymentTemplate)) {
+        if ($this->paymentTemplate === null) {
             $this->paymentTemplate = $this->getListingProduct()
                                           ->getChildObject()
                                           ->getPaymentTemplate();

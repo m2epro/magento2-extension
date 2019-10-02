@@ -10,12 +10,16 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tab
 
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Variations\NewChild
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $childListingProducts = null;
     protected $currentProductVariations = null;
-    protected $productVariationsTree = array();
-    protected $channelVariationsTree = array();
+    protected $productVariationsTree = [];
+    protected $channelVariationsTree = [];
 
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
@@ -128,14 +132,12 @@ HTML;
 HTML;
 
         if ($this->isGeneralIdOwner() && $this->hasChannelTheme()) {
-
             $html .= <<<HTML
         <td style="border-left: none; border-right: none; padding-left: 5px;
                    width: 185px; text-align: center; vertical-align: middle;" rowspan="6">
 HTML;
 
             if ($this->hasUnusedChannelVariations()) {
-
                 $html .= <<<HTML
         <div id="manage_variations_create_new_asin">
             {$this->__('or')}&nbsp;&nbsp;
@@ -152,7 +154,6 @@ HTML;
         </div>
 HTML;
             } else {
-
                 $html .= <<<HTML
             <input type="hidden" name="create_new_asin" value="1">
 HTML;
@@ -167,7 +168,6 @@ HTML;
 
         $i = 0;
         foreach ($matchedAttributes as $magentoAttr => $amazonAttr) {
-
             $style = array_key_exists($amazonAttr, $virtualChannelAttributes) ? 'border-bottom: 2px dotted grey;' : '';
 
             $html .= <<<HTML
@@ -213,7 +213,7 @@ HTML;
 HTML;
 
         $this->css->add(
-<<<CSS
+            <<<CSS
 .variation_new_child_form-full-width .admin__field-control {
     width: 100% !important;
     margin-left: 0px !important;
@@ -233,7 +233,7 @@ HTML;
     border-right: none;
 }
 CSS
-    );
+        );
 
         $fieldset->addField(
             'general_container',
@@ -372,7 +372,7 @@ CSS
 
     public function getChildListingProducts()
     {
-        if (!is_null($this->childListingProducts)) {
+        if ($this->childListingProducts !== null) {
             return $this->childListingProducts;
         }
 
@@ -382,7 +382,7 @@ CSS
 
     public function getCurrentProductVariations()
     {
-        if (!is_null($this->currentProductVariations)) {
+        if ($this->currentProductVariations !== null) {
             return $this->currentProductVariations;
         }
 
@@ -391,10 +391,10 @@ CSS
             ->getVariationInstance()
             ->getVariationsTypeStandard();
 
-        $productVariations = array();
+        $productVariations = [];
 
         foreach ($magentoProductVariations['variations'] as $option) {
-            $productOption = array();
+            $productOption = [];
 
             foreach ($option as $attribute) {
                 $productOption[$attribute['attribute']] = $attribute['option'];
@@ -416,12 +416,12 @@ CSS
 
     public function getAttributesOptionsFromVariations($variations)
     {
-        $attributesOptions = array();
+        $attributesOptions = [];
 
         foreach ($variations as $variation) {
             foreach ($variation as $attr => $option) {
                 if (!isset($attributesOptions[$attr])) {
-                    $attributesOptions[$attr] = array();
+                    $attributesOptions[$attr] = [];
                 }
                 if (!in_array($option, $attributesOptions[$attr])) {
                     $attributesOptions[$attr][] = $option;
@@ -459,7 +459,6 @@ CSS
     public function getProductVariationsTree()
     {
         if (empty($this->productVariationsTree)) {
-
             $matchedAttributes = $this->getMatchedAttributes();
             $unusedVariations = $this->sortVariationsAttributes(
                 $this->getUnusedProductVariations(),
@@ -473,7 +472,9 @@ CSS
             $firstAttribute = key($matchedAttributes);
 
             $this->productVariationsTree = $this->prepareVariations(
-                $firstAttribute,$unusedVariations,$variationsSets
+                $firstAttribute,
+                $unusedVariations,
+                $variationsSets
             );
         }
 
@@ -483,7 +484,6 @@ CSS
     public function getChannelVariationsTree()
     {
         if (empty($this->channelVariationsTree)) {
-
             $matchedAttributes = $this->getMatchedAttributes();
             $unusedVariations = $this->sortVariationsAttributes(
                 $this->getUnusedChannelVariations(),
@@ -504,7 +504,9 @@ CSS
             $firstAttribute = $matchedAttributes[key($matchedAttributes)];
 
             $this->channelVariationsTree = $this->prepareVariations(
-                $firstAttribute,$unusedVariations,$variationsSets
+                $firstAttribute,
+                $unusedVariations,
+                $variationsSets
             );
         }
 
@@ -522,7 +524,7 @@ CSS
 
     private function sortVariationAttributes($variation, $sortTemplate)
     {
-        $sortedData = array();
+        $sortedData = [];
 
         foreach ($sortTemplate as $attr) {
             $sortedData[$attr] = $variation[$attr];
@@ -531,7 +533,7 @@ CSS
         return $sortedData;
     }
 
-    private function prepareVariations($currentAttribute,$magentoVariations,$variationsSets,$filters = array())
+    private function prepareVariations($currentAttribute, $magentoVariations, $variationsSets, $filters = [])
     {
         $return = false;
 
@@ -541,16 +543,17 @@ CSS
         $currentAttributePosition = $temp[$currentAttribute];
 
         if ($currentAttributePosition != $lastAttributePosition) {
-
             $temp = array_keys($variationsSets);
             $nextAttribute = $temp[$currentAttributePosition + 1];
 
             foreach ($variationsSets[$currentAttribute] as $option) {
-
                 $filters[$currentAttribute] = $option;
 
                 $result = $this->prepareVariations(
-                    $nextAttribute,$magentoVariations,$variationsSets,$filters
+                    $nextAttribute,
+                    $magentoVariations,
+                    $variationsSets,
+                    $filters
                 );
 
                 if (!$result) {
@@ -570,15 +573,13 @@ CSS
         $return = false;
         foreach ($magentoVariations as $key => $magentoVariation) {
             foreach ($magentoVariation as $attribute => $option) {
-
                 if ($attribute == $currentAttribute) {
-
                     if (count($variationsSets) != 1) {
                         continue;
                     }
 
                     $values = array_flip($variationsSets[$currentAttribute]);
-                    $return = array($currentAttribute => $values);
+                    $return = [$currentAttribute => $values];
 
                     foreach ($return[$currentAttribute] as &$option) {
                         $option = true;

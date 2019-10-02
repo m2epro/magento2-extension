@@ -8,10 +8,13 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent;
 
-abstract class AbstractModel
-    extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\AbstractModel
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent
+ */
+abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\AbstractModel
 {
-    protected $childMode = NULL;
+    protected $childMode = null;
 
     protected $activeRecordFactory;
 
@@ -26,10 +29,9 @@ abstract class AbstractModel
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
         \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null,
-        $childMode  = null
-    )
-    {
-        if (!is_null($childMode)){
+        $childMode = null
+    ) {
+        if ($childMode !== null) {
             $this->setChildMode($childMode);
         }
 
@@ -65,7 +67,7 @@ abstract class AbstractModel
     {
         $temp = parent::_initSelect();
 
-        if (is_null($this->childMode)) {
+        if ($this->childMode === null) {
             return $temp;
         }
 
@@ -76,7 +78,7 @@ abstract class AbstractModel
         $componentPk = $resource->getChildPrimary($this->childMode);
 
         $this->getSelect()->join(
-            array('second_table'=>$componentTable),
+            ['second_table'=>$componentTable],
             "`second_table`.`".$componentPk."` = `main_table`.`id`"
         );
         $this->getSelect()->where("`main_table`.`component_mode` = '".$this->childMode."'");
@@ -90,13 +92,13 @@ abstract class AbstractModel
     {
         /** @var $item \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel */
 
-        if (is_null($this->childMode)) {
+        if ($this->childMode === null) {
             return parent::addItem($item);
         }
 
         $item->setChildMode($this->childMode);
 
-        if (is_null($item->getId())) {
+        if ($item->getId() === null) {
             return parent::addItem($item);
         }
 
@@ -110,7 +112,7 @@ abstract class AbstractModel
         /** @var $item \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel */
         $item = parent::getFirstItem();
 
-        if (is_null($this->childMode)) {
+        if ($this->childMode === null) {
             return $item;
         }
 
@@ -124,7 +126,7 @@ abstract class AbstractModel
         /** @var $item \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel */
         $item = parent::getLastItem();
 
-        if (is_null($this->childMode)) {
+        if ($this->childMode === null) {
             return $item;
         }
 
@@ -141,14 +143,14 @@ abstract class AbstractModel
         $object->unsetData();
 
         /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $childObject */
-        $modelName = str_replace('Ess\M2ePro\Model',ucwords($this->childMode),$this->_model);
+        $modelName = str_replace('Ess\M2ePro\Model', ucwords($this->childMode), $this->_model);
         $childObject = $this->activeRecordFactory->getObject($modelName);
 
         /** @var $resource \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel */
         $resource = $this->getResource();
 
         $childColumnsData = $this->getConnection()->describeTable($resource->getChildTable($this->childMode));
-        foreach($childColumnsData as $columnData) {
+        foreach ($childColumnsData as $columnData) {
             if (!isset($data[$columnData['COLUMN_NAME']])) {
                 continue;
             }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request;
 
+/**
+ * Class Price
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request
+ */
 class Price extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\AbstractModel
 {
     const BUSINESS_DISCOUNTS_TYPE_FIXED = 'fixed';
@@ -19,7 +23,7 @@ class Price extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Abst
      */
     public function getRequestData()
     {
-        $data = array();
+        $data = [];
 
         if ($this->getConfigurator()->isRegularPriceAllowed()) {
             if (!isset($this->validatorsData['regular_price'])) {
@@ -66,10 +70,10 @@ class Price extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Abst
             if ($businessDiscounts = $this->validatorsData['business_discounts']) {
                 ksort($businessDiscounts);
 
-                $data['business_discounts'] = array(
+                $data['business_discounts'] = [
                     'type'   => self::BUSINESS_DISCOUNTS_TYPE_FIXED,
                     'values' => $businessDiscounts
-                );
+                ];
             }
         }
 

@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Magento\Product;
 
+/**
+ * Class Status
+ * @package Ess\M2ePro\Model\Magento\Product
+ */
 class Status extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $resourceModel;
     protected $productResource;
     protected $magentoProductCollectionFactory;
 
-    protected $_productAttributes  = array();
+    protected $_productAttributes  = [];
 
     //########################################
 
@@ -24,8 +28,7 @@ class Status extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->resourceModel = $resourceModel;
         $this->productResource = $productResource;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
@@ -52,16 +55,21 @@ class Status extends \Ess\M2ePro\Model\AbstractModel
     public function getProductStatus($productIds, $storeId = null)
     {
         if (!is_array($productIds)) {
-            $productIds = array($productIds);
+            $productIds = [$productIds];
         }
 
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->addFieldToFilter([
             ['attribute' => 'entity_id', 'in' => $productIds]
         ]);
         $collection->joinAttribute(
-            'status', 'catalog_product/status', 'entity_id', NULL, 'inner', (int)$storeId
+            'status',
+            'catalog_product/status',
+            'entity_id',
+            null,
+            'inner',
+            (int)$storeId
         );
 
         $rows = [];
@@ -71,7 +79,7 @@ class Status extends \Ess\M2ePro\Model\AbstractModel
             $rows[$row['entity_id']] = $row['status'];
         }
 
-        $statuses = array();
+        $statuses = [];
 
         foreach ($productIds as $productId) {
             if (isset($rows[$productId])) {

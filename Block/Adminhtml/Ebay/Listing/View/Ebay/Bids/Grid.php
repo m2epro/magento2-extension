@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Bids;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Bids
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -29,8 +33,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->customCollectionFactory = $customCollectionFactory;
         $this->resourceConnection = $resourceConnection;
         $this->localeCurrency = $localeCurrency;
@@ -102,12 +105,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collection = $this->customCollectionFactory->create();
 
         foreach ($this->getBidsData() as $index => $item) {
-            $temp = array(
+            $temp = [
                 'user_id' => $item['user']['user_id'],
                 'email' => $item['user']['email'],
                 'price' => $item['price'],
                 'time' => $item['time']
-            );
+            ];
 
             $collection->addItem(new \Magento\Framework\DataObject($temp));
         }
@@ -120,36 +123,36 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('user_id', array(
+        $this->addColumn('user_id', [
             'header'       => $this->__('eBay User ID'),
             'width'        => '180px',
             'align'        => 'center',
             'type'         => 'text',
             'index'        => 'user_id',
             'sortable'     => false
-        ));
+        ]);
 
-        $this->addColumn('email', array(
+        $this->addColumn('email', [
             'header'       => $this->__('eBay User Email'),
             'width'        => '180px',
             'align'        => 'center',
             'type'         => 'text',
             'index'        => 'email',
             'sortable'     => false,
-            'frame_callback' => array($this, 'callbackColumnEmail')
-        ));
+            'frame_callback' => [$this, 'callbackColumnEmail']
+        ]);
 
-        $this->addColumn('price',array(
+        $this->addColumn('price', [
             'header'       => $this->__('Price'),
             'width'        => '90px',
             'align'        => 'right',
             'index'        => 'price',
             'sortable'     => false,
             'type'         => 'number',
-            'frame_callback' => array($this, 'callbackColumnPrice')
-        ));
+            'frame_callback' => [$this, 'callbackColumnPrice']
+        ]);
 
-        $this->addColumn('time', array(
+        $this->addColumn('time', [
             'header'       => $this->__('Date'),
             'width'        => '180px',
             'align'        => 'right',
@@ -158,7 +161,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'        => 'time',
             'sortable'     => false,
             'format'       => \IntlDateFormatter::MEDIUM,
-        ));
+        ]);
     }
 
     //########################################
@@ -209,7 +212,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     </div>
 </div>
 HTML;
-
     }
 
     //########################################

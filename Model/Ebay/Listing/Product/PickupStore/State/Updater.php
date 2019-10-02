@@ -8,24 +8,28 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\PickupStore\State;
 
+/**
+ * Class Updater
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\PickupStore\State
+ */
 class Updater extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-    private $listingProduct = NULL;
+    private $listingProduct = null;
 
     /** @var \Ess\M2ePro\Model\Listing\Product\Variation[] $variations */
-    private $variations = array();
+    private $variations = [];
 
-    private $maxAppliedQtyValue = NULL;
+    private $maxAppliedQtyValue = null;
 
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\PickupStore\QtyCalculator */
-    private $qtyCalculator = NULL;
+    private $qtyCalculator = null;
 
     /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore[] $accountPickupStores */
-    private $accountPickupStores = array();
+    private $accountPickupStores = [];
 
     /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore\State[] $accountPickupStoreStateItems */
-    private $accountPickupStoreStateItems = array();
+    private $accountPickupStoreStateItems = [];
 
     protected $resourceConnection;
     protected $activeRecordFactory;
@@ -37,8 +41,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -99,10 +102,10 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
 
         if (!$this->isDeleted()) {
             $connection->update(
-                $this->getHelper('Module\Database\Structure')
+                $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_ebay_listing_product_pickup_store'),
-                array('is_process_required' => 0),
-                array('listing_product_id = ?' => $this->getListingProduct()->getId())
+                ['is_process_required' => 0],
+                ['listing_product_id = ?' => $this->getListingProduct()->getId()]
             );
         }
 
@@ -113,11 +116,11 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
 
     private function calculateValues()
     {
-        $calculatedValues = array();
+        $calculatedValues = [];
 
         foreach ($this->getSkus() as $sku) {
-            $fullSettingsCache   = array();
-            $sourceSettingsCache = array();
+            $fullSettingsCache   = [];
+            $sourceSettingsCache = [];
 
             foreach ($this->getAccountPickupStores() as $accountPickupStore) {
                 $fullSettings = $accountPickupStore->getQtySource();
@@ -125,25 +128,25 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
                     $fullSettings = $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->getQtySource();
                 }
 
-                $fullSettingsHash = md5($this->getHelper('Data')->jsonEncode($fullSettings));
+                $fullSettingsHash = sha1($this->getHelper('Data')->jsonEncode($fullSettings));
                 if (isset($fullSettingsCache[$fullSettingsHash])) {
-                    $calculatedValues[] = array(
+                    $calculatedValues[] = [
                         'sku' => $sku,
                         'account_pickup_store_id' => $accountPickupStore->getId(),
                         'qty' => $fullSettingsCache[$fullSettingsHash],
-                    );
+                    ];
                     continue;
                 }
 
-                $sourceSettings = array(
+                $sourceSettings = [
                     'mode'      => $fullSettings['mode'],
                     'value'     => $fullSettings['value'],
                     'attribute' => $fullSettings['attribute'],
-                );
+                ];
 
-                $sourceSettingsHash = md5($this->getHelper('Data')->jsonEncode($sourceSettings));
+                $sourceSettingsHash = sha1($this->getHelper('Data')->jsonEncode($sourceSettings));
 
-                $bufferedValue = NULL;
+                $bufferedValue = null;
                 if (isset($sourceSettingsCache[$sourceSettingsHash])) {
                     $bufferedValue = $sourceSettingsCache[$sourceSettingsHash];
                 } else {
@@ -154,11 +157,11 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
                 $calculatedQty = $this->calculateQty($sku, $accountPickupStore, $bufferedValue);
                 $fullSettingsCache[$fullSettingsHash] = $calculatedQty;
 
-                $calculatedValues[] = array(
+                $calculatedValues[] = [
                     'sku' => $sku,
                     'account_pickup_store_id' => $accountPickupStore->getId(),
                     'qty' => $calculatedQty,
-                );
+                ];
             }
         }
 
@@ -167,16 +170,17 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
 
     private function prepareCalculatedValues(array $calculatedValues)
     {
-        $preparedUpdateValues = array();
-        $preparedCreateValues = array();
+        $preparedUpdateValues = [];
+        $preparedCreateValues = [];
 
         foreach ($calculatedValues as $calculatedValue) {
             $stateItem = $this->getAccountPickupStoreStateItem(
-                $calculatedValue['sku'], $calculatedValue['account_pickup_store_id']
+                $calculatedValue['sku'],
+                $calculatedValue['account_pickup_store_id']
             );
 
-            if (is_null($stateItem)) {
-                $preparedCreateValues[] = array(
+            if ($stateItem === null) {
+                $preparedCreateValues[] = [
                     'sku'                     => $calculatedValue['sku'],
                     'account_pickup_store_id' => $calculatedValue['account_pickup_store_id'],
                     'online_qty'              => 0,
@@ -185,7 +189,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
                     'is_deleted'              => 0,
                     'update_date'             => $this->getHelper('Data')->getCurrentGmtDate(),
                     'create_date'             => $this->getHelper('Data')->getCurrentGmtDate(),
-                );
+                ];
                 continue;
             }
 
@@ -193,11 +197,11 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            if (is_null($this->getMaxAppliedQtyValue())) {
-                $preparedUpdateValues[$calculatedValue['qty']][] = array(
+            if ($this->getMaxAppliedQtyValue() === null) {
+                $preparedUpdateValues[$calculatedValue['qty']][] = [
                     'sku' => $calculatedValue['sku'],
                     'account_pickup_store_id' => $calculatedValue['account_pickup_store_id'],
-                );
+                ];
 
                 continue;
             }
@@ -208,16 +212,16 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            $preparedUpdateValues[$calculatedValue['qty']][] = array(
+            $preparedUpdateValues[$calculatedValue['qty']][] = [
                 'sku' => $calculatedValue['sku'],
                 'account_pickup_store_id' => $calculatedValue['account_pickup_store_id'],
-            );
+            ];
         }
 
-        return array(
+        return [
             'create' => $preparedCreateValues,
             'update' => $preparedUpdateValues,
-        );
+        ];
     }
 
     private function applyCalculatedValues(array $calculatedValues)
@@ -228,7 +232,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
 
         if (!empty($calculatedValues['create'])) {
             $connection->insertMultiple(
-                $this->getHelper('Module\Database\Structure')
+                $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_ebay_account_pickup_store_state'),
                 $calculatedValues['create']
             );
@@ -250,9 +254,9 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
             }
 
             $connection->update(
-                $this->getHelper('Module\Database\Structure')
+                $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_ebay_account_pickup_store_state'),
-                array('target_qty' => $qty, 'update_date' => $this->getHelper('Data')->getCurrentGmtDate()),
+                ['target_qty' => $qty, 'update_date' => $this->getHelper('Data')->getCurrentGmtDate()],
                 $where
             );
 
@@ -276,10 +280,10 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
             $sku = $this->resourceConnection->getConnection()->quote($sku);
         }
 
-        $collection = $this->activeRecordFactory->getObject('Ebay\Listing\Product\PickupStore')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Ebay_Listing_Product_PickupStore')->getCollection();
         $collection->addFieldToFilter('main_table.listing_product_id', $this->getListingProduct()->getId());
         $collection->getSelect()->join(
-            ['eaps' => $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\State')
+            ['eaps' => $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')
                 ->getResource()->getMainTable()],
             'eaps.account_pickup_store_id=main_table.account_pickup_store_id
             AND eaps.sku IN(' . implode(',', $skus) . ') AND eaps.is_deleted = 1',
@@ -291,15 +295,19 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    private function calculateQty($sku, \Ess\M2ePro\Model\Ebay\Account\PickupStore $accountPickupStore,
-                                  $bufferedValue = NULL)
-    {
+    private function calculateQty(
+        $sku,
+        \Ess\M2ePro\Model\Ebay\Account\PickupStore $accountPickupStore,
+        $bufferedValue = null
+    ) {
         if (!$this->getEbayListingProduct()->isVariationsReady()) {
             return $this->getQtyCalculator()->getLocationProductValue($accountPickupStore, $bufferedValue);
         }
 
         return $this->getQtyCalculator()->getLocationVariationValue(
-            $this->getVariation($sku), $accountPickupStore, $bufferedValue
+            $this->getVariation($sku),
+            $accountPickupStore,
+            $bufferedValue
         );
     }
 
@@ -310,7 +318,8 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $this->getQtyCalculator()->getClearLocationVariationValue(
-            $this->getVariation($sku), $accountPickupStore
+            $this->getVariation($sku),
+            $accountPickupStore
         );
     }
 
@@ -318,7 +327,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
 
     private function getSkus()
     {
-        $skus = array();
+        $skus = [];
 
         if ($this->getEbayListingProduct()->isVariationsReady()) {
             foreach ($this->getVariations() as $variation) {
@@ -353,17 +362,17 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
             return $this->accountPickupStores;
         }
 
-        $collection = $this->activeRecordFactory->getObject('Ebay\Listing\Product\PickupStore')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Ebay_Listing_Product_PickupStore')->getCollection();
         $collection->addFieldToFilter('listing_product_id', $this->getListingProduct()->getId());
 
         $accountPickupStoreIds = array_unique($collection->getColumnValues('account_pickup_store_id'));
         if (empty($accountPickupStoreIds)) {
-            return $this->accountPickupStores = array();
+            return $this->accountPickupStores = [];
         }
 
-        $accountPickupStoreCollection = $this->activeRecordFactory->getObject('Ebay\Account\PickupStore')
+        $accountPickupStoreCollection = $this->activeRecordFactory->getObject('Ebay_Account_PickupStore')
             ->getCollection();
-        $accountPickupStoreCollection->addFieldToFilter('id', array('in' => $accountPickupStoreIds));
+        $accountPickupStoreCollection->addFieldToFilter('id', ['in' => $accountPickupStoreIds]);
 
         return $this->accountPickupStores = $accountPickupStoreCollection->getItems();
     }
@@ -376,8 +385,8 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
             return $this->accountPickupStoreStateItems;
         }
 
-        $collection = $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\State')->getCollection();
-        $collection->addFieldToFilter('sku', array('in' => $this->getSkus()));
+        $collection = $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')->getCollection();
+        $collection->addFieldToFilter('sku', ['in' => $this->getSkus()]);
 
         return $this->accountPickupStoreStateItems = $collection->getItems();
     }
@@ -396,7 +405,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
             return $stateItem;
         }
 
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------
@@ -408,7 +417,8 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $this->variations = $this->getListingProduct()->getVariations(
-            true, array('status' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED)
+            true,
+            ['status' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED]
         );
     }
 
@@ -429,11 +439,11 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
 
     private function getQtyCalculator()
     {
-        if (!is_null($this->qtyCalculator)) {
+        if ($this->qtyCalculator !== null) {
             return $this->qtyCalculator;
         }
 
-        $this->qtyCalculator = $this->modelFactory->getObject('Ebay\Listing\Product\PickupStore\QtyCalculator');
+        $this->qtyCalculator = $this->modelFactory->getObject('Ebay_Listing_Product_PickupStore_QtyCalculator');
         $this->qtyCalculator->setProduct($this->getListingProduct());
 
         return $this->qtyCalculator;

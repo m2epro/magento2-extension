@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
+/**
+ * Class SaveRecentCategory
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description
+ */
 class SaveRecentCategory extends Description
 {
     //########################################
@@ -25,8 +29,10 @@ class SaveRecentCategory extends Description
             return $this->getResult();
         }
 
-        $this->getHelper('Component\Amazon\Category')->addRecent(
-            $marketplaceId, $browseNodeId, $categoryPath
+        $this->getHelper('Component_Amazon_Category')->addRecent(
+            $marketplaceId,
+            $browseNodeId,
+            $categoryPath
         );
 
         $this->setJsonContent(['result' => true]);

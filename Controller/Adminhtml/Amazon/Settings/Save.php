@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Settings;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Settings;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
+ */
 class Save extends Settings
 {
     //########################################
@@ -17,7 +21,8 @@ class Save extends Settings
     public function execute()
     {
         $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/amazon/business/', 'mode',
+            '/amazon/business/',
+            'mode',
             (int)$this->getRequest()->getParam('business_mode')
         );
 

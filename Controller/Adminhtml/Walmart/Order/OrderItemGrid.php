@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
+/**
+ * Class OrderItemGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Order
+ */
 class OrderItemGrid extends Order
 {
     public function execute()
@@ -23,7 +27,7 @@ class OrderItemGrid extends Order
 
         $this->getHelper('Data\GlobalData')->setValue('order', $order);
 
-        $this->setAjaxContent($this->createBlock('Walmart\Order\View\Item'));
+        $this->setAjaxContent($this->createBlock('Walmart_Order_View_Item'));
 
         return $this->getResult();
     }

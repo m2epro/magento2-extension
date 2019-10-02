@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Product;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Product
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
 {
     protected $visibility;
@@ -25,8 +29,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->visibility = $visibility;
         $this->status = $status;
         $this->websiteFactory = $websiteFactory;
@@ -37,7 +40,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
 
     protected function _prepareColumns()
     {
-        $this->addColumnAfter('visibility', array(
+        $this->addColumnAfter('visibility', [
             'header'    => $this->__('Visibility'),
             'align'     => 'left',
             'width'     => '90px',
@@ -46,9 +49,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
             'index'     => 'visibility',
             'filter_index' => 'visibility',
             'options' => $this->visibility->getOptionArray()
-        ),'qty');
+        ], 'qty');
 
-        $this->addColumnAfter('status', array(
+        $this->addColumnAfter('status', [
             'header'    => $this->__('Status'),
             'align'     => 'left',
             'width'     => '90px',
@@ -57,12 +60,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
             'index'     => 'status',
             'filter_index' => 'status',
             'options' => $this->status->getOptionArray(),
-            'frame_callback' => array($this, 'callbackColumnStatus')
-        ),'visibility');
+            'frame_callback' => [$this, 'callbackColumnStatus']
+        ], 'visibility');
 
         if (!$this->_storeManager->isSingleStoreMode()) {
-
-            $this->addColumnAfter('websites', array(
+            $this->addColumnAfter('websites', [
                 'header'    => $this->__('Websites'),
                 'align'     => 'left',
                 'width'     => '90px',
@@ -71,8 +73,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
                 'index'     => 'websites',
                 'filter_index' => 'websites',
                 'options'   => $this->websiteFactory->create()->getCollection()->toOptionHash(),
-                'frame_callback' => array($this, 'callbackColumnWebsites')
-            ),'status');
+                'frame_callback' => [$this, 'callbackColumnWebsites']
+            ], 'status');
         }
 
         return parent::_prepareColumns();
@@ -89,12 +91,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
     }
 })()
 JS;
-
     }
 
     public function callbackColumnWebsites($value, $row, $column, $isExport)
     {
-        if (is_null($value)) {
+        if ($value === null) {
             $websites = [];
             foreach ($row->getWebsiteIds() as $websiteId) {
                 $websites[] = $this->_storeManager->getWebsite($websiteId)->getName();

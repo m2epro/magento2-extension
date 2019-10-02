@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\OtherListings;
 
+/**
+ * Class Sku
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\OtherListings
+ */
 class Sku extends AbstractModel
 {
     //########################################
@@ -51,8 +55,10 @@ class Sku extends AbstractModel
     protected function performActions()
     {
         $accountsCollection = $this->ebayFactory->getObject('Account')->getCollection();
-        $accountsCollection->addFieldToFilter('other_listings_synchronization',
-           \Ess\M2ePro\Model\Ebay\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES);
+        $accountsCollection->addFieldToFilter(
+            'other_listings_synchronization',
+            \Ess\M2ePro\Model\Ebay\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES
+        );
 
         $accounts = $accountsCollection->getItems();
 
@@ -73,11 +79,8 @@ class Sku extends AbstractModel
             );
 
             try {
-
                 $this->updateSkus($account);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Update SKUs" Action for eBay Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -102,7 +105,7 @@ class Sku extends AbstractModel
     private function updateSkus(\Ess\M2ePro\Model\Account $account)
     {
         $listingOtherCollection = $this->ebayFactory->getObject('Listing\Other')->getCollection();
-        $listingOtherCollection->addFieldToFilter('main_table.account_id',(int)$account->getId());
+        $listingOtherCollection->addFieldToFilter('main_table.account_id', (int)$account->getId());
         $listingOtherCollection->getSelect()->where('`second_table`.`sku` IS NULL');
         $listingOtherCollection->getSelect()->order('second_table.start_date ASC');
         $listingOtherCollection->getSelect()->limit(200);
@@ -118,7 +121,7 @@ class Sku extends AbstractModel
 
         if (empty($receivedData['items'])) {
             foreach ($listingOtherCollection->getItems() as $listingOther) {
-                $listingOther->getChildObject()->setData('sku','')->save();
+                $listingOther->getChildObject()->setData('sku', '')->save();
             }
             return;
         }
@@ -135,7 +138,7 @@ class Sku extends AbstractModel
         array $items
     ) {
         /** @var $mappingModel \Ess\M2ePro\Model\Ebay\Listing\Other\Mapping */
-        $mappingModel = $this->modelFactory->getObject('Ebay\Listing\Other\Mapping');
+        $mappingModel = $this->modelFactory->getObject('Ebay_Listing_Other_Mapping');
 
         foreach ($items as $item) {
             foreach ($listingOtherCollection->getItems() as $listingOther) {
@@ -146,7 +149,7 @@ class Sku extends AbstractModel
                     continue;
                 }
 
-                $listingOther->getChildObject()->setData('sku',(string)$item['sku'])->save();
+                $listingOther->getChildObject()->setData('sku', (string)$item['sku'])->save();
 
                 if ($account->getChildObject()->isOtherListingsMappingEnabled()) {
                     $mappingModel->initialize($account);
@@ -166,7 +169,7 @@ class Sku extends AbstractModel
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Other $ebayListingOther */
             $ebayListingOther = $listingOther->getChildObject();
 
-            if (!is_null($ebayListingOther->getSku())) {
+            if ($ebayListingOther->getSku() !== null) {
                 continue;
             }
 
@@ -182,27 +185,31 @@ class Sku extends AbstractModel
 
     private function receiveSkusFromEbay(\Ess\M2ePro\Model\Account $account, $sinceTime)
     {
-        $sinceTime = new \DateTime($sinceTime,new \DateTimeZone('UTC'));
+        $sinceTime = new \DateTime($sinceTime, new \DateTimeZone('UTC'));
         $sinceTime->modify('-1 minute');
         $sinceTime = $sinceTime->format('Y-m-d H:i:s');
 
-        $inputData = array(
+        $inputData = [
             'since_time'    => $sinceTime,
             'only_one_page' => true
-        );
+        ];
 
-        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+        $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObj->getVirtualConnector(
-            'item','get','all',
-            $inputData,NULL,
-            NULL,$account->getId()
+            'item',
+            'get',
+            'all',
+            $inputData,
+            null,
+            null,
+            $account->getId()
         );
 
         $dispatcherObj->process($connectorObj);
         $responseData = $connectorObj->getResponseData();
 
         if (!isset($responseData['items']) || !is_array($responseData['items'])) {
-            return array();
+            return [];
         }
 
         return $responseData;

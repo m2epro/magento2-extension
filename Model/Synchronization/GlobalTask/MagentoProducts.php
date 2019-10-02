@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask;
 
+/**
+ * Class MagentoProducts
+ * @package Ess\M2ePro\Model\Synchronization\GlobalTask
+ */
 class MagentoProducts extends AbstractModel
 {
     //########################################
@@ -25,7 +29,7 @@ class MagentoProducts extends AbstractModel
      */
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------

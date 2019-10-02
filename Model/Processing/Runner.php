@@ -8,16 +8,20 @@
 
 namespace Ess\M2ePro\Model\Processing;
 
+/**
+ * Class Runner
+ * @package Ess\M2ePro\Model\Processing
+ */
 abstract class Runner extends \Ess\M2ePro\Model\AbstractModel
 {
     const MAX_LIFETIME = 86400;
 
     /** @var \Ess\M2ePro\Model\Processing $processingObject */
-    protected $processingObject = NULL;
+    protected $processingObject = null;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
-    protected $activeRecordFactory = NULL;
+    protected $activeRecordFactory = null;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory */
-    protected $parentFactory = NULL;
+    protected $parentFactory = null;
 
     protected $params = [];
 
@@ -28,8 +32,7 @@ abstract class Runner extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->parentFactory = $parentFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -83,13 +86,25 @@ abstract class Runner extends \Ess\M2ePro\Model\AbstractModel
 
     //####################################
 
-    protected function eventBefore() {}
+    protected function eventBefore()
+    {
+        return null;
+    }
 
-    protected function setLocks() {}
+    protected function setLocks()
+    {
+        return null;
+    }
 
-    protected function unsetLocks() {}
+    protected function unsetLocks()
+    {
+        return null;
+    }
 
-    protected function eventAfter() {}
+    protected function eventAfter()
+    {
+        return null;
+    }
 
     //####################################
 

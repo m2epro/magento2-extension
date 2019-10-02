@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class General
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs
+ */
 class General extends AbstractForm
 {
     //########################################
@@ -32,7 +36,8 @@ class General extends AbstractForm
         $formData = $this->getFormData();
         $id = !empty($formData['id']) ? $formData['id'] : 0;
 
-        $form->addField('block_notice_ebay_accounts_pickup_store_general',
+        $form->addField(
+            'block_notice_ebay_accounts_pickup_store_general',
             self::HELP_BLOCK,
             [
                 'content' => $this->__('
@@ -45,7 +50,8 @@ class General extends AbstractForm
             ]
         );
 
-        $form->addField('pickup_store_id',
+        $form->addField(
+            'pickup_store_id',
             'hidden',
             [
                 'name' => 'id',
@@ -53,7 +59,8 @@ class General extends AbstractForm
             ]
         );
 
-        $form->addField('account_id',
+        $form->addField(
+            'account_id',
             'hidden',
             [
                 'name' => 'account_id',
@@ -65,7 +72,8 @@ class General extends AbstractForm
             'legend' => $this->__('General'), 'collapsable' => false
         ]);
 
-        $fieldset->addField('name',
+        $fieldset->addField(
+            'name',
             'text',
             [
                 'name' => 'name',
@@ -79,7 +87,8 @@ class General extends AbstractForm
             ]
         );
 
-        $fieldset->addField('location_id',
+        $fieldset->addField(
+            'location_id',
             'text',
             [
                 'name' => 'location_id',
@@ -94,7 +103,8 @@ class General extends AbstractForm
             ]
         );
 
-        $fieldset->addField('auto_generate',
+        $fieldset->addField(
+            'auto_generate',
             'checkbox',
             [
                 'name' => 'auto_generate',
@@ -105,13 +115,15 @@ class General extends AbstractForm
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_account_pickup_store_form_data_other',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_account_pickup_store_form_data_other',
             [
                 'legend' => $this->__('Other'), 'collapsable' => true
             ]
         );
 
-        $fieldset->addField('phone',
+        $fieldset->addField(
+            'phone',
             'text',
             [
                 'name' => 'phone',
@@ -122,7 +134,8 @@ class General extends AbstractForm
             ]
         );
 
-        $fieldset->addField('url',
+        $fieldset->addField(
+            'url',
             'text',
             [
                 'name' => 'url',
@@ -132,7 +145,8 @@ class General extends AbstractForm
             ]
         );
 
-        $fieldset->addField('pickup_instruction',
+        $fieldset->addField(
+            'pickup_instruction',
             'textarea',
             [
                 'name' => 'pickup_instruction',
@@ -148,7 +162,7 @@ class General extends AbstractForm
         $this->setForm($form);
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Account\PickupStore')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Account\PickupStore::class)
         );
 
         $this->jsUrl->addUrls([
@@ -181,7 +195,7 @@ class General extends AbstractForm
             window.EbayPickupStoreObj = new EbayPickupStore();
             EbayPickupStoreObj.init();
 JS
-    );
+        );
 
         return parent::_prepareForm();
     }
@@ -200,7 +214,7 @@ JS
         ];
 
         $model = $this->getHelper('Data\GlobalData')->getValue('temp_data');
-        if(is_null($model)) {
+        if ($model === null) {
             return $default;
         }
 

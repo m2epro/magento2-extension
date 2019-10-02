@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Cron\Task;
 
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 
+/**
+ * Class ConnectorRequesterPendingPartial
+ * @package Ess\M2ePro\Model\Cron\Task
+ */
 class ConnectorRequesterPendingPartial extends AbstractModel
 {
     const NICK = 'connector_requester_pending_partial';
@@ -40,14 +44,14 @@ class ConnectorRequesterPendingPartial extends AbstractModel
 
     private function removeMissedProcessingItems()
     {
-        $collection = $this->activeRecordFactory->getObject('Connector\Command\Pending\Requester\Partial')
+        $collection = $this->activeRecordFactory->getObject('Connector_Command_Pending_Requester_Partial')
             ->getCollection();
         $collection->getSelect()->joinLeft(
-            array('p' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_processing')),
+            ['p' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_processing')],
             'p.id = main_table.processing_id',
-            array()
+            []
         );
-        $collection->addFieldToFilter('p.id', array('null' => true));
+        $collection->addFieldToFilter('p.id', ['null' => true]);
 
         $failedItems = $collection->getItems();
         if (empty($failedItems)) {
@@ -56,7 +60,7 @@ class ConnectorRequesterPendingPartial extends AbstractModel
 
         foreach ($failedItems as $failedItem) {
             $requestPendingPartial = $failedItem->getRequestPendingPartial();
-            if (!is_null($requestPendingPartial)) {
+            if ($requestPendingPartial !== null) {
                 $requestPendingPartial->delete();
             }
 
@@ -66,24 +70,24 @@ class ConnectorRequesterPendingPartial extends AbstractModel
 
     private function completeExpiredItems()
     {
-        $collection = $this->activeRecordFactory->getObject('Connector\Command\Pending\Requester\Partial')
+        $collection = $this->activeRecordFactory->getObject('Connector_Command_Pending_Requester_Partial')
             ->getCollection();
         $collection->getSelect()->joinLeft(
-            array(
-                'rpp' => $this->getHelper('Module\Database\Structure')
+            [
+                'rpp' => $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_request_pending_partial')
-            ),
+            ],
             'rpp.id = main_table.request_pending_partial_id',
-            array()
+            []
         );
-        $collection->addFieldToFilter('rpp.id', array('null' => true));
+        $collection->addFieldToFilter('rpp.id', ['null' => true]);
 
         $expiredItems = $collection->getItems();
         if (empty($expiredItems)) {
             return;
         }
 
-        $expiredMessage = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $expiredMessage = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $expiredMessage->initFromPreparedData(
             'Request wait timeout exceeded.',
             Message::TYPE_ERROR
@@ -92,7 +96,7 @@ class ConnectorRequesterPendingPartial extends AbstractModel
         foreach ($expiredItems as $expiredItem) {
             $processing = $expiredItem->getProcessing();
 
-            $processing->setSettings('result_messages', array($expiredMessage->asArray()));
+            $processing->setSettings('result_messages', [$expiredMessage->asArray()]);
             $processing->setData('is_completed', 1);
             $processing->save();
 
@@ -102,7 +106,7 @@ class ConnectorRequesterPendingPartial extends AbstractModel
 
     private function processCompletedItems()
     {
-        $collection = $this->activeRecordFactory->getObject('Connector\Command\Pending\Requester\Partial')
+        $collection = $this->activeRecordFactory->getObject('Connector_Command_Pending_Requester_Partial')
             ->getCollection();
         $collection->setCompletedRequestPendingPartialFilter();
         $collection->setNotCompletedProcessingFilter();
@@ -110,11 +114,10 @@ class ConnectorRequesterPendingPartial extends AbstractModel
         $requesterPartialObjects = $collection->getItems();
 
         foreach ($requesterPartialObjects as $requesterPartialObject) {
-
             $processing = $requesterPartialObject->getProcessing();
             $processing->setSettings(
                 'result_data',
-                array('request_pending_partial_id' => $requesterPartialObject->getRequestPendingPartialId())
+                ['request_pending_partial_id' => $requesterPartialObject->getRequestPendingPartialId()]
             );
             $processing->setData('is_completed', 1);
             $processing->save();

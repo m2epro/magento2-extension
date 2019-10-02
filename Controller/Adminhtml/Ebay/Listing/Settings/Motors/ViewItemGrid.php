@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
+/**
+ * Class ViewItemGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ */
 class ViewItemGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -18,7 +22,7 @@ class ViewItemGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $motorsType = $this->getRequest()->getParam('motors_type');
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Item\Grid $block */
-        $block = $this->createBlock('Ebay\Listing\View\Settings\Motors\View\Item\Grid');
+        $block = $this->createBlock('Ebay_Listing_View_Settings_Motors_View_Item_Grid');
         $block->setListingProductId($entityId);
         $block->setMotorsType($motorsType);
 

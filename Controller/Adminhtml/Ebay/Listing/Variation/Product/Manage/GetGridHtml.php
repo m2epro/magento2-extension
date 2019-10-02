@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Variation\Product\Manage;
 
+/**
+ * Class GetGridHtml
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Variation\Product\Manage
+ */
 class GetGridHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     public function execute()
@@ -20,7 +24,7 @@ class GetGridHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         $this->getHelper('Data\GlobalData')->setValue('listing_product_id', $productId);
-        $view = $this->createBlock('Ebay\Listing\Variation\Product\Manage\View\Grid');
+        $view = $this->createBlock('Ebay_Listing_Variation_Product_Manage_View_Grid');
 
         $this->setAjaxContent($view);
         return $this->getResult();

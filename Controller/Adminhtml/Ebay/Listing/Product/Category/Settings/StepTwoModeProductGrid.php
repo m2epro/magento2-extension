@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
 
 use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
+/**
+ * Class StepTwoModeProductGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
+ */
 class StepTwoModeProductGrid extends Settings
 {
 
@@ -21,7 +25,7 @@ class StepTwoModeProductGrid extends Settings
         $this->getHelper('Data\GlobalData')->setValue('listing_for_products_category_settings', $this->getListing());
         // ---------------------------------------
 
-        $this->setAjaxContent($this->createBlock('Ebay\Listing\Product\Category\Settings\Mode\Product\Grid'));
+        $this->setAjaxContent($this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Product_Grid'));
 
         return $this->getResult();
     }

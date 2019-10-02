@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit
+ */
 class Tabs extends AbstractTabs
 {
     //########################################
@@ -38,29 +42,29 @@ class Tabs extends AbstractTabs
 
     protected function _beforeToHtml()
     {
-        $this->addTab('general', array(
+        $this->addTab('general', [
             'label'   => $this->__('General'),
             'title'   => $this->__('General'),
-            'content' => $this->createBlock('Ebay\Account\PickupStore\Edit\Tabs\General')->toHtml(),
-        ));
+            'content' => $this->createBlock('Ebay_Account_PickupStore_Edit_Tabs_General')->toHtml(),
+        ]);
 
-        $this->addTab('location', array(
+        $this->addTab('location', [
             'label'   => $this->__('Location'),
             'title'   => $this->__('Location'),
-            'content' => $this->createBlock('Ebay\Account\PickupStore\Edit\Tabs\Location')->toHtml(),
-        ));
+            'content' => $this->createBlock('Ebay_Account_PickupStore_Edit_Tabs_Location')->toHtml(),
+        ]);
 
-        $this->addTab('business_hours', array(
+        $this->addTab('business_hours', [
             'label'   => $this->__('Business Hours'),
             'title'   => $this->__('Business Hours'),
-            'content' => $this->createBlock('Ebay\Account\PickupStore\Edit\Tabs\BusinessHours')->toHtml(),
-        ));
+            'content' => $this->createBlock('Ebay_Account_PickupStore_Edit_Tabs_BusinessHours')->toHtml(),
+        ]);
 
-        $this->addTab('stock_settings', array(
+        $this->addTab('stock_settings', [
             'label'   => $this->__('Quantity Settings'),
             'title'   => $this->__('Quantity Settings'),
-            'content' => $this->createBlock('Ebay\Account\PickupStore\Edit\Tabs\StockSettings')->toHtml(),
-        ));
+            'content' => $this->createBlock('Ebay_Account_PickupStore_Edit_Tabs_StockSettings')->toHtml(),
+        ]);
 
         $this->setActiveTab($this->getRequest()->getParam('tab', 'general'));
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise;
 
+/**
+ * Class Validator
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise
+ */
 class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Validator
 {
     //########################################
@@ -54,7 +58,6 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
         }
 
         if (!$this->getListingProduct()->isListed() || !$this->getListingProduct()->isRevisable()) {
-
             // M2ePro\TRANSLATIONS
             // Item is not Listed or not available
             $this->addMessage('Item is not Listed or not available');

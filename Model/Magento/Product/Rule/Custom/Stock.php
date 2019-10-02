@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Product\Rule\Custom;
 
+/**
+ * Class Stock
+ * @package Ess\M2ePro\Model\Magento\Product\Rule\Custom
+ */
 class Stock extends AbstractModel
 {
     //########################################
@@ -29,12 +33,20 @@ class Stock extends AbstractModel
     }
 
     /**
+     * - MSI engine v. 2.3.2: Index tables have correct salable status
+     * - Regular engine: Index table has status with no applied "Manage Stock" setting
+     *
      * @param \Magento\Catalog\Model\Product $product
-     * @return bool|int
+     * @return int
      */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)
     {
-        return (int)$this->getStockItemByProductInstance($product)->getIsInStock();
+        $magentoProduct = $this->modelFactory->getObject('Magento\Product');
+        $magentoProduct->setProduct($product);
+
+        return $this->getHelper('Magento')->isMSISupportingVersion()
+            ? (int)$magentoProduct->isStockAvailability()
+            : (int)$magentoProduct->getStockItem()->getDataByKey('is_in_stock');
     }
 
     //########################################
@@ -60,16 +72,16 @@ class Stock extends AbstractModel
      */
     public function getOptions()
     {
-        return array(
-            array(
+        return [
+            [
                 'value' => 1,
                 'label' => __('In Stock')
-            ),
-            array(
+            ],
+            [
                 'value' => 0,
                 'label' => __('Out Of Stock')
-            ),
-        );
+            ],
+        ];
     }
 
     //########################################

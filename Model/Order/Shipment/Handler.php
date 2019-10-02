@@ -14,6 +14,10 @@ namespace Ess\M2ePro\Model\Order\Shipment;
 use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Sales\Model\ResourceModel\Order\Shipment\Track\Collection as TrackCollection;
 
+/**
+ * Class Handler
+ * @package Ess\M2ePro\Model\Order\Shipment
+ */
 class Handler extends \Ess\M2ePro\Model\AbstractModel
 {
     const HANDLE_RESULT_FAILED    = -1;
@@ -22,8 +26,8 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
 
     const CUSTOM_CARRIER_CODE = 'custom';
 
-    protected $activeRecordFactory = NULL;
-    protected $carrierFactory = NULL;
+    protected $activeRecordFactory = null;
+    protected $carrierFactory = null;
 
     //########################################
 
@@ -48,13 +52,13 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
 
         switch ($component) {
             case \Ess\M2ePro\Helper\Component\Amazon::NICK:
-                $handler = $this->modelFactory->getObject('Amazon\Order\Shipment\Handler');
+                $handler = $this->modelFactory->getObject('Amazon_Order_Shipment_Handler');
                 break;
             case \Ess\M2ePro\Helper\Component\Ebay::NICK:
-                $handler = $this->modelFactory->getObject('Ebay\Order\Shipment\Handler');
+                $handler = $this->modelFactory->getObject('Ebay_Order_Shipment_Handler');
                 break;
             case \Ess\M2ePro\Helper\Component\Walmart::NICK:
-                $handler = $this->modelFactory->getObject('Walmart\Order\Shipment\Handler');
+                $handler = $this->modelFactory->getObject('Walmart_Order_Shipment_Handler');
                 break;
         }
 
@@ -80,34 +84,30 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
 
     protected function getTrackingDetails(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Shipment $shipment)
     {
-        // Sometimes Magento returns an array instead of Collection by a call of $shipment->getTracksCollection()
-        if ($shipment->hasData(ShipmentInterface::TRACKS) &&
-            !($shipment->getData(ShipmentInterface::TRACKS) instanceof TrackCollection)) {
-
-            $shipment->unsetData(ShipmentInterface::TRACKS);
+        $tracks = $shipment->getTracks();
+        if (empty($tracks)) {
+            return [];
         }
 
-        $track = $shipment->getTracksCollection()->getLastItem();
-        $trackingDetails = array();
-
+        /** @var \Magento\Sales\Model\Order\Shipment\Track $track */
+        $track  = reset($tracks);
         $number = trim($track->getData('track_number'));
 
-        if (!empty($number)) {
-
-            $carrierCode = $carrierTitle = trim($track->getData('carrier_code'));
-
-            $carrier = $this->carrierFactory->create($carrierCode, $order->getStoreId());
-            $carrier && $carrierTitle = $carrier->getConfigData('title');
-
-            $trackingDetails = array(
-                'carrier_code'    => $carrierCode,
-                'carrier_title'   => $carrierTitle,
-                'shipping_method' => trim($track->getData('title')),
-                'tracking_number' => (string)$number
-            );
+        if (empty($number)) {
+            return [];
         }
 
-        return $trackingDetails;
+        $carrierCode = $carrierTitle = trim($track->getData('carrier_code'));
+
+        $carrier = $this->carrierFactory->create($carrierCode, $order->getStoreId());
+        $carrier && $carrierTitle = $carrier->getConfigData('title');
+
+        return [
+            'carrier_code'    => $carrierCode,
+            'carrier_title'   => $carrierTitle,
+            'shipping_method' => trim($track->getData('title')),
+            'tracking_number' => $number
+        ];
     }
 
     //########################################

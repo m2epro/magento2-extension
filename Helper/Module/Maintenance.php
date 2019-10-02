@@ -12,6 +12,10 @@ use Ess\M2ePro\Helper\Factory;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ResourceConnection;
 
+/**
+ * Class Maintenance
+ * @package Ess\M2ePro\Helper\Module
+ */
 class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const CONFIG_PATH = 'm2epro/maintenance';
@@ -37,7 +41,7 @@ class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $select = $this->resourceConnection->getConnection()
             ->select()
-            ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('core_config_data'), 'value')
+            ->from($this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'), 'value')
             ->where('scope = ?', 'default')
             ->where('scope_id = ?', 0)
             ->where('path = ?', self::CONFIG_PATH);
@@ -51,14 +55,14 @@ class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $select = $this->resourceConnection->getConnection()
             ->select()
-            ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('core_config_data'), 'value')
+            ->from($this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'), 'value')
             ->where('scope = ?', 'default')
             ->where('scope_id = ?', 0)
             ->where('path = ?', self::CONFIG_PATH);
 
         if ($this->resourceConnection->getConnection()->fetchOne($select) === false) {
             $this->resourceConnection->getConnection()->insert(
-                $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('core_config_data'),
+                $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'),
                 [
                     'scope' => 'default',
                     'scope_id' => 0,
@@ -70,7 +74,7 @@ class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $this->resourceConnection->getConnection()->update(
-            $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('core_config_data'),
+            $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'),
             ['value' => 1],
             [
                 'scope = ?' => 'default',
@@ -83,7 +87,7 @@ class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
     public function disable()
     {
         $this->resourceConnection->getConnection()->update(
-            $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('core_config_data'),
+            $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'),
             ['value' => 0],
             [
                 'scope = ?' => 'default',

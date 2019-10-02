@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Ebay\Order\ExternalTransaction;
 
 use Ess\M2ePro\Model\AbstractModel;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Ebay\Order\ExternalTransaction
+ */
 class Builder extends AbstractModel
 {
     private $activeRecordFactory;
@@ -21,8 +25,7 @@ class Builder extends AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory, $data);
     }
@@ -56,7 +59,7 @@ class Builder extends AbstractModel
      */
     private function createOrderExternalTransaction()
     {
-        $transaction = $this->activeRecordFactory->getObject('Ebay\Order\ExternalTransaction')
+        $transaction = $this->activeRecordFactory->getObject('Ebay_Order_ExternalTransaction')
             ->getCollection()
             ->addFieldToFilter('order_id', $this->getData('order_id'))
             ->addFieldToFilter('transaction_id', $this->getData('transaction_id'))

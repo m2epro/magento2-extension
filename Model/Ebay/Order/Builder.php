@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Ebay\Order;
 
 use Ess\M2ePro\Model\AbstractModel;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Ebay\Order
+ */
 class Builder extends AbstractModel
 {
     const STATUS_NOT_MODIFIED = 0;
@@ -47,20 +51,20 @@ class Builder extends AbstractModel
     private $helper;
 
     /** @var $order \Ess\M2ePro\Model\Account */
-    private $account = NULL;
+    private $account = null;
 
     /** @var $order \Ess\M2ePro\Model\Order */
-    private $order = NULL;
+    private $order = null;
 
-    private $items = array();
+    private $items = [];
 
-    private $externalTransactions = array();
+    private $externalTransactions = [];
 
     private $status = self::STATUS_NOT_MODIFIED;
 
-    private $updates = array();
+    private $updates = [];
 
-    private $relatedOrders = array();
+    private $relatedOrders = [];
 
     //########################################
 
@@ -72,8 +76,7 @@ class Builder extends AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Ebay\Order\Helper $orderHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->moduleConfig = $moduleConfig;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;
@@ -83,7 +86,7 @@ class Builder extends AbstractModel
 
     //########################################
 
-    public function initialize(\Ess\M2ePro\Model\Account $account, array $data = array())
+    public function initialize(\Ess\M2ePro\Model\Account $account, array $data = [])
     {
         $this->account = $account;
 
@@ -94,7 +97,7 @@ class Builder extends AbstractModel
 
     //########################################
 
-    protected function initializeData(array $data = array())
+    protected function initializeData(array $data = [])
     {
         // ---------------------------------------
         $this->setData('account_id', $this->account->getId());
@@ -136,7 +139,9 @@ class Builder extends AbstractModel
         $this->setData('payment_details', $data['payment']);
 
         $paymentStatus = $this->helper->getPaymentStatus(
-            $data['payment']['method'], $data['payment']['date'], $data['payment']['status']
+            $data['payment']['method'],
+            $data['payment']['date'],
+            $data['payment']['status']
         );
         $this->setData('payment_status', $paymentStatus);
         // ---------------------------------------
@@ -145,7 +150,8 @@ class Builder extends AbstractModel
         $this->setData('shipping_details', $data['shipping']);
 
         $shippingStatus = $this->helper->getShippingStatus(
-            $data['shipping']['date'], !empty($data['shipping']['service'])
+            $data['shipping']['date'],
+            !empty($data['shipping']['service'])
         );
         $this->setData('shipping_status', $shippingStatus);
         // ---------------------------------------
@@ -169,13 +175,15 @@ class Builder extends AbstractModel
         $shippingDetails = $this->getData('shipping_details');
         $paymentDetails = $this->getData('payment_details');
 
-        $marketplace = $this->ebayFactory->getCachedObjectLoaded('Marketplace',$item['site'], 'code');
+        $marketplace = $this->ebayFactory->getCachedObjectLoaded('Marketplace', $item['site'], 'code');
 
         $shippingDetails['service'] = $this->helper->getShippingServiceNameByCode(
-            $shippingDetails['service'], $marketplace->getId()
+            $shippingDetails['service'],
+            $marketplace->getId()
         );
         $paymentDetails['method'] = $this->helper->getPaymentMethodNameByCode(
-            $paymentDetails['method'], $marketplace->getId()
+            $paymentDetails['method'],
+            $marketplace->getId()
         );
 
         $this->setData('marketplace_id', $marketplace->getId());
@@ -208,9 +216,9 @@ class Builder extends AbstractModel
                                             ->getObject('Ebay\Order')
                                             ->getResource()
                                             ->getOrdersContainingItemsFromOrder(
-                                                  $this->account->getId(),
-                                                  $this->items
-                                              );
+                                                $this->account->getId(),
+                                                $this->items
+                                            );
             }
 
             return;
@@ -220,7 +228,6 @@ class Builder extends AbstractModel
         // duplicated M2ePro orders. remove M2E Pro order without magento order id or newest order
         // ---------------------------------------
         if ($existOrdersNumber > 1) {
-
             $isDeleted = false;
 
             foreach ($existOrders as $key => $order) {
@@ -249,7 +256,7 @@ class Builder extends AbstractModel
         $this->order = reset($existOrders);
         $this->status = self::STATUS_UPDATED;
 
-        if (is_null($this->order->getMagentoOrderId())) {
+        if ($this->order->getMagentoOrderId() === null) {
             $this->order->setStatusUpdateRequired(true);
         }
         // ---------------------------------------
@@ -260,7 +267,7 @@ class Builder extends AbstractModel
     public function process()
     {
         if (!$this->canCreateOrUpdateOrder()) {
-            return NULL;
+            return null;
         }
 
         $this->checkUpdates();
@@ -273,11 +280,15 @@ class Builder extends AbstractModel
         $magentoOrder = $this->order->getMagentoOrder();
 
         if (!empty($finalFee) && !empty($magentoOrder)) {
-            $paymentAdditionalData = $magentoOrder->getPayment()->getAdditionalData();
-            $paymentAdditionalData = @unserialize($paymentAdditionalData);
+
+            $paymentAdditionalData = $this->getHelper('Data')->unserialize(
+                $magentoOrder->getPayment()->getAdditionalData()
+            );
             if (!empty($paymentAdditionalData)) {
                 $paymentAdditionalData['channel_final_fee'] = $finalFee;
-                $magentoOrder->getPayment()->setAdditionalData(serialize($paymentAdditionalData));
+                $magentoOrder->getPayment()->setAdditionalData(
+                    $this->getHelper('Data')->serialize($paymentAdditionalData)
+                );
                 $magentoOrder->getPayment()->save();
             }
         }
@@ -305,7 +316,7 @@ class Builder extends AbstractModel
             $itemData['order_id'] = $this->order->getId();
 
             /** @var $itemBuilder \Ess\M2ePro\Model\Ebay\Order\Item\Builder */
-            $itemBuilder = $this->modelFactory->getObject('Ebay\Order\Item\Builder');
+            $itemBuilder = $this->modelFactory->getObject('Ebay_Order_Item_Builder');
             $itemBuilder->initialize($itemData);
 
             $item = $itemBuilder->process();
@@ -327,7 +338,7 @@ class Builder extends AbstractModel
             $transactionData['order_id'] = $this->order->getId();
 
             /** @var $transactionBuilder \Ess\M2ePro\Model\Ebay\Order\ExternalTransaction\Builder */
-            $transactionBuilder = $this->modelFactory->getObject('Ebay\Order\ExternalTransaction\Builder');
+            $transactionBuilder = $this->modelFactory->getObject('Ebay_Order_ExternalTransaction_Builder');
             $transactionBuilder->initialize($transactionData);
 
             $transaction = $transactionBuilder->process();
@@ -368,7 +379,7 @@ class Builder extends AbstractModel
 
     private function hasExternalTransactions()
     {
-        return count($this->externalTransactions) > 0;
+        return !empty($this->externalTransactions);
     }
 
     // ---------------------------------------
@@ -457,7 +468,7 @@ class Builder extends AbstractModel
         $shippingAddress['company'] = '';
 
         if (!isset($shippingAddress['street']) || !is_array($shippingAddress['street'])) {
-            $shippingAddress['street'] = array();
+            $shippingAddress['street'] = [];
         }
 
         $shippingAddress['street'] = array_filter($shippingAddress['street']);
@@ -497,10 +508,10 @@ class Builder extends AbstractModel
         }
 
         if (!$this->order->getChildObject()->canCreateMagentoOrder()) {
-            $this->order->addWarningLog('Magento Order was not created. Reason: %msg%', array(
+            $this->order->addWarningLog('Magento Order was not created. Reason: %msg%', [
                 'msg' => 'Order Creation Rules were not met. ' .
                          'Press Create Order Button at Order View Page to create it anyway.'
-            ));
+            ]);
             return;
         }
     }
@@ -517,16 +528,19 @@ class Builder extends AbstractModel
                 $description = 'Magento Order #%order_id% should be canceled '.
                                'as new combined eBay order #%new_id% was created.';
                 $description = $this->getHelper('Module\Log')->encodeDescription(
-                    $description, array(
+                    $description,
+                    [
                     '!order_id' => $order->getMagentoOrder()->getRealOrderId(),
                     '!new_id' => $this->order->getChildObject()->getEbayOrderId()
-                ));
+                    ]
+                );
 
                 $log->addMessage($order->getId(), $description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING);
 
                 try {
                     $order->cancelMagentoOrder();
-                } catch (\Exception $e) {}
+                } catch (\Exception $e) {
+                }
             }
 
             if ($order->getReserve()->isPlaced()) {
@@ -535,10 +549,12 @@ class Builder extends AbstractModel
 
             $description = 'eBay Order #%old_id% was deleted as new combined eBay order #%new_id% was created.';
             $description = $this->getHelper('Module\Log')->encodeDescription(
-                $description, array(
+                $description,
+                [
                 '!old_id' => $order->getChildObject()->getEbayOrderId(),
                 '!new_id' => $this->order->getChildObject()->getEbayOrderId()
-            ));
+                ]
+            );
 
             $log->addMessage($order->getId(), $description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING);
 
@@ -663,14 +679,12 @@ class Builder extends AbstractModel
         $taxDetails      = $this->getData('tax_details');
 
         if (!empty($shippingDetails['price']) && $shippingDetails['price'] != $ebayOrder->getShippingPrice() ||
-            !empty($shippingDetails['service']) && $shippingDetails['service'] != $ebayOrder->getShippingService())
-        {
+            !empty($shippingDetails['service']) && $shippingDetails['service'] != $ebayOrder->getShippingService()) {
             return true;
         }
 
         if ((!empty($taxDetails['rate']) && $taxDetails['rate'] != $ebayOrder->getTaxRate()) ||
-            (!empty($taxDetails['amount']) && $taxDetails['amount'] != $ebayOrder->getTaxAmount()))
-        {
+            (!empty($taxDetails['amount']) && $taxDetails['amount'] != $ebayOrder->getTaxAmount())) {
             return true;
         }
 
@@ -740,14 +754,12 @@ class Builder extends AbstractModel
         }
 
         if ($this->hasUpdate(self::UPDATE_SHIPPING_TAX_DATA) && $this->order->getMagentoOrderId()) {
-
             $message  = 'Attention! Shipping/Tax details have been modified on the channel. ';
             $message .= 'Magento order is already created and cannot be updated to reflect these changes.';
             $this->order->addWarningLog($message);
         }
 
         if ($this->hasUpdate(self::UPDATE_ITEMS_COUNT) && $this->order->getMagentoOrderId()) {
-
             $message  = 'Attention! The number of ordered Items has been modified on the channel. ';
             $message .= 'Magento order is already created and cannot be updated to reflect these changes.';
             $this->order->addWarningLog($message);
@@ -761,12 +773,12 @@ class Builder extends AbstractModel
         }
 
         $magentoOrder = $this->order->getMagentoOrder();
-        if (is_null($magentoOrder)) {
+        if ($magentoOrder === null) {
             return;
         }
 
         /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
-        $magentoOrderUpdater = $this->modelFactory->getObject('Magento\Order\Updater');
+        $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
         $magentoOrderUpdater->setMagentoOrder($magentoOrder);
 
         $proxy = $this->order->getProxy();

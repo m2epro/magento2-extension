@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
+/**
+ * Class Mode
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings
+ */
 class Mode extends AbstractContainer
 {
 //    protected $_template = 'Ess_M2ePro::ebay/listing/category/mode.phtml';
@@ -35,22 +39,21 @@ class Mode extends AbstractContainer
 
         $this->_headerText = $this->__('Set eBay Categories');
 
-        $url = $this->getUrl('*/ebay_listing_product_add/deleteAll',array('_current' => true));
+        $url = $this->getUrl('*/ebay_listing_product_add/deleteAll', ['_current' => true]);
 
         if (!$this->getRequest()->getParam('without_back')) {
-            $this->addButton('back', array(
+            $this->addButton('back', [
                 'label'     => $this->__('Back'),
                 'class'     => 'back',
                 'onclick'   => 'setLocation(\''.$url.'\');'
-            ));
+            ]);
         }
 
-        $this->addButton('next', array(
+        $this->addButton('next', [
             'label'     => $this->__('Continue'),
             'class'     => 'action-primary forward',
             'onclick'   => "$('categories_mode_form').submit();"
-        ));
-
+        ]);
     }
 
     //########################################
@@ -74,10 +77,12 @@ require([
 
 });
 JS
-);
+        );
 
         $viewHeaderBlock = $this->createBlock(
-            'Listing\View\Header','', ['data' => ['listing' => $listing]]
+            'Listing_View_Header',
+            '',
+            ['data' => ['listing' => $listing]]
         );
 
         return $viewHeaderBlock->toHtml() . parent::_toHtml() . <<<HTML
@@ -88,7 +93,6 @@ JS
         )}
 </div>
 HTML;
-
     }
 
     //########################################

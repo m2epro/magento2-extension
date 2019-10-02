@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization;
 use Ess\M2ePro\Model\Listing\Product as ListingProduct;
 use Ess\M2ePro\Model\Walmart\Template\Synchronization as SynchronizationPolicy;
 
+/**
+ * Class Inspector
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization
+ */
 class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Inspector
 {
     private $walmartFactory;
@@ -24,8 +28,7 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
-    )
-    {
+    ) {
         parent::__construct($activeRecordFactory, $helperFactory, $modelFactory);
 
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
@@ -53,7 +56,6 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         $variationManager = $walmartListingProduct->getVariationManager();
 
         if ($variationManager->isVariationProduct()) {
-
             if ($variationManager->isPhysicalUnit() &&
                 !$variationManager->getTypeModel()->isVariationProductMatched()
             ) {
@@ -78,34 +80,31 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         if ($listingProduct->isSetProcessingLock('in_action')) {
             if ($needSynchRulesCheckIfLocked) {
                 $this->activeRecordFactory->getObject('Listing\Product')
-                    ->getResource()->setNeedSynchRulesCheck(array($listingProduct->getId()));
+                    ->getResource()->setNeedSynchRulesCheck([$listingProduct->getId()]);
             }
             return false;
         }
 
-        $variationResource = $this->activeRecordFactory->getObject('Listing\Product\Variation')->getResource();
+        $variationResource = $this->activeRecordFactory->getObject('Listing_Product_Variation')->getResource();
 
         $additionalData = $listingProduct->getAdditionalData();
 
         $log = $this->getHelper('Module\Log');
 
         if ($walmartSynchronizationTemplate->isListStatusEnabled()) {
-
             if (!$listingProduct->getMagentoProduct()->isStatusEnabled()) {
-                // M2ePro\TRANSLATIONS
-                // Product was not automatically Listed according to the List Rules in Synchronization Policy. Status of Magento Product is Disabled (%date%) though in Synchronization Rules “Product Status” is set to Enabled.
                 $note = $log->encodeDescription(
                     'Product was not automatically Listed according to the List Rules in Synchronization Policy.
                      Status of Magento Product is Disabled (%date%) though in Synchronization Rules “Product Status”
                      is set to Enabled.',
-                    array('date' => $this->getHelper('Data')->getCurrentGmtDate())
+                    ['date' => $this->getHelper('Data')->getCurrentGmtDate()]
                 );
                 $additionalData['synch_template_list_rules_note'] = $note;
 
                 $listingProduct->setSettings('additional_data', $additionalData)->save();
 
                 return false;
-            } else if ($variationManager->isPhysicalUnit() &&
+            } elseif ($variationManager->isPhysicalUnit() &&
                        $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $temp = $variationResource->isAllStatusesDisabled(
@@ -113,14 +112,12 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
                     $listingProduct->getListing()->getStoreId()
                 );
 
-                if (!is_null($temp) && $temp) {
-                    // M2ePro\TRANSLATIONS
-                    // Product was not automatically Listed according to the List Rules in Synchronization Policy. Status of Magento Product Variation is Disabled (%date%) though in Synchronization Rules “Product Status“ is set to Enabled.
+                if ($temp !== null && $temp) {
                     $note = $log->encodeDescription(
                         'Product was not automatically Listed according to the List Rules in Synchronization Policy.
                          Status of Magento Product Variation is Disabled (%date%) though in Synchronization Rules
                          “Product Status“ is set to Enabled.',
-                        array('date' => $this->getHelper('Data')->getCurrentGmtDate())
+                        ['date' => $this->getHelper('Data')->getCurrentGmtDate()]
                     );
                     $additionalData['synch_template_list_rules_note'] = $note;
 
@@ -132,22 +129,19 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         }
 
         if ($walmartSynchronizationTemplate->isListIsInStock()) {
-
             if (!$listingProduct->getMagentoProduct()->isStockAvailability()) {
-                // M2ePro\TRANSLATIONS
-                // Product was not automatically Listed according to the List Rules in Synchronization Policy. Stock Availability of Magento Product is Out of Stock though in Synchronization Rules “Stock Availability” is set to In Stock.
                 $note = $log->encodeDescription(
                     'Product was not automatically Listed according to the List Rules in Synchronization Policy.
                      Stock Availability of Magento Product is Out of Stock though in
                      Synchronization Rules “Stock Availability” is set to In Stock.',
-                    array('date' => $this->getHelper('Data')->getCurrentGmtDate())
+                    ['date' => $this->getHelper('Data')->getCurrentGmtDate()]
                 );
                 $additionalData['synch_template_list_rules_note'] = $note;
 
                 $listingProduct->setSettings('additional_data', $additionalData)->save();
 
                 return false;
-            } else if ($variationManager->isPhysicalUnit() &&
+            } elseif ($variationManager->isPhysicalUnit() &&
                        $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $temp = $variationResource->isAllDoNotHaveStockAvailabilities(
@@ -155,14 +149,12 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
                     $listingProduct->getListing()->getStoreId()
                 );
 
-                if (!is_null($temp) && $temp) {
-                    // M2ePro\TRANSLATIONS
-                    // Product was not automatically Listed according to the List Rules in Synchronization Policy. Stock Availability of Magento Product Variation is Out of Stock though in Synchronization Rules “Stock Availability” is set to In Stock.
+                if ($temp !== null && $temp) {
                     $note = $log->encodeDescription(
                         'Product was not automatically Listed according to the List Rules in Synchronization Policy.
                          Stock Availability of Magento Product Variation is Out of Stock though
                          in Synchronization Rules “Stock Availability” is set to In Stock.',
-                        array('date' => $this->getHelper('Data')->getCurrentGmtDate())
+                        ['date' => $this->getHelper('Data')->getCurrentGmtDate()]
                     );
                     $additionalData['synch_template_list_rules_note'] = $note;
 
@@ -174,7 +166,6 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         }
 
         if ($walmartSynchronizationTemplate->isListWhenQtyMagentoHasValue()) {
-
             $result = false;
 
             if ($variationManager->isRelationParentType()) {
@@ -193,17 +184,15 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
                 if ($productQty <= $minQty) {
                     $result = true;
                 } else {
-                    // M2ePro\TRANSLATIONS
-                    // Product was not automatically Listed according to the List Rules in Synchronization Policy. Quantity of Magento Product is %product_qty% though in Synchronization Rules “Magento Quantity“ is set to less then  %template_min_qty%.
                     $note = $log->encodeDescription(
                         'Product was not automatically Listed according to the List Rules in Synchronization Policy.
                          Quantity of Magento Product is %product_qty% though in Synchronization Rules
                          “Magento Quantity“ is set to less then  %template_min_qty%.',
-                        array(
+                        [
                             '!template_min_qty' => $minQty,
                             '!product_qty' => $productQty,
                             '!date' => $this->getHelper('Data')->getCurrentGmtDate()
-                        )
+                        ]
                     );
                 }
             }
@@ -212,17 +201,15 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
                 if ($productQty >= $minQty) {
                     $result = true;
                 } else {
-                    // M2ePro\TRANSLATIONS
-                    // Product was not automatically Listed according to the List Rules in Synchronization Policy. Quantity of Magento Product is %product_qty% though in Synchronization Rules “Magento Quantity” is set to more then  %template_min_qty%.
                     $note = $log->encodeDescription(
                         'Product was not automatically Listed according to the List Rules in Synchronization Policy.
                          Quantity of Magento Product is %product_qty% though in Synchronization Rules
                          “Magento Quantity” is set to more then  %template_min_qty%.',
-                        array(
+                        [
                             '!template_min_qty' => $minQty,
                             '!product_qty' => $productQty,
                             '!date' => $this->getHelper('Data')->getCurrentGmtDate()
-                        )
+                        ]
                     );
                 }
             }
@@ -231,18 +218,16 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
                 if ($productQty >= $minQty && $productQty <= $maxQty) {
                     $result = true;
                 } else {
-                    // M2ePro\TRANSLATIONS
-                    // Product was not automatically Listed according to the List Rules in Synchronization Policy. Quantity of Magento Product is %product_qty% though in Synchronization Rules “Magento Quantity” is set between  %template_min_qty% and %template_max_qty%.
                     $note = $log->encodeDescription(
                         'Product was not automatically Listed according to the List Rules in Synchronization Policy.
                          Quantity of Magento Product is %product_qty% though in Synchronization Rules
                          “Magento Quantity” is set between  %template_min_qty% and %template_max_qty%.',
-                        array(
+                        [
                             '!template_min_qty' => $minQty,
                             '!template_max_qty' => $maxQty,
                             '!product_qty' => $productQty,
                             '!date' => $this->getHelper('Data')->getCurrentGmtDate()
-                        )
+                        ]
                     );
                 }
             }
@@ -260,7 +245,6 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         if ($walmartSynchronizationTemplate->isListWhenQtyCalculatedHasValue() &&
             !$variationManager->isRelationParentType()
         ) {
-
             $result = false;
             $productQty = (int)$walmartListingProduct->getQty(false);
 
@@ -274,17 +258,15 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
                 if ($productQty <= $minQty) {
                     $result = true;
                 } else {
-                    // M2ePro\TRANSLATIONS
-                    // Product was not automatically Listed according to the List Rules in Synchronization Policy. Quantity of Magento Product is %product_qty% though in Synchronization Rules “Calculated Quantity” is set to less then %template_min_qty%.
                     $note = $log->encodeDescription(
                         'Product was not automatically Listed according to the List Rules in Synchronization Policy.
                          Quantity of Magento Product is %product_qty% though in Synchronization Rules
                          “Calculated Quantity” is set to less then %template_min_qty%.',
-                        array(
+                        [
                             '!template_min_qty' => $minQty,
                             '!product_qty' => $productQty,
                             '!date' => $this->getHelper('Data')->getCurrentGmtDate()
-                        )
+                        ]
                     );
                 }
             }
@@ -293,17 +275,15 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
                 if ($productQty >= $minQty) {
                     $result = true;
                 } else {
-                    // M2ePro\TRANSLATIONS
-                    // Product was not automatically Listed according to the List Rules in Synchronization Policy. Quantity of Magento Product is %product_qty% though in Synchronization Rules “Calculated Quantity” is set to more then  %template_min_qty%.
                     $note = $log->encodeDescription(
                         'Product was not automatically Listed according to the List Rules in Synchronization Policy.
                          Quantity of Magento Product is %product_qty% though in Synchronization Rules
                          “Calculated Quantity” is set to more then  %template_min_qty%.',
-                        array(
+                        [
                             '!template_min_qty' => $minQty,
                             '!product_qty' => $productQty,
                             '!date' => $this->getHelper('Data')->getCurrentGmtDate()
-                        )
+                        ]
                     );
                 }
             }
@@ -312,18 +292,16 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
                 if ($productQty >= $minQty && $productQty <= $maxQty) {
                     $result = true;
                 } else {
-                    // M2ePro\TRANSLATIONS
-                    // Product was not automatically Listed according to the List Rules in Synchronization Policy. Quantity of Magento Product is %product_qty% though in Synchronization Rules “Calculated Quantity” is set between  %template_min_qty% and %template_max_qty%.
                     $note = $log->encodeDescription(
                         'Product was not automatically Listed according to the List Rules in Synchronization Policy.
                          Quantity of Magento Product is %product_qty% though in Synchronization Rules
                          “Calculated Quantity” is set between  %template_min_qty% and %template_max_qty%.',
-                        array(
+                        [
                             '!template_min_qty' => $minQty,
                             '!template_max_qty' => $maxQty,
                             '!product_qty' => $productQty,
                             '!date' => $this->getHelper('Data')->getCurrentGmtDate()
-                        )
+                        ]
                     );
                 }
             }
@@ -370,7 +348,6 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         $variationManager = $walmartListingProduct->getVariationManager();
 
         if ($variationManager->isVariationProduct()) {
-
             if ($variationManager->isRelationParentType()) {
                 return false;
             }
@@ -394,7 +371,7 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         if ($listingProduct->isSetProcessingLock('in_action')) {
             if ($needSynchRulesCheckIfLocked) {
                 $this->activeRecordFactory->getObject('Listing\Product')
-                    ->getResource()->setNeedSynchRulesCheck(array($listingProduct->getId()));
+                    ->getResource()->setNeedSynchRulesCheck([$listingProduct->getId()]);
             }
             return false;
         }
@@ -403,13 +380,12 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
             return false;
         }
 
-        $variationResource = $this->activeRecordFactory->getObject('Listing\Product\Variation')->getResource();
+        $variationResource = $this->activeRecordFactory->getObject('Listing_Product_Variation')->getResource();
 
         if ($walmartSynchronizationTemplate->isRelistStatusEnabled()) {
-
             if (!$listingProduct->getMagentoProduct()->isStatusEnabled()) {
                 return false;
-            } else if ($variationManager->isPhysicalUnit() &&
+            } elseif ($variationManager->isPhysicalUnit() &&
                        $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $temp = $variationResource->isAllStatusesDisabled(
@@ -417,17 +393,16 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
                     $listingProduct->getListing()->getStoreId()
                 );
 
-                if (!is_null($temp) && $temp) {
+                if ($temp !== null && $temp) {
                     return false;
                 }
             }
         }
 
         if ($walmartSynchronizationTemplate->isRelistIsInStock()) {
-
             if (!$listingProduct->getMagentoProduct()->isStockAvailability()) {
                 return false;
-            } else if ($variationManager->isPhysicalUnit() &&
+            } elseif ($variationManager->isPhysicalUnit() &&
                        $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $temp = $variationResource->isAllDoNotHaveStockAvailabilities(
@@ -435,14 +410,13 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
                     $listingProduct->getListing()->getStoreId()
                 );
 
-                if (!is_null($temp) && $temp) {
+                if ($temp !== null && $temp) {
                     return false;
                 }
             }
         }
 
         if ($walmartSynchronizationTemplate->isRelistWhenQtyMagentoHasValue()) {
-
             $result = false;
             $productQty = (int)$walmartListingProduct->getQty(true);
 
@@ -471,7 +445,6 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         }
 
         if ($walmartSynchronizationTemplate->isRelistWhenQtyCalculatedHasValue()) {
-
             $result = false;
             $productQty = (int)$walmartListingProduct->getQty(false);
 
@@ -526,7 +499,6 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         $variationManager = $walmartListingProduct->getVariationManager();
 
         if ($variationManager->isVariationProduct()) {
-
             if ($variationManager->isRelationParentType()) {
                 return false;
             }
@@ -535,7 +507,7 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         if ($listingProduct->isSetProcessingLock('in_action')) {
             if ($needSynchRulesCheckIfLocked) {
                 $this->activeRecordFactory->getObject('Listing\Product')
-                    ->getResource()->setNeedSynchRulesCheck(array($listingProduct->getId()));
+                    ->getResource()->setNeedSynchRulesCheck([$listingProduct->getId()]);
             }
             return false;
         }
@@ -557,7 +529,7 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         $variationManager = $walmartListingProduct->getVariationManager();
 
         $walmartSynchronizationTemplate = $walmartListingProduct->getWalmartSynchronizationTemplate();
-        $variationResource = $this->activeRecordFactory->getObject('Listing\Product\Variation')->getResource();
+        $variationResource = $this->activeRecordFactory->getObject('Listing_Product_Variation')->getResource();
 
         if (!$walmartSynchronizationTemplate->isStopMode()) {
             return false;
@@ -568,10 +540,9 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         }
 
         if ($walmartSynchronizationTemplate->isStopStatusDisabled()) {
-
             if (!$listingProduct->getMagentoProduct()->isStatusEnabled()) {
                 return true;
-            } else if ($variationManager->isPhysicalUnit() &&
+            } elseif ($variationManager->isPhysicalUnit() &&
                        $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $temp = $variationResource->isAllStatusesDisabled(
@@ -579,17 +550,16 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
                     $listingProduct->getListing()->getStoreId()
                 );
 
-                if (!is_null($temp) && $temp) {
+                if ($temp !== null && $temp) {
                     return true;
                 }
             }
         }
 
         if ($walmartSynchronizationTemplate->isStopOutOfStock()) {
-
             if (!$listingProduct->getMagentoProduct()->isStockAvailability()) {
                 return true;
-            } else if ($variationManager->isPhysicalUnit() &&
+            } elseif ($variationManager->isPhysicalUnit() &&
                        $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $temp = $variationResource->isAllDoNotHaveStockAvailabilities(
@@ -597,14 +567,13 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
                     $listingProduct->getListing()->getStoreId()
                 );
 
-                if (!is_null($temp) && $temp) {
+                if ($temp !== null && $temp) {
                     return true;
                 }
             }
         }
 
         if ($walmartSynchronizationTemplate->isStopWhenQtyMagentoHasValue()) {
-
             $productQty = (int)$walmartListingProduct->getQty(true);
 
             $typeQty = (int)$walmartSynchronizationTemplate->getStopWhenQtyMagentoHasValueType();
@@ -628,7 +597,6 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         }
 
         if ($walmartSynchronizationTemplate->isStopWhenQtyCalculatedHasValue()) {
-
             $productQty = (int)$walmartListingProduct->getQty(false);
 
             $typeQty = (int)$walmartSynchronizationTemplate->getStopWhenQtyCalculatedHasValueType();
@@ -679,7 +647,6 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         $variationManager = $walmartListingProduct->getVariationManager();
 
         if ($variationManager->isVariationProduct()) {
-
             if ($variationManager->isRelationParentType()) {
                 return false;
             }
@@ -689,6 +656,14 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
             ) {
                 return false;
             }
+        }
+
+        if ($listingProduct->isSetProcessingLock('in_action')) {
+            if ($needSynchRulesCheckIfLocked) {
+                $this->activeRecordFactory->getObject('Listing\Product')
+                                          ->getResource()->setNeedSynchRulesCheck([$listingProduct->getId()]);
+            }
+            return false;
         }
 
         return true;
@@ -717,13 +692,6 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
             return false;
         }
 
-        $currentLagTime = $walmartListingProduct->getSellingFormatTemplateSource()->getLagTime();
-        $onlineLagTime  = $walmartListingProduct->getOnlineLagTime();
-
-        if ($currentLagTime != $onlineLagTime) {
-            return true;
-        }
-
         $isMaxAppliedValueModeOn = $walmartSynchronizationTemplate->isReviseUpdateQtyMaxAppliedValueModeOn();
         $maxAppliedValue = $walmartSynchronizationTemplate->getReviseUpdateQtyMaxAppliedValue();
 
@@ -741,6 +709,37 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         return false;
     }
 
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param bool $needSynchRulesCheckIfLocked
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetReviseLagTimeRequirements(ListingProduct $listingProduct, $needSynchRulesCheckIfLocked = true)
+    {
+        if (!$this->isMeetReviseGeneralRequirements($listingProduct, $needSynchRulesCheckIfLocked)) {
+            return false;
+        }
+
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
+        $walmartListingProduct = $listingProduct->getChildObject();
+
+        $walmartSynchronizationTemplate = $walmartListingProduct->getWalmartSynchronizationTemplate();
+
+        if (!$walmartSynchronizationTemplate->isReviseUpdateQty()) {
+            return false;
+        }
+
+        $currentLagTime = $walmartListingProduct->getSellingFormatTemplateSource()->getLagTime();
+        $onlineLagTime  = $walmartListingProduct->getOnlineLagTime();
+
+        if ($currentLagTime != $onlineLagTime) {
+            return true;
+        }
+
+        return false;
+    }
+
     // ---------------------------------------
 
     /**
@@ -752,8 +751,7 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
     public function isMeetRevisePriceRequirements(
         ListingProduct $listingProduct,
         $needSynchRulesCheckIfLocked = true
-    )
-    {
+    ) {
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
         $walmartListingProduct = $listingProduct->getChildObject();
 
@@ -784,9 +782,10 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isMeetRevisePromotionsPriceRequirements(ListingProduct $listingProduct,
-                                                          $needSynchRulesCheckIfLocked = true)
-    {
+    public function isMeetRevisePromotionsPriceRequirements(
+        ListingProduct $listingProduct,
+        $needSynchRulesCheckIfLocked = true
+    ) {
         if (!$this->isMeetReviseGeneralRequirements($listingProduct, $needSynchRulesCheckIfLocked)) {
             return false;
         }
@@ -802,7 +801,7 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\Promotions $promotionsActionDataBuilder */
         $promotionsActionDataBuilder = $this->modelFactory
-            ->getObject('Walmart\Listing\Product\Action\DataBuilder\Promotions');
+            ->getObject('Walmart_Listing_Product_Action_DataBuilder_Promotions');
         $promotionsActionDataBuilder->setListingProduct($listingProduct);
 
         return $promotionsActionDataBuilder->getRequestData() != $walmartListingProduct->getOnlinePromotions();
@@ -816,9 +815,10 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isMeetReviseDetailsRequirements(ListingProduct $listingProduct,
-                                                    $needSynchRulesCheckIfLocked = true)
-    {
+    public function isMeetReviseDetailsRequirements(
+        ListingProduct $listingProduct,
+        $needSynchRulesCheckIfLocked = true
+    ) {
         if (!$this->isMeetReviseGeneralRequirements($listingProduct, $needSynchRulesCheckIfLocked)) {
             return false;
         }
@@ -832,7 +832,7 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\Details $detailsActionDataBuilder */
         $detailsActionDataBuilder = $this->modelFactory
-            ->getObject('Walmart\Listing\Product\Action\DataBuilder\Details');
+            ->getObject('Walmart_Listing_Product_Action_DataBuilder_Details');
         $detailsActionDataBuilder->setListingProduct($listingProduct);
 
         $currentDetailsData = $detailsActionDataBuilder->getRequestData();
@@ -866,9 +866,10 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isMeetReviseSynchReasonsRequirements(ListingProduct $listingProduct,
-        $needSynchRulesCheckIfLocked = true)
-    {
+    public function isMeetReviseSynchReasonsRequirements(
+        ListingProduct $listingProduct,
+        $needSynchRulesCheckIfLocked = true
+    ) {
         $reasons = $listingProduct->getSynchReasons();
         if (empty($reasons)) {
             return false;
@@ -879,6 +880,167 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         }
 
         return true;
+    }
+
+    //########################################
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product[] $lpForAdvancedRules
+     * input format $lpForAdvancedRules[$templateId][$storeId][$magentoProductId][] = $listingProduct;
+     * @param string $ruleModelPrefix
+     * @param string $ruleFiltersDataKeyPrefix
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Exception
+     */
+    public function getMeetAdvancedRequirementsProducts(
+        array $lpForAdvancedRules,
+        $ruleModelPrefix,
+        $ruleFiltersDataKeyPrefix
+    ) {
+        $resultProducts = [];
+
+        foreach ($lpForAdvancedRules as $templateId => $productsByTemplate) {
+
+            /** @var \Ess\M2ePro\Model\Walmart\Template\Synchronization $walmartTemplate */
+            $template = $this->walmartFactory->getCachedObjectLoaded('Template\Synchronization', $templateId);
+            $walmartTemplate = $template->getChildObject();
+
+            foreach ($productsByTemplate as $storeId => $productsByStore) {
+                /** @var $tempCollection \Magento\Catalog\Model\ResourceModel\Product\Collection */
+                $tempCollection = $this->magentoProductCollectionFactory->create();
+                $tempCollection->addFieldToFilter('entity_id', ['in' => array_keys($productsByStore)]);
+                $tempCollection->setStoreId($storeId);
+
+                $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
+                    [
+                        'store_id' => $storeId,
+                        'prefix'   => $ruleModelPrefix
+                    ]
+                );
+
+                $templateData = $walmartTemplate->getData($ruleFiltersDataKeyPrefix . '_advanced_rules_filters');
+                $templateData && $ruleModel->loadFromSerialized($templateData);
+
+                $ruleModel->setAttributesFilterToCollection($tempCollection);
+
+                foreach ($tempCollection->getItems() as $magentoProduct) {
+                    /**@var \Magento\Catalog\Model\Product $magentoProduct */
+
+                    if (isset($productsByStore[$magentoProduct->getId()])) {
+                        $resultProducts = array_merge($resultProducts, $productsByStore[$magentoProduct->getId()]);
+                    }
+                }
+            }
+        }
+
+        return $resultProducts;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetAdvancedListRequirements(ListingProduct $listingProduct)
+    {
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
+        $walmartListingProduct = $listingProduct->getChildObject();
+        $walmartTemplate = $walmartListingProduct->getWalmartSynchronizationTemplate();
+
+        if (!$walmartTemplate->isListAdvancedRulesEnabled()) {
+            return false;
+        }
+
+        return $this->isMeetAdvancedRequirements(
+            $listingProduct,
+            SynchronizationPolicy::LIST_ADVANCED_RULES_PREFIX,
+            'list'
+        );
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetAdvancedRelistRequirements(ListingProduct $listingProduct)
+    {
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
+        $walmartListingProduct = $listingProduct->getChildObject();
+        $walmartTemplate = $walmartListingProduct->getWalmartSynchronizationTemplate();
+
+        if (!$walmartTemplate->isRelistAdvancedRulesEnabled()) {
+            return false;
+        }
+
+        return $this->isMeetAdvancedRequirements(
+            $listingProduct,
+            SynchronizationPolicy::RELIST_ADVANCED_RULES_PREFIX,
+            'relist'
+        );
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetAdvancedStopRequirements(ListingProduct $listingProduct)
+    {
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
+        $walmartListingProduct = $listingProduct->getChildObject();
+        $walmartTemplate = $walmartListingProduct->getWalmartSynchronizationTemplate();
+
+        if (!$walmartTemplate->isStopAdvancedRulesEnabled()) {
+            return false;
+        }
+
+        return $this->isMeetAdvancedRequirements(
+            $listingProduct,
+            SynchronizationPolicy::STOP_ADVANCED_RULES_PREFIX,
+            'stop'
+        );
+    }
+
+    //todo
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param string $ruleModelPrefix
+     * @param string $ruleFiltersDataKeyPrefix
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Exception
+     */
+    private function isMeetAdvancedRequirements(
+        ListingProduct $listingProduct,
+        $ruleModelPrefix,
+        $ruleFiltersDataKeyPrefix
+    ) {
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
+        $walmartListingProduct = $listingProduct->getChildObject();
+
+        /** @var $tempCollection \Magento\Catalog\Model\ResourceModel\Product\Collection */
+        $tempCollection = $this->magentoProductCollectionFactory->create();
+        $tempCollection->addFieldToFilter('entity_id', $listingProduct->getProductId());
+        $tempCollection->setStoreId($listingProduct->getListing()->getStoreId());
+
+        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
+            [
+                'store_id' => $listingProduct->getListing()->getStoreId(),
+                'prefix'   => $ruleModelPrefix
+            ]
+        );
+
+        $walmartTemplate = $walmartListingProduct->getWalmartSynchronizationTemplate();
+        $templateData = $walmartTemplate->getData($ruleFiltersDataKeyPrefix . '_advanced_rules_filters');
+        $templateData && $ruleModel->loadFromSerialized($templateData);
+
+        $ruleModel->setAttributesFilterToCollection($tempCollection);
+
+        return $tempCollection->getSize();
     }
 
     //########################################

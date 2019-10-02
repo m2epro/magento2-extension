@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Synchronization\Templates\Synchronization;
 
+/**
+ * Class Inspector
+ * @package Ess\M2ePro\Model\Synchronization\Templates\Synchronization
+ */
 abstract class Inspector extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $activeRecordFactory;
@@ -18,8 +22,7 @@ abstract class Inspector extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -63,7 +66,8 @@ abstract class Inspector extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $lastListAttemptDate = new \DateTime(
-            $listingProductAdditionalData['last_list_attempt_date'], new \DateTimeZone('UTC')
+            $listingProductAdditionalData['last_list_attempt_date'],
+            new \DateTimeZone('UTC')
         );
 
         $minDate = new \DateTime('now', new \DateTimeZone('UTC'));

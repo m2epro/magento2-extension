@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product;
 
 use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator;
 
+/**
+ * Class EditSku
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product
+ */
 class EditSku extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {
     //########################################
@@ -59,7 +63,7 @@ class EditSku extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 
         try {
             /** @var Configurator $configurator */
-            $configurator = $this->modelFactory->getObject('Walmart\Listing\Product\Action\Configurator');
+            $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
             $configurator->reset();
             $configurator->allowDetails();
 
@@ -67,9 +71,8 @@ class EditSku extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 
             $params['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER;
 
-            $dispatcherObject = $this->modelFactory->getObject('Walmart\Connector\Product\Dispatcher');
+            $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Product_Dispatcher');
             $dispatcherObject->process(\Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, [$listingProduct], $params);
-
         } catch (\Exception $exception) {
             $this->setJsonContent([
                 'result' => false,

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Indexer\Listing\Product;
 
+/**
+ * Class VariationParent
+ * @package Ess\M2ePro\Model\ResourceModel\Amazon\Indexer\Listing\Product
+ */
 class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
@@ -21,20 +25,20 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstr
 
     public function getTrackedFields()
     {
-        return array(
+        return [
             'online_price',
             'online_sale_price',
             'online_sale_price_start_date',
             'online_sale_price_end_date',
             'online_business_price',
-        );
+        ];
     }
 
     //########################################
 
     public function clear($listingId = null)
     {
-        $conditions = array();
+        $conditions = [];
         $listingId && $conditions['listing_id = ?'] = (int)$listingId;
 
         $this->getConnection()->delete($this->getMainTable(), $conditions);
@@ -51,15 +55,15 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstr
         $createDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $createDate = $createDate->format('Y-m-d H:i:s');
 
-        $select->columns(array(
+        $select->columns([
             new \Zend_Db_Expr($this->getConnection()->quote($listing->getId())),
             new \Zend_Db_Expr($this->getConnection()->quote($createDate))
-        ));
+        ]);
 
         $query = $this->getConnection()->insertFromSelect(
             $select,
             $this->getMainTable(),
-            array(
+            [
                 'listing_product_id',
                 'min_regular_price',
                 'max_regular_price',
@@ -67,7 +71,7 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstr
                 'max_business_price',
                 'listing_id',
                 'create_date'
-            ),
+            ],
             \Magento\Framework\DB\Adapter\AdapterInterface::INSERT_IGNORE
         );
         $this->getConnection()->query($query);
@@ -77,7 +81,7 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstr
 
     public function getBuildIndexSelect(\Ess\M2ePro\Model\Listing $listing)
     {
-        $amazonListingProductTable = $this->activeRecordFactory->getObject('Amazon\Listing\Product')
+        $amazonListingProductTable = $this->activeRecordFactory->getObject('Amazon_Listing_Product')
             ->getResource()->getMainTable();
 
         $listingProductTable = $this->activeRecordFactory->getObject('Listing\Product')
@@ -85,8 +89,8 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstr
 
         $select = $this->getConnection()->select()
             ->from(
-                array('malp' => $amazonListingProductTable),
-                array(
+                ['malp' => $amazonListingProductTable],
+                [
                     'variation_parent_id',
                     new \Zend_Db_Expr(
                         "MIN(
@@ -122,18 +126,18 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstr
                             malp.online_business_price
                         ) as variation_max_business_price"
                     )
-                )
+                ]
             )
             ->joinInner(
-                array('mlp' => $listingProductTable),
+                ['mlp' => $listingProductTable],
                 'malp.listing_product_id = mlp.id',
-                array()
+                []
             )
-            ->where('mlp.status IN (?)', array(
+            ->where('mlp.status IN (?)', [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
                 \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN
-            ))
+            ])
             ->where('mlp.listing_id = ?', (int)$listing->getId())
             ->where('malp.variation_parent_id IS NOT NULL')
             ->group('malp.variation_parent_id');

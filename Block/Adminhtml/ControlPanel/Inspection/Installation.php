@@ -10,12 +10,16 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Context\Template;
 
+/**
+ * Class Installation
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection
+ */
 class Installation extends AbstractInspection
 {
     private $cacheConfig;
 
     public $lastVersion;
-    public $installationVersionHistory = array();
+    public $installationVersionHistory = [];
 
     //########################################
 
@@ -53,8 +57,8 @@ class Installation extends AbstractInspection
         $this->buildLatestVersion  = $this->cacheConfig->getGroupValue('/installation/', 'build_last_version');
 
         $setupCollection = $this->activeRecordFactory->getObject('Setup')->getCollection();
-        $setupCollection->addFieldToFilter('version_from', array('notnull' => true));
-        $setupCollection->addFieldToFilter('version_to', array('notnull' => true));
+        $setupCollection->addFieldToFilter('version_from', ['notnull' => true]);
+        $setupCollection->addFieldToFilter('version_to', ['notnull' => true]);
 
         $this->lastUpgradeDate = $setupCollection->getLastItem()->getData('create_date');
     }

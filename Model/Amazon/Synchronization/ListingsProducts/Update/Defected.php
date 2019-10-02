@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update;
 
 use Ess\M2ePro\Model\Processing\Runner;
 
+/**
+ * Class Defected
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update
+ */
 class Defected extends \Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\AbstractModel
 {
     //########################################
@@ -61,8 +65,6 @@ class Defected extends \Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts
             /** @var $account \Ess\M2ePro\Model\Account **/
 
             $this->getActualOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
-            // M2ePro\TRANSLATIONS
-            // The "Update Defected Listings Products" Action for Amazon Account: "%account_title%" is started. Please wait...
             $status = 'The "Update Defected Listings Products" Action for Amazon Account: ';
             $status .= '"%account_title%" is started. Please wait...';
             $this->getActualLockItem()->setStatus(
@@ -70,20 +72,14 @@ class Defected extends \Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts
             );
 
             if (!$this->isLockedAccount($account)) {
-
                 $this->getActualOperationHistory()->addTimePoint(
                     __METHOD__.'process'.$account->getId(),
                     'Process Account '.$account->getTitle()
                 );
 
                 try {
-
                     $this->processAccount($account);
-
                 } catch (\Exception $exception) {
-
-                    // M2ePro_TRANSLATIONS
-                    // The "Update Defected Listings Products" Action for Amazon Account: "%account%" was completed with error.
                     $message = 'The "Update Defected Listings Products" Action for Amazon Account "%account%"';
                     $message .= ' was completed with error.';
                     $message = $this->getHelper('Module\Translation')->__($message, $account->getTitle());
@@ -95,8 +91,6 @@ class Defected extends \Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts
                 $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'process'.$account->getId());
             }
 
-            // M2ePro\TRANSLATIONS
-            // The "Update Defected Listings Products" Action for Amazon Account: "%account_title%" is finished. Please wait...
             $status = 'The "Update Defected Listings Products" Action for Amazon Account: ';
             $status .= '"%account_title%" is finished. Please wait...';
             $this->getActualLockItem()->setStatus(
@@ -115,14 +109,14 @@ class Defected extends \Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts
     {
         $collection = $this->activeRecordFactory->getObject('Listing')->getCollection();
         $collection->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Amazon::NICK);
-        $collection->addFieldToFilter('account_id',(int)$account->getId());
+        $collection->addFieldToFilter('account_id', (int)$account->getId());
 
         if ($collection->getSize()) {
-
-            $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+            $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getCustomConnector(
-                'Amazon\Synchronization\ListingsProducts\Update\Defected\Requester',
-                array(), $account
+                'Amazon_Synchronization_ListingsProducts_Update_Defected_Requester',
+                [],
+                $account
             );
             $dispatcherObject->process($connectorObj);
         }
@@ -131,7 +125,7 @@ class Defected extends \Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts
     private function isLockedAccount(\Ess\M2ePro\Model\Account $account)
     {
         /** @var $lockItem \Ess\M2ePro\Model\Lock\Item\Manager */
-        $lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+        $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
         $lockItem->setNick(Defected\ProcessingRunner::LOCK_ITEM_PREFIX.'_'.$account->getId());
         $lockItem->setMaxInactiveTime(Runner::MAX_LIFETIME);
 

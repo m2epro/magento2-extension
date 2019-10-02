@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay;
 
+/**
+ * Class Installation
+ * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay
+ */
 abstract class Installation extends \Ess\M2ePro\Block\Adminhtml\Wizard\Installation
 {
     //########################################
@@ -21,7 +25,7 @@ abstract class Installation extends \Ess\M2ePro\Block\Adminhtml\Wizard\Installat
 
     protected function _toHtml()
     {
-        $this->js->add( <<<JS
+        $this->js->add(<<<JS
     require([
         'M2ePro/Wizard/InstallationEbay',
     ], function(){

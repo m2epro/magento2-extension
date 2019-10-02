@@ -8,8 +8,11 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search\Settings\ByQuery;
 
-class Requester
-    extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByQuery\ItemsRequester
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Amazon\Search\Settings\ByQuery
+ */
+class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByQuery\ItemsRequester
 {
     // ########################################
 
@@ -22,7 +25,7 @@ class Requester
     {
         return array_merge(
             parent::getResponserParams(),
-            array('type' => 'string', 'value' => $this->getQuery())
+            ['type' => 'string', 'value' => $this->getQuery()]
         );
     }
 

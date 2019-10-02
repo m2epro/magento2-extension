@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Order;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
+/**
+ * Class Debug
+ * @package Ess\M2ePro\Block\Adminhtml\Order
+ */
 class Debug extends AbstractContainer
 {
     protected $_template = 'order/debug.phtml';
@@ -26,8 +30,7 @@ class Debug extends AbstractContainer
         \Ess\M2ePro\Model\Magento\Quote\Manager $quoteManager,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
-    )
-    {
+    ) {
         $this->taxCalculator = $taxCalculator;
         $this->taxModel = $taxModel;
         $this->storeModel = $storeModel;
@@ -44,27 +47,31 @@ class Debug extends AbstractContainer
 
         /** @var \Ess\M2ePro\Model\Magento\Quote\Store\Configurator $storeConfigurator */
         $storeConfigurator = $this->modelFactory->getObject(
-            'Magento\Quote\Store\Configurator',
+            'Magento_Quote_Store_Configurator',
             ['quote' => $this->quoteManager->getBlankQuote(), 'proxyOrder' => $order->getProxy()]
         );
 
         $this->setData(
-            'product_price_includes_tax', $storeConfigurator->isPriceIncludesTax()
+            'product_price_includes_tax',
+            $storeConfigurator->isPriceIncludesTax()
         );
         $this->setData(
-            'shipping_price_includes_tax', $storeConfigurator->isShippingPriceIncludesTax()
+            'shipping_price_includes_tax',
+            $storeConfigurator->isShippingPriceIncludesTax()
         );
         $this->setData(
-            'store_shipping_tax_class', $storeConfigurator->getShippingTaxClassId()
+            'store_shipping_tax_class',
+            $storeConfigurator->getShippingTaxClassId()
         );
         $this->setData(
-            'store_tax_calculation_based_on', $storeConfigurator->getTaxCalculationBasedOn()
+            'store_tax_calculation_based_on',
+            $storeConfigurator->getTaxCalculationBasedOn()
         );
 
-        if (!is_null($store->getId())) {
-
+        if ($store->getId() !== null) {
             $this->setData(
-                'store_tax_calculation_algorithm', $store->getConfig(\Magento\Tax\Model\Config::XML_PATH_ALGORITHM)
+                'store_tax_calculation_algorithm',
+                $store->getConfig(\Magento\Tax\Model\Config::XML_PATH_ALGORITHM)
             );
 
             // ---------------------------------------

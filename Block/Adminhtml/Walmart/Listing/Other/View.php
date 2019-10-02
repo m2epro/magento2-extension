@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Other;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Other
+ */
 class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     protected $walmartFactory;
@@ -18,8 +22,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
-    )
-    {
+    ) {
         $this->walmartFactory = $walmartFactory;
         parent::__construct($context, $data);
     }
@@ -49,25 +52,24 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $accountId = $this->getRequest()->getParam('account');
         $marketplaceId = $this->getRequest()->getParam('marketplace');
 
-        $this->addButton('view_logs', array(
+        $this->addButton('view_logs', [
             'label'   => $this->__('View Log'),
             'onclick' => 'window.open(\''.$this->getUrl('*/walmart_log_listing_other/index', [
                 'walmartAccount' => $accountId,
                 'walmartMarketplace' => $marketplaceId,
                 'listings' => true
             ]) . '\');',
-        ));
+        ]);
 
-        if (!is_null($this->getRequest()->getParam('back'))) {
+        if ($this->getRequest()->getParam('back') !== null) {
             $url = $this->getHelper('Data')->getBackUrl();
-            $this->buttonList->add('back', array(
+            $this->buttonList->add('back', [
                 'label'   => $this->__('Back'),
                 'onclick' => 'CommonObj.backClick(\'' . $url . '\')',
                 'class'   => 'back'
-            ));
+            ]);
         }
         // ---------------------------------------
-
     }
 
     protected function _prepareLayout()
@@ -75,12 +77,9 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->appendHelpBlock([
             'content' => $this->__(
                 <<<HTML
-                <p>The list below shows the 3rd Party Listings imported from a particular Account and Marketplace.
-                It contains the functionality of manual and automatic Item Mapping and Moving. After the imported
-                Items are Mapped to Magento Products, they can be Moved into an M2E Pro
-                Listing for further management.</p><br>
-
-                <p>The list is automatically updated if the import option is enabled in the Account settings.</p>
+                You can Map the 3rd Party Items to the related Magento Products and Move them to the
+                selected M2E Pro Listing. Manage each Item individually or use the
+                Mass Actions to update the Items in bulk.
 HTML
             )
         ]);
@@ -97,7 +96,8 @@ HTML
 
         // ---------------------------------------
         $viewHeaderBlock = $this->createBlock(
-            'Listing\Other\View\Header','',
+            'Listing_Other_View_Header',
+            '',
             ['data' => [
                 'account' => $this->walmartFactory->getCachedObjectLoaded('Account', $accountId),
                 'marketplace' => $this->walmartFactory->getCachedObjectLoaded('Marketplace', $marketplaceId)
@@ -106,7 +106,7 @@ HTML
         // ---------------------------------------
 
         $mapToProductBlock = $this->createBlock(
-            'Listing\Other\Mapping'
+            'Listing_Other_Mapping'
         );
 
         return $viewHeaderBlock->toHtml() . $mapToProductBlock->toHtml() . parent::getGridHtml();
@@ -236,7 +236,7 @@ HTML
             WalmartListingOtherGridObj.afterInitPage();
         });
 JS
-);
+        );
 
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(
             '\Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid'

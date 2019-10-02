@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Connector\Product\ListAction;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Walmart\Connector\Product\ListAction
+ */
 class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
 {
     // ########################################
@@ -32,14 +36,14 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Walmart\Connector\Product\ListAction\ProcessingRunner';
+        return 'Walmart_Connector_Product_ListAction_ProcessingRunner';
     }
 
     // ########################################
 
     public function getCommand()
     {
-        return array('product', 'add', 'entities');
+        return ['product', 'add', 'entities'];
     }
 
     // ########################################
@@ -69,13 +73,12 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
         $sku = $walmartListingProduct->getSku();
         if (!$sku) {
             $skuResolver = $this->modelFactory
-                ->getObject('Walmart\Listing\Product\Action\Type\ListAction\SkuResolver');
+                ->getObject('Walmart_Listing_Product_Action_Type_ListAction_SkuResolver');
             $skuResolver->setListingProduct($this->listingProduct);
 
             $sku = $skuResolver->resolve();
 
-            if (count($skuResolver->getMessages()) > 0) {
-
+            if (!empty($skuResolver->getMessages())) {
                 foreach ($skuResolver->getMessages() as $message) {
                     $this->getLogger()->logListingProductMessage(
                         $this->listingProduct,
@@ -85,7 +88,7 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
                 }
             }
 
-            if (is_null($sku)) {
+            if ($sku === null) {
                 return false;
             }
         }
@@ -96,21 +99,21 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
             $productData = $productsData[$sku];
 
             $linking = $this->modelFactory
-                ->getObject('Walmart\Listing\Product\Action\Type\ListAction\Linking');
+                ->getObject('Walmart_Listing_Product_Action_Type_ListAction_Linking');
             $linking->setListingProduct($this->listingProduct);
             $linking->setSku($sku);
-            $linking->setProductIdentifiers(array(
+            $linking->setProductIdentifiers([
                 'wpid'    => $productData['wpid'],
                 'item_id' => $productData['item_id'],
                 'gtin'    => $productData['gtin'],
                 'upc'     => isset($productData['upc']) ? $productData['upc'] : null,
                 'ean'     => isset($productData['ean']) ? $productData['ean'] : null,
                 'isbn'    => isset($productData['isbn']) ? $productData['isbn'] : null,
-            ));
+            ]);
             $linking->link();
         } else {
             if ($walmartListingProduct->getSku()) {
-                $walmartListingProduct->addData(array(
+                $walmartListingProduct->addData([
                     'sku'     => null,
                     'wpid'    => null,
                     'item_id' => null,
@@ -118,7 +121,7 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
                     'upc'     => null,
                     'ean'     => null,
                     'isbn'    => null,
-                ));
+                ]);
                 $walmartListingProduct->save();
             }
         }
@@ -137,18 +140,22 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
             ]
         ];
 
-        $requestData = array(
+        $requestData = [
             'account'    => $this->listingProduct->getAccount()->getChildObject()->getServerHash(),
             'return_now' => true,
             'only_items' => $onlyItems,
-        );
+        ];
 
         /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcher */
-        $dispatcher = $this->modelFactory->getObject('Walmart\Connector\Dispatcher');
+        $dispatcher = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
 
         $connector = $dispatcher->getVirtualConnector(
-            'inventory', 'get', 'items',
-            $requestData, null, null
+            'inventory',
+            'get',
+            'items',
+            $requestData,
+            null,
+            null
         );
 
         try {
@@ -156,16 +163,16 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
         } catch (\Exception $exception) {
             $this->getHelper('Module\Exception')->process($exception);
 
-            return array();
+            return [];
         }
 
         $responseData = $connector->getResponseData();
 
         if (empty($responseData['data'])) {
-            return array();
+            return [];
         }
 
-        $productsData = array();
+        $productsData = [];
 
         foreach ($responseData['data'] as $productData) {
             $productsData[$productData['sku']] = $productData;
@@ -182,7 +189,7 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
      */
     protected function filterChildListingProductsByStatus(array $listingProducts)
     {
-        $resultListingProducts = array();
+        $resultListingProducts = [];
 
         foreach ($listingProducts as $listingProduct) {
             if (!$listingProduct->isNotListed() || !$listingProduct->isListable()) {

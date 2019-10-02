@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Ebay;
 
+/**
+ * Class UpdateAccountsPreferences
+ * @package Ess\M2ePro\Model\Cron\Task\Ebay
+ */
 class UpdateAccountsPreferences extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'ebay/update_accounts_preferences';
@@ -30,7 +34,8 @@ class UpdateAccountsPreferences extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
     public function performActions()
     {
         $accountCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Ebay::NICK, 'Account'
+            \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'Account'
         )->getCollection();
 
         /** @var \Ess\M2ePro\Model\Account[] $accounts */

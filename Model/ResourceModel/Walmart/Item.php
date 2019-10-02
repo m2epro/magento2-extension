@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Walmart;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Model\ResourceModel\Walmart
+ */
 class Item extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################

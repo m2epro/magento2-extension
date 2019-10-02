@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Templates;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\Templates
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Synchronization\AbstractModel
 {
-    protected $productChangesManager = NULL;
+    protected $productChangesManager = null;
 
     //########################################
 
@@ -44,12 +48,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Synchronization\Ab
 
     //########################################
 
-    protected function logError(\Ess\M2ePro\Model\Listing\Product $listingProduct,
-                                \Exception $exception,
-                                $sendToServer = true)
-    {
+    protected function logError(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        \Exception $exception,
+        $sendToServer = true
+    ) {
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Log $logModel */
-        $logModel = $this->activeRecordFactory->getObject('Amazon\Listing\Log');
+        $logModel = $this->activeRecordFactory->getObject('Amazon_Listing_Log');
 
         $logModel->addProductMessage(
             $listingProduct->getListingId(),

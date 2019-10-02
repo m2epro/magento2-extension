@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
+/**
+ * Class GetCategoryInfoByCategoryId
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category
+ */
 class GetCategoryInfoByCategoryId extends Category
 {
     //########################################
@@ -18,7 +22,7 @@ class GetCategoryInfoByCategoryId extends Category
     {
         $category = $this->resourceConnection->getConnection()->select()
             ->from(
-                $this->getHelper('Module\Database\Structure')
+                $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_walmart_dictionary_category')
             )
             ->where('marketplace_id = ?', $this->getRequest()->getPost('marketplace_id'))

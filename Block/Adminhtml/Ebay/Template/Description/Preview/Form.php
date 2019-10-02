@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Preview;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Magento\Framework\Message\MessageInterface;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Preview
+ */
 class Form extends AbstractForm
 {
     protected function _prepareForm()

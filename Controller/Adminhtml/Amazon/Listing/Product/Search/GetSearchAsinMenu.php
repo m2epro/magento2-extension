@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class GetSearchAsinMenu
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search
+ */
 class GetSearchAsinMenu extends Main
 {
     public function execute()
@@ -24,7 +28,7 @@ class GetSearchAsinMenu extends Main
 
         $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
 
-        $productSearchMenuBlock = $this->createBlock('Amazon\Listing\Product\Search\Menu');
+        $productSearchMenuBlock = $this->createBlock('Amazon_Listing_Product_Search_Menu');
         $productSearchMenuBlock->setListingProduct($listingProduct);
 
         $this->setAjaxContent($productSearchMenuBlock);

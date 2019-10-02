@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
+/**
+ * Class Delete
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ */
 class Delete extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 {
     //########################################
@@ -31,7 +35,7 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
         $deleted = $locked = 0;
         foreach ($ids as $id) {
-            $listing = $this->amazonFactory->getObjectLoaded('Listing',$id);
+            $listing = $this->amazonFactory->getObjectLoaded('Listing', $id);
             if ($listing->isLocked()) {
                 $locked++;
             } else {
@@ -44,7 +48,8 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         $deleted && $this->getMessageManager()->addSuccess($tempString);
 
         $tempString = $this->__(
-            '%amount% Listing(s) have Listed Items and can not be deleted', $locked
+            '%amount% Listing(s) have Listed Items and can not be deleted',
+            $locked
         );
         $locked && $this->getMessageManager()->addError($tempString);
 

@@ -11,6 +11,10 @@
  */
 namespace Ess\M2ePro\Model;
 
+/**
+ * Class Factory
+ * @package Ess\M2ePro\Model
+ */
 class Factory
 {
     protected $helperFactory;
@@ -27,8 +31,7 @@ class Factory
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\ObjectManagerInterface $objectManager
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
         $this->objectManager = $objectManager;
     }
@@ -43,6 +46,9 @@ class Factory
      */
     public function getObject($modelName, array $arguments = [])
     {
+        // fix for Magento2 sniffs that forcing to use ::class
+        $modelName = str_replace('_', '\\', $modelName);
+
         $model = $this->objectManager->create('\Ess\M2ePro\Model\\'.$modelName, $arguments);
 
         if (!$model instanceof \Ess\M2ePro\Model\AbstractModel) {

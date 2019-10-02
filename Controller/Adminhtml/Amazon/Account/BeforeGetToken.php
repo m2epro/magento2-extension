@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
+/**
+ * Class BeforeGetToken
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Account
+ */
 class BeforeGetToken extends Account
 {
     public function execute()
@@ -24,27 +28,28 @@ class BeforeGetToken extends Account
         $marketplace = $this->activeRecordFactory->getObjectLoaded('Marketplace', $marketplaceId);
 
         try {
-
             $backUrl = $this->getUrl('*/*/afterGetToken', ['_current' => true]);
 
-            $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector('account','get','authUrl',
-                array('back_url' => $backUrl, 'marketplace' => $marketplace->getData('native_id')));
+            $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
+            $connectorObj = $dispatcherObject->getVirtualConnector(
+                'account',
+                'get',
+                'authUrl',
+                ['back_url' => $backUrl, 'marketplace' => $marketplace->getData('native_id')]
+            );
 
             $dispatcherObject->process($connectorObj);
             $response = $connectorObj->getResponseData();
-
         } catch (\Exception $exception) {
-
             $this->getHelper('Module\Exception')->process($exception);
             // M2ePro_TRANSLATIONS
             // The Amazon token obtaining is currently unavailable.<br/>Reason: %error_message%
             $error = 'The Amazon token obtaining is currently unavailable.<br/>Reason: %error_message%';
             $error = $this->__($error, $exception->getMessage());
 
-            $this->setJsonContent(array(
+            $this->setJsonContent([
                 'message' => $error
-            ));
+            ]);
             return $this->getResult();
         }
 

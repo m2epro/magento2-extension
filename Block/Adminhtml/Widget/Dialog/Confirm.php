@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Widget\Dialog;
 
+/**
+ * Class Confirm
+ * @package Ess\M2ePro\Block\Adminhtml\Widget\Dialog
+ */
 class Confirm extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     //########################################
@@ -29,11 +33,11 @@ class Confirm extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         parent::_beforeToHtml();
 
         // ---------------------------------------
-        $data = array(
+        $data = [
             'class'   => 'ok_button',
             'label'   => $this->__('Confirm'),
             'onclick' => 'Dialog.okCallback();',
-        );
+        ];
         $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
         $this->setChild('ok_button', $buttonBlock);
         // ---------------------------------------

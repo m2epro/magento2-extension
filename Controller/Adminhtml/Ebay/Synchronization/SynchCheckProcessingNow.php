@@ -10,17 +10,21 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Settings;
 
+/**
+ * Class SynchCheckProcessingNow
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization
+ */
 class SynchCheckProcessingNow extends Settings
 {
     //########################################
 
     public function execute()
     {
-        $warningMessages = array();
+        $warningMessages = [];
 
         $synchronizationEbayOtherListingsProcessing = $this->activeRecordFactory->getObject('Lock\Item')
             ->getCollection()
-            ->addFieldToFilter('nick', array('like' => 'synchronization_ebay_other_listings_update%'))
+            ->addFieldToFilter('nick', ['like' => 'synchronization_ebay_other_listings_update%'])
             ->getSize();
 
         // M2ePro_TRANSLATIONS
@@ -32,9 +36,9 @@ class SynchCheckProcessingNow extends Settings
             );
         }
 
-        $this->setJsonContent(array(
+        $this->setJsonContent([
             'messages' => $warningMessages
-        ));
+        ]);
 
         return $this->getResponse();
     }

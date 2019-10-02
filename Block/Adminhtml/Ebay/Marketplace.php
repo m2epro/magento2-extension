@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
+/**
+ * Class Marketplace
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay
+ */
 class Marketplace extends AbstractContainer
 {
     //########################################
@@ -27,17 +31,17 @@ class Marketplace extends AbstractContainer
         $this->removeButton('reset');
         $this->removeButton('back');
 
-        $this->addButton('run_update_all', array(
+        $this->addButton('run_update_all', [
             'label'     => $this->__('Update All Now'),
             'onclick'   => 'MarketplaceObj.updateAction()',
             'class'     => 'save update_all_marketplaces primary'
-        ));
+        ]);
 
-        $this->addButton('run_save_and_synch', array(
+        $this->addButton('run_save_and_synch', [
             'label'     => $this->__('Save'),
             'onclick'   => 'MarketplaceObj.saveAction();',
             'class'     => 'save save_and_update_marketplaces primary'
-        ));
+        ]);
     }
 
     //########################################

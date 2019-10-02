@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper;
 
+/**
+ * Class AbstractHelper
+ * @package Ess\M2ePro\Helper
+ */
 class AbstractHelper extends \Magento\Framework\App\Helper\AbstractHelper
 {
     protected $helperFactory;
@@ -17,8 +21,7 @@ class AbstractHelper extends \Magento\Framework\App\Helper\AbstractHelper
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
         parent::__construct($context);
     }
@@ -37,5 +40,4 @@ class AbstractHelper extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     //########################################
-
 }

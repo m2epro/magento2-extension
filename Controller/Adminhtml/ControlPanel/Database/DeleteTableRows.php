@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database;
 
+/**
+ * Class DeleteTableRows
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database
+ */
 class DeleteTableRows extends Table
 {
     public function execute()
@@ -16,7 +20,6 @@ class DeleteTableRows extends Table
         $modelInstance = $this->getTableModel();
 
         if (empty($ids)) {
-
             $this->getMessageManager()->addError("Failed to get model or any of Table Rows are not selected.");
             $this->redirectToTablePage($modelInstance->getTableName());
         }

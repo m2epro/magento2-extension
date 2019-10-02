@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction
+ */
 class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Request
 {
     const LIST_TYPE_EXIST = 'exist';
@@ -22,9 +26,9 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
     {
         $params = $this->getParams();
 
-        $data = array(
+        $data = [
             'sku' => $params['sku'],
-        );
+        ];
 
         $data = array_merge(
             $data,

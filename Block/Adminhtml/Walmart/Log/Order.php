@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Log;
 
+/**
+ * Class Order
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Log
+ */
 class Order extends \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractContainer
 {
     //########################################
@@ -26,14 +30,14 @@ class Order extends \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractContainer
 
     protected function createAccountSwitcherBlock()
     {
-        return $this->createBlock('Walmart\Account\Switcher')->setData([
+        return $this->createBlock('Walmart_Account_Switcher')->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }
 
     protected function createMarketplaceSwitcherBlock()
     {
-        return $this->createBlock('Walmart\Marketplace\Switcher')->setData([
+        return $this->createBlock('Walmart_Marketplace_Switcher')->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }

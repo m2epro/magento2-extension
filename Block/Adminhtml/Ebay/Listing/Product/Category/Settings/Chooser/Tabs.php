@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser
+ */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs
 {
     const TAB_ID_RECENT      = 'recent';
@@ -30,31 +34,31 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
     {
         $hideRecent = $this->getHelper('Data\GlobalData')->getValue('category_chooser_hide_recent');
 
-        !$hideRecent && $this->addTab(self::TAB_ID_RECENT, array(
+        !$hideRecent && $this->addTab(self::TAB_ID_RECENT, [
             'label'   => $this->__('Recently Used'),
             'title'   => $this->__('Recently Used'),
-            'content' => $this->createBlock('Ebay\Listing\Product\Category\Settings\Chooser\Tabs\Recent')->toHtml(),
+            'content' => $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser_Tabs_Recent')->toHtml(),
             'active'  => true
-        ));
-        $this->addTab(self::TAB_ID_BROWSE, array(
+        ]);
+        $this->addTab(self::TAB_ID_BROWSE, [
             'label'   => $this->__('Browse'),
             'title'   => $this->__('Browse'),
-            'content' => $this->createBlock('Ebay\Listing\Product\Category\Settings\Chooser\Tabs\Browse')
+            'content' => $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser_Tabs_Browse')
                               ->toHtml(),
             'active'  => $hideRecent ? true : false
-        ));
-        $this->addTab(self::TAB_ID_SEARCH, array(
+        ]);
+        $this->addTab(self::TAB_ID_SEARCH, [
             'label'   => $this->__('Search'),
             'title'   => $this->__('Search'),
-            'content' => $this->createBlock('Ebay\Listing\Product\Category\Settings\Chooser\Tabs\Search')
+            'content' => $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser_Tabs_Search')
                               ->toHtml()
-        ));
-        $this->addTab(self::TAB_ID_ATTRIBUTE, array(
+        ]);
+        $this->addTab(self::TAB_ID_ATTRIBUTE, [
             'label'   => $this->__('Magento Attribute'),
             'title'   => $this->__('Magento Attribute'),
-            'content' => $this->createBlock('Ebay\Listing\Product\Category\Settings\Chooser\Tabs\Attribute')
+            'content' => $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser_Tabs_Attribute')
                               ->toHtml()
-        ));
+        ]);
 
         return parent::_prepareLayout();
     }

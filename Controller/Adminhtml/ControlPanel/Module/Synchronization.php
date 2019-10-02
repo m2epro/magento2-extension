@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module;
 
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
+/**
+ * Class Synchronization
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module
+ */
 class Synchronization extends Command
 {
     //########################################
@@ -23,7 +27,7 @@ class Synchronization extends Command
      */
     public function synchCronTasksAction()
     {
-        $this->processSynchTasks(array(
+        $this->processSynchTasks([
             \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::PROCESSING,
             \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::MAGENTO_PRODUCTS,
             \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::STOP_QUEUE,
@@ -33,7 +37,7 @@ class Synchronization extends Command
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::ORDERS,
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::OTHER_LISTINGS,
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::POLICIES
-        ));
+        ]);
     }
 
     //########################################
@@ -45,9 +49,9 @@ class Synchronization extends Command
      */
     public function synchGlobalProcessingAction()
     {
-        $this->processSynchTasks(array(
+        $this->processSynchTasks([
             \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::PROCESSING
-        ));
+        ]);
     }
 
     /**
@@ -57,9 +61,9 @@ class Synchronization extends Command
      */
     public function synchGlobalMagentoProductsAction()
     {
-        $this->processSynchTasks(array(
+        $this->processSynchTasks([
             \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::MAGENTO_PRODUCTS
-        ));
+        ]);
     }
 
     /**
@@ -70,9 +74,9 @@ class Synchronization extends Command
      */
     public function synchGlobalQueueAction()
     {
-        $this->processSynchTasks(array(
+        $this->processSynchTasks([
             \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::STOP_QUEUE
-        ));
+        ]);
     }
 
     //########################################
@@ -85,9 +89,9 @@ class Synchronization extends Command
      */
     public function generalAction()
     {
-        $this->processSynchTasks(array(
+        $this->processSynchTasks([
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::GENERAL
-        ));
+        ]);
     }
 
     /**
@@ -98,9 +102,9 @@ class Synchronization extends Command
      */
     public function synchListingsProductsAction()
     {
-        $this->processSynchTasks(array(
+        $this->processSynchTasks([
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::LISTINGS_PRODUCTS
-        ));
+        ]);
     }
 
     /**
@@ -111,9 +115,9 @@ class Synchronization extends Command
      */
     public function synchOtherListingsAction()
     {
-        $this->processSynchTasks(array(
+        $this->processSynchTasks([
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::OTHER_LISTINGS
-        ));
+        ]);
     }
 
     /**
@@ -124,9 +128,9 @@ class Synchronization extends Command
      */
     public function synchTemplatesAction()
     {
-        $this->processSynchTasks(array(
+        $this->processSynchTasks([
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::TEMPLATES
-        ));
+        ]);
     }
 
     /**
@@ -137,9 +141,9 @@ class Synchronization extends Command
      */
     public function synchOrdersAction()
     {
-        $this->processSynchTasks(array(
+        $this->processSynchTasks([
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::ORDERS
-        ));
+        ]);
     }
 
     /**
@@ -151,16 +155,16 @@ class Synchronization extends Command
      */
     public function synchMarketplacesAction()
     {
-        $params = array();
+        $params = [];
 
         $marketplaceId = (int)$this->getRequest()->getParam('marketplace_id');
         if (!empty($marketplaceId)) {
             $params['marketplace_id'] = $marketplaceId;
         }
 
-        $this->processSynchTasks(array(
+        $this->processSynchTasks([
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::MARKETPLACES
-        ), $params);
+        ], $params);
     }
 
     /**
@@ -171,14 +175,14 @@ class Synchronization extends Command
      */
     public function synchPoliciesAction()
     {
-        $this->processSynchTasks(array(
+        $this->processSynchTasks([
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::POLICIES
-        ));
+        ]);
     }
 
     //########################################
 
-    private function processSynchTasks($tasks, $params = array())
+    private function processSynchTasks($tasks, $params = [])
     {
         session_write_close();
 
@@ -186,7 +190,7 @@ class Synchronization extends Command
 
         $components = $this->getHelper('Component')->getComponents();
         if ($this->getRequest()->getParam('component')) {
-            $components = array($this->getRequest()->getParam('component'));
+            $components = [$this->getRequest()->getParam('component')];
         }
 
         $dispatcher->setAllowedComponents($components);

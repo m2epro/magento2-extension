@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationAmazon\Installation\Acco
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Magento\Framework\Message\MessageInterface;
 
+/**
+ * Class Content
+ * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationAmazon\Installation\Account
+ */
 class Content extends AbstractForm
 {
     protected $amazonFactory;
@@ -21,8 +25,7 @@ class Content extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
 
         parent::__construct($context, $registry, $formFactory, $data);
@@ -34,7 +37,7 @@ class Content extends AbstractForm
 On this step, you should link your Amazon Account with your M2E Pro.<br/><br/>
 Please, select the Marketplace you are going to sell on and click on Continue button.
 HTML
-));
+        ));
 
         parent::_prepareLayout();
     }
@@ -54,7 +57,7 @@ HTML
         );
 
         $marketplacesCollection = $this->amazonFactory->getObject('Marketplace')->getCollection()
-            ->addFieldToFilter('developer_key', array('notnull' => true))
+            ->addFieldToFilter('developer_key', ['notnull' => true])
             ->setOrder('sorder', 'ASC');
 
         $marketplaces = [[
@@ -89,13 +92,13 @@ HTML
                             You will be redirected to the Amazon Website.<br /><br />
                             Sign-in and complete steps of getting access for M2E Pro:<br /><br />
                             <ul style="margin-left: 25px;">
-                                <li>Select - \'I want to use an application to access my Amazon
-                                Seller Account with MWS.\'</li>
-                                <li>Fill in Application Name and Application\'s Developer Account Number,
-                                which you can find in the Marketplaces Section on the current Page.</li>
+                                <li>Select - \'I want to use an application to access
+                                my Amazon Seller Account with MWS.\'</li>
+                                <li>Fill in Application Name and Application\'s Developer Account Number, which you
+                                can find in the Marketplaces Section on the current Page.</li>
                                 <li>Accept the Amazon MWS License Agreement.</li>
-                                <li>Copy generated "Merchant ID" / "MWS Auth Token" and paste it in
-                                the corresponding fields of the current Page.</li>
+                                <li>Copy generated "Merchant ID" / "MWS Auth Token" and paste it in the corresponding
+                                fields of the current Page.</li>
                             </ul>
                         '),
                         'type'    => MessageInterface::TYPE_NOTICE,
@@ -166,7 +169,8 @@ HTML
                     'required' => true,
                     'css_class' => 'manual-authorization M2ePro-marketplace-merchant',
                     'tooltip' => $this->__(
-                        'Paste generated Merchant ID from Amazon. (It must look like: A15UFR7CZVW5YA).')
+                        'Paste generated Merchant ID from Amazon. (It must look like: A15UFR7CZVW5YA).'
+                    )
                 ]
             )->setFieldExtraAttributes('style="display: none"');
 
@@ -182,7 +186,8 @@ HTML
                     'css_class' => 'manual-authorization M2ePro-marketplace-merchant',
                     'tooltip' => $this->__(
                         'Paste generated MWS Auth Token from Amazon.
-                        (It must look like: amzn.mws.bna3f75c-a683-49c7-6da0-749y33313dft).')
+                        (It must look like: amzn.mws.bna3f75c-a683-49c7-6da0-749y33313dft).'
+                    )
                 ]
             )->setFieldExtraAttributes('style="display: none"');
         }
@@ -196,7 +201,8 @@ HTML
             'Option on MWS Authorization Page and enter correct Merchant ID.' => $this->__(
                 'M2E Pro was not able to get access to the Amazon Account.' .
                 ' Please, make sure, that you choose correct Option on MWS Authorization Page
-                and enter correct Merchant ID / MWS Auth Token'),
+                and enter correct Merchant ID / MWS Auth Token'
+            ),
             'M2E Pro was not able to get access to the Amazon Account. Reason: %error_message%' => $this->__(
                 'M2E Pro was not able to get access to the Amazon Account. Reason: %error_message%'
             ),

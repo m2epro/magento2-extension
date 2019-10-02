@@ -8,17 +8,21 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Command;
 
+/**
+ * Class RealTime
+ * @package Ess\M2ePro\Model\Ebay\Connector\Command
+ */
 abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
 {
     /**
      * @var \Ess\M2ePro\Model\Marketplace|null
      */
-    protected $marketplace = NULL;
+    protected $marketplace = null;
 
     /**
      * @var \Ess\M2ePro\Model\Account|null
      */
-    protected $account = NULL;
+    protected $account = null;
 
     // ########################################
 
@@ -28,10 +32,9 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params
-    )
-    {
-        $this->marketplace = (!is_null($marketplace->getId())) ? $marketplace : NULL;
-        $this->account = (!is_null($account->getId())) ? $account : NULL;
+    ) {
+        $this->marketplace = ($marketplace->getId() !== null) ? $marketplace : null;
+        $this->account = ($account->getId() !== null) ? $account : null;
 
         parent::__construct($helperFactory, $modelFactory, $params);
     }
@@ -44,10 +47,10 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
 
         $requestData = $request->getData();
 
-        if (!is_null($this->marketplace)) {
+        if ($this->marketplace !== null) {
             $requestData['marketplace'] = $this->marketplace->getNativeId();
         }
-        if (!is_null($this->account)) {
+        if ($this->account !== null) {
             $requestData['account'] = $this->account->getChildObject()->getServerHash();
         }
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Template\Category;
 
+/**
+ * Class Specific
+ * @package Ess\M2ePro\Model\Walmart\Template\Category
+ */
 class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     const DICTIONARY_TYPE_TEXT = 1;
@@ -34,7 +38,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Walmart\Template\Category\Specific\Source[]
      */
-    private $categorySpecificSourceModels = array();
+    private $categorySpecificSourceModels = [];
 
     //########################################
 
@@ -50,7 +54,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     {
         $temp = parent::delete();
         $temp && $this->categoryTemplateModel = null;
-        $temp && $this->categorySpecificSourceModels = array();
+        $temp && $this->categorySpecificSourceModels = [];
         return $temp;
     }
 
@@ -62,10 +66,9 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getCategoryTemplate()
     {
-        if (is_null($this->categoryTemplateModel)) {
-
+        if ($this->categoryTemplateModel === null) {
             $this->categoryTemplateModel = $this->activeRecordFactory->getObjectLoaded(
-                'Walmart\Template\Category',
+                'Walmart_Template_Category',
                 $this->getTemplateCategoryId()
             );
         }
@@ -105,7 +108,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         }
 
         $this->categorySpecificSourceModels[$productId] = $this->modelFactory->getObject(
-            'Walmart\Template\Category\Specific\Source'
+            'Walmart_Template_Category_Specific_Source'
         );
         $this->categorySpecificSourceModels[$productId]->setMagentoProduct($magentoProduct);
         $this->categorySpecificSourceModels[$productId]->setCategorySpecificTemplate($this);
@@ -162,7 +165,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getAttributes()
     {
         $value = $this->getData('attributes');
-        return is_string($value) ? (array)$this->getHelper('Data')->jsonDecode($value) : array();
+        return is_string($value) ? (array)$this->getHelper('Data')->jsonDecode($value) : [];
     }
 
     // ---------------------------------------
@@ -237,10 +240,10 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $attribute = $this->getCustomAttribute();
 
         if (empty($attribute)) {
-            return array();
+            return [];
         }
 
-        return array($attribute);
+        return [$attribute];
     }
 
     //########################################

@@ -8,12 +8,17 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
+/**
+ * Class Status
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub
+ */
 class Status extends AbstractModel
 {
     //########################################
 
     protected function check()
     {
+        return null;
     }
 
     protected function execute()
@@ -21,9 +26,9 @@ class Status extends AbstractModel
         $childListingProducts = $this->getProcessor()->getTypeModel()->getChildListingsProducts();
 
         if (empty($childListingProducts)) {
-            $this->getProcessor()->getListingProduct()->addData(array(
+            $this->getProcessor()->getListingProduct()->addData([
                 'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
-            ))->getChildObject()->addData([
+            ])->getChildObject()->addData([
                 'variation_child_statuses' => null
             ]);
 
@@ -35,12 +40,12 @@ class Status extends AbstractModel
 
         $resultStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
 
-        $childStatuses = array(
+        $childStatuses = [
             \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED     => 0,
             \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => 0,
             \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED    => 0,
             \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED    => 0,
-        );
+        ];
 
         foreach ($childListingProducts as $childListingProduct) {
             /** @var \Ess\M2ePro\Model\Listing\Product $childListingProduct */
@@ -58,7 +63,7 @@ class Status extends AbstractModel
                 continue;
             }
 
-            if (is_null($sameStatus)) {
+            if ($sameStatus === null) {
                 $sameStatus = $childStatus;
                 continue;
             }
@@ -68,7 +73,7 @@ class Status extends AbstractModel
             }
         }
 
-        if ($isStatusSame && !is_null($sameStatus) &&
+        if ($isStatusSame && $sameStatus !== null &&
             $sameStatus != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED &&
             $resultStatus != \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED
         ) {

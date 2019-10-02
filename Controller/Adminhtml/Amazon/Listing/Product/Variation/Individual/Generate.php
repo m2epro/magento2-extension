@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Indiv
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class Generate
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Individual
+ */
 class Generate extends Main
 {
     public function execute()
@@ -27,13 +31,13 @@ class Generate extends Main
             return $this->getResult();
         }
 
-        /* @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+        /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
         $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $listingProductId);
 
         $magentoVariations = $listingProduct->getMagentoProduct()->getVariationInstance()->getVariationsTypeStandard();
         $magentoVariations = $magentoVariations['variations'];
 
-        if (!$this->getRequest()->getParam('unique',false)) {
+        if (!$this->getRequest()->getParam('unique', false)) {
             $this->setJsonContent([
                 'type' => 'success',
                 'text' => $magentoVariations
@@ -43,18 +47,16 @@ class Generate extends Main
         }
 
         $listingProducts = $this->amazonFactory->getObject('Listing\Product')->getCollection()
-            ->addFieldToFilter('listing_id',$listingProduct->getListingId())
-            ->addFieldToFilter('product_id',$listingProduct->getProductId())
+            ->addFieldToFilter('listing_id', $listingProduct->getListingId())
+            ->addFieldToFilter('product_id', $listingProduct->getProductId())
             ->getItems();
 
         foreach ($listingProducts as $listingProduct) {
-
             $variationManager = $listingProduct->getChildObject()->getVariationManager();
 
             if ($listingProduct->isComponentModeAmazon()) {
                 if (!($variationManager->isIndividualType() &&
                     $variationManager->getTypeModel()->isVariationProductMatched())) {
-
                     continue;
                 }
             } else {
@@ -65,23 +67,25 @@ class Generate extends Main
 
             $variations = $listingProduct->getVariations(true);
             if (count($variations) <= 0) {
-                throw new \Ess\M2ePro\Model\Exception('There are no variations for a variation product.',
-                    array(
+                throw new \Ess\M2ePro\Model\Exception(
+                    'There are no variations for a variation product.',
+                    [
                         'listing_product_id' => $listingProduct->getId()
-                    ));
+                    ]
+                );
             }
 
-            /* @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
             $variation = reset($variations);
 
             $options = $variation->getOptions();
             foreach ($options as &$option) {
-                $option = array(
+                $option = [
                     'product_id' => $option['product_id'],
                     'product_type' => $option['product_type'],
                     'attribute' => $option['attribute'],
                     'option' => $option['option']
-                );
+                ];
             }
             unset($option);
 

@@ -11,12 +11,16 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Edit;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Edit
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     private $stringUtils;
     private $templateManager;
 
-    private $enabledMarketplaces = NULL;
+    private $enabledMarketplaces = null;
 
     //########################################
 
@@ -27,8 +31,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->stringUtils = $stringUtils;
         $this->templateManager = $templateManager;
         parent::__construct($context, $registry, $formFactory, $data);
@@ -80,8 +83,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         $templateNick = $this->getTemplateNick();
-        if (
-            $templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING
+        if ($templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING
             || $templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT
             || $templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY
         ) {
@@ -112,7 +114,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         return array_merge([
             'title' => '',
             'marketplace_id' => ''
-        ],$templateData->getData());
+        ], $templateData->getData());
     }
 
     //########################################
@@ -126,7 +128,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {
         $template = $this->getParentBlock()->getTemplateObject();
 
-        return $template ? $template->getId() : NULL;
+        return $template ? $template->getId() : null;
     }
 
     public function canDisplayMarketplace()
@@ -138,7 +140,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     public function getEnabledMarketplaces()
     {
-        if (is_null($this->enabledMarketplaces)) {
+        if ($this->enabledMarketplaces === null) {
             $collection = $this->activeRecordFactory->getObject('Marketplace')->getCollection();
             $collection->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Ebay::NICK);
             $collection->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
@@ -174,7 +176,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             return $template->getData('marketplace_id');
         }
 
-        return NULL;
+        return null;
     }
 
     //########################################
@@ -183,22 +185,25 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {
         $nick = $this->getTemplateNick();
         $this->jsUrl->addUrls([
-            'ebay_template/getTemplateHtml' => $this->getUrl('*/ebay_template/getTemplateHtml',
+            'ebay_template/getTemplateHtml' => $this->getUrl(
+                '*/ebay_template/getTemplateHtml',
                 [
-                    'account_id' => NULL,
+                    'account_id' => null,
                     'id' => $this->getTemplateId(),
                     'nick' => $nick,
                     'mode' => \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE,
                     'data_force' => true
                 ]
             ),
-            'ebay_template/isTitleUnique' => $this->getUrl('*/ebay_template/isTitleUnique',
+            'ebay_template/isTitleUnique' => $this->getUrl(
+                '*/ebay_template/isTitleUnique',
                 [
                     'id' => $this->getTemplateId(),
                     'nick' => $nick
                 ]
             ),
-            'deleteAction' => $this->getUrl('*/ebay_template/delete',
+            'deleteAction' => $this->getUrl(
+                '*/ebay_template/delete',
                 [
                     'id' => $this->getTemplateId(),
                     'nick' => $nick

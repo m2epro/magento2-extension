@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\Description;
 
+/**
+ * Class Specific
+ * @package Ess\M2ePro\Model\Amazon\Template\Description
+ */
 class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     const DICTIONARY_TYPE_TEXT      = 1;
@@ -26,12 +30,12 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Template\Description
      */
-    private $descriptionTemplateModel = NULL;
+    private $descriptionTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Template\Description\Specific\Source[]
      */
-    private $descriptionSpecificSourceModels = array();
+    private $descriptionSpecificSourceModels = [];
 
     protected $amazonFactory;
 
@@ -47,8 +51,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         parent::__construct(
             $modelFactory,
@@ -75,8 +78,8 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function delete()
     {
         $temp = parent::delete();
-        $temp && $this->descriptionTemplateModel = NULL;
-        $temp && $this->descriptionSpecificSourceModels = array();
+        $temp && $this->descriptionTemplateModel = null;
+        $temp && $this->descriptionSpecificSourceModels = [];
         return $temp;
     }
 
@@ -88,10 +91,12 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getDescriptionTemplate()
     {
-        if (is_null($this->descriptionTemplateModel)) {
-
+        if ($this->descriptionTemplateModel === null) {
             $this->descriptionTemplateModel = $this->amazonFactory->getCachedObjectLoaded(
-                'Template\Description', $this->getTemplateDescriptionId(), NULL, array('template')
+                'Template\Description',
+                $this->getTemplateDescriptionId(),
+                null,
+                ['template']
             );
         }
 
@@ -130,7 +135,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         }
 
         $this->descriptionSpecificSourceModels[$productId] = $this->modelFactory->getObject(
-            'Amazon\Template\Description\Specific\Source'
+            'Amazon_Template_Description_Specific_Source'
         );
         $this->descriptionSpecificSourceModels[$productId]->setMagentoProduct($magentoProduct);
         $this->descriptionSpecificSourceModels[$productId]->setDescriptionSpecificTemplate($this);
@@ -192,7 +197,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getAttributes()
     {
         $value = $this->getData('attributes');
-        return is_string($value) ? (array)$this->getHelper('Data')->jsonDecode($value) : array();
+        return is_string($value) ? (array)$this->getHelper('Data')->jsonDecode($value) : [];
     }
 
     //########################################
@@ -259,10 +264,10 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $attribute = $this->getCustomAttribute();
 
         if (empty($attribute)) {
-            return array();
+            return [];
         }
 
-        return array($attribute);
+        return [$attribute];
     }
 
     //########################################

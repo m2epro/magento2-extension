@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manag
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class ViewVariationsSettingsAjax
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manage
+ */
 class ViewVariationsSettingsAjax extends Main
 {
     public function execute()
@@ -20,7 +24,7 @@ class ViewVariationsSettingsAjax extends Main
             return $this->getResponse()->setBody('You should provide correct parameters.');
         }
 
-        $settings = $this->createBlock('Amazon\Listing\Product\Variation\Manage\Tabs\Settings\Form');
+        $settings = $this->createBlock('Amazon_Listing_Product_Variation_Manage_Tabs_Settings_Form');
         $settings->setListingProduct($this->amazonFactory->getObjectLoaded('Listing\Product', $productId));
 
         $this->setJsonContent([

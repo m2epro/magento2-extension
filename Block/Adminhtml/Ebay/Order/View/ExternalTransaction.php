@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Order\View;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
+/**
+ * Class ExternalTransaction
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Order\View
+ */
 class ExternalTransaction extends AbstractGrid
 {
     /** @var $order \Ess\M2ePro\Model\Order */
@@ -47,36 +51,36 @@ class ExternalTransaction extends AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('transaction_id', array(
+        $this->addColumn('transaction_id', [
             'header' => $this->__('Transaction #'),
             'align' => 'left',
             'width' => '*',
             'index' => 'transaction_id',
             'sortable' => false,
-            'frame_callback' => array($this, 'callbackColumnTransactionId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTransactionId']
+        ]);
 
-        $this->addColumn('fee', array(
+        $this->addColumn('fee', [
             'header' => $this->__('Fee'),
             'align' => 'left',
             'width' => '100px',
             'index' => 'fee',
             'type' => 'number',
             'sortable' => false,
-            'frame_callback' => array($this, 'callbackColumnFee')
-        ));
+            'frame_callback' => [$this, 'callbackColumnFee']
+        ]);
 
-        $this->addColumn('sum', array(
+        $this->addColumn('sum', [
             'header' => $this->__('Amount'),
             'align' => 'left',
             'width' => '100px',
             'index' => 'sum',
             'type' => 'number',
             'sortable' => false,
-            'frame_callback' => array($this, 'callbackColumnSum')
-        ));
+            'frame_callback' => [$this, 'callbackColumnSum']
+        ]);
 
-        $this->addColumn('transaction_date', array(
+        $this->addColumn('transaction_date', [
             'header'   => $this->__('Date'),
             'align'    => 'left',
             'width'    => '150px',
@@ -86,7 +90,7 @@ class ExternalTransaction extends AbstractGrid
             'format'   => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'sortable' => false
-        ));
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -97,7 +101,7 @@ class ExternalTransaction extends AbstractGrid
             return $value;
         }
 
-        $url = $this->getUrl('*/*/goToPaypal', array('transaction_id' => $value));
+        $url = $this->getUrl('*/*/goToPaypal', ['transaction_id' => $value]);
 
         return '<a href="'.$url.'" target="_blank">'.$value.'</a>';
     }
@@ -105,14 +109,16 @@ class ExternalTransaction extends AbstractGrid
     public function callbackColumnFee($value, $row, $column, $isExport)
     {
         return $this->modelFactory->getObject('Currency')->formatPrice(
-            $this->order->getChildObject()->getCurrency(), $value
+            $this->order->getChildObject()->getCurrency(),
+            $value
         );
     }
 
     public function callbackColumnSum($value, $row, $column, $isExport)
     {
         return $this->modelFactory->getObject('Currency')->formatPrice(
-            $this->order->getChildObject()->getCurrency(), $value
+            $this->order->getChildObject()->getCurrency(),
+            $value
         );
     }
 

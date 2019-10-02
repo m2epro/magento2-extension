@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Processing\Action\ListAction\Sku;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Amazon\Processing\Action\ListAction\Sku
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     // ########################################

@@ -12,6 +12,10 @@ use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 use Ess\M2ePro\Helper\Component\Walmart;
 use Ess\M2ePro\Model\Walmart\Template\Synchronization as SynchronizationPolicy;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Synchronization
+ */
 class Save extends Template
 {
     public function execute()
@@ -27,12 +31,12 @@ class Save extends Template
 
         // Base prepare
         // ---------------------------------------
-        $data = array();
+        $data = [];
         // ---------------------------------------
 
         // tab: list
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'title',
             'list_mode',
             'list_status_enabled',
@@ -42,8 +46,9 @@ class Save extends Template
             'list_qty_magento_value_max',
             'list_qty_calculated',
             'list_qty_calculated_value',
-            'list_qty_calculated_value_max'
-        );
+            'list_qty_calculated_value_max',
+            'list_advanced_rules_mode'
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -51,12 +56,15 @@ class Save extends Template
         }
 
         $data['title'] = strip_tags($data['title']);
+        $data['list_advanced_rules_filters'] = $this->getRuleData(
+            SynchronizationPolicy::LIST_ADVANCED_RULES_PREFIX
+        );
 
         // ---------------------------------------
 
         // tab: revise
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'revise_update_qty',
             'revise_update_qty_max_applied_value_mode',
             'revise_update_qty_max_applied_value',
@@ -64,7 +72,7 @@ class Save extends Template
             'revise_update_price_max_allowed_deviation_mode',
             'revise_update_price_max_allowed_deviation',
             'revise_update_promotions',
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -74,7 +82,7 @@ class Save extends Template
 
         // tab: relist
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'relist_mode',
             'relist_filter_user_lock',
             'relist_status_enabled',
@@ -85,17 +93,22 @@ class Save extends Template
             'relist_qty_calculated',
             'relist_qty_calculated_value',
             'relist_qty_calculated_value_max',
-        );
+            'relist_advanced_rules_mode'
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
             }
         }
+
+        $data['relist_advanced_rules_filters'] = $this->getRuleData(
+            SynchronizationPolicy::RELIST_ADVANCED_RULES_PREFIX
+        );
         // ---------------------------------------
 
         // tab: stop
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'stop_mode',
             'stop_status_disabled',
             'stop_out_off_stock',
@@ -104,13 +117,18 @@ class Save extends Template
             'stop_qty_magento_value_max',
             'stop_qty_calculated',
             'stop_qty_calculated_value',
-            'stop_qty_calculated_value_max'
-        );
+            'stop_qty_calculated_value_max',
+            'stop_advanced_rules_mode'
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
             }
         }
+
+        $data['stop_advanced_rules_filters'] = $this->getRuleData(
+            SynchronizationPolicy::STOP_ADVANCED_RULES_PREFIX
+        );
         // ---------------------------------------
 
         // Add or update model
@@ -140,12 +158,27 @@ class Save extends Template
         // ---------------------------------------
 
         $this->messageManager->addSuccess($this->__('Policy was successfully saved'));
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('*/walmart_template/index', array(), array(
-            'edit' => array(
+        return $this->_redirect($this->getHelper('Data')->getBackUrl('*/walmart_template/index', [], [
+            'edit' => [
                 'id' => $id,
                 'wizard' => $this->getRequest()->getParam('wizard'),
                 'close_on_save' => $this->getRequest()->getParam('close_on_save')
-            ),
-        )));
+            ],
+        ]));
+    }
+
+    private function getRuleData($rulePrefix)
+    {
+        $postData = $this->getRequest()->getPost()->toArray();
+
+        if (empty($postData['rule'][$rulePrefix])) {
+            return null;
+        }
+
+        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
+            ['prefix' => $rulePrefix]
+        );
+
+        return $ruleModel->getSerializedFromPost($postData);
     }
 }

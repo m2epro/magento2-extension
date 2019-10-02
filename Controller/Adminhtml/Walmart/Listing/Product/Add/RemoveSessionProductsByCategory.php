@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
+/**
+ * Class RemoveSessionProductsByCategory
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+ */
 class RemoveSessionProductsByCategory extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
     //########################################
@@ -20,20 +24,20 @@ class RemoveSessionProductsByCategory extends \Ess\M2ePro\Controller\Adminhtml\W
         if (!isset($tempSession['products_ids'])) {
             return $this->getResult();
         }
-        /* @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category\Tree */
-        $treeBlock = $this->createBlock('Walmart\Listing\Product\Add\SourceMode\Category\Tree');
+        /** @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category\Tree */
+        $treeBlock = $this->createBlock('Walmart_Listing_Product_Add_SourceMode_Category_Tree');
         $treeBlock->setSelectedIds($tempSession['products_ids']);
 
         $productsForEachCategory = $treeBlock->getProductsForEachCategory();
 
-        $products = array();
+        $products = [];
         foreach ($categoriesIds as $categoryId) {
             $products = array_merge($products, $productsForEachCategory[$categoryId]);
         }
 
         $tempSession['products_ids'] = array_diff($tempSession['products_ids'], $products);
 
-        $this->setSessionValue('source_categories',$tempSession);
+        $this->setSessionValue('source_categories', $tempSession);
     }
 
     //########################################

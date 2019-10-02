@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon;
 
+/**
+ * Class Marketplace
+ * @package Ess\M2ePro\Model\Amazon
+ */
 class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
     //########################################
@@ -22,7 +26,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('marketplace');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
         return parent::save();
     }
 
@@ -30,7 +34,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
 
     public function delete()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('marketplace');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
         return parent::delete();
     }
 
@@ -44,7 +48,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
      */
     public function getAmazonItems($asObjects = false, array $filters = [])
     {
-        return $this->getRelatedSimpleItems('Amazon\Item','marketplace_id',$asObjects,$filters);
+        return $this->getRelatedSimpleItems('Amazon\Item', 'marketplace_id', $asObjects, $filters);
     }
 
     /**
@@ -55,7 +59,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
      */
     public function getDescriptionTemplates($asObjects = false, array $filters = [])
     {
-        return $this->getRelatedSimpleItems('Amazon\Template\Description','marketplace_id',$asObjects,$filters);
+        return $this->getRelatedSimpleItems('Amazon_Template_Description', 'marketplace_id', $asObjects, $filters);
     }
 
     //########################################

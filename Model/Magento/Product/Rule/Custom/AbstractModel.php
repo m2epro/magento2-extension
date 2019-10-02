@@ -8,36 +8,29 @@
 
 namespace Ess\M2ePro\Model\Magento\Product\Rule\Custom;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Magento\Product\Rule\Custom
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface  */
     protected $localeDate;
 
-    /** @var \Magento\CatalogInventory\Api\StockRegistryInterface  */
-    protected $stockRegistry;
-
-    /** @var \Magento\CatalogInventory\Api\StockConfigurationInterface  */
-    protected $stockConfiguration;
-
-    protected $filterOperator  = NULL;
-    protected $filterCondition = NULL;
+    protected $filterOperator  = null;
+    protected $filterCondition = null;
 
     //########################################
 
     public function __construct(
-        $filterOperator, $filterCondition,
+        $filterOperator,
+        $filterCondition,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
-        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
-        \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    )
-    {
-        $this->localeDate          = $localeDate;
-        $this->stockRegistry       = $stockRegistry;
-        $this->stockConfiguration  = $stockConfiguration;
-
+    ) {
+        $this->localeDate      = $localeDate;
         $this->filterOperator  = $filterOperator;
         $this->filterCondition = $filterCondition;
 
@@ -75,20 +68,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getOptions()
     {
-        return array();
-    }
-
-    /**
-     * @param \Magento\Catalog\Model\Product $product
-     * @return \Magento\CatalogInventory\Api\Data\StockItemInterface
-     */
-    protected function getStockItemByProductInstance(\Magento\Catalog\Model\Product $product)
-    {
-        return $this->stockRegistry
-                    ->getStockItem(
-                        $product->getId(),
-                        $product->getStore()->getWebsiteId()
-                    );
+        return [];
     }
 
     //########################################

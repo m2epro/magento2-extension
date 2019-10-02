@@ -1,5 +1,14 @@
 <?php
-    /** @var $block Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Options\Mapping */
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var $block Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Options\Mapping */
+
 ?>
 
 <style type="text/css">
@@ -27,15 +36,14 @@
 
     <div style="border-bottom: 1px solid #E7E7E7; padding: 5px 5px;">
 
-        <?php if (count($block->getData('channel_options')) == 0): ?>
+        <?php if (empty($block->getData('channel_options'))) : ?>
             <span style="font-style: italic;">
                 <?php echo $block->__('No Channel Options are available.'); ?>
             </span>
-        <?php else: ?>
-
+        <?php else : ?>
             <dl>
 
-            <?php foreach ($block->getData('channel_options') as $channelOption): ?>
+            <?php foreach ($block->getData('channel_options') as $channelOption) : ?>
                 <dt>
                     <label>
                         <span style="font-weight: bold; font-style: italic;">
@@ -62,7 +70,7 @@
 
         <dl>
 
-        <?php foreach ($block->getData('magento_options') as $option): ?>
+        <?php foreach ($block->getData('magento_options') as $option) : ?>
             <dt>
                 <label>
                     <span style="color: #eb5202">*</span>&nbsp;<?php echo $block->getHelper('Data')->escapeHtml($option['label']); ?>
@@ -72,17 +80,19 @@
                 <div class="input-box">
                     <select name="option_id[<?php echo (int)$option['option_id']; ?>]" class="form-element select admin__control-select required-entry">
                         <option value="" class="empty"><?php echo $block->__('Select Option...'); ?></option>
-                        <?php foreach ($option['values'] as $value): ?>
+                        <?php foreach ($option['values'] as $value) : ?>
                             <?php
-                                $optionValue = json_encode(array(
+                                $optionValue = json_encode([
                                     'value_id' => $value['value_id'],
                                     'product_ids' => $value['product_ids']
-                                ));
+                                ]);
                                 $optionLabel = $value['label'];
 
                                 $selected = $block->isMagentoOptionSelected($option, $value);
                             ?>
-                            <option value="<?php echo $block->getHelper('Data')->escapeHtml($optionValue); ?>" <?php if ($selected): ?>selected="selected"<?php endif; ?>>
+                            <option value="<?php echo $block->getHelper('Data')->escapeHtml($optionValue); ?>" <?php if ($selected) :
+                                ?>selected="selected"<?php
+                                           endif; ?>>
                                 <?php echo $block->getHelper('Data')->escapeHtml($optionLabel); ?>
                             </option>
                         <?php endforeach; ?>
@@ -99,8 +109,7 @@
         <?php echo $block->getChildHtml('product_mapping_options_out_of_stock_message'); ?>
     </div>
 
-    <?php if (count($block->getData('channel_options')) > 0): ?>
-
+    <?php if (!empty($block->getData('channel_options'))) : ?>
         <div style="padding-top: 5px;">
             <input
                 id="save_matching"

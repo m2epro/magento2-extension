@@ -8,19 +8,13 @@
 
 namespace Ess\M2ePro\Model\Order;
 
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Inventory\Model\StockRepository;
 use Magento\InventoryConfigurationApi\Model\IsSourceItemManagementAllowedForProductTypeInterface;
-use Magento\InventorySales\Model\SalesEventToArrayConverter;
-use Magento\InventorySalesApi\Api\Data\ItemToSellInterfaceFactory;
-use Magento\InventorySalesApi\Api\Data\SalesChannelInterface;
-use Magento\InventorySalesApi\Api\Data\SalesChannelInterfaceFactory;
-use Magento\InventorySalesApi\Api\Data\SalesEventInterface;
-use Magento\InventorySalesApi\Api\Data\SalesEventInterfaceFactory;
-use Magento\InventorySalesApi\Api\PlaceReservationsForSalesEventInterface;
-use Magento\InventorySalesApi\Model\GetAssignedSalesChannelsForStockInterface;
-use Magento\Store\Api\WebsiteRepositoryInterface;
+use Magento\InventorySalesApi\Model\StockByWebsiteIdResolverInterface;
 
+/**
+ * Class Reserve
+ * @package Ess\M2ePro\Model\Order
+ */
 class Reserve extends \Ess\M2ePro\Model\AbstractModel
 {
     const STATE_UNKNOWN  = 0;
@@ -28,30 +22,24 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
     const STATE_RELEASED = 2;
     const STATE_CANCELED = 3;
 
-    const MAGENTO_RESERVATION_EVENT_TYPE  = 'm2epro_reservation';
-    const MAGENTO_RESERVATION_OBJECT_TYPE = 'm2epro_order';
+    const MAGENTO_RESERVATION_PLACED_EVENT_TYPE   = 'm2epro_reservation_placed';
+    const MAGENTO_RESERVATION_RELEASED_EVENT_TYPE = 'm2epro_reservation_released';
+    const MAGENTO_RESERVATION_OBJECT_TYPE         = 'm2epro_order';
 
     const ACTION_ADD = 'add';
     const ACTION_SUB = 'sub';
 
     /** @var \Magento\Framework\DB\TransactionFactory  */
-    private $transactionFactory = NULL;
-    /** @var ObjectManagerInterface */
-    private $objectManager;
-    /** @var \Ess\M2ePro\Model\Order */
-    private $order = null;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
-    private $activeRecordFactory;
-    /** @var GetAssignedSalesChannelsForStockInterface */
-    private $getAssignedChannels;
-    /** @var \Magento\Catalog\Model\ResourceModel\Product */
-    private $productResource;
-    /** @var WebsiteRepositoryInterface */
-    private $websiteRepository;
-    /** @var StockRepository */
-    private $stockRepository;
+    private $transactionFactory;
 
-    private $flags = array();
+    /** @var \Magento\Framework\ObjectManagerInterface */
+    private $objectManager;
+
+    /** @var \Ess\M2ePro\Model\Order */
+    private $order;
+
+    /** @var array */
+    private $flags = [];
 
     //########################################
 
@@ -60,14 +48,13 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Order $order,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        ObjectManagerInterface $objectManager,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-    )
-    {
-        $this->transactionFactory  = $transactionFactory;
-        $this->order               = $order;
-        $this->objectManager       = $objectManager;
-        $this->activeRecordFactory = $activeRecordFactory;
+        \Magento\Framework\ObjectManagerInterface $objectManager
+    ) {
+        $this->transactionFactory = $transactionFactory;
+        $this->objectManager = $objectManager;
+
+        $this->order = $order;
+
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -128,24 +115,19 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
         }
 
         try {
-
             $this->order->associateWithStore();
             $this->order->associateItemsWithProducts();
 
-            if ($this->getHelper('Magento')->isMSISupportingVersion()) {
-                $this->placeMagentoReservation();
-            } else {
-                $this->performAction(self::ACTION_SUB, self::STATE_PLACED);
-            }
-
+            $this->performAction(self::ACTION_SUB, self::STATE_PLACED);
             if (!$this->isPlaced()) {
                 return false;
             }
         } catch (\Exception $e) {
             $this->order->addErrorLog(
-                'QTY was not reserved. Reason: %msg%', array(
+                'QTY was not reserved. Reason: %msg%',
+                [
                     'msg' => $e->getMessage()
-                )
+                ]
             );
             return false;
         }
@@ -169,20 +151,17 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
         }
 
         try {
-            if ($this->getHelper('Magento')->isMSISupportingVersion()) {
-                $this->releaseMagentoReservation(self::STATE_RELEASED);
-            } else {
-                $this->performAction(self::ACTION_ADD, self::STATE_RELEASED);
-            }
 
+            $this->performAction(self::ACTION_ADD, self::STATE_RELEASED);
             if (!$this->isReleased()) {
                 return false;
             }
         } catch (\Exception $e) {
             $this->order->addErrorLog(
-                'QTY was not released. Reason: %msg%', array(
+                'QTY was not released. Reason: %msg%',
+                [
                     'msg' => $e->getMessage()
-                )
+                ]
             );
             return false;
         }
@@ -206,20 +185,17 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
         }
 
         try {
-            if ($this->getHelper('Magento')->isMSISupportingVersion()) {
-                $this->releaseMagentoReservation(self::STATE_CANCELED);
-            } else {
-                $this->performAction(self::ACTION_ADD, self::STATE_CANCELED);
-            }
 
+            $this->performAction(self::ACTION_ADD, self::STATE_CANCELED);
             if (!$this->isCanceled()) {
                 return false;
             }
         } catch (\Exception $e) {
             $this->order->addErrorLog(
-                'QTY reserve was not canceled. Reason: %msg%', array(
+                'QTY reserve was not canceled. Reason: %msg%',
+                [
                     'msg' => $e->getMessage()
-                )
+                ]
             );
             return false;
         }
@@ -230,24 +206,86 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $action
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function getValidatedOrdersItems($action)
+    {
+        $productsExistCount  = 0;
+        $validatedOrderItems = [];
+
+        foreach ($this->order->getItemsCollection()->getItems() as $item) {
+            /**@var \Ess\M2ePro\Model\Order\Item $item */
+
+            $products = $this->getItemProductsByAction($item, $action);
+            if (empty($products)) {
+                continue;
+            }
+
+            foreach ($products as $key => $productId) {
+
+                $magentoProduct = $this->modelFactory->getObject('Magento\Product')
+                    ->setStoreId($this->order->getStoreId())
+                    ->setProductId($productId);
+
+                if (!$magentoProduct->exists()) {
+                    $this->order->addWarningLog(
+                        'The QTY Reservation action (reserve/release/cancel) has not been performed for
+                        Product ID "%id%". It is not exist.',
+                        ['!id' => $productId]
+                    );
+                    continue;
+                }
+
+                $productsExistCount++;
+
+                $magentoStockItem = $this->modelFactory->getObject('Magento_Product_StockItem', [
+                    'stockItem' => $magentoProduct->getStockItem()
+                ]);
+
+                if (!$magentoStockItem->canChangeQty() &&
+                    $this->order->getLog()->getInitiator() == \Ess\M2ePro\Helper\Data::INITIATOR_USER
+                ) {
+                    $this->order->addWarningLog(
+                        'The QTY Reservation action (reserve/release/cancel) has not been performed for "%name%"
+                        as the "Decrease Stock When Order is Placed" or/and "Manage Stock" options are disabled in
+                        your Magento Inventory configurations.',
+                        ['!name' => $magentoProduct->getName()]
+                    );
+                    continue;
+                }
+
+                $validatedOrderItems[$item->getId()][$magentoProduct->getProductId()] = [
+                    $magentoProduct, $magentoStockItem
+                ];
+            }
+        }
+
+        if ($productsExistCount === 0) {
+            $this->order->setData('reservation_state', self::STATE_UNKNOWN)->save();
+            throw new \Ess\M2ePro\Model\Exception\Logic('Product(s) does not exist.');
+        }
+
+        return $validatedOrderItems;
+    }
+
+    /**
+     * @param $action
      * @param $newState
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     private function performAction($action, $newState)
     {
         $productsAffectedCount = 0;
-        $productsDeletedCount  = 0;
-        $productsExistCount    = 0;
+        $productsChangedCount  = 0;
+        $validateOrderItems = $this->getValidatedOrdersItems($action);
 
-        $productStockItems = array();
-        $magentoStockItems = array();
-
+        /** @var \Magento\Framework\DB\Transaction $transaction */
         $transaction = $this->transactionFactory->create();
 
         foreach ($this->order->getItemsCollection()->getItems() as $item) {
             /**@var \Ess\M2ePro\Model\Order\Item $item */
 
-            if ($action == self::ACTION_SUB) {
+            if ($action === self::ACTION_SUB) {
                 $qty = $item->getChildObject()->getQtyPurchased();
                 $item->setData('qty_reserved', $qty);
             } else {
@@ -255,341 +293,173 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
                 $item->setData('qty_reserved', 0);
             }
 
-            $products = $this->getItemProductsByAction($item, $action);
-
-            if (count($products) == 0) {
+            $products = isset($validateOrderItems[$item->getId()]) ? $validateOrderItems[$item->getId()] : [];
+            if (empty($products)) {
                 continue;
             }
 
-            foreach ($products as $key => $productId) {
+            foreach ($products as $productId => $productData) {
                 /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
-
-                $magentoProduct = $this->modelFactory->getObject('Magento\Product')
-                    ->setStoreId($this->order->getStoreId())
-                    ->setProductId($productId);
-
-                if (!$magentoProduct->exists()) {
-                    $productsDeletedCount++;
-                    unset($products[$key]);
-                    continue;
-                }
-
-                $productsExistCount++;
-
-                if (!isset($productStockItems[$productId])) {
-                    $productStockItems[$productId] = $magentoProduct->getStockItem();
-                }
-
-                $stockItem = $productStockItems[$productId];
-
                 /** @var \Ess\M2ePro\Model\Magento\Product\StockItem $magentoStockItem */
-                $magentoStockItem = $this->modelFactory->getObject('Magento\Product\StockItem', [
-                    'stockItem' => $stockItem
-                ]);
+                list($magentoProduct, $magentoStockItem) = $productData;
+                $productsAffectedCount++;
 
-                if (!$this->changeProductQty($magentoProduct, $magentoStockItem, $action, $qty)) {
-                    if ($action == self::ACTION_SUB) {
-                        unset($products[$key]);
+                $changeResult = $this->isMsiMode($magentoProduct)
+                    ? $this->changeMSIProductQty($item, $magentoProduct, $magentoStockItem, $action, $qty, $transaction)
+                    : $this->changeProductQty($item, $magentoProduct, $magentoStockItem, $action, $qty, $transaction);
+
+                if (!$changeResult) {
+                    if ($action === self::ACTION_SUB) {
+                        unset($products[$productId]);
                     }
 
                     continue;
                 }
 
-                if ($action == self::ACTION_ADD) {
-                    unset($products[$key]);
+                if ($action === self::ACTION_ADD) {
+                    unset($products[$productId]);
                 }
 
-                $productsAffectedCount++;
-
-                $transaction->addObject($magentoStockItem->getStockItem());
-
-                //--------------------------------------
-                if ($item->getMagentoProduct()->isSimpleType() ||
-                    $item->getMagentoProduct()->isDownloadableType()) {
-                    $item->getProduct()->setStockItem($magentoStockItem->getStockItem());
-                }
-
-                /**
-                 * After making changes to Stock Item, Magento Product model will contain invalid "salable" status.
-                 * Reset Magento Product model for further reload.
-                 */
-                if ($magentoStockItem->isStockStatusChanged()) {
-                    $item->setProduct(NULL);
-                }
-                //--------------------------------------
-
-                $magentoStockItems[] = $magentoStockItem;
+                $productsChangedCount++;
             }
 
-            $item->setReservedProducts($products);
+            $item->setReservedProducts(array_keys($products));
             $transaction->addObject($item);
-        }
-
-        unset($productStockItems);
-
-        if ($productsExistCount == 0 && $productsDeletedCount == 0) {
-            $this->order->setData('reservation_state', self::STATE_UNKNOWN)->save();
-            throw new \Ess\M2ePro\Model\Exception\Logic('The Order Item(s) was not Mapped to Magento Product(s) or
-                Mapped incorrect.');
-        }
-
-        if ($productsExistCount == 0) {
-            $this->order->setData('reservation_state', self::STATE_UNKNOWN)->save();
-            throw new \Ess\M2ePro\Model\Exception\Logic('Product(s) does not exist.');
-        }
-
-        if ($productsDeletedCount > 0) {
-            $this->order->addWarningLog(
-                'QTY for %number% Product(s) was not changed. Reason: Product(s) does not exist.',
-                array(
-                    '!number' => $productsDeletedCount
-                )
-            );
         }
 
         if ($productsAffectedCount <= 0) {
             return;
         }
 
+        if ($productsChangedCount <= 0 && $action === self::ACTION_SUB) {
+            return;
+        }
+
         $this->order->setData('reservation_state', $newState);
 
-        if ($newState == self::STATE_PLACED && !$this->getFlag('order_reservation')) {
+        if ($newState === self::STATE_PLACED && !$this->getFlag('order_reservation')) {
             $this->order->setData('reservation_start_date', $this->getHelper('Data')->getCurrentGmtDate());
         }
 
-        $transaction->addObject($this->order)
-                    ->save();
-
-        foreach ($magentoStockItems as $magentoStockItem) {
-            $magentoStockItem->afterSave();
-        }
+        $transaction->addObject($this->order);
+        $transaction->save();
     }
 
-    private function placeMagentoReservation()
-    {
-        /** @var SalesEventInterfaceFactory $salesEventFactory */
-        /** @var \Magento\Framework\App\ResourceConnection $resource */
-        /** @var SalesChannelInterfaceFactory $salesChannelFactory */
-        /** @var PlaceReservationsForSalesEventInterface $placeReserve */
-        /** @var ItemToSellInterfaceFactory $itemsToSellFactory */
-        /** @var SalesEventToArrayConverter $salesEventToArray */
-
-        $salesEventFactory   = $this->objectManager->get(SalesEventInterfaceFactory::class);
-        $salesChannelFactory = $this->objectManager->get(SalesChannelInterfaceFactory::class);
-        $placeReserve        = $this->objectManager->get(PlaceReservationsForSalesEventInterface::class);
-        $itemsToSellFactory  = $this->objectManager->get(ItemToSellInterfaceFactory::class);
-        $salesEventToArray   = $this->objectManager->get(SalesEventToArrayConverter::class);
-        $resource            = $this->objectManager->get(\Magento\Framework\App\ResourceConnection::class);
-
-        $itemsToSell = [];
-
-        foreach ($this->order->getItemsCollection() as $orderItem) {
-            /**@var \Ess\M2ePro\Model\Order\Item $orderItem */
-            if ($this->isPhysicalProductType($orderItem->getMagentoProduct())) {
-                $sku = $orderItem->getChildObject()->getSku();
-            } else {
-                $sku = $orderItem->getChildObject()->getVariationSku();
-            }
-            $itemsToSell[] = $itemsToSellFactory->create([
-                'sku' => $sku,
-                'qty' => -(float)$orderItem->getChildObject()->getQtyPurchased()
-            ]);
-        }
-
-        /** @var SalesEventInterface $salesEvent */
-        $salesEvent = $salesEventFactory->create([
-            'type'       => self::MAGENTO_RESERVATION_EVENT_TYPE,
-            'objectType' => self::MAGENTO_RESERVATION_OBJECT_TYPE,
-            'objectId'   => (string)$this->order->getId()
-        ]);
-        $salesChannel = $salesChannelFactory->create([
-            'data' => [
-                'type' => SalesChannelInterface::TYPE_WEBSITE,
-                'code' => $this->getHelper('Magento\Store')->getWebsite($this->order->getStoreId())->getCode()
-            ]
-        ]);
-
-        $placeReserve->execute($itemsToSell, $salesChannel, $salesEvent);
-        $encodedMetadata = $this->getHelper('Data')->jsonEncode($salesEventToArray->execute($salesEvent));
-
-        $select = $resource->getConnection()
-                           ->select()
-                           ->from($resource->getConnection()->getTableName('inventory_reservation'))
-                           ->reset(\Zend_Db_Select::COLUMNS)
-                           ->columns('reservation_id')
-                           ->where('metadata = ?', $encodedMetadata);
-
-        $reservationIds = $resource->getConnection()->fetchAll($select);
-
-        $this->order->setData('reservation_state', self::STATE_PLACED);
-        $this->order->setData('reservation_start_date', $this->getHelper('Data')->getCurrentGmtDate());
-        $this->order->setMagentoReservationIds($reservationIds);
-    }
-
-    /**
-     * @param \Ess\M2ePro\Model\Magento\Product $product
-     * @return bool
-     */
-    private function isPhysicalProductType(\Ess\M2ePro\Model\Magento\Product $product)
-    {
-        $validator = $this->objectManager->get(IsSourceItemManagementAllowedForProductTypeInterface::class);
-        return $validator->execute($product->getTypeId());
-    }
-
-    /**
-     * @param $releaseType
-     * @throws \Ess\M2ePro\Model\Exception
-     */
-    private function releaseMagentoReservation($releaseType)
-    {
-        $reservationIds = $this->order->getMagentoReservationIds();
-        if (empty($reservationIds)) {
-            return $this->performAction(self::ACTION_ADD, $releaseType);
-        }
-
-        $this->getAssignedChannels = $this->objectManager->get(GetAssignedSalesChannelsForStockInterface::class);
-        $this->websiteRepository   = $this->objectManager->get(WebsiteRepositoryInterface::class);
-        $this->productResource     = $this->objectManager->get(\Magento\Catalog\Model\ResourceModel\Product::class);
-        $this->stockRepository     = $this->objectManager->get(StockRepository::class);
-
-        /** @var \Magento\Framework\App\ResourceConnection $resource */
-        $resource = $this->objectManager->get(\Magento\Framework\App\ResourceConnection::class);
-
-        $connection  = $resource->getConnection();
-        $reservationTable = $resource->getTableName('inventory_reservation');
-
-        $reservations = $connection->select()
-                                   ->from($reservationTable, array('sku', 'stock_id', 'quantity'))
-                                   ->where('`reservation_id` IN(?)',$reservationIds)
-                                   ->query()
-                                   ->fetchAll();
-
-        foreach ($reservations as $reservation) {
-            $stockName = $this->stockRepository->get($reservation['stock_id'])->getName();
-            $listingProducts = $this->getAffectedListingsProducts($reservation['sku'], $reservation['stock_id']);
-            foreach ($listingProducts as $listingProduct) {
-                $this->logListingProductMessage($listingProduct, abs($reservation['quantity']), $stockName);
-            }
-        }
-
-        $connection->delete($reservationTable, array('reservation_id IN(?)' => $reservationIds));
-        $this->order->setData('reservation_state', $releaseType);
-        $this->order->setMagentoReservationIds([])->save();
-    }
-
-    /**
-     * @param string $sku
-     * @param int $stockId
-     * @return array
-     */
-    private function getAffectedListingsProducts(string $sku, int $stockId)
-    {
-        $mergedStoreIds = [];
-
-        $channels = $this->getAssignedChannels->execute($stockId);
-        foreach ($channels as $channel) {
-            $website = $this->websiteRepository->get($channel->getCode());
-            $mergedStoreIds = array_merge($mergedStoreIds, $website->getStoreIds());
-
-            if ($website->getIsDefault()) {
-                $mergedStoreIds[] = 0;
-            }
-        }
-
-        if (empty($mergedStoreIds)) {
-            return [];
-        }
-
-        return $this->activeRecordFactory
-                    ->getObject('Listing\Product')
-                    ->getResource()
-                    ->getItemsByProductId(
-                        $this->productResource->getIdBySku($sku),
-                        array('store_id' => $mergedStoreIds)
-                    );
-    }
-
-    /**
-     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
-     * @param $qty
-     * @param $stockName
-     */
-    private function logListingProductMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct, $qty, $stockName)
-    {
-        $log = $this->activeRecordFactory->getObject('Listing\Log');
-        $log->setComponentMode($listingProduct->getComponentMode());
-
-        $message = sprintf(
-            'M2E Pro released Product Quantity reservation from the "%s" Stock in the amount of %s.',
-            $stockName,
-            $qty
-        );
-
-        $log->addProductMessage(
-            $listingProduct->getListingId(),
-            $listingProduct->getProductId(),
-            $listingProduct->getId(),
-            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-            NULL,
-            \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_QTY,
-            $this->getHelper('Module\Log')->encodeDescription($message),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
-        );
-    }
-
-    /**
-     * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
-     * @param \Ess\M2ePro\Model\Magento\Product\StockItem $magentoStockItem
-     * @param $action
-     * @param $qty
-     * @return bool
-     */
-    private function changeProductQty(
+    protected function changeProductQty(
+        \Ess\M2ePro\Model\Order\Item $item,
         \Ess\M2ePro\Model\Magento\Product $magentoProduct,
         \Ess\M2ePro\Model\Magento\Product\StockItem $magentoStockItem,
         $action,
-        $qty
+        $qty,
+        \Magento\Framework\DB\Transaction $transaction
     ) {
+
         $result = true;
 
-        switch ($action) {
-
-            case self::ACTION_ADD:
-                if ($magentoStockItem->canChangeQty()) {
-                    $result = $magentoStockItem->addQty($qty, false);
-                }
-                break;
-
-            case self::ACTION_SUB:
-                try {
-                    $result = $magentoStockItem->subtractQty($qty, false);
-                } catch (\Exception $e) {
-
-                    $this->order->addErrorLog(
-                        'QTY for Product "%name%" cannot be reserved. Reason: %msg%',
-                        array(
-                            '!name' => $magentoProduct->getName(),
-                            'msg' => $e->getMessage()
-                        )
-                    );
-                    return false;
-                }
-                break;
+        if ($action === self::ACTION_ADD) {
+            if ($magentoStockItem->canChangeQty()) {
+                $result = $magentoStockItem->addQty($qty, false);
+            }
         }
 
-        if ($result === false && $this->order->getLog()->getInitiator() == \Ess\M2ePro\Helper\Data::INITIATOR_USER) {
-            $msg = 'The QTY Reservation action (reserve/release/cancel) has not been performed for "%name%" '
-                . 'as the "Decrease Stock When Order is Placed" or/and "Manage Stock" options are disabled in your '
-                . 'Magento Inventory configurations.';
+        if ($action === self::ACTION_SUB) {
 
-            $this->order->addWarningLog(
-                $msg,
-                array('!name' => $magentoProduct->getName())
-            );
+            try {
+                $result = $magentoStockItem->subtractQty($qty, false);
+            } catch (\Exception $e) {
+                $this->order->addErrorLog(
+                    'QTY for Product "%name%" cannot be reserved. Reason: %msg%',
+                    [
+                        '!name' => $magentoProduct->getName(),
+                        'msg' => $e->getMessage()
+                    ]
+                );
+                $result = false;
+            }
         }
+
+        if (!$result) {
+            return false;
+        }
+
+        $transaction->addObject($magentoStockItem->getStockItem());
+        $transaction->addCommitCallback([$magentoStockItem, 'afterSave']);
+
+        //--------------------------------------
+        if ($magentoProduct->isSimpleType() || $magentoProduct->isDownloadableType()) {
+            $item->getProduct()->setStockItem($magentoStockItem->getStockItem());
+        }
+
+        /**
+         * After making changes to Stock Item, Magento Product model will contain invalid "salable" status.
+         * Reset Magento Product model for further reload.
+         */
+        if ($magentoStockItem->isStockStatusChanged()) {
+            $item->setProduct(null);
+        }
+        //--------------------------------------
 
         return $result;
+    }
+
+    protected function changeMSIProductQty(
+        \Ess\M2ePro\Model\Order\Item $item,
+        \Ess\M2ePro\Model\Magento\Product $magentoProduct,
+        \Ess\M2ePro\Model\Magento\Product\StockItem $magentoStockItem,
+        $action,
+        $qty,
+        \Magento\Framework\DB\Transaction $transaction
+    ) {
+        $reservationMarkPath = "reservation_msi_used/{$magentoProduct->getProductId()}";
+
+        if ($action === self::ACTION_ADD) {
+            if (!$item->getSetting('product_details', $reservationMarkPath, false)) {
+                return $this->changeProductQty($item, $magentoProduct, $magentoStockItem, $action, $qty, $transaction);
+            }
+            $item->setSetting('product_details', $reservationMarkPath, null);
+        }
+
+        if ($action === self::ACTION_SUB) {
+
+            try {
+
+                $stockByWebsiteIdResolver = $this->objectManager->get(StockByWebsiteIdResolverInterface::class);
+                $websiteId = (int)$item->getOrder()->getStore()->getWebsiteId();
+                $stockId   = (int)$stockByWebsiteIdResolver->execute($websiteId)->getStockId();
+
+                $checkItemsQty = $this->objectManager->get(\Magento\InventorySales\Model\CheckItemsQuantity::class);
+                $checkItemsQty->execute([$magentoProduct->getSku() => $qty], $stockId);
+
+                $item->setSetting('product_details', $reservationMarkPath, true);
+
+            } catch (\Exception $e) {
+                $this->order->addErrorLog(
+                    'QTY for Product "%name%" cannot be reserved. Reason: %msg%',
+                    [
+                        '!name' => $magentoProduct->getName(),
+                        '!msg' => $e->getMessage()
+                    ]
+                );
+                return false;
+            }
+        }
+
+        $reservation = $this->objectManager->get(\Ess\M2ePro\Model\MSI\Order\Reserve::class);
+        $reservation->placeCompensationReservation(
+            [[
+                'sku' => $magentoProduct->getSku(),
+                'qty' => $action === self::ACTION_SUB ? -$qty : $qty
+            ]],
+            $this->order->getStoreId(),
+            [
+                'type' => $action === self::ACTION_SUB ? $reservation::EVENT_TYPE_MAGENTO_RESERVATION_PLACED
+                                                       : $reservation::EVENT_TYPE_MAGENTO_RESERVATION_RELEASED,
+                'objectType' => $reservation::M2E_ORDER_OBJECT_TYPE,
+                'objectId'   => (string)$this->order->getId()
+            ]
+        );
+
+        return true;
     }
 
     /**
@@ -599,24 +469,36 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
      */
     private function getItemProductsByAction(\Ess\M2ePro\Model\Order\Item $item, $action)
     {
-        $products = array();
-
         switch ($action) {
             case self::ACTION_ADD:
-                $products = $item->getReservedProducts();
-                break;
+                return $item->getReservedProducts();
+
             case self::ACTION_SUB:
                 if ($item->getProductId() &&
-                    ($item->getMagentoProduct()->isSimpleType() ||
-                     $item->getMagentoProduct()->isDownloadableType())) {
-                    $products[] = $item->getProductId();
-                } else {
-                    $products = $item->getAssociatedProducts();
+                    ($item->getMagentoProduct()->isSimpleType() || $item->getMagentoProduct()->isDownloadableType())
+                ) {
+                    return [$item->getProductId()];
                 }
-                break;
+                return $item->getAssociatedProducts();
+        }
+    }
+
+    //########################################
+
+    private function isMsiMode(\Ess\M2ePro\Model\Magento\Product $product)
+    {
+        if (!$this->getHelper('Magento')->isMSISupportingVersion()) {
+            return false;
         }
 
-        return $products;
+        if (interface_exists(IsSourceItemManagementAllowedForProductTypeInterface::class)) {
+            $isSourceItemManagementAllowedForProductType = $this->objectManager->get(
+                IsSourceItemManagementAllowedForProductTypeInterface::class
+            );
+            return $isSourceItemManagementAllowedForProductType->execute($product->getTypeId());
+        }
+
+        return true;
     }
 
     //########################################

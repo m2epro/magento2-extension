@@ -8,30 +8,34 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
 
+/**
+ * Class RemoveSessionProductsByCategory
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
+ */
 class RemoveSessionProductsByCategory extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {
 
-    public function execute() {
+    public function execute()
+    {
         $categoriesIds = $this->getRequestIds();
 
         $tempSession = $this->getSessionValue('source_categories');
         if (!isset($tempSession['products_ids'])) {
             return;
         }
-        /* @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree */
-        $treeBlock = $this->createBlock('Ebay\Listing\Product\Add\Category\Tree');
+        /** @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree */
+        $treeBlock = $this->createBlock('Ebay_Listing_Product_Add_Category_Tree');
         $treeBlock->setSelectedIds($tempSession['products_ids']);
 
         $productsForEachCategory = $treeBlock->getProductsForEachCategory();
 
-        $products = array();
+        $products = [];
         foreach ($categoriesIds as $categoryId) {
             $products = array_merge($products, $productsForEachCategory[$categoryId]);
         }
 
         $tempSession['products_ids'] = array_diff($tempSession['products_ids'], $products);
 
-        $this->setSessionValue('source_categories',$tempSession);
+        $this->setSessionValue('source_categories', $tempSession);
     }
-
 }

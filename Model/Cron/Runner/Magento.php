@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Cron\Runner;
 
 use \Ess\M2ePro\Helper\Module\Cron\Service as CronService;
 
+/**
+ * Class Magento
+ * @package Ess\M2ePro\Model\Cron\Runner
+ */
 class Magento extends AbstractModel
 {
     const MIN_DISTRIBUTION_EXECUTION_TIME = 300;
@@ -34,14 +38,14 @@ class Magento extends AbstractModel
      */
     protected function getStrategyObject()
     {
-        return $this->modelFactory->getObject('Cron\Strategy\Serial');
+        return $this->modelFactory->getObject('Cron_Strategy_Serial');
     }
 
     //########################################
 
     protected function isPossibleToRun()
     {
-        return is_null($this->getHelper('Data\GlobalData')->getValue('cron_running')) &&
+        return $this->getHelper('Data\GlobalData')->getValue('cron_running') === null &&
                parent::isPossibleToRun();
     }
 
@@ -54,7 +58,7 @@ class Magento extends AbstractModel
          * It can cause problems with items that were cached in first execution.
          */
         // ---------------------------------------
-        $this->getHelper('Data\GlobalData')->setValue('cron_running',true);
+        $this->getHelper('Data\GlobalData')->setValue('cron_running', true);
         // ---------------------------------------
 
         parent::beforeStart();
@@ -69,7 +73,7 @@ class Magento extends AbstractModel
             return;
         }
 
-        $maxExecutionTime = (int)@ini_get('max_execution_time');
+        $maxExecutionTime = (int)ini_get('max_execution_time');
 
         if ($maxExecutionTime <= 0 || $maxExecutionTime < self::MIN_DISTRIBUTION_EXECUTION_TIME) {
             return;

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order\ShippingAddress;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Order\ShippingAddress
+ */
 class Edit extends Order
 {
     public function execute()
@@ -20,7 +24,7 @@ class Edit extends Order
 
         $this->getHelper('Data\GlobalData')->setValue('order', $order);
 
-        $form = $this->createBlock('Ebay\Order\Edit\ShippingAddress\Form');
+        $form = $this->createBlock('Ebay_Order_Edit_ShippingAddress_Form');
 
         $this->setAjaxContent($form->toHtml());
         return $this->getResult();

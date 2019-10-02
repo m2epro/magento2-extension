@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class GetProductsSearchStatus
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search
+ */
 class GetProductsSearchStatus extends Main
 {
     public function execute()
@@ -27,18 +31,18 @@ class GetProductsSearchStatus extends Main
         $connRead = $this->resourceConnection->getConnection();
 
         $tableListingProduct = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
-        $tableAmazonListingProduct = $this->activeRecordFactory->getObject('Amazon\Listing\Product')
+        $tableAmazonListingProduct = $this->activeRecordFactory->getObject('Amazon_Listing_Product')
             ->getResource()->getMainTable();
 
         $itemsForSearchSelect = $connRead->select();
-        $itemsForSearchSelect->from(array('lp' => $tableListingProduct), array('id'))
+        $itemsForSearchSelect->from(['lp' => $tableListingProduct], ['id'])
             ->join(
-                array('alp' => $tableAmazonListingProduct),
+                ['alp' => $tableAmazonListingProduct],
                 'lp.id = alp.listing_product_id',
-                array()
+                []
             )
             ->where('lp.id IN (?)', $productsIds)
-            ->where('lp.status = ?',(int)\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED)
+            ->where('lp.status = ?', (int)\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED)
             ->where('alp.general_id IS NULL')
             ->where('alp.is_general_id_owner = 0');
 
@@ -54,17 +58,17 @@ class GetProductsSearchStatus extends Main
 
         $warningsCount = $this->resourceConnection->getConnection()->fetchCol($selectWarnings);
 
-        $messages = array();
+        $messages = [];
 
-        if (count($warningsCount) > 0) {
-            $messages[] = array(
+        if (!empty($warningsCount)) {
+            $messages[] = [
                 'type' => 'warning',
                 'text' => $this->__(
                     'For %count% Items it is necessary to choose manually one of the found Amazon Products
                      or these Items are in process of Search and results for them will be available later.',
                     count($warningsCount)
                 )
-            );
+            ];
         }
 
         $searchStatusNotFound = \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND;
@@ -74,24 +78,24 @@ class GetProductsSearchStatus extends Main
 
         $errorsCount = $this->resourceConnection->getConnection()->fetchCol($selectError);
 
-        if (count($errorsCount) > 0) {
-            $messages[] = array(
+        if (!empty($errorsCount)) {
+            $messages[] = [
                 'type' => 'error',
                 'text' => $this->__(
                     'For %count% Items no Amazon Products were found. Please use Manual Search
                      or create New ASIN/ISBN.',
                     count($errorsCount)
                 )
-            );
+            ];
         }
 
         if (empty($messages)) {
-            $messages[] = array(
+            $messages[] = [
                 'type' => 'success',
                 'text' => $this->__(
                     'ASIN(s)/ISBN(s) were found and assigned for selected Items.'
                 )
-            );
+            ];
         }
 
         $this->setJsonContent([

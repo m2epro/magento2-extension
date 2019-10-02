@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\Mysql;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 use Ess\M2ePro\Helper\Module\Database\Structure;
 
+/**
+ * Class Module
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\Mysql
+ */
 class Module extends AbstractBlock
 {
     //########################################
@@ -31,20 +35,21 @@ class Module extends AbstractBlock
 
     public function getInfoTables()
     {
-        $tablesData = array_merge($this->getConfigTables(),
-                                  $this->getLocksAndChangeTables(),
-                                  $this->getAdditionalTables());
+        $tablesData = array_merge(
+            $this->getConfigTables(),
+            $this->getLocksAndChangeTables(),
+            $this->getAdditionalTables()
+        );
 
         /** @var Structure $helper */
-        $helper = $this->getHelper('Module\Database\Structure');
+        $helper = $this->getHelper('Module_Database_Structure');
 
-        $tablesInfo = array();
+        $tablesInfo = [];
         foreach ($tablesData as $category => $tables) {
             foreach ($tables as $tableName) {
-
-                $tablesInfo[$category][$tableName] = array(
+                $tablesInfo[$category][$tableName] = [
                     'count' => 0, 'url'   => '#'
-                );
+                ];
 
                 if (!$helper->isTableReady($tableName)) {
                     continue;
@@ -52,7 +57,8 @@ class Module extends AbstractBlock
 
                 $tablesInfo[$category][$tableName]['count'] = $helper->getCountOfRecords($tableName);
                 $tablesInfo[$category][$tableName]['url'] = $this->getUrl(
-                    '*/controlPanel_database/manageTable', array('table' => $tableName)
+                    '*/controlPanel_database/manageTable',
+                    ['table' => $tableName]
                 );
             }
         }
@@ -64,40 +70,40 @@ class Module extends AbstractBlock
 
     private function getConfigTables()
     {
-        return array(
-            'Config' => array(
+        return [
+            'Config' => [
                 'm2epro_module_config',
                 'm2epro_primary_config',
                 'm2epro_synchronization_config',
                 'm2epro_cache_config'
-            )
-        );
+            ]
+        ];
     }
 
     private function getLocksAndChangeTables()
     {
-        return array(
-            'Additional' => array(
+        return [
+            'Additional' => [
                 'm2epro_lock_item',
                 'm2epro_product_change',
                 'm2epro_order_change',
                 'm2epro_operation_history'
-            )
-        );
+            ]
+        ];
     }
 
     private function getAdditionalTables()
     {
-        return array(
-            'Processing' => array(
+        return [
+            'Processing' => [
                 'm2epro_processing',
                 'm2epro_processing_lock',
                 'm2epro_request_pending_single',
                 'm2epro_request_pending_partial',
                 'm2epro_connector_pending_requester_single',
                 'm2epro_connector_pending_requester_partial',
-            )
-        );
+            ]
+        ];
     }
 
     //########################################

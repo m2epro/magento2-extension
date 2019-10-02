@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Product;
 
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractView;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Product
+ */
 class View extends AbstractView
 {
     //########################################
@@ -21,14 +25,14 @@ class View extends AbstractView
 
     protected function createAccountSwitcherBlock()
     {
-        return $this->createBlock('Amazon\Account\Switcher')->setData([
+        return $this->createBlock('Amazon_Account_Switcher')->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }
 
     protected function createMarketplaceSwitcherBlock()
     {
-        return $this->createBlock('Amazon\Marketplace\Switcher')->setData([
+        return $this->createBlock('Amazon_Marketplace_Switcher')->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }

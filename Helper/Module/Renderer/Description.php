@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Module\Renderer;
 
+/**
+ * Class Description
+ * @package Ess\M2ePro\Helper\Module\Renderer
+ */
 class Description extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const IMAGES_MODE_DEFAULT    = 0;
@@ -34,8 +38,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\View\LayoutInterface $layout,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->appEmulation = $appEmulation;
         $this->filter = $filter;
         $this->layout = $layout;
@@ -48,7 +51,9 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
     {
         // Start store emulation process
         $this->appEmulation->startEnvironmentEmulation(
-            $magentoProduct->getStoreId(), \Magento\Framework\App\Area::AREA_FRONTEND, true
+            $magentoProduct->getStoreId(),
+            \Magento\Framework\App\Area::AREA_FRONTEND,
+            true
         );
         //--
 
@@ -57,7 +62,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
         $text = $this->insertMediaGalleries($text, $magentoProduct);
 
         // the CMS static block replacement i.e. {{media url=’image.jpg’}}
-        $this->filter->setVariables(array('product'=>$magentoProduct->getProduct()));
+        $this->filter->setVariables(['product'=>$magentoProduct->getProduct()]);
         $text = $this->filter->filter($text);
 
         //-- Stop store emulation process
@@ -73,14 +78,13 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
     {
         preg_match_all("/#([a-z_0-9]+?)#/", $text, $matches);
 
-        if (!count($matches[0])) {
+        if (empty($matches[0])) {
             return $text;
         }
 
-        $search = array();
-        $replace = array();
+        $search = [];
+        $replace = [];
         foreach ($matches[1] as $attributeCode) {
-
             $value = $magentoProduct->getAttributeValue($attributeCode);
 
             if (!is_array($value) && $value != '') {
@@ -88,7 +92,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
                     $value = $this->normalizeDescription($value);
                 } elseif ($attributeCode == 'weight') {
                     $value = (float)$value;
-                } elseif (in_array($attributeCode, array('price', 'special_price'))) {
+                } elseif (in_array($attributeCode, ['price', 'special_price'])) {
                     $value = $magentoProduct->getProduct()->getFormatedPrice();
                 }
                 $search[] = '#' . $attributeCode . '#';
@@ -108,21 +112,20 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
     {
         preg_match_all("/#image\[(.*?)\]#/", $text, $matches);
 
-        if (!count($matches[0])) {
+        if (empty($matches[0])) {
             return $text;
         }
 
         $mainImage     = $magentoProduct->getImage('image');
         $mainImageLink = $mainImage ? $mainImage->getUrl() : '';
 
-        $search = array();
-        $replace = array();
+        $search = [];
+        $replace = [];
 
         foreach ($matches[0] as $key => $match) {
-
             $tempImageAttributes = explode(',', $matches[1][$key]);
-            $realImageAttributes = array();
-            for ($i=0;$i<6;$i++) {
+            $realImageAttributes = [];
+            for ($i=0; $i<6; $i++) {
                 if (!isset($tempImageAttributes[$i])) {
                     $realImageAttributes[$i] = 0;
                 } else {
@@ -144,7 +147,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
                 'Ess\M2ePro\Block\Adminhtml\Renderer\Description\Image'
             );
 
-            $data = array(
+            $data = [
                 'width'        => $realImageAttributes[0],
                 'height'       => $realImageAttributes[1],
                 'margin'       => $realImageAttributes[2],
@@ -152,7 +155,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
                 'watermark'    => $realImageAttributes[4],
                 'src'          => $tempImageLink,
                 'index_number' => $key
-            );
+            ];
             $search[] = $match;
             $replace[] = ($tempImageLink == '')
                 ? '' :
@@ -168,17 +171,17 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
     {
         preg_match_all("/#media_gallery\[(.*?)\]#/", $text, $matches);
 
-        if (!count($matches[0])) {
+        if (empty($matches[0])) {
             return $text;
         }
 
-        $search = array();
-        $replace = array();
+        $search = [];
+        $replace = [];
 
         foreach ($matches[0] as $key => $match) {
             $tempMediaGalleryAttributes = explode(',', $matches[1][$key]);
-            $realMediaGalleryAttributes = array();
-            for ($i=0;$i<8;$i++) {
+            $realMediaGalleryAttributes = [];
+            for ($i=0; $i<8; $i++) {
                 if (!isset($tempMediaGalleryAttributes[$i])) {
                     $realMediaGalleryAttributes[$i] = '';
                 } else {
@@ -191,9 +194,8 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
                 $imagesQty = $realMediaGalleryAttributes[3] == self::IMAGES_MODE_GALLERY ? 100 : 25;
             }
 
-            $galleryImagesLinks = array();
+            $galleryImagesLinks = [];
             foreach ($magentoProduct->getGalleryImages($imagesQty) as $image) {
-
                 if (!$image->getUrl()) {
                     continue;
                 }
@@ -201,14 +203,13 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
                 $galleryImagesLinks[] = $image->getUrl();
             }
 
-            if (!count($galleryImagesLinks)) {
-
+            if (empty($galleryImagesLinks)) {
                 $search = $matches[0];
                 $replace = '';
                 break;
             }
 
-            if (!in_array($realMediaGalleryAttributes[3], [self::IMAGES_MODE_DEFAULT, self::IMAGES_MODE_GALLERY])){
+            if (!in_array($realMediaGalleryAttributes[3], [self::IMAGES_MODE_DEFAULT, self::IMAGES_MODE_GALLERY])) {
                 $realMediaGalleryAttributes[3] = self::IMAGES_MODE_GALLERY;
             }
 
@@ -216,7 +217,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
                 $realMediaGalleryAttributes[4] = self::LAYOUT_MODE_ROW;
             }
 
-            $data = array(
+            $data = [
                 'width'        => (int)$realMediaGalleryAttributes[0],
                 'height'       => (int)$realMediaGalleryAttributes[1],
                 'margin'       => (int)$realMediaGalleryAttributes[2],
@@ -226,7 +227,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
                 'watermark'    => (int)$realMediaGalleryAttributes[7],
                 'images'       => $galleryImagesLinks,
                 'index_number' => $key
-            );
+            ];
 
             $blockObj = $this->layout->createBlock(
                 'Ess\M2ePro\Block\Adminhtml\Renderer\Description\Gallery'
@@ -252,7 +253,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         // Standardize newlines
-        $str = str_replace(array("\r\n", "\r"), "\n", $str);
+        $str = str_replace(["\r\n", "\r"], "\n", $str);
 
         // Trim whitespace on each line
         $str = preg_replace('~^[ \t]+~m', '', $str);
@@ -281,8 +282,8 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         // Convert single linebreaks to <br/>
-        $br = $this->getHelper('Module')->getConfig()->getGroupValue('/renderer/description/','convert_linebreaks');
-        if (is_null($br) || (bool)(int)$br === true) {
+        $br = $this->getHelper('Module')->getConfig()->getGroupValue('/renderer/description/', 'convert_linebreaks');
+        if ($br === null || (bool)(int)$br === true) {
             $str = preg_replace('~(?<!\n)\n(?!\n)~', "<br/>\n", $str);
         }
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Same;
 
+/**
+ * Class Chooser
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Same
+ */
 class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     //########################################
@@ -23,22 +27,22 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         $this->_headerText = $this->__('eBay Same Categories');
 
-        $this->addButton('back', array(
+        $this->addButton('back', [
             'label'     => $this->__('Back'),
             'class'     => 'back',
-            'onclick'   => 'setLocation(\'' . $this->getUrl('*/*/*', array('_current' => true, 'step' => 1)) . '\');'
-        ));
+            'onclick'   => 'setLocation(\'' . $this->getUrl('*/*/*', ['_current' => true, 'step' => 1]) . '\');'
+        ]);
 
         $onClick = <<<JS
 EbayListingProductCategorySettingsChooserObj.submitData(
     '{$this->getUrl('*/*/*', array('step' => 2,'_current' => true))}'
 );
 JS;
-        $this->addButton('next', array(
+        $this->addButton('next', [
             'label'     => $this->__('Continue'),
             'class'     => 'action-primary forward',
             'onclick'   => $onClick
-        ));
+        ]);
     }
 
     //########################################
@@ -53,27 +57,6 @@ JS;
     protected function _beforeToHtml()
     {
         parent::_beforeToHtml();
-
-//
-//        // ---------------------------------------
-//        $data = array(
-//            'label' => $this->__('Yes'),
-//            'id'    => 'existing_templates_confirm_button'
-//        );
-//        $this->setChild(
-//            'existing_templates_confirm_button',
-//            $this->getLayout()->createBlock('adminhtml/widget_button')->setData($data)
-//        );
-//        // ---------------------------------------
-//        $data = array(
-//            'label' => $this->__('No'),
-//            'id'    => 'existing_templates_cancel_button'
-//        );
-//        $this->setChild(
-//            'existing_templates_cancel_button',
-//            $this->getLayout()->createBlock('adminhtml/widget_button')->setData($data)
-//        );
-//        // ---------------------------------------
     }
 
     //########################################
@@ -84,25 +67,25 @@ JS;
 
         // ---------------------------------------
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
-            '\Ebay\Listing\Product\Category\Settings',
-            array(
+            'Ebay_Listing_Product_Category_Settings',
+            [
                 '_current' => true
-            )
+            ]
         ));
 
-        $this->jsUrl->add($this->getUrl('*/ebay_listing_product_category_settings', array(
+        $this->jsUrl->add($this->getUrl('*/ebay_listing_product_category_settings', [
             'step' => 3,
             '_current' => true
-        )), 'ebay_listing_product_category_settings');
+        ]), 'ebay_listing_product_category_settings');
 
-        $this->jsUrl->add($this->getUrl('*/ebay_listing/review', array(
+        $this->jsUrl->add($this->getUrl('*/ebay_listing/review', [
             '_current' => true
-        )), 'ebay_listing/review');
+        ]), 'ebay_listing/review');
         // ---------------------------------------
 
         // ---------------------------------------
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_category_settings');
-        $viewHeaderBlock = $this->createBlock('Listing\View\Header','', [
+        $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
             'data' => ['listing' => $listing]
         ]);
         // ---------------------------------------
@@ -111,7 +94,7 @@ JS;
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_category_settings');
         $internalData = $this->getData('internal_data');
 
-        $chooserBlock = $this->createBlock('Ebay\Listing\Product\Category\Settings\Chooser');
+        $chooserBlock = $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser');
         $chooserBlock->setMarketplaceId($listing['marketplace_id']);
         $chooserBlock->setAccountId($listing['account_id']);
 

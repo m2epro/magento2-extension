@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Order;
 
+/**
+ * Class Change
+ * @package Ess\M2ePro\Model\ResourceModel\Order
+ */
 class Change extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
@@ -23,9 +27,9 @@ class Change extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
     {
         $this->getConnection()->delete(
             $this->getMainTable(),
-            array(
+            [
                 'id IN(?)' => $ids
-            )
+            ]
         );
     }
 
@@ -33,14 +37,14 @@ class Change extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
     {
         $this->getConnection()->delete(
             $this->getMainTable(),
-            array(
+            [
                 'order_id = ?' => $orderId,
                 'action = ?' => $action
-            )
+            ]
         );
     }
 
-    public function deleteByProcessingAttemptCount($count = 3, $component = NULL)
+    public function deleteByProcessingAttemptCount($count = 3, $component = null)
     {
         $count = (int)$count;
 
@@ -48,11 +52,11 @@ class Change extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
             return;
         }
 
-        $where = array(
+        $where = [
             'processing_attempt_count >= ?' => $count
-        );
+        ];
 
-        if (!is_null($component)) {
+        if ($component !== null) {
             $where['component = ?'] = $component;
         }
 
@@ -74,13 +78,13 @@ class Change extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 
         $this->getConnection()->update(
             $this->getMainTable(),
-            array(
+            [
                 'processing_attempt_count' => new \Zend_Db_Expr('processing_attempt_count + ' . $increment),
                 'processing_attempt_date' => $this->getHelper('Data')->getCurrentGmtDate()
-            ),
-            array(
+            ],
+            [
                 'id IN (?)' => $ids
-            )
+            ]
         );
     }
 

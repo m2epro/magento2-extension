@@ -11,13 +11,17 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
 use Magento\Framework\Message\MessageInterface;
 
+/**
+ * Class Synchronization
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs
+ */
 class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
     //########################################
 
     protected function _prepareForm()
     {
-        $synchronizationConfig = $this->modelFactory->getObject('Config\Manager\Synchronization');
+        $synchronizationConfig = $this->modelFactory->getObject('Config_Manager_Synchronization');
 
         // ---------------------------------------
         $listingsMode = $synchronizationConfig->getGroupValue('/amazon/templates/', 'mode');
@@ -34,14 +38,16 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
             ]
         );
 
-        $fieldset = $form->addFieldset('amazon_synchronization_templates',
+        $fieldset = $form->addFieldset(
+            'amazon_synchronization_templates',
             [
                 'legend' => $this->__('M2E Pro Listings Synchronization'),
                 'collapsable' => false,
             ]
         );
 
-        $fieldset->addField('templates_mode',
+        $fieldset->addField(
+            'templates_mode',
             self::SELECT,
             [
                 'name'        => 'templates_mode',
@@ -70,13 +76,14 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
                         [
                             'type' => MessageInterface::TYPE_NOTICE,
                             'content' => $this->__(
-                                    'If your Amazon Listings for some reason were asynchronized with the Products in
+                                'If your Amazon Listings for some reason were asynchronized with the Products in
                                  Magento, <a href="javascript:" onclick="%script_code%">turn on</a> the Revise All
                                  Action to catch data up.
                                  <br/>Revise is performed by the Inventory Synchronization, 100 Items per a cycle.
                                  <br/><br/>',
-                                    'SynchronizationObj.showReviseAllConfirmPopup(\''.
-                                    \Ess\M2ePro\Helper\Component\Amazon::NICK.'\');') .
+                                'SynchronizationObj.showReviseAllConfirmPopup(\''.
+                                \Ess\M2ePro\Helper\Component\Amazon::NICK.'\');'
+                            ) .
                                 '<span id="amazon_revise_all_start" style="display: none">
 
                                         <span style="color: blue">
@@ -105,14 +112,16 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
             );
         }
 
-        $fieldset = $form->addFieldset('amazon_synchronization_orders',
+        $fieldset = $form->addFieldset(
+            'amazon_synchronization_orders',
             [
                 'legend' => $this->__('Orders Synchronization'),
                 'collapsable' => false,
             ]
         );
 
-        $fieldset->addField('templates_orders_mode',
+        $fieldset->addField(
+            'templates_orders_mode',
             self::SELECT,
             [
                 'name'        => 'templates_orders_mode',
@@ -133,14 +142,16 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
             ]
         );
 
-        $fieldset = $form->addFieldset('amazon_synchronization_other_listings',
+        $fieldset = $form->addFieldset(
+            'amazon_synchronization_other_listings',
             [
                 'legend' => $this->__('3rd Party Synchronization '),
                 'collapsable' => false,
             ]
         );
 
-        $fieldset->addField('templates_other_listings_mode',
+        $fieldset->addField(
+            'templates_other_listings_mode',
             self::SELECT,
             [
                 'name'        => 'templates_other_listings_mode',
@@ -167,21 +178,24 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
 
     protected function _beforeToHtml()
     {
-        $synchronizationConfig = $this->modelFactory->getObject('Config\Manager\Synchronization');
+        $synchronizationConfig = $this->modelFactory->getObject('Config_Manager_Synchronization');
 
         // ---------------------------------------
-        $this->reviseAllInProcessingState = !is_null($synchronizationConfig->getGroupValue(
-            '/amazon/templates/synchronization/revise/total/', 'last_listing_product_id'
-        ));
+        $this->reviseAllInProcessingState = $synchronizationConfig->getGroupValue(
+            '/amazon/templates/synchronization/revise/total/',
+            'last_listing_product_id'
+        ) !== null;
 
         $this->reviseAllStartDate = $synchronizationConfig->getGroupValue(
-            '/amazon/templates/synchronization/revise/total/', 'start_date'
+            '/amazon/templates/synchronization/revise/total/',
+            'start_date'
         );
         $this->reviseAllStartDate && $this->reviseAllStartDate = $this->templateContext->_localeDate
             ->formatDate($this->reviseAllStartDate, \IntlDateFormatter::MEDIUM);
 
         $this->reviseAllEndDate = $synchronizationConfig->getGroupValue(
-            '/amazon/templates/synchronization/revise/total/', 'end_date'
+            '/amazon/templates/synchronization/revise/total/',
+            'end_date'
         );
         $this->reviseAllEndDate && $this->reviseAllEndDate = $this->templateContext->_localeDate
             ->formatDate($this->reviseAllEndDate, \IntlDateFormatter::MEDIUM);
@@ -189,18 +203,19 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
 
         // ---------------------------------------
         $component = \Ess\M2ePro\Helper\Component\Amazon::NICK;
-        $data = array(
+        $data = [
             'class'   => 'ok_button',
             'label'   => $this->__('Confirm'),
             'onclick' => "ReviseAllConfirmPopup.closeModal(); SynchronizationObj.runReviseAll('{$component}');",
-        );
+        ];
         $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
         $this->setChild('revise_all_confirm_popup_ok_button', $buttonBlock);
         // ---------------------------------------
 
         // ---------------------------------------
         $this->inspectorMode = (int)$synchronizationConfig->getGroupValue(
-            '/global/magento_products/inspector/','mode'
+            '/global/magento_products/inspector/',
+            'mode'
         );
         // ---------------------------------------
 
@@ -255,8 +270,8 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
         $this->jsUrl->addUrls([
             Tabs::TAB_ID_SYNCHRONIZATION => $this->getUrl('*/amazon_synchronization/save'),
             'synch_formSubmit' => $this->getUrl('*/amazon_synchronization/save'),
-            'logViewUrl' => $this->getUrl('*/amazon_synchronization_log/index',array('back'=>$this->getHelper('Data')
-                ->makeBackUrlParam('*/amazon_synchronization/index'))),
+            'logViewUrl' => $this->getUrl('*/amazon_synchronization_log/index', ['back'=>$this->getHelper('Data')
+                ->makeBackUrlParam('*/amazon_synchronization/index')]),
 
             'runReviseAll'        => $this->getUrl('*/amazon_synchronization/runReviseAll'),
             'runAllEnabledNow'    => $this->getUrl('*/amazon_synchronization/runAllEnabledNow'),
@@ -289,7 +304,8 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
     public function isShowReviseAll()
     {
         return $this->getHelper('Module')->getConfig()->getGroupValue(
-            '/view/synchronization/revise_total/','show'
+            '/view/synchronization/revise_total/',
+            'show'
         );
     }
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item;
 
+/**
+ * Class CustomForm
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item
+ */
 class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     //########################################
@@ -21,11 +25,12 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $motorsType = $this->getRequest()->getParam('motors_type');
 
-        $itemTitle = $this->getHelper('Component\Ebay\Motors')->isTypeBasedOnEpids($motorsType)
+        $itemTitle = $this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($motorsType)
             ? $this->__('ePID')
             : $this->__('kType');
 
-        $form->addField('custom_motors_item_help_block',
+        $form->addField(
+            'custom_motors_item_help_block',
             self::HELP_BLOCK,
             [
                 'content' => $this->__('
@@ -39,7 +44,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $form->addField('motors_type',
+        $form->addField(
+            'motors_type',
             'hidden',
             [
                 'name' => 'motors_type',
@@ -72,7 +78,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('epid',
+        $fieldset->addField(
+            'epid',
             'text',
             [
                 'label' => 'ePID',
@@ -81,7 +88,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('product_type',
+        $fieldset->addField(
+            'product_type',
             self::SELECT,
             [
                 'name' => 'item[product_type]',
@@ -96,7 +104,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('make',
+        $fieldset->addField(
+            'make',
             'text',
             [
                 'label' => 'Make',
@@ -105,7 +114,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('model',
+        $fieldset->addField(
+            'model',
             'text',
             [
                 'label' => 'Model',
@@ -114,7 +124,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('submodel',
+        $fieldset->addField(
+            'submodel',
             'text',
             [
                 'label' => 'Submodel',
@@ -122,7 +133,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('year',
+        $fieldset->addField(
+            'year',
             'text',
             [
                 'label' => 'Year',
@@ -132,7 +144,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('trim',
+        $fieldset->addField(
+            'trim',
             'text',
             [
                 'label' => 'Trim',
@@ -140,7 +153,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('engine',
+        $fieldset->addField(
+            'engine',
             'text',
             [
                 'label' => 'Engine',
@@ -158,7 +172,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('ktype',
+        $fieldset->addField(
+            'ktype',
             'text',
             [
                 'label' => 'kType',
@@ -169,7 +184,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('make',
+        $fieldset->addField(
+            'make',
             'text',
             [
                 'label' => 'Make',
@@ -177,7 +193,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('model',
+        $fieldset->addField(
+            'model',
             'text',
             [
                 'label' => 'Model',
@@ -185,7 +202,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('variant',
+        $fieldset->addField(
+            'variant',
             'text',
             [
                 'label' => 'Variant',
@@ -193,7 +211,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('body_style',
+        $fieldset->addField(
+            'body_style',
             'text',
             [
                 'label' => 'Body Style',
@@ -201,7 +220,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('type',
+        $fieldset->addField(
+            'type',
             'text',
             [
                 'label' => 'Type',
@@ -209,7 +229,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('from_year',
+        $fieldset->addField(
+            'from_year',
             'text',
             [
                 'label' => 'Year From',
@@ -218,7 +239,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('to_year',
+        $fieldset->addField(
+            'to_year',
             'text',
             [
                 'label' => 'Year To',
@@ -227,7 +249,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('engine',
+        $fieldset->addField(
+            'engine',
             'text',
             [
                 'label' => 'Engine',
@@ -237,5 +260,4 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     }
 
     //########################################
-
 }

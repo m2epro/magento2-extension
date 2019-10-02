@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Marketplaces;
 
+/**
+ * Class MotorsKtypes
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\Marketplaces
+ */
 class MotorsKtypes extends AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Marketplace */
@@ -71,11 +75,12 @@ class MotorsKtypes extends AbstractModel
         $this->deleteAllKtypes();
 
         for ($i = 0; $i < 100; $i++) {
-
             $this->getActualLockItem()->setPercents($this->getPercentsStart());
 
-            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'get'.$this->marketplace->getId(),
-                                                             'Get kTypes from eBay');
+            $this->getActualOperationHistory()->addTimePoint(
+                __METHOD__.'get'.$this->marketplace->getId(),
+                'Get kTypes from eBay'
+            );
             $response = $this->receiveFromEbay($partNumber);
             $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$this->marketplace->getId());
 
@@ -89,8 +94,10 @@ class MotorsKtypes extends AbstractModel
             $this->getActualLockItem()->setPercents($this->getPercentsStart() + $this->getPercentsInterval()/2);
             $this->getActualLockItem()->activate();
 
-            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'save'.$this->marketplace->getId(),
-                                                             'Save kTypes to DB');
+            $this->getActualOperationHistory()->addTimePoint(
+                __METHOD__.'save'.$this->marketplace->getId(),
+                'Save kTypes to DB'
+            );
             $this->saveKtypesToDb($response['data']);
             $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'save'.$this->marketplace->getId());
 
@@ -99,7 +106,7 @@ class MotorsKtypes extends AbstractModel
 
             $partNumber = $response['next_part'];
 
-            if (is_null($partNumber)) {
+            if ($partNumber === null) {
                 break;
             }
         }
@@ -111,16 +118,21 @@ class MotorsKtypes extends AbstractModel
 
     protected function receiveFromEbay($partNumber)
     {
-        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorObj = $dispatcherObj->getVirtualConnector('marketplace','get','motorsKtypes',
-                                                            array('part_number' => $partNumber),
-                                                            NULL,$this->marketplace->getId());
+        $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        $connectorObj = $dispatcherObj->getVirtualConnector(
+            'marketplace',
+            'get',
+            'motorsKtypes',
+            ['part_number' => $partNumber],
+            null,
+            $this->marketplace->getId()
+        );
 
         $dispatcherObj->process($connectorObj);
         $response = $connectorObj->getResponseData();
 
-        if (is_null($response) || empty($response['data'])) {
-            $response = array();
+        if ($response === null || empty($response['data'])) {
+            $response = [];
         }
 
         $dataCount = isset($response['data']) ? count($response['data']) : 0;
@@ -132,7 +144,7 @@ class MotorsKtypes extends AbstractModel
     protected function deleteAllKtypes()
     {
         $connWrite = $this->resourceConnection->getConnection();
-        $tableMotorsKtypes = $this->getHelper('Module\Database\Structure')
+        $tableMotorsKtypes = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_ktype');
 
         $connWrite->delete($tableMotorsKtypes, '`is_custom` = 0');
@@ -146,22 +158,21 @@ class MotorsKtypes extends AbstractModel
         }
 
         $connWrite = $this->resourceConnection->getConnection();
-        $tableMotorsKtype = $this->getHelper('Module\Database\Structure')
+        $tableMotorsKtype = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_ktype');
 
         $iteration            = 0;
         $iterationsForOneStep = 1000;
         $percentsForOneStep   = ($this->getPercentsInterval()/2) / ($totalCountItems/$iterationsForOneStep);
 
-        $temporaryIds   = array();
-        $itemsForInsert = array();
+        $temporaryIds   = [];
+        $itemsForInsert = [];
 
         for ($i = 0; $i < $totalCountItems; $i++) {
-
             $item = $data['items'][$i];
 
             $temporaryIds[] = (int)$item['ktype'];
-            $itemsForInsert[] = array(
+            $itemsForInsert[] = [
                 'ktype'          => (int)$item['ktype'],
                 'make'           => $item['make'],
                 'model'          => $item['model'],
@@ -171,14 +182,13 @@ class MotorsKtypes extends AbstractModel
                 'from_year'      => (int)$item['from_year'],
                 'to_year'        => (int)$item['to_year'],
                 'engine'         => $item['engine'],
-            );
+            ];
 
             if (count($itemsForInsert) >= 100 || $i >= ($totalCountItems - 1)) {
-
                 $connWrite->insertMultiple($tableMotorsKtype, $itemsForInsert);
-                $connWrite->delete($tableMotorsKtype, array('is_custom = ?' => 1,
-                                                            'ktype IN (?)'  => $temporaryIds));
-                $itemsForInsert = $temporaryIds = array();
+                $connWrite->delete($tableMotorsKtype, ['is_custom = ?' => 1,
+                                                            'ktype IN (?)'  => $temporaryIds]);
+                $itemsForInsert = $temporaryIds = [];
             }
 
             if (++$iteration % $iterationsForOneStep == 0) {
@@ -197,12 +207,14 @@ class MotorsKtypes extends AbstractModel
 
         $tempString = $this->getHelper('Module\Log')->encodeDescription(
             'The "Parts Compatibility [kTypes]" Action for eBay Site: "%mrk%" has been successfully completed.',
-            array('mrk' => $this->marketplace->getTitle())
+            ['mrk' => $this->marketplace->getTitle()]
         );
 
-        $this->getLog()->addMessage($tempString,
-                                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
-                                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW);
+        $this->getLog()->addMessage(
+            $tempString,
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+        );
     }
 
     //########################################

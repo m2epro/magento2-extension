@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Listing;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling
+ */
 class Form extends AbstractForm
 {
     protected $sessionKey = 'amazon_listing_create';
@@ -29,8 +33,7 @@ class Form extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -52,27 +55,32 @@ class Form extends AbstractForm
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
 
-        $attributesByTypes = array(
+        $attributesByTypes = [
             'boolean' => $magentoAttributeHelper->filterByInputTypes(
-                $this->getData('all_attributes'), array('boolean')
+                $this->getData('all_attributes'),
+                ['boolean']
             ),
             'text' => $magentoAttributeHelper->filterByInputTypes(
-                $this->getData('general_attributes'), array('text')
+                $this->getData('general_attributes'),
+                ['text']
             ),
             'text_textarea' => $magentoAttributeHelper->filterByInputTypes(
-                $this->getData('all_attributes'), array('text', 'textarea')
+                $this->getData('all_attributes'),
+                ['text', 'textarea']
             ),
             'text_date' => $magentoAttributeHelper->filterByInputTypes(
-                $this->getData('general_attributes'), array('text', 'date', 'datetime')
+                $this->getData('general_attributes'),
+                ['text', 'date', 'datetime']
             ),
             'text_select' => $magentoAttributeHelper->filterByInputTypes(
-                $this->getData('general_attributes'), array('text', 'select')
+                $this->getData('general_attributes'),
+                ['text', 'select']
             ),
             'text_images' => $magentoAttributeHelper->filterByInputTypes(
                 $this->getData('general_attributes'),
-                array('text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect')
+                ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
             )
-        );
+        ];
         $formData = $this->getListingData();
 
         // SKU Settings
@@ -96,8 +104,7 @@ class Form extends AbstractForm
         $preparedAttributes = [];
         foreach ($attributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['sku_mode'] == \Ess\M2ePro\Model\Amazon\Listing::SKU_MODE_CUSTOM_ATTRIBUTE
+            if ($formData['sku_mode'] == \Ess\M2ePro\Model\Amazon\Listing::SKU_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['sku_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -133,7 +140,8 @@ class Form extends AbstractForm
                     <br/>
                     <br/>
                     <b>Note:</b> If you list a Magento Product and M2E Pro find an Amazon Item with the same
-                    <i>Merchant SKU</i> in Amazon Inventory, they will be Mapped.')
+                    <i>Merchant SKU</i> in Amazon Inventory, they will be Mapped.'
+                )
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -208,7 +216,8 @@ class Form extends AbstractForm
             ]
         );
 
-        $fieldset->addField('template_selling_format_messages',
+        $fieldset->addField(
+            'template_selling_format_messages',
             self::CUSTOM_CONTAINER,
             [
                 'style' => 'display: block;',
@@ -380,8 +389,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributesByTypes['text_select'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['condition_mode'] == \Ess\M2ePro\Model\Amazon\Listing::SKU_MODE_CUSTOM_ATTRIBUTE
+            if ($formData['condition_mode'] == \Ess\M2ePro\Model\Amazon\Listing::SKU_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['condition_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -466,7 +474,7 @@ HTML
                 'style'        => 'width: 70%;',
                 'class'        => 'textarea M2ePro-required-when-visible',
                 'required'     => true,
-                'after_element_html' => $this->createBlock('Magento\Button\MagentoAttribute')->addData([
+                'after_element_html' => $this->createBlock('Magento_Button_MagentoAttribute')->addData([
                     'label' => $this->__('Insert Attribute'),
                     'destination_id' => 'condition_note_value',
                     'magento_attributes' => $preparedAttributes,
@@ -502,8 +510,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributesByTypes['text_images'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['image_main_mode'] == \Ess\M2ePro\Model\Amazon\Listing::IMAGE_MAIN_MODE_ATTRIBUTE
+            if ($formData['image_main_mode'] == \Ess\M2ePro\Model\Amazon\Listing::IMAGE_MAIN_MODE_ATTRIBUTE
                 && $attribute['code'] == $formData['image_main_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -588,8 +595,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributesByTypes['text_images'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['gallery_images_mode'] == \Ess\M2ePro\Model\Amazon\Listing::GALLERY_IMAGES_MODE_ATTRIBUTE
+            if ($formData['gallery_images_mode'] == \Ess\M2ePro\Model\Amazon\Listing::GALLERY_IMAGES_MODE_ATTRIBUTE
                 && $attribute['code'] == $formData['gallery_images_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -653,8 +659,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributesByTypes['boolean'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['gift_wrap_mode'] == \Ess\M2ePro\Model\Amazon\Listing::GIFT_WRAP_MODE_ATTRIBUTE
+            if ($formData['gift_wrap_mode'] == \Ess\M2ePro\Model\Amazon\Listing::GIFT_WRAP_MODE_ATTRIBUTE
                 && $attribute['code'] == $formData['gift_wrap_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -706,8 +711,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributesByTypes['boolean'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['gift_message_mode'] == \Ess\M2ePro\Model\Amazon\Listing::GIFT_MESSAGE_MODE_ATTRIBUTE
+            if ($formData['gift_message_mode'] == \Ess\M2ePro\Model\Amazon\Listing::GIFT_MESSAGE_MODE_ATTRIBUTE
                 && $attribute['code'] == $formData['gift_message_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -792,8 +796,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributesByTypes['text_select'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['handling_time_mode'] == \Ess\M2ePro\Model\Amazon\Listing::HANDLING_TIME_MODE_CUSTOM_ATTRIBUTE
+            if ($formData['handling_time_mode'] == \Ess\M2ePro\Model\Amazon\Listing::HANDLING_TIME_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['handling_time_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -848,8 +851,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributesByTypes['text_date'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['restock_date_mode'] == \Ess\M2ePro\Model\Amazon\Listing::RESTOCK_DATE_MODE_CUSTOM_ATTRIBUTE
+            if ($formData['restock_date_mode'] == \Ess\M2ePro\Model\Amazon\Listing::RESTOCK_DATE_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['restock_date_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -975,21 +977,32 @@ HTML
         $this->jsTranslator->addTranslations([
             'condition_note_length_error' => $this->__('Must be not more than 2000 characters long.'),
             'sku_modification_custom_value_error' => $this->__('%value% placeholder should be specified'),
-            'sku_modification_custom_value_max_length_error' => $this->__('The SKU length must be less than %value%.',
+            'sku_modification_custom_value_max_length_error' => $this->__(
+                'The SKU length must be less than %value%.',
                 \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General::SKU_MAX_LENGTH
             )
         ]);
 
-        $this->jsUrl->add($this->getUrl('*/template/checkMessages',
-            ['component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK]), 'templateCheckMessages');
-        $this->jsUrl->add($this->getUrl('*/amazon_template_sellingFormat/new',
-            ['wizard' => $this->getRequest()->getParam('wizard')]), 'addNewSellingFormatTemplate');
-        $this->jsUrl->add($this->getUrl('*/amazon_template_synchronization/new',
-            ['wizard' => $this->getRequest()->getParam('wizard')]), 'addNewSynchronizationTemplate');
-        $this->jsUrl->add($this->getUrl('*/amazon_template_sellingFormat/edit',
-            ['wizard' => $this->getRequest()->getParam('wizard')]), 'editSellingFormatTemplate');
-        $this->jsUrl->add($this->getUrl('*/amazon_template_synchronization/edit',
-            ['wizard' => $this->getRequest()->getParam('wizard')]), 'editSynchronizationTemplate');
+        $this->jsUrl->add($this->getUrl(
+            '*/template/checkMessages',
+            ['component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK]
+        ), 'templateCheckMessages');
+        $this->jsUrl->add($this->getUrl(
+            '*/amazon_template_sellingFormat/new',
+            ['wizard' => $this->getRequest()->getParam('wizard')]
+        ), 'addNewSellingFormatTemplate');
+        $this->jsUrl->add($this->getUrl(
+            '*/amazon_template_synchronization/new',
+            ['wizard' => $this->getRequest()->getParam('wizard')]
+        ), 'addNewSynchronizationTemplate');
+        $this->jsUrl->add($this->getUrl(
+            '*/amazon_template_sellingFormat/edit',
+            ['wizard' => $this->getRequest()->getParam('wizard')]
+        ), 'editSellingFormatTemplate');
+        $this->jsUrl->add($this->getUrl(
+            '*/amazon_template_synchronization/edit',
+            ['wizard' => $this->getRequest()->getParam('wizard')]
+        ), 'editSynchronizationTemplate');
         $this->jsUrl->add($this->getUrl('*/general/modelGetAll', [
             'model'=>'Template_SellingFormat',
             'id_field'=>'id',
@@ -1007,12 +1020,15 @@ HTML
             'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK
         ]), 'getSynchronizationTemplates');
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Amazon'));
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing'));
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Listing'));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Model\Listing::class));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Model\Amazon\Listing::class));
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants(
-                '\Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General'
+                \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General::class
             )
         );
 
@@ -1023,7 +1039,7 @@ HTML
 
         if (isset($listingData['marketplace_id'])) {
             $marketplaceId = (int)$listingData['marketplace_id'];
-        } else if (isset($listingData['account_id'])) {
+        } elseif (isset($listingData['account_id'])) {
             $accountObj =$this->amazonFactory->getCachedObjectLoaded('Account', (int)$listingData['account_id']);
             $marketplaceId = (int)$accountObj->getChildObject()->getMarketplaceId();
         }
@@ -1112,7 +1128,7 @@ require([
         .simulate('change');
 });
 JS
-);
+        );
 
         return parent::_toHtml();
     }
@@ -1121,7 +1137,7 @@ JS
 
     public function getDefaultFieldsValues()
     {
-        return array(
+        return [
             'sku_mode' => \Ess\M2ePro\Model\Amazon\Listing::SKU_MODE_DEFAULT,
             'sku_custom_attribute' => '',
             'sku_modification_mode' => \Ess\M2ePro\Model\Amazon\Listing::SKU_MODIFICATION_MODE_NONE,
@@ -1156,7 +1172,7 @@ JS
             'restock_date_mode' => \Ess\M2ePro\Model\Amazon\Listing::RESTOCK_DATE_MODE_NONE,
             'restock_date_value' => $this->getHelper('Data')->getCurrentGmtDate(),
             'restock_date_custom_attribute' => ''
-        );
+        ];
     }
 
     //########################################
@@ -1176,7 +1192,7 @@ JS
             $this->getHelper('Magento\Attribute')->getAll()
         );
 
-        foreach ($data as $key=>$value) {
+        foreach ($data as $key => $value) {
             $this->setData($key, $value);
         }
         // ---------------------------------------
@@ -1214,7 +1230,7 @@ JS
 
     protected function getListingData()
     {
-        if (!is_null($this->getRequest()->getParam('id'))) {
+        if ($this->getRequest()->getParam('id') !== null) {
             $data = array_merge($this->getListing()->getData(), $this->getListing()->getChildObject()->getData());
         } else {
             $data = $this->getHelper('Data\Session')->getValue($this->sessionKey);
@@ -1222,7 +1238,6 @@ JS
         }
 
         if ($data['restock_date_value'] != '') {
-
             $dateTime = new \DateTime(
                 $data['restock_date_value'],
                 new \DateTimeZone($this->_localeDate->getDefaultTimezone())
@@ -1243,7 +1258,7 @@ JS
             throw new \Ess\M2ePro\Model\Exception('Listing is not defined');
         }
 
-        if (is_null($this->listing)) {
+        if ($this->listing === null) {
             $this->listing = $this->amazonFactory->getCachedObjectLoaded('Listing', $listingId);
         }
 

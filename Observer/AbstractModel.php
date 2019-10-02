@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Observer;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Observer
+ */
 abstract class AbstractModel implements \Magento\Framework\Event\ObserverInterface
 {
     protected $helperFactory;
@@ -17,7 +21,7 @@ abstract class AbstractModel implements \Magento\Framework\Event\ObserverInterfa
     /**
      * @var null|\Magento\Framework\Event\Observer
      */
-    private $eventObserver = NULL;
+    private $eventObserver = null;
 
     //########################################
 
@@ -25,8 +29,7 @@ abstract class AbstractModel implements \Magento\Framework\Event\ObserverInterfa
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->modelFactory = $modelFactory;
@@ -48,15 +51,14 @@ abstract class AbstractModel implements \Magento\Framework\Event\ObserverInterfa
 
     public function execute(\Magento\Framework\Event\Observer $eventObserver)
     {
-        if ($this->helperFactory->getObject('Module\Maintenance')->isEnabled() ||
+        if (!$this->helperFactory->getObject('Magento')->isInstalled() ||
+            $this->helperFactory->getObject('Module\Maintenance')->isEnabled() ||
             $this->helperFactory->getObject('Module')->isDisabled() ||
             !$this->helperFactory->getObject('Module')->isReadyToWork()) {
-
             return;
         }
 
         try {
-
             $this->setEventObserver($eventObserver);
 
             if (!$this->canProcess()) {
@@ -66,7 +68,6 @@ abstract class AbstractModel implements \Magento\Framework\Event\ObserverInterfa
             $this->beforeProcess();
             $this->process();
             $this->afterProcess();
-
         } catch (\Exception $exception) {
             $this->helperFactory->getObject('Module\Exception')->process($exception);
         }
@@ -76,8 +77,14 @@ abstract class AbstractModel implements \Magento\Framework\Event\ObserverInterfa
 
     //########################################
 
-    public function beforeProcess() {}
-    public function afterProcess() {}
+    public function beforeProcess()
+    {
+        return null;
+    }
+    public function afterProcess()
+    {
+        return null;
+    }
 
     //########################################
 

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Descri
 
 use \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description;
 
+/**
+ * Class ValidateProductsForAssign
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description
+ */
 class ValidateProductsForAssign extends Description
 {
     public function execute()
@@ -26,7 +30,7 @@ class ValidateProductsForAssign extends Description
             $productsIds = explode(',', $productsIds);
         }
 
-        $variationHelper = $this->getHelper('Component\Amazon\Variation');
+        $variationHelper = $this->getHelper('Component_Amazon_Variation');
 
         $messages = [];
 
@@ -73,7 +77,7 @@ class ValidateProductsForAssign extends Description
             return $this->getResult();
         }
 
-        $block = $this->createBlock('Amazon\Listing\Product\Template\Description');
+        $block = $this->createBlock('Amazon_Listing_Product_Template_Description');
         if (!empty($messages)) {
             $block->setMessages($messages);
         }

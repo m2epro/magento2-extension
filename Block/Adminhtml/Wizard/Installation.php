@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Wizard;
 
+/**
+ * Class Installation
+ * @package Ess\M2ePro\Block\Adminhtml\Wizard
+ */
 abstract class Installation extends AbstractWizard
 {
     //########################################
@@ -20,10 +24,10 @@ abstract class Installation extends AbstractWizard
     {
         parent::_construct();
 
-        $this->addButton('continue', array(
+        $this->addButton('continue', [
             'label' => $this->__('Continue'),
             'class' => 'primary forward',
-        ));
+        ]);
     }
 
     protected function _beforeToHtml()

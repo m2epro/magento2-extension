@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\HealthStatus\Task\Orders\IntervalToTheLatest;
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 
+/**
+ * Class Ebay
+ * @package Ess\M2ePro\Model\HealthStatus\Task\Orders\IntervalToTheLatest
+ */
 class Ebay extends IssueType
 {
     const DIFF_CRITICAL_FACTOR = 1.50;
@@ -32,7 +36,7 @@ class Ebay extends IssueType
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory);
         $this->resultFactory = $resultFactory;
         $this->ebayFactory = $ebayFactory;
@@ -55,7 +59,6 @@ class Ebay extends IssueType
         $result->setTaskData($currentInterval);
 
         if ($currentInterval >= $maxInterval * self::DIFF_WARNING_FACTOR) {
-
             $result->setTaskResult(TaskResult::STATE_WARNING);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
                 <<<HTML
@@ -78,7 +81,6 @@ HTML
         }
 
         if ($currentInterval >= $maxInterval * self::DIFF_CRITICAL_FACTOR) {
-
             $result->setTaskResult(TaskResult::STATE_CRITICAL);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
                 <<<HTML
@@ -134,12 +136,10 @@ HTML
         $maxInterval = 0;
         $previousItemDate = null;
 
-        foreach ($collection->getItems() as $item){
-
+        foreach ($collection->getItems() as $item) {
             $currentItemDate = new \DateTime($item->getData('purchase_create_date'), new \DateTimeZone('UTC'));
 
-            if (is_null($previousItemDate)) {
-
+            if ($previousItemDate === null) {
                 $previousItemDate = $currentItemDate;
                 continue;
             }

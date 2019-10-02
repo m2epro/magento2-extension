@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Synchronization\GlobalTask
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal
 {
     //########################################
@@ -23,7 +27,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Synchronization\Task\Abst
     {
         $path = '/global/';
         $path .= $this->getType() ? strtolower($this->getType()).'/' : '';
-        return $path.trim(strtolower($this->getNick()),'/').'/';
+        return $path.trim(strtolower($this->getNick()), '/').'/';
     }
 
     //########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore;
 
+/**
+ * Class Assign
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
+ */
 class Assign extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
 {
     //########################################
@@ -37,13 +41,13 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
                 'text' => $this->__('Stores cannot be assigned')
             ];
         } else {
-            $this->activeRecordFactory->getObject('Ebay\Listing\Product\PickupStore')
+            $this->activeRecordFactory->getObject('Ebay_Listing_Product_PickupStore')
                                       ->getResource()->assignProductsToStores($productsIds, $storesIds);
 
-            $messages[] = array(
+            $messages[] = [
                 'type' => 'success',
                 'text' => $this->__('Stores have been successfully assigned.')
-            );
+            ];
         }
 
         $this->setAjaxContent($this->getHelper('Data')->jsonEncode([

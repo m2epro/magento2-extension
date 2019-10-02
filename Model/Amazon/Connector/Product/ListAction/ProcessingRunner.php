@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Product\ListAction;
 
+/**
+ * Class ProcessingRunner
+ * @package Ess\M2ePro\Model\Amazon\Connector\Product\ListAction
+ */
 class ProcessingRunner extends \Ess\M2ePro\Model\Amazon\Connector\Product\ProcessingRunner
 {
     // ########################################
@@ -19,11 +23,11 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Amazon\Connector\Product\Proces
         $accountId = (int)$params['account_id'];
         $sku       = (string)$params['request_data']['sku'];
 
-        $processingActionListSku = $this->activeRecordFactory->getObject('Amazon\Processing\Action\ListAction\Sku');
-        $processingActionListSku->setData(array(
+        $processingActionListSku = $this->activeRecordFactory->getObject('Amazon_Processing_Action_ListAction_Sku');
+        $processingActionListSku->setData([
             'account_id' => $accountId,
             'sku'        => $sku,
-        ));
+        ]);
         $processingActionListSku->save();
 
         parent::eventBefore();
@@ -37,7 +41,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Amazon\Connector\Product\Proces
         $sku       = (string)$params['request_data']['sku'];
 
         $processingActionListSkuCollection = $this->activeRecordFactory
-                                                  ->getObject('Amazon\Processing\Action\ListAction\Sku')
+                                                  ->getObject('Amazon_Processing_Action_ListAction_Sku')
                                                   ->getCollection();
         $processingActionListSkuCollection->addFieldToFilter('account_id', $accountId);
         $processingActionListSkuCollection->addFieldToFilter('sku', $sku);

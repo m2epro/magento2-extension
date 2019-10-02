@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tabs;
 
+/**
+ * Class General
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tabs
+ */
 class General extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     //########################################
@@ -45,7 +49,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             'template_nick' => \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT,
             'policy_localization' => $this->getData('policy_localization')
         ];
-        $switcherBlock = $this->createBlock('Ebay\Listing\Template\Switcher','',['data' => $parameters]);
+        $switcherBlock = $this->createBlock('Ebay_Listing_Template_Switcher', '', ['data' => $parameters]);
 
         $this->setChild('payment', $switcherBlock);
         // ---------------------------------------
@@ -55,7 +59,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             'template_nick' => \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING,
             'policy_localization' => $this->getData('policy_localization')
         ];
-        $switcherBlock = $this->createBlock('Ebay\Listing\Template\Switcher','', ['data' => $parameters]);
+        $switcherBlock = $this->createBlock('Ebay_Listing_Template_Switcher', '', ['data' => $parameters]);
 
         $this->setChild('shipping', $switcherBlock);
         // ---------------------------------------
@@ -65,7 +69,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             'template_nick' => \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY,
             'policy_localization' => $this->getData('policy_localization')
         ];
-        $switcherBlock = $this->createBlock('Ebay\Listing\Template\Switcher','',['data' => $parameters]);
+        $switcherBlock = $this->createBlock('Ebay_Listing_Template_Switcher', '', ['data' => $parameters]);
 
         $this->setChild('return', $switcherBlock);
         // ---------------------------------------
@@ -81,8 +85,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             . $this->getChildHtml('help')
             . $this->getChildHtml('payment')
             . $this->getChildHtml('shipping')
-            . $this->getChildHtml('return')
-        ;
+            . $this->getChildHtml('return');
     }
 
     //########################################

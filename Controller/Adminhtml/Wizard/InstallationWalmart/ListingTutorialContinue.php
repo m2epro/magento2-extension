@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
 
+/**
+ * Class ListingTutorialContinue
+ * @package Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart
+ */
 class ListingTutorialContinue extends InstallationWalmart
 {
     public function execute()

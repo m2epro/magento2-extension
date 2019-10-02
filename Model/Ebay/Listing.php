@@ -21,59 +21,59 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Category
      */
-    private $autoGlobalAddingCategoryTemplateModel = NULL;
+    private $autoGlobalAddingCategoryTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory
      */
-    private $autoGlobalAddingOtherCategoryTemplateModel = NULL;
+    private $autoGlobalAddingOtherCategoryTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Category
      */
-    private $autoWebsiteAddingCategoryTemplateModel = NULL;
+    private $autoWebsiteAddingCategoryTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory
      */
-    private $autoWebsiteAddingOtherCategoryTemplateModel = NULL;
+    private $autoWebsiteAddingOtherCategoryTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Manager[]
      */
-    private $templateManagers = array();
+    private $templateManagers = [];
 
     // ---------------------------------------
 
     /**
      * @var \Ess\M2ePro\Model\Template\SellingFormat
      */
-    private $sellingFormatTemplateModel = NULL;
+    private $sellingFormatTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Template\Synchronization
      */
-    private $synchronizationTemplateModel = NULL;
+    private $synchronizationTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Template\Description
      */
-    private $descriptionTemplateModel = NULL;
+    private $descriptionTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Payment
      */
-    private $paymentTemplateModel = NULL;
+    private $paymentTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy
      */
-    private $returnTemplateModel = NULL;
+    private $returnTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Shipping
      */
-    private $shippingTemplateModel = NULL;
+    private $shippingTemplateModel = null;
 
     //########################################
 
@@ -87,7 +87,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('listing');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('listing');
         return parent::save();
     }
 
@@ -99,19 +99,19 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             return false;
         }
 
-        $this->templateManagers = array();
-        $this->autoGlobalAddingCategoryTemplateModel = NULL;
-        $this->autoGlobalAddingOtherCategoryTemplateModel = NULL;
-        $this->autoWebsiteAddingCategoryTemplateModel = NULL;
-        $this->autoWebsiteAddingOtherCategoryTemplateModel = NULL;
-        $this->sellingFormatTemplateModel = NULL;
-        $this->synchronizationTemplateModel = NULL;
-        $this->descriptionTemplateModel = NULL;
-        $this->paymentTemplateModel = NULL;
-        $this->returnTemplateModel = NULL;
-        $this->shippingTemplateModel = NULL;
+        $this->templateManagers = [];
+        $this->autoGlobalAddingCategoryTemplateModel = null;
+        $this->autoGlobalAddingOtherCategoryTemplateModel = null;
+        $this->autoWebsiteAddingCategoryTemplateModel = null;
+        $this->autoWebsiteAddingOtherCategoryTemplateModel = null;
+        $this->sellingFormatTemplateModel = null;
+        $this->synchronizationTemplateModel = null;
+        $this->descriptionTemplateModel = null;
+        $this->paymentTemplateModel = null;
+        $this->returnTemplateModel = null;
+        $this->shippingTemplateModel = null;
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('listing');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('listing');
 
         return parent::delete();
     }
@@ -123,11 +123,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getAutoGlobalAddingCategoryTemplate()
     {
-        if (is_null($this->autoGlobalAddingCategoryTemplateModel)) {
-
+        if ($this->autoGlobalAddingCategoryTemplateModel === null) {
             try {
                 $this->autoGlobalAddingCategoryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                    'Ebay\Template\Category', (int)$this->getAutoGlobalAddingTemplateCategoryId()
+                    'Ebay_Template_Category',
+                    (int)$this->getAutoGlobalAddingTemplateCategoryId()
                 );
             } catch (\Exception $exception) {
                 return $this->autoGlobalAddingCategoryTemplateModel;
@@ -152,11 +152,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getAutoGlobalAddingOtherCategoryTemplate()
     {
-        if (is_null($this->autoGlobalAddingOtherCategoryTemplateModel)) {
-
+        if ($this->autoGlobalAddingOtherCategoryTemplateModel === null) {
             try {
                 $this->autoGlobalAddingOtherCategoryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                    'Ebay\Template\OtherCategory', (int)$this->getAutoGlobalAddingTemplateOtherCategoryId()
+                    'Ebay_Template_OtherCategory',
+                    (int)$this->getAutoGlobalAddingTemplateOtherCategoryId()
                 );
             } catch (\Exception $exception) {
                 return $this->autoGlobalAddingOtherCategoryTemplateModel;
@@ -181,11 +181,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getAutoWebsiteAddingCategoryTemplate()
     {
-        if (is_null($this->autoWebsiteAddingCategoryTemplateModel)) {
-
+        if ($this->autoWebsiteAddingCategoryTemplateModel === null) {
             try {
                 $this->autoWebsiteAddingCategoryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                    'Ebay\Template\Category', (int)$this->getAutoWebsiteAddingTemplateCategoryId()
+                    'Ebay_Template_Category',
+                    (int)$this->getAutoWebsiteAddingTemplateCategoryId()
                 );
             } catch (\Exception $exception) {
                 return $this->autoWebsiteAddingCategoryTemplateModel;
@@ -210,11 +210,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getAutoWebsiteAddingOtherCategoryTemplate()
     {
-        if (is_null($this->autoWebsiteAddingOtherCategoryTemplateModel)) {
-
+        if ($this->autoWebsiteAddingOtherCategoryTemplateModel === null) {
             try {
                 $this->autoWebsiteAddingOtherCategoryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                    'Ebay\Template\OtherCategory', (int)$this->getAutoWebsiteAddingTemplateOtherCategoryId()
+                    'Ebay_Template_OtherCategory',
+                    (int)$this->getAutoWebsiteAddingTemplateOtherCategoryId()
                 );
             } catch (\Exception $exception) {
                 return $this->autoWebsiteAddingOtherCategoryTemplateModel;
@@ -278,7 +278,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     {
         if (!isset($this->templateManagers[$template])) {
             /** @var \Ess\M2ePro\Model\Ebay\Template\Manager $manager */
-            $manager = $this->modelFactory->getObject('Ebay\Template\Manager')->setOwnerObject($this);
+            $manager = $this->modelFactory->getObject('Ebay_Template_Manager')->setOwnerObject($this);
             $this->templateManagers[$template] = $manager->setTemplate($template);
         }
 
@@ -292,7 +292,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getSellingFormatTemplate()
     {
-        if (is_null($this->sellingFormatTemplateModel)) {
+        if ($this->sellingFormatTemplateModel === null) {
             $template = \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT;
             $this->sellingFormatTemplateModel = $this->getTemplateManager($template)->getResultObject();
         }
@@ -315,7 +315,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getSynchronizationTemplate()
     {
-        if (is_null($this->synchronizationTemplateModel)) {
+        if ($this->synchronizationTemplateModel === null) {
             $template = \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION;
             $this->synchronizationTemplateModel = $this->getTemplateManager($template)->getResultObject();
         }
@@ -338,7 +338,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getDescriptionTemplate()
     {
-        if (is_null($this->descriptionTemplateModel)) {
+        if ($this->descriptionTemplateModel === null) {
             $template = \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION;
             $this->descriptionTemplateModel = $this->getTemplateManager($template)->getResultObject();
         }
@@ -361,7 +361,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getPaymentTemplate()
     {
-        if (is_null($this->paymentTemplateModel)) {
+        if ($this->paymentTemplateModel === null) {
             $template =\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT;
             $this->paymentTemplateModel = $this->getTemplateManager($template)->getResultObject();
         }
@@ -384,7 +384,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getReturnTemplate()
     {
-        if (is_null($this->returnTemplateModel)) {
+        if ($this->returnTemplateModel === null) {
             $template = \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY;
             $this->returnTemplateModel = $this->getTemplateManager($template)->getResultObject();
         }
@@ -407,7 +407,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getShippingTemplate()
     {
-        if (is_null($this->shippingTemplateModel)) {
+        if ($this->shippingTemplateModel === null) {
             $template = \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING;
             $this->shippingTemplateModel = $this->getTemplateManager($template)->getResultObject();
         }
@@ -451,9 +451,9 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     //########################################
 
-    public function getProducts($asObjects = false, array $filters = array())
+    public function getProducts($asObjects = false, array $filters = [])
     {
-        return $this->getParentObject()->getProducts($asObjects,$filters);
+        return $this->getParentObject()->getProducts($asObjects, $filters);
     }
 
     //########################################
@@ -508,7 +508,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     {
         if ($this->getEbayMarketplace()->isMultiMotorsEnabled()) {
             return $this->gePartsCompatibilityMode() == self::PARTS_COMPATIBILITY_MODE_KTYPES ||
-                is_null($this->gePartsCompatibilityMode());
+                $this->gePartsCompatibilityMode() === null;
         }
 
         return $this->getEbayMarketplace()->isKtypeEnabled();
@@ -533,11 +533,12 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      * @return bool|\Ess\M2ePro\Model\Listing\Product
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function addProductFromOther(\Ess\M2ePro\Model\Listing\Other $listingOtherProduct,
-                                        $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
-                                        $checkingMode = false,
-                                        $checkHasProduct = true)
-    {
+    public function addProductFromOther(
+        \Ess\M2ePro\Model\Listing\Other $listingOtherProduct,
+        $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
+        $checkingMode = false,
+        $checkHasProduct = true
+    ) {
         if (!$listingOtherProduct->getProductId()) {
             return false;
         }
@@ -562,21 +563,20 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $ebayItem = $collection->getLastItem();
 
         if (!$ebayItem->getId()) {
-
-            $ebayItem->setData(array(
+            $ebayItem->setData([
                 'account_id'     => $listingOtherProduct->getAccount()->getId(),
                 'marketplace_id' => $listingOtherProduct->getMarketplace()->getId(),
                 'item_id'        => $listingOtherProduct->getChildObject()->getItemId(),
                 'product_id'     => $listingOtherProduct->getProductId(),
-            ));
+            ]);
         }
 
-        $ebayItem->setData('store_id',$this->getParentObject()->getStoreId())
+        $ebayItem->setData('store_id', $this->getParentObject()->getStoreId())
                  ->save();
 
         $ebayListingProduct = $listingOtherProduct->getChildObject();
 
-        $dataForUpdate = array(
+        $dataForUpdate = [
             'ebay_item_id'         => $ebayItem->getId(),
 
             'online_sku'           => $ebayListingProduct->getSku(),
@@ -591,14 +591,15 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
             'status'               => $listingOtherProduct->getStatus(),
             'status_changer'       => $listingOtherProduct->getStatusChanger()
-        );
+        ];
 
         $listingOtherAdditionalData = $listingOtherProduct->getAdditionalData();
 
         if (!empty($listingOtherAdditionalData['out_of_stock_control'])) {
             $listingProductAdditionalData = $listingProduct->getAdditionalData();
             $additionalDataForUpdate = array_merge(
-                $listingProductAdditionalData, array('out_of_stock_control' => true)
+                $listingProductAdditionalData,
+                ['out_of_stock_control' => true]
             );
             $dataForUpdate['additional_data'] = $this->getHelper('Data')->jsonEncode($additionalDataForUpdate);
         }
@@ -629,7 +630,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getTrackingAttributes()
     {
-        return array();
+        return [];
     }
 
     //########################################
@@ -642,7 +643,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getAffectedListingsProductsByTemplate($template, $asArrays = true, $columns = '*')
     {
-        $templateManager = $this->modelFactory->getObject('Ebay\Template\Manager');
+        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
         $templateManager->setTemplate($template);
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
@@ -650,7 +651,8 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             ->getCollection();
         $collection->addFieldToFilter('listing_id', $this->getId());
         $collection->addFieldToFilter(
-            $templateManager->getModeColumnName(),\Ess\M2ePro\Model\Ebay\Template\Manager::MODE_PARENT
+            $templateManager->getModeColumnName(),
+            \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_PARENT
         );
 
         if (is_array($columns) && !empty($columns)) {
@@ -663,22 +665,22 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $templateManager = $this->modelFactory->getObject('Ebay\Template\Manager');
+        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
 
         $newTemplates = $templateManager->getTemplatesFromData($newData);
         $oldTemplates = $templateManager->getTemplatesFromData($oldData);
 
         foreach ($templateManager->getAllTemplates() as $template) {
-
             $templateManager->setTemplate($template);
 
             $templateManager->getTemplateModel(true)->getResource()->setSynchStatusNeed(
                 $newTemplates[$template]->getDataSnapshot(),
                 $oldTemplates[$template]->getDataSnapshot(),
                 $this->getAffectedListingsProductsByTemplate(
-                    $template, true,
+                    $template,
+                    true,
                     $template == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION ?
-                        array('id', 'synch_status', 'synch_reasons') : array('id')
+                        ['id', 'synch_status', 'synch_reasons'] : ['id']
                 )
             );
         }
@@ -686,30 +688,31 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     //########################################
 
-    public function updateLastPrimaryCategory($path,$data)
+    public function updateLastPrimaryCategory($path, $data)
     {
         $settings = $this->getParentObject()->getSettings('additional_data');
         $temp = &$settings;
 
-        foreach ($path as $i => $part) {
+        $pathCount = count($path);
 
-            if (!array_key_exists($part,$temp)) {
-                $temp[$part] = array();
+        foreach ($path as $i => $part) {
+            if (!array_key_exists($part, $temp)) {
+                $temp[$part] = [];
             }
 
-            if ($i == count($path) - 1) {
+            if ($i == $pathCount - 1) {
                 $temp[$part] = $data;
             }
 
             $temp = &$temp[$part];
         }
 
-        $this->getParentObject()->setSettings('additional_data',$settings)->save();
+        $this->getParentObject()->setSettings('additional_data', $settings)->save();
     }
 
     public function getLastPrimaryCategory($key)
     {
-        return (array)$this->getSetting('additional_data',$key);
+        return (array)$this->getSetting('additional_data', $key);
     }
 
     //########################################

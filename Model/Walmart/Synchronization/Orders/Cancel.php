@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization\Orders;
 
+/**
+ * Class Cancel
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\Orders
+ */
 class Cancel extends AbstractModel
 {
     const MAX_ORDERS_CHANGES_COUNT = 50;
@@ -70,11 +74,8 @@ class Cancel extends AbstractModel
             // ---------------------------------------
 
             try {
-
                 $this->processAccount($account);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Cancel" Action for Walmart Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -124,7 +125,7 @@ class Cancel extends AbstractModel
             /** @var \Ess\M2ePro\Model\Order $order */
             $order = $this->walmartFactory->getObjectLoaded('Order', $orderChange->getOrderId());
 
-            $actionHandler = $this->modelFactory->getObject('Walmart\Order\Action\Handler\Cancel');
+            $actionHandler = $this->modelFactory->getObject('Walmart_Order_Action_Handler_Cancel');
             $actionHandler->setOrder($order);
             $actionHandler->setParams($orderChange->getParams());
 
@@ -150,7 +151,7 @@ class Cancel extends AbstractModel
         $changesCollection->addFieldToFilter('component', \Ess\M2ePro\Helper\Component\Walmart::NICK);
         $changesCollection->addFieldToFilter('action', \Ess\M2ePro\Model\Order\Change::ACTION_CANCEL);
         $changesCollection->getSelect()->limit(self::MAX_ORDERS_CHANGES_COUNT);
-        $changesCollection->getSelect()->group(array('order_id'));
+        $changesCollection->getSelect()->group(['order_id']);
 
         return $changesCollection->getItems();
     }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\AutoAction;
 
+/**
+ * Class Mode
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\AutoAction
+ */
 class Mode extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     protected $formFactory;
@@ -18,8 +22,7 @@ class Mode extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
-    )
-    {
+    ) {
         $this->formFactory = $formFactory;
         parent::__construct($context, $data);
     }
@@ -102,7 +105,9 @@ class Mode extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     {
         $form = $this->formFactory->create();
 
-        $form->addField('global', 'radio',
+        $form->addField(
+            'global',
+            'radio',
             [
                 'name' => 'auto_mode',
                 'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL,
@@ -111,15 +116,18 @@ class Mode extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             ]
         );
 
-        $form->addField('note_global', 'note',
+        $form->addField(
+            'note_global',
+            'note',
             [
                 'text' => $this->__('Acts when a Product is added or deleted from Magento Catalog.')
             ]
         );
 
         if (!$this->isAdminStore()) {
-
-            $form->addField('website', 'radio',
+            $form->addField(
+                'website',
+                'radio',
                 [
                     'name' => 'auto_mode',
                     'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE,
@@ -128,7 +136,9 @@ class Mode extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
                 ]
             );
 
-            $form->addField('note_website', 'note',
+            $form->addField(
+                'note_website',
+                'note',
                 [
                     'text' => $this->__(
                         'Acts when a Product is added to or deleted from the Website with regard
@@ -136,10 +146,11 @@ class Mode extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
                     )
                 ]
             );
-
         }
 
-        $form->addField('category', 'radio',
+        $form->addField(
+            'category',
+            'radio',
             [
                 'name' => 'auto_mode',
                 'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY,
@@ -148,7 +159,9 @@ class Mode extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             ]
         );
 
-        $form->addField('note_category', 'note',
+        $form->addField(
+            'note_category',
+            'note',
             [
                 'text' => $this->__(
                     'Acts when the Product is added to or deleted from the
@@ -157,7 +170,8 @@ class Mode extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             ]
         );
 
-        $form->addField('validation',
+        $form->addField(
+            'validation',
             'text',
             [
                 'class' => 'M2ePro-validate-mode',

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Mana
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
+/**
+ * Class ViewVariationsSettingsAjax
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage
+ */
 class ViewVariationsSettingsAjax extends Main
 {
     public function execute()
@@ -20,7 +24,7 @@ class ViewVariationsSettingsAjax extends Main
             return $this->getResponse()->setBody('You should provide correct parameters.');
         }
 
-        $settings = $this->createBlock('Walmart\Listing\Product\Variation\Manage\Tabs\Settings\Form');
+        $settings = $this->createBlock('Walmart_Listing_Product_Variation_Manage_Tabs_Settings_Form');
         $settings->setListingProduct($this->walmartFactory->getObjectLoaded('Listing\Product', $productId));
 
         $this->setJsonContent([

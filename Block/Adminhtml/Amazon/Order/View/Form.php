@@ -10,15 +10,19 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order\View;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Order\View
+ */
 class Form extends AbstractContainer
 {
     protected $_template = 'amazon/order.phtml';
 
     protected $storeManager;
 
-    public $shippingAddress = array();
+    public $shippingAddress = [];
 
-    public $realMagentoOrderId = NULL;
+    public $realMagentoOrderId = null;
 
     /** @var \Ess\M2ePro\Model\Order */
     public $order;
@@ -29,8 +33,7 @@ class Form extends AbstractContainer
         \Magento\Store\Model\StoreManager $storeManager,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
-    )
-    {
+    ) {
         $this->storeManager = $storeManager;
 
         parent::__construct($context, $data);
@@ -52,30 +55,30 @@ class Form extends AbstractContainer
     {
         // Magento order data
         // ---------------------------------------
-        $this->realMagentoOrderId = NULL;
+        $this->realMagentoOrderId = null;
 
         $magentoOrder = $this->order->getMagentoOrder();
-        if (!is_null($magentoOrder)) {
+        if ($magentoOrder !== null) {
             $this->realMagentoOrderId = $magentoOrder->getRealOrderId();
         }
         // ---------------------------------------
 
-        $data = array(
+        $data = [
             'class' => 'primary',
             'label'   => $this->__('Edit'),
             'onclick' => "OrderEditItemObj.openEditShippingAddressPopup({$this->order->getId()});",
-        );
+        ];
         $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
         $this->setChild('edit_shipping_info', $buttonBlock);
 
         // ---------------------------------------
-        if (!is_null($magentoOrder) && $magentoOrder->hasShipments() && !$this->order->getChildObject()->isPrime()) {
-            $url = $this->getUrl('*/order/resubmitShippingInfo', array('id' => $this->order->getId()));
-            $data = array(
+        if ($magentoOrder !== null && $magentoOrder->hasShipments() && !$this->order->getChildObject()->isPrime()) {
+            $url = $this->getUrl('*/order/resubmitShippingInfo', ['id' => $this->order->getId()]);
+            $data = [
                 'class'   => 'primary',
                 'label'   => $this->__('Resend Shipping Information'),
                 'onclick' => 'setLocation(\''.$url.'\');',
-            );
+            ];
             $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
             $this->setChild('resubmit_shipping_info', $buttonBlock);
         }
@@ -92,31 +95,34 @@ class Form extends AbstractContainer
 
         $this->jsUrl->addUrls([
             'order/getDebugInformation' => $this->getUrl(
-                '*/order/getDebugInformation/', array('id' => $this->getRequest()->getParam('id'))
+                '*/order/getDebugInformation/',
+                ['id' => $this->getRequest()->getParam('id')]
             ),
             'getEditShippingAddressForm' => $this->getUrl(
-                '*/amazon_order_shippingAddress/edit/', array('id' => $this->getRequest()->getParam('id'))
+                '*/amazon_order_shippingAddress/edit/',
+                ['id' => $this->getRequest()->getParam('id')]
             ),
             'saveShippingAddress' => $this->getUrl(
-                '*/amazon_order_shippingAddress/save', array('id' => $this->getRequest()->getParam('id'))
+                '*/amazon_order_shippingAddress/save',
+                ['id' => $this->getRequest()->getParam('id')]
             ),
         ]);
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Controller\Adminhtml\Order\EditItem')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Controller\Adminhtml\Order\EditItem::class)
         );
 
-        $this->setChild('shipping_address', $this->createBlock('Amazon\Order\Edit\ShippingAddress'));
-        $this->setChild('item', $this->createBlock('Amazon\Order\View\Item'));
-        $this->setChild('item_edit', $this->createBlock('Order\Item\Edit'));
-        $this->setChild('log', $this->createBlock('Order\View\Log\Grid'));
+        $this->setChild('shipping_address', $this->createBlock('Amazon_Order_Edit_ShippingAddress'));
+        $this->setChild('item', $this->createBlock('Amazon_Order_View_Item'));
+        $this->setChild('item_edit', $this->createBlock('Order_Item_Edit'));
+        $this->setChild('log', $this->createBlock('Order_View_Log_Grid'));
 
         return parent::_beforeToHtml();
     }
 
     private function getStore()
     {
-        if (is_null($this->order->getData('store_id'))) {
+        if ($this->order->getData('store_id') === null) {
             return null;
         }
 
@@ -133,12 +139,13 @@ class Form extends AbstractContainer
     {
         $store = $this->getStore();
 
-        if (is_null($store)) {
+        if ($store === null) {
             return true;
         }
 
         return $this->modelFactory->getObject('Currency')->isAllowed(
-            $this->order->getChildObject()->getCurrency(), $store
+            $this->order->getChildObject()->getCurrency(),
+            $store
         );
     }
 
@@ -146,12 +153,13 @@ class Form extends AbstractContainer
     {
         $store = $this->getStore();
 
-        if (is_null($store)) {
+        if ($store === null) {
             return true;
         }
 
         return $this->modelFactory->getObject('Currency')->getConvertRateFromBase(
-            $this->order->getChildObject()->getCurrency(), $store
+            $this->order->getChildObject()->getCurrency(),
+            $store
         ) != 0;
     }
 

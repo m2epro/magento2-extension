@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
+/**
+ * Class CssRenderer
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Renderer
+ */
 class CssRenderer extends AbstractRenderer
 {
     protected $css = [];

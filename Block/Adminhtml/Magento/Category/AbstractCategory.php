@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Category;
 use Magento\Backend\Block\Widget;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
+/**
+ * Class AbstractCategory
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Category
+ */
 abstract class AbstractCategory extends \Magento\Catalog\Block\Adminhtml\Category\AbstractCategory
 {
     use Traits\BlockTrait;

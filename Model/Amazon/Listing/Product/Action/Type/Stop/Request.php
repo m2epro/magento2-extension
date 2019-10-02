@@ -8,16 +8,20 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Stop;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Stop
+ */
 class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Request
 {
     //########################################
 
     protected function getActionData()
     {
-        return array(
+        return [
             'sku' => $this->getAmazonListingProduct()->getSku(),
             'qty' => 0
-        );
+        ];
     }
 
     //########################################

@@ -8,11 +8,15 @@
 
 namespace Ess\M2ePro\Model\Amazon\Marketplace;
 
+/**
+ * Class Details
+ * @package Ess\M2ePro\Model\Amazon\Marketplace
+ */
 class Details extends \Ess\M2ePro\Model\AbstractModel
 {
     private $marketplaceId = null;
 
-    private $productData = array();
+    private $productData = [];
 
     private $resourceConnection;
 
@@ -22,8 +26,7 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -54,7 +57,7 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getProductData()
     {
-       return $this->productData;
+        return $this->productData;
     }
 
     /**
@@ -64,7 +67,7 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
     public function getVariationThemes($productDataNick)
     {
         if (!isset($this->productData[$productDataNick])) {
-            return array();
+            return [];
         }
 
         return (array)$this->productData[$productDataNick]['variation_themes'];
@@ -78,19 +81,19 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
     public function getVariationThemeAttributes($productDataNick, $theme)
     {
         $themes = $this->getVariationThemes($productDataNick);
-        return !empty($themes[$theme]['attributes']) ? $themes[$theme]['attributes'] : array();
+        return !empty($themes[$theme]['attributes']) ? $themes[$theme]['attributes'] : [];
     }
 
     //########################################
 
     private function load()
     {
-        if (is_null($this->marketplaceId)) {
+        if ($this->marketplaceId === null) {
             throw new \Ess\M2ePro\Model\Exception('Marketplace was not set.');
         }
 
         $connRead = $this->resourceConnection->getConnection();
-        $table    = $this->getHelper('Module\Database\Structure')
+        $table    = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_amazon_dictionary_marketplace');
 
         $data = $connRead->select()

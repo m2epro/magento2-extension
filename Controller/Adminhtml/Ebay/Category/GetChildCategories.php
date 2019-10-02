@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
+/**
+ * Class GetChildCategories
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Category
+ */
 class GetChildCategories extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {
 
@@ -20,34 +24,33 @@ class GetChildCategories extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $parentCategoryId  = $this->getRequest()->getParam('parent_category_id');
         $categoryType = $this->getRequest()->getParam('category_type');
 
-        $ebayCategoryTypes = $this->getHelper('Component\Ebay\Category')->getEbayCategoryTypes();
-        $storeCategoryTypes = $this->getHelper('Component\Ebay\Category')->getStoreCategoryTypes();
+        $ebayCategoryTypes = $this->getHelper('Component_Ebay_Category')->getEbayCategoryTypes();
+        $storeCategoryTypes = $this->getHelper('Component_Ebay_Category')->getStoreCategoryTypes();
 
-        $data = array();
+        $data = [];
 
-        if ((in_array($categoryType, $ebayCategoryTypes) && is_null($marketplaceId)) ||
-            (in_array($categoryType, $storeCategoryTypes) && is_null($accountId))
+        if ((in_array($categoryType, $ebayCategoryTypes) && $marketplaceId === null) ||
+            (in_array($categoryType, $storeCategoryTypes) && $accountId === null)
         ) {
             $this->setJsonContent($data);
             return $this->getResult();
         }
 
         if (in_array($categoryType, $ebayCategoryTypes)) {
-            $data = $this->ebayFactory->getCachedObjectLoaded('Marketplace',$marketplaceId)
+            $data = $this->ebayFactory->getCachedObjectLoaded('Marketplace', $marketplaceId)
                 ->getChildObject()
                 ->getChildCategories($parentCategoryId);
         } elseif (in_array($categoryType, $storeCategoryTypes)) {
-
             $connection = $this->resourceConnection->getConnection();
-            $tableAccountStoreCategories = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix(
+            $tableAccountStoreCategories = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
                 'm2epro_ebay_account_store_category'
             );
 
             $dbSelect = $connection->select()
-                ->from($tableAccountStoreCategories,'*')
-                ->where('`account_id` = ?',(int)$accountId)
+                ->from($tableAccountStoreCategories, '*')
+                ->where('`account_id` = ?', (int)$accountId)
                 ->where('`parent_id` = ?', $parentCategoryId)
-                ->order(array('sorder ASC'));
+                ->order(['sorder ASC']);
 
             $data = $connection->fetchAll($dbSelect);
         }

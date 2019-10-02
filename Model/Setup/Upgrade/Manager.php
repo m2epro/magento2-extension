@@ -14,6 +14,10 @@ use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
 use Ess\M2ePro\Model\Setup\Upgrade\Entity\Factory;
 use Magento\Framework\Module\Setup;
 
+/**
+ * Class Manager
+ * @package Ess\M2ePro\Model\Setup\Upgrade
+ */
 class Manager extends AbstractModel
 {
     private $upgradeFactory;
@@ -27,13 +31,13 @@ class Manager extends AbstractModel
     private $versionTo;
 
     /** @var AbstractConfig */
-    private $configObject = NULL;
+    private $configObject = null;
 
     /** @var AbstractFeature[] $featuresObjects */
     private $featuresObjects = [];
 
     /** @var Backup $backupObject */
-    private $backupObject = NULL;
+    private $backupObject = null;
 
     //########################################
 
@@ -41,7 +45,8 @@ class Manager extends AbstractModel
         Factory $upgradeFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         Setup $installer,
-        $versionFrom, $versionTo,
+        $versionFrom,
+        $versionTo,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
@@ -59,7 +64,9 @@ class Manager extends AbstractModel
 
         foreach ($this->configObject->getFeaturesList() as $featureName) {
             $featureObject = $this->upgradeFactory->getFeatureObject(
-                $featureName, $this->versionFrom, $this->versionTo
+                $featureName,
+                $this->versionFrom,
+                $this->versionTo
             );
 
             $backupTables = array_merge($backupTables, $featureObject->getBackupTables());
@@ -67,7 +74,7 @@ class Manager extends AbstractModel
             $this->featuresObjects[] = $featureObject;
         }
 
-        $this->backupObject = $modelFactory->getObject('Setup\Upgrade\Backup', [
+        $this->backupObject = $modelFactory->getObject('Setup_Upgrade_Backup', [
             'versionFrom' => $this->versionFrom,
             'versionTo'   => $this->versionTo,
             'tablesList'  => $backupTables,

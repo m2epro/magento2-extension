@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View;
 
+/**
+ * Class Group
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View
+ */
 class Group extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     private $listingProductId;
@@ -26,7 +30,7 @@ class Group extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     {
         //------------------------------
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group\Grid $block */
-        $block = $this->createBlock('Ebay\Listing\View\Settings\Motors\View\Group\Grid');
+        $block = $this->createBlock('Ebay_Listing_View_Settings_Motors_View_Group_Grid');
         $block->setListingProductId($this->getListingProductId());
         $block->setMotorsType($this->getMotorsType());
         $this->setChild('view_group_grid', $block);
@@ -43,7 +47,7 @@ class Group extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
      */
     public function getListingProductId()
     {
-        if (is_null($this->listingProductId)) {
+        if ($this->listingProductId === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Listing Product ID was not set.');
         }
 
@@ -67,7 +71,7 @@ class Group extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     public function getMotorsType()
     {
-        if (is_null($this->motorsType)) {
+        if ($this->motorsType === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Motors type not set.');
         }
 

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
+/**
+ * Class SaveListing
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template
+ */
 class SaveListing extends Template
 {
 
@@ -24,7 +28,8 @@ class SaveListing extends Template
         }
 
         $id = $this->getRequest()->getParam('id');
-        $listing = $this->ebayFactory->getObjectLoaded('Listing',$id);;
+        $listing = $this->ebayFactory->getObjectLoaded('Listing', $id);
+        ;
 
         // ---------------------------------------
         $oldData = $listing->getChildObject()->getDataSnapshot();
@@ -34,19 +39,19 @@ class SaveListing extends Template
         $listing->save();
         // ---------------------------------------
         $newData = $listing->getChildObject()->getDataSnapshot();
-        $listing->getChildObject()->setSynchStatusNeed($newData,$oldData);
+        $listing->getChildObject()->setSynchStatusNeed($newData, $oldData);
         // ---------------------------------------
 
         $this->messageManager->addSuccess($this->__('The Listing was successfully saved.'));
 
-        $extendedParams = array(
-            '*/ebay_template/editListing' => array(
+        $extendedParams = [
+            '*/ebay_template/editListing' => [
                 'id' => $id,
                 'tab' => $this->getRequest()->getPost('tab')
-            )
-        );
+            ]
+        ];
 
-        $this->_redirect($this->getHelper('Data')->getBackUrl('list', array(), $extendedParams));
+        $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], $extendedParams));
 
         return $this->getResult();
     }
@@ -58,9 +63,9 @@ class SaveListing extends Template
         $post = $this->getRequest()->getPost();
 
         // ---------------------------------------
-        $data = array();
+        $data = [];
         foreach ($this->templateManager->getAllTemplates() as $nick) {
-            $manager = $this->modelFactory->getObject('Ebay\Template\Manager')
+            $manager = $this->modelFactory->getObject('Ebay_Template_Manager')
                 ->setTemplate($nick);
 
             if (!isset($post["template_{$nick}"])) {
@@ -75,7 +80,7 @@ class SaveListing extends Template
             $idColumn = $manager->getIdColumnNameByMode($templateMode);
             $modeColumn = $manager->getModeColumnName();
 
-            if (!is_null($idColumn)) {
+            if ($idColumn !== null) {
                 $data[$idColumn] = (int)$templateId;
             }
 
@@ -90,22 +95,22 @@ class SaveListing extends Template
 
     private function clearTemplatesFieldsNotRelatedToMode(array &$data, $nick, $mode)
     {
-        $modes = array(
+        $modes = [
             \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_PARENT,
             \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_CUSTOM,
             \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
-        );
+        ];
 
         unset($modes[array_search($mode, $modes)]);
 
         foreach ($modes as $mode) {
             $column = $this->templateManager->setTemplate($nick)->getIdColumnNameByMode($mode);
 
-            if (is_null($column)) {
+            if ($column === null) {
                 continue;
             }
 
-            $data[$column] = NULL;
+            $data[$column] = null;
         }
     }
 

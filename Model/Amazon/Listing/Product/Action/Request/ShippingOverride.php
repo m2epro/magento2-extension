@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request;
 
+/**
+ * Class ShippingOverride
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request
+ */
 class ShippingOverride extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\AbstractModel
 {
     const TYPE_EXCLUSIVE = 'Exclusive';
@@ -16,7 +20,7 @@ class ShippingOverride extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
     /**
      * @var \Ess\M2ePro\Model\Amazon\Template\ShippingOverride
      */
-    private $shippingOverrideTemplate = NULL;
+    private $shippingOverrideTemplate = null;
 
     //########################################
 
@@ -26,26 +30,26 @@ class ShippingOverride extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
     public function getRequestData()
     {
         if (!$this->getConfigurator()->isShippingOverrideAllowed()) {
-            return array();
+            return [];
         }
 
         if (!$this->getAmazonListingProduct()->getAmazonAccount()->isShippingModeOverride()) {
-            return array();
+            return [];
         }
 
         if (!$this->getAmazonListingProduct()->isExistShippingOverrideTemplate()) {
-            return array();
+            return [];
         }
 
-        $data = array();
+        $data = [];
 
         foreach ($this->getShippingOverrideTemplate()->getServices(true) as $service) {
 
             /** @var \Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service $service */
 
-            $tempService = array(
+            $tempService = [
                 'option' => $service->getOption()
-            );
+            ];
 
             if ($service->isTypeRestrictive()) {
                 $tempService['is_restricted'] = true;
@@ -60,7 +64,6 @@ class ShippingOverride extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
             }
 
             if ($service->isTypeExclusive() || $service->isTypeAdditive()) {
-
                 $store = $this->getListing()->getStoreId();
                 $tempService['amount'] = $service->getSource($this->getMagentoProduct())->getCost($store);
             }
@@ -78,7 +81,7 @@ class ShippingOverride extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
      */
     private function getShippingOverrideTemplate()
     {
-        if (is_null($this->shippingOverrideTemplate)) {
+        if ($this->shippingOverrideTemplate === null) {
             $this->shippingOverrideTemplate = $this->getAmazonListingProduct()->getShippingOverrideTemplate();
         }
         return $this->shippingOverrideTemplate;

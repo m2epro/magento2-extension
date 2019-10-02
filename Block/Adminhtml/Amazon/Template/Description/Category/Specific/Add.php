@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Specific;
 
+/**
+ * Class Add
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Specific
+ */
 class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     protected $_template = 'amazon/template/description/category/specific/add.phtml';
@@ -43,7 +47,9 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $additionalTitle = $this->getRequest()->getParam('current_indexed_xpath');
         $additionalTitle = explode('/', ltrim($additionalTitle, '/'));
         array_shift($additionalTitle);
-        $additionalTitle = array_map(function($el) { return preg_replace('/-\d+/', '', $el); }, $additionalTitle);
+        $additionalTitle = array_map(function ($el) {
+            return preg_replace('/-\d+/', '', $el);
+        }, $additionalTitle);
         $this->setData('additional_title', implode(' > ', $additionalTitle));
 
         return parent::_beforeToHtml();

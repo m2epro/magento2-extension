@@ -8,16 +8,19 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database;
 
+/**
+ * Class ManageTables
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database
+ */
 class ManageTables extends Table
 {
     public function execute()
     {
-        $tables = $this->getRequest()->getParam('tables', array());
+        $tables = $this->getRequest()->getParam('tables', []);
 
         $response = '';
         foreach ($tables as $table) {
-
-            if (is_null($this->getHelper('Module\Database\Structure')->getTableModel($table))) {
+            if ($this->getHelper('Module_Database_Structure')->getTableModel($table) === null) {
                 continue;
             }
 

@@ -13,6 +13,10 @@
 
 namespace Ess\M2ePro\Model\Walmart;
 
+/**
+ * Class ThrottlingManager
+ * @package Ess\M2ePro\Model\Walmart
+ */
 class ThrottlingManager extends \Ess\M2ePro\Model\AbstractModel
 {
     const REQUEST_TYPE_UPDATE_DETAILS = 'update_details';
@@ -42,10 +46,13 @@ class ThrottlingManager extends \Ess\M2ePro\Model\AbstractModel
     {
         /** @var \Ess\M2ePro\Model\Registry $registry */
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::REGISTRY_KEY . $accountId . '/', 'key', false
+            'Registry',
+            self::REGISTRY_KEY . $accountId . '/',
+            'key',
+            false
         );
 
-        if (is_null($registry)) {
+        if ($registry === null) {
             $registry = $this->activeRecordFactory->getObject('Registry');
         }
 
@@ -92,27 +99,30 @@ class ThrottlingManager extends \Ess\M2ePro\Model\AbstractModel
             $availableRequestsCount = 0;
         }
 
-        $lastRequestInfo = array(
+        $lastRequestInfo = [
             'date'                     => $this->getHelper('Data')->getCurrentGmtDate(),
             'available_requests_count' => $availableRequestsCount,
-        );
+        ];
 
         /** @var \Ess\M2ePro\Model\Registry $registry */
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::REGISTRY_KEY . $accountId . '/', 'key', false
+            'Registry',
+            self::REGISTRY_KEY . $accountId . '/',
+            'key',
+            false
         );
 
-        if (is_null($registry)) {
+        if ($registry === null) {
             $registry = $this->activeRecordFactory->getObject('Registry');
         }
 
         $existedLastRequestInfo = $registry->getValueFromJson();
         $existedLastRequestInfo[$requestType] = $lastRequestInfo;
 
-        $registry->addData(array(
+        $registry->addData([
             'key'   => self::REGISTRY_KEY . $accountId . '/',
             'value' => $this->getHelper('Data')->jsonEncode($existedLastRequestInfo),
-        ));
+        ]);
         $registry->save();
     }
 
@@ -120,24 +130,24 @@ class ThrottlingManager extends \Ess\M2ePro\Model\AbstractModel
 
     private function getThrottlingInfo($requestType)
     {
-        $throttlingInfo = array(
-            self::REQUEST_TYPE_UPDATE_DETAILS    => array(
+        $throttlingInfo = [
+            self::REQUEST_TYPE_UPDATE_DETAILS    => [
                 'quota'        => 10,
                 'restore_rate' => 0.16, // 10 per hour
-            ),
-            self::REQUEST_TYPE_UPDATE_PRICE      => array(
+            ],
+            self::REQUEST_TYPE_UPDATE_PRICE      => [
                 'quota'        => 10,
                 'restore_rate' => 0.16, // 10 per hour
-            ),
-            self::REQUEST_TYPE_UPDATE_PROMOTIONS => array(
+            ],
+            self::REQUEST_TYPE_UPDATE_PROMOTIONS => [
                 'quota'        => 6,
                 'restore_rate' => 0.0042, // 6 per day
-            ),
-            self::REQUEST_TYPE_UPDATE_QTY        => array(
+            ],
+            self::REQUEST_TYPE_UPDATE_QTY        => [
                 'quota'        => 10,
                 'restore_rate' => 0.16, // 10 per hour
-            ),
-        );
+            ],
+        ];
 
         return $throttlingInfo[$requestType];
     }

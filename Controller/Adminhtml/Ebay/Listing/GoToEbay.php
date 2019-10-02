@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+/**
+ * Class GoToEbay
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ */
 class GoToEbay extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -26,7 +30,7 @@ class GoToEbay extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $accountId = $this->getRequest()->getParam('account_id');
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
 
-        if (is_null($itemId) || is_null($accountId) || is_null($marketplaceId)) {
+        if ($itemId === null || $accountId === null || $marketplaceId === null) {
             $this->messageManager->addError($this->__('Requested eBay Item ID is not found.'));
             $this->_redirect('*/*/index');
             return;
@@ -37,7 +41,9 @@ class GoToEbay extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             ->getMode();
 
         $url = $this->getHelper('Component\Ebay')->getItemUrl(
-            $itemId, $accountMode, $marketplaceId
+            $itemId,
+            $accountMode,
+            $marketplaceId
         );
 
         return $this->_redirect($url);

@@ -28,21 +28,24 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
     {
         parent::inspectProduct();
 
-        $runner = $this->modelFactory->getObject('Synchronization\Templates\Synchronization\Runner');
-        $runner->setConnectorModel('Amazon\Connector\Product\Dispatcher');
+        /** @var \Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner $runner */
+        $runner = $this->modelFactory->getObject('Synchronization_Templates_Synchronization_Runner');
+        $runner->setConnectorModel('Amazon_Connector_Product_Dispatcher');
         $runner->setMaxProductsPerStep(100);
 
         if (!$this->isSuccess) {
             if ($this->listingProduct->needSynchRulesCheck()) {
-                $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
 
                 $responseData = $this->getPreparedResponseData();
                 if (empty($responseData['request_time']) && !empty($responseData['start_processing_date'])) {
-                    $configurator->setParams(array('start_processing_date' => $responseData['start_processing_date']));
+                    $configurator->setParams(['start_processing_date' => $responseData['start_processing_date']]);
                 }
 
                 $runner->addProduct(
-                    $this->listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator
+                    $this->listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                    $configurator
                 );
                 $runner->execute();
             }
@@ -64,7 +67,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
             return;
         }
 
-        $inspector = $this->modelFactory->getObject('Amazon\Synchronization\Templates\Synchronization\Inspector');
+        $inspector = $this->modelFactory->getObject('Amazon_Synchronization_Templates_Synchronization_Inspector');
 
         foreach ($childListingProducts as $listingProduct) {
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -79,14 +82,15 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 
             if ($amazonTemplate->isListAdvancedRulesEnabled() &&
                 !$inspector->isMeetAdvancedListRequirements($this->listingProduct)) {
-
                 continue;
             }
 
-            $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
+            $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
 
             $runner->addProduct(
-                $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator
+                $listingProduct,
+                \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                $configurator
             );
         }
 
@@ -95,7 +99,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 
     // ########################################
 
-    protected function processSuccess(array $params = array())
+    protected function processSuccess(array $params = [])
     {
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
         $amazonListingProduct = $this->listingProduct->getChildObject();
@@ -104,11 +108,11 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
             !$this->getRequestDataObject()->hasProductId() &&
             empty($params['general_id'])
         ) {
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 'Unexpected error. The ASIN/ISBN for Parent or Child Product was not returned from Amazon.
                  Operation cannot be finished correctly.',
-               \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
+                \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
             );
 
             $this->getLogger()->logListingProductMessage(
@@ -128,10 +132,10 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
         $responseData = $this->getPreparedResponseData();
 
         if (empty($responseData['asins'])) {
-            return array();
+            return [];
         }
 
-        return array('general_id' => $responseData['asins']);
+        return ['general_id' => $responseData['asins']];
     }
 
     // ########################################

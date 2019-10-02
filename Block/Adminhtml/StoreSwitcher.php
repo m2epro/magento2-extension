@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml;
 
+/**
+ * Class StoreSwitcher
+ * @package Ess\M2ePro\Block\Adminhtml
+ */
 class StoreSwitcher extends Magento\AbstractBlock
 {
     const DISPLAY_DEFAULT_STORE_MODE_UP   = 'up';
@@ -28,8 +32,7 @@ class StoreSwitcher extends Magento\AbstractBlock
         \Magento\Store\Model\StoreFactory $storeFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
-    )
-    {
+    ) {
         $this->_websiteFactory = $websiteFactory;
         $this->_storeGroupFactory = $storeGroupFactory;
         $this->_storeFactory = $storeFactory;
@@ -166,7 +169,7 @@ class StoreSwitcher extends Magento\AbstractBlock
         if ($url = $this->getData('switch_url')) {
             return $url;
         }
-        return $this->getUrl('*/*/new', array('_current' => true, 'store' => null));
+        return $this->getUrl('*/*/new', ['_current' => true, 'store' => null]);
     }
 
     public function getStoreId()
@@ -200,7 +203,7 @@ class StoreSwitcher extends Magento\AbstractBlock
 
     public function hasDefaultOption()
     {
-        if (!is_null($this->getData('has_default_option'))) {
+        if ($this->getData('has_default_option') !== null) {
             $this->_hasDefaultOption = $this->getData('has_default_option');
         }
         return $this->_hasDefaultOption;

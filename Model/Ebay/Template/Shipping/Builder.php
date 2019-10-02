@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Ebay\Template\Shipping;
 
 use \Ess\M2ePro\Model\Ebay\Template\Shipping as TemplateShipping;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Ebay\Template\Shipping
+ */
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 {
     protected $resourceConnection;
@@ -22,8 +26,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         parent::__construct($activeRecordFactory, $ebayFactory, $helperFactory, $modelFactory);
     }
@@ -33,7 +36,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
     public function build(array $data)
     {
         if (empty($data)) {
-            return NULL;
+            return null;
         }
 
         $this->validate($data);
@@ -41,10 +44,11 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         $generalData = $this->prepareGeneralData($data);
 
         $marketplace = $this->ebayFactory->getCachedObjectLoaded(
-            'Marketplace', $generalData['marketplace_id']
+            'Marketplace',
+            $generalData['marketplace_id']
         );
 
-        $template = $this->activeRecordFactory->getObject('Ebay\Template\Shipping');
+        $template = $this->activeRecordFactory->getObject('Ebay_Template_Shipping');
 
         if (isset($generalData['id'])) {
             $template->load($generalData['id']);
@@ -77,7 +81,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             empty($data['country_custom_value']) ||
             $data['country_mode'] == TemplateShipping::COUNTRY_MODE_CUSTOM_ATTRIBUTE &&
             empty($data['country_custom_attribute'])) {
-
             throw new \Ess\M2ePro\Model\Exception\Logic('Country is empty.');
         }
 
@@ -92,7 +95,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
         $prepared['marketplace_id'] = (int)$data['marketplace_id'];
 
-        $keys = array(
+        $keys = [
             'country_mode',
             'country_custom_value',
             'country_custom_attribute',
@@ -111,7 +114,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             'international_shipping_mode',
             'international_shipping_discount_mode',
             'cross_border_trade',
-        );
+        ];
 
         foreach ($keys as $key) {
             $prepared[$key] = isset($data[$key]) ? $data[$key] : '';
@@ -119,18 +122,18 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
         if (isset($data['local_shipping_discount_profile_id'])) {
             $prepared['local_shipping_discount_profile_id'] = $this->getHelper('Data')->jsonEncode(
-                array_diff($data['local_shipping_discount_profile_id'], array(''))
+                array_diff($data['local_shipping_discount_profile_id'], [''])
             );
         } else {
-            $prepared['local_shipping_discount_profile_id'] = $this->getHelper('Data')->jsonEncode(array());
+            $prepared['local_shipping_discount_profile_id'] = $this->getHelper('Data')->jsonEncode([]);
         }
 
         if (isset($data['international_shipping_discount_profile_id'])) {
             $prepared['international_shipping_discount_profile_id'] = $this->getHelper('Data')->jsonEncode(
-                array_diff($data['international_shipping_discount_profile_id'], array(''))
+                array_diff($data['international_shipping_discount_profile_id'], [''])
             );
         } else {
-            $prepared['international_shipping_discount_profile_id'] = $this->getHelper('Data')->jsonEncode(array());
+            $prepared['international_shipping_discount_profile_id'] = $this->getHelper('Data')->jsonEncode([]);
         }
 
         if (isset($data['excluded_locations'])) {
@@ -142,9 +145,9 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         }
 
         $key = 'cash_on_delivery_cost';
-        $prepared[$key] = (isset($data[$key]) && $data[$key] != '') ? $data[$key] : NULL;
+        $prepared[$key] = (isset($data[$key]) && $data[$key] != '') ? $data[$key] : null;
 
-        $modes = array(
+        $modes = [
             'local_shipping_rate_table_mode',
             'international_shipping_rate_table_mode',
             'local_shipping_mode',
@@ -152,7 +155,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             'international_shipping_mode',
             'international_shipping_discount_mode',
             'cross_border_trade',
-        );
+        ];
 
         foreach ($modes as $mode) {
             $prepared[$mode] = (int)$prepared[$mode];
@@ -165,9 +168,9 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
     private function prepareCalculatedData($templateShippingId, array $data)
     {
-        $prepared = array('template_shipping_id' => $templateShippingId);
+        $prepared = ['template_shipping_id' => $templateShippingId];
 
-        $keys = array(
+        $keys = [
             'measurement_system',
 
             'package_size_mode',
@@ -186,19 +189,19 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             'weight_minor',
             'weight_major',
             'weight_attribute'
-        );
+        ];
 
         foreach ($keys as $key) {
             $prepared[$key] = isset($data[$key]) ? $data[$key] : '';
         }
 
-        $nullKeys = array(
+        $nullKeys = [
             'local_handling_cost',
             'international_handling_cost'
-        );
+        ];
 
         foreach ($nullKeys as $key) {
-            $prepared[$key] = (isset($data[$key]) && $data[$key] != '') ? $data[$key] : NULL;
+            $prepared[$key] = (isset($data[$key]) && $data[$key] != '') ? $data[$key] : null;
         }
 
         return $prepared;
@@ -246,17 +249,17 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         $connection = $this->resourceConnection->getConnection();
 
         $connection->delete(
-            $this->activeRecordFactory->getObject('Ebay\Template\Shipping\Calculated')->getResource()->getMainTable(),
-            array(
+            $this->activeRecordFactory->getObject('Ebay_Template_Shipping_Calculated')->getResource()->getMainTable(),
+            [
                 'template_shipping_id = ?' => (int)$templateShippingId
-            )
+            ]
         );
 
         if (empty($data)) {
             return;
         }
 
-        $this->activeRecordFactory->getObject('Ebay\Template\Shipping\Calculated')->setData($data)->save();
+        $this->activeRecordFactory->getObject('Ebay_Template_Shipping_Calculated')->setData($data)->save();
     }
 
     //########################################
@@ -289,10 +292,9 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
         // ---------------------------------------
 
-        $services = array();
+        $services = [];
         foreach ($data['cost_mode'] as $i => $costMode) {
-
-            $locations = array();
+            $locations = [];
             if (isset($data['shippingLocation'][$i])) {
                 foreach ($data['shippingLocation'][$i] as $location) {
                     $locations[] = $location;
@@ -304,7 +306,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
                 : \Ess\M2ePro\Model\Ebay\Template\Shipping\Service::SHIPPING_TYPE_INTERNATIONAL;
 
             if ($costMode == \Ess\M2ePro\Model\Ebay\Template\Shipping\Service::COST_MODE_CUSTOM_ATTRIBUTE) {
-
                 $cost = isset($data['shipping_cost_attribute'][$i])
                     ? $data['shipping_cost_attribute'][$i]
                     : '';
@@ -312,9 +313,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
                 $costAdditional = isset($data['shipping_cost_additional_attribute'][$i])
                     ? $data['shipping_cost_additional_attribute'][$i]
                     : '';
-
             } else {
-
                 $cost = isset($data['shipping_cost_value'][$i])
                     ? $data['shipping_cost_value'][$i]
                     : '';
@@ -325,22 +324,18 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             }
 
             if ($costMode == \Ess\M2ePro\Model\Ebay\Template\Shipping\Service::COST_MODE_CUSTOM_ATTRIBUTE) {
-
                 $costSurcharge = isset($data['shipping_cost_surcharge_attribute'][$i])
                     ? $data['shipping_cost_surcharge_attribute'][$i]
                     : '';
-
-            } else if ($costMode == \Ess\M2ePro\Model\Ebay\Template\Shipping\Service::COST_MODE_CUSTOM_VALUE) {
-
+            } elseif ($costMode == \Ess\M2ePro\Model\Ebay\Template\Shipping\Service::COST_MODE_CUSTOM_VALUE) {
                 $costSurcharge = isset($data['shipping_cost_surcharge_value'][$i])
                     ? $data['shipping_cost_surcharge_value'][$i]
                     : '';
-
             } else {
                 $costSurcharge = '';
             }
 
-            $services[] = array(
+            $services[] = [
                 'template_shipping_id'  => $templateShippingId,
                 'cost_mode'             => $costMode,
                 'cost_value'            => $cost,
@@ -350,7 +345,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
                 'cost_surcharge_value'  => $costSurcharge,
                 'priority'              => $data['shipping_priority'][$i],
                 'locations'             => $this->getHelper('Data')->jsonEncode($locations)
-            );
+            ];
         }
 
         return $services;
@@ -359,14 +354,14 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
     private function createServices($templateShippingId, array $data)
     {
         $connection = $this->resourceConnection->getConnection();
-        $etssTable = $this->activeRecordFactory->getObject('Ebay\Template\Shipping\Service')
+        $etssTable = $this->activeRecordFactory->getObject('Ebay_Template_Shipping_Service')
             ->getResource()->getMainTable();
 
         $connection->delete(
             $etssTable,
-            array(
+            [
                 'template_shipping_id = ?' => (int)$templateShippingId
-            )
+            ]
         );
 
         if (empty($data)) {
@@ -374,7 +369,8 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         }
 
         $connection->insertMultiple(
-            $etssTable, $data
+            $etssTable,
+            $data
         );
     }
 

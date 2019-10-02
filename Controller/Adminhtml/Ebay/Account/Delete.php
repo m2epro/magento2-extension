@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
+/**
+ * Class Delete
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account
+ */
 class Delete extends Account
 {
     public function execute()
@@ -34,13 +38,18 @@ class Delete extends Account
             }
 
             try {
-                $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-                $connectorObj = $dispatcherObject->getVirtualConnector('account','delete','entity',
-                    array(),NULL,NULL,$account->getId());
+                $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+                $connectorObj = $dispatcherObject->getVirtualConnector(
+                    'account',
+                    'delete',
+                    'entity',
+                    [],
+                    null,
+                    null,
+                    $account->getId()
+                );
                 $dispatcherObject->process($connectorObj);
-
             } catch (\Exception $e) {
-
                 $account->deleteProcessings();
                 $account->deleteProcessingLocks();
                 $account->delete();

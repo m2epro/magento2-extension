@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Synchronization;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Synchronization
+ */
 class Edit extends Template
 {
     public function execute()
@@ -19,7 +23,7 @@ class Edit extends Template
             $template = $this->walmartFactory->getObjectLoaded('Template\Synchronization', $id);
         }
 
-        if (is_null($template) && $id) {
+        if ($template === null && $id) {
             $this->messageManager->addError($this->__('Policy does not exist'));
             return $this->_redirect('*/walmart_template/index');
         }
@@ -29,7 +33,7 @@ class Edit extends Template
         $headerTextEdit = $this->__("Edit Synchronization Policy");
         $headerTextAdd = $this->__("Add Synchronization Policy");
 
-        if (!is_null($template)
+        if ($template !== null
             && $template->getId()
         ) {
             $headerText = $headerTextEdit;
@@ -43,7 +47,7 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
         $this->setPageHelpLink('x/UABhAQ');
-        $this->addContent($this->createBlock('Walmart\Template\Synchronization\Edit'));
+        $this->addContent($this->createBlock('Walmart_Template_Synchronization_Edit'));
 
         return $this->getResultPage();
     }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Plugin\Config\Magento\Config\Controller\Adminhtml\System\Config;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Plugin\Config\Magento\Config\Controller\Adminhtml\System\Config
+ */
 class Edit extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     //########################################

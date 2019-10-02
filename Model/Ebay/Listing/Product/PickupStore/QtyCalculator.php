@@ -8,18 +8,23 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\PickupStore;
 
+/**
+ * Class QtyCalculator
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\PickupStore
+ */
 class QtyCalculator extends \Ess\M2ePro\Model\Ebay\Listing\Product\QtyCalculator
 {
     //########################################
 
-    public function getLocationProductValue(\Ess\M2ePro\Model\Ebay\Account\PickupStore $accountPickupStore,
-                                            $bufferedClearValue = NULL)
-    {
+    public function getLocationProductValue(
+        \Ess\M2ePro\Model\Ebay\Account\PickupStore $accountPickupStore,
+        $bufferedClearValue = null
+    ) {
         if (!$accountPickupStore->isQtyModeSellingFormatTemplate()) {
             $this->source = $accountPickupStore->getQtySource();
         }
 
-        if (!is_null($bufferedClearValue)) {
+        if ($bufferedClearValue !== null) {
             $value = $bufferedClearValue;
         } else {
             $value = $this->getClearLocationProductValue($accountPickupStore);
@@ -31,15 +36,16 @@ class QtyCalculator extends \Ess\M2ePro\Model\Ebay\Listing\Product\QtyCalculator
         return $value;
     }
 
-    public function getLocationVariationValue(\Ess\M2ePro\Model\Listing\Product\Variation $variation,
-                                              \Ess\M2ePro\Model\Ebay\Account\PickupStore $accountPickupStore,
-                                              $bufferedClearValue = NULL)
-    {
+    public function getLocationVariationValue(
+        \Ess\M2ePro\Model\Listing\Product\Variation $variation,
+        \Ess\M2ePro\Model\Ebay\Account\PickupStore $accountPickupStore,
+        $bufferedClearValue = null
+    ) {
         if (!$accountPickupStore->isQtyModeSellingFormatTemplate()) {
             $this->source = $accountPickupStore->getQtySource();
         }
 
-        if (!is_null($bufferedClearValue)) {
+        if ($bufferedClearValue !== null) {
             $value = $bufferedClearValue;
         } else {
             $value = $this->getClearLocationVariationValue($variation, $accountPickupStore);
@@ -62,9 +68,10 @@ class QtyCalculator extends \Ess\M2ePro\Model\Ebay\Listing\Product\QtyCalculator
         return $this->getClearProductValue();
     }
 
-    public function getClearLocationVariationValue(\Ess\M2ePro\Model\Listing\Product\Variation $variation,
-                                                   \Ess\M2ePro\Model\Ebay\Account\PickupStore $accountPickupStore)
-    {
+    public function getClearLocationVariationValue(
+        \Ess\M2ePro\Model\Listing\Product\Variation $variation,
+        \Ess\M2ePro\Model\Ebay\Account\PickupStore $accountPickupStore
+    ) {
         if (!$accountPickupStore->isQtyModeSellingFormatTemplate()) {
             $this->source = $accountPickupStore->getQtySource();
         }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Listing\Auto\Actions\Mode;
 
+/**
+ * Class Website
+ * @package Ess\M2ePro\Model\Listing\Auto\Actions\Mode
+ */
 class Website extends AbstractMode
 {
     //########################################
@@ -15,7 +19,7 @@ class Website extends AbstractMode
     public function synchWithAddedWebsiteId($websiteId)
     {
         if ($websiteId == 0) {
-            $storeIds = array(\Magento\Store\Model\Store::DEFAULT_STORE_ID);
+            $storeIds = [\Magento\Store\Model\Store::DEFAULT_STORE_ID];
         } else {
             /** @var $websiteObject \Magento\Store\Model\Website */
             $websiteObject = $this->storeManager->getWebsite($websiteId);
@@ -28,10 +32,12 @@ class Website extends AbstractMode
 
         $collection = $this->activeRecordFactory->getObject('Listing')->getCollection();
 
-        $collection->addFieldToFilter('auto_mode',\Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE);
-        $collection->addFieldToFilter('auto_website_adding_mode',
-                                      array('neq'=>\Ess\M2ePro\Model\Listing::ADDING_MODE_NONE));
-        $collection->addFieldToFilter('store_id',array('in'=>$storeIds));
+        $collection->addFieldToFilter('auto_mode', \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE);
+        $collection->addFieldToFilter(
+            'auto_website_adding_mode',
+            ['neq'=>\Ess\M2ePro\Model\Listing::ADDING_MODE_NONE]
+        );
+        $collection->addFieldToFilter('store_id', ['in'=>$storeIds]);
 
         foreach ($collection->getItems() as $listing) {
 
@@ -60,11 +66,13 @@ class Website extends AbstractMode
 
         $collection = $this->activeRecordFactory->getObject('Listing')->getCollection();
 
-        $collection->addFieldToFilter('auto_mode',\Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE);
-        $collection->addFieldToFilter('auto_website_deleting_mode',
-                                      array('neq'=>\Ess\M2ePro\Model\Listing::DELETING_MODE_NONE));
+        $collection->addFieldToFilter('auto_mode', \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE);
+        $collection->addFieldToFilter(
+            'auto_website_deleting_mode',
+            ['neq'=>\Ess\M2ePro\Model\Listing::DELETING_MODE_NONE]
+        );
 
-        $collection->addFieldToFilter('store_id',array('in'=>$storeIds));
+        $collection->addFieldToFilter('store_id', ['in'=>$storeIds]);
 
         foreach ($collection->getItems() as $listing) {
 

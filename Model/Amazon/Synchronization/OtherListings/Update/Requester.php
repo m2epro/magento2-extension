@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update
+ */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRequester
 {
     // ########################################
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Amazon\Synchronization\OtherListings\Update\ProcessingRunner';
+        return 'Amazon_Synchronization_OtherListings_Update_ProcessingRunner';
     }
 
     // ########################################

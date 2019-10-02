@@ -8,11 +8,16 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing;
 
+/**
+ * Class Moving
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing
+ */
 abstract class Moving extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
     //########################################
 
-    protected function productCanBeMoved($productId, $listing) {
+    protected function productCanBeMoved($productId, $listing)
+    {
 
         if ($listing->isComponentModeEbay()) {
             return !$listing->hasProduct($productId);
@@ -20,11 +25,11 @@ abstract class Moving extends \Ess\M2ePro\Controller\Adminhtml\Listing
 
         // Add attribute set filter
         // ---------------------------------------
-        $table = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_entity');
+        $table = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('catalog_product_entity');
         $dbSelect = $this->resourceConnection->getConnection()
             ->select()
-            ->from($table,new \Zend_Db_Expr('DISTINCT `entity_id`'))
-            ->where('`entity_id` = ?',(int)$productId);
+            ->from($table, new \Zend_Db_Expr('DISTINCT `entity_id`'))
+            ->where('`entity_id` = ?', (int)$productId);
 
         $productArray = $this->resourceConnection->getConnection()->fetchCol($dbSelect);
 

@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Model\Magento\Product\Rule\Condition;
 
+/**
+ * Class Combine
+ * @package Ess\M2ePro\Model\Magento\Product\Rule\Condition
+ */
 class Combine extends AbstractModel
 {
     protected $_logger;
     protected $_useCustomOptions = true;
 
-    static protected $_conditionModels = array();
+    protected static $_conditionModels = [];
 
     //########################################
 
@@ -22,20 +26,19 @@ class Combine extends AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Rule\Model\Condition\Context $context,
         array $data = []
-    )
-    {
+    ) {
         $this->_logger = $context->getLogger();
         parent::__construct($helperFactory, $modelFactory, $context, $data);
 
         $this->setType('Magento\Product\Rule\Condition\Combine')
             ->setAggregator('all')
             ->setValue(true)
-            ->setConditions(array())
-            ->setActions(array());
+            ->setConditions([])
+            ->setActions([]);
 
         $this->loadAggregatorOptions();
         if ($options = $this->getAggregatorOptions()) {
-            foreach ($options as $aggregator=>$dummy) {
+            foreach ($options as $aggregator => $dummy) {
                 $this->setAggregator($aggregator);
                 break;
             }
@@ -61,25 +64,25 @@ class Combine extends AbstractModel
      */
     public function getNewChildSelectOptions()
     {
-        $conditions = array(
-            array(
+        $conditions = [
+            [
                 'label' => $this->getHelper('Module\Translation')->__('Conditions Combination'),
                 'value' => $this->getConditionCombine()
-            )
-        );
+            ]
+        ];
 
         $customAttribute = $this->getCustomOptionsAttributes();
         if ($this->_useCustomOptions && !empty($customAttribute)) {
-            $conditions[] = array(
+            $conditions[] = [
                 'label' => $this->getCustomLabel(),
                 'value' => $this->getCustomOptions()
-            );
+            ];
         }
 
-        $conditions[] = array(
+        $conditions[] = [
             'label' => $this->getHelper('Module\Translation')->__('Product Attribute'),
             'value' => $this->getProductOptions()
-        );
+        ];
 
         return array_merge_recursive(parent::getNewChildSelectOptions(), $conditions);
     }
@@ -100,35 +103,35 @@ class Combine extends AbstractModel
 
     protected function getCustomOptions()
     {
-        return array();
+        return [];
     }
 
-    protected  function getCustomOptionsAttributes()
+    protected function getCustomOptionsAttributes()
     {
-        return array();
+        return [];
     }
 
     // ---------------------------------------
 
     protected function getProductOptions()
     {
-        $attributes = $this->modelFactory->getObject('Magento\Product\Rule\Condition\Product')->getAttributeOption();
+        $attributes = $this->modelFactory->getObject('Magento_Product_Rule_Condition_Product')->getAttributeOption();
         return  !empty($attributes) ?
                 $this->getOptions('Magento\Product\Rule\Condition\Product', $attributes)
-                : array();
+                : [];
     }
 
     // ---------------------------------------
 
-    protected function getOptions($value, array $optionsAttribute, array $params = array())
+    protected function getOptions($value, array $optionsAttribute, array $params = [])
     {
-        $options = array();
+        $options = [];
         $suffix = (count($params)) ? '|' . implode('|', $params) . '|' : '|';
         foreach ($optionsAttribute as $code => $label) {
-            $options[] = array(
+            $options[] = [
                 'value' => $value . $suffix . $code,
                 'label' => $label
-            );
+            ];
         }
 
         return $options;
@@ -146,18 +149,18 @@ class Combine extends AbstractModel
 
     public function loadAggregatorOptions()
     {
-        $this->setAggregatorOption(array(
+        $this->setAggregatorOption([
             'all' => __('ALL'),
             'any' => __('ANY'),
-        ));
+        ]);
         return $this;
     }
 
     public function getAggregatorSelectOptions()
     {
-        $opt = array();
-        foreach ($this->getAggregatorOption() as $k=>$v) {
-            $opt[] = array('value'=>$k, 'label'=>$v);
+        $opt = [];
+        foreach ($this->getAggregatorOption() as $k => $v) {
+            $opt[] = ['value'=>$k, 'label'=>$v];
         }
         return $opt;
     }
@@ -169,19 +172,19 @@ class Combine extends AbstractModel
 
     public function getAggregatorElement()
     {
-        if (is_null($this->getAggregator())) {
-            foreach ($this->getAggregatorOption() as $k=>$v) {
+        if ($this->getAggregator() === null) {
+            foreach ($this->getAggregatorOption() as $k => $v) {
                 $this->setAggregator($k);
                 break;
             }
         }
-        return $this->getForm()->addField($this->getPrefix().'__'.$this->getId().'__aggregator', 'select', array(
+        return $this->getForm()->addField($this->getPrefix().'__'.$this->getId().'__aggregator', 'select', [
             'name'=>'rule['.$this->getPrefix().']['.$this->getId().'][aggregator]',
             'values'=>$this->getAggregatorSelectOptions(),
             'value'=>$this->getAggregator(),
             'value_name'=>$this->getAggregatorName(),
-        ))->setRenderer(
-            $this->_layout->getBlockSingleton('Magento\Rule\Block\Editable')
+        ])->setRenderer(
+            $this->_layout->getBlockSingleton(\Magento\Rule\Block\Editable::class)
         );
     }
 
@@ -189,10 +192,10 @@ class Combine extends AbstractModel
 
     public function loadValueOptions()
     {
-        $this->setValueOption(array(
+        $this->setValueOption([
             1 => __('TRUE'),
             0 => __('FALSE'),
-        ));
+        ]);
         return $this;
     }
 
@@ -236,7 +239,7 @@ class Combine extends AbstractModel
 
     // ---------------------------------------
 
-    public function loadArray($arr, $key='conditions')
+    public function loadArray($arr, $key = 'conditions')
     {
         $this->setAggregator(isset($arr['aggregator']) ? $arr['aggregator']
             : (isset($arr['attribute']) ? $arr['attribute'] : null))
@@ -252,9 +255,8 @@ class Combine extends AbstractModel
 
                     $cond = $this->_getNewConditionModelInstance($condArr['type']);
                     if ($cond) {
-
                         if ($cond instanceof \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine) {
-                            $cond->setData($this->getPrefix(), array());
+                            $cond->setData($this->getPrefix(), []);
                             $cond->setCustomOptionsFlag($this->_useCustomOptions);
                         }
 
@@ -284,7 +286,7 @@ class Combine extends AbstractModel
 
     //########################################
 
-    public function asXml($containerKey='conditions', $itemKey='condition')
+    public function asXml($containerKey = 'conditions', $itemKey = 'condition')
     {
         $xml = "<aggregator>".$this->getAggregator()."</aggregator>"
             ."<value>".$this->getValue()."</value>"
@@ -296,7 +298,7 @@ class Combine extends AbstractModel
         return $xml;
     }
 
-    public function asArray(array $arrAttributes = array())
+    public function asArray(array $arrAttributes = [])
     {
         $out = parent::asArray();
         $out['aggregator'] = $this->getAggregator();
@@ -334,14 +336,17 @@ class Combine extends AbstractModel
         return $html;
     }
 
-    public function asString($format='')
+    public function asString($format = '')
     {
-        $str = $this->getHelper('Module\Translation')->__("If %rule% of these Conditions are %value%:",
-                                          $this->getAggregatorName(), $this->getValueName());
+        $str = $this->getHelper('Module\Translation')->__(
+            "If %rule% of these Conditions are %value%:",
+            $this->getAggregatorName(),
+            $this->getValueName()
+        );
         return $str;
     }
 
-    public function asStringRecursive($level=0)
+    public function asStringRecursive($level = 0)
     {
         $str = parent::asStringRecursive($level);
         foreach ($this->getConditions() as $cond) {
@@ -354,12 +359,12 @@ class Combine extends AbstractModel
 
     public function getNewChildElement()
     {
-        return $this->getForm()->addField($this->getPrefix().'__'.$this->getId().'__new_child', 'select', array(
+        return $this->getForm()->addField($this->getPrefix().'__'.$this->getId().'__new_child', 'select', [
             'name'=>'rule['.$this->getPrefix().']['.$this->getId().'][new_child]',
             'values'=>$this->getNewChildSelectOptions(),
             'value_name'=>$this->getNewChildName(),
-        ))->setRenderer(
-            $this->_layout->getBlockSingleton('Magento\Rule\Block\Newchild')
+        ])->setRenderer(
+            $this->_layout->getBlockSingleton(\Magento\Rule\Block\Newchild::class)
         );
     }
 
@@ -422,7 +427,7 @@ class Combine extends AbstractModel
 
     protected function _getRecursiveChildSelectOption()
     {
-        return array('value' => $this->getType(), 'label' => __('Conditions Combination'));
+        return ['value' => $this->getType(), 'label' => __('Conditions Combination')];
     }
 
     protected function _getNewConditionModelInstance($modelClass)

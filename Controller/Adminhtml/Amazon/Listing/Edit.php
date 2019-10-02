@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ */
 class Edit extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 {
     //########################################
@@ -22,16 +26,16 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
     public function execute()
     {
         $id = $this->getRequest()->getParam('id');
-        $listing = $this->amazonFactory->getCachedObjectLoaded('Listing', $id, NULL, false);
+        $listing = $this->amazonFactory->getCachedObjectLoaded('Listing', $id, null, false);
 
-        if (is_null($listing)) {
+        if ($listing === null) {
             $this->getMessageManager()->addError($this->__('Listing does not exist.'));
             return $this->_redirect('*/amazon_listing/index');
         }
 
         $this->getHelper('Data\GlobalData')->setValue('edit_listing', $listing);
 
-        $this->addContent($this->createBlock('Amazon\Listing\Edit'));
+        $this->addContent($this->createBlock('Amazon_Listing_Edit'));
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Edit M2E Pro Listing "%listing_title%" Settings', $listing->getTitle())

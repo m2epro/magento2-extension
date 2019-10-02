@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 use Ess\M2ePro\Helper\Component\Amazon;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat
+ */
 class Save extends Template
 {
     protected $dateTime;
@@ -21,8 +25,7 @@ class Save extends Template
         \Magento\Framework\Stdlib\DateTime $dateTime,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
-    )
-    {
+    ) {
         $this->dateTime = $dateTime;
         parent::__construct($amazonFactory, $context);
     }
@@ -42,9 +45,9 @@ class Save extends Template
 
         // Base prepare
         // ---------------------------------------
-        $data = array();
+        $data = [];
 
-        $keys = array(
+        $keys = [
             'title',
 
             'is_regular_customer_allowed',
@@ -93,7 +96,7 @@ class Save extends Template
             'business_discounts_mode',
             'business_discounts_tier_coefficient',
             'business_discounts_tier_customer_group_id',
-        );
+        ];
 
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -103,32 +106,40 @@ class Save extends Template
 
         if ($data['regular_sale_price_start_date_value'] === '') {
             $data['regular_sale_price_start_date_value'] = $this->getHelper('Data')->getCurrentGmtDate(
-                false, 'Y-m-d 00:00:00'
+                false,
+                'Y-m-d 00:00:00'
             );
         } else {
             // UTC Date are shown on interface
             $timestamp = $this->getHelper('Data')->parseTimestampFromLocalizedFormat(
                 $data['regular_sale_price_start_date_value'],
-                \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE,
+                \IntlDateFormatter::SHORT,
+                \IntlDateFormatter::NONE,
                 $this->getHelper('Data')->getDefaultTimezone()
             );
             $data['regular_sale_price_start_date_value'] = $this->getHelper('Data')->getDate(
-                $timestamp, false, 'Y-m-d 00:00:00'
+                $timestamp,
+                false,
+                'Y-m-d 00:00:00'
             );
         }
         if ($data['regular_sale_price_end_date_value'] === '') {
             $data['regular_sale_price_end_date_value'] = $this->getHelper('Data')->getCurrentGmtDate(
-                false, 'Y-m-d 00:00:00'
+                false,
+                'Y-m-d 00:00:00'
             );
         } else {
             // UTC Date are shown on interface
             $timestamp = $this->getHelper('Data')->parseTimestampFromLocalizedFormat(
                 $data['regular_sale_price_end_date_value'],
-                \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE,
+                \IntlDateFormatter::SHORT,
+                \IntlDateFormatter::NONE,
                 $this->getHelper('Data')->getDefaultTimezone()
             );
             $data['regular_sale_price_end_date_value'] = $this->getHelper('Data')->getDate(
-                $timestamp, false, 'Y-m-d 00:00:00'
+                $timestamp,
+                false,
+                'Y-m-d 00:00:00'
             );
         }
 
@@ -168,7 +179,7 @@ class Save extends Template
         ));
         $model->save();
 
-        if ($this->getHelper('Component\Amazon\Business')->isEnabled()) {
+        if ($this->getHelper('Component_Amazon_Business')->isEnabled()) {
             $this->saveDiscounts($model->getId(), $post);
         }
 
@@ -185,13 +196,13 @@ class Save extends Template
         $id = $model->getId();
 
         $this->messageManager->addSuccess($this->__('Policy was successfully saved'));
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('*/amazon_template/index', array(), array(
-            'edit' => array(
+        return $this->_redirect($this->getHelper('Data')->getBackUrl('*/amazon_template/index', [], [
+            'edit' => [
                 'id' => $id,
                 'wizard' => $this->getRequest()->getParam('wizard'),
                 'close_on_save' => $this->getRequest()->getParam('close_on_save')
-            ),
-        )));
+            ],
+        ]));
     }
 
     //########################################
@@ -199,14 +210,14 @@ class Save extends Template
     private function saveDiscounts($templateId, $post)
     {
         $amazonTemplateSellingFormatBusinessDiscountTable = $this->activeRecordFactory->getObject(
-            'Amazon\Template\SellingFormat\BusinessDiscount'
+            'Amazon_Template_SellingFormat_BusinessDiscount'
         )->getResource()->getMainTable();
 
         $this->resourceConnection->getConnection()->delete(
             $amazonTemplateSellingFormatBusinessDiscountTable,
-            array(
+            [
                 'template_selling_format_id = ?' => (int)$templateId
-            )
+            ]
         );
 
         if (empty($post['is_business_customer_allowed']) ||
@@ -215,9 +226,8 @@ class Save extends Template
             return;
         }
 
-        $discounts = array();
+        $discounts = [];
         foreach ($post['business_discount']['qty'] as $i => $qty) {
-
             if ((string)$i == '%i%') {
                 continue;
             }
@@ -231,26 +241,26 @@ class Save extends Template
             $coefficient = empty($post['business_discount']['coefficient'][$i]) ?
                 '' : $post['business_discount']['coefficient'][$i];
 
-            $discounts[] = array(
+            $discounts[] = [
                 'template_selling_format_id' => $templateId,
                 'qty'                        => $qty,
                 'mode'                       => $mode,
                 'attribute'                  => $attribute,
                 'coefficient'                => $coefficient
-            );
+            ];
         }
 
         if (empty($discounts)) {
             return;
         }
 
-        usort($discounts, function($a, $b)
-        {
+        usort($discounts, function ($a, $b) {
             return $a["qty"] > $b["qty"];
         });
 
         $this->resourceConnection->getConnection()->insertMultiple(
-            $amazonTemplateSellingFormatBusinessDiscountTable, $discounts
+            $amazonTemplateSellingFormatBusinessDiscountTable,
+            $discounts
         );
     }
 

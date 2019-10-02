@@ -8,18 +8,22 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization;
 
+/**
+ * Class Launcher
+ * @package Ess\M2ePro\Model\Walmart\Synchronization
+ */
 class Launcher extends AbstractModel
 {
     //########################################
 
     protected function getType()
     {
-        return NULL;
+        return null;
     }
 
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------

@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tab
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Settings
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     const MESSAGE_TYPE_ERROR = 'error';
@@ -28,7 +32,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Attribute $matcherAttribute */
     protected $matcherAttributes;
 
-    protected $messages = array();
+    protected $messages = [];
 
     //########################################
 
@@ -83,7 +87,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $html = '';
         if ($this->hasGeneralId() && !$this->isGeneralIdOwner()) {
-
             $html = <<<HTML
 {$this->__('You are not the Creator of Amazon Parent Product: %asin%. It is not allowed to you to create
            New Amazon Child Products.', $this->getGeneralIdLink())}
@@ -108,9 +111,7 @@ HTML;
 </div>
 HTML;
             }
-
         } elseif ($this->hasGeneralId() && $this->isGeneralIdOwner()) {
-
             $html .= <<<HTML
         <p>{$this->__('You are the Creator of Amazon Parent Product %asin%. It is allowed to you to create
                        New Amazon Child Products. <br/><br/><b>Please Note:</b> New Amazon Child Products will be
@@ -128,7 +129,6 @@ HTML;
 
             $html .= '</p>';
         } elseif (!$this->hasGeneralId() && $this->isGeneralIdOwner()) {
-
             $html .= <<<HTML
         <p>{$this->__('New Amazon Parent Product will be created based on %desctemplate% Description Policy.<br/>
                       You will be able to create New Amazon Child Products.', $this->getDescriptionTemplateLink())}</p>
@@ -170,7 +170,6 @@ HTML;
             $html = '';
 
             if ($this->hasGeneralId()) {
-
                 if (!$this->hasChannelTheme()) {
                     $html = <<<HTML
 <span style="color: #ea7601; ">{$this->__('Not Available')}</span>
@@ -201,7 +200,6 @@ HTML;
                     ]
                 );
             } else {
-
                 $style = !$this->hasChannelTheme() ? 'color: red;' : 'color: initial;';
                 $text = $this->hasChannelTheme() ? $this->getChannelThemeAttrString() : $this->__('Not Set');
 
@@ -211,7 +209,7 @@ HTML;
 
                 $channelThemes = $this->getChannelThemes();
                 $channelThemesOptions = [];
-                foreach($channelThemes as $key => $theme) {
+                foreach ($channelThemes as $key => $theme) {
                     $channelThemesOptions[] = [
                         'value' => $key,
                         'label' => implode(', ', $theme['attributes'])
@@ -288,15 +286,13 @@ HTML;
                         'text' => $html
                     ]
                 );
-
             }
         }
 
         if ($this->hasGeneralId() ||
             (!$this->hasGeneralId() && $this->isGeneralIdOwner() && $this->hasChannelTheme())) {
-
             $this->js->add(
-<<<JS
+                <<<JS
     ListingGridHandlerObj.variationProductManageHandler.virtualAmazonMatchedAttributes = false;
     ListingGridHandlerObj.variationProductManageHandler.amazonVariationSet = false;
 JS
@@ -344,8 +340,7 @@ JS
                         <i class="underline">"Change"</i> Button. <br/><br/>
 
                         <b>Note:</b> In case correspondence between Amazon and Magento Variation Attributes
-                        is not set adding and selling of Amazon Child Products is impossible.'
-                    )
+                        is not set adding and selling of Amazon Child Products is impossible.')
                 ]
             );
 
@@ -383,14 +378,13 @@ HTML;
 HTML;
 
                 if ($this->getMatcherAttributes()->isSourceAmountGreater()) {
-
                     $matchedAttriutes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
                     $productAttributes = $this->getHelper('Data')->jsonEncode($this->getProductAttributes());
                     $destinationAttributes = $this->getHelper('Data')->jsonEncode($this->getDestinationAttributes());
                     $magentoVariationSet = $this->getHelper('Data')->jsonEncode($magentoProductVariations['set']);
 
                     $this->js->add(
-<<<JS
+                        <<<JS
     ListingGridHandlerObj.variationProductManageHandler.matchingType = ListingGridHandlerObj
         .variationProductManageHandler.MATCHING_TYPE_VIRTUAL_AMAZON;
     ListingGridHandlerObj.variationProductManageHandler.matchedAttributes = {$matchedAttriutes};
@@ -401,15 +395,13 @@ HTML;
     ListingGridHandlerObj.variationProductManageHandler.renderMatchedAttributesNotSetView();
 JS
                     );
-
                 } elseif ($this->getMatcherAttributes()->isDestinationAmountGreater()) {
-
                     $matchedAttriutes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
                     $destinationAttributes = $this->getHelper('Data')->jsonEncode($this->getDestinationAttributes());
                     $amazonVariationSet = $this->getHelper('Data')->jsonEncode($this->getAmazonVariationsSet());
 
                     $this->js->add(
-<<<JS
+                        <<<JS
     ListingGridHandlerObj.variationProductManageHandler.matchingType = ListingGridHandlerObj
         .variationProductManageHandler.MATCHING_TYPE_VIRTUAL_MAGENTO;
 
@@ -422,7 +414,6 @@ JS
                     );
                 }
             } else {
-
                 $html .= <<<HTML
     <table class="data-grid data-grid-not-hovered" cellspacing="0" cellpadding="0">
         <tr>
@@ -444,7 +435,6 @@ HTML;
                 $virtualChannelAttributes = $this->getVirtualChannelAttributes();
 
                 foreach ($this->getMatchedAttributes() as $magentoAttr => $amazonAttr) {
-
                     $isVirtual = ($magentoAttr == $amazonAttr)
                         && in_array($magentoAttr, array_keys($virtualAttributes));
 
@@ -525,7 +515,6 @@ HTML;
         <span style="{$style}">{$amazonAttr} ({$virtualAttributes[$amazonAttr]})</span>
         <input type="hidden" name="variation_attributes[amazon_attributes][]" value="{$amazonAttr}" />
 HTML;
-
                     }
 
                     $html .= <<<HTML
@@ -533,7 +522,6 @@ HTML;
         </td></tr>
 HTML;
                     $attrId++;
-
                 }
 
                 $style = $this->isChangeMatchedAttributesAllowed() ? '' : 'display: none;';
@@ -577,7 +565,7 @@ HTML;
             );
 
             $this->css->add(
-<<<CSS
+                <<<CSS
 .data-grid.data-grid-not-hovered td.label {
     border-left: none;
 }
@@ -586,7 +574,7 @@ HTML;
     border-right: none;
 }
 CSS
-);
+            );
         }
 
         if ($this->hasGeneralId() && $this->hasMatchedAttributes()) {
@@ -605,7 +593,8 @@ CSS
                         Button on the Child Products Tab. <br/><br/>
                         In case you are the Creator of this Product, you can create New Amazon Child Products
                         for unused Magento Product Variations.',
-                        implode(', ', $this->getProductAttributes()), implode(', ', $this->getDestinationAttributes())
+                        implode(', ', $this->getProductAttributes()),
+                        implode(', ', $this->getDestinationAttributes())
                     )
                 ]
             );
@@ -615,7 +604,6 @@ CSS
             if (!$this->hasUnusedProductVariation()) {
                 $html = $this->__('All the possible Variations of Magento Product are being sold.');
             } elseif ($this->hasChildWithEmptyProductOptions()) {
-
                 $html = $this->__(
                     'There is Amazon Child Product, you are selling,
                     for which Magento Variation was not set for some reasons. <br/><br/>
@@ -623,7 +611,6 @@ CSS
                     To continue full work with all your Amazon Child Products you should specify
                     Magento Product Variation for that Amazon Child Product on Child Products Tab.'
                 );
-
             } elseif (!$this->isGeneralIdOwner() && !$this->hasUnusedChannelVariations()) {
                 $html = $this->__('All the possible Variations of Amazon Product are being sold.');
             } elseif (!$this->isGeneralIdOwner() && $this->hasChildWithEmptyChannelOptions()) {
@@ -672,10 +659,10 @@ CSS
      */
     public function addMessage($message, $type = self::MESSAGE_TYPE_ERROR)
     {
-        $this->messages[] = array(
+        $this->messages[] = [
             'type' => $type,
             'text' => $message
-        );
+        ];
     }
     /**
      * @param array $messages
@@ -696,7 +683,7 @@ CSS
     {
         $type = self::MESSAGE_TYPE_WARNING;
         foreach ($this->messages as $message) {
-            if ($message['type'] === self::MESSAGE_TYPE_ERROR)     {
+            if ($message['type'] === self::MESSAGE_TYPE_ERROR) {
                 $type = $message['type'];
                 break;
             }
@@ -736,7 +723,7 @@ CSS
      */
     public function getListingProductTypeModel()
     {
-        if (is_null($this->listingProductTypeModel)) {
+        if ($this->listingProductTypeModel === null) {
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
             $amazonListingProduct = $this->getListingProduct()->getChildObject();
             /** @var ParentRelation $typeModel */
@@ -755,7 +742,7 @@ CSS
     {
         if (empty($this->matcherAttributes)) {
             $this->matcherAttributes = $this->modelFactory->getObject(
-                'Amazon\Listing\Product\Variation\Matcher\Attribute'
+                'Amazon_Listing_Product_Variation_Matcher_Attribute'
             );
             $this->matcherAttributes->setMagentoProduct($this->getListingProduct()->getMagentoProduct());
             $this->matcherAttributes->setDestinationAttributes($this->getDestinationAttributes());
@@ -769,12 +756,11 @@ CSS
     public function getWarnings()
     {
         /** @var \Magento\Framework\View\Element\Messages $messages */
-        $messages = $this->getLayout()->createBlock('\Magento\Framework\View\Element\Messages');
+        $messages = $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class);
 
         foreach ($this->getMessages() as $message) {
             $addMethod = 'add'.ucfirst($message['type']);
             $messages->$addMethod($message['text']);
-
         }
         return $messages->toHtml();
     }
@@ -782,7 +768,6 @@ CSS
     public function calculateWarnings()
     {
         if (!$this->warningsCalculated) {
-
             $this->warningsCalculated = true;
 
             if (!$this->hasGeneralId() && $this->isGeneralIdOwner()) {
@@ -833,7 +818,7 @@ CSS
     protected function _toHtml()
     {
         $this->css->add(
-<<<CSS
+            <<<CSS
     #variation_manager_product_options_form select {
         min-width: 200px;
     }
@@ -871,7 +856,7 @@ CSS
 
     public function hasGeneralId()
     {
-        return $this->getListingProduct()->getChildObject()->getGeneralId() !== NULL;
+        return $this->getListingProduct()->getChildObject()->getGeneralId() !== null;
     }
 
     public function getGeneralId()
@@ -900,9 +885,9 @@ HTML;
 
     public function getDescriptionTemplateLink()
     {
-        $url = $this->getUrl('*/amazon_template_description/edit', array(
+        $url = $this->getUrl('*/amazon_template_description/edit', [
             'id' => $this->getListingProduct()->getChildObject()->getTemplateDescriptionId()
-        ));
+        ]);
 
         $templateTitle = $this->getListingProduct()->getChildObject()->getDescriptionTemplate()->getTitle();
 
@@ -925,7 +910,7 @@ HTML;
 
     public function getChannelThemes()
     {
-        if (!is_null($this->channelThemes)) {
+        if ($this->channelThemes !== null) {
             return $this->channelThemes;
         }
 
@@ -934,19 +919,19 @@ HTML;
         $descriptionTemplate = $amazonListingProduct->getAmazonDescriptionTemplate();
 
         if (!$descriptionTemplate) {
-            return array();
+            return [];
         }
 
         $marketPlaceId = $this->getListingProduct()->getListing()->getMarketplaceId();
 
-        $detailsModel = $this->modelFactory->getObject('Amazon\Marketplace\Details');
+        $detailsModel = $this->modelFactory->getObject('Amazon_Marketplace_Details');
         $detailsModel->setMarketplaceId($marketPlaceId);
 
         $channelThemes = $detailsModel->getVariationThemes($descriptionTemplate->getProductDataNick());
 
-        $variationHelper = $this->getHelper('Component\Amazon\Variation');
+        $variationHelper = $this->getHelper('Component_Amazon_Variation');
         $themesUsageData = $variationHelper->getThemesUsageData();
-        $usedThemes = array();
+        $usedThemes = [];
 
         if (!empty($themesUsageData[$marketPlaceId])) {
             foreach ($themesUsageData[$marketPlaceId] as $theme => $count) {
@@ -1031,7 +1016,7 @@ HTML;
             return $virtualChannelAttributes;
         }
 
-        return array();
+        return [];
     }
 
     public function getVirtualProductAttributes()
@@ -1042,7 +1027,7 @@ HTML;
             return $virtualProductAttributes;
         }
 
-        return array();
+        return [];
     }
 
     public function getVirtualChannelAttributes()
@@ -1053,14 +1038,14 @@ HTML;
             return $virtualChannelAttributes;
         }
 
-        return array();
+        return [];
     }
 
     // ---------------------------------------
 
     public function isChangeMatchedAttributesAllowed()
     {
-        if ($this->isInAction() ) {
+        if ($this->isInAction()) {
             return false;
         }
         if ($this->hasMatchedAttributes()) {
@@ -1080,7 +1065,7 @@ HTML;
 
     public function getChildListingProducts()
     {
-        if (!is_null($this->childListingProducts)) {
+        if ($this->childListingProducts !== null) {
             return $this->childListingProducts;
         }
 
@@ -1089,7 +1074,7 @@ HTML;
 
     public function getCurrentProductVariations()
     {
-        if (!is_null($this->currentProductVariations)) {
+        if ($this->currentProductVariations !== null) {
             return $this->currentProductVariations;
         }
 
@@ -1098,10 +1083,10 @@ HTML;
             ->getVariationInstance()
             ->getVariationsTypeStandard();
 
-        $productVariations = array();
+        $productVariations = [];
 
         foreach ($magentoProductVariations['variations'] as $option) {
-            $productOption = array();
+            $productOption = [];
 
             foreach ($option as $attribute) {
                 $productOption[$attribute['attribute']] = $attribute['option'];
@@ -1128,12 +1113,12 @@ HTML;
             return false;
         }
 
-        $attributesOptions = array();
+        $attributesOptions = [];
 
         foreach ($variations as $variation) {
             foreach ($variation as $attr => $option) {
                 if (!isset($attributesOptions[$attr])) {
-                    $attributesOptions[$attr] = array();
+                    $attributesOptions[$attr] = [];
                 }
                 if (!in_array($option, $attributesOptions[$attr])) {
                     $attributesOptions[$attr][] = $option;

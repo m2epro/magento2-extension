@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore;
 
+/**
+ * Class ValidateLocation
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore
+ */
 class ValidateLocation extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {
     //########################################
@@ -26,7 +30,7 @@ class ValidateLocation extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
             'utc_offset',
         ];
 
-        $pickupStoreCollection = $this->activeRecordFactory->getObject('Ebay\Account\PickupStore')
+        $pickupStoreCollection = $this->activeRecordFactory->getObject('Ebay_Account_PickupStore')
                                       ->getCollection();
 
         $idValue = (int)$this->getRequest()->getParam('id', 0);

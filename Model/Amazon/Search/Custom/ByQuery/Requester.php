@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search\Custom\ByQuery;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Amazon\Search\Custom\ByQuery
+ */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByQuery\ItemsRequester
 {
     //########################################

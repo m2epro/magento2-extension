@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class Inspection
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs
+ */
 class Inspection extends AbstractBlock
 {
     //########################################
@@ -31,26 +35,26 @@ class Inspection extends AbstractBlock
     protected function _beforeToHtml()
     {
         // ---------------------------------------
-        $this->setChild('requirements', $this->getLayout()->createBlock(
-            '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\Requirements'
+        $this->setChild('requirements', $this->createBlock(
+            'ControlPanel_Inspection_Requirements'
         ));
-        $this->setChild('cron', $this->getLayout()->createBlock(
-            '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\Cron'
+        $this->setChild('cron', $this->createBlock(
+            'ControlPanel_Inspection_Cron'
         ));
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->setChild('caches', $this->getLayout()->createBlock(
-            '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\Caches'
+        $this->setChild('caches', $this->createBlock(
+            'ControlPanel_Inspection_Caches'
         ));
-        $this->setChild('conflicted_modules', $this->getLayout()->createBlock(
-            '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\ConflictedModules'
+        $this->setChild('conflicted_modules', $this->createBlock(
+            'ControlPanel_Inspection_ConflictedModules'
         ));
-        $this->setChild('database_broken', $this->getLayout()->createBlock(
-            '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\DatabaseBrokenTables'
+        $this->setChild('database_broken', $this->createBlock(
+            'ControlPanel_Inspection_DatabaseBrokenTables'
         ));
-        $this->setChild('other_issues', $this->getLayout()->createBlock(
-            '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\OtherIssues'
+        $this->setChild('other_issues', $this->createBlock(
+            'ControlPanel_Inspection_OtherIssues'
         ));
         // ---------------------------------------
 

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class Data
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form
+ */
 class Data extends AbstractBlock
 {
     protected $_template = 'ebay/template/synchronization/form/data.phtml';
@@ -21,13 +25,13 @@ class Data extends AbstractBlock
         $this->getHelper('Data\GlobalData')->setValue('is_custom', $this->getData('is_custom'));
         $this->getHelper('Data\GlobalData')->setValue('custom_title', $this->getData('custom_title'));
 
-        $this->setChild('tabs', $this->createBlock('Ebay\Template\Synchronization\Edit\Form\Tabs'));
+        $this->setChild('tabs', $this->createBlock('Ebay_Template_Synchronization_Edit_Form_Tabs'));
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Template\Synchronization')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Synchronization::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Template\Synchronization')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Template\Synchronization::class)
         );
 
         $this->jsTranslator->addTranslations([

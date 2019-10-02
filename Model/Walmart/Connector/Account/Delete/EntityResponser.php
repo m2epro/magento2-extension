@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Connector\Account\Delete;
 
+/**
+ * Class EntityResponser
+ * @package Ess\M2ePro\Model\Walmart\Connector\Account\Delete
+ */
 class EntityResponser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Responser
 {
     // ########################################
@@ -19,6 +23,7 @@ class EntityResponser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pendin
 
     protected function processResponseData()
     {
+        return null;
     }
 
     // ########################################

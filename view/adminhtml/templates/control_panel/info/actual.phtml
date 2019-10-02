@@ -1,110 +1,121 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
 <table class="form-list" cellspacing="0" cellpadding="0">
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Magento'); ?>: </label>
+            <label><?php echo $block->__('Magento'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->magentoInfo ?>
+            <?php echo $block->magentoInfo ?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Module [Public]'); ?>: </label>
+            <label><?php echo $block->__('Module [Public]'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->publicVersion ?>
+            <?php echo $block->publicVersion ?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Module [Setup]'); ?>: </label>
+            <label><?php echo $block->__('Module [Setup]'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->setupVersion ?>
+            <?php echo $block->setupVersion ?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Module [Files]'); ?>: </label>
+            <label><?php echo $block->__('Module [Files]'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->filesVersion ?>
+            <?php echo $block->filesVersion ?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('PHP'); ?>: </label>
+            <label><?php echo $block->__('PHP'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->phpVersion ?>
+            <?php echo $block->phpVersion ?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Server API'); ?>: </label>
+            <label><?php echo $block->__('Server API'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo$this->phpApi ?>
+            <?php echo$block->phpApi ?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Memory Limit'); ?>: </label>
+            <label><?php echo $block->__('Memory Limit'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->memoryLimit . ' Mb'?>
+            <?php echo $block->memoryLimit . ' Mb'?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Max Execution Time'); ?>: </label>
+            <label><?php echo $block->__('Max Execution Time'); ?>: </label>
         </td>
         <td class="value">
-             <?php echo $this->maxExecutionTime == 0 ? $this->__('Unlimited') : $this->maxExecutionTime . ' sec'; ?>
+                <?php echo $block->maxExecutionTime == 0 ? $block->__('Unlimited') : $block->maxExecutionTime . ' sec'; ?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('MySQL'); ?>: </label>
+            <label><?php echo $block->__('MySQL'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->mySqlVersion ?>
+            <?php echo $block->mySqlVersion ?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Database'); ?>: </label>
+            <label><?php echo $block->__('Database'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->mySqlDatabaseName ?>
+            <?php echo $block->mySqlDatabaseName ?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Cron'); ?> (<?php echo $this->cronCurrentRunner; ?>): </label>
+            <label><?php echo $block->__('Cron'); ?> (<?php echo $block->cronCurrentRunner; ?>): </label>
         </td>
         <?php
             $style = '';
-            if ($this->cronIsNotWorking) {
-                $style = ' style="color: red"';
-            }
+        if ($block->cronIsNotWorking) {
+            $style = ' style="color: red"';
+        }
         ?>
         <td class="value">
-            <span<?php echo $style; ?>><?php echo $this->cronLastRunTime; ?></span>
+            <span<?php echo $style; ?>><?php echo $block->cronLastRunTime; ?></span>
             <?php
-            if ($this->cronIsNotWorking) {
-                echo ' (' . $this->__('not working') . ')';
+            if ($block->cronIsNotWorking) {
+                echo ' (' . $block->__('not working') . ')';
             }
             ?>
         </td>

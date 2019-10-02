@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Feedback;
 
+/**
+ * Class Template
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Feedback
+ */
 class Template extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################

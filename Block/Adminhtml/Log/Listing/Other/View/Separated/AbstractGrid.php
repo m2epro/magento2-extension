@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\View\Separated;
 
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\View;
 
+/**
+ * Class AbstractGrid
+ * @package Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\View\Separated
+ */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid
 {
     //########################################
@@ -23,7 +27,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Othe
 
     protected function _prepareCollection()
     {
-        $collection = $this->activeRecordFactory->getObject('Listing\Other\Log')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Listing_Other_Log')->getCollection();
 
         $this->applyFilters($collection);
 

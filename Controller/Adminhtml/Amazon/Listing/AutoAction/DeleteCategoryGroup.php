@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction;
 
+/**
+ * Class DeleteCategoryGroup
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
+ */
 class DeleteCategoryGroup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
 {
     //########################################
@@ -16,11 +20,10 @@ class DeleteCategoryGroup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listin
     {
         $groupId = $this->getRequest()->getParam('group_id');
 
-        $this->activeRecordFactory->getObject('Listing\Auto\Category\Group')
+        $this->activeRecordFactory->getObject('Listing_Auto_Category_Group')
             ->load($groupId)
             ->delete();
     }
 
     //########################################
-
 }

@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Repricing;
 use \Ess\M2ePro\Model\Amazon\Account\Repricing as AccountRepricing;
 use Ess\M2ePro\Model\Listing\Product\Variation;
 
+/**
+ * Class PriceCalculator
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Repricing
+ */
 class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
 {
     //########################################
@@ -30,7 +34,7 @@ class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
     public function getProductValue()
     {
         if ($this->isSourceModeNone()) {
-            return NULL;
+            return null;
         }
 
         return parent::getProductValue();
@@ -39,7 +43,7 @@ class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
     public function getVariationValue(Variation $variation)
     {
         if ($this->isSourceModeNone()) {
-            return NULL;
+            return null;
         }
 
         return parent::getVariationValue($variation);

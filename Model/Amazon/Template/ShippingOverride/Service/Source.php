@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service;
 
+/**
+ * Class Source
+ * @package Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service
+ */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
@@ -47,8 +51,8 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
      * @return $this
      */
     public function setShippingOverrideServiceTemplate(
-        \Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service $instance)
-    {
+        \Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service $instance
+    ) {
         $this->shippingOverrideServiceTemplateModel = $instance;
         return $this;
     }
@@ -67,7 +71,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
      * @param $storeForConvertingAttributeTypePrice
      * @return float
      */
-    public function getCost($storeForConvertingAttributeTypePrice = NULL)
+    public function getCost($storeForConvertingAttributeTypePrice = null)
     {
         $result = 0;
 
@@ -86,9 +90,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 break;
         }
 
-        is_string($result) && $result = str_replace(',','.',$result);
+        is_string($result) && $result = str_replace(',', '.', $result);
 
-        return round((float)$result,2);
+        return round((float)$result, 2);
     }
 
     // ---------------------------------------
@@ -97,17 +101,17 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     {
         $attributeValue = $this->getMagentoProduct()->getAttributeValue($attributeCode);
 
-        if (empty($attributeValue) || is_null($store)) {
+        if (empty($attributeValue) || $store === null) {
             return $attributeValue;
         }
 
         $isPriceConvertEnabled = $this->getHelper('Module')->getConfig()->getGroupValue(
-            '/magento/attribute/', 'price_type_converting'
+            '/magento/attribute/',
+            'price_type_converting'
         );
 
         if ($isPriceConvertEnabled &&
             $this->getHelper('Magento\Attribute')->isAttributeInputTypePrice($attributeCode)) {
-
             $currency = $this->getShippingOverrideServiceTemplate()
                 ->getShippingOverrideTemplate()
                 ->getMarketplace()

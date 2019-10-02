@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Refund;
 
+/**
+ * Class ItemsRequester
+ * @package Ess\M2ePro\Model\Amazon\Connector\Orders\Refund
+ */
 abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {
     protected $activeRecordFactory;
@@ -20,8 +24,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Account $account = null,
         array $params = []
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct(
             $helperFactory,
@@ -35,7 +38,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     public function getCommand()
     {
-        return array('orders','refund','entities');
+        return ['orders','refund','entities'];
     }
 
     // ########################################
@@ -50,19 +53,19 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Amazon\Connector\Orders\Refund\ProcessingRunner';
+        return 'Amazon_Connector_Orders_Refund_ProcessingRunner';
     }
 
     protected function getProcessingParams()
     {
         return array_merge(
             parent::getProcessingParams(),
-            array(
+            [
                 'request_data' => $this->getRequestData(),
                 'order_id'     => $this->params['order']['order_id'],
                 'change_id'    => $this->params['order']['change_id'],
                 'start_date'   => $this->getHelper('Data')->getCurrentGmtDate(),
-            )
+            ]
         );
     }
 
@@ -70,12 +73,12 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     protected function getRequestData()
     {
-        return array(
+        return [
             'order_id' => $this->params['order']['amazon_order_id'],
             'currency' => $this->params['order']['currency'],
             'type'     => 'Refund',
             'items'    => $this->params['order']['items'],
-        );
+        ];
     }
 
     // ########################################

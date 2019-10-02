@@ -1,5 +1,14 @@
 <?php
-/* @var $block \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree */
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var $block \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree */
+
 ?>
 
 <div class="m2epro-box-style" style="margin-top: 11px; padding: 10px 15px;">
@@ -106,7 +115,7 @@
             massGridObj['checkedString'] = '';
             massGridObj['initialCheckedString'] = '';
 
-            new Ajax.Request('<?php echo $block->getUrl('*/*/saveProductsToSessionAndGetInfo', array('_current' => true)) ?>', {
+            new Ajax.Request('<?php echo $block->getUrl('*/*/saveProductsToSessionAndGetInfo', ['_current' => true]) ?>', {
                 method: 'post',
                 parameters: {
                     checked_ids: checkedString,
@@ -126,7 +135,7 @@
             var gridObj = window['<?php echo $block->getGridId() ?>JsObject'];
             var massGridObj = window['<?php echo $block->getGridId() ?>_massactionJsObject'];
 
-            new Ajax.Request('<?php echo $block->getUrl('*/*/getCategoriesSummaryHtml', array('_current' => true)); ?>', {
+            new Ajax.Request('<?php echo $block->getUrl('*/*/getCategoriesSummaryHtml', ['_current' => true]); ?>', {
                 method: 'get',
                 parameters: {
                     categories_ids: getExpandedCategoriesIds().join(',')
@@ -145,7 +154,7 @@
                         title: '<?php echo $block->__('Categories of selected Magento Products') ?>',
                         type: 'slide',
                         closed: function(){
-                            var url = '<?php echo $block->getUrl('*/*/getTreeInfo', array('_current' => true)); ?>';
+                            var url = '<?php echo $block->getUrl('*/*/getTreeInfo', ['_current' => true]); ?>';
                             new Ajax.Request(url, {
                                 method: 'get',
                                 onSuccess: function (transport) {

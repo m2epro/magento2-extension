@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Helper\Component;
 
 use \Ess\M2ePro\Model\Listing\Product as ListingProduct;
 
+/**
+ * Class Walmart
+ * @package Ess\M2ePro\Helper\Component
+ */
 class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const NICK  = 'walmart';
@@ -46,8 +50,7 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->walmartFactory = $walmartFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->moduleConfig = $moduleConfig;
@@ -70,17 +73,21 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getHumanTitleByListingProductStatus($status)
     {
-        $translation = $this->helperFactory->getObject('Module\Translation');
-        $statuses = array(
-            ListingProduct::STATUS_UNKNOWN    => $translation->__('Unknown'),
-            ListingProduct::STATUS_NOT_LISTED => $translation->__('Not Listed'),
-            ListingProduct::STATUS_LISTED     => $translation->__('Active'),
-            ListingProduct::STATUS_STOPPED    => $translation->__('Inactive'),
-            ListingProduct::STATUS_BLOCKED    => $translation->__('Inactive (Blocked)')
-        );
+        $statuses = [
+            ListingProduct::STATUS_UNKNOWN    =>
+                $this->helperFactory->getObject('Module\Translation')->__('Unknown'),
+            ListingProduct::STATUS_NOT_LISTED =>
+                $this->helperFactory->getObject('Module\Translation')->__('Not Listed'),
+            ListingProduct::STATUS_LISTED     =>
+                $this->helperFactory->getObject('Module\Translation')->__('Active'),
+            ListingProduct::STATUS_STOPPED    =>
+                $this->helperFactory->getObject('Module\Translation')->__('Inactive'),
+            ListingProduct::STATUS_BLOCKED    =>
+                $this->helperFactory->getObject('Module\Translation')->__('Inactive (Blocked)')
+        ];
 
         if (!isset($statuses[$status])) {
-            return NULL;
+            return null;
         }
 
         return $statuses[$status];
@@ -119,7 +126,7 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
         return 'https://developer.' . $domain . '/#/generateKey';
     }
 
-    public function getItemUrl($productItemId, $marketplaceId = NULL)
+    public function getItemUrl($productItemId, $marketplaceId = null)
     {
         $marketplaceId = (int)$marketplaceId;
         $marketplaceId <= 0 && $marketplaceId = self::MARKETPLACE_US;
@@ -131,13 +138,13 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
         return 'https://'.$domain.'/ip/'.$productItemId;
     }
 
-    public function getOrderUrl($orderId, $marketplaceId = NULL)
+    public function getOrderUrl($orderId, $marketplaceId = null)
     {
         $marketplaceId = (int)$marketplaceId;
         $marketplaceId <= 0 && $marketplaceId = self::MARKETPLACE_US;
 
         $domain = $this->walmartFactory
-            ->getCachedObjectLoaded('Marketplace',$marketplaceId)
+            ->getCachedObjectLoaded('Marketplace', $marketplaceId)
             ->getUrl();
 
         return 'https://seller.'.$domain.'/order-management/details./'.$orderId;
@@ -167,12 +174,12 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getCarriers()
     {
-        return array(
+        return [
             'usps'  => 'USPS',
             'ups'   => 'UPS',
             'fedex' => 'FedEx',
             'dhl'   => 'DHL',
-        );
+        ];
     }
 
     public function getCarrierTitle($carrierCode, $title)
@@ -200,8 +207,8 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getResultProductStatus($publishStatus, $lifecycleStatus, $onlineQty)
     {
-        if (!in_array($publishStatus, array(self::PRODUCT_PUBLISH_STATUS_PUBLISHED,
-                                            self::PRODUCT_PUBLISH_STATUS_STAGE)) ||
+        if (!in_array($publishStatus, [self::PRODUCT_PUBLISH_STATUS_PUBLISHED,
+                                            self::PRODUCT_PUBLISH_STATUS_STAGE]) ||
             $lifecycleStatus != self::PRODUCT_LIFECYCLE_STATUS_ACTIVE
         ) {
             return ListingProduct::STATUS_BLOCKED;
@@ -216,7 +223,7 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function clearCache()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagsValues(self::NICK);
+        $this->getHelper('Data_Cache_Permanent')->removeTagsValues(self::NICK);
     }
 
     //########################################

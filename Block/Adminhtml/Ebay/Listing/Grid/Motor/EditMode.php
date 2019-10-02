@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Motor;
 
+/**
+ * Class EditMode
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Motor
+ */
 class EditMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $listingId;
@@ -27,7 +31,9 @@ class EditMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         return $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Ebay::NICK, 'Listing', $this->listingId
+            \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'Listing',
+            $this->listingId
         );
     }
 
@@ -52,7 +58,8 @@ class EditMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $form->addField('edit_mode_help',
+        $form->addField(
+            'edit_mode_help',
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
@@ -76,7 +83,8 @@ HTML
             []
         );
 
-        $fieldset->addField('parts_compatibility_mode',
+        $fieldset->addField(
+            'parts_compatibility_mode',
             self::SELECT,
             [
                 'name' => 'parts_compatibility_mode',

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class Manage
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation
+ */
 class Manage extends Main
 {
     public function execute()
@@ -25,7 +29,7 @@ class Manage extends Main
         $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
         $listingProduct->getChildObject()->getVariationManager()->getTypeModel()->getProcessor()->process();
 
-        $tabs = $this->createBlock('Amazon\Listing\Product\Variation\Manage\Tabs');
+        $tabs = $this->createBlock('Amazon_Listing_Product_Variation_Manage_Tabs');
         $tabs->setListingProduct($listingProduct);
 
         $this->setAjaxContent($tabs);

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
+/**
+ * Class SearchCategory
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description
+ */
 class SearchCategory extends Description
 {
     //########################################
@@ -25,13 +29,13 @@ class SearchCategory extends Description
 
         $select = $connection->select()
             ->from(
-                $this->getHelper('Module\Database\Structure')
+                $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_amazon_dictionary_category')
             )
             ->where('is_leaf = 1')
             ->where('marketplace_id = ?', $this->getRequest()->getParam('marketplace_id'));
 
-        $where = array();
+        $where = [];
         $where[] = "browsenode_id = {$connection->quote($keywords)}";
 
         foreach (explode(' ', $keywords) as $part) {
@@ -48,7 +52,7 @@ class SearchCategory extends Description
             ->limit(200)
             ->order('id ASC');
 
-        $categories = array();
+        $categories = [];
         $queryStmt = $select->query();
 
         while ($row = $queryStmt->fetch()) {

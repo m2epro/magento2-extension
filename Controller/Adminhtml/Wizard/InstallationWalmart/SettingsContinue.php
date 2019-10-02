@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
 
+/**
+ * Class SettingsContinue
+ * @package Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart
+ */
 class SettingsContinue extends InstallationWalmart
 {
     public function execute()
@@ -19,7 +23,7 @@ class SettingsContinue extends InstallationWalmart
             return $this->indexAction();
         }
 
-        $this->getHelper('Component\Walmart\Configuration')
+        $this->getHelper('Component_Walmart_Configuration')
             ->setConfigValues($params);
 
         $this->setStep($this->getNextStep());

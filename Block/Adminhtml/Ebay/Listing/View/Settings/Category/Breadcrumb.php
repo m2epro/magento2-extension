@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Category;
 
+/**
+ * Class Breadcrumb
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Category
+ */
 class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
 {
     //########################################

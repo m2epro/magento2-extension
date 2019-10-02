@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\OtherListings;
 
+/**
+ * Class Title
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\OtherListings
+ */
 class Title extends AbstractModel
 {
     //########################################
@@ -39,12 +43,14 @@ class Title extends AbstractModel
     protected function performActions()
     {
         $accountsCollection = $this->amazonFactory->getObject('Account')->getCollection();
-        $accountsCollection->addFieldToFilter('other_listings_synchronization',
-            \Ess\M2ePro\Model\Amazon\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES);
+        $accountsCollection->addFieldToFilter(
+            'other_listings_synchronization',
+            \Ess\M2ePro\Model\Amazon\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES
+        );
 
         $accounts = $accountsCollection->getItems();
 
-        if (count($accounts) <= 0) {
+        if (empty($accounts)) {
             return;
         }
 
@@ -61,11 +67,8 @@ class Title extends AbstractModel
             );
 
             try {
-
                 $this->updateTitlesByAsins($account);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Update Titles" Action for Amazon Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -90,7 +93,6 @@ class Title extends AbstractModel
     private function updateTitlesByAsins(\Ess\M2ePro\Model\Account $account)
     {
         for ($i = 0; $i <= 5; $i++) {
-
             $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
             $listingOtherCollection->addFieldToFilter('main_table.account_id', (int)$account->getId());
             $listingOtherCollection->getSelect()->where('`second_table`.`title` IS NULL');
@@ -101,21 +103,24 @@ class Title extends AbstractModel
                 return;
             }
 
-            $neededItems = array();
+            $neededItems = [];
             foreach ($listingOtherCollection->getItems() as $tempItem) {
                 /**@var $tempItem \Ess\M2ePro\Model\Listing\Other  */
                 $neededItems[] = $tempItem->getChildObject()->getData('general_id');
             }
 
             /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
-            $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+            $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
-                'product', 'search', 'byIdentifiers',
-                array(
+                'product',
+                'search',
+                'byIdentifiers',
+                [
                     'items'         => $neededItems,
                     'id_type'       => 'ASIN',
                     'only_realtime' => 1
-                ), NULL,
+                ],
+                null,
                 $account->getId()
             );
 
@@ -141,18 +146,17 @@ class Title extends AbstractModel
 
         $connWrite = $this->resourceConnection->getConnection();
 
-        $aloTable = $this->activeRecordFactory->getObject('Amazon\Listing\Other')->getResource()->getMainTable();
-        $lolTable = $this->activeRecordFactory->getObject('Listing\Other\Log')->getResource()->getMainTable();
+        $aloTable = $this->activeRecordFactory->getObject('Amazon_Listing_Other')->getResource()->getMainTable();
+        $lolTable = $this->activeRecordFactory->getObject('Listing_Other_Log')->getResource()->getMainTable();
 
         /** @var $mappingModel \Ess\M2ePro\Model\Amazon\Listing\Other\Mapping */
-        $mappingModel = $this->modelFactory->getObject('Amazon\Listing\Other\Mapping');
+        $mappingModel = $this->modelFactory->getObject('Amazon_Listing_Other_Mapping');
 
         /** @var $movingModel \Ess\M2ePro\Model\Amazon\Listing\Other\Moving */
-        $movingModel = $this->modelFactory->getObject('Amazon\Listing\Other\Moving');
+        $movingModel = $this->modelFactory->getObject('Amazon_Listing_Other_Moving');
 
-        $receivedItems = array();
+        $receivedItems = [];
         foreach ($responseData['items'] as $generalId => $item) {
-
             if ($item == false) {
                 continue;
             }
@@ -166,44 +170,40 @@ class Title extends AbstractModel
 
             $receivedItems[$generalId] = $title;
 
-            $listingsOthersWithEmptyTitles = array();
+            $listingsOthersWithEmptyTitles = [];
             if ($account->getChildObject()->isOtherListingsMappingEnabled()) {
-
                 $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection()
-                    ->addFieldToFilter('main_table.account_id',(int)$account->getId())
-                    ->addFieldToFilter('second_table.general_id',(int)$generalId)
-                    ->addFieldToFilter('second_table.title',array('null' => true));
+                    ->addFieldToFilter('main_table.account_id', (int)$account->getId())
+                    ->addFieldToFilter('second_table.general_id', (int)$generalId)
+                    ->addFieldToFilter('second_table.title', ['null' => true]);
 
                 $listingsOthersWithEmptyTitles = $listingOtherCollection->getItems();
             }
 
             $connWrite->update(
                 $aloTable,
-                array('title' => (string)$title),
-                array('general_id = ?' => (string)$generalId)
+                ['title' => (string)$title],
+                ['general_id = ?' => (string)$generalId]
             );
 
             $connWrite->update(
                 $lolTable,
-                array('title' => (string)$title),
-                array(
+                ['title' => (string)$title],
+                [
                     'identifier = ?' => (string)$generalId,
                     'component_mode = ?' => \Ess\M2ePro\Helper\Component\Amazon::NICK
-                )
+                ]
             );
 
-            if (count($listingsOthersWithEmptyTitles) > 0) {
-
+            if (!empty($listingsOthersWithEmptyTitles)) {
                 foreach ($listingsOthersWithEmptyTitles as $listingOtherModel) {
-
-                    $listingOtherModel->setData('title',(string)$title);
-                    $listingOtherModel->getChildObject()->setData('title',(string)$title);
+                    $listingOtherModel->setData('title', (string)$title);
+                    $listingOtherModel->getChildObject()->setData('title', (string)$title);
 
                     $mappingModel->initialize($account);
                     $mappingResult = $mappingModel->autoMapOtherListingProduct($listingOtherModel);
 
                     if ($mappingResult) {
-
                         if (!$account->getChildObject()->isOtherListingsMoveToListingsEnabled()) {
                             continue;
                         }
@@ -220,10 +220,9 @@ class Title extends AbstractModel
     {
         $connWrite = $this->resourceConnection->getConnection();
 
-        $aloTable = $this->activeRecordFactory->getObject('Amazon\Listing\Other')->getResource()->getMainTable();
+        $aloTable = $this->activeRecordFactory->getObject('Amazon_Listing_Other')->getResource()->getMainTable();
 
         foreach ($neededItems as $generalId) {
-
             if (isset($responseData['items'][$generalId]) &&
                 !empty($responseData['items'][$generalId][0]['title'])) {
                 continue;
@@ -231,8 +230,8 @@ class Title extends AbstractModel
 
             $connWrite->update(
                 $aloTable,
-                array('title' => \Ess\M2ePro\Model\Amazon\Listing\Other::EMPTY_TITLE_PLACEHOLDER),
-                array('general_id = ?' => (string)$generalId)
+                ['title' => \Ess\M2ePro\Model\Amazon\Listing\Other::EMPTY_TITLE_PLACEHOLDER],
+                ['general_id = ?' => (string)$generalId]
             );
         }
     }

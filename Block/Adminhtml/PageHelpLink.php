@@ -10,13 +10,17 @@ namespace Ess\M2ePro\Block\Adminhtml;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class PageHelpLink
+ * @package Ess\M2ePro\Block\Adminhtml
+ */
 class PageHelpLink extends AbstractBlock
 {
     protected $_template = 'page_help_link.phtml';
 
     protected function _toHtml()
     {
-        if (is_null($this->getPageHelpLink())) {
+        if ($this->getPageHelpLink() === null) {
             return '';
         }
 

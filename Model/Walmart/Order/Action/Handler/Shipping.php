@@ -10,9 +10,13 @@ namespace Ess\M2ePro\Model\Walmart\Order\Action\Handler;
 
 use Ess\M2ePro\Model\Walmart\Order\Item as OrderItem;
 
+/**
+ * Class Shipping
+ * @package Ess\M2ePro\Model\Walmart\Order\Action\Handler
+ */
 class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractModel
 {
-    private $params = array();
+    private $params = [];
 
     //########################################
 
@@ -39,25 +43,25 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
 
     protected function getServerCommand()
     {
-        return array('orders', 'update', 'shipping');
+        return ['orders', 'update', 'shipping'];
     }
 
     protected function getRequestData()
     {
-        $resultItems = array();
+        $resultItems = [];
 
         foreach ($this->params['items'] as $itemData) {
-            $resultItems[] = array(
+            $resultItems[] = [
                 'number'           => $itemData['walmart_order_item_id'],
                 'qty'              => $itemData['qty'],
                 'tracking_details' => $itemData['tracking_details'],
-            );
+            ];
         }
 
-        return array(
+        return [
             'channel_order_id' => $this->getWalmartOrder()->getWalmartOrderId(),
             'items'            => $resultItems,
-        );
+        ];
     }
 
     protected function processResult(array $responseData)
@@ -67,13 +71,15 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
             return;
         }
 
-        $itemsStatuses = array();
+        $itemsStatuses = [];
 
         foreach ($this->params['items'] as $itemData) {
 
             /** @var \Ess\M2ePro\Model\Walmart\Order\Item $orderItem */
             $orderItem = $this->activeRecordFactory->getObjectLoaded(
-                'Walmart\Order\Item', $itemData['walmart_order_item_id'], 'walmart_order_item_id'
+                'Walmart_Order_Item',
+                $itemData['walmart_order_item_id'],
+                'walmart_order_item_id'
             );
 
             /**
@@ -81,7 +87,7 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
              * So walmart_order_item_id of real OrderItem and walmart_order_item_id in request may be different.
              * Real walmart_order_item_id will match with the ID in request when the last item will be shipped.
              */
-            if (!is_null($orderItem)) {
+            if ($orderItem !== null) {
                 $orderItem->setData('status', OrderItem::STATUS_SHIPPED)->save();
                 $itemsStatuses[$itemData['walmart_order_item_id']] = OrderItem::STATUS_SHIPPED;
             } else {
@@ -91,13 +97,12 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
 
         foreach ($this->getOrder()->getItemsCollection() as $item) {
             if (!array_key_exists($item->getChildObject()->getData('walmart_order_item_id'), $itemsStatuses)) {
-
                 $itemsStatuses[$item->getChildObject()->getData('walmart_order_item_id')] =
                     $item->getChildObject()->getData('status');
             }
         }
 
-        $orderStatus = $this->modelFactory->getObject('Walmart\Order\Helper')->getOrderStatus($itemsStatuses);
+        $orderStatus = $this->modelFactory->getObject('Walmart_Order_Helper')->getOrderStatus($itemsStatuses);
         $this->getOrder()->getChildObject()->setData('status', $orderStatus);
         $this->getOrder()->getChildObject()->save();
         $this->getOrder()->save();
@@ -112,17 +117,18 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
     /**
      * @param \Ess\M2ePro\Model\Connector\Connection\Response\Message[] $messages
      */
-    protected function processError(array $messages = array())
+    protected function processError(array $messages = [])
     {
         if (empty($messages)) {
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
-                $this->helperFactory->getObject('Module\Translation')
-                                    ->__('Order was not shipped due to Walmart error.'),
+                $this->helperFactory->getObject('Module\Translation')->__(
+                    'Order was not shipped due to Walmart error.'
+                ),
                 \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
             );
 
-            $messages = array($message);
+            $messages = [$message];
         }
 
         foreach ($messages as $message) {

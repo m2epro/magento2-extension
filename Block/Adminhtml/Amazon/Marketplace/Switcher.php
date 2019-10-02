@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Marketplace;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Marketplace
+ */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher
 {
     //########################################
@@ -17,11 +21,11 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher
         parent::loadItems();
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Switcher $accountSwitcher */
-        $accountSwitcher = $this->createBlock('Amazon\Account\Switcher')->setData([
+        $accountSwitcher = $this->createBlock('Amazon_Account_Switcher')->setData([
             'component_mode' => $this->getData('component_mode')
         ]);
 
-        if (!is_null($accountSwitcher->getSelectedParam())) {
+        if ($accountSwitcher->getSelectedParam() !== null) {
             $this->hasDefaultOption = false;
             $this->setIsDisabled(true);
         }

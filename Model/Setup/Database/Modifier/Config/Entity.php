@@ -11,10 +11,14 @@ namespace Ess\M2ePro\Model\Setup\Database\Modifier\Config;
 use Ess\M2ePro\Model\AbstractModel;
 use Ess\M2ePro\Model\Setup\Database\Modifier\Config;
 
+/**
+ * Class Entity
+ * @package Ess\M2ePro\Model\Setup\Database\Modifier\Config
+ */
 class Entity extends AbstractModel
 {
-    private $group = NULL;
-    private $key = NULL;
+    private $group = null;
+    private $key = null;
 
     /**
      * @var Config
@@ -61,7 +65,7 @@ class Entity extends AbstractModel
     public function getValue()
     {
         $row = $this->configModifier->getRow($this->group, $this->key);
-        return isset($row['value']) ? $row['value'] : NULL;
+        return isset($row['value']) ? $row['value'] : null;
     }
 
     // ---------------------------------------
@@ -107,10 +111,10 @@ class Entity extends AbstractModel
 
     private function getWhereConditions()
     {
-        if (is_null($this->group)) {
-            $conditions = array('`group` IS NULL');
+        if ($this->group === null) {
+            $conditions = ['`group` IS NULL'];
         } else {
-            $conditions = array('`group` = ?' => $this->group);
+            $conditions = ['`group` = ?' => $this->group];
         }
 
         $conditions['`key` = ?'] = $this->key;

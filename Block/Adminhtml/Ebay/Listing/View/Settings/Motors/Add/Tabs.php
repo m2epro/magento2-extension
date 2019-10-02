@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add
+ */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs
 {
     protected $motorsType;
@@ -32,7 +36,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
     {
         //------------------------------
         $motorsType = $this->getMotorsType();
-        $motorsType = $this->getHelper('Component\Ebay\Motors')->getIdentifierKey($motorsType);
+        $motorsType = $this->getHelper('Component_Ebay_Motors')->getIdentifierKey($motorsType);
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\Grid $itemsGrid */
         $itemsGrid = $this->createBlock(
@@ -50,7 +54,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
 
         //------------------------------
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter\Grid $filtersGrid */
-        $filtersGrid = $this->createBlock('Ebay\Listing\View\Settings\Motors\Add\Filter\Grid');
+        $filtersGrid = $this->createBlock('Ebay_Listing_View_Settings_Motors_Add_Filter_Grid');
         $filtersGrid->setMotorsType($this->getMotorsType());
 
         $this->addTab('filters', [
@@ -62,7 +66,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
 
         //------------------------------
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Group\Grid $groupsGrid */
-        $groupsGrid = $this->createBlock('Ebay\Listing\View\Settings\Motors\Add\Group\Grid');
+        $groupsGrid = $this->createBlock('Ebay_Listing_View_Settings_Motors_Add_Group_Grid');
         $groupsGrid->setMotorsType($this->getMotorsType());
 
         $this->addTab('groups', [
@@ -91,7 +95,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
 
     public function getMotorsType()
     {
-        if (is_null($this->motorsType)) {
+        if ($this->motorsType === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Motors type not set.');
         }
 
@@ -102,7 +106,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
 
     public function getItemsTabTitle()
     {
-        if ($this->getHelper('Component\Ebay\Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
+        if ($this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
             return $this->__('ePID(s)');
         }
 

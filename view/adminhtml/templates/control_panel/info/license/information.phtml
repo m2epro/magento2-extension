@@ -1,35 +1,46 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
 <table class="form-list" cellspacing="0" cellpadding="0">
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('License Key'); ?>: </label>
+            <label><?php echo $block->__('License Key'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->licenseKey; ?>
+            <?php echo $block->licenseKey; ?>
         </td>
     </tr>
 
-    <?php if ($this->licenseData['domain'] != ''): ?>
+    <?php if ($block->licenseData['domain'] != '') : ?>
         <tr>
             <td class="label">
-                <label><?php echo $this->__('Valid Domain'); ?>: </label>
+                <label><?php echo $block->__('Valid Domain'); ?>: </label>
             </td>
             <td class="value">
-                <span <?php echo $this->licenseData['valid']['domain'] ? '' : 'style="color:red;"' ?>>
-                    <?php echo $this->licenseData['domain']; ?>
+                <span <?php echo $block->licenseData['valid']['domain'] ? '' : 'style="color:red;"' ?>>
+                    <?php echo $block->licenseData['domain']; ?>
                 </span>
             </td>
         </tr>
     <?php endif; ?>
 
-    <?php if ($this->licenseData['ip'] != ''): ?>
+    <?php if ($block->licenseData['ip'] != '') : ?>
         <tr>
             <td class="label">
-                <label><?php echo $this->__('Valid IP'); ?>: </label>
+                <label><?php echo $block->__('Valid IP'); ?>: </label>
             </td>
             <td class="value">
-                <span <?php echo $this->licenseData['valid']['ip'] ? '' : 'style="color:red;"' ?>>
-                    <?php echo $this->licenseData['ip']; ?>
+                <span <?php echo $block->licenseData['valid']['ip'] ? '' : 'style="color:red;"' ?>>
+                    <?php echo $block->licenseData['ip']; ?>
                 </span>
             </td>
         </tr>

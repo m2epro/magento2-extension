@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Collection;
 
+/**
+ * Class Custom
+ * @package Ess\M2ePro\Model\ResourceModel\Collection
+ */
 class Custom extends \Magento\Framework\Data\Collection
 {
     //########################################
@@ -38,11 +42,8 @@ class Custom extends \Magento\Framework\Data\Collection
     protected function _renderFilters()
     {
         foreach ($this->getItems() as $key => $item) {
-
             foreach ($this->_filters as $filter) {
-
                 switch ($filter->getData('type')) {
-
                     case self::CONDITION_LIKE:
                         $this->_applyLikeFilter($item, $key, $filter);
                         break;
@@ -62,7 +63,7 @@ class Custom extends \Magento\Framework\Data\Collection
         $itemKey,
         \Magento\Framework\DataObject $filter
     ) {
-        $conditions = !is_array($filter->getData('value')) ? array($filter->getData('value'))
+        $conditions = !is_array($filter->getData('value')) ? [$filter->getData('value')]
             : $filter->getData('value');
 
         if (empty($conditions)) {
@@ -84,7 +85,7 @@ class Custom extends \Magento\Framework\Data\Collection
         $itemKey,
         \Magento\Framework\DataObject $filter
     ) {
-        $conditions = !is_array($filter->getData('value')) ? array($filter->getData('value'))
+        $conditions = !is_array($filter->getData('value')) ? [$filter->getData('value')]
             : $filter->getData('value');
 
         if (empty($conditions)) {
@@ -110,7 +111,7 @@ class Custom extends \Magento\Framework\Data\Collection
         $orderColumn    = key($this->_orders);
         $orderDirection = current($this->_orders);
 
-        $sortByColumn = array();
+        $sortByColumn = [];
         foreach ($this->getItems() as $item) {
             /**@var \Magento\Framework\DataObject $item */
             $sortByColumn[] = $item->getData($orderColumn);
@@ -128,8 +129,11 @@ class Custom extends \Magento\Framework\Data\Collection
     {
         if ($this->_pageSize) {
             $this->_totalRecords = count($this->_items);
-            $this->_items        = array_splice($this->_items, $this->_pageSize * ($this->getCurPage() - 1),
-                $this->_pageSize);
+            $this->_items        = array_splice(
+                $this->_items,
+                $this->_pageSize * ($this->getCurPage() - 1),
+                $this->_pageSize
+            );
         }
 
         return $this;

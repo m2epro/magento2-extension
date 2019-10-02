@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database;
 
 use Ess\M2ePro\Model\ResourceModel\Collection\Custom;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     private $customCollectionFactory;
@@ -54,7 +58,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareCollection()
     {
         $magentoHelper   = $this->helperFactory->getObject('Magento');
-        $structureHelper = $this->helperFactory->getObject('Module\Database\Structure');
+        $structureHelper = $this->helperFactory->getObject('Module_Database_Structure');
 
         $tablesList = $magentoHelper->getMySqlTables();
         foreach ($tablesList as &$tableName) {
@@ -67,12 +71,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collection = $this->customCollectionFactory->create();
 
         foreach ($tablesList as $tableName) {
-
             if (!$structureHelper->isModuleTable($tableName)) {
                 continue;
             }
 
-            $tableRow = array(
+            $tableRow = [
                 'table_name' => $tableName,
                 'component'  => '',
                 'group'      => '',
@@ -81,10 +84,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'records'    => 0,
                 'size'       => 0,
                 'model'      => $structureHelper->getTableModel($tableName)
-            );
+            ];
 
             if ($tableRow['is_exist'] && !$tableRow['is_crashed']) {
-
                 $tableRow['component'] = $structureHelper->getTableComponent($tableName);
                 $tableRow['group']     = $structureHelper->getTableGroup($tableName);
                 $tableRow['size']      = $structureHelper->getDataLength($tableName);
@@ -102,20 +104,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('table_name', array(
+        $this->addColumn('table_name', [
             'header'    => $this->__('Table Name'),
             'align'     => 'left',
             'index'     => 'table_name',
             'filter_index' => 'table_name',
-            'frame_callback' => array($this, 'callbackColumnTableName'),
-            'filter_condition_callback' => array($this, 'callbackFilterTitle'),
-        ));
+            'frame_callback' => [$this, 'callbackColumnTableName'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
+        ]);
 
         // ---------------------------------------
         $options['general'] = 'General';
         $options = array_merge($options, $this->helperFactory->getObject('Component')->getComponentsTitles());
 
-        $this->addColumn('component', array(
+        $this->addColumn('component', [
             'header'    => $this->__('Component'),
             'align'     => 'right',
             'width'     => '120px',
@@ -123,12 +125,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type'      => 'options',
             'options'   => $options,
             'filter_index' => 'component',
-            'filter_condition_callback' => array($this, 'callbackFilterMatch'),
-        ));
+            'filter_condition_callback' => [$this, 'callbackFilterMatch'],
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $options = array(
+        $options = [
             \Ess\M2ePro\Helper\Module\Database\Structure::TABLE_GROUP_CONFIGS           => 'Configs',
             \Ess\M2ePro\Helper\Module\Database\Structure::TABLE_GROUP_ACCOUNTS          => 'Accounts',
             \Ess\M2ePro\Helper\Module\Database\Structure::TABLE_GROUP_MARKETPLACES      => 'Marketplaces',
@@ -143,9 +145,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             \Ess\M2ePro\Helper\Module\Database\Structure::TABLE_GROUP_ORDERS            => 'Orders',
             \Ess\M2ePro\Helper\Module\Database\Structure::TABLE_GROUP_TEMPLATES         => 'Templates',
             \Ess\M2ePro\Helper\Module\Database\Structure::TABLE_GROUP_OTHER             => 'Other'
-        );
+        ];
 
-        $this->addColumn('group', array(
+        $this->addColumn('group', [
             'header'    => $this->__('Group'),
             'align'     => 'right',
             'width'     => '100px',
@@ -153,26 +155,26 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type'      => 'options',
             'options'   => $options,
             'filter_index' => 'group',
-            'filter_condition_callback' => array($this, 'callbackFilterMatch'),
-        ));
+            'filter_condition_callback' => [$this, 'callbackFilterMatch'],
+        ]);
         // ---------------------------------------
 
-        $this->addColumn('records', array(
+        $this->addColumn('records', [
             'header'    => $this->__('Records'),
             'align'     => 'right',
             'width'     => '100px',
             'index'     => 'records',
             'type'      => 'number',
             'filter'    => false,
-        ));
+        ]);
 
-        $this->addColumn('size', array(
+        $this->addColumn('size', [
             'header'    => $this->__('Size (Mb)'),
             'align'     => 'right',
             'width'     => '100px',
             'index'     => 'size',
             'filter'    => false,
-        ));
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -209,19 +211,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         // Set edit action
         // ---------------------------------------
-        $this->getMassactionBlock()->addItem('edit', array(
+        $this->getMassactionBlock()->addItem('edit', [
             'label'    => $this->__('Edit Table(s)'),
             'url'      => $this->getUrl('*/controlPanel_database/manageTables')
-        ));
+        ]);
         // ---------------------------------------
 
         // Set truncate action
         // ---------------------------------------
-        $this->getMassactionBlock()->addItem('truncate', array(
+        $this->getMassactionBlock()->addItem('truncate', [
             'label'    => $this->__('Truncate Table(s)'),
             'url'      => $this->getUrl('*/controlPanel_database/truncateTables'),
             'confirm'  => $this->__('Are you sure?')
-        ));
+        ]);
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -254,7 +256,7 @@ JS
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/controlPanel/databaseTab', array('_current'=>true));
+        return $this->getUrl('*/controlPanel/databaseTab', ['_current'=>true]);
     }
 
     public function getRowUrl($row)
@@ -263,8 +265,10 @@ JS
             return false;
         }
 
-        return $this->getUrl('*/controlPanel_database/manageTable',
-                             array('table' => $row->getData('table_name')));
+        return $this->getUrl(
+            '*/controlPanel_database/manageTable',
+            ['table' => $row->getData('table_name')]
+        );
     }
 
     //########################################
@@ -287,7 +291,9 @@ JS
         }
 
         $this->getCollection()->addFilter(
-            'table_name', $value, \Ess\M2ePro\Model\ResourceModel\Collection\Custom::CONDITION_LIKE
+            'table_name',
+            $value,
+            \Ess\M2ePro\Model\ResourceModel\Collection\Custom::CONDITION_LIKE
         );
     }
 
@@ -302,7 +308,9 @@ JS
         }
 
         $this->getCollection()->addFilter(
-            $field, $value, \Ess\M2ePro\Model\ResourceModel\Collection\Custom::CONDITION_MATCH
+            $field,
+            $value,
+            \Ess\M2ePro\Model\ResourceModel\Collection\Custom::CONDITION_MATCH
         );
     }
 

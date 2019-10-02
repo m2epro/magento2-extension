@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
+/**
+ * Class Template
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product
+ */
 abstract class Template extends Main
 {
     //########################################
@@ -22,7 +26,6 @@ abstract class Template extends Main
         $productsIds = [];
         $productsIdsParam = array_chunk($productsIdsParam, 1000);
         foreach ($productsIdsParam as $productsIdsParamChunk) {
-
             $select = $connection->select();
             $select->from(['lo' => $table], ['object_id'])
                 ->where('model_name = "Listing\Product"')
@@ -49,11 +52,11 @@ abstract class Template extends Main
     protected function runProcessorForParents($productsIds)
     {
         $connection = $this->resourceConnection->getConnection();
-        $tableWalmartListingProduct = $this->activeRecordFactory->getObject('Walmart\Listing\Product')
+        $tableWalmartListingProduct = $this->activeRecordFactory->getObject('Walmart_Listing_Product')
             ->getResource()->getMainTable();
 
         $select = $connection->select();
-        $select->from(array('alp' => $tableWalmartListingProduct), array('listing_product_id'))
+        $select->from(['alp' => $tableWalmartListingProduct], ['listing_product_id'])
             ->where('listing_product_id IN (?)', $productsIds)
             ->where('is_variation_parent = ?', 1);
 

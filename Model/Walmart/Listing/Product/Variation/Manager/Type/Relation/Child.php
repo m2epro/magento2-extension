@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation;
 
+/**
+ * Class Child
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation
+ */
 class Child extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\PhysicalUnit
 {
     /**
@@ -22,7 +26,7 @@ class Child extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\
      */
     public function getParentListingProduct()
     {
-        if (is_null($this->parentListingProduct)) {
+        if ($this->parentListingProduct === null) {
             $parentListingProductId = $this->getVariationManager()->getVariationParentId();
             $this->parentListingProduct = $this->walmartFactory
                 ->getObjectLoaded('Listing\Product', $parentListingProductId);
@@ -61,7 +65,7 @@ class Child extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\
             return $productOptions;
         }
 
-        $realProductOptions = array();
+        $realProductOptions = [];
         foreach ($productOptions as $attribute => $value) {
             if (isset($virtualProductAttributes[$attribute])) {
                 continue;
@@ -89,7 +93,7 @@ class Child extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\
 
     public function unsetChannelVariation()
     {
-        $this->setChannelOptions(array(), false);
+        $this->setChannelOptions([], false);
         $this->getListingProduct()->save();
     }
 
@@ -100,7 +104,7 @@ class Child extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\
      */
     public function getChannelOptions()
     {
-        return $this->getListingProduct()->getSetting('additional_data', 'variation_channel_options', array());
+        return $this->getListingProduct()->getSetting('additional_data', 'variation_channel_options', []);
     }
 
     /**
@@ -115,7 +119,7 @@ class Child extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\
             return $channelOptions;
         }
 
-        $realChannelOptions = array();
+        $realChannelOptions = [];
         foreach ($channelOptions as $attribute => $value) {
             if (isset($virtualChannelAttributes[$attribute])) {
                 continue;
@@ -144,7 +148,9 @@ class Child extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\
     public function setCorrectMatchedAttributes(array $matchedAttributes, $save = true)
     {
         $this->getListingProduct()->setSetting(
-            'additional_data', 'variation_correct_matched_attributes', $matchedAttributes
+            'additional_data',
+            'variation_correct_matched_attributes',
+            $matchedAttributes
         );
         $save && $this->getListingProduct()->save();
     }
@@ -155,7 +161,9 @@ class Child extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\
     public function getCorrectMatchedAttributes()
     {
         return $this->getListingProduct()->getSetting(
-            'additional_data', 'variation_correct_matched_attributes', array()
+            'additional_data',
+            'variation_correct_matched_attributes',
+            []
         );
     }
 

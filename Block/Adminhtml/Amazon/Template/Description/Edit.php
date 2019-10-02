@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description
+ */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 {
     //########################################
@@ -35,7 +39,6 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
         $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
 
         if (!$isSaveAndClose && $this->isEditMode()) {
-
             $headId = 'amazon-template-description';
             // ---------------------------------------
             $this->buttonList->add('duplicate', [

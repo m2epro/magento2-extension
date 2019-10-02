@@ -34,7 +34,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     private $productFactory;
 
     /** @var $channelItem \Ess\M2ePro\Model\Ebay\Item */
-    private $channelItem = NULL;
+    private $channelItem = null;
 
     //########################################
 
@@ -50,8 +50,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->productBuilderFactory = $productBuilderFactory;
         $this->productFactory = $productFactory;
         parent::__construct(
@@ -79,7 +78,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
 
     public function getProxy()
     {
-        return $this->modelFactory->getObject('Ebay\Order\Item\Proxy', [
+        return $this->modelFactory->getObject('Ebay_Order_Item_ProxyObject', [
             'item' => $this
         ]);
     }
@@ -109,7 +108,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
      */
     public function getChannelItem()
     {
-        if (is_null($this->channelItem)) {
+        if ($this->channelItem === null) {
             $this->channelItem = $this->activeRecordFactory->getObject('Ebay\Item')->getCollection()
                 ->addFieldToFilter('item_id', $this->getItemId())
                 ->addFieldToFilter('account_id', $this->getEbayAccount()->getId())
@@ -117,7 +116,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
                 ->getFirstItem();
         }
 
-        return !is_null($this->channelItem->getId()) ? $this->channelItem : NULL;
+        return $this->channelItem->getId() !== null ? $this->channelItem : null;
     }
 
     //########################################
@@ -232,7 +231,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
      */
     public function hasVariation()
     {
-        return count($this->getVariationDetails()) > 0;
+        return !empty($this->getVariationDetails());
     }
 
     /**
@@ -261,7 +260,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     public function getVariationOptions()
     {
         $variationDetails = $this->getVariationDetails();
-        return isset($variationDetails['options']) ? $variationDetails['options'] : array();
+        return isset($variationDetails['options']) ? $variationDetails['options'] : [];
     }
 
     // ---------------------------------------
@@ -273,7 +272,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     public function getTrackingDetails()
     {
         $trackingDetails = $this->getSettings('tracking_details');
-        return is_array($trackingDetails) ? $trackingDetails : array();
+        return is_array($trackingDetails) ? $trackingDetails : [];
     }
 
     // ---------------------------------------
@@ -325,11 +324,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     {
         $ebayItem = $this->getChannelItem();
 
-        if (!is_null($ebayItem) && !$this->getEbayAccount()->isMagentoOrdersListingsModeEnabled()) {
+        if ($ebayItem !== null && !$this->getEbayAccount()->isMagentoOrdersListingsModeEnabled()) {
             return false;
         }
 
-        if (is_null($ebayItem) && !$this->getEbayAccount()->isMagentoOrdersListingsOtherModeEnabled()) {
+        if ($ebayItem === null && !$this->getEbayAccount()->isMagentoOrdersListingsOtherModeEnabled()) {
             return false;
         }
 
@@ -345,7 +344,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     {
         // Item was listed by M2E
         // ---------------------------------------
-        if (!is_null($this->getChannelItem())) {
+        if ($this->getChannelItem() !== null) {
             return $this->getEbayAccount()->isMagentoOrdersListingsStoreCustom()
                 ? $this->getEbayAccount()->getMagentoOrdersListingsStoreId()
                 : $this->getChannelItem()->getStoreId();
@@ -361,7 +360,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     {
         // Item was listed by M2E
         // ---------------------------------------
-        if (!is_null($this->getChannelItem())) {
+        if ($this->getChannelItem() !== null) {
             return $this->getChannelItem()->getProductId();
         }
         // ---------------------------------------
@@ -412,7 +411,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         $order = $this->getParentObject()->getOrder();
 
         /** @var $itemImporter \Ess\M2ePro\Model\Ebay\Order\Item\Importer */
-        $itemImporter = $this->modelFactory->getObject('Ebay\Order\Item\Importer', [
+        $itemImporter = $this->modelFactory->getObject('Ebay_Order_Item_Importer', [
             'item' => $this
         ]);
 
@@ -454,7 +453,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         // ---------------------------------------
 
         $order->addSuccessLog(
-            'Product for eBay Item #%id% was created in Magento Catalog.', array('!id' => $this->getItemId())
+            'Product for eBay Item #%id% was created in Magento Catalog.',
+            ['!id' => $this->getItemId()]
         );
 
         return $productBuilder->getProduct();
@@ -463,10 +463,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     private function associateWithProduct(\Magento\Catalog\Model\Product $product)
     {
         if (!$this->hasVariation()) {
-            $this->_eventManager->dispatch('ess_associate_ebay_order_item_to_product', array(
+            $this->_eventManager->dispatch('ess_associate_ebay_order_item_to_product', [
                 'product'    => $product,
                 'order_item' => $this->getParentObject(),
-            ));
+            ]);
         }
     }
 
@@ -476,18 +476,17 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
      * @param array $trackingDetails
      * @return bool
      */
-    public function updateShippingStatus(array $trackingDetails = array())
+    public function updateShippingStatus(array $trackingDetails = [])
     {
         if (!$this->getEbayOrder()->canUpdateShippingStatus($trackingDetails)) {
             return false;
         }
 
-        $params = array(
+        $params = [
             'item_id' => $this->getId(),
-        );
+        ];
 
         if (!empty($trackingDetails['carrier_code'])) {
-
             $trackingDetails['carrier_title'] = $this->getHelper('Component\Ebay')->getCarrierTitle(
                 $trackingDetails['carrier_code'],
                 isset($trackingDetails['carrier_title']) ? $trackingDetails['carrier_title'] : ''
@@ -495,16 +494,16 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         }
 
         if (!empty($trackingDetails['carrier_title'])) {
-
             if ($trackingDetails['carrier_title'] == \Ess\M2ePro\Model\Order\Shipment\Handler::CUSTOM_CARRIER_CODE &&
-                !empty($trackingDetails['shipping_method']))
-            {
+                !empty($trackingDetails['shipping_method'])) {
                 $trackingDetails['carrier_title'] = $trackingDetails['shipping_method'];
             }
 
             // remove unsupported by eBay symbols
             $trackingDetails['carrier_title'] = str_replace(
-                array('\'', '"', '+', '(', ')'), array(), $trackingDetails['carrier_title']
+                ['\'', '"', '+', '(', ')'],
+                [],
+                $trackingDetails['carrier_title']
             );
         }
 
@@ -515,7 +514,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
 
         $this->activeRecordFactory->getObject('Order\Change')->create(
-            $this->getParentObject()->getOrderId(), $action, $creator, $component, $params
+            $this->getParentObject()->getOrderId(),
+            $action,
+            $creator,
+            $component,
+            $params
         );
 
         return true;

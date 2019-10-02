@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tab
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Settings\SkuPopup
+ */
 class Form extends AbstractForm
 {
     protected function _prepareForm()
@@ -61,5 +65,4 @@ class Form extends AbstractForm
             parent::_toHtml() .
             '</div>';
     }
-
 }

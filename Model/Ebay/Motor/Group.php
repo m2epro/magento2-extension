@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Motor;
 
+/**
+ * Class Group
+ * @package Ess\M2ePro\Model\Ebay\Motor
+ */
 class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     const MODE_ITEM     = 1;
@@ -30,9 +34,9 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         }
 
         $connection = $this->getResource()->getConnection();
-        $filterGroupRelation = $this->getHelper('Module\Database\Structure')
+        $filterGroupRelation = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
-        $connection->delete($filterGroupRelation, array('group_id = ?' => $this->getId()));
+        $connection->delete($filterGroupRelation, ['group_id = ?' => $this->getId()]);
 
         return true;
     }
@@ -92,11 +96,11 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function isTypeEpid()
     {
-        return in_array($this->getType(), array(
+        return in_array($this->getType(), [
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_MOTOR,
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_UK,
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_DE,
-        ));
+        ]);
     }
 
     /**
@@ -118,7 +122,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function getItems()
     {
-        $data = $this->getHelper('Component\Ebay\Motors')->parseAttributeValue($this->getItemsData());
+        $data = $this->getHelper('Component_Ebay_Motors')->parseAttributeValue($this->getItemsData());
 
         return $data['items'];
     }
@@ -126,11 +130,11 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getFiltersIds()
     {
         $connection = $this->getResource()->getConnection();
-        $table = $this->getHelper('Module\Database\Structure')
+        $table = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
 
         $select = $connection->select();
-        $select->from(array('emftg' => $table), array('filter_id'))
+        $select->from(['emftg' => $table], ['filter_id'])
                ->where('group_id IN (?)', $this->getId());
 
         return $connection->fetchCol($select);

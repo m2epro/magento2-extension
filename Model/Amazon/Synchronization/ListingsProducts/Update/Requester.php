@@ -8,22 +8,26 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update
+ */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRequester
 {
     // ########################################
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Amazon\Synchronization\ListingsProducts\Update\ProcessingRunner';
+        return 'Amazon_Synchronization_ListingsProducts_Update_ProcessingRunner';
     }
 
     protected function getResponserParams()
     {
         return array_merge(
             parent::getResponserParams(),
-            array(
+            [
                 'request_date' => $this->getHelper('Data')->getCurrentGmtDate(),
-            )
+            ]
         );
     }
 

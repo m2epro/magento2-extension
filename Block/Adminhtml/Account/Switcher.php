@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Account;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Block\Adminhtml\Account
+ */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
 {
     protected $paramName = 'account';
@@ -25,12 +29,12 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
             ->setOrder('component_mode', 'ASC')
             ->setOrder('title', 'ASC');
 
-        if (!is_null($this->getData('component_mode'))) {
+        if ($this->getData('component_mode') !== null) {
             $collection->addFieldToFilter('component_mode', $this->getData('component_mode'));
         }
 
         if (!$collection->getSize()) {
-            $this->items = array();
+            $this->items = [];
             return;
         }
 
@@ -39,19 +43,19 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
             $this->setIsDisabled(true);
         }
 
-        $items = array();
+        $items = [];
 
         foreach ($collection->getItems() as $account) {
-
             $accountTitle = $this->filterManager->truncate(
-                $account->getTitle(), ['length' => 15]
+                $account->getTitle(),
+                ['length' => 15]
             );
 
             /** @var $account \Ess\M2ePro\Model\Account */
-            $items[$account->getComponentMode()]['value'][] = array(
+            $items[$account->getComponentMode()]['value'][] = [
                 'value' => $account->getId(),
                 'label' => $accountTitle
-            );
+            ];
         }
 
         $this->items = $items;

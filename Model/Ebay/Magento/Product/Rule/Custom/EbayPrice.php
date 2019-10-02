@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom;
 
+/**
+ * Class EbayPrice
+ * @package Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom
+ */
 class EbayPrice extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
     //########################################
@@ -42,10 +46,10 @@ class EbayPrice extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractMo
         $maxPrice = $product->getData('max_online_price');
 
         if (!empty($minPrice) && !empty($maxPrice) && $minPrice != $maxPrice) {
-            return array(
+            return [
                 $product->getData('min_online_price'),
                 $product->getData('max_online_price'),
-            );
+            ];
         }
 
         return $product->getData('min_online_price');

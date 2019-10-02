@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Observer\Product\AddUpdate;
 
+/**
+ * Class AbstractAddUpdate
+ * @package Ess\M2ePro\Observer\Product\AddUpdate
+ */
 abstract class AbstractAddUpdate extends \Ess\M2ePro\Observer\Product\AbstractProduct
 {
-    private $affectedListingsProducts = array();
+    private $affectedListingsProducts = [];
 
     //########################################
 
@@ -30,7 +34,7 @@ abstract class AbstractAddUpdate extends \Ess\M2ePro\Observer\Product\AbstractPr
 
     protected function areThereAffectedItems()
     {
-        return count($this->getAffectedListingsProducts()) > 0;
+        return !empty($this->getAffectedListingsProducts());
     }
 
     // ---------------------------------------

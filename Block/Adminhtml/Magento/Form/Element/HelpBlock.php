@@ -13,6 +13,10 @@ use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Escaper;
 
+/**
+ * Class HelpBlock
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Form\Element
+ */
 class HelpBlock extends AbstractElement
 {
     protected $layout;
@@ -23,8 +27,7 @@ class HelpBlock extends AbstractElement
         CollectionFactory $factoryCollection,
         Escaper $escaper,
         array $data = []
-    )
-    {
+    ) {
         $this->layout = $layout;
 
         $this->setType('hidden');

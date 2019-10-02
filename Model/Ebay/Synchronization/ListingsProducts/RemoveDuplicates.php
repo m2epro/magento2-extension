@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\ListingsProducts;
 
+/**
+ * Class RemoveDuplicates
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\ListingsProducts
+ */
 class RemoveDuplicates extends AbstractModel
 {
     const BLOCKED_PRODUCTS_PER_SYNCH = 10;
     const MAX_ALLOWED_BLOCKED_PRODUCTS = 100;
     const MIN_SECONDS_FROM_FAILED_REQUEST = 300;
 
-    private $duplicatedItems = array();
+    private $duplicatedItems = [];
 
     //########################################
 
@@ -96,7 +100,6 @@ class RemoveDuplicates extends AbstractModel
             $productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
 
             try {
-
                 $additionalData = $product->getAdditionalData();
                 if (empty($additionalData['last_failed_action_data'])) {
                     throw new \Ess\M2ePro\Model\Exception('last_failed_action_data is empty');
@@ -116,14 +119,13 @@ class RemoveDuplicates extends AbstractModel
                 $marketplaceId = (int)$product->getData('marketplace_id');
 
                 if (!isset($this->duplicatedItems[$accountId])) {
-                    $this->duplicatedItems[$accountId] = array();
+                    $this->duplicatedItems[$accountId] = [];
                 }
                 if (!isset($this->duplicatedItems[$accountId][$marketplaceId])) {
-                    $this->duplicatedItems[$accountId][$marketplaceId] = array();
+                    $this->duplicatedItems[$accountId][$marketplaceId] = [];
                 }
 
                 if ($action == \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST) {
-
                     $itemInfo = $this->getEbayItemInfo(
                         $lastFailedActionData['native_request_data']['item_id'],
                         $accountId
@@ -150,11 +152,11 @@ class RemoveDuplicates extends AbstractModel
                 $marketplaceCode = $this->activeRecordFactory->getObjectLoaded('Marketplace', $marketplaceId)
                                                              ->getCode();
 
-                $duplicatedItem = $this->getDuplicateItemFromPossible($possibleDuplicates, array(
+                $duplicatedItem = $this->getDuplicateItemFromPossible($possibleDuplicates, [
                     'title' => $lastFailedActionData['native_request_data']['title'],
                     'sku' => $lastFailedActionData['native_request_data']['sku'],
                     'marketplace' => $marketplaceCode,
-                ));
+                ]);
 
                 if (empty($duplicatedItem)) {
                     throw new \Ess\M2ePro\Model\Exception('Duplicate was not found');
@@ -162,8 +164,7 @@ class RemoveDuplicates extends AbstractModel
 
                 $this->duplicatedItems[$accountId][$marketplaceId][] = $duplicatedItem['id'];
                 $this->modifyAndLogListingProduct($product, $productStatus, $duplicatedItem['id']);
-
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $this->modifyAndLogListingProduct($product, $productStatus);
             }
         }
@@ -178,9 +179,7 @@ class RemoveDuplicates extends AbstractModel
         }
 
         foreach ($this->duplicatedItems as $accountId => $marketplaceItems) {
-
             foreach ($marketplaceItems as $marketplaceId => $itemIds) {
-
                 if (empty($itemIds)) {
                     continue;
                 }
@@ -189,14 +188,20 @@ class RemoveDuplicates extends AbstractModel
 
                 foreach ($itemsParts as $itemsPart) {
                     try {
-
-                        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-                        $connectorObj = $dispatcherObj->getVirtualConnector('item','update','ends',
-                                                                            array('items' => $itemsPart),NULL,
-                                                                            $marketplaceId,$accountId,NULL);
+                        $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+                        $connectorObj = $dispatcherObj->getVirtualConnector(
+                            'item',
+                            'update',
+                            'ends',
+                            ['items' => $itemsPart],
+                            null,
+                            $marketplaceId,
+                            $accountId,
+                            null
+                        );
                         $dispatcherObj->process($connectorObj);
-
-                    } catch (\Exception $e) {}
+                    } catch (\Exception $e) {
+                    }
                 }
             }
         }
@@ -210,11 +215,12 @@ class RemoveDuplicates extends AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
 
         $listingTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
-        $collection->addFieldToFilter('main_table.component_mode',\Ess\M2ePro\Helper\Component\Ebay::NICK)
+        $collection->addFieldToFilter('main_table.component_mode', \Ess\M2ePro\Helper\Component\Ebay::NICK)
             ->addFieldToFilter('status', \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED)
             ->join(
-                ['Listing' => $listingTable], 'Listing.id=main_table.listing_id',
-                array('Listing.account_id', 'Listing.marketplace_id')
+                ['Listing' => $listingTable],
+                'Listing.id=main_table.listing_id',
+                ['Listing.account_id', 'Listing.marketplace_id']
             );
 
         return $collection;
@@ -224,32 +230,44 @@ class RemoveDuplicates extends AbstractModel
 
     private function getEbayItemInfo($itemId, $accountId)
     {
-        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorObj = $dispatcherObj->getVirtualConnector('item','get','info',
-                                                            array('item_id' => $itemId),NULL,
-                                                            NULL,$accountId);
+        $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        $connectorObj = $dispatcherObj->getVirtualConnector(
+            'item',
+            'get',
+            'info',
+            ['item_id' => $itemId],
+            null,
+            null,
+            $accountId
+        );
 
         $dispatcherObj->process($connectorObj);
         $responseData = $connectorObj->getResponseData();
 
-        return isset($responseData['result']) ? $responseData['result'] : array();
+        return isset($responseData['result']) ? $responseData['result'] : [];
     }
 
     private function getEbayItemsByStartTimeInterval($timeFrom, $timeTo, $accountId)
     {
         is_object($timeFrom) && $timeFrom = $timeFrom->format('Y-m-d H:i:s');
-        is_object($timeTo)   && $timeTo = $timeTo->format('Y-m-d H:i:s');
+        is_object($timeTo) && $timeTo = $timeTo->format('Y-m-d H:i:s');
 
-        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorObj = $dispatcherObj->getVirtualConnector('item','get','all',
-                                                            array('since_time'=>$timeFrom,
-                                                                  'to_time'=>$timeTo),NULL,
-                                                            NULL,$accountId);
+        $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        $connectorObj = $dispatcherObj->getVirtualConnector(
+            'item',
+            'get',
+            'all',
+            ['since_time'=>$timeFrom,
+                                                                  'to_time'=>$timeTo],
+            null,
+            null,
+            $accountId
+        );
 
         $dispatcherObj->process($connectorObj);
         $responseData = $connectorObj->getResponseData();
 
-        return isset($responseData['items']) ? $responseData['items'] : array();
+        return isset($responseData['items']) ? $responseData['items'] : [];
     }
 
     // ---------------------------------------
@@ -257,15 +275,13 @@ class RemoveDuplicates extends AbstractModel
     private function getDuplicateItemFromPossible(array $possibleDuplicates, array $searchParams)
     {
         if (empty($possibleDuplicates)) {
-            return array();
+            return [];
         }
 
         foreach ($possibleDuplicates as $item) {
-
             $isFound = true;
 
             foreach ($searchParams as $key => $value) {
-
                 if (trim($item[$key]) == trim($value)) {
                     continue;
                 }
@@ -281,14 +297,16 @@ class RemoveDuplicates extends AbstractModel
             return $item;
         }
 
-        return array();
+        return [];
     }
 
     //########################################
 
-    private function modifyAndLogListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct,
-                                                $status, $duplicateItemId = null)
-    {
+    private function modifyAndLogListingProduct(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        $status,
+        $duplicateItemId = null
+    ) {
         /** @var \Ess\M2ePro\Model\Listing\Log $logModel */
         $logModel = $this->activeRecordFactory->getObject('Listing\Log');
         $logModel->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
@@ -312,15 +330,15 @@ class RemoveDuplicates extends AbstractModel
         $additionalData = $listingProduct->getAdditionalData();
         unset($additionalData['last_failed_action_data']);
 
-        $listingProduct->addData(array(
+        $listingProduct->addData([
             'status'          => $status,
             'status_changer'  => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT,
             'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData),
-        ))->save();
+        ])->save();
 
         $listingProduct->getChildObject()->updateVariationsStatus();
 
-        if (is_null($duplicateItemId)) {
+        if ($duplicateItemId === null) {
             return;
         }
 

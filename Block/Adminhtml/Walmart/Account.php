@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart;
 
+/**
+ * Class Account
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart
+ */
 class Account extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -35,14 +39,12 @@ class Account extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
     protected function _prepareLayout()
     {
-        $url = $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XgBhAQ');
         $this->appendHelpBlock([
             'content' => $this->__(<<<HTML
-<p>In this section, you can create, edit and delete Accounts for Walmart integration</p><br>
-<p>Please be advised that Account is created per Marketplace using the relevant API credentials.</p><br>
-<p>The detailed information can be found <a href="{$url}" target="_blank">here</a></p><br>
+            In this section, you can create, edit and delete Accounts for Walmart integration.
+            Please be advised that Account is created per Marketplace using the relevant API credentials.
 HTML
-)
+        )
         ]);
 
         return parent::_prepareLayout();

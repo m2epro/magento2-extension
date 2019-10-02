@@ -1,11 +1,19 @@
 <?php
-    /** @var $block Ess\M2ePro\Block\Adminhtml\Walmart\Order\View\Form */
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var $block Ess\M2ePro\Block\Adminhtml\Walmart\Order\View\Form */
     echo $block->getChildHtml('item_edit');
 
     $currency = $block->order->getChildObject()->getData('currency');
-    if (empty($currency)) {
-        $currency = $block->order->getMarketplace()->getChildObject()->getDefaultCurrency();
-    }
+if (empty($currency)) {
+    $currency = $block->order->getMarketplace()->getChildObject()->getDefaultCurrency();
+}
 ?>
 
 <!-- ########################################################################################### -->
@@ -37,16 +45,14 @@
                             <td class="label"><?php echo $block->__('Magento Order #');?></td>
                             <td class="value">
                                 <strong>
-                                    <?php if (!is_null($block->realMagentoOrderId)) { ?>
-
-                                        <?php if (!is_null($block->realMagentoOrderId)) { ?>
-                                            <a href="<?php echo $block->getUrl('sales/order/view', array('order_id' => $block->order->getData('magento_order_id'))); ?>" target="_blank"><?php echo $block->realMagentoOrderId; ?></a>
+                                    <?php if ($block->realMagentoOrderId !== null) { ?>
+                                        <?php if ($block->realMagentoOrderId !== null) { ?>
+                                            <a href="<?php echo $block->getUrl('sales/order/view', ['order_id' => $block->order->getData('magento_order_id')]); ?>" target="_blank"><?php echo $block->realMagentoOrderId; ?></a>
                                         <?php } else { ?>
                                             <?php echo $block->order->getData('magento_order_id'); ?>
                                         <?php } ?>
 
                                     <?php } else { ?>
-
                                         <?php echo $block->__('N/A'); ?>
 
                                     <?php } ?>
@@ -64,7 +70,7 @@
                             <td class="value"><strong><?php echo $block->formatDate($block->order->getChildObject()->getData('purchase_update_date'), \IntlDateFormatter::MEDIUM, true); ?></strong></td>
                         </tr>
 
-                        <?php if (!is_null($block->order->getData('reservation_start_date'))): ?>
+                        <?php if ($block->order->getData('reservation_start_date') !== null) : ?>
                             <tr>
                                 <td class="label"><?php echo $block->__('Reservation Time') ?></td>
                                 <td class="value"><strong><?php echo $block->formatDate($block->order->getData('reservation_start_date'), \IntlDateFormatter::MEDIUM, true); ?></strong></td>
@@ -76,7 +82,7 @@
                             <td class="value">
                                 <strong>
 
-                                    <?php if ($this->order->getChildObject()->isCreated()) { ?>
+                                    <?php if ($block->order->getChildObject()->isCreated()) { ?>
                                         <span style="color: gray;"><?php echo $block->__('Created') ?></span>
                                     <?php } ?>
 
@@ -113,8 +119,7 @@
                                         <span style="color: red;"><?php echo $block->__('Deleted'); ?></span>
 
                                     <?php } else { ?>
-
-                                        <a href="<?php echo $block->getUrl('*/walmart_account/edit', array('id' => $block->order->getAccount()->getId())); ?>" target="_blank"><?php echo $block->getHelper('Data')->escapeHtml($block->order->getAccount()->getTitle()); ?></a>
+                                        <a href="<?php echo $block->getUrl('*/walmart_account/edit', ['id' => $block->order->getAccount()->getId()]); ?>" target="_blank"><?php echo $block->getHelper('Data')->escapeHtml($block->order->getAccount()->getTitle()); ?></a>
 
                                     <?php }?>
 
@@ -166,19 +171,19 @@
                         <tr>
                             <td class="label"><?php echo $block->__('Order Currency');?></td>
                             <td class="value">
-                                <?php if ($block->order->getChildObject()->getData('currency')): ?>
+                                <?php if ($block->order->getChildObject()->getData('currency')) : ?>
                                     <strong>
                                         <?php echo $block->getHelper('Data')->escapeHtml($block->order->getChildObject()->getData('currency')); ?>
                                     </strong>
 
                                     <?php
-                                        if (!$block->isCurrencyAllowed()) {
-                                            echo '<br/><b>' . $block->__('Attention!') . '</b> ' . $block->__('Order Currency is not enabled in Magento. Please, enable it in System > Configuration > Currency Setup.');
-                                        } elseif (!$block->hasCurrencyConversionRate()) {
-                                            echo '<br/><b>' . $block->__('Attention!') . '</b> ' . $block->__('There\'s no rate for Order Currency in Magento. Please, add Currency convert rate in System > Manage Currency > Rates.');
-                                        }
+                                    if (!$block->isCurrencyAllowed()) {
+                                        echo '<br/><b>' . $block->__('Attention!') . '</b> ' . $block->__('Order Currency is not enabled in Magento. Please, enable it in System > Configuration > Currency Setup.');
+                                    } elseif (!$block->hasCurrencyConversionRate()) {
+                                        echo '<br/><b>' . $block->__('Attention!') . '</b> ' . $block->__('There\'s no rate for Order Currency in Magento. Please, add Currency convert rate in System > Manage Currency > Rates.');
+                                    }
                                     ?>
-                                <?php else: ?>
+                                <?php else : ?>
                                     <strong><?php echo $block->__('N/A'); ?><strong>
                                 <?php endif; ?>
 
@@ -211,7 +216,7 @@
                             <td class="label"><?php echo $block->__('Shipping Service');?></td>
                             <td class="value">
                                 <strong>
-                                    <?php if (is_null($block->order->getChildObject()->getData('shipping_service'))) { ?>
+                                    <?php if ($block->order->getChildObject()->getData('shipping_service') === null) { ?>
                                         <?php echo $block->__('N/A'); ?>
                                     <?php } else { ?>
                                         <?php echo $block->getHelper('Data')->escapeHtml($block->order->getChildObject()->getData('shipping_service')); ?>
@@ -233,7 +238,7 @@
                             </td>
                         </tr>
 
-                        <?php if ($childHtml = $this->getChildHtml('resubmit_shipping_info')): ?>
+                        <?php if ($childHtml = $block->getChildHtml('resubmit_shipping_info')) : ?>
                             <tr>
                                 <td></td>
                                 <td class="value" style="padding-top: 10px;">
@@ -260,7 +265,7 @@
 
     <div class="fieldset-wrapper-content admin__fieldset-wrapper-content grid np">
         <div class="hor-scroll">
-             <?php echo $block->getChildHtml('item'); ?>
+                <?php echo $block->getChildHtml('item'); ?>
         </div>
     </div>
 </div>

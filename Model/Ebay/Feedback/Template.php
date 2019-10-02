@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Model\Ebay\Feedback;
 
+/**
+ * Class Template
+ * @package Ess\M2ePro\Model\Ebay\Feedback
+ */
 class Template extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Account
      */
-    private $accountModel = NULL;
+    private $accountModel = null;
 
     //########################################
 
@@ -37,8 +41,7 @@ class Template extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct(
             $modelFactory,
@@ -57,7 +60,7 @@ class Template extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function delete()
     {
         $temp = parent::delete();
-        $temp && $this->accountModel = NULL;
+        $temp && $this->accountModel = null;
         return $temp;
     }
 
@@ -68,9 +71,10 @@ class Template extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getAccount()
     {
-        if (is_null($this->accountModel)) {
+        if ($this->accountModel === null) {
             $this->accountModel = $this->ebayFactory->getCachedObjectLoaded(
-                'Account',$this->getData('account_id')
+                'Account',
+                $this->getData('account_id')
             );
         }
 

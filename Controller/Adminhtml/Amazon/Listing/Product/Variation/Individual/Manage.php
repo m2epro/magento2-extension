@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Indiv
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class Manage
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Individual
+ */
 class Manage extends Main
 {
     //########################################
@@ -30,7 +34,7 @@ class Manage extends Main
             return $this->getResult();
         }
 
-        /* @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+        /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
         $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $listingProductId);
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager $variationManager */
@@ -48,11 +52,9 @@ class Manage extends Main
         if ($isVariationProductMatched) {
             $listingProduct = $this->duplicateListingProduct($listingProduct);
         } else {
-
-            $listingProduct->setData('search_settings_status', NULL);
-            $listingProduct->setData('search_settings_data', NULL);
+            $listingProduct->setData('search_settings_status', null);
+            $listingProduct->setData('search_settings_data', null);
             $listingProduct->save();
-
         }
 
         $magentoVariations = $listingProduct->getMagentoProduct()->getVariationInstance()->getVariationsTypeStandard();
@@ -60,7 +62,6 @@ class Manage extends Main
 
         $isFirst = true;
         foreach ($variationsData as $variationData) {
-
             !$isFirst && $listingProduct = $this->duplicateListingProduct($listingProduct);
             $isFirst = false;
 
@@ -113,7 +114,10 @@ class Manage extends Main
     private function duplicateListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
         $duplicatedListingProduct = $listingProduct->getListing()->addProduct(
-            $listingProduct->getProductId(), \Ess\M2ePro\Helper\Data::INITIATOR_USER, false,false
+            $listingProduct->getProductId(),
+            \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+            false,
+            false
         );
 
         $variationManager = $listingProduct->getChildObject()->getVariationManager();

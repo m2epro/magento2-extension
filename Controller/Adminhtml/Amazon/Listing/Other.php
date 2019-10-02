@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
+/**
+ * Class Other
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ */
 abstract class Other extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 {
     //########################################

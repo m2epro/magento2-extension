@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit
+ */
 class Form extends AbstractForm
 {
     //########################################
@@ -17,7 +21,7 @@ class Form extends AbstractForm
     protected function _prepareForm()
     {
         $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
-        $formData = !is_null($template)
+        $formData = $template !== null
                     ? array_merge($template->getData(), $template->getChildObject()->getData())
                     : ['title' => ''];
 
@@ -48,13 +52,14 @@ class Form extends AbstractForm
                 'label' => $this->__('Title'),
                 'value' => $formData['title'],
                 'class' => 'M2ePro-synchronization-tpl-title',
-                'tooltip' => $this->__('Short meaningful Policy Title for your internal use.'),
+                'tooltip' => $this->__('Policy Title for your internal use.'),
                 'required' => true,
             ]
         );
 
-        $dataBlock = $this->createBlock('Walmart\Template\Synchronization\Edit\Data');
-        $form->addField('container_html',
+        $dataBlock = $this->createBlock('Walmart_Template_Synchronization_Edit_Data');
+        $form->addField(
+            'container_html',
             self::CUSTOM_CONTAINER,
             [
                 'text' => $dataBlock->toHtml()

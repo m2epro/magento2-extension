@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs;
 
 use Ess\M2ePro\Model\Amazon\Template\Description\Definition as DefinitionTemplate;
 
+/**
+ * Class Definition
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs
+ */
 class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     public $templateModel = null;
@@ -77,7 +81,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
                     More detailed information about ability to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.',
-                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/OAYtAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/OAYtAQ')
                 )
             ]
         );
@@ -92,7 +96,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
            'legend' => $this->__('General'), 'collapsable' => true
         ]);
 
-        $fieldSet->addField('title_mode', self::SELECT,
+        $fieldSet->addField(
+            'title_mode',
+            self::SELECT,
             [
                 'name' => 'definition[title_mode]',
                 'label' => $this->__('Title'),
@@ -109,7 +115,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('title_template', 'text',
+        $fieldSet->addField(
+            'title_template',
+            'text',
             [
                 'name' => 'definition[title_template]',
                 'label' => $this->__('Title Value'),
@@ -118,7 +126,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'class' => 'input-text M2ePro-required-when-visible',
                 'required' => true,
                 'field_extra_attributes' => 'id="custom_title_tr" style="display: none;"',
-                'after_element_html' => $this->createBlock('Magento\Button\MagentoAttribute')->addData([
+                'after_element_html' => $this->createBlock('Magento_Button_MagentoAttribute')->addData([
                     'label' => $this->__('Insert Attribute'),
                     'destination_id' => 'title_template',
                     'magento_attributes' => $this->getClearAttributesByInputTypesOptions(),
@@ -138,7 +146,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('brand_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'brand_custom_attribute',
+            'hidden',
             [
                 'name' => 'definition[brand_custom_attribute]',
                 'value' => $this->formData['brand_custom_attribute']
@@ -153,7 +163,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = $this->formData['brand_mode'];
         }
 
-        $fieldSet->addField('brand_mode', self::SELECT,
+        $fieldSet->addField(
+            'brand_mode',
+            self::SELECT,
             [
                 'name' => 'definition[brand_mode]',
                 'label' => $this->__('Brand'),
@@ -169,7 +181,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('brand_custom_value', 'text',
+        $fieldSet->addField(
+            'brand_custom_value',
+            'text',
             [
                 'name' => 'definition[brand_custom_value]',
                 'label' => $this->__('Brand Value'),
@@ -183,7 +197,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('manufacturer_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'manufacturer_custom_attribute',
+            'hidden',
             [
                 'name' => 'definition[manufacturer_custom_attribute]',
                 'value' => $this->formData['manufacturer_custom_attribute']
@@ -198,7 +214,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = $this->formData['manufacturer_mode'];
         }
 
-        $fieldSet->addField('manufacturer_mode', self::SELECT,
+        $fieldSet->addField(
+            'manufacturer_mode',
+            self::SELECT,
             [
                 'name' => 'definition[manufacturer_mode]',
                 'label' => $this->__('Manufacturer'),
@@ -214,7 +232,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('manufacturer_custom_value', 'text',
+        $fieldSet->addField(
+            'manufacturer_custom_value',
+            'text',
             [
                 'name' => 'definition[manufacturer_custom_value]',
                 'label' => $this->__('Manufacturer Value'),
@@ -228,7 +248,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('manufacturer_part_number_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'manufacturer_part_number_custom_attribute',
+            'hidden',
             [
                 'name' => 'definition[manufacturer_part_number_custom_attribute]',
                 'value' => $this->formData['manufacturer_part_number_custom_attribute']
@@ -246,7 +268,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = $this->formData['manufacturer_part_number_mode'];
         }
 
-        $fieldSet->addField('manufacturer_part_number_mode', self::SELECT,
+        $fieldSet->addField(
+            'manufacturer_part_number_mode',
+            self::SELECT,
             [
                 'name' => 'definition[manufacturer_part_number_mode]',
                 'label' => $this->__('Manufacturer Part Number'),
@@ -261,7 +285,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('manufacturer_part_number_custom_value', 'text',
+        $fieldSet->addField(
+            'manufacturer_part_number_custom_value',
+            'text',
             [
                 'name' => 'definition[manufacturer_part_number_custom_value]',
                 'label' => $this->__('Manufacturer Part Number Value'),
@@ -277,7 +303,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('item_package_quantity_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'item_package_quantity_custom_attribute',
+            'hidden',
             [
                 'name' => 'definition[item_package_quantity_custom_attribute]',
                 'value' => $this->formData['item_package_quantity_custom_attribute']
@@ -295,7 +323,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = $this->formData['item_package_quantity_mode'];
         }
 
-        $fieldSet->addField('item_package_quantity_mode', self::SELECT,
+        $fieldSet->addField(
+            'item_package_quantity_mode',
+            self::SELECT,
             [
                 'name' => 'definition[item_package_quantity_mode]',
                 'label' => $this->__('Package Quantity'),
@@ -310,7 +340,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('item_package_quantity_custom_value', 'text',
+        $fieldSet->addField(
+            'item_package_quantity_custom_value',
+            'text',
             [
                 'name' => 'definition[item_package_quantity_custom_value]',
                 'label' => $this->__('Package Quantity Value'),
@@ -325,7 +357,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('number_of_items_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'number_of_items_custom_attribute',
+            'hidden',
             [
                 'name' => 'definition[number_of_items_custom_attribute]',
                 'value' => $this->formData['number_of_items_custom_attribute']
@@ -340,7 +374,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = $this->formData['number_of_items_mode'];
         }
 
-        $fieldSet->addField('number_of_items_mode', self::SELECT,
+        $fieldSet->addField(
+            'number_of_items_mode',
+            self::SELECT,
             [
                 'name' => 'definition[number_of_items_mode]',
                 'label' => $this->__('Number of Items'),
@@ -361,7 +397,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('number_of_items_custom_value', 'text',
+        $fieldSet->addField(
+            'number_of_items_custom_value',
+            'text',
             [
                 'name' => 'definition[number_of_items_custom_value]',
                 'label' => $this->__('Number of Items Value'),
@@ -386,7 +424,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('msrp_rrp_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'msrp_rrp_custom_attribute',
+            'hidden',
             [
                 'name' => 'definition[msrp_rrp_custom_attribute]',
                 'value' => $this->formData['msrp_rrp_custom_attribute']
@@ -396,11 +436,13 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         $defaultValue = '';
-        if ($this->formData['msrp_rrp_mode'] == DefinitionTemplate::MSRP_RRP_MODE_NONE ) {
+        if ($this->formData['msrp_rrp_mode'] == DefinitionTemplate::MSRP_RRP_MODE_NONE) {
             $defaultValue = $this->formData['msrp_rrp_mode'];
         }
 
-        $fieldSet->addField('msrp_rrp_mode', self::SELECT,
+        $fieldSet->addField(
+            'msrp_rrp_mode',
+            self::SELECT,
             [
                 'name' => 'definition[msrp_rrp_mode]',
                 'label' => $this->__('MSRP / RRP'),
@@ -430,7 +472,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('image_main_attribute', 'hidden',
+        $fieldSet->addField(
+            'image_main_attribute',
+            'hidden',
             [
                 'name' => 'definition[image_main_attribute]',
                 'value' => $this->formData['image_main_attribute']
@@ -445,7 +489,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = $this->formData['image_main_mode'];
         }
 
-        $fieldSet->addField('image_main_mode', self::SELECT,
+        $fieldSet->addField(
+            'image_main_mode',
+            self::SELECT,
             [
                 'name' => 'definition[image_main_mode]',
                 'label' => $this->__('Main Image'),
@@ -460,7 +506,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('gallery_images_limit', 'hidden',
+        $fieldSet->addField(
+            'gallery_images_limit',
+            'hidden',
             [
                 'name' => 'definition[gallery_images_limit]',
                 'value' => $this->formData['gallery_images_limit']
@@ -469,7 +517,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('gallery_images_attribute', 'hidden',
+        $fieldSet->addField(
+            'gallery_images_attribute',
+            'hidden',
             [
                 'name' => 'definition[gallery_images_attribute]',
                 'value' => $this->formData['gallery_images_attribute']
@@ -483,7 +533,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = $this->formData['gallery_images_mode'];
         }
 
-        $fieldSet->addField('gallery_images_mode', self::SELECT,
+        $fieldSet->addField(
+            'gallery_images_mode',
+            self::SELECT,
             [
                 'name' => 'definition[gallery_images_mode]',
                 'label' => $this->__('Additional Images'),
@@ -497,7 +549,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('image_variation_difference_attribute', 'hidden',
+        $fieldSet->addField(
+            'image_variation_difference_attribute',
+            'hidden',
             [
                 'name' => 'definition[image_variation_difference_attribute]',
                 'value' => $this->formData['image_variation_difference_attribute']
@@ -515,7 +569,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = $this->formData['image_variation_difference_mode'];
         }
 
-        $fieldSet->addField('image_variation_difference_mode', self::SELECT,
+        $fieldSet->addField(
+            'image_variation_difference_mode',
+            self::SELECT,
             [
                 'name' => 'definition[image_variation_difference_mode]',
                 'label' => $this->__('Swatch Image'),
@@ -541,7 +597,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('description_mode', self::SELECT,
+        $fieldSet->addField(
+            'description_mode',
+            self::SELECT,
             [
                 'name' => 'definition[description_mode]',
                 'label' => $this->__('Description'),
@@ -575,7 +633,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ];
         }
 
-        $fieldSet->addField('description_template', 'textarea',
+        $fieldSet->addField(
+            'description_template',
+            'textarea',
             [
                 'name' => 'definition[description_template]',
                 'label' => $this->__('Description Value'),
@@ -585,7 +645,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'required' => true,
                 'css_class' => 'c-custom_description_tr',
                 'field_extra_attributes' => 'style="display: none;"',
-                'after_element_html' => $this->createBlock('Magento\Button\MagentoAttribute')->addData([
+                'after_element_html' => $this->createBlock('Magento_Button_MagentoAttribute')->addData([
                     'label' => $this->__('Insert Attribute'),
                     'destination_id' => 'description_template',
                     'magento_attributes' => $options,
@@ -607,7 +667,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('item_dimensions_volume_mode', self::SELECT,
+        $fieldSet->addField(
+            'item_dimensions_volume_mode',
+            self::SELECT,
             [
                 'name' => 'definition[item_dimensions_volume_mode]',
                 'label' => $this->__('Volume'),
@@ -652,7 +714,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         ]])->addCustomAttribute('min_value', '0.01');
         $heightBlock->setForm($form);
 
-        $fieldSet->addField('item_dimensions_volume_custom_value',
+        $fieldSet->addField(
+            'item_dimensions_volume_custom_value',
             self::CUSTOM_CONTAINER,
             [
                 'label' => $this->__('Length x Width x Height'),
@@ -705,7 +768,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $heightBlock->setId('item_dimensions_volume_height_custom_attribute');
         $heightBlock->setForm($form);
 
-        $fieldSet->addField('item_dimensions_volume_custom_attribute',
+        $fieldSet->addField(
+            'item_dimensions_volume_custom_attribute',
             self::CUSTOM_CONTAINER,
             [
                 'label' => $this->__('Length x Width x Height'),
@@ -721,7 +785,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('item_dimensions_volume_unit_of_measure_custom_value', 'hidden',
+        $fieldSet->addField(
+            'item_dimensions_volume_unit_of_measure_custom_value',
+            'hidden',
             [
                 'name' => 'definition[item_dimensions_volume_unit_of_measure_custom_value]',
                 'value' => $this->formData['item_dimensions_volume_unit_of_measure_custom_value']
@@ -730,7 +796,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('item_dimensions_volume_unit_of_measure_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'item_dimensions_volume_unit_of_measure_custom_attribute',
+            'hidden',
             [
                 'name' => 'definition[item_dimensions_volume_unit_of_measure_custom_attribute]',
                 'value' => $this->formData['item_dimensions_volume_unit_of_measure_custom_attribute']
@@ -739,7 +807,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('item_dimensions_volume_unit_of_measure_mode', self::SELECT,
+        $fieldSet->addField(
+            'item_dimensions_volume_unit_of_measure_mode',
+            self::SELECT,
             [
                 'name' => 'definition[item_dimensions_volume_unit_of_measure_mode]',
                 'label' => $this->__('Measure Units'),
@@ -759,7 +829,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('item_dimensions_weight_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'item_dimensions_weight_custom_attribute',
+            'hidden',
             [
                 'name' => 'definition[item_dimensions_weight_custom_attribute]',
                 'value' => $this->formData['item_dimensions_weight_custom_attribute']
@@ -774,7 +846,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = $this->formData['item_dimensions_weight_mode'];
         }
 
-        $fieldSet->addField('item_dimensions_weight_mode', self::SELECT,
+        $fieldSet->addField(
+            'item_dimensions_weight_mode',
+            self::SELECT,
             [
                 'name' => 'definition[item_dimensions_weight_mode]',
                 'label' => $this->__('Weight'),
@@ -789,7 +863,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('item_dimensions_weight_custom_value', 'text',
+        $fieldSet->addField(
+            'item_dimensions_weight_custom_value',
+            'text',
             [
                 'name' => 'definition[item_dimensions_weight_custom_value]',
                 'label' => $this->__('Weight Value'),
@@ -802,7 +878,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('item_dimensions_weight_unit_of_measure_custom_value', 'hidden',
+        $fieldSet->addField(
+            'item_dimensions_weight_unit_of_measure_custom_value',
+            'hidden',
             [
                 'name' => 'definition[item_dimensions_weight_unit_of_measure_custom_value]',
                 'value' => $this->formData['item_dimensions_weight_unit_of_measure_custom_value']
@@ -811,7 +889,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('item_dimensions_weight_unit_of_measure_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'item_dimensions_weight_unit_of_measure_custom_attribute',
+            'hidden',
             [
                 'name' => 'definition[item_dimensions_weight_unit_of_measure_custom_attribute]',
                 'value' => $this->formData['item_dimensions_weight_unit_of_measure_custom_attribute']
@@ -820,7 +900,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('item_dimensions_weight_unit_of_measure_mode', self::SELECT,
+        $fieldSet->addField(
+            'item_dimensions_weight_unit_of_measure_mode',
+            self::SELECT,
             [
                 'name' => 'definition[item_dimensions_weight_unit_of_measure_mode]',
                 'label' => $this->__('Weight Units'),
@@ -850,7 +932,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('package_dimensions_volume_mode', self::SELECT,
+        $fieldSet->addField(
+            'package_dimensions_volume_mode',
+            self::SELECT,
             [
                 'name' => 'definition[package_dimensions_volume_mode]',
                 'label' => $this->__('Volume'),
@@ -895,7 +979,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         ]])->addCustomAttribute('min_value', '0.01');
         $heightBlock->setForm($form);
 
-        $fieldSet->addField('package_dimensions_volume_custom_value',
+        $fieldSet->addField(
+            'package_dimensions_volume_custom_value',
             self::CUSTOM_CONTAINER,
             [
                 'label' => $this->__('Length x Width x Height'),
@@ -948,7 +1033,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $heightBlock->setId('package_dimensions_volume_height_custom_attribute');
         $heightBlock->setForm($form);
 
-        $fieldSet->addField('package_dimensions_volume_custom_attribute',
+        $fieldSet->addField(
+            'package_dimensions_volume_custom_attribute',
             self::CUSTOM_CONTAINER,
             [
                 'label' => $this->__('Length x Width x Height'),
@@ -965,7 +1051,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('package_dimensions_volume_unit_of_measure_custom_value', 'hidden',
+        $fieldSet->addField(
+            'package_dimensions_volume_unit_of_measure_custom_value',
+            'hidden',
             [
                 'name' => 'definition[package_dimensions_volume_unit_of_measure_custom_value]',
                 'value' => $this->formData['package_dimensions_volume_unit_of_measure_custom_value']
@@ -974,7 +1062,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('package_dimensions_volume_unit_of_measure_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'package_dimensions_volume_unit_of_measure_custom_attribute',
+            'hidden',
             [
                 'name' => 'definition[package_dimensions_volume_unit_of_measure_custom_attribute]',
                 'value' => $this->formData['package_dimensions_volume_unit_of_measure_custom_attribute']
@@ -983,7 +1073,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('package_dimensions_volume_unit_of_measure_mode', self::SELECT,
+        $fieldSet->addField(
+            'package_dimensions_volume_unit_of_measure_mode',
+            self::SELECT,
             [
                 'name' => 'definition[package_dimensions_volume_unit_of_measure_mode]',
                 'label' => $this->__('Measure Units'),
@@ -1014,7 +1106,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('package_weight_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'package_weight_custom_attribute',
+            'hidden',
             [
                 'name' => 'definition[package_weight_custom_attribute]',
                 'value' => $this->formData['package_weight_custom_attribute']
@@ -1029,7 +1123,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = $this->formData['package_weight_mode'];
         }
 
-        $fieldSet->addField('package_weight_mode', self::SELECT,
+        $fieldSet->addField(
+            'package_weight_mode',
+            self::SELECT,
             [
                 'name' => 'definition[package_weight_mode]',
                 'label' => $this->__('Package Weight'),
@@ -1044,7 +1140,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('package_weight_custom_value', 'text',
+        $fieldSet->addField(
+            'package_weight_custom_value',
+            'text',
             [
                 'name' => 'definition[package_weight_custom_value]',
                 'label' => $this->__('Package Weight Value'),
@@ -1058,7 +1156,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('package_weight_unit_of_measure_custom_value', 'hidden',
+        $fieldSet->addField(
+            'package_weight_unit_of_measure_custom_value',
+            'hidden',
             [
                 'name' => 'definition[package_weight_unit_of_measure_custom_value]',
                 'value' => $this->formData['package_weight_unit_of_measure_custom_value'],
@@ -1067,7 +1167,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('package_weight_unit_of_measure_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'package_weight_unit_of_measure_custom_attribute',
+            'hidden',
             [
                 'name' => 'definition[package_weight_unit_of_measure_custom_attribute]',
                 'value' => $this->formData['package_weight_unit_of_measure_custom_attribute'],
@@ -1076,7 +1178,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('package_weight_unit_of_measure_mode', self::SELECT,
+        $fieldSet->addField(
+            'package_weight_unit_of_measure_mode',
+            self::SELECT,
             [
                 'name' => 'definition[package_weight_unit_of_measure_mode]',
                 'label' => $this->__('Package Weight Units'),
@@ -1096,7 +1200,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('shipping_weight_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'shipping_weight_custom_attribute',
+            'hidden',
             [
                 'name' => 'definition[shipping_weight_custom_attribute]',
                 'value' => $this->formData['shipping_weight_custom_attribute']
@@ -1111,7 +1217,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = $this->formData['shipping_weight_mode'];
         }
 
-        $fieldSet->addField('shipping_weight_mode', self::SELECT,
+        $fieldSet->addField(
+            'shipping_weight_mode',
+            self::SELECT,
             [
                 'name' => 'definition[shipping_weight_mode]',
                 'label' => $this->__('Shipping Weight'),
@@ -1126,7 +1234,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('shipping_weight_custom_value', 'text',
+        $fieldSet->addField(
+            'shipping_weight_custom_value',
+            'text',
             [
                 'name' => 'definition[shipping_weight_custom_value]',
                 'label' => $this->__('Shipping Weight Value'),
@@ -1140,7 +1250,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('shipping_weight_unit_of_measure_custom_value', 'hidden',
+        $fieldSet->addField(
+            'shipping_weight_unit_of_measure_custom_value',
+            'hidden',
             [
                 'name' => 'definition[shipping_weight_unit_of_measure_custom_value]',
                 'value' => $this->formData['shipping_weight_unit_of_measure_custom_value'],
@@ -1149,7 +1261,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('shipping_weight_unit_of_measure_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'shipping_weight_unit_of_measure_custom_attribute',
+            'hidden',
             [
                 'name' => 'definition[shipping_weight_unit_of_measure_custom_attribute]',
                 'value' => $this->formData['shipping_weight_unit_of_measure_custom_attribute'],
@@ -1158,7 +1272,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('shipping_weight_unit_of_measure_mode', self::SELECT,
+        $fieldSet->addField(
+            'shipping_weight_unit_of_measure_mode',
+            self::SELECT,
             [
                 'name' => 'definition[shipping_weight_unit_of_measure_mode]',
                 'label' => $this->__('Shipping Weight Units'),
@@ -1188,7 +1304,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('target_audience_mode', self::SELECT,
+        $fieldSet->addField(
+            'target_audience_mode',
+            self::SELECT,
             [
                 'name' => 'definition[target_audience_mode]',
                 'label' => $this->__('Target Audience Mode'),
@@ -1210,7 +1328,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('search_terms_mode', self::SELECT,
+        $fieldSet->addField(
+            'search_terms_mode',
+            self::SELECT,
             [
                 'name' => 'definition[search_terms_mode]',
                 'label' => $this->__('Search Terms Mode'),
@@ -1234,7 +1354,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('bullet_points_mode', self::SELECT,
+        $fieldSet->addField(
+            'bullet_points_mode',
+            self::SELECT,
             [
                 'name' => 'definition[bullet_points_mode]',
                 'label' => $this->__('Bullet Points Mode'),
@@ -1261,11 +1383,12 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     public function appendKeywordsFields(
         \Magento\Framework\Data\Form\Element\Fieldset $fieldSet,
-        $fieldCount, $name, $fieldTitle
-    ){
+        $fieldCount,
+        $name,
+        $fieldTitle
+    ) {
         $helper = $this->getHelper('Data');
         for ($i = 0; $i < $fieldCount; $i++) {
-
             $button = $this->getMultiElementButton($name, $i);
 
             $value = '';
@@ -1273,7 +1396,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 $value = $helper->escapeHtml($this->formData[$name][$i]);
             }
 
-            $fieldSet->addField($name.'_'.$i, 'text',
+            $fieldSet->addField(
+                $name.'_'.$i,
+                'text',
                 [
                     'name' => 'definition['.$name.']['.$i.']',
                     'label' => $this->__('%title% Value #%number%', $fieldTitle, $i + 1),
@@ -1289,7 +1414,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             );
         }
 
-        $fieldSet->addField($name.'_actions',
+        $fieldSet->addField(
+            $name.'_actions',
             self::CUSTOM_CONTAINER,
             [
                 'text' => <<<HTML
@@ -1305,7 +1431,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                    {$this->__('Remove')}
                 </a>
 HTML
-,
+            ,
                 'field_extra_attributes' => 'id="'.$name.'_actions_tr" style="display: none;"',
             ]
         );
@@ -1318,7 +1444,7 @@ HTML
         $optionsResult = [];
         $helper = $this->getHelper('Data');
 
-        foreach($this->allAttributesByInputTypes['text_select'] as $attribute) {
+        foreach ($this->allAttributesByInputTypes['text_select'] as $attribute) {
             $optionsResult[] = [
                 'value' => $attribute['code'],
                 'label' => $helper->escapeHtml($attribute['label']),
@@ -1337,7 +1463,7 @@ HTML
         $optionsResult = [];
         $helper = $this->getHelper('Data');
 
-        foreach($this->generalAttributesByInputTypes[$attributeType] as $attribute) {
+        foreach ($this->generalAttributesByInputTypes[$attributeType] as $attribute) {
             $tmpOption = [
                 'value' => $value,
                 'label' => $helper->escapeHtml($attribute['label']),
@@ -1367,7 +1493,7 @@ HTML
             ],
         ];
 
-        foreach($this->getDimensionsUnits() as $unitName) {
+        foreach ($this->getDimensionsUnits() as $unitName) {
             $tmpOption = [
                 'value' => $valueMode,
                 'label' => $this->__($unitName),
@@ -1391,14 +1517,16 @@ HTML
             $optionsResult['attr_opt_group']['value'][] = $forceAddedAttributeOption;
         }
 
-        $optionsResult['attr_opt_group']['value'] = array_merge($optionsResult['attr_opt_group']['value'],
+        $optionsResult['attr_opt_group']['value'] = array_merge(
+            $optionsResult['attr_opt_group']['value'],
             $this->getAttributesByInputTypesOptions(
                 $attributeMode,
                 'text_select',
-                function($attribute) use ($attributeName) {
+                function ($attribute) use ($attributeName) {
                     return $attribute['code'] == $this->formData[$attributeName];
                 }
-            ));
+            )
+        );
 
         return $optionsResult;
     }
@@ -1416,7 +1544,7 @@ HTML
             ],
         ];
 
-        foreach($this->getWeightUnits() as $unitName) {
+        foreach ($this->getWeightUnits() as $unitName) {
             $tmpOption = [
                 'value' => $valueMode,
                 'label' => $this->__($unitName),
@@ -1440,14 +1568,16 @@ HTML
             $optionsResult['attr_opt_group']['value'][] = $forceAddedAttributeOption;
         }
 
-        $optionsResult['attr_opt_group']['value'] = array_merge($optionsResult['attr_opt_group']['value'],
+        $optionsResult['attr_opt_group']['value'] = array_merge(
+            $optionsResult['attr_opt_group']['value'],
             $this->getAttributesByInputTypesOptions(
                 $attributeMode,
                 'text_select',
-                function($attribute) use ($attributeName) {
+                function ($attribute) use ($attributeName) {
                     return $attribute['code'] == $this->formData[$attributeName];
                 }
-            ));
+            )
+        );
 
         return $optionsResult;
     }
@@ -1468,7 +1598,7 @@ HTML
         }
 
         $helper = $this->getHelper('Data');
-        foreach($this->generalAttributesByInputTypes['text_weight'] as $attribute) {
+        foreach ($this->generalAttributesByInputTypes['text_weight'] as $attribute) {
             $tmpOption = [
                 'value' => $attribute['code'],
                 'label' => $helper->escapeHtml($attribute['label'])
@@ -1502,7 +1632,7 @@ HTML
             'value' => $this->getAttributesByInputTypesOptions(
                 $attributeMode,
                 $attributeType,
-                function($attribute) use ($attributeName) {
+                function ($attribute) use ($attributeName) {
                     return $attribute['code'] == $this->formData[$attributeName];
                 }
             ),
@@ -1607,7 +1737,7 @@ HTML
             'value' => $this->getAttributesByInputTypesOptions(
                 DefinitionTemplate::ITEM_PACKAGE_QUANTITY_MODE_CUSTOM_ATTRIBUTE,
                 'text_select',
-                function($attribute) {
+                function ($attribute) {
                     return $attribute['code'] == $this->formData['item_package_quantity_custom_attribute'];
                 }
             ),
@@ -1647,7 +1777,7 @@ HTML
             'value' => $this->getAttributesByInputTypesOptions(
                 DefinitionTemplate::NUMBER_OF_ITEMS_MODE_CUSTOM_ATTRIBUTE,
                 'text_select',
-                function($attribute) {
+                function ($attribute) {
                     return $attribute['code'] == $this->formData['number_of_items_custom_attribute'];
                 }
             ),
@@ -1716,7 +1846,7 @@ HTML
             'value' => $this->getAttributesByInputTypesOptions(
                 DefinitionTemplate::GALLERY_IMAGES_MODE_ATTRIBUTE,
                 'text_images',
-                function($attribute) {
+                function ($attribute) {
                     return $attribute['code'] == $this->formData['gallery_images_attribute'];
                 }
             ),
@@ -1910,7 +2040,7 @@ HTML
             $this->templateModel->getChildObject()->getDefinitionTemplate()->getData()
         );
 
-        foreach(['target_audience', 'bullet_points', 'search_terms'] as $formField) {
+        foreach (['target_audience', 'bullet_points', 'search_terms'] as $formField) {
             if (empty($formData[$formField])) {
                 continue;
             }
@@ -1918,7 +2048,7 @@ HTML
             $formData[$formField] = $this->getHelper('Data')->jsonDecode($formData[$formField]);
         }
 
-        $formData['package_weight_custom_value'] == 0  && $formData['package_weight_custom_value'] = '';
+        $formData['package_weight_custom_value'] == 0 && $formData['package_weight_custom_value'] = '';
         $formData['shipping_weight_custom_value'] == 0 && $formData['shipping_weight_custom_value'] = '';
         $formData['item_dimensions_weight_custom_value'] == 0 && $formData['item_dimensions_weight_custom_value'] = '';
 
@@ -1930,7 +2060,8 @@ HTML
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Template\Description\Definition')
+            $this->getHelper('Data')
+                ->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\Description\Definition::class)
         );
 
         return parent::_beforeToHtml();
@@ -1940,7 +2071,7 @@ HTML
 
     private function getMultiElementButton($type, $index)
     {
-        return $this->createBlock('Magento\Button\MagentoAttribute')->addData([
+        return $this->createBlock('Magento_Button_MagentoAttribute')->addData([
             'label' => $this->__('Insert Attribute'),
             'destination_id' => $type.'_'.$index,
             'magento_attributes' => $this->getClearAttributesByInputTypesOptions(),
@@ -1970,7 +2101,7 @@ HTML
 
         $result = ['value' => $value, 'label' => $attributeLabel];
 
-        if (is_null($value)) {
+        if ($value === null) {
             return $result;
         }
 
@@ -1982,24 +2113,24 @@ HTML
 
     public function getWeightUnits()
     {
-        return array(
+        return [
             'GR',
             'KG',
             'OZ',
             'LB',
             'MG'
-        );
+        ];
     }
 
     public function getDimensionsUnits()
     {
-        return array(
+        return [
             'MM',
             'CM',
             'M',
             'IN',
             'FT'
-        );
+        ];
     }
 
     //########################################

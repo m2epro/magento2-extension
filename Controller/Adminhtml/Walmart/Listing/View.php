@@ -10,19 +10,22 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
+ */
 class View extends Main
 {
     public function execute()
     {
         if ($this->getRequest()->getQuery('ajax')) {
-
             $id = $this->getRequest()->getParam('id');
             $listing = $this->walmartFactory->getCachedObjectLoaded('Listing', $id);
 
             $this->getHelper('Data\GlobalData')->setValue('view_listing', $listing);
 //            Mage::helper('M2ePro/Data_Global')->setValue('marketplace_id', $model->getMarketplaceId());
 
-            $listingView = $this->createBlock('Walmart\Listing\View');
+            $listingView = $this->createBlock('Walmart_Listing_View');
 
             // Set rule model
             // ---------------------------------------
@@ -39,10 +42,10 @@ class View extends Main
                 implode(',', $this->getHelper('Data\Session')->getValue('added_products_ids'))
             );
 
-            return $this->_redirect('*/*/*', array(
+            return $this->_redirect('*/*/*', [
                 '_current'  => true,
-                'do_list'   => NULL
-            ));
+                'do_list'   => null
+            ]);
         }
 
         $id = $this->getRequest()->getParam('id');
@@ -57,11 +60,11 @@ class View extends Main
         $listingProductsIds = $listing->getSetting('additional_data', 'adding_listing_products_ids');
 
         if (!empty($listingProductsIds)) {
-            return $this->_redirect('*/walmart_listing_product_add/index', array(
+            return $this->_redirect('*/walmart_listing_product_add/index', [
                 'id' => $id,
                 'not_completed' => 1,
                 'step' => 3
-            ));
+            ]);
         }
 
         // Check listing lock object
@@ -75,13 +78,13 @@ class View extends Main
 
         $this->getHelper('Data\GlobalData')->setValue('view_listing', $listing);
 
-        $this->setPageHelpLink('x/AgItAQ');
+        $this->setPageHelpLink('x/OwBhAQ');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Listing "%listing_title%"', $listing->getTitle())
         );
 
-        $this->addContent($this->createBlock('Walmart\Listing\View'));
+        $this->addContent($this->createBlock('Walmart_Listing_View'));
 
         // Set rule model
         // ---------------------------------------
@@ -111,7 +114,7 @@ class View extends Main
         // ---------------------------------------
 
         /** @var $ruleModel \Ess\M2ePro\Model\Magento\Product\Rule */
-        $ruleModel = $this->activeRecordFactory->getObject('Walmart\Magento\Product\Rule')->setData(
+        $ruleModel = $this->activeRecordFactory->getObject('Walmart_Magento_Product_Rule')->setData(
             [
                 'prefix' => $prefix,
                 'store_id' => $storeId,
@@ -122,9 +125,10 @@ class View extends Main
         $ruleParam = $this->getRequest()->getPost('rule');
         if (!empty($ruleParam)) {
             $this->getHelper('Data\Session')->setValue(
-                $prefix, $ruleModel->getSerializedFromPost($this->getRequest()->getPostValue())
+                $prefix,
+                $ruleModel->getSerializedFromPost($this->getRequest()->getPostValue())
             );
-        } elseif (!is_null($ruleParam)) {
+        } elseif ($ruleParam !== null) {
             $this->getHelper('Data\Session')->setValue($prefix, []);
         }
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Log\Listing;
 
+/**
+ * Class TypeSwitcher
+ * @package Ess\M2ePro\Block\Adminhtml\Log\Listing
+ */
 class TypeSwitcher extends \Ess\M2ePro\Block\Adminhtml\Listing\TypeSwitcher
 {
     //########################################
@@ -17,13 +21,13 @@ class TypeSwitcher extends \Ess\M2ePro\Block\Adminhtml\Listing\TypeSwitcher
         $typeM2ePro = self::LISTING_TYPE_M2E_PRO;
         $typeM2eProUrl = $this->getUrl(
             "*/{$this->getData('component_mode')}_log_listing_{$typeM2ePro}/*",
-            array('_current' => true)
+            ['_current' => true]
         );
 
         $typeOther = self::LISTING_TYPE_LISTING_OTHER;
         $typeOtherUrl = $this->getUrl(
             "*/{$this->getData('component_mode')}_log_listing_{$typeOther}/*",
-            array('_current' => true)
+            ['_current' => true]
         );
 
         return <<<JS

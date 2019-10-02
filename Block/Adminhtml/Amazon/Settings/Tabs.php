@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Settings;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Settings
+ */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 {
     const TAB_ID_MAIN = 'main';
@@ -21,7 +25,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
         $tab = [
             'label' => __('Main'),
             'title' => __('Main'),
-            'content' => $this->createBlock('Amazon\Settings\Tabs\Main')->toHtml()
+            'content' => $this->createBlock('Amazon_Settings_Tabs_Main')->toHtml()
         ];
 
         $this->addTab(self::TAB_ID_MAIN, $tab);
@@ -30,11 +34,11 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 
         // ---------------------------------------
 
-        $tab = array(
+        $tab = [
             'label' => __('Synchronization'),
             'title' => __('Synchronization'),
-            'content' => $this->createBlock('Amazon\Settings\Tabs\Synchronization')->toHtml()
-        );
+            'content' => $this->createBlock('Amazon_Settings_Tabs_Synchronization')->toHtml()
+        ];
 
         $this->addTab(self::TAB_ID_SYNCHRONIZATION, $tab);
 

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Helper\View;
 
 use Ess\M2ePro\Helper\Factory;
 
+/**
+ * Class ControlPanel
+ * @package Ess\M2ePro\Helper\View
+ */
 class ControlPanel extends \Ess\M2ePro\Helper\AbstractHelper
 {
     // M2ePro_TRANSLATIONS
@@ -61,37 +65,37 @@ class ControlPanel extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getPageOwerviewTabUrl(array $params = [])
     {
-        return $this->getPageUrl(array_merge($params,['tab' => self::TAB_OVERVIEW]));
+        return $this->getPageUrl(array_merge($params, ['tab' => self::TAB_OVERVIEW]));
     }
 
     public function getPageInspectionTabUrl(array $params = [])
     {
-        return $this->getPageUrl(array_merge($params,['tab' => self::TAB_INSPECTION]));
+        return $this->getPageUrl(array_merge($params, ['tab' => self::TAB_INSPECTION]));
     }
 
     public function getPageDatabaseTabUrl(array $params = [])
     {
-        return $this->getPageUrl(array_merge($params,['tab' => self::TAB_DATABASE]));
+        return $this->getPageUrl(array_merge($params, ['tab' => self::TAB_DATABASE]));
     }
 
     public function getPageVersionsHistoryTabUrl(array $params = [])
     {
-        return $this->getPageUrl(array_merge($params,['tab' => self::TAB_VERSIONS_HISTORY]));
+        return $this->getPageUrl(array_merge($params, ['tab' => self::TAB_VERSIONS_HISTORY]));
     }
 
     public function getPageToolsTabUrl(array $params = [])
     {
-        return $this->getPageUrl(array_merge($params,['tab' => self::TAB_TOOLS_GENERAL]));
+        return $this->getPageUrl(array_merge($params, ['tab' => self::TAB_TOOLS_GENERAL]));
     }
 
     public function getPageModuleTabUrl(array $params = [])
     {
-        return $this->getPageUrl(array_merge($params,['tab' => self::TAB_TOOLS_MODULE]));
+        return $this->getPageUrl(array_merge($params, ['tab' => self::TAB_TOOLS_MODULE]));
     }
 
     public function getPageDebugTabUrl(array $params = [])
     {
-        return $this->getPageUrl(array_merge($params,['tab' => self::TAB_DEBUG]));
+        return $this->getPageUrl(array_merge($params, ['tab' => self::TAB_DEBUG]));
     }
 
     //########################################

@@ -11,12 +11,16 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Account;
 
+/**
+ * Class General
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs
+ */
 class General extends AbstractForm
 {
     protected function _prepareForm()
     {
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
-        $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         $ebayUserId = null;
         if (empty($formData['user_id']) && isset($formData['info']) &&
@@ -26,22 +30,22 @@ class General extends AbstractForm
         }
 
         $temp = $this->getHelper('Data\Session')->getValue('get_token_account_title', true);
-        !is_null($temp) && $formData['title'] = $temp;
+        $temp !== null && $formData['title'] = $temp;
 
         $temp = $this->getHelper('Data\Session')->getValue('get_token_account_mode', true);
-        !is_null($temp) && $formData['mode'] = $temp;
+        $temp !== null && $formData['mode'] = $temp;
 
         $temp = $this->getHelper('Data\Session')->getValue('get_token_account_token_session', true);
-        !is_null($temp) && $formData['token_session'] = $temp;
+        $temp !== null && $formData['token_session'] = $temp;
 
-        $defaults = array(
+        $defaults = [
             'title' => '',
             'user_id' => '',
             'mode' => Account::MODE_PRODUCTION,
             'token_session' => '',
             'token_expired_date' => '',
             'other_listings_synchronization' => Account::OTHER_LISTINGS_SYNCHRONIZATION_YES
-        );
+        ];
         $formData = array_merge($defaults, $formData);
 
         $isEdit = !!$this->getRequest()->getParam('id');
@@ -122,7 +126,8 @@ HTML
                         'label' => $this->__('eBay User ID'),
                         'value' => $formData['user_id'],
                         'href' => $this->getHelper('Component\Ebay')->getMemberUrl(
-                            $formData['user_id'], $formData['mode']
+                            $formData['user_id'],
+                            $formData['mode']
                         ),
                         'class' => 'control-value external-link',
                         'target' => '_blank',
@@ -155,7 +160,8 @@ HTML
                 'disabled' => $formData['token_session'] != '',
                 'tooltip' => !$isEdit ? $this->__(
                     'Choose \'Production (Live)\' to use an eBay Account to list for real on Marketplaces.
-                    <br/>Choose \'Sandbox (Test)\' to use an eBay Sandbox Account for testing purposes.')
+                    <br/>Choose \'Sandbox (Test)\' to use an eBay Sandbox Account for testing purposes.'
+                )
                         : $this->__('<b>Production (Live):</b> an eBay Account Listing for real on Marketplaces.
                                     <br/><b>Sandbox (Test):</b> an eBay Sandbox Account for testing purposes.')
             ]
@@ -246,7 +252,7 @@ HTML
         $id = $this->getRequest()->getParam('id');
         $this->js->add("M2ePro.formData.id = '$id';");
 
-        $this->js->add( <<<JS
+        $this->js->add(<<<JS
     require([
         'M2ePro/Ebay/Account',
     ], function(){

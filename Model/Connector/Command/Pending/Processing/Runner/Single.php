@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner;
 
+/**
+ * Class Single
+ * @package Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner
+ */
 class Single extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner
 {
     // ##################################
@@ -46,7 +50,7 @@ class Single extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runn
 
         $params = $this->getParams();
 
-        $requestPendingSingleCollection = $this->activeRecordFactory->getObject('Request\Pending\Single')
+        $requestPendingSingleCollection = $this->activeRecordFactory->getObject('Request_Pending_Single')
             ->getCollection();
         $requestPendingSingleCollection->addFieldToFilter('component', $params['component']);
         $requestPendingSingleCollection->addFieldToFilter('server_hash', $params['server_hash']);
@@ -55,22 +59,22 @@ class Single extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runn
         $requestPendingSingle = $requestPendingSingleCollection->getFirstItem();
 
         if (!$requestPendingSingle->getId()) {
-            $requestPendingSingle->setData(array(
+            $requestPendingSingle->setData([
                 'component'       => $params['component'],
                 'server_hash'     => $params['server_hash'],
                 'expiration_date' => $this->getHelper('Data')->getDate(
                     $this->getHelper('Data')->getCurrentGmtDate(true)+static::PENDING_REQUEST_MAX_LIFE_TIME
                 )
-            ));
+            ]);
 
             $requestPendingSingle->save();
         }
 
-        $requesterSingle = $this->activeRecordFactory->getObject('Connector\Command\Pending\Requester\Single');
-        $requesterSingle->setData(array(
+        $requesterSingle = $this->activeRecordFactory->getObject('Connector_Command_Pending_Requester_Single');
+        $requesterSingle->setData([
             'processing_id'             => $this->getProcessingObject()->getId(),
             'request_pending_single_id' => $requestPendingSingle->getId(),
-        ));
+        ]);
 
         $requesterSingle->save();
     }

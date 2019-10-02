@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Translation\Connector;
 
+/**
+ * Class Protocol
+ * @package Ess\M2ePro\Model\Translation\Connector
+ */
 class Protocol extends \Ess\M2ePro\Model\Connector\Protocol
 {
     // ########################################

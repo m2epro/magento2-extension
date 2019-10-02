@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Collection;
 
+/**
+ * Class Wrapper
+ * @package Ess\M2ePro\Model\ResourceModel\Collection
+ */
 class Wrapper extends \Magento\Framework\Data\Collection\AbstractDb
 {
     //########################################
@@ -23,7 +27,7 @@ class Wrapper extends \Magento\Framework\Data\Collection\AbstractDb
 
     public function getResource()
     {
-        return NULL;
+        return null;
     }
 
     public function setCustomSize($size)

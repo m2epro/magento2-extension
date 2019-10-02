@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Repricing\Synchronization;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Amazon\Repricing\Synchronization
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
 {
     const MODE_GENERAL      = 'general';
@@ -15,7 +19,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Repricing\Abstract
 
     //########################################
 
-    abstract public function run($skus = NULL);
+    abstract public function run($skus = null);
 
     //########################################
 
@@ -39,12 +43,11 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Repricing\Abstract
         }
 
         try {
-            $result = $this->getHelper('Component\Amazon\Repricing')->sendRequest(
+            $result = $this->getHelper('Component_Amazon_Repricing')->sendRequest(
                 \Ess\M2ePro\Helper\Component\Amazon\Repricing::COMMAND_SYNCHRONIZE,
                 $requestData
             );
         } catch (\Exception $exception) {
-
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($exception->getMessage()),
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,

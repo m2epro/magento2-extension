@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template
+ */
 class Grid extends Template
 {
     //########################################
@@ -17,8 +21,8 @@ class Grid extends Template
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Grid $switcherBlock */
-        $grid = $this->getLayout()->createBlock(
-            'Ess\\M2ePro\\Block\\Adminhtml\\Amazon\\Template\\Grid'
+        $grid = $this->createBlock(
+            'Amazon_Template_Grid'
         );
 
         $this->setAjaxContent($grid->toHtml());

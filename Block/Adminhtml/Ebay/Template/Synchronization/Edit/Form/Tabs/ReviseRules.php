@@ -10,18 +10,23 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tab
 
 use Ess\M2ePro\Model\Ebay\Template\Synchronization;
 
+/**
+ * Class ReviseRules
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs
+ */
 class ReviseRules extends AbstractTab
 {
     protected function _prepareForm()
     {
-        $default = $this->activeRecordFactory->getObject('Ebay\Template\Synchronization')->getReviseDefaultSettings();
+        $default = $this->activeRecordFactory->getObject('Ebay_Template_Synchronization')->getReviseDefaultSettings();
         $formData = $this->getFormData();
 
         $formData = array_merge($default, $formData);
 
         $form = $this->_formFactory->create();
 
-        $form->addField('ebay_template_synchronization_form_data_revise',
+        $form->addField(
+            'ebay_template_synchronization_form_data_revise',
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
@@ -39,14 +44,16 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_template_synchronization_form_data_revise_products',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_template_synchronization_form_data_revise_products',
             [
                 'legend' => $this->__('Partial Revise'),
                 'collapsable' => true
             ]
         );
 
-        $fieldset->addField('revise_update_qty',
+        $fieldset->addField(
+            'revise_update_qty',
             self::SELECT,
             [
                 'name' => 'synchronization[revise_update_qty]',
@@ -63,7 +70,8 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('revise_update_qty_max_applied_value_mode',
+        $fieldset->addField(
+            'revise_update_qty_max_applied_value_mode',
             self::SELECT,
             [
                 'container_id' => 'revise_update_qty_max_applied_value_mode_tr',
@@ -80,7 +88,8 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('revise_update_qty_max_applied_value',
+        $fieldset->addField(
+            'revise_update_qty_max_applied_value',
             'text',
             [
                 'container_id' => 'revise_update_qty_max_applied_value_tr',
@@ -96,12 +105,14 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('revise_update_qty_max_applied_value_line_tr',
+        $fieldset->addField(
+            'revise_update_qty_max_applied_value_line_tr',
             self::SEPARATOR,
             []
         );
 
-        $fieldset->addField('revise_update_price',
+        $fieldset->addField(
+            'revise_update_price',
             self::SELECT,
             [
                 'name' => 'synchronization[revise_update_price]',
@@ -118,7 +129,8 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('revise_update_price_max_allowed_deviation_mode',
+        $fieldset->addField(
+            'revise_update_price_max_allowed_deviation_mode',
             self::SELECT,
             [
                 'container_id' => 'revise_update_price_max_allowed_deviation_mode_tr',
@@ -143,7 +155,8 @@ class ReviseRules extends AbstractTab
             $priceDeviationValue >= 5 && $percentageStep = 1;
         }
 
-        $fieldset->addField('revise_update_price_max_allowed_deviation',
+        $fieldset->addField(
+            'revise_update_price_max_allowed_deviation',
             self::SELECT,
             [
                 'container_id' => 'revise_update_price_max_allowed_deviation_tr',
@@ -169,12 +182,14 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('revise_update_price_line',
+        $fieldset->addField(
+            'revise_update_price_line',
             self::SEPARATOR,
             []
         );
 
-        $fieldset->addField('revise_update_title',
+        $fieldset->addField(
+            'revise_update_title',
             self::SELECT,
             [
                 'name' => 'synchronization[revise_update_title]',
@@ -191,7 +206,8 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('revise_update_sub_title',
+        $fieldset->addField(
+            'revise_update_sub_title',
             self::SELECT,
             [
                 'name' => 'synchronization[revise_update_sub_title]',
@@ -208,7 +224,8 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('revise_update_description',
+        $fieldset->addField(
+            'revise_update_description',
             self::SELECT,
             [
                 'name' => 'synchronization[revise_update_description]',
@@ -225,7 +242,8 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('revise_update_images',
+        $fieldset->addField(
+            'revise_update_images',
             self::SELECT,
             [
                 'name' => 'synchronization[revise_update_images]',
@@ -242,7 +260,8 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('revise_update_specifics',
+        $fieldset->addField(
+            'revise_update_specifics',
             self::SELECT,
             [
                 'name' => 'synchronization[revise_update_specifics]',
@@ -259,7 +278,8 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('revise_update_shipping_services',
+        $fieldset->addField(
+            'revise_update_shipping_services',
             self::SELECT,
             [
                 'name' => 'synchronization[revise_update_shipping_services]',
@@ -276,14 +296,16 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_template_synchronization_form_data_revise_templates',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_template_synchronization_form_data_revise_templates',
             [
                 'legend' => $this->__('Full Revise'),
                 'collapsable' => true
             ]
         );
 
-        $fieldset->addField('revise_change_selling_format_template',
+        $fieldset->addField(
+            'revise_change_selling_format_template',
             self::SELECT,
             [
                 'name' => 'synchronization[revise_change_selling_format_template]',
@@ -302,7 +324,8 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('revise_change_description_template',
+        $fieldset->addField(
+            'revise_change_description_template',
             self::SELECT,
             [
                 'name' => 'synchronization[revise_change_description_template]',
@@ -319,7 +342,8 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('revise_change_category_template',
+        $fieldset->addField(
+            'revise_change_category_template',
             self::SELECT,
             [
                 'name' => 'synchronization[revise_change_category_template]',
@@ -336,7 +360,8 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('revise_change_payment_template',
+        $fieldset->addField(
+            'revise_change_payment_template',
             self::SELECT,
             [
                 'name' => 'synchronization[revise_change_payment_template]',
@@ -353,7 +378,8 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('revise_change_shipping_template',
+        $fieldset->addField(
+            'revise_change_shipping_template',
             self::SELECT,
             [
                 'name' => 'synchronization[revise_change_shipping_template]',
@@ -370,7 +396,8 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('revise_change_return_policy_template',
+        $fieldset->addField(
+            'revise_change_return_policy_template',
             self::SELECT,
             [
                 'name' => 'synchronization[revise_change_return_policy_template]',
@@ -387,7 +414,8 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $form->addField('revise_qty_max_applied_value_confirmation_popup_template',
+        $form->addField(
+            'revise_qty_max_applied_value_confirmation_popup_template',
             self::CUSTOM_CONTAINER,
             [
                 'text' => $this->__('
@@ -414,7 +442,8 @@ class ReviseRules extends AbstractTab
             ]
         );
 
-        $form->addField('revise_price_max_max_allowed_deviation_confirmation_popup_template',
+        $form->addField(
+            'revise_price_max_max_allowed_deviation_confirmation_popup_template',
             self::CUSTOM_CONTAINER,
             [
                 'text' => $this->__('

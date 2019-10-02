@@ -10,9 +10,13 @@ namespace Ess\M2ePro\Model\Wizard;
 
 use Ess\M2ePro\Model\Wizard;
 
+/**
+ * Class InstallationEbay
+ * @package Ess\M2ePro\Model\Wizard
+ */
 class InstallationEbay extends Wizard
 {
-    protected $steps = array(
+    protected $steps = [
         'registration',
         'account',
 
@@ -29,7 +33,7 @@ class InstallationEbay extends Wizard
         'categoryStepOne',
         'categoryStepTwo',
         'categoryStepThree',
-    );
+    ];
 
     //########################################
 

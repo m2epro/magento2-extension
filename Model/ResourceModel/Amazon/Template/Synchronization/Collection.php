@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Template\Synchronization;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Amazon\Template\Synchronization
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Child\AbstractModel
 {
     //########################################

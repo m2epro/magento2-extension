@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs;
 
+/**
+ * Class MagentoInventory
+ * @package Ess\M2ePro\Block\Adminhtml\Settings\Tabs
+ */
 class MagentoInventory extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
     //########################################
@@ -22,23 +26,20 @@ class MagentoInventory extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstrac
         ]);
 
         $form->addField(
-            'settings_interface_help',
+            'magento_inventory_help',
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
                     <<<HTML
-                    <p>In this section, you can provide the global settings for
-                    Inventory and Product Price management.</p><br>
-                    <p>More detailed information about ability to work with this Page you can find
-                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>
+                    <p>In this section, you can provide the global settings for Product Quantity and Price management.
+                    Click <strong>Save</strong> after the changes are made.</p>
 HTML
-                    ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/ZQBhAQ')
                 )
             ]
         );
 
-        $fieldset = $form->addFieldset('configuration_settings_magento_inventory_quantity',
+        $fieldset = $form->addFieldset(
+            'configuration_settings_magento_inventory_quantity',
             [
                 'legend'      => $this->__('Quantity'),
                 'collapsable' => false,
@@ -48,7 +49,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('force_qty_mode',
+        $fieldset->addField(
+            'force_qty_mode',
             self::SELECT,
             [
                 'name' => 'force_qty_mode',
@@ -58,7 +60,8 @@ HTML
                     1 => $this->__('Allow')
                 ],
                 'value' => (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/product/force_qty/','mode'
+                    '/product/force_qty/',
+                    'mode'
                 ),
                 'tooltip' => $this->__(
                     'Choose whether M2E Pro is allowed to List Products with unlimited stock or that are
@@ -68,13 +71,15 @@ HTML
             ]
         );
 
-        $fieldset->addField('force_qty_value',
+        $fieldset->addField(
+            'force_qty_value',
             'text',
             [
                 'name' => 'force_qty_value',
                 'label' => $this->__('Quantity To Be Listed'),
                 'value' => (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/product/force_qty/','value'
+                    '/product/force_qty/',
+                    'value'
                 ),
                 'tooltip' => $this->__(
                     'Set a number to List, e.g. if you have Manage Stock "No" in Magento Product and set this Value
@@ -86,7 +91,8 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('configuration_settings_magento_inventory_price',
+        $fieldset = $form->addFieldset(
+            'configuration_settings_magento_inventory_price',
             [
                 'legend'      => $this->__('Price'),
                 'collapsable' => false,
@@ -96,7 +102,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('price_type_converting_mode',
+        $fieldset->addField(
+            'price_type_converting_mode',
             self::SELECT,
             [
                 'name' => 'price_type_converting_mode',
@@ -106,7 +113,8 @@ HTML
                     1 => $this->__('Yes')
                 ],
                 'value' => (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/magento/attribute/','price_type_converting'
+                    '/magento/attribute/',
+                    'price_type_converting'
                 ),
                 'tooltip' => $this->__(
                     '<p>Choose whether Magento Price Attribute values should be converted automatically.

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
+/**
+ * Class BeforeGetToken
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account
+ */
 class BeforeGetToken extends Account
 {
     public function execute()
@@ -26,19 +30,23 @@ class BeforeGetToken extends Account
         $mode = $accountMode == \Ess\M2ePro\Model\Ebay\Account::MODE_PRODUCTION ? 'production' : 'sandbox';
 
         try {
+            $backUrl = $this->getUrl('*/*/afterGetToken', ['_current' => true]);
 
-            $backUrl = $this->getUrl('*/*/afterGetToken', array('_current' => true));
-
-            $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector('account','get','authUrl',
-                array('back_url' => $backUrl, 'mode' => $mode),
-                NULL,NULL,NULL,$mode);
+            $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+            $connectorObj = $dispatcherObject->getVirtualConnector(
+                'account',
+                'get',
+                'authUrl',
+                ['back_url' => $backUrl, 'mode' => $mode],
+                null,
+                null,
+                null,
+                $mode
+            );
 
             $dispatcherObject->process($connectorObj);
             $response = $connectorObj->getResponseData();
-
         } catch (\Exception $exception) {
-
             $this->getHelper('Module\Exception')->process($exception);
             // M2ePro_TRANSLATIONS
             // The eBay token obtaining is currently unavailable.<br/>Reason: %error_message%

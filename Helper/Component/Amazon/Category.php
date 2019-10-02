@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Helper\Component\Amazon
+ */
 class Category extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const RECENT_MAX_COUNT = 20;
@@ -22,8 +26,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($helperFactory, $context);
@@ -31,25 +34,24 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getRecent($marketplaceId, array $excludedCategory = array())
+    public function getRecent($marketplaceId, array $excludedCategory = [])
     {
         /** @var $registryModel \Ess\M2ePro\Model\Registry */
         $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', $this->getConfigGroup(), 'key', false);
 
-        if (is_null($registryModel)) {
-            return array();
+        if ($registryModel === null) {
+            return [];
         }
 
         $allRecentCategories = $registryModel->getValueFromJson();
 
         if (!isset($allRecentCategories[$marketplaceId])) {
-            return array();
+            return [];
         }
 
         $recentCategories = $allRecentCategories[$marketplaceId];
 
         foreach ($recentCategories as $index => $recentCategoryValue) {
-
             $isRecentCategoryExists = isset($recentCategoryValue['browsenode_id'], $recentCategoryValue['path']);
 
             $isCategoryEqualExcludedCategory = !empty($excludedCategory) &&
@@ -74,17 +76,16 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         /** @var $registryModel \Ess\M2ePro\Model\Registry */
         $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', $key, 'key', false);
 
-        if (is_null($registryModel)) {
+        if ($registryModel === null) {
             $registryModel = $this->activeRecordFactory->getObject('Registry');
         }
 
         $allRecentCategories = $registryModel->getValueFromJson();
 
-        !isset($allRecentCategories[$marketplaceId]) && $allRecentCategories[$marketplaceId] = array();
+        !isset($allRecentCategories[$marketplaceId]) && $allRecentCategories[$marketplaceId] = [];
 
         $recentCategories = $allRecentCategories[$marketplaceId];
         foreach ($recentCategories as $recentCategoryValue) {
-
             if (!isset($recentCategoryValue['browsenode_id'], $recentCategoryValue['path'])) {
                 continue;
             }
@@ -99,18 +100,18 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
             array_shift($recentCategories);
         }
 
-        $categoryInfo = array(
+        $categoryInfo = [
             'browsenode_id' => $browseNodeId,
             'path'          => $categoryPath
-        );
+        ];
 
         $recentCategories[] = $categoryInfo;
         $allRecentCategories[$marketplaceId] = $recentCategories;
 
-        $registryModel->addData(array(
+        $registryModel->addData([
             'key'   => $key,
             'value' => $this->getHelper('Data')->jsonEncode($allRecentCategories)
-        ))->save();
+        ])->save();
     }
 
     //########################################
@@ -128,7 +129,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
             return;
         }
 
-        $nodeIdsForCheck = array();
+        $nodeIdsForCheck = [];
         foreach ($recentCategories as $categoryData) {
             $nodeIdsForCheck[] = $categoryData['browsenode_id'];
         }
@@ -136,14 +137,14 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         $select = $this->resourceConnection->getConnection()
             ->select()
             ->from(
-                $this->getHelper('Module\Database\Structure')
+                $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_amazon_dictionary_category')
             )
             ->where('marketplace_id = ?', $marketplaceId)
             ->where('browsenode_id IN (?)', array_unique($nodeIdsForCheck));
 
         $queryStmt = $select->query();
-        $tempCategories = array();
+        $tempCategories = [];
 
         while ($row = $queryStmt->fetch()) {
             $path = $row['path'] ? $row['path'] .'>'. $row['title'] : $row['title'];
@@ -152,7 +153,6 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         foreach ($recentCategories as $categoryKey => &$categoryData) {
-
             $categoryPath = str_replace(' > ', '>', $categoryData['path']);
             $key = $categoryData['browsenode_id'] .'##'. $categoryPath;
 
@@ -168,7 +168,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         /** @var $registryModel \Ess\M2ePro\Model\Registry */
         $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', $this->getConfigGroup(), 'key', false);
 
-        if (is_null($registryModel)) {
+        if ($registryModel === null) {
             $registryModel = $this->activeRecordFactory->getObject('Registry');
         }
 
@@ -178,16 +178,15 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         foreach ($currentRecentCategories as $index => $recentCategory) {
             if ($category['browsenode_id'] == $recentCategory['browsenode_id'] &&
                 $category['path']          == $recentCategory['path']) {
-
                 unset($allRecentCategories[$marketplaceId][$index]);
                 break;
             }
         }
 
-        $registryModel->addData(array(
+        $registryModel->addData([
             'key' => $this->getConfigGroup(),
             'value' => $this->getHelper('Data')->jsonEncode($allRecentCategories)
-        ))->save();
+        ])->save();
     }
 
     //########################################

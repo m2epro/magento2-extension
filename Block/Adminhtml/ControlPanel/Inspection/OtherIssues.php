@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Context\Template;
 
+/**
+ * Class OtherIssues
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection
+ */
 class OtherIssues extends AbstractInspection
 {
     private $resourceConnection;
@@ -69,15 +73,15 @@ class OtherIssues extends AbstractInspection
     {
         $table = $this->activeRecordFactory->getObject('Log\System')->getResource()->getMainTable();
 
-        if (!$this->getHelper('Module\Database\Structure')->isTableExists($table)) {
+        if (!$this->getHelper('Module_Database_Structure')->isTableExists($table)) {
             return false;
         }
 
         $totalCount = $this->resourceConnection->getConnection()
             ->select()
             ->from(
-                array('log'   => $table),
-                array('count' => new \Zend_Db_Expr('COUNT(*)'))
+                ['log'   => $table],
+                ['count' => new \Zend_Db_Expr('COUNT(*)')]
             )
             ->query()->fetchColumn();
 

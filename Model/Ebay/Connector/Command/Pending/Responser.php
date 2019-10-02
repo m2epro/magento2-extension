@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Command\Pending;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Ebay\Connector\Command\Pending
+ */
 abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {
-    private $cachedParamsObjects = array();
+    private $cachedParamsObjects = [];
 
     protected $ebayFactory;
 
@@ -21,9 +25,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        array $params = array()
-    )
-    {
+        array $params = []
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct($response, $helperFactory, $modelFactory, $params);
     }
@@ -37,10 +40,10 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         }
 
         if (!isset($this->params[$idKey])) {
-            return NULL;
+            return null;
         }
 
-        $this->cachedParamsObjects[$idKey] = $this->ebayFactory->getObjectLoaded($model,$this->params[$idKey]);
+        $this->cachedParamsObjects[$idKey] = $this->ebayFactory->getObjectLoaded($model, $this->params[$idKey]);
 
         return $this->cachedParamsObjects[$idKey];
     }

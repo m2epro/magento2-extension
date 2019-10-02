@@ -8,6 +8,13 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task;
 
+use Magento\InventoryApi\Api\GetSourcesAssignedToStockOrderedByPriorityInterface;
+use Magento\InventorySalesApi\Model\GetAssignedSalesChannelsForStockInterface;
+
+/**
+ * Class Statistic
+ * @package Ess\M2ePro\Model\Servicing\Task
+ */
 class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 {
     const RUN_INTERVAL = 604800; // 1 week
@@ -34,6 +41,8 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     protected $synchronizationConfig;
 
+    protected $objectManager;
+
     //########################################
 
     public function __construct(
@@ -55,9 +64,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
-    )
-    {
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Magento\Framework\ObjectManagerInterface $objectManager
+    ) {
         $this->transactionCollectionFactory = $transactionCollectionFactory;
         $this->creditmemoCollectionFactory = $creditmemoCollectionFactory;
         $this->shipmentCollectionFactory = $shipmentCollectionFactory;
@@ -69,6 +78,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $this->moduleList = $moduleList;
         $this->moduleManager = $moduleManager;
         $this->synchronizationConfig = $synchronizationConfig;
+        $this->objectManager = $objectManager;
         parent::__construct(
             $config,
             $cacheConfig,
@@ -103,11 +113,13 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $lastRun = $cacheConfig->getGroupValue('/servicing/statistic/', 'last_run');
 
         if ($this->getInitiator() === \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER ||
-            is_null($lastRun) ||
+            $lastRun === null ||
             $this->getHelper('Data')->getCurrentGmtDate(true) > strtotime($lastRun) + self::RUN_INTERVAL) {
-
-            $cacheConfig->setGroupValue('/servicing/statistic/', 'last_run',
-                                        $this->getHelper('Data')->getCurrentGmtDate());
+            $cacheConfig->setGroupValue(
+                '/servicing/statistic/',
+                'last_run',
+                $this->getHelper('Data')->getCurrentGmtDate()
+            );
 
             return true;
         }
@@ -122,23 +134,26 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
      */
     public function getRequestData()
     {
-        return array(
-            'statistics' => array(
+        return [
+            'statistics' => [
                 'server'    => $this->getServerRequestPart(),
                 'magento'   => $this->getMagentoRequestPart(),
                 'extension' => $this->getExtensionRequestPart(),
-            ),
-        );
+            ],
+        ];
     }
 
-    public function processResponseData(array $data) {}
+    public function processResponseData(array $data)
+    {
+        return null;
+    }
 
     //########################################
 
     private function fillUpDataByMethod(array &$data, $method)
     {
         try {
-            if (is_callable(array($this, $method))) {
+            if (is_callable([$this, $method])) {
                 $this->$method($data);
             }
         } catch (\Exception $e) {
@@ -150,7 +165,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     private function getServerRequestPart()
     {
-        $data = array();
+        $data = [];
 
         $this->fillUpDataByMethod($data, 'appendServerSystemInfo');
         $this->fillUpDataByMethod($data, 'appendServerPhpInfo');
@@ -192,12 +207,13 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     private function getMagentoRequestPart()
     {
-        $data = array();
+        $data = [];
 
         $this->fillUpDataByMethod($data, 'appendMagentoSystemInfo');
 
         $this->fillUpDataByMethod($data, 'appendMagentoModulesInfo');
         $this->fillUpDataByMethod($data, 'appendMagentoStoresInfo');
+        $this->fillUpDataByMethod($data, 'appendMagentoStocksInfo');
 
         $this->fillUpDataByMethod($data, 'appendMagentoAttributesInfo');
         $this->fillUpDataByMethod($data, 'appendMagentoProductsInfo');
@@ -222,12 +238,11 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     private function appendMagentoModulesInfo(&$data)
     {
         foreach ($this->moduleList->getAll() as $module => $moduleData) {
-
-            $data['modules'][$module] = array(
+            $data['modules'][$module] = [
                 'name'    => $module,
                 'version' => isset($moduleData['setup_version']) ? $moduleData['setup_version'] : null,
                 'status'  => (int) $this->moduleManager->isEnabled($module)
-            );
+            ];
         }
     }
 
@@ -238,6 +253,50 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
                 foreach ($group->getStores() as $store) {
                     $data['stores'][$website->getName()][$group->getName()][] = $store->getName();
                 }
+            }
+        }
+    }
+
+    private function appendMagentoStocksInfo(&$data)
+    {
+        if (!$this->getHelper('Magento')->isMSISupportingVersion()) {
+            return;
+        }
+
+        $stocksData = $this->resource
+                           ->getConnection()
+                           ->select()
+                           ->from(
+                               $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('inventory_stock')
+                           )
+                           ->query()
+                           ->fetchAll();
+
+        /** @var GetSourcesAssignedToStockOrderedByPriorityInterface $getSources */
+        /** @var GetAssignedSalesChannelsForStockInterface $getAssignedChannels */
+        $getSources = $this->objectManager->get(GetSourcesAssignedToStockOrderedByPriorityInterface::class);
+        $getAssignedChannels = $this->objectManager->get(GetAssignedSalesChannelsForStockInterface::class);
+
+        foreach ($stocksData as $stockData) {
+            try {
+                $sources = $getSources->execute($stockData['stock_id']);
+            } catch (\Exception $exception) {
+                $sources = [];
+            }
+
+            foreach ($sources as $source) {
+                $data['stocks'][$stockData['name']]['sources'][] = [
+                    'source_name' => $source->getName(),
+                    'source_code' => $source->getSourceCode(),
+                    'is_enabled' => (int)$source->isEnabled()
+                ];
+            }
+
+            foreach ($getAssignedChannels->execute($stockData['stock_id']) as $salesChannel) {
+                $data['stocks'][$stockData['name']]['sales_channels'][] = [
+                    'channel_type' => $salesChannel->getType(),
+                    'channel_code' => $salesChannel->getCode()
+                ];
             }
         }
     }
@@ -262,18 +321,19 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         // Count of Products
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_entity'),
-                     array(
+              ->from(
+                  $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('catalog_product_entity'),
+                  [
                          'count' => new \Zend_Db_Expr('COUNT(*)'),
                          'type'  => 'type_id'
-                     ))
+                  ]
+              )
               ->group('type_id')
               ->query();
 
         $data['products']['total'] = 0;
 
         while ($row = $queryStmt->fetch()) {
-
             $data['products']['total'] += (int)$row['count'];
             $data['products']['types'][$row['type']]['amount'] = (int)$row['count'];
         }
@@ -283,25 +343,25 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $queryStmt = $this->resource->getConnection()
               ->select()
               ->from(
-                  array(
-                      'stock_item' => $this->getHelper('Module\Database\Structure')
+                  [
+                      'stock_item' => $this->getHelper('Module_Database_Structure')
                           ->getTableNameWithPrefix('cataloginventory_stock_item')
-                  ),
-                  array(
+                  ],
+                  [
                      'min_qty'     => new \Zend_Db_Expr('MIN(stock_item.qty)'),
                      'max_qty'     => new \Zend_Db_Expr('MAX(stock_item.qty)'),
                      'avg_qty'     => new \Zend_Db_Expr('AVG(stock_item.qty)'),
                      'count'       => new \Zend_Db_Expr('COUNT(*)'),
                      'is_in_stock' => 'stock_item.is_in_stock'
-                 )
+                  ]
               )
               ->joinLeft(
-                  array(
-                      'catalog_product' => $this->getHelper('Module\Database\Structure')
+                  [
+                      'catalog_product' => $this->getHelper('Module_Database_Structure')
                           ->getTableNameWithPrefix('catalog_product_entity')
-                  ),
+                  ],
                   'stock_item.product_id = catalog_product.entity_id',
-                  array()
+                  []
               )
               ->where('catalog_product.type_id = ?', 'simple')
               ->group('is_in_stock')
@@ -315,7 +375,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $data['products']['stock_availability']['out'] = 0;
 
         while ($row = $queryStmt->fetch()) {
-
             $data['products']['qty']['min'] += (int)$row['min_qty'];
             $data['products']['qty']['max'] += (int)$row['max_qty'];
             $data['products']['qty']['avg'] += (int)$row['avg_qty'];
@@ -328,13 +387,12 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $result = $this->resource->getConnection()
               ->select()
               ->from(
-                  $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_index_price'
-                  ),
-                  array(
+                  $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('catalog_product_index_price'),
+                  [
                      'min_price' => new \Zend_Db_Expr('MIN(price)'),
                      'max_price' => new \Zend_Db_Expr('MAX(price)'),
                      'avg_price' => new \Zend_Db_Expr('AVG(price)')
-                  )
+                  ]
               )
               ->where('website_id = ?', $this->storeManager->getWebsite(true)->getId())
               ->query()
@@ -351,18 +409,19 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         // Count of Orders
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('sales_order'),
-                     array(
+              ->from(
+                  $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('sales_order'),
+                  [
                          'count'  => new \Zend_Db_Expr('COUNT(*)'),
                          'status' => 'status'
-                     ))
+                  ]
+              )
               ->group('status')
               ->query();
 
         $data['orders']['total'] = 0;
 
         while ($row = $queryStmt->fetch()) {
-
             $data['orders']['total'] += (int)$row['count'];
             $data['orders']['statuses'][$row['status']]['amount'] = (int)$row['count'];
         }
@@ -385,7 +444,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     private function getExtensionRequestPart()
     {
-        $data = array();
+        $data = [];
 
         $this->fillUpDataByMethod($data, 'appendExtensionSystemInfo');
         $this->fillUpDataByMethod($data, 'appendExtensionM2eProUpdaterModuleInfo');
@@ -433,15 +492,14 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     private function appendExtensionTablesInfo(&$data)
     {
-        $helper = $this->getHelper('Module\Database\Structure');
-        $data['info']['tables'] = array();
+        $helper = $this->getHelper('Module_Database_Structure');
+        $data['info']['tables'] = [];
 
         foreach ($helper->getMySqlTables() as $tableName) {
-
-            $data['info']['tables'][$tableName] = array(
+            $data['info']['tables'][$tableName] = [
                 'size'   => $helper->getDataLength($tableName),
                 'amount' => $helper->getCountOfRecords($tableName),
-            );
+            ];
         }
     }
 
@@ -450,17 +508,17 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $config = $this->getHelper('Module')->getConfig();
 
         $data['settings']['track_direct'] = $this->synchronizationConfig->getGroupValue(
-            '/global/magento_products/inspector/','mode'
+            '/global/magento_products/inspector/',
+            'mode'
         );
         $data['settings']['manage_stock_backorders'] = false;
 
-        if ($config->getGroupValue('/product/force_qty/','mode')) {
-            $data['settings']['manage_stock_backorders'] = $config->getGroupValue('/product/force_qty/','value');
+        if ($config->getGroupValue('/product/force_qty/', 'mode')) {
+            $data['settings']['manage_stock_backorders'] = $config->getGroupValue('/product/force_qty/', 'value');
         }
 
         foreach ($this->getHelper('Component')->getComponents() as $componentNick) {
-
-            $tempInfo = array();
+            $tempInfo = [];
 
             $tempInfo['enabled'] = $config->getGroupValue('/component/'.$componentNick.'/', 'mode');
 
@@ -474,7 +532,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     private function appendExtensionMarketplacesInfo(&$data)
     {
-        $data['marketplaces'] = array();
+        $data['marketplaces'] = [];
 
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Marketplace')
             ->getCollection();
@@ -482,21 +540,19 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         /** @var \Ess\M2ePro\Model\Marketplace $item */
         foreach ($collection->getItems() as $item) {
-
             $data['marketplaces'][$item->getComponentMode()][$item->getNativeId()] = $item->getTitle();
         }
     }
 
     private function appendExtensionAccountsInfo(&$data)
     {
-        $data['accounts'] = array();
+        $data['accounts'] = [];
 
         $collection = $this->activeRecordFactory->getObject('Account')->getCollection();
 
         /** @var \Ess\M2ePro\Model\Account $item */
         foreach ($collection->getItems() as $item) {
-
-            $tempInfo = array();
+            $tempInfo = [];
             $childItem = $item->getChildObject();
 
             if ($item->isComponentModeEbay()) {
@@ -522,20 +578,22 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing'),
-                     array(
+              ->from(
+                  $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_listing'),
+                  [
                          'count'          => new \Zend_Db_Expr('COUNT(*)'),
                          'component'      => 'component_mode',
                          'marketplace_id' => 'marketplace_id',
                          'account_id'     => 'account_id',
                          'store_id'       => 'store_id'
-                     ))
-              ->group(array(
+                  ]
+              )
+              ->group([
                           'component_mode',
                           'marketplace_id',
                           'account_id',
                           'store_id'
-                      ))
+                      ])
               ->query();
 
         $data['listings']['total'] = 0;
@@ -546,7 +604,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         while ($row = $queryStmt->fetch()) {
-
             if (!in_array($row['component'], $availableComponents)) {
                 continue;
             }
@@ -584,32 +641,34 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     private function appendExtensionListingsProductsInfo(&$data)
     {
-        $tableListingProduct       = $this->getHelper('Module\Database\Structure')
+        $tableListingProduct       = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_listing_product');
-        $tableAmazonListingProduct = $this->getHelper('Module\Database\Structure')
+        $tableAmazonListingProduct = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_amazon_listing_product');
-        $tableProductEntity        = $this->getHelper('Module\Database\Structure')
+        $tableProductEntity        = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('catalog_product_entity');
 
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing'),
-                     array(
+              ->from(
+                  $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_listing'),
+                  [
                          'component'      => 'component_mode',
                          'marketplace_id' => 'marketplace_id',
                          'account_id'     => 'account_id',
                          'products_count' => 'products_total_count'
-                     ))
+                  ]
+              )
               ->query();
 
-        $productTypes = array(
+        $productTypes = [
             \Ess\M2ePro\Model\Magento\Product::TYPE_SIMPLE_ORIGIN,
             \Ess\M2ePro\Model\Magento\Product::TYPE_CONFIGURABLE_ORIGIN,
             \Ess\M2ePro\Model\Magento\Product::TYPE_BUNDLE_ORIGIN,
             \Ess\M2ePro\Model\Magento\Product::TYPE_GROUPED_ORIGIN,
             \Ess\M2ePro\Model\Magento\Product::TYPE_DOWNLOADABLE_ORIGIN,
             \Ess\M2ePro\Model\Magento\Product::TYPE_VIRTUAL_ORIGIN
-        );
+        ];
 
         $data['listings_products']['total'] = 0;
 
@@ -619,27 +678,27 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
             foreach ($productTypes as $type) {
                 $select = $this->resource->getConnection()->select();
-                $select->from(array('lp' => $tableListingProduct), array('count(*)'))
+                $select->from(['lp' => $tableListingProduct], ['count(*)'])
                     ->where('component_mode = ?', $nick)
                     ->joinLeft(
-                        array('cpe' => $tableProductEntity),
+                        ['cpe' => $tableProductEntity],
                         'lp.product_id = cpe.entity_id',
-                        array()
+                        []
                     )
                     ->where('type_id = ?', $type);
 
                 if ($nick === \Ess\M2ePro\Helper\Component\Amazon::NICK) {
                     $select->joinLeft(
-                        array('alp' => $tableAmazonListingProduct),
+                        ['alp' => $tableAmazonListingProduct],
                         'lp.id = alp.listing_product_id',
-                        array()
+                        []
                     )
                         ->where('variation_parent_id IS NULL');
                 }
 
-                $data['listings_products'][$nick]['products']['type'][$type] = array(
+                $data['listings_products'][$nick]['products']['type'][$type] = [
                     'amount' => $this->resource->getConnection()->fetchOne($select)
-                );
+                ];
             }
         }
 
@@ -649,13 +708,12 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
                 $amount += $data['listings_products'][$nick]['products']['type'][$type]['amount'];
             }
 
-            $data['listings_products']['products']['type'][$type] = array(
+            $data['listings_products']['products']['type'][$type] = [
                 'amount' => $amount
-            );
+            ];
         }
 
         while ($row = $queryStmt->fetch()) {
-
             if (!in_array($row['component'], $availableComponents)) {
                 continue;
             }
@@ -688,18 +746,20 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing_other'),
-                     array(
+              ->from(
+                  $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_listing_other'),
+                  [
                          'count'          => new \Zend_Db_Expr('COUNT(*)'),
                          'component'      => 'component_mode',
                          'marketplace_id' => 'marketplace_id',
                          'account_id'     => 'account_id',
-                     ))
-              ->group(array(
+                  ]
+              )
+              ->group([
                           'component_mode',
                           'marketplace_id',
                           'account_id'
-                      ))
+                      ])
               ->query();
 
         $data['listings_other']['total'] = 0;
@@ -710,7 +770,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         while ($row = $queryStmt->fetch()) {
-
             if (!in_array($row['component'], $availableComponents)) {
                 continue;
             }
@@ -756,18 +815,20 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_order'),
-                     array(
+              ->from(
+                  $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_order'),
+                  [
                          'count'          => new \Zend_Db_Expr('COUNT(*)'),
                          'component'      => 'component_mode',
                          'marketplace_id' => 'marketplace_id',
                          'account_id'     => 'account_id',
-                     ))
-              ->group(array(
+                  ]
+              )
+              ->group([
                           'component_mode',
                           'marketplace_id',
                           'account_id'
-                      ))
+                      ])
               ->query();
 
         $data['orders']['total'] = 0;
@@ -780,7 +841,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         while ($row = $queryStmt->fetch()) {
-
             if (!in_array($row['component'], $availableComponents)) {
                 continue;
             }
@@ -811,8 +871,10 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         // Orders types eBay
         $result = $this->resource->getConnection()
                ->select()
-               ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_ebay_order'),
-                      array('count' => new \Zend_Db_Expr('COUNT(*)')))
+               ->from(
+                   $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_ebay_order'),
+                   ['count' => new \Zend_Db_Expr('COUNT(*)')]
+               )
                ->where('checkout_status = ?', \Ess\M2ePro\Model\Ebay\Order::CHECKOUT_STATUS_COMPLETED)
                ->query()
                ->fetchColumn();
@@ -821,8 +883,10 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         $result = $this->resource->getConnection()
                ->select()
-               ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_ebay_order'),
-                      array('count' => new \Zend_Db_Expr('COUNT(*)')))
+               ->from(
+                   $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_ebay_order'),
+                   ['count' => new \Zend_Db_Expr('COUNT(*)')]
+               )
                ->where('shipping_status = ?', \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_COMPLETED)
                ->query()
                ->fetchColumn();
@@ -831,8 +895,10 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         $result = $this->resource->getConnection()
               ->select()
-              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_ebay_order'),
-                     array('count' => new \Zend_Db_Expr('COUNT(*)')))
+              ->from(
+                  $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_ebay_order'),
+                  ['count' => new \Zend_Db_Expr('COUNT(*)')]
+              )
               ->where('payment_status = ?', \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED)
               ->query()
               ->fetchColumn();
@@ -843,15 +909,17 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         // Orders types Amazon
         $queryStmt = $this->resource->getConnection()
                ->select()
-               ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_amazon_order'),
-                      array(
+               ->from(
+                   $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_amazon_order'),
+                   [
                           'count'  => new \Zend_Db_Expr('COUNT(*)'),
                           'status' => 'status'
-                      ))
-               ->group(array('status'))
+                   ]
+               )
+               ->group(['status'])
                ->query();
 
-        $statuses = array(
+        $statuses = [
             \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING             => 'pending',
             \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED           => 'unshipped',
             \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY   => 'shipped_partially',
@@ -859,10 +927,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
             \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE       => 'unfulfillable',
             \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED            => 'canceled',
             \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED => 'invoice_uncorfirmed'
-        );
+        ];
 
         while ($row = $queryStmt->fetch()) {
-
             $status = $statuses[(int)$row['status']];
 
             if (!isset($data['orders']['amazon']['types'][$status])) {
@@ -894,11 +961,13 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName),
-                     array(
+              ->from(
+                  $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName),
+                  [
                          'count'     => new \Zend_Db_Expr('COUNT(*)'),
                          'component' => 'component_mode'
-                     ))
+                  ]
+              )
               ->group('component_mode')
               ->query();
 
@@ -910,7 +979,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         while ($row = $queryStmt->fetch()) {
-
             if (!in_array($row['component'], $availableComponents)) {
                 continue;
             }
@@ -929,11 +997,13 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName),
-                     array(
+              ->from(
+                  $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName),
+                  [
                          'count'     => new \Zend_Db_Expr('COUNT(*)'),
                          'component' => 'component_mode'
-                     ))
+                  ]
+              )
               ->group('component_mode')
               ->query();
 
@@ -945,7 +1015,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         while ($row = $queryStmt->fetch()) {
-
             if (!in_array($row['component'], $availableComponents)) {
                 continue;
             }
@@ -961,10 +1030,12 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName),
-                     array(
+              ->from(
+                  $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName),
+                  [
                          'count'     => new \Zend_Db_Expr('COUNT(*)')
-                     ))
+                  ]
+              )
               ->query();
 
         $data['policies']['ebay'][$type] = (int)$queryStmt->fetchColumn();

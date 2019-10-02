@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
+/**
+ * Class GetRandomMagentoProductId
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description
+ */
 class GetRandomMagentoProductId extends Description
 {
     public function execute()
@@ -35,7 +39,7 @@ class GetRandomMagentoProductId extends Description
             ->addFieldToFilter('store_id', $storeId)
             ->getFirstItem();
 
-        if (!is_null($listingProduct->getId())) {
+        if ($listingProduct->getId() !== null) {
             $this->setJsonContent([
                 'success' => true,
                 'product_id' => $listingProduct->getProductId()
@@ -55,7 +59,7 @@ class GetRandomMagentoProductId extends Description
         /** @var \Magento\Catalog\Model\Product $product */
         $product = $productCollection->getFirstItem();
 
-        if (!is_null($product->getId())) {
+        if ($product->getId() !== null) {
             $this->setJsonContent([
                 'success' => true,
                 'product_id' => $product->getId()

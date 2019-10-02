@@ -8,22 +8,26 @@
 
 namespace Ess\M2ePro\Model\Listing;
 
+/**
+ * Class Other
+ * @package Ess\M2ePro\Model\Listing
+ */
 class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Account
      */
-    private $accountModel = NULL;
+    private $accountModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
-    private $marketplaceModel = NULL;
+    private $marketplaceModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Magento\Product\Cache
      */
-    protected $magentoProductModel = NULL;
+    protected $magentoProductModel = null;
 
     //########################################
 
@@ -51,9 +55,9 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
     public function delete()
     {
         $temp = parent::delete();
-        $temp && $this->accountModel = NULL;
-        $temp && $this->marketplaceModel = NULL;
-        $temp && $this->magentoProductModel = NULL;
+        $temp && $this->accountModel = null;
+        $temp && $this->marketplaceModel = null;
+        $temp && $this->magentoProductModel = null;
         return $temp;
     }
 
@@ -64,9 +68,11 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
      */
     public function getAccount()
     {
-        if (is_null($this->accountModel)) {
+        if ($this->accountModel === null) {
             $this->accountModel = $this->parentFactory->getCachedObjectLoaded(
-                $this->getComponentMode(),'Account',$this->getData('account_id')
+                $this->getComponentMode(),
+                'Account',
+                $this->getData('account_id')
             );
         }
 
@@ -88,9 +94,11 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
      */
     public function getMarketplace()
     {
-        if (is_null($this->marketplaceModel)) {
+        if ($this->marketplaceModel === null) {
             $this->marketplaceModel = $this->parentFactory->getCachedObjectLoaded(
-                $this->getComponentMode(),'Marketplace',$this->getData('marketplace_id')
+                $this->getComponentMode(),
+                'Marketplace',
+                $this->getData('marketplace_id')
             );
         }
 
@@ -117,11 +125,11 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
             return $this->magentoProductModel;
         }
 
-        if (is_null($this->getProductId())) {
+        if ($this->getProductId() === null) {
             throw new \Ess\M2ePro\Model\Exception('Product id is not set');
         }
 
-        return $this->magentoProductModel = $this->modelFactory->getObject('Magento\Product\Cache')
+        return $this->magentoProductModel = $this->modelFactory->getObject('Magento_Product_Cache')
             ->setStoreId($this->getChildObject()->getRelatedStoreId())
             ->setProductId($this->getProductId());
     }
@@ -158,7 +166,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
     public function getProductId()
     {
         $temp = $this->getData('product_id');
-        return is_null($temp) ? NULL : (int)$temp;
+        return $temp === null ? null : (int)$temp;
     }
 
     public function getAdditionalData()
@@ -295,17 +303,17 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
 
     //########################################
 
-    public function reviseAction(array $params = array())
+    public function reviseAction(array $params = [])
     {
         return $this->getChildObject()->reviseAction($params);
     }
 
-    public function relistAction(array $params = array())
+    public function relistAction(array $params = [])
     {
         return $this->getChildObject()->relistAction($params);
     }
 
-    public function stopAction(array $params = array())
+    public function stopAction(array $params = [])
     {
         return $this->getChildObject()->stopAction($params);
     }
@@ -336,20 +344,22 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
      */
     public function mapProduct($productId, $logsInitiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN)
     {
-        $this->addData(array('product_id'=>$productId))->save();
+        $this->addData(['product_id'=>$productId])->save();
         $this->getChildObject()->afterMapProduct();
 
-        $logModel = $this->activeRecordFactory->getObject('Listing\Other\Log');
+        $logModel = $this->activeRecordFactory->getObject('Listing_Other_Log');
         $logModel->setComponentMode($this->getComponentMode());
-        $logModel->addProductMessage($this->getId(),
+        $logModel->addProductMessage(
+            $this->getId(),
             $logsInitiator,
-            NULL,
+            null,
             \Ess\M2ePro\Model\Listing\Other\Log::ACTION_MAP_ITEM,
             // M2ePro\TRANSLATIONS
             // Item was successfully Mapped
             'Item was successfully Mapped',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM);
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+        );
     }
 
     /**
@@ -359,19 +369,21 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
     public function unmapProduct($logsInitiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN)
     {
         $this->getChildObject()->beforeUnmapProduct();
-        $this->setData('product_id', NULL)->save();
+        $this->setData('product_id', null)->save();
 
-        $logModel = $this->activeRecordFactory->getObject('Listing\Other\Log');
+        $logModel = $this->activeRecordFactory->getObject('Listing_Other_Log');
         $logModel->setComponentMode($this->getComponentMode());
-        $logModel->addProductMessage($this->getId(),
+        $logModel->addProductMessage(
+            $this->getId(),
             $logsInitiator,
-            NULL,
+            null,
             \Ess\M2ePro\Model\Listing\Other\Log::ACTION_UNMAP_ITEM,
             // M2ePro\TRANSLATIONS
             // Item was successfully Unmapped
             'Item was successfully Unmapped',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM);
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+        );
     }
 
     //########################################

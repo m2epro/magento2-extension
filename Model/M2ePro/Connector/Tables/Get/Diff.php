@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\M2ePro\Connector\Tables\Get;
 
+/**
+ * Class Diff
+ * @package Ess\M2ePro\Model\M2ePro\Connector\Tables\Get
+ */
 class Diff extends \Ess\M2ePro\Model\Connector\Command\RealTime
 {
     const SEVERITY_CRITICAL = 'critical';
@@ -25,16 +29,16 @@ class Diff extends \Ess\M2ePro\Model\Connector\Command\RealTime
 
     protected function getCommand()
     {
-        return array('tables', 'get', 'diff');
+        return ['tables', 'get', 'diff'];
     }
 
     protected function getRequestData()
     {
-        return array(
+        return [
             'tables_info' => $this->getHelper('Data')->jsonEncode(
-                $this->getHelper('Module\Database\Structure')->getTablesInfo()
+                $this->getHelper('Module_Database_Structure')->getTablesInfo()
             )
-        );
+        ];
     }
 
     protected function validateResponse()

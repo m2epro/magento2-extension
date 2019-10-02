@@ -14,28 +14,13 @@ define([
 
         initialize: function ($super, gridHandler)
         {
-            var self = this;
-
             $super(gridHandler);
 
-            jQuery.validator.addMethod('M2ePro-walmart-required-channel-attribute', function(value,el) {
-
-                var result = false;
-
-                $$('.M2ePro-walmart-required-channel-attribute').each(function(obj) {
-                    if (obj.checked) {
-                        result = true;
-                        return;
-                    }
-                });
-
-                return result;
-            }, M2ePro.translator.translate('At least one Variant Attribute must be selected.'));
+            this.initValidators();
         },
 
         // ---------------------------------------
 
-        options: {},
         matchingType: 1,
         matchedAttributes: [],
         productAttributes: [],
@@ -44,25 +29,17 @@ define([
         magentoVariationSet: [],
         walmartVariationSet: false,
 
-        setOptions: function (options)
-        {
-            this.options = Object.extend(this.options, options);
-            this.initValidators();
-            return this;
-        },
-
         initValidators: function ()
         {
-            var self = this;
+            Validation.add('M2ePro-walmart-attribute-unique-value', M2ePro.translator.translate('variation_manage_matched_attributes_error_duplicate'), function(value, el) {
 
-            jQuery.validator.addMethod('M2ePro-walmart-attribute-unique-value', function(value, el) {
                 var existedValues = [],
                     isValid = true,
                     form = el.up('form');
 
-                form.select('select').each(function (el) {
+                form.select('select').each(function(el) {
                     if (el.value != '') {
-                        if (existedValues.indexOf(el.value) === -1) {
+                        if(existedValues.indexOf(el.value) === -1) {
                             existedValues.push(el.value);
                         } else {
                             isValid = false;
@@ -71,7 +48,7 @@ define([
                 });
 
                 return isValid;
-            }, M2ePro.translator.translate('variation_manage_matched_attributes_error_duplicate'));
+            });
         },
 
         initSettingsTab: function ()
@@ -421,15 +398,23 @@ define([
 
             $('variation_manager_channel_attributes_form').show();
 
-            this.channelAttributesForm = jQuery('#variation_manager_channel_attributes_form').form();
+            $('M2ePro-walmart-required-channel-attribute-error').hide();
         },
 
         setChannelAttributes: function()
         {
             var self = this,
+                result = false;
                 form = $('variation_manager_channel_attributes_form');
 
-            if(this.channelAttributesForm.validate()) {
+            $$('.M2ePro-walmart-required-channel-attribute').each(function(obj) {
+                if (obj.checked) {
+                    result = true;
+                    return;
+                }
+            });
+
+            if(result) {
 
                 var data = form.serialize(true);
                 data.product_id = self.variationProductManagePopup.productId;
@@ -444,6 +429,12 @@ define([
                         }
                     }
                 });
+            } else {
+
+                var errorChannelAttribute = $('M2ePro-walmart-required-channel-attribute-error');
+
+                errorChannelAttribute.show();
+                errorChannelAttribute.update(M2ePro.translator.translate('At least one Variant Attribute must be selected.'))
             }
         },
 

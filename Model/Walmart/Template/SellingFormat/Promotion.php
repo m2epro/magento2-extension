@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat;
 
+/**
+ * Class Promotion
+ * @package Ess\M2ePro\Model\Walmart\Template\SellingFormat
+ */
 class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     const START_DATE_MODE_VALUE = 1;
@@ -51,7 +55,7 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     {
         $temp = parent::delete();
         $temp && $this->sellingFormatTemplateModel = null;
-        $temp && $this->sellingFormatPromotionSourceModels = array();
+        $temp && $this->sellingFormatPromotionSourceModels = [];
         return $temp;
     }
 
@@ -62,9 +66,10 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getSellingFormatTemplate()
     {
-        if (is_null($this->sellingFormatTemplateModel)) {
+        if ($this->sellingFormatTemplateModel === null) {
             $this->sellingFormatTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Walmart\Template\SellingFormat', $this->getTemplateSellingFormatId()
+                'Walmart_Template_SellingFormat',
+                $this->getTemplateSellingFormatId()
             );
         }
 
@@ -94,7 +99,7 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         }
 
         $this->sellingFormatPromotionSourceModels[$id] = $this->modelFactory->getObject(
-            'Walmart\Template\SellingFormat\Promotion\Source'
+            'Walmart_Template_SellingFormat_Promotion_Source'
         );
 
         $this->sellingFormatPromotionSourceModels[$id]->setMagentoProduct($magentoProduct);
@@ -146,7 +151,7 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function getStartDateAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         if ($this->isStartDateModeAttribute()) {
             $attributes[] = $this->getStartDateAttribute();
@@ -188,7 +193,7 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function getEndDateAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         if ($this->isEndDateModeAttribute()) {
             $attributes[] = $this->getEndDateAttribute();
@@ -235,7 +240,7 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function getPriceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         if ($this->isPriceModeAttribute()) {
             $attributes[] = $this->getPriceAttribute();
@@ -248,11 +253,11 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function getPriceSource()
     {
-        return array(
+        return [
             'mode'        => $this->getPriceMode(),
             'coefficient' => $this->getPriceCoefficient(),
             'attribute'   => $this->getPriceAttribute(),
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -293,18 +298,18 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function getComparisonPriceSource()
     {
-        return array(
+        return [
             'mode'        => $this->getComparisonPriceMode(),
             'coefficient' => $this->getComparisonPriceCoefficient(),
             'attribute'   => $this->getComparisonPriceAttribute(),
-        );
+        ];
     }
 
     // ---------------------------------------
 
     public function getComparisonPriceAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         if ($this->isComparisonPriceModeAttribute()) {
             $attributes[] = $this->getComparisonPriceAttribute();

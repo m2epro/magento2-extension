@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel;
 
+/**
+ * Class Setup
+ * @package Ess\M2ePro\Model\ResourceModel
+ */
 class Setup extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
@@ -28,10 +32,10 @@ class Setup extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
         $completedItems = $collection->getItems();
 
         /** @var \Ess\M2ePro\Model\Setup $maxCompletedItem */
-        $maxCompletedItem = NULL;
+        $maxCompletedItem = null;
 
         foreach ($completedItems as $completedItem) {
-            if (is_null($maxCompletedItem)) {
+            if ($maxCompletedItem === null) {
                 $maxCompletedItem = $completedItem;
                 continue;
             }

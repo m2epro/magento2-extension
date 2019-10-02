@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
+ */
 class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
 {
     public function execute()
@@ -23,8 +27,8 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('3rd Party Listings'));
 
-        $this->addContent($this->getLayout()->createBlock(
-            'Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Other\View'
+        $this->addContent($this->createBlock(
+            'Ebay_Listing_Other_View'
         ));
 
         return $this->getResult();

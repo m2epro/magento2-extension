@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent\AbstractModel
 {
     //########################################

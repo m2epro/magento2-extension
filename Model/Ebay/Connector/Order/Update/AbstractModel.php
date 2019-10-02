@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Order\Update;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Ebay\Connector\Order\Update
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 {
     // M2ePro\TRANSLATIONS
@@ -17,8 +21,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
     /**
      * @var $order \Ess\M2ePro\Model\Order
      */
-    protected $order = NULL;
-    protected $action = NULL;
+    protected $order = null;
+    protected $action = null;
 
     private $status = \Ess\M2ePro\Helper\Data::STATUS_SUCCESS;
 
@@ -33,8 +37,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($marketplace, $account, $helperFactory, $modelFactory, $params);
     }
@@ -73,14 +76,14 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
             return (int)$this->params['change_id'];
         }
 
-        return NULL;
+        return null;
     }
 
     // ########################################
 
     protected function getCommand()
     {
-        return array('orders', 'update', 'status');
+        return ['orders', 'update', 'status'];
     }
 
     // ########################################
@@ -107,7 +110,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
             $this->status = \Ess\M2ePro\Helper\Data::STATUS_ERROR;
 
             $this->order->addErrorLog(
-                'eBay Order status was not updated. Reason: %msg%', array('msg' => $message->getText())
+                'eBay Order status was not updated. Reason: %msg%',
+                ['msg' => $message->getText()]
             );
         }
     }
@@ -119,18 +123,18 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
         if ($this->order->getMarketplace()->getCode() == 'India'
             && stripos($this->order->getChildObject()->getPaymentMethod(), 'paisa') !== false
         ) {
-            $this->order->addErrorLog('eBay Order Status was not updated. Reason: %msg%', array(
+            $this->order->addErrorLog('eBay Order Status was not updated. Reason: %msg%', [
                 'msg' => 'Status of India Site Orders cannot be updated if the Buyer uses PaisaPay payment method.'
-            ));
+            ]);
 
             return false;
         }
 
-        if (!in_array($this->action,array(
+        if (!in_array($this->action, [
            \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_PAY,
            \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP,
            \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP_TRACK
-        ))) {
+        ])) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Invalid Action.');
         }
 
@@ -139,7 +143,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
 
     protected function getRequestData()
     {
-        $requestData = array('action' => $this->action);
+        $requestData = ['action' => $this->action];
 
         $ebayOrderId = $this->order->getChildObject()->getData('ebay_order_id');
 

@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Defected;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Defected
+ */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defected\ItemsRequester
 {
     //########################################
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Amazon\Synchronization\ListingsProducts\Update\Defected\ProcessingRunner';
+        return 'Amazon_Synchronization_ListingsProducts_Update_Defected_ProcessingRunner';
     }
 
     //########################################

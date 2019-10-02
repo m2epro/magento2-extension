@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model;
 
+/**
+ * Class Setup
+ * @package Ess\M2ePro\Model
+ */
 class Setup extends ActiveRecord\AbstractModel
 {
     //########################################

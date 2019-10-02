@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated;
 
+/**
+ * Class Source
+ * @package Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated
+ */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
@@ -84,27 +88,30 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $src = $this->getShippingCalculatedTemplate()->getDimensionSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated::DIMENSION_NONE) {
-            return array();
+            return [];
         }
 
         if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated::DIMENSION_CUSTOM_ATTRIBUTE) {
+            $widthValue = str_replace(',', '.', $this->getMagentoProduct()->getAttributeValue($src['width_attribute']));
+            $lengthValue = str_replace(
+                ',',
+                '.',
+                $this->getMagentoProduct()->getAttributeValue($src['length_attribute'])
+            );
+            $depthValue = str_replace(',', '.', $this->getMagentoProduct()->getAttributeValue($src['depth_attribute']));
 
-            $widthValue = str_replace(',','.',$this->getMagentoProduct()->getAttributeValue($src['width_attribute']));
-            $lengthValue = str_replace(',','.',$this->getMagentoProduct()->getAttributeValue($src['length_attribute']));
-            $depthValue = str_replace(',','.',$this->getMagentoProduct()->getAttributeValue($src['depth_attribute']));
-
-            return array(
+            return [
                 'width' => $widthValue,
                 'length' => $lengthValue,
                 'depth' => $depthValue
-            );
+            ];
         }
 
-        return array(
+        return [
             'width'  => $src['width_value'],
             'length' => $src['length_value'],
             'depth'  => $src['depth_value']
-        );
+        ];
     }
 
     /**
@@ -115,7 +122,6 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $src = $this->getShippingCalculatedTemplate()->getWeightSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated::WEIGHT_CUSTOM_ATTRIBUTE) {
-
             $weightValue = $this->getMagentoProduct()->getAttributeValue($src['attribute']);
             $weightValue = str_replace(',', '.', $weightValue);
             $weightArray = explode('.', $weightValue);
@@ -147,23 +153,23 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 $major = (int)$weightValue;
             }
 
-            return array(
+            return [
                 'minor' => (float)$minor,
                 'major' => (int)$major
-            );
+            ];
         }
 
         if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated::WEIGHT_NONE) {
-            return array(
+            return [
                 'minor' => 0,
                 'major' => 0
-            );
+            ];
         }
 
-        return array(
+        return [
             'minor' => (float)$src['minor'],
             'major' => (int)$src['major']
-        );
+        ];
     }
 
     //########################################

@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\SellingFormat;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 use \Magento\Backend\App\Action;
 
+/**
+ * Class SearchCharity
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template\SellingFormat
+ */
 class SearchCharity extends Template
 {
     //########################################
@@ -21,26 +25,28 @@ class SearchCharity extends Template
         $destination = $this->getRequest()->getPost('destination');
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
 
-        $params = array(
+        $params = [
             $destination    => $query,
             'maxRecord'     => 10,
-        );
+        ];
 
         try {
-
-            $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector('marketplace', 'get', 'charity',
-                $params, NULL,
+            $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+            $connectorObj = $dispatcherObject->getVirtualConnector(
+                'marketplace',
+                'get',
+                'charity',
+                $params,
+                null,
                 $marketplaceId
             );
 
             $dispatcherObject->process($connectorObj);
             $responseData = $connectorObj->getResponseData();
-
         } catch (\Exception $e) {
             $this->setJsonContent([
                 'result' => 'error',
-                'html' => $this->getLayout()->createBlock('Magento\Framework\View\Element\Messages')
+                'html' => $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class)
                     ->addError($this->__('Error search charity'))->toHtml()
             ]);
 
@@ -51,17 +57,19 @@ class SearchCharity extends Template
         $totalCount = empty($responseData['total_count']) ? 0 : $responseData['total_count'];
 
         $grid = $this->createBlock(
-            'Ebay\Template\SellingFormat\Edit\Form\Charity\Search\Grid', '', [
+            'Ebay_Template_SellingFormat_Edit_Form_Charity_Search_Grid',
+            '',
+            [
                 'data' => [
                     'charities' => $charities
                 ]
             ]
         );
 
-        $response = array(
+        $response = [
             'result' => 'success',
             'html' => $grid->toHtml()
-        );
+        ];
 
         if ((int)$totalCount > 10) {
             $response['count'] = (int)$responseData['total_count'];

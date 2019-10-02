@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Category;
 
+/**
+ * Class Source
+ * @package Ess\M2ePro\Model\Ebay\Template\Category
+ */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**

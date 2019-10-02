@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
+/**
+ * Class Business
+ * @package Ess\M2ePro\Helper\Component\Amazon
+ */
 class Business extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $moduleConfig;
@@ -18,8 +22,7 @@ class Business extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->moduleConfig = $moduleConfig;
         parent::__construct($helperFactory, $context);
     }
@@ -38,7 +41,8 @@ class Business extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         return (bool)$this->moduleConfig->getGroupValue(
-            '/amazon/business/vat_calculation_service/', 'mode'
+            '/amazon/business/vat_calculation_service/',
+            'mode'
         );
     }
 
@@ -49,7 +53,8 @@ class Business extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         return (bool)$this->moduleConfig->getGroupValue(
-            '/amazon/business/vat_calculation_service/', 'is_invoice_creation_disabled'
+            '/amazon/business/vat_calculation_service/',
+            'is_invoice_creation_disabled'
         );
     }
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Tax\Rule;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Magento\Tax\Rule
+ */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
     const TAX_CLASS_NAME_PRODUCT   = 'M2E Pro Product Tax Class';
@@ -24,7 +28,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     protected $rateFactory;
     protected $ruleFactory;
     /** @var $rule \Magento\Tax\Model\Calculation\Rule */
-    protected $rule = NULL;
+    protected $rule = null;
 
     //########################################
 
@@ -34,8 +38,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Tax\Model\Calculation\RuleFactory $ruleFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->classModelFactory = $classModelFactory;
         $this->rateFactory = $rateFactory;
         $this->ruleFactory = $ruleFactory;
@@ -51,7 +54,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function buildProductTaxRule($rate, $countryId, $customerTaxClassId = NULL)
+    public function buildProductTaxRule($rate, $countryId, $customerTaxClassId = null)
     {
         $this->buildTaxRule(
             $rate,
@@ -63,7 +66,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         );
     }
 
-    public function buildShippingTaxRule($rate, $countryId, $customerTaxClassId = NULL)
+    public function buildShippingTaxRule($rate, $countryId, $customerTaxClassId = null)
     {
         $this->buildTaxRule(
             $rate,
@@ -78,12 +81,11 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     private function buildTaxRule(
         $rate,
         $countryId,
-        $customerTaxClassId = NULL,
+        $customerTaxClassId = null,
         $taxRateCode,
         $taxRuleCode,
         $taxClassName
-    )
-    {
+    ) {
         // Init product tax class
         // ---------------------------------------
         $productTaxClass = $this->classModelFactory->create()->getCollection()
@@ -91,7 +93,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             ->addFieldToFilter('class_type', \Magento\Tax\Model\ClassModel::TAX_CLASS_TYPE_PRODUCT)
             ->getFirstItem();
 
-        if (is_null($productTaxClass->getId())) {
+        if ($productTaxClass->getId() === null) {
             $productTaxClass->setClassName($taxClassName)
                 ->setClassType(\Magento\Tax\Model\ClassModel::TAX_CLASS_TYPE_PRODUCT);
             $productTaxClass->save();
@@ -100,13 +102,13 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
         // Init customer tax class
         // ---------------------------------------
-        if (is_null($customerTaxClassId)) {
+        if ($customerTaxClassId === null) {
             $customerTaxClass = $this->classModelFactory->create()->getCollection()
                 ->addFieldToFilter('class_name', self::TAX_CLASS_NAME_CUSTOMER)
                 ->addFieldToFilter('class_type', \Magento\Tax\Model\ClassModel::TAX_CLASS_TYPE_CUSTOMER)
                 ->getFirstItem();
 
-            if (is_null($customerTaxClass->getId())) {
+            if ($customerTaxClass->getId() === null) {
                 $customerTaxClass->setClassName(self::TAX_CLASS_NAME_CUSTOMER)
                     ->setClassType(\Magento\Tax\Model\ClassModel::TAX_CLASS_TYPE_CUSTOMER);
                 $customerTaxClass->save();

@@ -8,6 +8,13 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Moving;
 
+use Ess\M2ePro\Helper\Component\Walmart;
+
+/**
+ * Class Grid
+ *
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\Moving
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $storeFactory;
@@ -19,8 +26,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->storeFactory = $storeFactory;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -62,7 +68,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ->getCollection();
 
         foreach ($ignoreListings as $listingId) {
-            $collection->addFieldToFilter('main_table.id', array('neq'=>$listingId));
+            $collection->addFieldToFilter('main_table.id', ['neq'=>$listingId]);
         }
 
         $this->addAccountAndMarketplaceFilter($collection);
@@ -74,17 +80,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('listing_id', array(
+        $this->addColumn('listing_id', [
             'header'       => $this->__('ID'),
             'align'        => 'right',
             'type'         => 'number',
             'width'        => '75px',
             'index'        => 'id',
             'filter_index' => 'id',
-            'frame_callback' => array($this, 'callbackColumnId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnId']
+        ]);
 
-        $this->addColumn('title', array(
+        $this->addColumn('title', [
             'header'       => $this->__('Title'),
             'align'        => 'left',
             'type'         => 'text',
@@ -92,10 +98,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'        => 'title',
             'escape'       => false,
             'filter_index' => 'main_table.title',
-            'frame_callback' => array($this, 'callbackColumnTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTitle']
+        ]);
 
-        $this->addColumn('store_name', array(
+        $this->addColumn('store_name', [
             'header'        => $this->__('Store View'),
             'align'        => 'left',
             'type'         => 'text',
@@ -103,28 +109,28 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'        => 'store_id',
             'filter'    => false,
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnStore')
-        ));
+            'frame_callback' => [$this, 'callbackColumnStore']
+        ]);
 
-        $this->addColumn('products_total_count', array(
+        $this->addColumn('products_total_count', [
             'header'        => $this->__('Total Items'),
             'align'        => 'right',
             'type'         => 'number',
             'width'        => '100px',
             'index'        => 'products_total_count',
             'filter_index' => 'products_total_count',
-            'frame_callback' => array($this, 'callbackColumnSourceTotalItems')
-        ));
+            'frame_callback' => [$this, 'callbackColumnSourceTotalItems']
+        ]);
 
-        $this->addColumn('actions', array(
+        $this->addColumn('actions', [
             'header'       => $this->__('Actions'),
             'align'        => 'left',
             'type'         => 'text',
             'width'        => '125px',
             'filter'       => false,
             'sortable'     => false,
-            'frame_callback' => array($this, 'callbackColumnActions'),
-        ));
+            'frame_callback' => [$this, 'callbackColumnActions'],
+        ]);
     }
 
     //########################################
@@ -138,7 +144,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $title = $this->getHelper('Data')->escapeHtml($value);
         $url = $this->getHelper('View')->getUrl(
-            $row, 'listing', 'view', array('id' => $row->getData('id'))
+            $row,
+            'listing',
+            'view',
+            ['id' => $row->getData('id')]
         );
         return '&nbsp;<a href="'.$url.'" target="_blank">'.$title.'</a>';
     }
@@ -197,7 +206,6 @@ HTML;
         $helpBlockHtml = '';
 
         if ($this->canDisplayContainer()) {
-
             if ($this->getRequest()->getParam('listing_view', false)) {
                 $helpBlockHtml = $this->createBlock('HelpBlock')->setData([
                     'content' => <<<HTML
@@ -238,13 +246,19 @@ HTML
 
     protected function getNewListingUrl()
     {
-        $newListingUrl = $this->getUrl('*/amazon_listing_create/index', array(
-            'step' => 1,
-            'clear' => 1,
-            'account_id' => $this->getHelper('Data\GlobalData')->getValue('accountId'),
+        if ($this->getHelper('Data\GlobalData')->getValue('componentMode') === Walmart::NICK) {
+            $url = '*/walmart_listing_create/index';
+        } else {
+            $url = '*/amazon_listing_create/index';
+        }
+
+        $newListingUrl = $this->getUrl($url, [
+            'step'           => 1,
+            'clear'          => 1,
+            'account_id'     => $this->getHelper('Data\GlobalData')->getValue('accountId'),
             'marketplace_id' => $this->getHelper('Data\GlobalData')->getValue('marketplaceId'),
-            'creation_mode' => \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY,
-        ));
+            'creation_mode'  => \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY,
+        ]);
 
         return $newListingUrl;
     }
@@ -265,7 +279,7 @@ HTML
                 el.style.padding = '2px 4px';
             });
 JS
-);
+        );
 
         return $this->getHelpBlockHtml() . parent::_toHtml();
     }

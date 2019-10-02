@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
+/**
+ * Class AssignProductDetails
+ * @package Ess\M2ePro\Controller\Adminhtml\Order
+ */
 class AssignProductDetails extends Order
 {
     public function execute()
@@ -22,14 +26,14 @@ class AssignProductDetails extends Order
         $optionsData = $this->getProductOptionsDataFromPost();
 
         if (count($optionsData) == 0 || !$orderItem->getId()) {
-            $this->setJsonContent(array(
+            $this->setJsonContent([
                 'error' => $this->__('Please specify Required Options.')
-            ));
+            ]);
             return $this->getResult();
         }
 
-        $associatedOptions  = array();
-        $associatedProducts = array();
+        $associatedOptions  = [];
+        $associatedProducts = [];
 
         foreach ($optionsData as $optionId => $optionData) {
             $optionId = (int)$optionId;
@@ -42,17 +46,17 @@ class AssignProductDetails extends Order
         try {
             $orderItem->assignProductDetails($associatedOptions, $associatedProducts);
         } catch (\Exception $e) {
-            $this->setJsonContent(array(
+            $this->setJsonContent([
                 'error' => $e->getMessage()
-            ));
+            ]);
             return $this->getResult();
         }
 
         if ($saveMatching) {
-            $outputData = array(
+            $outputData = [
                 'associated_options'  => $orderItem->getAssociatedOptions(),
                 'associated_products' => $orderItem->getAssociatedProducts()
-            );
+            ];
 
             /** @var $orderMatching \Ess\M2ePro\Model\Order\Matching */
             $orderMatching = $this->activeRecordFactory->getObject('Order\Matching');
@@ -65,13 +69,13 @@ class AssignProductDetails extends Order
         }
 
         $orderItem->getOrder()->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
-        $orderItem->getOrder()->addSuccessLog('Order Item "%title%" Options were Successfully configured.', array(
+        $orderItem->getOrder()->addSuccessLog('Order Item "%title%" Options were Successfully configured.', [
             'title' => $orderItem->getChildObject()->getTitle()
-        ));
+        ]);
 
-        $this->setJsonContent(array(
+        $this->setJsonContent([
             'success' => $this->__('Order Item Options were Successfully configured.')
-        ));
+        ]);
 
         return $this->getResult();
     }

@@ -11,14 +11,18 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Other;
 use \Ess\M2ePro\Model\Amazon\Template;
 use \Ess\M2ePro\Helper\Component\Amazon;
 
+/**
+ * Class Moving
+ * @package Ess\M2ePro\Model\Amazon\Listing\Other
+ */
 class Moving extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Account|null
      */
-    protected $account = NULL;
+    protected $account = null;
 
-    protected $tempObjectsCache = array();
+    protected $tempObjectsCache = [];
 
     protected $activeRecordFactory;
     protected $amazonFactory;
@@ -30,8 +34,7 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->amazonFactory = $amazonFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -39,10 +42,10 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function initialize(\Ess\M2ePro\Model\Account $account = NULL)
+    public function initialize(\Ess\M2ePro\Model\Account $account = null)
     {
         $this->account = $account;
-        $this->tempObjectsCache = array();
+        $this->tempObjectsCache = [];
     }
 
     //########################################
@@ -53,10 +56,9 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
      */
     public function autoMoveOtherListingsProducts(array $otherListings)
     {
-        $otherListingsFiltered = array();
+        $otherListingsFiltered = [];
 
         foreach ($otherListings as $otherListing) {
-
             if (!($otherListing instanceof \Ess\M2ePro\Model\Listing\Other)) {
                 continue;
             }
@@ -70,7 +72,7 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        $sortedItems = array();
+        $sortedItems = [];
 
         /** @var $otherListing \Ess\M2ePro\Model\Listing\Other */
         foreach ($otherListingsFiltered as $otherListing) {
@@ -110,7 +112,8 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $listingProduct = $listing->addProduct(
-            $otherListing->getProductId(), \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION
+            $otherListing->getProductId(),
+            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION
         );
 
         if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
@@ -128,7 +131,7 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Other $amazonOtherListing */
         $amazonOtherListing = $otherListing->getChildObject();
 
-        $dataForUpdate = array(
+        $dataForUpdate = [
             'general_id'         => $amazonOtherListing->getGeneralId(),
             'sku'                => $amazonOtherListing->getSku(),
             'online_price'       => $amazonOtherListing->getOnlinePrice(),
@@ -137,7 +140,7 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
             'is_isbn_general_id' => (int)$amazonOtherListing->isIsbnGeneralId(),
             'status'             => $otherListing->getStatus(),
             'status_changer'     => $otherListing->getStatusChanger()
-        );
+        ];
 
         $listingProduct->addData($dataForUpdate)->save();
         $amazonListingProduct->addData(array_merge(
@@ -146,13 +149,13 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
         ))->save();
 
         if ($amazonOtherListing->isRepricing()) {
-            $listingProductRepricing = $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing');
-            $listingProductRepricing->setData(array(
+            $listingProductRepricing = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing');
+            $listingProductRepricing->setData([
                 'listing_product_id' => $listingProduct->getId(),
                 'is_online_disabled' => $amazonOtherListing->isRepricingDisabled(),
                 'update_date'        => $this->getHelper('Data')->getCurrentGmtDate(),
                 'create_date'        => $this->getHelper('Data')->getCurrentGmtDate(),
-            ));
+            ]);
             $listingProductRepricing->save();
         }
 
@@ -168,23 +171,23 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
         if ($itemsCollection->getSize() > 0) {
             $itemsCollection->getFirstItem()->setData('store_id', $listing->getStoreId())->save();
         } else {
-            $dataForAdd = array(
+            $dataForAdd = [
                 'account_id'     => $otherListing->getAccountId(),
                 'marketplace_id' => $otherListing->getMarketplaceId(),
                 'sku'            => $amazonOtherListing->getSku(),
                 'product_id'     => $otherListing->getProductId(),
                 'store_id'       => $listing->getStoreId()
-            );
+            ];
             $this->activeRecordFactory->getObject('Amazon\Item')->setData($dataForAdd)->save();
         }
         // ---------------------------------------
 
-        $logModel = $this->activeRecordFactory->getObject('Listing\Other\Log');
+        $logModel = $this->activeRecordFactory->getObject('Listing_Other_Log');
         $logModel->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
         $logModel->addProductMessage(
             $otherListing->getId(),
             \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-            NULL,
+            null,
             \Ess\M2ePro\Model\Listing\Other\Log::ACTION_MOVE_ITEM,
             // M2ePro\TRANSLATIONS
             // Item was successfully Moved
@@ -200,7 +203,7 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
             $otherListing->getProductId(),
             $listingProduct->getId(),
             \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-            NULL,
+            null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_FROM_OTHER_LISTING,
             // M2ePro\TRANSLATIONS
             // Product was successfully Moved
@@ -211,8 +214,10 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
 
         if (!$this->getAmazonAccount()->isOtherListingsMoveToListingsSynchModeNone()) {
             $this->activeRecordFactory->getObject('ProductChange')
-                ->addUpdateAction($otherListing->getProductId(),
-                                  \Ess\M2ePro\Model\ProductChange::INITIATOR_UNKNOWN);
+                ->addUpdateAction(
+                    $otherListing->getProductId(),
+                    \Ess\M2ePro\Model\ProductChange::INITIATOR_UNKNOWN
+                );
         }
 
         $otherListing->delete();
@@ -235,20 +240,22 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $tempCollection = $this->amazonFactory->getObject('Listing')->getCollection();
-        $tempCollection->addFieldToFilter('main_table.title',
-                                          'Default ('.$this->getAccount()
+        $tempCollection->addFieldToFilter(
+            'main_table.title',
+            'Default ('.$this->getAccount()
                                                            ->getTitle().' - '.$this->getMarketplace()
-                                                                                   ->getTitle().')');
+            ->getTitle().')'
+        );
         $tempItem = $tempCollection->getFirstItem();
 
-        if (!is_null($tempItem->getId())) {
+        if ($tempItem->getId() !== null) {
             $this->tempObjectsCache['listing_'.$accountId] = $tempItem;
             return $tempItem;
         }
 
         $tempModel = $this->amazonFactory->getObject('Listing');
 
-        $dataForAdd = array(
+        $dataForAdd = [
             'title' => 'Default ('.$this->getAccount()->getTitle().' - '.$this->getMarketplace()->getTitle().')',
             'store_id' => $otherListing->getChildObject()->getRelatedStoreId(),
             'marketplace_id' => $this->getMarketplace()->getId(),
@@ -270,7 +277,7 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
             'condition_mode' => \Ess\M2ePro\Model\Amazon\Listing::CONDITION_MODE_DEFAULT,
             'condition_value' => \Ess\M2ePro\Model\Amazon\Listing::CONDITION_NEW,
             'condition_note_mode' => \Ess\M2ePro\Model\Amazon\Listing::CONDITION_NOTE_MODE_NONE
-        );
+        ];
 
         $tempModel->addData($dataForAdd)->save();
 
@@ -299,17 +306,17 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $tempCollection = $this->amazonFactory->getObject('Template\Synchronization')->getCollection();
-        $tempCollection->addFieldToFilter('main_table.title','Default ('.$this->getMarketplace()->getTitle().')');
+        $tempCollection->addFieldToFilter('main_table.title', 'Default ('.$this->getMarketplace()->getTitle().')');
         $tempItem = $tempCollection->getFirstItem();
 
-        if (!is_null($tempItem->getId())) {
+        if ($tempItem->getId() !== null) {
             $this->tempObjectsCache['synchronization_'.$marketplaceId] = $tempItem;
             return $tempItem;
         }
 
         $tempModel = $this->amazonFactory->getObject('Template\Synchronization');
 
-        $dataForAdd = array(
+        $dataForAdd = [
             'title' => 'Default ('.$this->getMarketplace()->getTitle().')',
             'list_mode' => \Ess\M2ePro\Model\Amazon\Template\Synchronization::LIST_MODE_NONE,
             'list_status_enabled' => \Ess\M2ePro\Model\Amazon\Template\Synchronization::LIST_STATUS_ENABLED_YES,
@@ -342,18 +349,18 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
             'stop_qty' => \Ess\M2ePro\Model\Amazon\Template\Synchronization::STOP_QTY_NONE,
             'stop_qty_value' => 0,
             'stop_qty_value_max' => 10
-        );
+        ];
 
         if ($this->getAmazonAccount()->isOtherListingsMoveToListingsSynchModePrice() ||
             $this->getAmazonAccount()->isOtherListingsMoveToListingsSynchModeAll()
         ) {
-            $additionalPriceSettings = array(
+            $additionalPriceSettings = [
                 'revise_update_price' => Template\Synchronization::REVISE_UPDATE_PRICE_YES,
                 'revise_update_price_max_allowed_deviation_mode' =>
                     Template\Synchronization::REVISE_MAX_ALLOWED_PRICE_DEVIATION_MODE_ON,
                 'revise_update_price_max_allowed_deviation'      =>
                     Template\Synchronization::REVISE_UPDATE_PRICE_MAX_ALLOWED_DEVIATION_DEFAULT,
-            );
+            ];
 
             $dataForAdd = array_merge($dataForAdd, $additionalPriceSettings);
         }
@@ -361,7 +368,7 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
         if ($this->getAmazonAccount()->isOtherListingsMoveToListingsSynchModeQty() ||
             $this->getAmazonAccount()->isOtherListingsMoveToListingsSynchModeAll()
         ) {
-            $additionalQtySettings = array(
+            $additionalQtySettings = [
                 'revise_update_qty'    => \Ess\M2ePro\Model\Amazon\Template\Synchronization::REVISE_UPDATE_QTY_YES,
                 'revise_update_qty_max_applied_value_mode' =>
                     \Ess\M2ePro\Model\Amazon\Template\Synchronization::REVISE_MAX_AFFECTED_QTY_MODE_ON,
@@ -370,7 +377,7 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
                 'relist_mode'          => \Ess\M2ePro\Model\Amazon\Template\Synchronization::RELIST_MODE_YES,
                 'stop_status_disabled' => \Ess\M2ePro\Model\Amazon\Template\Synchronization::STOP_STATUS_DISABLED_YES,
                 'stop_out_off_stock'   => \Ess\M2ePro\Model\Amazon\Template\Synchronization::STOP_OUT_OFF_STOCK_YES,
-            );
+            ];
 
             $dataForAdd = array_merge($dataForAdd, $additionalQtySettings);
         }
@@ -400,17 +407,17 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $tempCollection = $this->amazonFactory->getObject('Template\SellingFormat')->getCollection();
-        $tempCollection->addFieldToFilter('main_table.title','Default ('.$this->getMarketplace()->getTitle().')');
+        $tempCollection->addFieldToFilter('main_table.title', 'Default ('.$this->getMarketplace()->getTitle().')');
         $tempItem = $tempCollection->getFirstItem();
 
-        if (!is_null($tempItem->getId())) {
+        if ($tempItem->getId() !== null) {
             $this->tempObjectsCache['selling_format_'.$marketplaceId] = $tempItem;
             return $tempItem;
         }
 
         $tempModel = $this->amazonFactory->getObject('Template\SellingFormat');
 
-        $dataForAdd = array(
+        $dataForAdd = [
             'title' => 'Default ('.$this->getMarketplace()->getTitle().')',
 
             'qty_mode' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT,
@@ -428,7 +435,7 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
             'regular_sale_price_start_date_value' => $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d'),
             'regular_sale_price_end_date_mode' => \Ess\M2ePro\Model\Amazon\Template\SellingFormat::DATE_VALUE,
             'regular_sale_price_end_date_value' => $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d')
-        );
+        ];
 
         $tempModel->addData($dataForAdd)->save();
 
@@ -476,12 +483,13 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function setAccountByOtherListingProduct(\Ess\M2ePro\Model\Listing\Other $otherListing)
     {
-        if (!is_null($this->account) && $this->account->getId() == $otherListing->getAccountId()) {
+        if ($this->account !== null && $this->account->getId() == $otherListing->getAccountId()) {
             return;
         }
 
         $this->account = $this->amazonFactory->getCachedObjectLoaded(
-            'Account',$otherListing->getAccountId()
+            'Account',
+            $otherListing->getAccountId()
         );
     }
 

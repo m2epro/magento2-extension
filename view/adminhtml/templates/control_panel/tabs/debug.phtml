@@ -1,13 +1,27 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
 <div id="magento_block_control_panel_debug_commands" class="debug-test-commands">
 
-    <?php foreach($this->commands as $command) : ?>
-
+    <?php foreach ($block->commands as $command) : ?>
         <table class="simple_commands_list">
 
             <tr>
                 <td>
 
-                    <a href="<?php echo $command['url']; ?>" <?php if ($command['confirm'] != ''): ?>onclick="return confirm('<?php echo $command['confirm']; ?>');"<?php endif; ?> <?php if ($command['new_window']): ?>target="_blank"<?php endif; ?> title="<?php echo $command['description']; ?>" alt="<?php echo $command['description']; ?>"><?php echo $command['title']; ?></a>
+                    <a href="<?php echo $command['url']; ?>" <?php if ($command['confirm'] != '') :
+                        ?>onclick="return confirm('<?php echo $command['confirm']; ?>');"<?php
+                             endif; ?> <?php if ($command['new_window']) :
+    ?>target="_blank"<?php
+                             endif; ?> title="<?php echo $command['description']; ?>" alt="<?php echo $command['description']; ?>"><?php echo $command['title']; ?></a>
                     <p style="font-size: 0.9em; color: grey;"><?php echo $command['description']; ?></p>
 
                 </td>
@@ -21,29 +35,29 @@
 
 <div id="block_notice_control_panel_tab_debug_magento_development" class="debug-mode-switcher">
 
-    <?php if ($this->isMagentoDevelopmentModeEnabled) : ?>
-        <b><?php echo $this->__('Magento Development Mode is <span style="color:red;">Enabled</span> now.'); ?></b>
+    <?php if ($block->isMagentoDevelopmentModeEnabled) : ?>
+        <b><?php echo $block->__('Magento Development Mode is <span style="color:red;">Enabled</span> now.'); ?></b>
     <?php endif; ?>
 
-    <?php if (!$this->isMagentoDevelopmentModeEnabled) : ?>
-        <b><?php echo $this->__('Magento Development Mode is <span style="color:green;">Disabled</span> now.'); ?></b>
+    <?php if (!$block->isMagentoDevelopmentModeEnabled) : ?>
+        <b><?php echo $block->__('Magento Development Mode is <span style="color:green;">Disabled</span> now.'); ?></b>
     <?php endif; ?>
 
 </div>
 
 <div id="block_notice_control_panel_tab_development_mode" class="debug-mode-switcher">
 
-    <?php if ($this->isDevelopmentModeEnabled) : ?>
-        <b><?php echo $this->__('M2E Pro Development Mode is <span style="color:red;">Enabled</span> now.'); ?></b>
+    <?php if ($block->isDevelopmentModeEnabled) : ?>
+        <b><?php echo $block->__('M2E Pro Development Mode is <span style="color:red;">Enabled</span> now.'); ?></b>
         <div style="float: right; margin-top: -9px;">
-            <?php echo $this->getChildHtml('disable_development_mode'); ?>
+            <?php echo $block->getChildHtml('disable_development_mode'); ?>
         </div>
     <?php endif; ?>
 
-    <?php if (!$this->isDevelopmentModeEnabled) : ?>
-        <b><?php echo $this->__('M2E Pro Development Mode is <span style="color:green;">Disabled</span> now.'); ?></b>
+    <?php if (!$block->isDevelopmentModeEnabled) : ?>
+        <b><?php echo $block->__('M2E Pro Development Mode is <span style="color:green;">Disabled</span> now.'); ?></b>
         <div style="float: right; margin-top: -9px;">
-            <?php echo $this->getChildHtml('enable_development_mode'); ?>
+            <?php echo $block->getChildHtml('enable_development_mode'); ?>
         </div>
     <?php endif; ?>
 

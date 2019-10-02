@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category
+ */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
 {
     //########################################
@@ -35,7 +39,6 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
         $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
 
         if (!$isSaveAndClose && $this->isEditMode()) {
-
             $headId = 'walmart-template-category';
             // ---------------------------------------
             $this->buttonList->add('duplicate', [

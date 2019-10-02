@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Inventory\Get;
 
+/**
+ * Class ItemsResponser
+ * @package Ess\M2ePro\Model\Ebay\Connector\Inventory\Get
+ */
 abstract class ItemsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Responser
 {
     // ########################################

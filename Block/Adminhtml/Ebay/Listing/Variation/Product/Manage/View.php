@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage
+ */
 class View extends AbstractContainer
 {
     protected function _construct()

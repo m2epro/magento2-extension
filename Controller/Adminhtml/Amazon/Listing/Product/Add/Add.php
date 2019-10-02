@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
+/**
+ * Class Add
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
+ */
 class Add extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {
     //########################################
@@ -21,8 +25,8 @@ class Add extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         $productsIds = explode(',', $productsIds);
         $productsIds = array_unique($productsIds);
 
-        $listingProductIds = array();
-        if (count($productsIds) > 0) {
+        $listingProductIds = [];
+        if (!empty($productsIds)) {
             foreach ($productsIds as $productId) {
                 if ($productId == '' || $productsIds[0] == 'true') {
                     continue;
@@ -41,13 +45,12 @@ class Add extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 
         $isLastPart = $this->getRequest()->getParam('is_last_part');
         if ($isLastPart == 'yes') {
-
-            $backUrl = $this->getUrl('*/*/index', array(
+            $backUrl = $this->getUrl('*/*/index', [
                 'id' => $listingId,
                 'skip_products_steps' => empty($tempProducts),
                 'step' => 3,
                 'wizard' => $this->getRequest()->getParam('wizard')
-            ));
+            ]);
 
             $this->clearSession();
 
@@ -56,7 +59,7 @@ class Add extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return $this->getResult();
         }
 
-        $response = array('redirect' => '');
+        $response = ['redirect' => ''];
         $this->setJsonContent($response);
 
         return $this->getResult();

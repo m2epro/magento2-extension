@@ -1,32 +1,43 @@
-<?php foreach($this->commands as $index => $command) : ?>
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
 
+// @codingStandardsIgnoreFile
+
+?>
+
+<?php foreach ($block->commands as $index => $command) : ?>
     <?php
-        $components = array();
-        if ($command['components']) {
-            $components = $command['components'] === true ? $this->enabledComponents : $command['components'];
-        }
+        $components = [];
+    if ($command['components']) {
+        $components = $command['components'] === true ? $block->enabledComponents : $command['components'];
+    }
     ?>
 
     <table class="controlPanel-reflection-container">
-        <tr <?php if ($command['non_production'] && $this->getHelper('Module')->isProductionEnvironment()) : echo 'style="display: none;"'; endif; ?>>
+        <tr <?php if ($command['non_production'] && $block->getHelper('Module')->isProductionEnvironment()) :
+            echo 'style="display: none;"';
+            endif; ?>>
             <td class="group_number_td"><b><?php echo $index + 1; ?>.</b></td>
             <td class="group_separator">|</td>
             <td>
-                <?php echo $this->getCommandLauncherHtml($command); ?>
+                <?php echo $block->getCommandLauncherHtml($command); ?>
 
-                <?php if (count($components) > 1): ?>
-                <?php foreach ($this->enabledComponents as $key => $component): ?>
+                <?php if (count($components) > 1) : ?>
+                    <?php foreach ($block->enabledComponents as $key => $component) : ?>
+                        <?php echo $key == 0 ? '(' : ''; ?>
+                        <?php echo $block->getCommandLauncherHtml($command, $component); ?>
+                        <?php echo isset($block->enabledComponents[$key + 1]) ? ', ' : ')'; ?>
 
-<?php echo $key == 0 ? '(' : ''; ?>
-<?php echo $this->getCommandLauncherHtml($command, $component); ?>
-<?php echo isset($this->enabledComponents[$key + 1]) ? ', ' : ')'; ?>
-
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
                 <?php endif; ?>
             </td>
         </tr>
 
-        <?php if ($command['new_line']): ?>
+        <?php if ($command['new_line']) : ?>
             <tr>
                 <td colspan="3">
                     <hr/>

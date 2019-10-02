@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template;
 
+/**
+ * Class ShippingOverride
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template
+ */
 class ShippingOverride extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template
 {
     //########################################

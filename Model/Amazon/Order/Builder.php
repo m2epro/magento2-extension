@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Amazon\Order;
 
 use Ess\M2ePro\Model\AbstractModel;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Amazon\Order
+ */
 class Builder extends AbstractModel
 {
     const STATUS_NOT_MODIFIED = 0;
@@ -29,16 +33,16 @@ class Builder extends AbstractModel
     private $amazonFactory;
 
     /** @var $order \Ess\M2ePro\Model\Account */
-    private $account = NULL;
+    private $account = null;
 
     /** @var $order \Ess\M2ePro\Model\Order */
-    private $order = NULL;
+    private $order = null;
 
     private $status = self::STATUS_NOT_MODIFIED;
 
-    private $items = array();
+    private $items = [];
 
-    private $updates = array();
+    private $updates = [];
 
     //########################################
 
@@ -48,8 +52,7 @@ class Builder extends AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->amazonFactory = $amazonFactory;
         parent::__construct($helperFactory, $modelFactory, $data);
@@ -57,7 +60,7 @@ class Builder extends AbstractModel
 
     //########################################
 
-    public function initialize(\Ess\M2ePro\Model\Account $account, array $data = array())
+    public function initialize(\Ess\M2ePro\Model\Account $account, array $data = [])
     {
         $this->account = $account;
 
@@ -67,7 +70,7 @@ class Builder extends AbstractModel
 
     //########################################
 
-    private function initializeData(array $data = array())
+    private function initializeData(array $data = [])
     {
         // Init general data
         // ---------------------------------------
@@ -75,7 +78,7 @@ class Builder extends AbstractModel
         $this->setData('amazon_order_id', $data['amazon_order_id']);
         $this->setData('marketplace_id', $data['marketplace_id']);
 
-        $this->setData('status', $this->modelFactory->getObject('Amazon\Order\Helper')->getStatus($data['status']));
+        $this->setData('status', $this->modelFactory->getObject('Amazon_Order_Helper')->getStatus($data['status']));
         $this->setData('is_afn_channel', $data['is_afn_channel']);
         $this->setData('is_prime', $data['is_prime']);
         $this->setData('is_business', $data['is_business']);
@@ -162,7 +165,7 @@ class Builder extends AbstractModel
         $this->order = reset($existOrders);
         $this->status = self::STATUS_UPDATED;
 
-        if (is_null($this->order->getMagentoOrderId())) {
+        if ($this->order->getMagentoOrderId() === null) {
             $this->order->setStatusUpdateRequired(true);
         }
         // ---------------------------------------
@@ -205,7 +208,7 @@ class Builder extends AbstractModel
             $itemData['order_id'] = $this->order->getId();
 
             /** @var $itemBuilder \Ess\M2ePro\Model\Amazon\Order\Item\Builder */
-            $itemBuilder = $this->modelFactory->getObject('Amazon\Order\Item\Builder');
+            $itemBuilder = $this->modelFactory->getObject('Amazon_Order_Item_Builder');
             $itemBuilder->initialize($itemData);
 
             $item = $itemBuilder->process();
@@ -314,7 +317,7 @@ class Builder extends AbstractModel
 
     private function processMagentoOrderUpdates()
     {
-        if (!$this->hasUpdates() || is_null($this->order->getMagentoOrder())) {
+        if (!$this->hasUpdates() || $this->order->getMagentoOrder() === null) {
             return;
         }
 
@@ -324,7 +327,7 @@ class Builder extends AbstractModel
         }
 
         /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
-        $magentoOrderUpdater = $this->modelFactory->getObject('Magento\Order\Updater');
+        $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
         $magentoOrderUpdater->setMagentoOrder($this->order->getMagentoOrder());
 
         if ($this->hasUpdate(self::UPDATE_STATUS)) {
@@ -351,7 +354,7 @@ class Builder extends AbstractModel
             return;
         }
 
-        $magentoOrderComments = array();
+        $magentoOrderComments = [];
         $magentoOrderComments[] = '<b>Attention!</b> Order was canceled on Amazon.';
 
         try {
@@ -361,7 +364,7 @@ class Builder extends AbstractModel
         }
 
         /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
-        $magentoOrderUpdater = $this->modelFactory->getObject('Magento\Order\Updater');
+        $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
         $magentoOrderUpdater->setMagentoOrder($this->order->getMagentoOrder());
         $magentoOrderUpdater->updateComments($magentoOrderComments);
         $magentoOrderUpdater->finishUpdate();
@@ -376,16 +379,16 @@ class Builder extends AbstractModel
 
         $logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId();
 
-        $parentsForProcessing = array();
-        $listingsProductsIdsForNeedSynchRulesCheck = array();
+        $parentsForProcessing = [];
+        $listingsProductsIdsForNeedSynchRulesCheck = [];
 
         foreach ($this->items as $orderItem) {
             /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
             $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
             $listingProductCollection->getSelect()->join(
-                array('l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()),
+                ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
                 'main_table.listing_id=l.id',
-                array('account_id')
+                ['account_id']
             );
             $listingProductCollection->addFieldToFilter('sku', $orderItem['sku']);
             $listingProductCollection->addFieldToFilter('l.account_id', $this->account->getId());
@@ -397,7 +400,6 @@ class Builder extends AbstractModel
             }
 
             foreach ($listingsProducts as $listingProduct) {
-
                 if (!$listingProduct->isListed() && !$listingProduct->isStopped()) {
                     continue;
                 }
@@ -412,7 +414,7 @@ class Builder extends AbstractModel
                 $currentOnlineQty = $amazonListingProduct->getOnlineQty();
 
                 // if product was linked by sku during list action
-                if ($listingProduct->isStopped() && is_null($currentOnlineQty)) {
+                if ($listingProduct->isStopped() && $currentOnlineQty === null) {
                     continue;
                 }
 
@@ -424,7 +426,8 @@ class Builder extends AbstractModel
                 }
 
                 $this->activeRecordFactory->getObject('ProductChange')->addUpdateAction(
-                    $listingProduct->getProductId(),\Ess\M2ePro\Model\ProductChange::INITIATOR_SYNCHRONIZATION
+                    $listingProduct->getProductId(),
+                    \Ess\M2ePro\Model\ProductChange::INITIATOR_SYNCHRONIZATION
                 );
 
                 if ($listingProduct->isSetProcessingLock('in_action')) {
@@ -461,11 +464,11 @@ class Builder extends AbstractModel
 
                 $listingProduct->setData('online_qty', 0);
 
-                $tempLogMessages = array($this->helperFactory->getObject('Module\Translation')->__(
+                $tempLogMessages = [$this->helperFactory->getObject('Module\Translation')->__(
                     'Item QTY was successfully changed from %from% to %to% .',
                     empty($currentOnlineQty) ? '"empty"' : $currentOnlineQty,
                     0
-                ));
+                )];
 
                 if (!$listingProduct->isStopped()) {
                     $statusChangedFrom = $this->helperFactory->getObject('Component\Amazon')
@@ -484,7 +487,8 @@ class Builder extends AbstractModel
                     }
 
                     $listingProduct->setData(
-                        'status_changer', \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT
+                        'status_changer',
+                        \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT
                     );
                     $listingProduct->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED);
                 }
@@ -509,7 +513,7 @@ class Builder extends AbstractModel
 
         if (!empty($parentsForProcessing)) {
             $massProcessor = $this->modelFactory->getObject(
-                'Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass'
+                'Amazon_Listing_Product_Variation_Manager_Type_Relation_ParentRelation_Processor_Mass'
             );
             $massProcessor->setListingsProducts($parentsForProcessing);
             $massProcessor->execute();
@@ -526,10 +530,10 @@ class Builder extends AbstractModel
 
     private function processOtherListingsUpdates()
     {
-        $logger = $this->activeRecordFactory->getObject('Listing\Other\Log');
+        $logger = $this->activeRecordFactory->getObject('Listing_Other_Log');
         $logger->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
 
-        $logsActionId = $this->activeRecordFactory->getObject('Listing\Other\Log')->getResource()->getNextActionId();
+        $logsActionId = $this->activeRecordFactory->getObject('Listing_Other_Log')->getResource()->getNextActionId();
 
         foreach ($this->items as $orderItem) {
             /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingOtherCollection */
@@ -544,7 +548,6 @@ class Builder extends AbstractModel
             }
 
             foreach ($otherListings as $otherListing) {
-
                 if (!$otherListing->isListed() && !$otherListing->isStopped()) {
                     continue;
                 }
@@ -586,11 +589,11 @@ class Builder extends AbstractModel
 
                 $otherListing->setData('online_qty', 0);
 
-                $tempLogMessages = array($this->helperFactory->getObject('Module\Translation')->__(
+                $tempLogMessages = [$this->helperFactory->getObject('Module\Translation')->__(
                     'Item qty was successfully changed from %from% to %to% .',
                     empty($currentOnlineQty) ? '"empty"' : $currentOnlineQty,
                     0
-                ));
+                )];
 
                 if (!$otherListing->isStopped()) {
                     $statusChangedFrom = $this->helperFactory->getObject('Component\Amazon')
@@ -603,12 +606,14 @@ class Builder extends AbstractModel
                         // Item Status was successfully changed from "%from%" to "%to%" .
                         $tempLogMessages[] = $this->helperFactory->getObject('Module\Translation')->__(
                             'Item Status was successfully changed from "%from%" to "%to%" .',
-                            $statusChangedFrom, $statusChangedTo
+                            $statusChangedFrom,
+                            $statusChangedTo
                         );
                     }
 
                     $otherListing->setData(
-                        'status_changer', \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT
+                        'status_changer',
+                        \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT
                     );
                     $otherListing->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED);
                 }

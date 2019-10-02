@@ -10,11 +10,15 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocab
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class GetOptionsPopup
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocabulary
+ */
 class GetOptionsPopup extends Main
 {
     public function execute()
     {
-        $block = $this->createBlock('Amazon\Listing\Product\Variation\VocabularyOptionsPopup');
+        $block = $this->createBlock('Amazon_Listing_Product_Variation_VocabularyOptionsPopup');
 
         $this->setAjaxContent($block);
 

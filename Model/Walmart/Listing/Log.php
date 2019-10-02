@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing;
 
+/**
+ * Class Log
+ * @package Ess\M2ePro\Model\Walmart\Listing
+ */
 class Log extends \Ess\M2ePro\Model\Listing\Log
 {
     //########################################
@@ -44,9 +48,10 @@ class Log extends \Ess\M2ePro\Model\Listing\Log
         $description = null,
         $type = null,
         $priority = null,
-        array $additionalData = array()
+        array $additionalData = []
     ) {
-        $dataForAdd = $this->makeDataForAdd($listingId,
+        $dataForAdd = $this->makeDataForAdd(
+            $listingId,
             $initiator,
             $productId,
             $listingProductId,
@@ -55,14 +60,18 @@ class Log extends \Ess\M2ePro\Model\Listing\Log
             $description,
             $type,
             $priority,
-            $additionalData);
+            $additionalData
+        );
 
         if (!empty($listingProductId)) {
 
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->parentFactory
-                ->getObjectLoaded(\Ess\M2ePro\Helper\Component\Walmart::NICK,
-                    'Listing\Product', $listingProductId);
+                ->getObjectLoaded(
+                    \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                    'Listing\Product',
+                    $listingProductId
+                );
 
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager $variationManager */
             $variationManager = $listingProduct->getChildObject()->getVariationManager();
@@ -73,7 +82,6 @@ class Log extends \Ess\M2ePro\Model\Listing\Log
                 $productOptions = $variationManager->getTypeModel()->getProductOptions();
 
                 if (!empty($productOptions)) {
-
                     $dataForAdd['additional_data'] = (array)$this->getHelper('Data')->jsonDecode(
                         $dataForAdd['additional_data']
                     );

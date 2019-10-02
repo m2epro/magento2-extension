@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order\ShippingAddress;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Order\ShippingAddress
+ */
 class Save extends Order
 {
     public function execute()
@@ -28,11 +32,11 @@ class Save extends Order
         /** @var $order \Ess\M2ePro\Model\Order */
         $order = $this->ebayFactory->getObjectLoaded('Order', (int)$id);
 
-        $data = array();
-        $keys = array(
+        $data = [];
+        $keys = [
             'buyer_name',
             'buyer_email'
-        );
+        ];
 
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -43,15 +47,15 @@ class Save extends Order
         $order->getChildObject()->setData('buyer_name', $data['buyer_name']);
         $order->getChildObject()->setData('buyer_email', $data['buyer_email']);
 
-        $data = array();
-        $keys = array(
+        $data = [];
+        $keys = [
             'street',
             'city',
             'country_code',
             'state',
             'postal_code',
             'phone'
-        );
+        ];
 
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -73,7 +77,7 @@ class Save extends Order
 
         $this->setJsonContent([
             'success' => true,
-            'html' => $this->createBlock('Ebay\Order\Edit\ShippingAddress')->toHtml()
+            'html' => $this->createBlock('Ebay_Order_Edit_ShippingAddress')->toHtml()
         ]);
 
         return $this->getResult();

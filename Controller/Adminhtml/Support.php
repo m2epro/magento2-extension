@@ -8,19 +8,23 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml;
 
+/**
+ * Class Support
+ * @package Ess\M2ePro\Controller\Adminhtml
+ */
 abstract class Support extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
     //########################################
 
     protected function initResultPage()
     {
-        if (!is_null($this->resultPage)) {
+        if ($this->resultPage !== null) {
             return;
         }
 
         parent::initResultPage();
 
-        if (!is_null($this->getMenuRootNodeNick())) {
+        if ($this->getMenuRootNodeNick() !== null) {
             $this->getResultPage()->setActiveMenu($this->getMenuRootNodeNick());
         }
     }
@@ -36,7 +40,7 @@ abstract class Support extends \Ess\M2ePro\Controller\Adminhtml\Base
             return \Ess\M2ePro\Helper\View\Amazon::MENU_ROOT_NODE_NICK;
         }
 
-        return NULL;
+        return null;
     }
 
     protected function _isAllowed()

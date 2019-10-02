@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Other\Mapping;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\Other\Mapping
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $magentoProductCollectionFactory;
@@ -21,8 +25,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->type = $type;
         parent::__construct($context, $backendHelper, $data);
@@ -49,22 +52,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create()
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('type_id');
 
-        $collection->joinStockItem(array(
-            'qty'         => 'qty',
-            'is_in_stock' => 'is_in_stock'
-        ));
+        $collection->joinStockItem();
 
         $collection->addFieldToFilter(
-            array(array(
+            [[
                 'attribute' => 'type_id',
                 'in' => $this->getHelper('Magento\Product')->getOriginKnownTypes()
-            ))
+            ]]
         );
 
         $this->setCollection($collection);
@@ -73,17 +73,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('product_id', array(
+        $this->addColumn('product_id', [
             'header'       => $this->__('Product ID'),
             'align'        => 'right',
             'type'         => 'number',
             'width'        => '100px',
             'index'        => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => array($this, 'callbackColumnProductId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductId']
+        ]);
 
-        $this->addColumn('title', array(
+        $this->addColumn('title', [
             'header'       => $this->__('Product Title / Product SKU'),
             'align'        => 'left',
             'type'         => 'text',
@@ -91,11 +91,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'        => 'name',
             'filter_index' => 'name',
             'escape'       => false,
-            'frame_callback' => array($this, 'callbackColumnTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+        ]);
 
-        $this->addColumn('type', array(
+        $this->addColumn('type', [
             'header'    => $this->__('Type'),
             'align'     => 'left',
             'width'     => '120px',
@@ -104,43 +104,43 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'     => 'type_id',
             'filter_index' => 'type_id',
             'options' => $this->getProductTypes()
-        ));
+        ]);
 
-        $this->addColumn('stock_availability', array(
+        $this->addColumn('stock_availability', [
             'header'=> $this->__('Stock Availability'),
             'width' => '100px',
             'index' => 'is_in_stock',
             'filter_index' => 'is_in_stock',
             'type'  => 'options',
             'sortable'  => false,
-            'options' => array(
+            'options' => [
                 1 => $this->__('In Stock'),
                 0 => $this->__('Out of Stock')
-            ),
-            'frame_callback' => array($this, 'callbackColumnStockAvailability')
-        ));
+            ],
+            'frame_callback' => [$this, 'callbackColumnIsInStock']
+        ]);
 
-        $this->addColumn('actions', array(
+        $this->addColumn('actions', [
             'header'       => $this->__('Actions'),
             'align'        => 'left',
             'type'         => 'text',
             'width'        => '125px',
             'filter'       => false,
             'sortable'     => false,
-            'frame_callback' => array($this, 'callbackColumnActions'),
-        ));
-
+            'frame_callback' => [$this, 'callbackColumnActions'],
+        ]);
     }
 
     //########################################
 
     public function callbackColumnProductId($productId, $product, $column, $isExport)
     {
-        $url = $this->getUrl('catalog/product/edit', array('id' => $productId));
+        $url = $this->getUrl('catalog/product/edit', ['id' => $productId]);
         $withoutImageHtml = '<a href="'.$url.'" target="_blank">'.$productId.'</a>&nbsp;';
 
         $showProductsThumbnails = (bool)(int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/view/','show_products_thumbnails'
+            '/view/',
+            'show_products_thumbnails'
         );
         if (!$showProductsThumbnails) {
             return $withoutImageHtml;
@@ -151,7 +151,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $magentoProduct->setProduct($product);
 
         $imageUrlResized = $magentoProduct->getThumbnailImage();
-        if (is_null($imageUrlResized)) {
+        if ($imageUrlResized === null) {
             return $withoutImageHtml;
         }
 
@@ -159,7 +159,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $imageHtml = $productId.'<div style="margin-top: 5px">'.
             '<img style="max-width: 100px; max-height: 100px;" src="' .$imageUrlResizedUrl. '" /></div>';
-        $withImageHtml = str_replace('>'.$productId.'<','>'.$imageHtml.'<',$withoutImageHtml);
+        $withImageHtml = str_replace('>'.$productId.'<', '>'.$imageHtml.'<', $withoutImageHtml);
 
         return $withImageHtml;
     }
@@ -169,7 +169,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $value = '<div style="margin-left: 3px">'.$this->getHelper('Data')->escapeHtml($value);
 
         $tempSku = $row->getData('sku');
-        if (is_null($tempSku)) {
+        if ($tempSku === null) {
             $tempSku = $this->modelFactory->getObject('Magento\Product')
                                           ->setProductId($row->getData('entity_id'))->getSku();
         }
@@ -185,10 +185,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return '<div style="margin-left: 3px">'.$this->getHelper('Data')->escapeHtml($value).'</div>';
     }
 
-    public function callbackColumnStockAvailability($value, $row, $column, $isExport)
+    public function callbackColumnIsInStock($value, $row, $column, $isExport)
     {
+        if ($row->getData('is_in_stock') === null) {
+            return $this->__('N/A');
+        }
+
         if ((int)$row->getData('is_in_stock') <= 0) {
-            return '<span style="color: red;">'.$value.'</span>';
+            return '<span style="color: red;">'.$this->__('Out of Stock').'</span>';
         }
 
         return $value;
@@ -214,12 +218,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         $collection->addFieldToFilter(
-            array(
-                array('attribute'=>'sku','like'=>'%'.$value.'%'),
-                array('attribute'=>'name', 'like'=>'%'.$value.'%')
-            )
+            [
+                ['attribute'=>'sku','like'=>'%'.$value.'%'],
+                ['attribute'=>'name', 'like'=>'%'.$value.'%']
+            ]
         );
-
     }
 
     //########################################
@@ -237,7 +240,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         });
 
 JS
-);
+        );
         return parent::_beforeToHtml();
     }
 
@@ -245,7 +248,7 @@ JS
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/listing_other_mapping/mapGrid', array('_current'=>true));
+        return $this->getUrl('*/listing_other_mapping/mapGrid', ['_current'=>true]);
     }
 
     public function getRowUrl($row)

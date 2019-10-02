@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization;
 
+/**
+ * Class Orders
+ * @package Ess\M2ePro\Model\Amazon\Synchronization
+ */
 class Orders extends AbstractModel
 {
     //########################################
@@ -19,7 +23,7 @@ class Orders extends AbstractModel
 
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------
@@ -40,9 +44,9 @@ class Orders extends AbstractModel
     {
         $result = true;
 
-        $result = !$this->processTask('Orders\Reserve\Cancellation') ? false : $result;
+        $result = !$this->processTask('Orders_Reserve_Cancellation') ? false : $result;
         $result = !$this->processTask('Orders\Receive') ? false : $result;
-        $result = !$this->processTask('Orders\Receive\Details') ? false : $result;
+        $result = !$this->processTask('Orders_Receive_Details') ? false : $result;
         $result = !$this->processTask('Orders\CreateFailed') ? false : $result;
         $result = !$this->processTask('Orders\Refund') ? false : $result;
         $result = !$this->processTask('Orders\Cancel') ? false : $result;

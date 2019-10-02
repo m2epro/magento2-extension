@@ -8,8 +8,12 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\ActiveRecord;
 
-use  Ess\M2ePro\Model\ActiveRecord\AbstractModel as ActiveRecordAbstract;
+use Ess\M2ePro\Model\ActiveRecord\AbstractModel as ActiveRecordAbstract;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\ResourceModel\ActiveRecord
+ */
 abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
@@ -30,8 +34,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\A
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         $connectionName = null
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->parentFactory = $parentFactory;
@@ -68,7 +71,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\A
         // fix for \Magento\Framework\DB\Adapter\Pdo\Mysql::prepareColumnValue
         // an empty string cannot be saved -> NULL is saved instead
         foreach ($object->getData() as $key => $value) {
-            $value === '' && $object->setData($key,new \Zend_Db_Expr("''"));
+            $value === '' && $object->setData($key, new \Zend_Db_Expr("''"));
         }
 
         return $result;
@@ -82,7 +85,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\A
         // an empty string cannot be saved -> NULL is saved instead
         foreach ($object->getData() as $key => $value) {
             if ($value instanceof \Zend_Db_Expr && $value->__toString() === '\'\'') {
-                $object->setData($key,'');
+                $object->setData($key, '');
             }
         }
 

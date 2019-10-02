@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template;
 
+/**
+ * Class Synchronization
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Template
+ */
 class Synchronization extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
@@ -28,7 +32,7 @@ class Synchronization extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compo
             return;
         }
 
-        $settings = array(
+        $settings = [
             'sellingFormatTemplate' => 'revise_change_selling_format_template',
             'descriptionTemplate'   => 'revise_change_description_template',
             'categoryTemplate'      => 'revise_change_category_template',
@@ -36,7 +40,7 @@ class Synchronization extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compo
             'paymentTemplate'       => 'revise_change_payment_template',
             'shippingTemplate'      => 'revise_change_shipping_template',
             'returnTemplate'        => 'revise_change_return_policy_template'
-        );
+        ];
 
         $settings = $this->getEnabledReviseSettings($newData, $oldData, $settings);
 
@@ -44,22 +48,20 @@ class Synchronization extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compo
             return;
         }
 
-        $idsByReasonDictionary = array();
+        $idsByReasonDictionary = [];
         foreach ($listingsProducts as $listingProduct) {
-
             if ($listingProduct['synch_status'] != \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_SKIP) {
                 continue;
             }
 
-            $listingProductSynchReasons = array_unique(array_filter(explode(',',$listingProduct['synch_reasons'])));
+            $listingProductSynchReasons = array_unique(array_filter(explode(',', $listingProduct['synch_reasons'])));
             foreach ($listingProductSynchReasons as $reason) {
                 $idsByReasonDictionary[$reason][] = $listingProduct['id'];
             }
         }
 
-        $idsForUpdate = array();
+        $idsForUpdate = [];
         foreach ($settings as $reason => $setting) {
-
             if (!isset($idsByReasonDictionary[$reason])) {
                 continue;
             }
@@ -69,8 +71,8 @@ class Synchronization extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compo
 
         $this->getConnection()->update(
             $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable(),
-            array('synch_status' => \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_NEED),
-            array('id IN (?)' => array_unique($idsForUpdate))
+            ['synch_status' => \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_NEED],
+            ['id IN (?)' => array_unique($idsForUpdate)]
         );
     }
 
@@ -79,7 +81,6 @@ class Synchronization extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compo
     public function getEnabledReviseSettings($newData, $oldData, $settings)
     {
         foreach ($settings as $reason => $setting) {
-
             if (!isset($newData[$setting], $oldData[$setting])) {
                 unset($settings[$reason]);
                 continue;

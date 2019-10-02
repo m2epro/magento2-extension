@@ -13,33 +13,43 @@ use Magento\InventorySalesApi\Model\GetAssignedSalesChannelsForStockInterface;
 /**
  * Class ReplaceSalesChannelsDataForStock
  * @package Ess\M2ePro\Plugin\MSI\Magento\InventorySales\Model\ResourceModel
- *
- * This code is not supposed to be executed on Magento v. < 2.3.0.
- * However, classes, which are declared only on Magento v. > 2.3.0 shouldn't be requested in constructor
- * for correct "setup:di:compile" command execution on older versions.
  */
 class ReplaceSalesChannelsDataForStock extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
-    /** @var GetAssignedSalesChannelsForStockInterface */
-    private $getAssignedChannels;
-    /** @var \Magento\Framework\ObjectManagerInterface */
-    private $objectManager;
-    /** @var \Magento\Framework\Event\ManagerInterface */
-    private $eventManager;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory */
+    protected $activeRecordFactory;
+
+    /** @var \Ess\M2ePro\Model\MSI\AffectedProducts */
+    protected $msiAffectedProducts;
+
+    /** @var \Ess\M2ePro\PublicServices\Product\SqlChange */
+    protected $publicService;
+
+    // ---------------------------------------
+
     /** @var StockRepositoryInterface */
-    private $stockRepository;
+    protected $stockRepository;
+
+    /** @var \Magento\InventorySalesApi\Model\GetAssignedSalesChannelsForStockInterface */
+    protected $getAssignedChannels;
 
     //########################################
 
-    public function __construct(\Ess\M2ePro\Helper\Factory $helperFactory,
-                                \Ess\M2ePro\Model\Factory $modelFactory,
-                                \Magento\Framework\ObjectManagerInterface $objectManager,
-                                \Magento\Framework\Event\ManagerInterface $eventManager) {
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\MSI\AffectedProducts $msiAffectedProducts,
+        \Ess\M2ePro\PublicServices\Product\SqlChange $publicService,
+        \Magento\Framework\ObjectManagerInterface $objectManager
+    ) {
         parent::__construct($helperFactory, $modelFactory);
-        $this->objectManager       = $objectManager;
-        $this->eventManager        = $eventManager;
-        $this->getAssignedChannels = $this->objectManager->get(GetAssignedSalesChannelsForStockInterface::class);
-        $this->stockRepository     = $this->objectManager->get(StockRepositoryInterface::class);
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->msiAffectedProducts = $msiAffectedProducts;
+        $this->publicService = $publicService;
+
+        $this->stockRepository = $objectManager->get(StockRepositoryInterface::class);
+        $this->getAssignedChannels = $objectManager->get(GetAssignedSalesChannelsForStockInterface::class);
     }
 
     //########################################
@@ -63,38 +73,36 @@ class ReplaceSalesChannelsDataForStock extends \Ess\M2ePro\Plugin\AbstractPlugin
      */
     public function processExecute($interceptor, \Closure $callback, array $arguments)
     {
-        if (!isset($arguments[0]) || !isset($arguments[1])) {
-            return $callback(...$arguments);
-        }
-
-        $newChannels     = $arguments[0];
-        $stockId         = $arguments[1];
-        $currentChannels = $this->getAssignedChannels->execute($stockId);
+        $stockId        = $arguments[1];
+        $channelsAfter  = $arguments[0];
+        $channelsBefore = $this->getAssignedChannels->execute($stockId);
 
         $result = $callback(...$arguments);
 
-        $addedChannels = $this->getOnlyAddedChannels($currentChannels, $newChannels);
+        /** @var \Magento\InventorySalesApi\Api\Data\SalesChannelInterface[] $addedChannels */
+        $addedChannels = $this->getOnlyAddedChannels($channelsBefore, $channelsAfter);
         if (empty($addedChannels)) {
             return $result;
         }
 
-        foreach ($addedChannels as $channel) {
-            $this->eventManager->dispatch(
-                'ess_stock_channel_added',
-                [
-                    'added_channel' => $channel,
-                    'stock'         => $this->stockRepository->get($stockId)
-                ]
-            );
+        $stock = $this->stockRepository->get($stockId);
 
+        foreach ($addedChannels as $addedChannel) {
+            foreach ($this->msiAffectedProducts->getAffectedListingsByChannel($addedChannel->getCode()) as $listing) {
+                foreach ($listing->getChildObject()->getResource()->getUsedProductsIds($listing->getId()) as $prId) {
+                    $this->publicService->markQtyWasChanged($prId);
+                }
+                $this->logListingMessage($listing, $addedChannel, $stock);
+            }
         }
+        $this->publicService->applyChanges();
 
         return $result;
     }
 
     /**
-     * @param array $oldChannels
-     * @param array $newChannels
+     * @param \Magento\InventorySalesApi\Api\Data\SalesChannelInterface[] $oldChannels
+     * @param \Magento\InventorySalesApi\Api\Data\SalesChannelInterface[] $newChannels
      * @return array
      */
     private function getOnlyAddedChannels(array $oldChannels, array $newChannels)
@@ -105,9 +113,34 @@ class ReplaceSalesChannelsDataForStock extends \Ess\M2ePro\Plugin\AbstractPlugin
             $oldCodes[] = $oldChannel->getCode();
         }
 
-        return array_filter($newChannels, function($channel) use ($oldCodes){
+        return array_filter($newChannels, function ($channel) use ($oldCodes) {
             return !in_array($channel->getCode(), $oldCodes, true);
         });
+    }
+
+    //########################################
+
+    private function logListingMessage(
+        \Ess\M2ePro\Model\Listing $listing,
+        \Magento\InventorySalesApi\Api\Data\SalesChannelInterface $channel,
+        \Magento\InventoryApi\Api\Data\StockInterface $stock
+    ) {
+        /** @var \Ess\M2ePro\Model\Listing\Log $log */
+        $log = $this->activeRecordFactory->getObject('Listing\Log');
+        $log->setComponentMode($listing->getComponentMode());
+
+        $log->addListingMessage(
+            $listing->getId(),
+            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+            null,
+            null,
+            $this->getHelper('Module\Log')->encodeDescription(
+                'Website "%website%" has been linked with stock "%stock%".',
+                ['!website' => $channel->getCode(), '!stock' => $stock->getName()]
+            ),
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+        );
     }
 
     //########################################

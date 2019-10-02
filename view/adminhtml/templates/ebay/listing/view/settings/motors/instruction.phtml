@@ -1,5 +1,14 @@
 <?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
 /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Instruction $block */
+
 ?>
 
 <div id="add_custom_motors_record_instruction_container">
@@ -27,6 +36,6 @@
                 <li><strong>1)</strong> In case of using Add option, the prepared ePIDs/kTypes, Filters or Groups Values will be Added to the already present in the Attribute Values. For example, if the Parts Compatibility Magento Attribute contains 5 ePIDs/kTypes Values, the 3 newly selected Values will be added on top of them, and eventually 8 values will be available in the Magento Attribute.</li><br/>
                 <li><strong>2)</strong> In case of using Override option, all of the previously present in the Magento Attribute Values will be Overridden, and only the newly selected ePIDs/kTypes, Filters or Groups Values will be applied.</li>
             </ul>
-        ', $block->getUrl('*/ebay_settings/index',  ['active_tab' => \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs::TAB_ID_MOTORS]))
+        ', $block->getUrl('*/ebay_settings/index', ['active_tab' => \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs::TAB_ID_MOTORS]))
     ])->toHtml() ?>
 </div>

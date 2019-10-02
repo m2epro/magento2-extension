@@ -1,6 +1,16 @@
 <?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
 use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
+
 /** @var $block \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping\Edit\Form\Data */
+
 ?>
 
 <div class="entry-edit form-inline">
@@ -107,7 +117,6 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
 
             <div id="exclude_locations_popup_domestic">
                 <?php if (!empty($block->marketplaceData['locations_exclude']['domestic'])) : ?>
-
                     <h4><?php echo $block->__('Domestic'); ?></h4>
 
                     <?php foreach ($block->marketplaceData['locations_exclude']['domestic'] as $locationCode => $locationTitle) : ?>
@@ -122,7 +131,6 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
 
             <div id="exclude_locations_popup_international">
                 <?php if (!empty($block->marketplaceData['locations_exclude']['international'])) : ?>
-
                     <h4><?php echo $block->__('International'); ?></h4>
 
                     <div id="exclude_locations_international_regions">
@@ -157,7 +165,6 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
 
             <div id="exclude_locations_popup_additional">
                 <?php if (!empty($block->marketplaceData['locations_exclude']['additional'])) : ?>
-
                     <h4><?php echo $block->__('Additional'); ?></h4>
 
                     <?php foreach ($block->marketplaceData['locations_exclude']['additional'] as $locationCode => $locationTitle) : ?>

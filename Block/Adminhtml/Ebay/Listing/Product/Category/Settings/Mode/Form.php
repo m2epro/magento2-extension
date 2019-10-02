@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode
+ */
 class Form extends AbstractForm
 {
     protected function _prepareForm()
@@ -37,7 +41,7 @@ class Form extends AbstractForm
             ]
         );
         $this->css->add(
-<<<CSS
+            <<<CSS
     #categories_mode_block_title .admin__field-control{
         width: 90%;
     }

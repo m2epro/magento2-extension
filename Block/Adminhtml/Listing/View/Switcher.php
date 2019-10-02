@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\View;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\View
+ */
 abstract class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
 {
     protected $paramName = 'view_mode';
@@ -39,14 +43,15 @@ abstract class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
     public function getDefaultParam()
     {
         $listing = $this->activeRecordFactory->getCachedObjectLoaded(
-            'Listing', $this->getRequest()->getParam('id')
+            'Listing',
+            $this->getRequest()->getParam('id')
         );
 
         $sessionViewMode = $this->getHelper('Data\Session')->getValue(
             "{$this->getComponentMode()}_listing_{$listing->getId()}_view_mode"
         );
 
-        if (is_null($sessionViewMode)) {
+        if ($sessionViewMode === null) {
             return $this->getDefaultViewMode();
         }
 
@@ -55,18 +60,20 @@ abstract class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
 
     public function getSelectedParam()
     {
-        if (!is_null($this->viewMode)) {
+        if ($this->viewMode !== null) {
             return $this->viewMode;
         }
 
         $selectedViewMode = parent::getSelectedParam();
 
         $listing = $this->activeRecordFactory->getCachedObjectLoaded(
-            'Listing', $this->getRequest()->getParam('id')
+            'Listing',
+            $this->getRequest()->getParam('id')
         );
 
         $this->getHelper('Data\Session')->setValue(
-            "{$this->getComponentMode()}_listing_{$listing->getId()}_view_mode", $selectedViewMode
+            "{$this->getComponentMode()}_listing_{$listing->getId()}_view_mode",
+            $selectedViewMode
         );
 
         $this->viewMode = $selectedViewMode;

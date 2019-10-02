@@ -12,6 +12,10 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 use Ess\M2ePro\Model\Amazon\Template\Description\Specific;
 use Ess\M2ePro\Helper\Component\Amazon;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description
+ */
 class Save extends Description
 {
     //########################################
@@ -189,13 +193,16 @@ class Save extends Description
             array_filter($dataForAdd['bullet_points'])
         );
 
-        /* @var $descriptionDefinition \Ess\M2ePro\Model\Amazon\Template\Description\Definition */
+        /** @var $descriptionDefinition \Ess\M2ePro\Model\Amazon\Template\Description\Definition */
         $descriptionDefinition = $this->activeRecordFactory->getObjectLoaded(
-            'Amazon\Template\Description\Definition', $id, NULL, false
+            'Amazon_Template_Description_Definition',
+            $id,
+            null,
+            false
         );
 
-        if (is_null($descriptionDefinition)) {
-            $descriptionDefinition = $this->activeRecordFactory->getObject('Amazon\Template\Description\Definition');
+        if ($descriptionDefinition === null) {
+            $descriptionDefinition = $this->activeRecordFactory->getObject('Amazon_Template_Description_Definition');
         }
 
         $descriptionDefinition->addData($dataForAdd)->save();
@@ -214,12 +221,11 @@ class Save extends Description
         $this->sortSpecifics($specifics, $post['general']['product_data_nick'], $post['general']['marketplace_id']);
 
         foreach ($specifics as $xpath => $specificData) {
-
             if (!$this->validateSpecificData($specificData)) {
                 continue;
             }
 
-            $specificInstance = $this->activeRecordFactory->getObject('Amazon\Template\Description\Specific');
+            $specificInstance = $this->activeRecordFactory->getObject('Amazon_Template_Description_Specific');
 
             $type       = isset($specificData['type']) ? $specificData['type'] : '';
             $isRequired = isset($specificData['is_required']) ? $specificData['is_required'] : 0;
@@ -262,18 +268,18 @@ class Save extends Description
         // Run Processor for Variation Relation Parents
         // ---------------------------------------
         if ($amazonDescriptionTemplate->getResource()->isDifferent($newData, $oldData)) {
-
             $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection()
                 ->addFieldToFilter('template_description_id', $id)
                 ->addFieldToFilter(
-                    'is_general_id_owner', \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES
+                    'is_general_id_owner',
+                    \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES
                 )
-                ->addFieldToFilter('general_id', array('null' => true))
+                ->addFieldToFilter('general_id', ['null' => true])
                 ->addFieldToFilter('is_variation_product', 1)
                 ->addFieldToFilter('is_variation_parent', 1);
 
             $massProcessor = $this->modelFactory->getObject(
-                'Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass'
+                'Amazon_Listing_Product_Variation_Manager_Type_Relation_ParentRelation_Processor_Mass'
             );
             $massProcessor->setListingsProducts($listingProductCollection->getItems());
             $massProcessor->setForceExecuting(false);
@@ -291,12 +297,14 @@ class Save extends Description
 
         $this->messageManager->addSuccess($this->__('Policy was successfully saved'));
         return $this->_redirect($this->getHelper('Data')->getBackUrl(
-            'list', [], ['edit' => [
+            'list',
+            [],
+            ['edit' => [
                 'id' => $id,
                 'wizard' => $this->getRequest()->getParam('wizard'),
                 'close_on_save' => $this->getRequest()->getParam('close_on_save')
-            ]])
-        );
+            ]]
+        ));
     }
 
     // ---------------------------------------
@@ -325,11 +333,11 @@ class Save extends Description
 
     private function sortSpecifics(&$specifics, $productData, $marketplaceId)
     {
-        $table = $this->getHelper('Module\Database\Structure')
+        $table = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_amazon_dictionary_specific');
 
         $dictionarySpecifics = $this->resourceConnection->getConnection()->select()
-            ->from($table,['id', 'xpath'])
+            ->from($table, ['id', 'xpath'])
             ->where('product_data_nick = ?', $productData)
             ->where('marketplace_id = ?', $marketplaceId)
             ->query()->fetchAll();
@@ -342,22 +350,21 @@ class Save extends Description
 
         $this->getHelper('Data\GlobalData')->setValue('dictionary_specifics', $dictionarySpecifics);
 
-        $callback = function ($aXpath, $bXpath) use ($dictionarySpecifics)
-        {
+        $callback = function ($aXpath, $bXpath) use ($dictionarySpecifics) {
 
-            $aXpathParts = explode('/',$aXpath);
+            $aXpathParts = explode('/', $aXpath);
             foreach ($aXpathParts as &$part) {
-                $part = preg_replace('/\-\d+$/','',$part);
+                $part = preg_replace('/\-\d+$/', '', $part);
             }
             unset($part);
-            $aXpath = implode('/',$aXpathParts);
+            $aXpath = implode('/', $aXpathParts);
 
-            $bXpathParts = explode('/',$bXpath);
+            $bXpathParts = explode('/', $bXpath);
             foreach ($bXpathParts as &$part) {
-                $part = preg_replace('/\-\d+$/','',$part);
+                $part = preg_replace('/\-\d+$/', '', $part);
             }
             unset($part);
-            $bXpath = implode('/',$bXpathParts);
+            $bXpath = implode('/', $bXpathParts);
 
             $aIndex = $dictionarySpecifics[$aXpath];
             $bIndex = $dictionarySpecifics[$bXpath];

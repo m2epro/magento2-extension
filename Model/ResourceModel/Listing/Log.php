@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing;
 
+/**
+ * Class Log
+ * @package Ess\M2ePro\Model\ResourceModel\Listing
+ */
 class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
 {
     //########################################
@@ -27,7 +31,7 @@ class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
 
     //########################################
 
-    public function updateListingTitle($listingId , $title)
+    public function updateListingTitle($listingId, $title)
     {
         if ($title == '') {
             return false;
@@ -35,14 +39,14 @@ class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
 
         $this->getConnection()->update(
             $this->getMainTable(),
-            array('listing_title'=>$title),
-            array('listing_id = ?'=>(int)$listingId)
+            ['listing_title'=>$title],
+            ['listing_id = ?'=>(int)$listingId]
         );
 
         return true;
     }
 
-    public function updateProductTitle($productId , $title)
+    public function updateProductTitle($productId, $title)
     {
         if ($title == '') {
             return false;
@@ -50,8 +54,8 @@ class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
 
         $this->getConnection()->update(
             $this->getMainTable(),
-            array('product_title'=>$title),
-            array('product_id = ?'=>(int)$productId)
+            ['product_title'=>$title],
+            ['product_id = ?'=>(int)$productId]
         );
 
         return true;

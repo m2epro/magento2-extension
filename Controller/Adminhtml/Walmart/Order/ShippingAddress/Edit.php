@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Order\ShippingAddress;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Order\ShippingAddress
+ */
 class Edit extends Order
 {
     public function execute()
@@ -20,7 +24,7 @@ class Edit extends Order
 
         $this->getHelper('Data\GlobalData')->setValue('order', $order);
 
-        $form = $this->createBlock('Walmart\Order\Edit\ShippingAddress\Form');
+        $form = $this->createBlock('Walmart_Order_Edit_ShippingAddress_Form');
 
         $this->setAjaxContent($form->toHtml());
         return $this->getResult();

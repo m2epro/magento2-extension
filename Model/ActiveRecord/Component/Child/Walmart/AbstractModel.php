@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel
 {
     protected $walmartFactory;
@@ -26,8 +30,17 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ch
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        parent::__construct($parentFactory, $modelFactory, $activeRecordFactory, $helperFactory, $context, $registry,
-            $resource, $resourceCollection, $data);
+        parent::__construct(
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
 
         $this->walmartFactory = $walmartFactory;
     }

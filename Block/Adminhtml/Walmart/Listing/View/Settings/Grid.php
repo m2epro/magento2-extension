@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Settings;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Settings
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
     /** @var  \Ess\M2ePro\Model\Listing */
@@ -26,8 +30,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->walmartFactory = $walmartFactory;
         $this->resourceConnection = $resourceConnection;
@@ -57,7 +60,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         // Get collection
         // ---------------------------------------
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
@@ -79,24 +82,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // ---------------------------------------
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
         $collection->joinTable(
-            array('lp' => $lpTable),
+            ['lp' => $lpTable],
             'product_id=entity_id',
-            array(
+            [
                 'id'              => 'id',
                 'walmart_status'   => 'status',
                 'component_mode'  => 'component_mode',
                 'additional_data' => 'additional_data'
-            ),
-            array(
+            ],
+            [
                 'listing_id' => (int)$this->listing['id']
-            )
+            ]
         );
 
-        $wlpTable = $this->activeRecordFactory->getObject('Walmart\Listing\Product')->getResource()->getMainTable();
+        $wlpTable = $this->activeRecordFactory->getObject('Walmart_Listing_Product')->getResource()->getMainTable();
         $collection->joinTable(
-            array('wlp' => $wlpTable),
+            ['wlp' => $wlpTable],
             'listing_product_id=id',
-            array(
+            [
                 'template_category_id'           => 'template_category_id',
                 'variation_child_statuses'       => 'variation_child_statuses',
                 'walmart_sku'                    => 'sku',
@@ -114,17 +117,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'is_online_price_invalid'        => 'is_online_price_invalid',
                 'online_start_date'              => 'online_start_date',
                 'online_end_date'                => 'online_end_date',
-            ),
+            ],
             '{{table}}.variation_parent_id is NULL'
         );
 
-        $tdTable = $this->activeRecordFactory->getObject('Walmart\Template\Category')->getResource()->getMainTable();
+        $tdTable = $this->activeRecordFactory->getObject('Walmart_Template_Category')->getResource()->getMainTable();
         $collection->joinTable(
-            array('wtc' => $tdTable),
+            ['wtc' => $tdTable],
             'id=template_category_id',
-            array(
+            [
                 'template_category_title' => 'title'
-            ),
+            ],
             null,
             'left'
         );
@@ -140,58 +143,58 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('product_id', array(
+        $this->addColumn('product_id', [
             'header'    => $this->__('Product ID'),
             'align'     => 'right',
             'width'     => '100px',
             'type'      => 'number',
             'index'     => 'entity_id',
-            'frame_callback' => array($this, 'callbackColumnProductId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductId']
+        ]);
 
-        $this->addColumn('name', array(
+        $this->addColumn('name', [
             'header'    => $this->__('Product Title / Product SKU'),
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'name',
             'filter_index' => 'name',
             'escape'       => false,
-            'frame_callback' => array($this, 'callbackColumnProductTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+        ]);
 
-        $this->addColumn('sku', array(
+        $this->addColumn('sku', [
             'header' => $this->__('SKU'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'text',
             'index' => 'walmart_sku',
             'filter_index' => 'walmart_sku',
-            'frame_callback' => array($this, 'callbackColumnWalmartSku')
-        ));
+            'frame_callback' => [$this, 'callbackColumnWalmartSku']
+        ]);
 
-        $this->addColumn('gtin', array(
+        $this->addColumn('gtin', [
             'header' => $this->__('GTIN'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'text',
             'index' => 'gtin',
             'filter_index' => 'gtin',
-            'frame_callback' => array($this, 'callbackColumnGtin'),
-            'filter_condition_callback' => array($this, 'callbackFilterGtin')
-        ));
+            'frame_callback' => [$this, 'callbackColumnGtin'],
+            'filter_condition_callback' => [$this, 'callbackFilterGtin']
+        ]);
 
-        $this->addColumn('category_template', array(
+        $this->addColumn('category_template', [
             'header' => $this->__('Category Policy'),
             'align' => 'left',
             'width' => '250px',
             'type' => 'text',
             'index' => 'template_category_title',
             'filter_index' => 'template_category_title',
-            'frame_callback' => array($this, 'callbackColumnTemplateCategory')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTemplateCategory']
+        ]);
 
-        $this->addColumn('actions', array(
+        $this->addColumn('actions', [
             'header'    => $this->__('Actions'),
             'align'     => 'left',
             'width'     => '100px',
@@ -204,7 +207,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'no_link'  => true,
             'group_order' => $this->getGroupOrder(),
             'actions'     => $this->getColumnActionsItems()
-        ));
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -213,23 +216,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function getGroupOrder()
     {
-        $groups = array(
+        $groups = [
             'edit_template_category' => $this->__('Category Policy')
-        );
+        ];
 
         return $groups;
     }
 
     protected function getColumnActionsItems()
     {
-        $actions = array(
-            'assignTemplateCategory' => array(
+        $actions = [
+            'assignTemplateCategory' => [
                 'caption' => $this->__('Use Another Category Policy'),
                 'group'   => 'edit_template_category',
                 'field'   => 'id',
                 'onclick_action' => 'ListingGridHandlerObj.actions[\'changeTemplateCategoryIdAction\']'
-            ),
-        );
+            ],
+        ];
 
         return $actions;
     }
@@ -246,30 +249,30 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         // Set mass-action
         // ---------------------------------------
-        $groups = array(
+        $groups = [
             'category_policy' => $this->__('Category Policy'),
             'other'           => $this->__('Other'),
-        );
+        ];
 
         $this->getMassactionBlock()->setGroups($groups);
 
-        $this->getMassactionBlock()->addItem('changeTemplateCategoryId', array(
+        $this->getMassactionBlock()->addItem('changeTemplateCategoryId', [
             'label'    => $this->__('Use Another'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'category_policy');
+        ], 'category_policy');
 
-        $this->getMassactionBlock()->addItem('moving', array(
+        $this->getMassactionBlock()->addItem('moving', [
             'label'    => $this->__('Move Item(s) to Another Listing'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'other');
+        ], 'other');
 
-        $this->getMassactionBlock()->addItem('duplicate', array(
+        $this->getMassactionBlock()->addItem('duplicate', [
             'label'    => $this->__('Duplicate'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'other');
+        ], 'other');
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -283,7 +286,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $value = '<span>'.$productTitle.'</span>';
 
-        if (is_null($sku = $row->getData('sku'))) {
+        $sku = $row->getData('sku');
+
+        if ($row->getData('sku') === null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
                 ->setProductId($row->getData('entity_id'))
                 ->getSku();
@@ -305,7 +310,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $variationManager = $walmartListingProduct->getVariationManager();
 
         if ($variationManager->isRelationParentType()) {
-
             $productAttributes = (array)$variationManager->getTypeModel()->getProductAttributes();
             $virtualProductAttributes = $variationManager->getTypeModel()->getVirtualProductAttributes();
             $virtualChannelAttributes = $variationManager->getTypeModel()->getVirtualChannelAttributes();
@@ -317,15 +321,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             } else {
                 foreach ($productAttributes as $attribute) {
                     if (in_array($attribute, array_keys($virtualProductAttributes))) {
-
                         $attributesStr .= '<span style="border-bottom: 2px dotted grey">' . $attribute .
                             ' (' . $virtualProductAttributes[$attribute] . ')</span>, ';
-
-                    } else if (in_array($attribute, array_keys($virtualChannelAttributes))) {
-
+                    } elseif (in_array($attribute, array_keys($virtualChannelAttributes))) {
                         $attributesStr .= '<span>' . $attribute .
                             ' (' . $virtualChannelAttributes[$attribute] . ')</span>, ';
-
                     } else {
                         $attributesStr .= $attribute . ', ';
                     }
@@ -354,7 +354,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     public function callbackColumnWalmartSku($value, $row, $column, $isExport)
     {
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             $value = $this->__('N/A');
         }
 
@@ -382,13 +382,13 @@ HTML;
 <div class="walmart-identifiers-gtin">{$gtinHtml}</div>
 HTML;
 
-        $identifiers = array(
+        $identifiers = [
             'UPC'        => $row->getData('upc'),
             'EAN'        => $row->getData('ean'),
             'ISBN'       => $row->getData('isbn'),
             'Walmart ID' => $row->getData('wpid'),
             'Item ID'    => $row->getData('item_id')
-        );
+        ];
 
         $htmlAdditional = '';
         foreach ($identifiers as $title => $value) {
@@ -397,8 +397,7 @@ HTML;
             }
 
             if (($row->getData('upc') || $row->getData('ean') || $row->getData('isbn')) &&
-                ($row->getData('wpid') || $row->getData('item_id')) && $title == 'Walmart ID')
-            {
+                ($row->getData('wpid') || $row->getData('item_id')) && $title == 'Walmart ID') {
                 $htmlAdditional .= "<div class='separator-line'></div>";
             }
             $identifierCode  = $this->__($title);
@@ -431,11 +430,10 @@ HTML;
         $html = $this->__('N/A');
 
         if ($row->getData('template_category_id')) {
-
-            $url = $this->getUrl('*/walmart_template_category/edit', array(
+            $url = $this->getUrl('*/walmart_template_category/edit', [
                 'id' => $row->getData('template_category_id'),
                 'close_on_save' => true
-            ));
+            ]);
 
             $templateTitle = $this->getHelper('Data')->escapeHtml($row->getData('template_category_title'));
 
@@ -458,10 +456,10 @@ HTML;
         }
 
         $collection->addFieldToFilter(
-            array(
-                array('attribute'=>'sku','like'=>'%'.$value.'%'),
-                array('attribute'=>'name', 'like'=>'%'.$value.'%')
-            )
+            [
+                ['attribute'=>'sku','like'=>'%'.$value.'%'],
+                ['attribute'=>'name', 'like'=>'%'.$value.'%']
+            ]
         );
     }
 
@@ -498,7 +496,7 @@ SQL;
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
-<<<JS
+                <<<JS
     ListingGridHandlerObj.afterInitPage();
 JS
             );

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Group;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Group
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     private $motorsType;
@@ -34,7 +38,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareCollection()
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Group\Collection $collection */
-        $collection = $this->activeRecordFactory->getObject('Ebay\Motor\Group')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Ebay_Motor_Group')->getCollection();
         $collection->addFieldToFilter('type', ['=' => $this->getMotorsType()]);
 
         $this->setCollection($collection);
@@ -155,7 +159,6 @@ HTML;
     {
 
         if (!$this->canDisplayContainer()) {
-
             $this->js->add(<<<JS
     EbayListingViewSettingsMotorsAddGroupGridObj.afterInitPage();
 JS
@@ -204,7 +207,7 @@ JS
 
     public function getMotorsType()
     {
-        if (is_null($this->motorsType)) {
+        if ($this->motorsType === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Motors type not set.');
         }
 
@@ -215,7 +218,7 @@ JS
 
     public function getItemsColumnTitle()
     {
-        if ($this->getHelper('Component\Ebay\Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
+        if ($this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
             return $this->__('ePID(s)');
         }
 

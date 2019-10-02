@@ -10,12 +10,16 @@ namespace Ess\M2ePro\Observer\Product\AddUpdate;
 
 use \Magento\Catalog\Model\Product\Attribute\Source\Status;
 
+/**
+ * Class After
+ * @package Ess\M2ePro\Observer\Product\AddUpdate
+ */
 class After extends AbstractAddUpdate
 {
     private $eavConfig;
     private $storeManager;
     private $objectManager;
-    private $attributeAffectOnStoreIdCache = array();
+    private $attributeAffectOnStoreIdCache = [];
 
     //########################################
 
@@ -27,8 +31,7 @@ class After extends AbstractAddUpdate
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Framework\ObjectManagerInterface $objectManager
-    )
-    {
+    ) {
         $this->eavConfig = $eavConfig;
         $this->storeManager = $storeManager;
         $this->objectManager = $objectManager;
@@ -58,11 +61,9 @@ class After extends AbstractAddUpdate
     public function process()
     {
         if (!$this->isAddingProductProcess()) {
-
             $this->updateProductsNamesInLogs();
 
             if ($this->areThereAffectedItems()) {
-
                 $this->activeRecordFactory->getObject('ProductChange')->addUpdateAction(
                     $this->getProductId(),
                     \Ess\M2ePro\Model\ProductChange::INITIATOR_OBSERVER
@@ -78,7 +79,6 @@ class After extends AbstractAddUpdate
                 $this->performTrackingAttributesChanges();
                 $this->updateListingsProductsVariations();
             }
-
         } else {
             $this->performGlobalAutoActions();
         }
@@ -109,10 +109,10 @@ class After extends AbstractAddUpdate
     private function updateListingsProductsVariations()
     {
         /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Updater[] $variationUpdatersByComponent */
-        $variationUpdatersByComponent = array();
+        $variationUpdatersByComponent = [];
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $listingsProductsForProcess */
-        $listingsProductsForProcess   = array();
+        $listingsProductsForProcess   = [];
 
         foreach ($this->getAffectedListingsProducts() as $listingProduct) {
 
@@ -141,7 +141,6 @@ class After extends AbstractAddUpdate
 
             if ($variationManager->isRelationChildType() &&
                 isset($listingsProductsForProcess[$variationManager->getVariationParentId()])) {
-
                 unset($listingsProductsForProcess[$listingProduct->getId()]);
             }
         }
@@ -180,37 +179,36 @@ class After extends AbstractAddUpdate
         $oldValue = ($oldValue == Status::STATUS_ENABLED) ? 'Enabled' : 'Disabled';
         $newValue = ($newValue == Status::STATUS_ENABLED) ? 'Enabled' : 'Disabled';
 
-        $changedStores = array();
-
         foreach ($this->getAffectedListingsProducts() as $listingProduct) {
 
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
             $listingProductStoreId = $listingProduct->getListing()->getStoreId();
 
-            if (!$this->isAttributeAffectOnStoreId('status',$listingProductStoreId)) {
+            if (!$this->isAttributeAffectOnStoreId('status', $listingProductStoreId)) {
                 continue;
             }
 
-            if (!$this->updateProductChangeRecord('status',$listingProductStoreId,$oldValue,$newValue) ||
+            if (!$this->updateProductChangeRecord('status', $listingProductStoreId, $oldValue, $newValue) ||
                 $oldValue == $newValue) {
                 continue;
             }
 
-            $changedStores[$listingProductStoreId] = true;
-
-            $this->logListingProductMessage($listingProduct,
-                                            \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_STATUS,
-                                            $oldValue, $newValue);
+            $this->logListingProductMessage(
+                $listingProduct,
+                \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_STATUS,
+                $oldValue,
+                $newValue
+            );
         }
     }
 
     private function performPriceChanges()
     {
-        $oldValue = round((float)$this->getProxy()->getData('price'),2);
-        $newValue = round((float)$this->getProduct()->getPrice(),2);
+        $oldValue = round((float)$this->getProxy()->getData('price'), 2);
+        $newValue = round((float)$this->getProduct()->getPrice(), 2);
 
-        if (!$this->updateProductChangeRecord('price',NULL,$oldValue,$newValue) ||
+        if (!$this->updateProductChangeRecord('price', null, $oldValue, $newValue) ||
             $oldValue == $newValue) {
             return;
         }
@@ -219,18 +217,21 @@ class After extends AbstractAddUpdate
 
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
-            $this->logListingProductMessage($listingProduct,
-                                            \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_PRICE,
-                                            $oldValue, $newValue);
+            $this->logListingProductMessage(
+                $listingProduct,
+                \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_PRICE,
+                $oldValue,
+                $newValue
+            );
         }
     }
 
     private function performSpecialPriceChanges()
     {
-        $oldValue = round((float)$this->getProxy()->getData('special_price'),2);
-        $newValue = round((float)$this->getProduct()->getSpecialPrice(),2);
+        $oldValue = round((float)$this->getProxy()->getData('special_price'), 2);
+        $newValue = round((float)$this->getProduct()->getSpecialPrice(), 2);
 
-        if (!$this->updateProductChangeRecord('special_price',NULL,$oldValue,$newValue) ||
+        if (!$this->updateProductChangeRecord('special_price', null, $oldValue, $newValue) ||
             $oldValue == $newValue) {
             return;
         }
@@ -239,9 +240,12 @@ class After extends AbstractAddUpdate
 
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
-            $this->logListingProductMessage($listingProduct,
-                                            \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_SPECIAL_PRICE,
-                                            $oldValue, $newValue);
+            $this->logListingProductMessage(
+                $listingProduct,
+                \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_SPECIAL_PRICE,
+                $oldValue,
+                $newValue
+            );
         }
     }
 
@@ -250,16 +254,13 @@ class After extends AbstractAddUpdate
         $oldValue = $this->getProxy()->getData('special_price_from_date');
         $newValue = $this->getProduct()->getSpecialFromDate();
 
-        if (!$this->updateProductChangeRecord('special_price_from_date',NULL,$oldValue,$newValue) ||
+        if (!$this->updateProductChangeRecord('special_price_from_date', null, $oldValue, $newValue) ||
             $oldValue == $newValue) {
             return;
-        }
-
-        // M2ePro\TRANSLATIONS
-        // None
-
-        (is_null($oldValue) || $oldValue === false || $oldValue == '') && $oldValue = 'None';
-        (is_null($newValue) || $newValue === false || $newValue == '') && $newValue = 'None';
+        }(
+            $oldValue === null || $oldValue === false || $oldValue == ''
+        ) && $oldValue = 'None';
+        ($newValue === null || $newValue === false || $newValue == '') && $newValue = 'None';
 
         foreach ($this->getAffectedListingsProducts() as $listingProduct) {
 
@@ -268,7 +269,8 @@ class After extends AbstractAddUpdate
             $this->logListingProductMessage(
                 $listingProduct,
                 \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_SPECIAL_PRICE_FROM_DATE,
-                $oldValue, $newValue
+                $oldValue,
+                $newValue
             );
         }
     }
@@ -278,16 +280,13 @@ class After extends AbstractAddUpdate
         $oldValue = $this->getProxy()->getData('special_price_to_date');
         $newValue = $this->getProduct()->getSpecialToDate();
 
-        if (!$this->updateProductChangeRecord('special_price_to_date',NULL,$oldValue,$newValue) ||
+        if (!$this->updateProductChangeRecord('special_price_to_date', null, $oldValue, $newValue) ||
             $oldValue == $newValue) {
             return;
-        }
-
-        // M2ePro\TRANSLATIONS
-        // None
-
-        (is_null($oldValue) || $oldValue === false || $oldValue == '') && $oldValue = 'None';
-        (is_null($newValue) || $newValue === false || $newValue == '') && $newValue = 'None';
+        }(
+            $oldValue === null || $oldValue === false || $oldValue == ''
+        ) && $oldValue = 'None';
+        ($newValue === null || $newValue === false || $newValue == '') && $newValue = 'None';
 
         foreach ($this->getAffectedListingsProducts() as $listingProduct) {
 
@@ -296,7 +295,8 @@ class After extends AbstractAddUpdate
             $this->logListingProductMessage(
                 $listingProduct,
                 \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_SPECIAL_PRICE_TO_DATE,
-                $oldValue, $newValue
+                $oldValue,
+                $newValue
             );
         }
     }
@@ -323,7 +323,8 @@ class After extends AbstractAddUpdate
             $this->logListingProductMessage(
                 $listingProduct,
                 \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_TIER_PRICE,
-                $oldValue, $newValue
+                $oldValue,
+                $newValue
             );
         }
     }
@@ -333,11 +334,8 @@ class After extends AbstractAddUpdate
     private function performTrackingAttributesChanges()
     {
         foreach ($this->getProxy()->getAttributes() as $attributeCode => $attributeValue) {
-
             $oldValue = $attributeValue;
             $newValue = $this->getMagentoProduct()->getAttributeValue($attributeCode);
-
-            $changedStores = array();
 
             foreach ($this->getAffectedListingsProductsByTrackingAttribute($attributeCode) as $listingProduct) {
 
@@ -345,20 +343,22 @@ class After extends AbstractAddUpdate
 
                 $listingProductStoreId = $listingProduct->getListing()->getStoreId();
 
-                if (!$this->isAttributeAffectOnStoreId($attributeCode,$listingProductStoreId)) {
+                if (!$this->isAttributeAffectOnStoreId($attributeCode, $listingProductStoreId)) {
                     continue;
                 }
 
-                if (!$this->updateProductChangeRecord($attributeCode,$listingProductStoreId,$oldValue,$newValue) ||
+                if (!$this->updateProductChangeRecord($attributeCode, $listingProductStoreId, $oldValue, $newValue) ||
                     $oldValue == $newValue) {
                     continue;
                 }
 
-                $changedStores[$listingProductStoreId] = true;
-
-                $this->logListingProductMessage($listingProduct,
-                                                \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_CUSTOM_ATTRIBUTE,
-                                                $oldValue, $newValue, 'of attribute "'.$attributeCode.'"');
+                $this->logListingProductMessage(
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_CUSTOM_ATTRIBUTE,
+                    $oldValue,
+                    $newValue,
+                    'of attribute "'.$attributeCode.'"'
+                );
             }
         }
     }
@@ -368,7 +368,7 @@ class After extends AbstractAddUpdate
     private function performGlobalAutoActions()
     {
         /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\GlobalMode $object */
-        $object = $this->modelFactory->getObject('Listing\Auto\Actions\Mode\GlobalMode');
+        $object = $this->modelFactory->getObject('Listing_Auto_Actions_Mode_GlobalMode');
         $object->setProduct($this->getProduct());
         $object->synch();
     }
@@ -376,7 +376,7 @@ class After extends AbstractAddUpdate
     private function performWebsiteAutoActions()
     {
         /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Website $object */
-        $object = $this->modelFactory->getObject('Listing\Auto\Actions\Mode\Website');
+        $object = $this->modelFactory->getObject('Listing_Auto_Actions_Mode_Website');
         $object->setProduct($this->getProduct());
 
         $websiteIdsOld = $this->getProxy()->getWebsiteIds();
@@ -385,12 +385,12 @@ class After extends AbstractAddUpdate
         // website for admin values
         $this->isAddingProductProcess() && $websiteIdsNew[] = 0;
 
-        $addedWebsiteIds = array_diff($websiteIdsNew,$websiteIdsOld);
+        $addedWebsiteIds = array_diff($websiteIdsNew, $websiteIdsOld);
         foreach ($addedWebsiteIds as $websiteId) {
             $object->synchWithAddedWebsiteId($websiteId);
         }
 
-        $deletedWebsiteIds = array_diff($websiteIdsOld,$websiteIdsNew);
+        $deletedWebsiteIds = array_diff($websiteIdsOld, $websiteIdsNew);
         foreach ($deletedWebsiteIds as $websiteId) {
             $object->synchWithDeletedWebsiteId($websiteId);
         }
@@ -399,49 +399,48 @@ class After extends AbstractAddUpdate
     private function performCategoryAutoActions()
     {
         /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Category $object */
-        $object = $this->modelFactory->getObject('Listing\Auto\Actions\Mode\Category');
+        $object = $this->modelFactory->getObject('Listing_Auto_Actions_Mode_Category');
         $object->setProduct($this->getProduct());
 
         $categoryIdsOld = $this->getProxy()->getCategoriesIds();
         $categoryIdsNew = $this->getProduct()->getCategoryIds();
-        $addedCategories = array_diff($categoryIdsNew,$categoryIdsOld);
-        $deletedCategories = array_diff($categoryIdsOld,$categoryIdsNew);
+        $addedCategories = array_diff($categoryIdsNew, $categoryIdsOld);
+        $deletedCategories = array_diff($categoryIdsOld, $categoryIdsNew);
 
         $websiteIdsOld = $this->getProxy()->getWebsiteIds();
         $websiteIdsNew  = $this->getProduct()->getWebsiteIds();
         $addedWebsites = array_diff($websiteIdsNew, $websiteIdsOld);
         $deletedWebsites = array_diff($websiteIdsOld, $websiteIdsNew);
 
-        $websitesChanges = array(
+        $websitesChanges = [
             // website for default store view
-            0 => array(
+            0 => [
                 'added' => $addedCategories,
                 'deleted' => $deletedCategories
-            )
-        );
+            ]
+        ];
 
         foreach ($this->storeManager->getWebsites() as $website) {
-
             $websiteId = (int)$website->getId();
 
-            $websiteChanges = array(
-                'added' => array(),
-                'deleted' => array()
-            );
+            $websiteChanges = [
+                'added' => [],
+                'deleted' => []
+            ];
 
             // website has been enabled
-            if (in_array($websiteId,$addedWebsites)) {
+            if (in_array($websiteId, $addedWebsites)) {
                 $websiteChanges['added'] = $categoryIdsNew;
             // website is enabled
-            } else if (in_array($websiteId,$websiteIdsNew)) {
+            } elseif (in_array($websiteId, $websiteIdsNew)) {
                 $websiteChanges['added'] = $addedCategories;
             }
 
             // website has been disabled
-            if (in_array($websiteId,$deletedWebsites)) {
+            if (in_array($websiteId, $deletedWebsites)) {
                 $websiteChanges['deleted'] = $categoryIdsOld;
                 // website is enabled
-            } else if (in_array($websiteId,$websiteIdsNew)) {
+            } elseif (in_array($websiteId, $websiteIdsNew)) {
                 $websiteChanges['deleted'] = $deletedCategories;
             }
 
@@ -449,13 +448,12 @@ class After extends AbstractAddUpdate
         }
 
         foreach ($websitesChanges as $websiteId => $changes) {
-
             foreach ($changes['added'] as $categoryId) {
-                $object->synchWithAddedCategoryId($categoryId,$websiteId);
+                $object->synchWithAddedCategoryId($categoryId, $websiteId);
             }
 
             foreach ($changes['deleted'] as $categoryId) {
-                $object->synchWithDeletedCategoryId($categoryId,$websiteId);
+                $object->synchWithDeletedCategoryId($categoryId, $websiteId);
             }
         }
     }
@@ -522,7 +520,7 @@ class After extends AbstractAddUpdate
             return $this->attributeAffectOnStoreIdCache[$cacheKey];
         }
 
-        $attributeInstance = $this->eavConfig->getAttribute('catalog_product',$attributeCode);
+        $attributeInstance = $this->eavConfig->getAttribute('catalog_product', $attributeCode);
 
         if (!($attributeInstance instanceof \Magento\Catalog\Model\ResourceModel\Eav\Attribute)) {
             return $this->attributeAffectOnStoreIdCache[$cacheKey] = false;
@@ -542,7 +540,8 @@ class After extends AbstractAddUpdate
             $product->setStoreId($onStoreId);
             $product->load($this->getProductId());
 
-            $scopeOverridden = $this->objectManager->create('Magento\Catalog\Model\Attribute\ScopeOverriddenValue');
+            $scopeOverridden = $this->objectManager
+                ->create(\Magento\Catalog\Model\Attribute\ScopeOverriddenValue::class);
             $isExistsValueForStore = $scopeOverridden->containsValue(
                 \Magento\Catalog\Api\Data\ProductInterface::class,
                 $product,
@@ -557,20 +556,20 @@ class After extends AbstractAddUpdate
         }
 
         $affectedStoreIds = $this->storeManager->getStore($this->getStoreId())->getWebsite()->getStoreIds();
-        $affectedStoreIds = array_map('intval',array_values(array_unique($affectedStoreIds)));
+        $affectedStoreIds = array_map('intval', array_values(array_unique($affectedStoreIds)));
 
-        return $this->attributeAffectOnStoreIdCache[$cacheKey] = in_array($onStoreId,$affectedStoreIds);
+        return $this->attributeAffectOnStoreIdCache[$cacheKey] = in_array($onStoreId, $affectedStoreIds);
     }
 
     //########################################
 
     private function getAffectedListingsProductsByTrackingAttribute($attributeCode)
     {
-        $result = array();
+        $result = [];
 
         foreach ($this->getAffectedListingsProducts() as $listingProduct) {
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-            if (in_array($attributeCode,$listingProduct->getTrackingAttributes())) {
+            if (in_array($attributeCode, $listingProduct->getTrackingAttributes())) {
                 $result[] = $listingProduct;
             }
         }
@@ -588,7 +587,8 @@ class After extends AbstractAddUpdate
 
         $result = [];
         foreach ($tierPrice as $tierPriceData) {
-            $result[] = sprintf("[price = %s, qty = %s]",
+            $result[] = sprintf(
+                "[price = %s, qty = %s]",
                 $tierPriceData["website_price"],
                 $tierPriceData["price_qty"]
             );
@@ -599,9 +599,13 @@ class After extends AbstractAddUpdate
 
     //########################################
 
-    private function logListingProductMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct, $action,
-                                              $oldValue, $newValue, $messagePostfix = '')
-    {
+    private function logListingProductMessage(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        $action,
+        $oldValue,
+        $newValue,
+        $messagePostfix = ''
+    ) {
         // M2ePro\TRANSLATIONS
         // From [%from%] to [%to%].
 
@@ -618,11 +622,10 @@ class After extends AbstractAddUpdate
         }
 
         if ($listingProduct->isComponentModeEbay() && is_array($listingProduct->getData('found_options_ids'))) {
+            $collection = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')->getCollection()
+                ->addFieldToFilter('main_table.id', ['in' => $listingProduct->getData('found_options_ids')]);
 
-            $collection = $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')->getCollection()
-                ->addFieldToFilter('main_table.id', array('in' => $listingProduct->getData('found_options_ids')));
-
-            $additionalData = array();
+            $additionalData = [];
             foreach ($collection as $listingProductVariationOption) {
                 /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $listingProductVariationOption  */
                 $additionalData['variation_options'][$listingProductVariationOption
@@ -631,22 +634,21 @@ class After extends AbstractAddUpdate
 
             if (!empty($additionalData['variation_options']) &&
                 $this->getHelper('Magento\Product')->isBundleType($collection->getFirstItem()->getProductType())) {
-
                 foreach ($additionalData['variation_options'] as $attribute => $option) {
                     $log->addProductMessage(
                         $listingProduct->getListingId(),
                         $listingProduct->getProductId(),
                         $listingProduct->getId(),
                         \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-                        NULL,
+                        null,
                         $action,
                         $this->getHelper('Module\Log')->encodeDescription(
                             'From [%from%] to [%to%]'.$messagePostfix.'.',
-                            array('!from'=>$oldValue,'!to'=>$newValue)
+                            ['!from'=>$oldValue,'!to'=>$newValue]
                         ),
                         \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
                         \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW,
-                        array('variation_options' => array($attribute => $option))
+                        ['variation_options' => [$attribute => $option]]
                     );
                 }
 
@@ -658,11 +660,11 @@ class After extends AbstractAddUpdate
                 $listingProduct->getProductId(),
                 $listingProduct->getId(),
                 \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-                NULL,
+                null,
                 $action,
                 $this->getHelper('Module\Log')->encodeDescription(
                     'From [%from%] to [%to%]'.$messagePostfix.'.',
-                    array('!from'=>$oldValue,'!to'=>$newValue)
+                    ['!from'=>$oldValue,'!to'=>$newValue]
                 ),
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
                 \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW,
@@ -677,11 +679,11 @@ class After extends AbstractAddUpdate
             $listingProduct->getProductId(),
             $listingProduct->getId(),
             \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-            NULL,
+            null,
             $action,
             $this->getHelper('Module\Log')->encodeDescription(
                 'From [%from%] to [%to%]'.$messagePostfix.'.',
-                array('!from'=>$oldValue,'!to'=>$newValue)
+                ['!from'=>$oldValue,'!to'=>$newValue]
             ),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW

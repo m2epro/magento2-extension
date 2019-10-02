@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action;
 
+/**
+ * Class RequestData
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action
+ */
 class RequestData extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Listing\Product
      */
-    private $listingProduct = NULL;
+    private $listingProduct = null;
 
     //########################################
 
@@ -208,7 +212,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getSku()
     {
-        return $this->hasSku() ? $this->getData('sku') : NULL;
+        return $this->hasSku() ? $this->getData('sku') : null;
     }
 
     /**
@@ -216,7 +220,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getProductId()
     {
-        return $this->hasProductId() ? $this->getData('product_id') : NULL;
+        return $this->hasProductId() ? $this->getData('product_id') : null;
     }
 
     /**
@@ -224,7 +228,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getProductIdType()
     {
-        return $this->hasProductIdType() ? $this->getData('product_id_type') : NULL;
+        return $this->hasProductIdType() ? $this->getData('product_id_type') : null;
     }
 
     // ---------------------------------------
@@ -263,7 +267,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getQty()
     {
-        return $this->hasQty() ? $this->getData('qty') : NULL;
+        return $this->hasQty() ? $this->getData('qty') : null;
     }
 
     // ---------------------------------------
@@ -273,7 +277,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getHandlingTime()
     {
-        return $this->hasHandlingTime() ? $this->getData('handling_time') : NULL;
+        return $this->hasHandlingTime() ? $this->getData('handling_time') : null;
     }
 
     /**
@@ -281,7 +285,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getRestockDate()
     {
-        return $this->hasRestockDate() ? $this->getData('restock_date') : NULL;
+        return $this->hasRestockDate() ? $this->getData('restock_date') : null;
     }
 
     // ---------------------------------------
@@ -291,7 +295,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getRegularPrice()
     {
-        return $this->hasRegularPrice() ? $this->getData('price') : NULL;
+        return $this->hasRegularPrice() ? $this->getData('price') : null;
     }
 
     /**
@@ -299,7 +303,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getRegularSalePrice()
     {
-        return $this->hasRegularSalePrice() ? $this->getData('sale_price') : NULL;
+        return $this->hasRegularSalePrice() ? $this->getData('sale_price') : null;
     }
 
     /**
@@ -307,7 +311,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getRegularSalePriceStartDate()
     {
-        return $this->hasRegularSalePrice() ? $this->getData('sale_price_start_date') : NULL;
+        return $this->hasRegularSalePrice() ? $this->getData('sale_price_start_date') : null;
     }
 
     /**
@@ -315,7 +319,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getRegularSalePriceEndDate()
     {
-        return $this->hasRegularSalePrice() ? $this->getData('sale_price_end_date') : NULL;
+        return $this->hasRegularSalePrice() ? $this->getData('sale_price_end_date') : null;
     }
 
     // ---------------------------------------
@@ -325,7 +329,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getBusinessPrice()
     {
-        return $this->hasBusinessPrice() ? $this->getData('business_price') : NULL;
+        return $this->hasBusinessPrice() ? $this->getData('business_price') : null;
     }
 
     /**
@@ -333,7 +337,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getBusinessDiscounts()
     {
-        return $this->hasBusinessDiscounts() ? $this->getData('business_discounts') : NULL;
+        return $this->hasBusinessDiscounts() ? $this->getData('business_discounts') : null;
     }
 
     // ---------------------------------------
@@ -343,7 +347,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getCondition()
     {
-        return $this->hasCondition() ? $this->getData('condition') : NULL;
+        return $this->hasCondition() ? $this->getData('condition') : null;
     }
 
     /**
@@ -351,7 +355,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getConditionNote()
     {
-        return $this->hasConditionNote() ? $this->getData('condition_note') : NULL;
+        return $this->hasConditionNote() ? $this->getData('condition_note') : null;
     }
 
     // ---------------------------------------
@@ -361,7 +365,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getBrowsenodeId()
     {
-        return $this->hasBrowsenodeId() ? $this->getData('browsenode_id') : NULL;
+        return $this->hasBrowsenodeId() ? $this->getData('browsenode_id') : null;
     }
 
     /**
@@ -369,7 +373,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getProductDataNick()
     {
-        return $this->hasProductDataNick() ? $this->getData('product_data_nick') : NULL;
+        return $this->hasProductDataNick() ? $this->getData('product_data_nick') : null;
     }
 
     // ---------------------------------------
@@ -379,7 +383,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getProductData()
     {
-        return $this->hasProductData() ? $this->getData('product_data') : NULL;
+        return $this->hasProductData() ? $this->getData('product_data') : null;
     }
 
     /**
@@ -387,7 +391,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getDescriptionData()
     {
-        return $this->hasDescriptionData() ? $this->getData('description_data') : NULL;
+        return $this->hasDescriptionData() ? $this->getData('description_data') : null;
     }
 
     // ---------------------------------------
@@ -397,7 +401,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getImagesData()
     {
-        return $this->hasImagesData() ? $this->getData('images_data') : NULL;
+        return $this->hasImagesData() ? $this->getData('images_data') : null;
     }
 
     // ---------------------------------------
@@ -407,7 +411,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getVariationAttributes()
     {
-        return $this->hasVariationAttributes() ? $this->getData()['variation_data']['attributes'] : NULL;
+        return $this->hasVariationAttributes() ? $this->getData()['variation_data']['attributes'] : null;
     }
 
     //########################################

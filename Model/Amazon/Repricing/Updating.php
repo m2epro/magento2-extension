@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Repricing;
 
+/**
+ * Class Updating
+ * @package Ess\M2ePro\Model\Amazon\Repricing
+ */
 class Updating extends AbstractModel
 {
     //########################################
@@ -18,11 +22,10 @@ class Updating extends AbstractModel
      */
     public function process(array $listingsProductsRepricing)
     {
-        $changesData = array();
-        $updatedSkus = array();
+        $changesData = [];
+        $updatedSkus = [];
 
         foreach ($listingsProductsRepricing as $listingProductRepricing) {
-
             $changeData = $this->getChangeData($listingProductRepricing);
             if ($changeData && !in_array($changeData['sku'], $updatedSkus, true)) {
                 $changesData[] = $changeData;
@@ -59,27 +62,26 @@ class Updating extends AbstractModel
             return false;
         }
 
-        return array(
+        return [
             'sku' => $listingProductRepricing->getAmazonListingProduct()->getSku(),
             'regular_product_price'   => $regularPrice,
             'minimal_product_price'   => $minPrice,
             'maximal_product_price'   => $maxPrice,
             'is_calculation_disabled' => $isDisabled,
-        );
+        ];
     }
 
     private function sendData(array $changesData)
     {
         try {
-            $result = $this->getHelper('Component\Amazon\Repricing')->sendRequest(
+            $result = $this->getHelper('Component_Amazon_Repricing')->sendRequest(
                 \Ess\M2ePro\Helper\Component\Amazon\Repricing::COMMAND_SYNCHRONIZE_USER_CHANGES,
-                array(
+                [
                     'account_token' => $this->getAmazonAccountRepricing()->getToken(),
                     'offers'        => $this->getHelper('Data')->jsonEncode($changesData),
-                )
+                ]
             );
         } catch (\Exception $exception) {
-
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($exception->getMessage()),
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manag
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class GetNewChildForm
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manage
+ */
 class GetNewChildForm extends Main
 {
     public function execute()
@@ -20,7 +24,7 @@ class GetNewChildForm extends Main
             return $this->getResponse()->setBody('You should provide correct parameters.');
         }
 
-        $form = $this->createBlock('Amazon\Listing\Product\Variation\Manage\Tabs\Variations\NewChild\Form');
+        $form = $this->createBlock('Amazon_Listing_Product_Variation_Manage_Tabs_Variations_NewChild_Form');
         $form->setListingProduct($this->amazonFactory->getObjectLoaded('Listing\Product', $productId));
 
         $this->setAjaxContent($form);

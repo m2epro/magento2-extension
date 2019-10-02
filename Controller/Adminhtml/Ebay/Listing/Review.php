@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+/**
+ * Class Review
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ */
 class Review extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     public function execute()
@@ -20,11 +24,11 @@ class Review extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $ids = $this->getHelper('Data\Session')->getValue('added_products_ids');
 
         if (empty($ids) && !$this->getRequest()->getParam('disable_list')) {
-            return $this->_redirect('*/*/view', array('id' => $listingId));
+            return $this->_redirect('*/*/view', ['id' => $listingId]);
         }
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Congratulations'));
-        $this->addContent($this->createBlock('Ebay\Listing\Product\Review', '', [
+        $this->addContent($this->createBlock('Ebay_Listing_Product_Review', '', [
             'data' => [
                 'products_count' => count($ids)
             ]

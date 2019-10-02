@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $listing;
@@ -36,14 +40,18 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'id' => 'edit_form',
         ]]);
 
-        $form->addField('group_id', 'hidden',
+        $form->addField(
+            'group_id',
+            'hidden',
             [
                 'name' => 'id',
                 'value' => $this->formData['id']
             ]
         );
 
-        $form->addField('auto_mode', 'hidden',
+        $form->addField(
+            'auto_mode',
+            'hidden',
             [
                 'name' => 'auto_mode',
                 'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY
@@ -52,7 +60,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $fieldSet = $form->addFieldset('category_form_container_field', []);
 
-        $fieldSet->addField('group_title', 'text',
+        $fieldSet->addField(
+            'group_title',
+            'text',
             [
                 'name' => 'title',
                 'label' => $this->__('Title'),
@@ -63,7 +73,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('adding_mode',
+        $fieldSet->addField(
+            'adding_mode',
             'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select',
             [
                 'name' => 'adding_mode',
@@ -81,7 +92,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('adding_add_not_visible',
+        $fieldSet->addField(
+            'adding_add_not_visible',
             'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select',
             [
                 'name' => 'adding_add_not_visible',
@@ -104,7 +116,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('deleting_mode',
+        $fieldSet->addField(
+            'deleting_mode',
             'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select',
             [
                 'name' => 'deleting_mode',
@@ -145,7 +158,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         $group = $this->activeRecordFactory->getObjectLoaded(
-            'Listing\Auto\Category\Group', $groupId
+            'Listing_Auto_Category_Group',
+            $groupId
         );
 
         $data = $group->getData();
@@ -156,21 +170,21 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     public function getDefault()
     {
-        return array(
-            'id' => NULL,
-            'title' => NULL,
-            'category_id' => NULL,
+        return [
+            'id' => null,
+            'title' => null,
+            'category_id' => null,
             'adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
             'deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
-        );
+        ];
     }
 
     //########################################
 
     public function getCategoriesFromOtherGroups()
     {
-        $categories = $this->activeRecordFactory->getObject('Listing\Auto\Category\Group')->getResource()
+        $categories = $this->activeRecordFactory->getObject('Listing_Auto_Category_Group')->getResource()
             ->getCategoriesFromOtherGroups(
                 $this->getRequest()->getParam('id'),
                 $this->getRequest()->getParam('group_id')
@@ -191,7 +205,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
      */
     public function getListing()
     {
-        if (is_null($this->listing)) {
+        if ($this->listing === null) {
             $listingId = $this->getRequest()->getParam('id');
             $this->listing = $this->activeRecordFactory->getCachedObjectLoaded('Listing', $listingId);
         }
@@ -203,7 +217,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected function _afterToHtml($html)
     {
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing'));
+        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class));
 
         $magentoCategoryIdsFromOtherGroups = $this->getHelper('Data')->jsonEncode(
             $this->getCategoriesFromOtherGroups()
@@ -221,17 +235,17 @@ JS
 
     protected function _toHtml()
     {
-        $selectedCategories = array();
+        $selectedCategories = [];
         if ($this->getRequest()->getParam('group_id')) {
-            $selectedCategories = $this->activeRecordFactory->getObject('Listing\Auto\Category')
+            $selectedCategories = $this->activeRecordFactory->getObject('Listing_Auto_Category')
                 ->getCollection()
                 ->addFieldToFilter('group_id', $this->getRequest()->getParam('group_id'))
-                ->addFieldToFilter('category_id', array('neq' => 0))
+                ->addFieldToFilter('category_id', ['neq' => 0])
                 ->getColumnValues('category_id');
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree $block */
-        $block = $this->createBlock('Listing\Category\Tree');
+        $block = $this->createBlock('Listing_Category_Tree');
         $block->setCallback('ListingAutoActionObj.magentoCategorySelectCallback');
         $block->setSelectedCategories($selectedCategories);
 

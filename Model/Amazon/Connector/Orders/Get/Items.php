@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Get;
 
+/**
+ * Class Items
+ * @package Ess\M2ePro\Model\Amazon\Connector\Orders\Get
+ */
 class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 {
     const TIMEOUT_ERRORS_COUNT_TO_RISE = 3;
@@ -24,7 +28,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
         $account,
         \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         array $params
-    ){
+    ) {
         $this->cacheConfig = $cacheConfig;
         parent::__construct($helperFactory, $modelFactory, $account, $params);
     }
@@ -33,21 +37,21 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 
     public function getCommand()
     {
-        return array('orders','get','items');
+        return ['orders','get','items'];
     }
 
     protected function getRequestData()
     {
-        $accountsAccessTokens = array();
+        $accountsAccessTokens = [];
         foreach ($this->params['accounts'] as $account) {
             $accountsAccessTokens[] = $account->getChildObject()->getServerHash();
         }
 
-        $data = array(
+        $data = [
             'accounts'         => $accountsAccessTokens,
             'from_update_date' => $this->params['from_update_date'],
             'to_update_date'   => $this->params['to_update_date']
-        );
+        ];
 
         if (!empty($this->params['job_token'])) {
             $data['job_token'] = $this->params['job_token'];
@@ -63,14 +67,10 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
         $cacheConfigGroup = '/amazon/synchronization/orders/receive/timeout';
 
         try {
-
             parent::process();
-
         } catch (\Ess\M2ePro\Model\Exception\Connection $exception) {
-
             $data = $exception->getAdditionalData();
             if (!empty($data['curl_error_number']) && $data['curl_error_number'] == CURLE_OPERATION_TIMEOUTED) {
-
                 $fails = (int)$this->cacheConfig->getGroupValue($cacheConfigGroup, 'fails');
                 $fails++;
 
@@ -78,7 +78,6 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                 $rise += self::TIMEOUT_RISE_ON_ERROR;
 
                 if ($fails >= self::TIMEOUT_ERRORS_COUNT_TO_RISE && $rise <= self::TIMEOUT_RISE_MAX_VALUE) {
-
                     $fails = 0;
                     $this->cacheConfig->setGroupValue($cacheConfigGroup, 'rise', $rise);
                 }
@@ -121,27 +120,25 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
             return;
         }
 
-        $accounts = array();
+        $accounts = [];
         foreach ($this->params['accounts'] as $item) {
             $accounts[$item->getChildObject()->getServerHash()] = $item;
         }
 
-        $preparedOrders = array();
+        $preparedOrders = [];
 
         foreach ($responseData['items'] as $accountAccessToken => $ordersData) {
-
             if (empty($accounts[$accountAccessToken])) {
                 continue;
             }
 
-            $preparedOrders[$accountAccessToken] = array();
+            $preparedOrders[$accountAccessToken] = [];
 
-            /* @var $marketplace \Ess\M2ePro\Model\Marketplace */
+            /** @var $marketplace \Ess\M2ePro\Model\Marketplace */
             $marketplace = $accounts[$accountAccessToken]->getChildObject()->getMarketplace();
 
             foreach ($ordersData as $orderData) {
-
-                $order = array();
+                $order = [];
 
                 $order['amazon_order_id'] = trim($orderData['id']);
                 $order['status'] = trim($orderData['status']);
@@ -168,28 +165,28 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 
                 $order['shipping_address'] = $this->parseShippingAddress($shipping, $marketplace);
 
-                $order['shipping_dates'] = array(
-                    'ship' => array(
+                $order['shipping_dates'] = [
+                    'ship' => [
                         'from' => $shipping['ship_date']['from'],
                         'to' => $shipping['ship_date']['to'],
-                    ),
-                    'delivery' => array(
+                    ],
+                    'delivery' => [
                         'from' => $shipping['delivery_date']['from'],
                         'to' => $shipping['delivery_date']['to'],
-                    ),
-                );
+                    ],
+                ];
 
                 $order['currency'] = isset($orderData['currency']) ? trim($orderData['currency']) : '';
                 $order['paid_amount'] = isset($orderData['amount_paid']) ? (float)$orderData['amount_paid'] : 0;
-                $order['tax_details'] = isset($orderData['price']['taxes']) ? $orderData['price']['taxes'] : array();
+                $order['tax_details'] = isset($orderData['price']['taxes']) ? $orderData['price']['taxes'] : [];
 
                 $order['discount_details'] = isset($orderData['price']['discounts'])
-                    ? $orderData['price']['discounts'] : array();
+                    ? $orderData['price']['discounts'] : [];
 
-                $order['items'] = array();
+                $order['items'] = [];
 
                 foreach ($orderData['items'] as $item) {
-                    $order['items'][] = array(
+                    $order['items'][] = [
                         'amazon_order_item_id' => trim($item['id']),
                         'sku' => trim($item['identifiers']['sku']),
                         'general_id' => trim($item['identifiers']['general_id']),
@@ -204,17 +201,17 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                         'discount_details' => $item['discounts'],
                         'qty_purchased' => (int)$item['qty']['ordered'],
                         'qty_shipped' => (int)$item['qty']['shipped']
-                    );
+                    ];
                 }
 
                 $preparedOrders[$accountAccessToken][] = $order;
             }
         }
 
-        $this->responseData = array(
+        $this->responseData = [
             'items'          => $preparedOrders,
             'to_update_date' => $responseData['to_update_date']
-        );
+        ];
 
         if (!empty($responseData['job_token'])) {
             $this->responseData['job_token']= $responseData['job_token'];
@@ -223,10 +220,10 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 
     private function parseShippingAddress(array $shippingData, \Ess\M2ePro\Model\Marketplace $marketplace)
     {
-        $location = isset($shippingData['location']) ? $shippingData['location'] : array();
-        $address  = isset($shippingData['address']) ? $shippingData['address'] : array();
+        $location = isset($shippingData['location']) ? $shippingData['location'] : [];
+        $address  = isset($shippingData['address']) ? $shippingData['address'] : [];
 
-        $parsedAddress = array(
+        $parsedAddress = [
             'county'         => isset($location['county']) ? trim($location['county']) : '',
             'country_code'   => isset($location['country_code']) ? trim($location['country_code']) : '',
             'state'          => isset($location['state']) ? trim($location['state']) : '',
@@ -235,12 +232,12 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
             'recipient_name' => isset($shippingData['buyer']) ? trim($shippingData['buyer']) : '',
             'phone'          => isset($shippingData['phone']) ? $shippingData['phone'] : '',
             'company'        => '',
-            'street'         => array(
+            'street'         => [
                 isset($address['first']) ? $address['first'] : '',
                 isset($address['second']) ? $address['second'] : '',
                 isset($address['third']) ? $address['third'] : ''
-            )
-        );
+            ]
+        ];
         $parsedAddress['street'] = array_filter($parsedAddress['street']);
 
         $group = '/amazon/order/settings/marketplace_'.$marketplace->getId().'/';

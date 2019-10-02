@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $productsIds;
@@ -55,7 +59,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $this->setNoTemplatesText();
 
-        $collection = $this->activeRecordFactory->getObject('Amazon\Template\ProductTaxCode')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Amazon_Template_ProductTaxCode')->getCollection();
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
@@ -63,7 +67,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('title', array(
+        $this->addColumn('title', [
             'header'       => $this->__('Title'),
             'align'        => 'left',
             'type'         => 'text',
@@ -71,10 +75,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_index' => 'title',
             'escape'       => false,
             'sortable'     => true,
-            'frame_callback' => array($this, 'callbackColumnTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTitle']
+        ]);
 
-        $this->addColumn('action', array(
+        $this->addColumn('action', [
             'header'       => $this->__('Action'),
             'align'        => 'left',
             'type'         => 'number',
@@ -82,20 +86,21 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'        => 'id',
             'filter'       => false,
             'sortable'     => false,
-            'frame_callback' => array($this, 'callbackColumnAction')
-        ));
+            'frame_callback' => [$this, 'callbackColumnAction']
+        ]);
     }
 
     protected function _prepareLayout()
     {
-        $this->setChild('refresh_button',
-                        $this->createBlock('Magento\Button')
-                             ->setData(array(
+        $this->setChild(
+            'refresh_button',
+            $this->createBlock('Magento\Button')
+                             ->setData([
                                    'id'        => 'productTaxCode_template_refresh_btn',
                                    'label'     => $this->__('Refresh'),
                                    'class'     => 'action primary',
                                    'onclick'   => "ListingGridHandlerObj.templateProductTaxCodeHandler.loadGrid()"
-                             ))
+                             ])
         );
 
         return parent::_prepareLayout();
@@ -119,17 +124,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
-        $templateEditUrl = $this->getUrl('*/amazon_template_productTaxCode/edit', array(
+        $templateEditUrl = $this->getUrl('*/amazon_template_productTaxCode/edit', [
             'id'            => $row->getData('id'),
             'close_on_save' => true
-        ));
+        ]);
 
         $title = $this->getHelper('Data')->escapeHtml($value);
 
         return <<<HTML
 <a target="_blank" href="{$templateEditUrl}">{$title}</a>
 HTML;
-
     }
 
     public function callbackColumnAction($value, $row, $column, $isExport)
@@ -143,7 +147,6 @@ HTML;
     {$assignText}
 </a>
 HTML;
-
     }
 
     //########################################
@@ -163,10 +166,10 @@ JS
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/amazon_listing_product_template_productTaxCode/viewGrid', array(
+        return $this->getUrl('*/amazon_listing_product_template_productTaxCode/viewGrid', [
             'products_ids' => implode(',', $this->getProductsIds()),
             '_current'     => true
-        ));
+        ]);
     }
 
     public function getRowUrl($row)
@@ -192,9 +195,9 @@ HTML;
 
     protected function getNewTemplateProductTaxCodeUrl()
     {
-        return $this->getUrl('*/amazon_template_productTaxCode/new', array(
+        return $this->getUrl('*/amazon_template_productTaxCode/new', [
             'close_on_save'  => true
-        ));
+        ]);
     }
 
     //########################################

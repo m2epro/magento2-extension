@@ -8,17 +8,21 @@
 
 namespace Ess\M2ePro\Model\Listing\Product\Variation;
 
+/**
+ * Class Option
+ * @package Ess\M2ePro\Model\Listing\Product\Variation
+ */
 class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Listing\Product\Variation
      */
-    private $listingProductVariationModel = NULL;
+    private $listingProductVariationModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Magento\Product\Cache
      */
-    protected $magentoProductModel = NULL;
+    protected $magentoProductModel = null;
 
     //########################################
 
@@ -35,7 +39,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMod
         $listingProductId = $this->getListingProduct()->getId();
         $variationId      = $this->getListingProductVariationId();
 
-        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+        $this->getHelper('Data_Cache_Runtime')->removeTagValues(
             "listing_product_{$listingProductId}_variation_{$variationId}_options"
         );
 
@@ -47,7 +51,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMod
         $listingProductId = $this->getListingProduct()->getId();
         $variationId      = $this->getListingProductVariationId();
 
-        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+        $this->getHelper('Data_Cache_Runtime')->removeTagValues(
             "listing_product_{$listingProductId}_variation_{$variationId}_options"
         );
 
@@ -60,8 +64,8 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMod
             return false;
         }
 
-        $this->listingProductVariationModel = NULL;
-        $this->magentoProductModel = NULL;
+        $this->listingProductVariationModel = null;
+        $this->magentoProductModel = null;
 
         return true;
     }
@@ -73,9 +77,11 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMod
      */
     public function getListingProductVariation()
     {
-        if (is_null($this->listingProductVariationModel)) {
+        if ($this->listingProductVariationModel === null) {
             $this->listingProductVariationModel = $this->parentFactory->getObjectLoaded(
-                $this->getComponentMode(),'Listing\Product\Variation',$this->getData('listing_product_variation_id')
+                $this->getComponentMode(),
+                'Listing_Product_Variation',
+                $this->getData('listing_product_variation_id')
             );
         }
 
@@ -98,7 +104,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMod
     public function getMagentoProduct()
     {
         if (!$this->magentoProductModel) {
-            $this->magentoProductModel = $this->modelFactory->getObject('Magento\Product\Cache')
+            $this->magentoProductModel = $this->modelFactory->getObject('Magento_Product_Cache')
                 ->setStoreId($this->getListing()->getStoreId())
                 ->setProductId($this->getData('product_id'))
                 ->setStatisticId($this->getListingProduct()->getId());

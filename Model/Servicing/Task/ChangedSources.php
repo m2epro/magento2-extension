@@ -12,6 +12,10 @@ use Ess\M2ePro\Model\Exception;
 use Magento\Framework\Component\ComponentRegistrar;
 use Ess\M2ePro\Helper\Module;
 
+/**
+ * Class ChangedSources
+ * @package Ess\M2ePro\Model\Servicing\Task
+ */
 class ChangedSources extends \Ess\M2ePro\Model\Servicing\Task
 {
     protected $componentRegistrar;
@@ -32,7 +36,7 @@ class ChangedSources extends \Ess\M2ePro\Model\Servicing\Task
         ComponentRegistrar $componentRegistrar,
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
         \Magento\Framework\Filesystem\File\ReadFactory $fileReaderFactory
-    ){
+    ) {
         parent::__construct(
             $config,
             $cacheConfig,
@@ -66,28 +70,25 @@ class ChangedSources extends \Ess\M2ePro\Model\Servicing\Task
      */
     public function getRequestData()
     {
-        $responseData = array();
+        $responseData = [];
 
         try {
-
             $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector('files','get','info');
+            $connectorObj = $dispatcherObject->getVirtualConnector('files', 'get', 'info');
             $dispatcherObject->process($connectorObj);
 
             $responseData = $connectorObj->getResponseData();
-
         } catch (Exception $e) {
             $this->helperFactory->getObject('Module\Exception')->process($e);
         }
 
         if (count($responseData) <= 0) {
-            return array();
+            return [];
         }
 
-        $requestData = array();
+        $requestData = [];
 
         foreach ($responseData['files_info'] as $info) {
-
             if (!in_array($info['path'], $this->getImportantFiles())) {
                 continue;
             }
@@ -96,28 +97,26 @@ class ChangedSources extends \Ess\M2ePro\Model\Servicing\Task
             $fullPath = $basePath .DIRECTORY_SEPARATOR. $info['path'];
 
             if (!$this->filesystemDriver->isExists($fullPath)) {
-
-                $requestData[] = array(
+                $requestData[] = [
                     'path'    => $info['path'],
-                    'hash'    => NULL,
-                    'content' => NULL,
-                );
+                    'hash'    => null,
+                    'content' => null,
+                ];
                 continue;
             }
 
             /** @var \Magento\Framework\Filesystem\File\Read $fileReader */
             $fileReader = $this->fileReaderFactory->create($fullPath, $this->filesystemDriver);
             $fileContent = $fileReader->readAll();
-            $fileContent = str_replace(array("\r\n","\n\r",PHP_EOL), chr(10), $fileContent);
-            $contentHash = md5($fileContent);
+            $fileContent = str_replace(["\r\n","\n\r",PHP_EOL], chr(10), $fileContent);
+            $contentHash = call_user_func('md5', $fileContent);
 
             if ($contentHash != $info['hash']) {
-
-                $requestData[] = array(
+                $requestData[] = [
                     'path'    => $info['path'],
                     'hash'    => $contentHash,
                     'content' => $fileContent,
-                );
+                ];
             }
         }
 
@@ -126,16 +125,20 @@ class ChangedSources extends \Ess\M2ePro\Model\Servicing\Task
 
     //########################################
 
-    public function processResponseData(array $data) {}
+    public function processResponseData(array $data)
+    {
+        return null;
+    }
 
     //########################################
 
+    //todo Ruslan is going to change this list
     private function getImportantFiles()
     {
-        return array(
+        return [
             'Model/Ebay/Actions/Processor.php',
             'Model/Amazon/Actions/Processor.php'
-        );
+        ];
     }
 
     //########################################

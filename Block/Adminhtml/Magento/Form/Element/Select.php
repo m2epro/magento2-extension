@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Form\Element;
 
+/**
+ * Class Select
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Form\Element
+ */
 class Select extends \Magento\Framework\Data\Form\Element\Select
 {
     /**
@@ -33,8 +37,8 @@ class Select extends \Magento\Framework\Data\Form\Element\Select
         }
 
         $html .= '<select id="' . $this->getHtmlId() . '" name="' . $this->getName() . '" ' . $this->serialize(
-                $this->getHtmlAttributes()
-            ) . $this->_getUiId() . '>' . "\n";
+            $this->getHtmlAttributes()
+        ) . $this->_getUiId() . '>' . "\n";
 
         $value = $this->getValue();
         if (!is_array($value)) {
@@ -105,13 +109,9 @@ class Select extends \Magento\Framework\Data\Form\Element\Select
     {
         if ($this->getData('create_magento_attribute') === true
             && !empty($attributeData['attrs']['is_magento_attribute'])) {
-
             if (empty($attributeData['attrs']) || !is_array($attributeData['attrs'])) {
-
                 $attributeData['attrs'] = ['class' => 'M2ePro-custom-attribute-optgroup'];
-
             } else {
-
                 if (isset($attributeData['attrs']['class'])) {
                     $attributeData['attrs']['class'] = $attributeData['attrs']['class']
                                                        . ' M2ePro-custom-attribute-optgroup';

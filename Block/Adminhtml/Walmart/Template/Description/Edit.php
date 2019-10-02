@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Description;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Description
+ */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
 {
     //########################################
@@ -35,7 +39,6 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
         $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
 
         if (!$isSaveAndClose && $this->isEditMode()) {
-
             $headId = 'walmart-template-description';
             // ---------------------------------------
             $this->buttonList->add('duplicate', [
@@ -74,7 +77,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                                      . '\'\','
                                      . 'undefined,'
                                      . '\'' . $this->getSaveConfirmationText() . '\','
-                                     . '\''.\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_DESCRIPTION.'\''
+                                     . '\'' .
+                                        \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_DESCRIPTION . '\''
                                      . ')'
                     ]
                 ],
@@ -98,7 +102,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                         'onclick'   =>'WalmartTemplateDescriptionObj.saveClick('
                                       . '\'\','
                                       . '\'' . $this->getSaveConfirmationText() . '\','
-                                      .'\''.\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_DESCRIPTION.'\''
+                                      . '\'' .
+                                        \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_DESCRIPTION . '\''
                                       . ')',
                     ]
                 ],

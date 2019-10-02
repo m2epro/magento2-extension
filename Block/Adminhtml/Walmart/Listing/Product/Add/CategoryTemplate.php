@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add;
 
+/**
+ * Class CategoryTemplate
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add
+ */
 class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     /** @var  \Ess\M2ePro\Model\Listing */
@@ -38,21 +42,21 @@ class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
 
         $this->listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
 
-        $url = $this->getUrl('*/*/removeAddedProducts', array(
+        $url = $this->getUrl('*/*/removeAddedProducts', [
             'step' => 1,
             '_current' => true
-        ));
-        $this->addButton('back', array(
+        ]);
+        $this->addButton('back', [
             'label'     => $this->__('Back'),
             'class'     => 'back',
             'onclick'   => 'setLocation(\''.$url.'\');'
-        ));
+        ]);
 
-        $this->addButton('next', array(
+        $this->addButton('next', [
             'label'     => $this->__('Continue'),
             'class'     => 'action-primary forward',
             'onclick'   => "categoryTemplateModeFormSubmit()"
-        ));
+        ]);
     }
 
     //########################################
@@ -80,7 +84,9 @@ class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
     protected function _toHtml()
     {
         $viewHeaderBlock = $this->createBlock(
-            'Listing\View\Header','', ['data' => ['listing' => $this->listing]]
+            'Listing_View_Header',
+            '',
+            ['data' => ['listing' => $this->listing]]
         );
 
         return $viewHeaderBlock->toHtml() . parent::_toHtml();

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization
+ */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 {
     //########################################
@@ -33,11 +37,11 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 
         // ---------------------------------------
         $url = $this->getHelper('Data')->getBackUrl('list');
-        $this->addButton('back', array(
+        $this->addButton('back', [
             'label'     => $this->__('Back'),
             'onclick'   => 'AmazonTemplateSynchronizationObj.backClick(\'' . $url . '\')',
             'class'     => 'back'
-        ));
+        ]);
         // ---------------------------------------
 
         $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
@@ -47,27 +51,26 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
             && $this->getHelper('Data\GlobalData')->getValue('tmp_template')->getId()
         ) {
             // ---------------------------------------
-            $this->addButton('duplicate', array(
+            $this->addButton('duplicate', [
                 'label'     => $this->__('Duplicate'),
                 'onclick'   => 'AmazonTemplateSynchronizationObj.duplicateClick'
                     .'(\'amazon-template-synchronization\')',
                 'class'     => 'add M2ePro_duplicate_button primary'
-            ));
+            ]);
             // ---------------------------------------
 
             // ---------------------------------------
-            $this->addButton('delete', array(
+            $this->addButton('delete', [
                 'label'     => $this->__('Delete'),
                 'onclick'   => 'AmazonTemplateSynchronizationObj.deleteClick()',
                 'class'     => 'delete M2ePro_delete_button primary'
-            ));
+            ]);
             // ---------------------------------------
         }
 
         // ---------------------------------------
 
         if ($isSaveAndClose) {
-
             $this->removeButton('back');
 
             $saveButtons = [
@@ -93,7 +96,6 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                 ]
             ];
         } else {
-
             $saveButtons = [
                 'id' => 'save_and_continue',
                 'label' => $this->__('Save And Continue Edit'),

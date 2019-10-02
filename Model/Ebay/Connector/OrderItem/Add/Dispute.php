@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\OrderItem\Add;
 
+/**
+ * Class Dispute
+ * @package Ess\M2ePro\Model\Ebay\Connector\OrderItem\Add
+ */
 class Dispute extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 {
     // M2ePro\TRANSLATIONS
@@ -36,7 +40,7 @@ class Dispute extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 
     protected function getCommand()
     {
-        return array('dispute', 'add', 'entity');
+        return ['dispute', 'add', 'entity'];
     }
 
     protected function isNeedSendRequest()
@@ -62,12 +66,12 @@ class Dispute extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 
     protected function getRequestData()
     {
-        $requestData = array(
+        $requestData = [
             'item_id'        => $this->orderItem->getChildObject()->getItemId(),
             'transaction_id' => $this->orderItem->getChildObject()->getTransactionId(),
             'explanation'    => $this->params['explanation'],
             'reason'         => $this->params['reason']
-        );
+        ];
 
         return $requestData;
     }
@@ -91,15 +95,17 @@ class Dispute extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
             }
 
             $this->orderItem->getOrder()->addErrorLog(
-                'Unpaid Item Process was not open for Item #%id%. Reason: %msg%', array(
+                'Unpaid Item Process was not open for Item #%id%. Reason: %msg%',
+                [
                     '!id' => $this->orderItem->getChildObject()->getItemId(),
                     'msg' => $message->getText()
-                )
+                ]
             );
 
-            if ((in_array($message->getCode(), array(16207, 16212)))) {
+            if ((in_array($message->getCode(), [16207, 16212]))) {
                 $this->orderItem->setData(
-                    'unpaid_item_process_state',\Ess\M2ePro\Model\Ebay\Order\Item::UNPAID_ITEM_PROCESS_OPENED
+                    'unpaid_item_process_state',
+                    \Ess\M2ePro\Model\Ebay\Order\Item::UNPAID_ITEM_PROCESS_OPENED
                 );
                 $this->orderItem->save();
             }
@@ -116,20 +122,21 @@ class Dispute extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 
         if (empty($responseData['dispute_id'])) {
             $log = 'Unpaid Item Process was not open for Item #%id%. Reason: eBay failure. Please try again later.';
-            $this->orderItem->getOrder()->addErrorLog($log, array(
+            $this->orderItem->getOrder()->addErrorLog($log, [
                 '!id' => $this->orderItem->getChildObject()->getItemId()
-            ));
+            ]);
             return;
         }
 
         $this->orderItem->getChildObject()->setData(
-            'unpaid_item_process_state',\Ess\M2ePro\Model\Ebay\Order\Item::UNPAID_ITEM_PROCESS_OPENED
+            'unpaid_item_process_state',
+            \Ess\M2ePro\Model\Ebay\Order\Item::UNPAID_ITEM_PROCESS_OPENED
         );
         $this->orderItem->getChildObject()->save();
 
-        $this->orderItem->getOrder()->addSuccessLog('Unpaid Item Process for Item #%id% has been initiated.', array(
+        $this->orderItem->getOrder()->addSuccessLog('Unpaid Item Process for Item #%id% has been initiated.', [
             '!id' => $this->orderItem->getChildObject()->getItemId()
-        ));
+        ]);
     }
 
     // ########################################

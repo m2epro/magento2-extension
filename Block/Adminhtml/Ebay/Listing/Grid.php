@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 {
     const MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY = 'editPartsCompatibilityMode';
@@ -21,8 +25,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -51,14 +54,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         // Get collection of listings
         $collection = $this->ebayFactory->getObject('Listing')->getCollection();
         $collection->getSelect()->join(
-            array('a'=>$aTable),
+            ['a'=>$aTable],
             '(`a`.`id` = `main_table`.`account_id`)',
-            array('account_title'=>'title')
+            ['account_title'=>'title']
         );
         $collection->getSelect()->join(
-            array('m'=>$mTable),
+            ['m'=>$mTable],
             '(`m`.`id` = `main_table`.`marketplace_id`)',
-            array('marketplace_title'=>'title')
+            ['marketplace_title'=>'title']
         );
 
         $this->setCollection($collection);
@@ -79,14 +82,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 
     protected function setColumns()
     {
-        $this->addColumn('items_sold_count', array(
+        $this->addColumn('items_sold_count', [
             'header'    => $this->__('Sold QTY'),
             'align'     => 'right',
             'type'      => 'number',
             'index'     => 'items_sold_count',
             'filter_index' => 'second_table.items_sold_count',
-            'frame_callback' => array($this, 'callbackColumnSoldQTY')
-        ));
+            'frame_callback' => [$this, 'callbackColumnSoldQTY']
+        ]);
 
         return $this;
     }
@@ -95,131 +98,131 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
     {
         $backUrl = $this->getHelper('Data')->makeBackUrlParam('*/ebay_listing/index');
 
-        $actions = array(
-            'manageProducts' => array(
+        $actions = [
+            'manageProducts' => [
                 'caption' => $this->__('Manage'),
                 'group'   => 'products_actions',
                 'field'   => 'id',
-                'url'     => array(
+                'url'     => [
                     'base'   => '*/ebay_listing/view',
-                    'params' => array('id' => $this->getId(), 'back' => $backUrl)
-                )
-            ),
+                    'params' => ['id' => $this->getId(), 'back' => $backUrl]
+                ]
+            ],
 
-            'addProductsSourceProducts' => array(
+            'addProductsSourceProducts' => [
                 'caption'        => $this->__('Add From Products List'),
                 'group'          => 'products_actions',
                 'field'          => 'id',
                 'onclick_action' => 'EbayListingGridObj.addProductsSourceProductsAction',
-            ),
+            ],
 
-            'addProductsSourceCategories' => array(
+            'addProductsSourceCategories' => [
                 'caption'        => $this->__('Add From Categories'),
                 'group'          => 'products_actions',
                 'field'          => 'id',
                 'onclick_action' => 'EbayListingGridObj.addProductsSourceCategoriesAction',
-            ),
+            ],
 
-            'autoActions' => array(
+            'autoActions' => [
                 'caption' => $this->__('Auto Add/Remove Rules'),
                 'group'   => 'products_actions',
                 'field'   => 'id',
-                'url'     => array(
+                'url'     => [
                     'base'   => '*/ebay_listing/view',
-                    'params' => array('id' => $this->getId(), 'auto_actions' => 1)
-                )
-            ),
+                    'params' => ['id' => $this->getId(), 'auto_actions' => 1]
+                ]
+            ],
 
-            'viewLogs' => array(
+            'viewLogs' => [
                 'caption' => $this->__('View Log'),
                 'group'   => 'other',
                 'field'   => \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
-                'url'     => array(
+                'url'     => [
                     'base'   => '*/ebay_log_listing_product/index'
-                )
-            ),
+                ]
+            ],
 
-            'clearLogs' => array(
+            'clearLogs' => [
                 'caption' => $this->__('Clear Log'),
                 'confirm' => $this->__('Are you sure?'),
                 'group'   => 'other',
                 'field'   => 'id',
-                'url'     => array(
+                'url'     => [
                     'base' => '*/listing/clearLog',
-                    'params' => array(
+                    'params' => [
                         'back' => $backUrl
-                    )
-                )
-            ),
+                    ]
+                ]
+            ],
 
-            'delete' => array(
+            'delete' => [
                 'caption' => $this->__('Delete Listing'),
                 'confirm' => $this->__('Are you sure?'),
                 'group'   => 'other',
                 'field'   => 'id',
-                'url'     => array(
+                'url'     => [
                     'base'   => '*/ebay_listing/delete',
-                    'params' => array('id' => $this->getId())
-                )
-            ),
+                    'params' => ['id' => $this->getId()]
+                ]
+            ],
 
-            'editTitle' => array(
+            'editTitle' => [
                 'caption'        => $this->__('Title'),
                 'group'          => 'edit_actions',
                 'field'          => 'id',
                 'onclick_action' => 'EditListingTitleObj.openPopup',
-            ),
+            ],
 
-            'editSelling' => array(
+            'editSelling' => [
                 'caption' => $this->__('Selling'),
                 'group'   => 'edit_actions',
                 'field'   => 'id',
-                'url'     => array(
+                'url'     => [
                     'base'   => '*/ebay_template/editListing',
-                    'params' => array(
+                    'params' => [
                         'id' => $this->getId(),
                         'tab' => 'selling',
                         'back' => $backUrl
-                    )
-                )
-            ),
+                    ]
+                ]
+            ],
 
-            'editSynchronization' => array(
+            'editSynchronization' => [
                 'caption' => $this->__('Synchronization'),
                 'group'   => 'edit_actions',
                 'field'   => 'id',
-                'url'     => array(
+                'url'     => [
                     'base'   => '*/ebay_template/editListing',
-                    'params' => array(
+                    'params' => [
                         'id' => $this->getId(),
                         'tab' => 'synchronization',
                         'back' => $backUrl
-                    )
-                )
-            ),
+                    ]
+                ]
+            ],
 
-            'editPaymentAndShipping' => array(
+            'editPaymentAndShipping' => [
                 'caption' => $this->__('Payment / Shipping'),
                 'group'   => 'edit_actions',
                 'field'   => 'id',
-                'url'     => array(
+                'url'     => [
                     'base'   => '*/ebay_template/editListing',
-                    'params' => array(
+                    'params' => [
                         'id' => $this->getId(),
                         'tab' => 'general',
                         'back' => $backUrl
-                    )
-                )
-            ),
+                    ]
+                ]
+            ],
 
-            self::MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY => array(
+            self::MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY => [
                 'caption'        => $this->__('Parts Compatibility Mode'),
                 'group'          => 'edit_actions',
                 'field'          => 'id',
                 'onclick_action' => 'EditCompatibilityModeObj.openPopup',
                 'action_id'      => self::MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY
-            ),
-        );
+            ],
+        ];
 
         return $actions;
     }
@@ -233,7 +236,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         $result = parent::_prepareColumns();
 
         $this->getColumn('actions')->setData(
-            'renderer', '\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Column\Renderer\Action'
+            'renderer',
+            '\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Column\Renderer\Action'
         );
 
         return $result;
@@ -255,7 +259,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 </span>
 HTML;
 
-        /* @var $row \Ess\M2ePro\Model\Listing */
+        /** @var $row \Ess\M2ePro\Model\Listing */
         $accountTitle = $row->getData('account_title');
         $marketplaceTitle = $row->getData('marketplace_title');
 
@@ -292,9 +296,9 @@ HTML;
 
     public function getRowUrl($row)
     {
-        return $this->getUrl('*/ebay_listing/view', array(
+        return $this->getUrl('*/ebay_listing/view', [
             'id' => $row->getId()
-        ));
+        ]);
     }
 
     //########################################
@@ -323,12 +327,12 @@ HTML;
 
         $this->jsUrl->addUrls(array_merge(
             $this->getHelper('Data')->getControllerActions('Ebay\Listing'),
-            $this->getHelper('Data')->getControllerActions('Ebay\Listing\Product\Add'),
-            $this->getHelper('Data')->getControllerActions('Ebay\Log\Listing\Product'),
+            $this->getHelper('Data')->getControllerActions('Ebay_Listing_Product_Add'),
+            $this->getHelper('Data')->getControllerActions('Ebay_Log_Listing_Product'),
             $this->getHelper('Data')->getControllerActions('Ebay\Template')
-//            array(
-//                'common_listing/editTitle' => $this->getUrl('*/common_listing/editTitle')
-//            )
+            //            array(
+            //                'common_listing/editTitle' => $this->getUrl('*/common_listing/editTitle')
+            //            )
         ));
 
         $this->jsUrl->add($this->getUrl('*/listing/edit'), 'listing/edit');
@@ -344,13 +348,13 @@ HTML;
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Ebay')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay::class)
         );
 
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
 
         $this->js->add(
-<<<JS
+            <<<JS
     require([
         'M2ePro/Ebay/Listing/Grid',
         'M2ePro/Listing/EditTitle',

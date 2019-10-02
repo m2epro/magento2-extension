@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\General;
 
 use Ess\M2ePro\Controller\Adminhtml\Base;
 
+/**
+ * Class RequirementsPopupClose
+ * @package Ess\M2ePro\Controller\Adminhtml\General
+ */
 class RequirementsPopupClose extends Base
 {
     //########################################
@@ -17,7 +21,9 @@ class RequirementsPopupClose extends Base
     public function execute()
     {
         $this->getHelper('Module')->getCacheConfig()->setGroupValue(
-            '/view/requirements/popup/', 'closed', 1
+            '/view/requirements/popup/',
+            'closed',
+            1
         );
 
         $this->setJsonContent(['status' => true]);

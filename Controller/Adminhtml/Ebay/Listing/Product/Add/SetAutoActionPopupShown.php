@@ -8,11 +8,18 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
 
+/**
+ * Class SetAutoActionPopupShown
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
+ */
 class SetAutoActionPopupShown extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {
-    public function execute() {
+    public function execute()
+    {
         $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/view/ebay/advanced/autoaction_popup/', 'shown', 1
+            '/view/ebay/advanced/autoaction_popup/',
+            'shown',
+            1
         );
 
         return $this->getResult();

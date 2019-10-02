@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model;
 
+/**
+ * Class Registry
+ * @package Ess\M2ePro\Model
+ */
 class Registry extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     //########################################
@@ -34,7 +38,7 @@ class Registry extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function getValueFromJson()
     {
-        return is_null($this->getId()) ?  array() : $this->getHelper('Data')->jsonDecode($this->getValue());
+        return $this->getId() === null ?  [] : $this->getHelper('Data')->jsonDecode($this->getValue());
     }
 
     //########################################

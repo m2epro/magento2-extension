@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
+use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor;
+
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     //########################################
 
-    /**
-     *@var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor $processor
-     */
+    /** @var Processor $processor */
     private $processor = null;
 
     //########################################
@@ -44,7 +48,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function validate()
     {
-        if (is_null($this->getProcessor())) {
+        if ($this->getProcessor() === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Processor was not set.');
         }
     }

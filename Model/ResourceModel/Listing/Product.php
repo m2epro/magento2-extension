@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing;
 
+/**
+ * Class Product
+ * @package Ess\M2ePro\Model\ResourceModel\Listing
+ */
 class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {
     protected $synchronizationConfig;
@@ -21,8 +25,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         $connectionName = null
-    )
-    {
+    ) {
         $this->synchronizationConfig = $synchronizationConfig;
         parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
     }
@@ -40,33 +43,34 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
     {
         $select = $this->getConnection()
                        ->select()
-                       ->from(array('lp' => $this->getMainTable()))
+                       ->from(['lp' => $this->getMainTable()])
                        ->reset(\Zend_Db_Select::COLUMNS)
-                       ->columns(array('product_id'))
+                       ->columns(['product_id'])
                        ->where('id IN (?)', $listingProductIds);
 
         return $select->query()->fetchAll(\PDO::FETCH_COLUMN);
     }
 
-    public function getItemsByProductId($productId,
-                                        array $listingFilters = array(),
-                                        array $listingProductFilters = array())
-    {
+    public function getItemsByProductId(
+        $productId,
+        array $listingFilters = [],
+        array $listingProductFilters = []
+    ) {
         $filters    = [$listingFilters, $listingProductFilters];
         $cacheKey   = __METHOD__.$productId.sha1($this->getHelper('Data')->jsonEncode($filters));
-        $cacheValue = $this->getHelper('Data\Cache\Runtime')->getValue($cacheKey);
+        $cacheValue = $this->getHelper('Data_Cache_Runtime')->getValue($cacheKey);
 
-        if (!is_null($cacheValue)) {
+        if ($cacheValue !== null) {
             return $cacheValue;
         }
 
         $simpleProductsSelect = $this->getConnection()
             ->select()
             ->from(
-                array('lp' => $this->getMainTable()),
-                array('id','component_mode','option_id' => new \Zend_Db_Expr('NULL'))
+                ['lp' => $this->getMainTable()],
+                ['id','component_mode','option_id' => new \Zend_Db_Expr('NULL')]
             )
-            ->where("`product_id` = ?",(int)$productId);
+            ->where("`product_id` = ?", (int)$productId);
 
         if (!empty($listingProductFilters)) {
             foreach ($listingProductFilters as $column => $value) {
@@ -80,9 +84,9 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
 
         if (!empty($listingFilters)) {
             $simpleProductsSelect->join(
-                array('l' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing')),
+                ['l' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_listing')],
                 '`l`.`id` = `lp`.`listing_id`',
-                array()
+                []
             );
 
             foreach ($listingFilters as $column => $value) {
@@ -94,28 +98,28 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
             }
         }
 
-        $variationTable = $this->activeRecordFactory->getObject('Listing\Product\Variation')->getResource()
+        $variationTable = $this->activeRecordFactory->getObject('Listing_Product_Variation')->getResource()
             ->getMainTable();
-        $optionTable = $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')->getResource()
+        $optionTable = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')->getResource()
             ->getMainTable();
 
         $variationsProductsSelect = $this->getConnection()
             ->select()
             ->from(
-                array('lp' => $this->getMainTable()),
-                array('id','component_mode')
+                ['lp' => $this->getMainTable()],
+                ['id','component_mode']
             )
             ->join(
-                array('lpv' => $variationTable),
+                ['lpv' => $variationTable],
                 '`lp`.`id` = `lpv`.`listing_product_id`',
-                array()
+                []
             )
             ->join(
-                array('lpvo' => $optionTable),
+                ['lpvo' => $optionTable],
                 '`lpv`.`id` = `lpvo`.`listing_product_variation_id`',
-                array('option_id' => 'id')
+                ['option_id' => 'id']
             )
-            ->where("`lpvo`.`product_id` = ?",(int)$productId)
+            ->where("`lpvo`.`product_id` = ?", (int)$productId)
             ->where("`lpvo`.`product_type` != ?", "simple");
 
         if (!empty($listingProductFilters)) {
@@ -130,9 +134,9 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
 
         if (!empty($listingFilters)) {
             $variationsProductsSelect->join(
-                array('l' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing')),
+                ['l' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_listing')],
                 '`l`.`id` = `lp`.`listing_id`',
-                array()
+                []
             );
             foreach ($listingFilters as $column => $value) {
                 if (is_array($value)) {
@@ -143,13 +147,13 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
             }
         }
 
-        $unionSelect = $this->getConnection()->select()->union(array(
+        $unionSelect = $this->getConnection()->select()->union([
             $simpleProductsSelect,
             $variationsProductsSelect
-        ));
+        ]);
 
-        $result = array();
-        $foundOptionsIds = array();
+        $result = [];
+        $foundOptionsIds = [];
 
         foreach ($unionSelect->query()->fetchAll() as $item) {
             $tempListingProductId = $item['id'];
@@ -163,7 +167,9 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
             }
 
             $result[$tempListingProductId] = $this->parentFactory->getObjectLoaded(
-                $item['component_mode'], 'Listing\Product', (int)$tempListingProductId
+                $item['component_mode'],
+                'Listing\Product',
+                (int)$tempListingProductId
             );
         }
 
@@ -175,26 +181,31 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
             $result[$listingProductId]->setData('found_options_ids', $optionsIds);
         }
 
-        $this->getHelper('Data\Cache\Runtime')->setValue($cacheKey, $result);
+        $this->getHelper('Data_Cache_Runtime')->setValue($cacheKey, $result);
 
         return array_values($result);
     }
 
     //########################################
 
-    public function getChangedItems(array $attributes,
-                                    $componentMode = NULL,
-                                    $withStoreFilter = false)
-    {
-        $resultsByListingProduct = $this->getChangedItemsByListingProduct($attributes,
-                                                                          $componentMode,
-                                                                          $withStoreFilter);
+    public function getChangedItems(
+        array $attributes,
+        $componentMode = null,
+        $withStoreFilter = false
+    ) {
+        $resultsByListingProduct = $this->getChangedItemsByListingProduct(
+            $attributes,
+            $componentMode,
+            $withStoreFilter
+        );
 
-        $resultsByVariationOption = $this->getChangedItemsByVariationOption($attributes,
-                                                                            $componentMode,
-                                                                            $withStoreFilter);
+        $resultsByVariationOption = $this->getChangedItemsByVariationOption(
+            $attributes,
+            $componentMode,
+            $withStoreFilter
+        );
 
-        $results = array();
+        $results = [];
 
         foreach ($resultsByListingProduct as $item) {
             if (isset($results[$item['id'].'_'.$item['changed_attribute']])) {
@@ -215,53 +226,55 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
 
     // ---------------------------------------
 
-    public function getChangedItemsByListingProduct(array $attributes,
-                                                    $componentMode = NULL,
-                                                    $withStoreFilter = false)
-    {
+    public function getChangedItemsByListingProduct(
+        array $attributes,
+        $componentMode = null,
+        $withStoreFilter = false
+    ) {
         if (count($attributes) <= 0) {
-            return array();
+            return [];
         }
 
         $listingsTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
         $productsChangesTable = $this->activeRecordFactory->getObject('ProductChange')->getResource()->getMainTable();
 
         $limit = (int)$this->synchronizationConfig->getGroupValue(
-            '/settings/product_change/', 'max_count_per_one_time'
+            '/settings/product_change/',
+            'max_count_per_one_time'
         );
 
         $select = $this->getConnection()
                        ->select()
-                       ->from($productsChangesTable,'*')
-                       ->order(array('id ASC'))
+                       ->from($productsChangesTable, '*')
+                       ->order(['id ASC'])
                        ->limit($limit);
 
         $select = $this->getConnection()
                        ->select()
                        ->from(
-                          array('pc' => $select),
-                          array(
+                           ['pc' => $select],
+                           [
                               'changed_attribute'=>'attribute',
                               'changed_to_value'=>'value_new',
                               'change_initiators'=>'initiators',
-                          )
+                           ]
                        )
                        ->join(
-                          array('lp' => $this->getMainTable()),
-                          '`pc`.`product_id` = `lp`.`product_id`',
-                          'id'
+                           ['lp' => $this->getMainTable()],
+                           '`pc`.`product_id` = `lp`.`product_id`',
+                           'id'
                        )
-                       ->where('`pc`.`action` = ?',(string)\Ess\M2ePro\Model\ProductChange::ACTION_UPDATE)
-                       ->where("`pc`.`attribute` IN ('".implode("','",$attributes)."')");
+                       ->where('`pc`.`action` = ?', (string)\Ess\M2ePro\Model\ProductChange::ACTION_UPDATE)
+                       ->where("`pc`.`attribute` IN ('".implode("','", $attributes)."')");
 
         if ($withStoreFilter) {
-            $select->join(array('l' => $listingsTable),'`lp`.`listing_id` = `l`.`id`',array());
+            $select->join(['l' => $listingsTable], '`lp`.`listing_id` = `l`.`id`', []);
             $select->where("`l`.`store_id` = `pc`.`store_id`");
         }
 
-        !is_null($componentMode) && $select->where("`lp`.`component_mode` = ?",(string)$componentMode);
+        $componentMode !== null && $select->where("`lp`.`component_mode` = ?", (string)$componentMode);
 
-        $results = array();
+        $results = [];
 
         foreach ($select->query()->fetchAll() as $item) {
             if (isset($results[$item['id'].'_'.$item['changed_attribute']])) {
@@ -273,67 +286,69 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
         return array_values($results);
     }
 
-    public function getChangedItemsByVariationOption(array $attributes,
-                                                     $componentMode = NULL,
-                                                     $withStoreFilter = false)
-    {
+    public function getChangedItemsByVariationOption(
+        array $attributes,
+        $componentMode = null,
+        $withStoreFilter = false
+    ) {
         if (count($attributes) <= 0) {
-            return array();
+            return [];
         }
 
         $listingsTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
-        $variationsTable = $this->activeRecordFactory->getObject('Listing\Product\Variation')->getResource()
+        $variationsTable = $this->activeRecordFactory->getObject('Listing_Product_Variation')->getResource()
             ->getMainTable();
-        $optionsTable = $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')->getResource()
+        $optionsTable = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')->getResource()
             ->getMainTable();
         $productsChangesTable = $this->activeRecordFactory->getObject('ProductChange')->getResource()->getMainTable();
 
         $limit = (int)$this->synchronizationConfig->getGroupValue(
-            '/settings/product_change/', 'max_count_per_one_time'
+            '/settings/product_change/',
+            'max_count_per_one_time'
         );
 
         $select = $this->getConnection()
                        ->select()
-                       ->from($productsChangesTable,'*')
-                       ->order(array('id ASC'))
+                       ->from($productsChangesTable, '*')
+                       ->order(['id ASC'])
                        ->limit($limit);
 
         $select = $this->getConnection()
                        ->select()
                        ->from(
-                            array('pc' => $select),
-                            array(
+                           ['pc' => $select],
+                           [
                                 'changed_attribute'=>'attribute',
                                 'changed_to_value'=>'value_new',
                                 'change_initiators'=>'initiators',
-                            )
+                            ]
+                       )
+                     ->join(
+                         ['lpvo' => $optionsTable],
+                         '`pc`.`product_id` = `lpvo`.`product_id`',
+                         []
                      )
                      ->join(
-                        array('lpvo' => $optionsTable),
-                        '`pc`.`product_id` = `lpvo`.`product_id`',
-                        array()
+                         ['lpv' => $variationsTable],
+                         '`lpvo`.`listing_product_variation_id` = `lpv`.`id`',
+                         []
                      )
                      ->join(
-                        array('lpv' => $variationsTable),
-                        '`lpvo`.`listing_product_variation_id` = `lpv`.`id`',
-                        array()
+                         ['lp' => $this->getMainTable()],
+                         '`lpv`.`listing_product_id` = `lp`.`id`',
+                         ['id']
                      )
-                     ->join(
-                        array('lp' => $this->getMainTable()),
-                        '`lpv`.`listing_product_id` = `lp`.`id`',
-                        array('id')
-                     )
-                     ->where('`pc`.`action` = ?',(string)\Ess\M2ePro\Model\ProductChange::ACTION_UPDATE)
-                     ->where("`pc`.`attribute` IN ('".implode("','",$attributes)."')");
+                     ->where('`pc`.`action` = ?', (string)\Ess\M2ePro\Model\ProductChange::ACTION_UPDATE)
+                     ->where("`pc`.`attribute` IN ('".implode("','", $attributes)."')");
 
         if ($withStoreFilter) {
-            $select->join(array('l' => $listingsTable),'`lp`.`listing_id` = `l`.`id`',array());
+            $select->join(['l' => $listingsTable], '`lp`.`listing_id` = `l`.`id`', []);
             $select->where("`l`.`store_id` = `pc`.`store_id`");
         }
 
-        !is_null($componentMode) && $select->where("`lpvo`.`component_mode` = ?",(string)$componentMode);
+        $componentMode !== null && $select->where("`lpvo`.`component_mode` = ?", (string)$componentMode);
 
-        $results = array();
+        $results = [];
 
         foreach ($select->query()->fetchAll() as $item) {
             if (isset($results[$item['id'].'_'.$item['changed_attribute']])) {
@@ -351,8 +366,8 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
     {
         $this->getConnection()->update(
             $this->getMainTable(),
-            array('need_synch_rules_check' => 1),
-            array('id IN (?)' => $listingsProductsIds)
+            ['need_synch_rules_check' => 1],
+            ['id IN (?)' => $listingsProductsIds]
         );
     }
 

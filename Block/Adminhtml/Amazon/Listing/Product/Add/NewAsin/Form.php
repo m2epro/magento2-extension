@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var  \Ess\M2ePro\Model\Listing */
@@ -20,7 +24,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         parent::_construct();
 
         $this->listing = $this->parentFactory->getObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing', $this->getRequest()->getParam('id')
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Listing',
+            $this->getRequest()->getParam('id')
         );
     }
 
@@ -175,7 +181,7 @@ HTML
         $productsIds = implode(',', $this->getProductsIds());
 
         $this->js->add(
-<<<JS
+            <<<JS
     require([
         'Magento_Ui/js/modal/modal'
     ],function(modal) {

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore
+ */
 class Grid extends AbstractGrid
 {
     //########################################
@@ -38,7 +42,7 @@ class Grid extends AbstractGrid
 
     protected function _prepareCollection()
     {
-        $pickupStoreCollection = $this->activeRecordFactory->getObject('Ebay\Account\PickupStore')->getCollection();
+        $pickupStoreCollection = $this->activeRecordFactory->getObject('Ebay_Account_PickupStore')->getCollection();
 
         if ($this->getRequest()->getParam('account_id')) {
             $pickupStoreCollection->addFieldToFilter('account_id', $this->getRequest()->getParam('account_id'));
@@ -92,7 +96,7 @@ class Grid extends AbstractGrid
             'index'     => 'marketplace_id',
             'escape'    => true,
             'filter_index' => 'mm.title',
-            'filter_condition_callback' => array($this, 'callbackFilterMarketplace'),
+            'filter_condition_callback' => [$this, 'callbackFilterMarketplace'],
             'options' => $this->getEnabledMarketplaceTitles()
         ]);
 
@@ -173,15 +177,15 @@ class Grid extends AbstractGrid
 
     private function getEnabledMarketplaceTitles()
     {
-        $marketplaceCollection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK,'Marketplace')
+        $marketplaceCollection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Marketplace')
                                       ->getCollection()
                                      ->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Ebay::NICK)
                                      ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
                                      ->addFieldToFilter('is_in_store_pickup', 1)
                                      ->setOrder('sorder', 'ASC');
 
-        $pickupStoreHelper = $this->getHelper('Component\Ebay\PickupStore');
-        $options = array();
+        $pickupStoreHelper = $this->getHelper('Component_Ebay_PickupStore');
+        $options = [];
         foreach ($marketplaceCollection->getItems() as $marketplace) {
             $countryData = $pickupStoreHelper->convertMarketplaceToCountry(
                 $marketplace->getChildObject()->getData()

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts\Update;
 
 use Ess\M2ePro\Model\Processing\Runner;
 
+/**
+ * Class Blocked
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts\Update
+ */
 class Blocked extends \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts\AbstractModel
 {
     const LOCK_ITEM_PREFIX = 'synchronization_walmart_listings_products_update_blocked';
@@ -63,8 +67,6 @@ class Blocked extends \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts
             /** @var $account \Ess\M2ePro\Model\Account **/
 
             $this->getActualOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
-            // M2ePro\TRANSLATIONS
-            // The "Update Blocked Listings Products" Action for Walmart Account: "%account_title%" is started. Please wait...
             $status = 'The "Update Blocked Listings Products" Action for Walmart Account: ';
             $status .= '"%account_title%" is started. ';
             $status .= 'Please wait...';
@@ -73,20 +75,14 @@ class Blocked extends \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts
             );
 
             if (!$this->isLockedAccount($account) && !$this->isLockedAccountInterval($account)) {
-
                 $this->getActualOperationHistory()->addTimePoint(
                     __METHOD__.'process'.$account->getId(),
                     'Process Account '.$account->getTitle()
                 );
 
                 try {
-
                     $this->processAccount($account);
-
                 } catch (\Exception $exception) {
-
-                    // M2ePro_TRANSLATIONS
-                    // The "Update Blocked Listings Products" Action for Walmart Account: "%account%" was completed with error.
                     $message = 'The "Update Blocked Listings Products" Action for Walmart Account "%account%"';
                     $message .= ' was completed with error.';
                     $message = $this->getHelper('Module\Translation')->__($message, $account->getTitle());
@@ -98,8 +94,6 @@ class Blocked extends \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts
                 $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'process'.$account->getId());
             }
 
-            // M2ePro\TRANSLATIONS
-            // The "Update Listings Products" Action for Walmart Account: "%account_title%" is finished. Please wait...
             $status = 'The "Update Blocked Listings Products" Action for Walmart Account: ';
             $status .= '"%account_title%" is finished. ';
             $status .= 'Please wait...';
@@ -119,16 +113,21 @@ class Blocked extends \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts
     {
         $collection = $this->activeRecordFactory->getObject('Listing')->getCollection();
         $collection->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Walmart::NICK);
-        $collection->addFieldToFilter('account_id',(int)$account->getId());
+        $collection->addFieldToFilter('account_id', (int)$account->getId());
 
         if (!$collection->getSize()) {
             return;
         }
 
         /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcher */
-        $dispatcher = $this->modelFactory->getObject('Walmart\Connector\Dispatcher');
-        $connector = $dispatcher->getVirtualConnector('inventory', 'get', 'wpidsItems', array(), 'data', $account);
+        $dispatcher = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
+        $connector = $dispatcher->getVirtualConnector('inventory', 'get', 'wpidsItems', [], 'data', $account);
         $dispatcher->process($connector);
+
+        if (!$this->isNeedProcessResponse($connector->getResponse())) {
+            $this->processResponseMessages($connector->getResponseMessages());
+            return;
+        }
 
         $wpids = $connector->getResponseData();
 
@@ -140,21 +139,21 @@ class Blocked extends \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts
 
         $logsActionId = $tempLog->getResource()->getNextActionId();
 
-        $notReceivedIds = array();
+        $notReceivedIds = [];
         while ($existingItem = $stmtTemp->fetch()) {
-
             if (in_array($existingItem['wpid'], $wpids)) {
                 continue;
             }
 
             $notReceivedItem = $existingItem;
 
-            if (!in_array((int)$notReceivedItem['id'],$notReceivedIds)) {
+            if (!in_array((int)$notReceivedItem['id'], $notReceivedIds)) {
                 $statusChangedFrom = $this->getHelper('Component\Walmart')
                                          ->getHumanTitleByListingProductStatus($notReceivedItem['status']);
                 $statusChangedTo = $this->getHelper('Component\Walmart')
                                        ->getHumanTitleByListingProductStatus(
-                                           \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED);
+                                           \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED
+                                       );
 
                 // M2ePro_TRANSLATIONS
                 // Item Status was successfully changed from "%from%" to "%to%" .
@@ -192,31 +191,31 @@ class Blocked extends \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts
             $this->updateLastListingProductsSynchronization($account);
         }
 
-        $mainBind = array(
+        $mainBind = [
             'status'         => \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
             'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT,
-        );
+        ];
 
-        $childBind = array(
+        $childBind = [
             'is_missed_on_channel' => 1,
-        );
+        ];
 
         $connWrite = $this->resourceConnection->getConnection();
 
         $listingProductMainTable = $this->activeRecordFactory->getObject('Listing\Product')
                                                              ->getResource()
                                                              ->getMainTable();
-        $listingProductChildTable =$this->activeRecordFactory->getObject('Walmart\Listing\Product')
+        $listingProductChildTable =$this->activeRecordFactory->getObject('Walmart_Listing_Product')
                                                              ->getResource()
                                                              ->getMainTable();
 
-        $chunckedIds = array_chunk($notReceivedIds,1000);
+        $chunckedIds = array_chunk($notReceivedIds, 1000);
         foreach ($chunckedIds as $partIds) {
-            $where = '`id` IN ('.implode(',',$partIds).')';
-            $connWrite->update($listingProductMainTable,$mainBind,$where);
+            $where = '`id` IN ('.implode(',', $partIds).')';
+            $connWrite->update($listingProductMainTable, $mainBind, $where);
 
-            $where = '`listing_product_id` IN ('.implode(',',$partIds).')';
-            $connWrite->update($listingProductChildTable,$childBind,$where);
+            $where = '`listing_product_id` IN ('.implode(',', $partIds).')';
+            $connWrite->update($listingProductChildTable, $childBind, $where);
         }
 
         if (!empty($parentIdsForProcessing)) {
@@ -228,20 +227,20 @@ class Blocked extends \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts
     {
         $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
         $collection->getSelect()->join(
-            array('l' => $this->activeRecordFactory->getObject('Listing')
+            ['l' => $this->activeRecordFactory->getObject('Listing')
                                                    ->getResource()
-                                                   ->getMainTable()),
+                                                   ->getMainTable()],
             'main_table.listing_id = l.id',
-            array()
+            []
         );
 
         $collection->addFieldToFilter('l.account_id', (int)$account->getId());
-        $collection->addFieldToFilter('status',array('nin' => array(
+        $collection->addFieldToFilter('status', ['nin' => [
             \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
             \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
-        )));
-        $collection->addFieldToFilter('is_variation_parent', array('neq' => 1));
-        $collection->addFieldToFilter('is_missed_on_channel', array('neq' => 1));
+        ]]);
+        $collection->addFieldToFilter('is_variation_parent', ['neq' => 1]);
+        $collection->addFieldToFilter('is_missed_on_channel', ['neq' => 1]);
 
         /**
          * Wait for 24 hours before the newly listed item can be marked as inactive blocked
@@ -249,12 +248,13 @@ class Blocked extends \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts
         $borderDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $borderDate->modify('- 24 hours');
         $collection->addFieldToFilter(
-            new \Zend_Db_Expr('list_date IS NULL OR list_date'), array('lt' => $borderDate->format('Y-m-d H:i:s'))
+            new \Zend_Db_Expr('list_date IS NULL OR list_date'),
+            ['lt' => $borderDate->format('Y-m-d H:i:s')]
         );
 
         $collection->getSelect()
                    ->reset(\Zend_Db_Select::COLUMNS)
-                   ->columns(array(
+                   ->columns([
                        'main_table.id',
                        'main_table.status',
                        'main_table.listing_id',
@@ -262,7 +262,7 @@ class Blocked extends \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts
                        'second_table.wpid',
                        'second_table.is_variation_product',
                        'second_table.variation_parent_id'
-                   ));
+                   ]);
 
         return $collection->getSelect()->__toString();
     }
@@ -274,7 +274,7 @@ class Blocked extends \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts
         }
 
         $parentListingProductCollection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
-        $parentListingProductCollection->addFieldToFilter('id', array('in' => array_unique($parentIds)));
+        $parentListingProductCollection->addFieldToFilter('id', ['in' => array_unique($parentIds)]);
 
         $parentListingsProducts = $parentListingProductCollection->getItems();
         if (empty($parentListingsProducts)) {
@@ -282,7 +282,7 @@ class Blocked extends \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts
         }
 
         $massProcessor = $this->modelFactory->getObject(
-            'Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass'
+            'Walmart_Listing_Product_Variation_Manager_Type_Relation_ParentRelation_Processor_Mass'
         );
         $massProcessor->setListingsProducts($parentListingsProducts);
         $massProcessor->setForceExecuting(false);
@@ -293,9 +293,9 @@ class Blocked extends \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts
     protected function updateLastListingProductsSynchronization(\Ess\M2ePro\Model\Account $account)
     {
         $additionalData = $this->getHelper('Data')->jsonDecode($account->getAdditionalData());
-        $lastSynchData = array(
+        $lastSynchData = [
             'last_listing_products_synchronization' => $this->getHelper('Data')->getCurrentGmtDate()
-        );
+        ];
 
         if (!empty($additionalData)) {
             $additionalData = array_merge($additionalData, $lastSynchData);
@@ -312,7 +312,7 @@ class Blocked extends \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts
     private function isLockedAccount(\Ess\M2ePro\Model\Account $account)
     {
         /** @var $lockItem \Ess\M2ePro\Model\Lock\Item\Manager */
-        $lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+        $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
         $lockItem->setNick(self::LOCK_ITEM_PREFIX.'_'.$account->getId());
         $lockItem->setMaxInactiveTime(Runner::MAX_LIFETIME);
 
@@ -333,6 +333,41 @@ class Blocked extends \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts
         }
 
         return false;
+    }
+
+    //########################################
+
+    protected function processResponseMessages(array $messages = [])
+    {
+        /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messagesSet */
+        $messagesSet = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
+        $messagesSet->init($messages);
+
+        foreach ($messagesSet->getEntities() as $message) {
+            if (!$message->isError() && !$message->isWarning()) {
+                continue;
+            }
+
+            $logType = $message->isError() ? \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
+                : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
+
+            $this->getLog()->addMessage(
+                $this->getHelper('Module\Translation')->__($message->getText()),
+                $logType,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            );
+        }
+    }
+
+    //########################################
+
+    /**
+     * @param \Ess\M2ePro\Model\Connector\Connection\Response $response
+     * @return bool
+     */
+    protected function isNeedProcessResponse($response)
+    {
+        return !$response->getMessages()->hasErrorEntities();
     }
 
     //########################################

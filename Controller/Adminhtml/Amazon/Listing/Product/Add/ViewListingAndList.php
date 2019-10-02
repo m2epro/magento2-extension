@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
+/**
+ * Class ViewListingAndList
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
+ */
 class ViewListingAndList extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {
     //########################################
@@ -20,10 +24,10 @@ class ViewListingAndList extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
             return $this->_redirect('*/amazon_listing/index');
         }
 
-        return $this->_redirect('*/amazon_listing/view', array(
+        return $this->_redirect('*/amazon_listing/view', [
             'id' => $listingId,
             'do_list' => true
-        ));
+        ]);
     }
 
     //########################################

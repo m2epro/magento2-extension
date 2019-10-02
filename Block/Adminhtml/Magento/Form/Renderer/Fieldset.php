@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Form\Renderer;
 use Magento\Backend\Block\Widget\Form\Renderer\Fieldset as MagentoFieldset;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
+/**
+ * Class Fieldset
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Form\Renderer
+ */
 class Fieldset extends MagentoFieldset
 {
     /** @var \Ess\M2ePro\Helper\Factory */
@@ -21,7 +25,7 @@ class Fieldset extends MagentoFieldset
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
-    ){
+    ) {
         $this->helperFactory = $context->getHelperFactory();
         parent::__construct($context, $data);
     }
@@ -46,7 +50,7 @@ HTML;
 
         $tooltip = $element->getData('tooltip');
 
-        if (is_null($tooltip)) {
+        if ($tooltip === null) {
             return parent::render($element);
         }
 
@@ -63,7 +67,7 @@ HTML;
         $directionClass = $element->getData('direction_class');
 
         $element->setLegend(
-            $element->getLegend() . $this->getTooltipHtml($tooltip, empty($directionClass) ? 'right' : $directionClass )
+            $element->getLegend() . $this->getTooltipHtml($tooltip, empty($directionClass) ? 'right' : $directionClass)
         );
 
         return parent::render($element);
@@ -79,10 +83,12 @@ HTML;
      *
      * Starting from version 2.2.3 Magento forcibly escapes content of tooltips. But we are using HTML there
      */
-    public function escapeHtml($data, $allowedTags = NULL)
+    public function escapeHtml($data, $allowedTags = null)
     {
         return $this->helperFactory->getObject('Data')->escapeHtml(
-            $data, ['div', 'a', 'strong', 'br', 'i', 'b', 'ul', 'li', 'p'], ENT_NOQUOTES
+            $data,
+            ['div', 'a', 'strong', 'br', 'i', 'b', 'ul', 'li', 'p'],
+            ENT_NOQUOTES
         );
     }
 

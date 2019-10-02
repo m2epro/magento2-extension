@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Model\Order;
 
+/**
+ * Class Log
+ * @package Ess\M2ePro\Model\Order
+ */
 class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 {
     /** @var int|null */
-    protected $initiator = NULL;
+    protected $initiator = null;
 
     //########################################
 
@@ -43,7 +47,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     // ########################################
 
-    public function addMessage($orderId, $description, $type, array $additionalData = array())
+    public function addMessage($orderId, $description, $type, array $additionalData = [])
     {
         $dataForAdd = $this->makeDataForAdd($orderId, $description, $type, $additionalData);
         $this->createMessage($dataForAdd);
@@ -55,7 +59,9 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     {
         /** @var \Ess\M2ePro\Model\Order $order */
         $order = $this->parentFactory->getObjectLoaded(
-            $this->getComponentMode(), 'Order', $dataForAdd['order_id']
+            $this->getComponentMode(),
+            'Order',
+            $dataForAdd['order_id']
         );
 
         $dataForAdd['account_id']     = $order->getAccountId();
@@ -70,14 +76,14 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
             ->save();
     }
 
-    protected function makeDataForAdd($orderId, $description, $type, array $additionalData = array())
+    protected function makeDataForAdd($orderId, $description, $type, array $additionalData = [])
     {
-        $dataForAdd = array(
+        $dataForAdd = [
             'order_id'        => $orderId,
             'description'     => $description,
             'type'            => (int)$type,
             'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData)
-        );
+        ];
 
         return $dataForAdd;
     }

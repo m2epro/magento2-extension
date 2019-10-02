@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Model\Walmart
+ */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     private $walmartFactory;
@@ -41,8 +45,16 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         array $data = []
     ) {
         $this->walmartFactory = $walmartFactory;
-        parent::__construct($modelFactory, $activeRecordFactory, $helperFactory, $context, $registry, $resource,
-            $resourceCollection, $data);
+        parent::__construct(
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
     }
 
     //########################################
@@ -71,9 +83,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getAccount()
     {
-        if (is_null($this->accountModel)) {
+        if ($this->accountModel === null) {
             $this->accountModel = $this->walmartFactory->getCachedObjectLoaded(
-                'Account', $this->getAccountId()
+                'Account',
+                $this->getAccountId()
             );
         }
 
@@ -95,9 +108,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getMarketplace()
     {
-        if (is_null($this->marketplaceModel)) {
+        if ($this->marketplaceModel === null) {
             $this->marketplaceModel = $this->walmartFactory->getCachedObjectLoaded(
-                'Marketplace', $this->getMarketplaceId()
+                'Marketplace',
+                $this->getMarketplaceId()
             );
         }
 

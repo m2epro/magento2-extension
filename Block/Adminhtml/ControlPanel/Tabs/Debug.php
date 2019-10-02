@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class Debug
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs
+ */
 class Debug extends AbstractBlock
 {
     //########################################
@@ -33,27 +37,27 @@ class Debug extends AbstractBlock
         $this->isMagentoDevelopmentModeEnabled = $this->getHelper('Magento')->isDeveloper();
         $this->isDevelopmentModeEnabled        = $this->getHelper('Module')->isDevelopmentMode();
 
-        $this->commands = $this->getHelper('View\ControlPanel\Command')
+        $this->commands = $this->getHelper('View_ControlPanel_Command')
             ->parseDebugCommandsData(\Ess\M2ePro\Helper\View\ControlPanel\Command::CONTROLLER_DEBUG);
 
         // ---------------------------------------
         $url = $this->getUrl('*/controlPanel_debug/enableDevelopmentMode/');
-        $data = array(
+        $data = [
             'label'   => $this->__('Enable'),
             'onclick' => 'setLocation(\'' . $url . '\');',
             'class'   => 'enable_development_mode'
-        );
+        ];
         $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
-        $this->setChild('enable_development_mode',$buttonBlock);
+        $this->setChild('enable_development_mode', $buttonBlock);
 
         $url = $this->getUrl('*/controlPanel_debug/disableDevelopmentMode/');
-        $data = array(
+        $data = [
             'label'   => $this->__('Disable'),
             'onclick' => 'setLocation(\'' . $url . '\');',
             'class'   => 'disable_development_mode'
-        );
+        ];
         $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
-        $this->setChild('disable_development_mode',$buttonBlock);
+        $this->setChild('disable_development_mode', $buttonBlock);
         // ---------------------------------------
 
         return parent::_beforeToHtml();

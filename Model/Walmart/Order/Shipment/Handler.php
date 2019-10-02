@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Walmart\Order\Shipment;
 
 use \Ess\M2ePro\Helper\Data as Helper;
 
+/**
+ * Class Handler
+ * @package Ess\M2ePro\Model\Walmart\Order\Shipment
+ */
 class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
 {
     //########################################
@@ -49,7 +53,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
      */
     private function getItemsToShip(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Shipment $shipment)
     {
-        $itemsToShip = array();
+        $itemsToShip = [];
 
         foreach ($shipment->getAllItems() as $shipmentItem) {
             /** @var \Magento\Sales\Model\Order\Shipment\Item $shipmentItem */
@@ -58,13 +62,15 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
                 continue;
             }
 
-            $additionalData = $shipmentItem->getOrderItem()->getAdditionalData();
-            $additionalData = is_string($additionalData) ? @unserialize($additionalData) : array();
+            $additionalData = $this->getHelper('Data')->unserialize(
+                $shipmentItem->getOrderItem()->getAdditionalData()
+            );
 
             //--
             if (isset($additionalData[Helper::CUSTOM_IDENTIFIER]['shipments'][$shipmentItem->getId()])) {
                 $itemsToShip = array_merge(
-                    $itemsToShip, $additionalData[Helper::CUSTOM_IDENTIFIER]['shipments'][$shipmentItem->getId()]
+                    $itemsToShip,
+                    $additionalData[Helper::CUSTOM_IDENTIFIER]['shipments'][$shipmentItem->getId()]
                 );
                 continue;
             }
@@ -75,12 +81,11 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
                 continue;
             }
 
-            $shipmentItems = array();
+            $shipmentItems = [];
             $qtyAvailable = (int)$shipmentItem->getQty();
 
             $dataSize = count($additionalData[Helper::CUSTOM_IDENTIFIER]['items']);
             for ($i = 0; $i < $dataSize; $i++) {
-
                 $data = $additionalData[Helper::CUSTOM_IDENTIFIER]['items'][$i];
                 if ($qtyAvailable <= 0 || !isset($data['order_item_id'])) {
                     continue;
@@ -91,9 +96,11 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
 
                 /** @var \Ess\M2ePro\Model\Walmart\Order\Item $item */
                 $item = $this->activeRecordFactory->getObjectLoaded(
-                    'Walmart\Order\Item', $orderItemId, 'walmart_order_item_id'
+                    'Walmart_Order_Item',
+                    $orderItemId,
+                    'order_item_id'
                 );
-                if (is_null($item)) {
+                if ($item === null) {
                     continue;
                 }
 
@@ -101,8 +108,8 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
                  * Walmart returns the same Order Item more than one time with single QTY. That data was merged
                  */
                 $mergedOrderItems = $item->getMergedWalmartOrderItemIds();
+                $orderItemId = $item->getWalmartOrderItemId();
                 while ($mergedOrderItemId = array_shift($mergedOrderItems)) {
-
                     if (!isset($data['shipped_qty'][$mergedOrderItemId])) {
                         $orderItemId = $mergedOrderItemId;
                         break;
@@ -124,10 +131,10 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
                     $itemQty = $qtyAvailable;
                 }
 
-                $shipmentItems[] = array(
+                $shipmentItems[] = [
                     'walmart_order_item_id' => $orderItemId,
                     'qty'                   => $itemQty
-                );
+                ];
 
                 $qtyAvailable -= $itemQty;
                 $data['shipped_qty'][$orderItemId] = $itemQty;
@@ -139,7 +146,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
             $itemsToShip = array_merge($itemsToShip, $shipmentItems);
             $additionalData[Helper::CUSTOM_IDENTIFIER]['shipments'][$shipmentItem->getId()] = $shipmentItems;
 
-            $shipmentItem->getOrderItem()->setAdditionalData(serialize($additionalData));
+            $shipmentItem->getOrderItem()->setAdditionalData($this->getHelper('Data')->serialize($additionalData));
             $shipmentItem->getOrderItem()->save();
         }
 

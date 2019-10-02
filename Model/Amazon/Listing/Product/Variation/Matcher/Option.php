@@ -8,18 +8,22 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher;
 
+/**
+ * Class Option
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher
+ */
 class Option extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
     private $magentoProduct = null;
 
-    private $destinationOptions = array();
+    private $destinationOptions = [];
 
-    private $destinationOptionsLocalVocabularyNames = array();
+    private $destinationOptionsLocalVocabularyNames = [];
 
-    private $destinationOptionsServerVocabularyNames = array();
+    private $destinationOptionsServerVocabularyNames = [];
 
-    private $matchedAttributes = array();
+    private $matchedAttributes = [];
 
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Option\Resolver $resolver */
     private $resolver = null;
@@ -54,8 +58,8 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
     {
         $this->destinationOptions = $destinationOptions;
 
-        $this->destinationOptionsLocalVocabularyNames  = array();
-        $this->destinationOptionsServerVocabularyNames = array();
+        $this->destinationOptionsLocalVocabularyNames  = [];
+        $this->destinationOptionsServerVocabularyNames = [];
 
         return $this;
     }
@@ -105,7 +109,7 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
 
     private function validate()
     {
-        if (is_null($this->magentoProduct)) {
+        if ($this->magentoProduct === null) {
             throw new \Ess\M2ePro\Model\Exception('Magento Product was not set.');
         }
 
@@ -118,7 +122,7 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
 
     private function matchGeneralIdByNames(array $sourceOption)
     {
-        $sourceOptionNames = array();
+        $sourceOptionNames = [];
         foreach ($sourceOption as $attribute => $option) {
             $sourceOptionNames[$attribute] = $this->prepareOptionNames($option);
         }
@@ -157,9 +161,9 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
     {
         $magentoOptionNames = $this->magentoProduct->getVariationInstance()->getTitlesVariationSet();
 
-        $resultNames = array();
+        $resultNames = [];
         foreach ($sourceOption as $attribute => $option) {
-            $names = array();
+            $names = [];
             if (isset($magentoOptionNames[$attribute]['values'])) {
                 $attributeValues = $magentoOptionNames[$attribute]['values'];
                 foreach ($attributeValues as $defaultValue => $optionValues) {
@@ -181,12 +185,13 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
             return $this->destinationOptionsLocalVocabularyNames;
         }
 
-        $vocabularyHelper = $this->getHelper('Component\Amazon\Vocabulary');
+        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
 
         foreach ($this->destinationOptions as $generalId => $destinationOption) {
             foreach ($destinationOption as $attributeName => $optionName) {
                 $this->destinationOptionsLocalVocabularyNames[$generalId][$attributeName] = $this->prepareOptionNames(
-                    $optionName, $vocabularyHelper->getLocalOptionNames($attributeName, $optionName)
+                    $optionName,
+                    $vocabularyHelper->getLocalOptionNames($attributeName, $optionName)
                 );
             }
         }
@@ -200,12 +205,13 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
             return $this->destinationOptionsServerVocabularyNames;
         }
 
-        $vocabularyHelper = $this->getHelper('Component\Amazon\Vocabulary');
+        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
 
         foreach ($this->destinationOptions as $generalId => $destinationOption) {
             foreach ($destinationOption as $attributeName => $optionName) {
                 $this->destinationOptionsServerVocabularyNames[$generalId][$attributeName] = $this->prepareOptionNames(
-                    $optionName, $vocabularyHelper->getServerOptionNames($attributeName, $optionName)
+                    $optionName,
+                    $vocabularyHelper->getServerOptionNames($attributeName, $optionName)
                 );
             }
         }
@@ -217,15 +223,15 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
 
     private function getResolver()
     {
-        if (!is_null($this->resolver)) {
+        if ($this->resolver !== null) {
             return $this->resolver;
         }
 
-        $this->resolver = $this->modelFactory->getObject('Amazon\Listing\Product\Variation\Matcher\Option\Resolver');
+        $this->resolver = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Matcher_Option_Resolver');
         return $this->resolver;
     }
 
-    private function prepareOptionNames($option, array $names = array())
+    private function prepareOptionNames($option, array $names = [])
     {
         $names[] = $option;
         $names = array_unique($names);

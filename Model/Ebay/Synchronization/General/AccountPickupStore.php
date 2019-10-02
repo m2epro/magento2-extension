@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General;
 
+/**
+ * Class AccountPickupStore
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\General
+ */
 class AccountPickupStore extends AbstractModel
 {
     //########################################
@@ -17,7 +21,7 @@ class AccountPickupStore extends AbstractModel
      */
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\ResourceModel\Magento\Category;
 
 use Magento\Catalog\Api\Data\CategoryAttributeInterface;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Magento\Category
+ */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collection
 {
     /** @var \Ess\M2ePro\Helper\Factory */
@@ -61,7 +65,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
         if ($helper->isInstalled() &&
             $helper->isStagedTable($table, CategoryAttributeInterface::ENTITY_TYPE_CODE) &&
             strpos($bind, 'entity_id') !== false) {
-
             $bind = str_replace(
                 'entity_id',
                 $helper->getTableLinkField(CategoryAttributeInterface::ENTITY_TYPE_CODE),
@@ -75,7 +78,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
     /**
      * Compatibility with Magento Enterprise (Staging modules) - entity_id column issue
      */
-    public function joinAttribute($alias, $attribute, $bind, $filter = NULL, $joinType = 'inner', $storeId = NULL)
+    public function joinAttribute($alias, $attribute, $bind, $filter = null, $joinType = 'inner', $storeId = null)
     {
         /** @var \Ess\M2ePro\Helper\Magento\Staging $helper */
         $helper = $this->helperFactory->getObject('Magento\Staging');

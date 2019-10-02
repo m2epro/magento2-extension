@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
+/**
+ * Class AfterGetTokenAutomatic
+ * @package Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon
+ */
 class AfterGetTokenAutomatic extends AfterGetTokenAbstract
 {
     //########################################
@@ -20,13 +24,13 @@ class AfterGetTokenAutomatic extends AfterGetTokenAbstract
             return $this->indexAction();
         }
 
-        $requiredFields = array(
+        $requiredFields = [
             'Merchant',
             'Marketplace',
             'MWSAuthToken',
             'Signature',
             'SignedString'
-        );
+        ];
 
         foreach ($requiredFields as $requiredField) {
             if (!isset($params[$requiredField])) {
@@ -38,12 +42,12 @@ class AfterGetTokenAutomatic extends AfterGetTokenAbstract
         }
 
         return array_merge(
-            array(
+            [
                 'title'          => $params['Merchant'],
                 'marketplace_id' => $this->getHelper('Data\Session')->getValue('marketplace_id'),
                 'merchant_id'    => $params['Merchant'],
                 'token'          => $params['MWSAuthToken'],
-            ),
+            ],
             $this->getAmazonAccountDefaultSettings()
         );
     }

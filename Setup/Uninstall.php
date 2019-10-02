@@ -15,10 +15,14 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 
+/**
+ * Class Uninstall
+ * @package Ess\M2ePro\Setup
+ */
 class Uninstall implements \Magento\Framework\Setup\UninstallInterface
 {
-    private $variablesDir = NULL;
-    private $deploymentConfig = NULL;
+    private $variablesDir = null;
+    private $deploymentConfig = null;
 
     /** @var  ModuleDataSetupInterface $installer */
     private $installer;
@@ -46,7 +50,6 @@ class Uninstall implements \Magento\Framework\Setup\UninstallInterface
         $this->installer = $setup;
 
         try {
-
             if (!$this->canRemoveData()) {
                 return;
             }
@@ -71,7 +74,6 @@ class Uninstall implements \Magento\Framework\Setup\UninstallInterface
                 ['path LIKE ?' => 'm2epro/%']
             );
             // -----------------------
-
         } catch (\Exception $exception) {
             $this->logger->error($exception, ['source' => 'Uninstall']);
         }

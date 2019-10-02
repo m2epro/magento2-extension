@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode
+ */
 class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     //########################################
@@ -32,7 +36,8 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $containerHtml = $this->getChildHtml('group_grid');
 
-        $form->addField('custom_listing_auto_action_mode_category',
+        $form->addField(
+            'custom_listing_auto_action_mode_category',
             'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\CustomContainer',
             [
                 'text' => $containerHtml,
@@ -47,7 +52,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected function prepareGroupsGrid()
     {
-        $groupGrid = $this->createBlock('Listing\AutoAction\Mode\Category\Group\Grid');
+        $groupGrid = $this->createBlock('Listing_AutoAction_Mode_Category_Group_Grid');
         $groupGrid->prepareGrid();
         $this->setChild('group_grid', $groupGrid);
 
@@ -59,7 +64,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
 
         // ---------------------------------------
@@ -91,7 +96,7 @@ JS
 
     protected function getBlockTitle()
     {
-        return $this->__('Categories') ;
+        return $this->__('Categories');
     }
 
     //########################################

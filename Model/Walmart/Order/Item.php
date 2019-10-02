@@ -12,6 +12,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Order;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Model\Walmart\Order
+ */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     const STATUS_CREATED = 'created';
@@ -46,8 +50,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->productBuilderFactory = $productBuilderFactory;
         $this->productFactory = $productFactory;
         parent::__construct(
@@ -76,7 +79,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
 
     public function getProxy()
     {
-        return $this->modelFactory->getObject('Walmart\Order\Item\Proxy', [
+        return $this->modelFactory->getObject('Walmart_Order_Item_ProxyObject', [
             'item' => $this
         ]);
     }
@@ -106,7 +109,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
      */
     public function getChannelItem()
     {
-        if (is_null($this->channelItem)) {
+        if ($this->channelItem === null) {
             $this->channelItem = $this->activeRecordFactory->getObject('Walmart\Item')->getCollection()
                 ->addFieldToFilter('account_id', $this->getParentObject()->getOrder()->getAccountId())
                 ->addFieldToFilter('marketplace_id', $this->getParentObject()->getOrder()->getMarketplaceId())
@@ -115,7 +118,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
                 ->getFirstItem();
         }
 
-        return !is_null($this->channelItem->getId()) ? $this->channelItem : null;
+        return $this->channelItem->getId() !== null ? $this->channelItem : null;
     }
 
     //########################################
@@ -175,6 +178,14 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
         return (int)$this->getData('qty');
     }
 
+    /*
+     * Compatibility with Amazon | Ebay
+     */
+    public function getQtyPurchased()
+    {
+        return $this->getQty();
+    }
+
     // ---------------------------------------
 
     /**
@@ -184,8 +195,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     {
         $channelItem = $this->getChannelItem();
 
-        if (is_null($channelItem)) {
-            return array();
+        if ($channelItem === null) {
+            return [];
         }
 
         return $channelItem->getVariationProductOptions();
@@ -198,8 +209,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     {
         $channelItem = $this->getChannelItem();
 
-        if (is_null($channelItem)) {
-            return array();
+        if ($channelItem === null) {
+            return [];
         }
 
         return $channelItem->getVariationChannelOptions();
@@ -214,7 +225,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     {
         // Item was listed by M2E
         // ---------------------------------------
-        if (!is_null($this->getChannelItem())) {
+        if ($this->getChannelItem() !== null) {
             return $this->getWalmartAccount()->isMagentoOrdersListingsStoreCustom()
                 ? $this->getWalmartAccount()->getMagentoOrdersListingsStoreId()
                 : $this->getChannelItem()->getStoreId();
@@ -242,11 +253,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     {
         $channelItem = $this->getChannelItem();
 
-        if (!is_null($channelItem) && !$this->getWalmartAccount()->isMagentoOrdersListingsModeEnabled()) {
+        if ($channelItem !== null && !$this->getWalmartAccount()->isMagentoOrdersListingsModeEnabled()) {
             return false;
         }
 
-        if (is_null($channelItem) && !$this->getWalmartAccount()->isMagentoOrdersListingsOtherModeEnabled()) {
+        if ($channelItem === null && !$this->getWalmartAccount()->isMagentoOrdersListingsOtherModeEnabled()) {
             return false;
         }
 
@@ -263,7 +274,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     {
         // Item was listed by M2E
         // ---------------------------------------
-        if (!is_null($this->getChannelItem())) {
+        if ($this->getChannelItem() !== null) {
             return $this->getChannelItem()->getProductId();
         }
         // ---------------------------------------
@@ -280,10 +291,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
                 ->getFirstItem();
 
             if ($product->getId()) {
-                $this->_eventManager->dispatch('ess_associate_walmart_order_item_to_product', array(
+                $this->_eventManager->dispatch('ess_associate_walmart_order_item_to_product', [
                     'product'    => $product,
                     'order_item' => $this->getParentObject(),
-                ));
+                ]);
 
                 return $product->getId();
             }
@@ -292,10 +303,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
 
         $product = $this->createProduct();
 
-        $this->_eventManager->dispatch('ess_associate_walmart_order_item_to_product', array(
+        $this->_eventManager->dispatch('ess_associate_walmart_order_item_to_product', [
             'product'    => $product,
             'order_item' => $this->getParentObject(),
-        ));
+        ]);
 
         return $product->getId();
     }
@@ -322,7 +333,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
             $hash = $this->getHelper('Data')->generateUniqueHash($sku, $hashLength);
 
             $isSaveStart = (bool)$this->getHelper('Module')->getConfig()->getGroupValue(
-                '/order/magento/settings/', 'save_start_of_long_sku_for_new_product'
+                '/order/magento/settings/',
+                'save_start_of_long_sku_for_new_product'
             );
 
             if ($isSaveStart) {
@@ -332,7 +344,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
             }
         }
 
-        $productData = array(
+        $productData = [
             'title'             => $this->getTitle(),
             'sku'               => $sku,
             'description'       => '',
@@ -341,7 +353,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
             'price'             => $this->getPrice(),
             'store_id'          => $storeId,
             'tax_class_id'     => $this->getWalmartAccount()->getMagentoOrdersListingsOtherProductTaxClassId()
-        );
+        ];
 
         // Create product in magento
         // ---------------------------------------
@@ -351,7 +363,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
         // ---------------------------------------
 
         $this->getParentObject()->getOrder()->addSuccessLog(
-            'Product for Walmart Item "%title%" was Created in Magento Catalog.', array('!title' => $this->getTitle())
+            'Product for Walmart Item "%title%" was Created in Magento Catalog.',
+            ['!title' => $this->getTitle()]
         );
 
         return $productBuilder->getProduct();

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Search;
 
+/**
+ * Class TypeSwitcher
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\Search
+ */
 class TypeSwitcher extends \Ess\M2ePro\Block\Adminhtml\Listing\TypeSwitcher
 {
     //########################################

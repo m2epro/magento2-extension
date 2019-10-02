@@ -12,6 +12,10 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 use Ess\M2ePro\Model\Walmart\Account;
 
+/**
+ * Class ListingOther
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs
+ */
 class ListingOther extends AbstractForm
 {
     protected function _prepareForm()
@@ -24,14 +28,15 @@ class ListingOther extends AbstractForm
         $generalAttributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
 
         $attributes = $magentoAttributeHelper->filterByInputTypes(
-            $generalAttributes, array(
+            $generalAttributes,
+            [
                 'text', 'textarea', 'select'
-            )
+            ]
         );
 
         /** @var $account \Ess\M2ePro\Model\Account */
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
-        $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         if (isset($formData['other_listings_mapping_settings'])) {
             $formData['other_listings_mapping_settings'] = (array)$this->getHelper('Data')->jsonDecode(
@@ -39,13 +44,13 @@ class ListingOther extends AbstractForm
             );
         }
 
-        $defaults = array(
+        $defaults = [
             'related_store_id' => 0,
 
             'other_listings_synchronization' => \Ess\M2ePro\Model\Walmart\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES,
             'other_listings_mapping_mode' => \Ess\M2ePro\Model\Walmart\Account::OTHER_LISTINGS_MAPPING_MODE_YES,
-            'other_listings_mapping_settings' => array(),
-        );
+            'other_listings_mapping_settings' => [],
+        ];
 
         $formData = array_merge($defaults, $formData);
         $isEdit = !!$this->getRequest()->getParam('id');
@@ -54,20 +59,21 @@ class ListingOther extends AbstractForm
             'walmart_accounts_other_listings',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(<<<HTML
+                'content' => $this->__(
+                    <<<HTML
         The 3rd Party Listings include Items which were listed on Walmart without using M2E Pro Extension.<br/><br/>
 
         To allow the 3rd Party Listing importing for the current Walmart Account,
-        enable the Import 3rd Party Listings option. The imported 3rd Party Items can be
-        found under <i>%menu_other_listings_path%</i>.<br/><br/>
+        enable the Import 3rd Party Listings option. The imported 3rd Party Items can be found
+        under <i>Walmart Integration > Listings > 3rd Party</i>.<br/><br/>
 
-       The 3rd Party Items can be automatically mapped to the related Magento Product by SKU, UPC, GTIN,
-       Walmart ID or Title values. To do this, enable the Product Mapping
-       option and select appropriate Attribute.<br/><br/>
+        The 3rd Party Items can be automatically mapped to the related Magento Product by SKU, UPC, GTIN,
+        Walmart ID or Title values. To do this, enable the Product Mapping option and
+        select appropriate Attribute.<br/><br/>
 
-        <strong>Note:</strong> Automatic mapping of the 3rd Party Item is performed only during the initial
-        3rd Party Listing importing. Afterward, you can map and move the 3rd Party Items
-        manually under <i>%menu_other_listings_path%</i>.<br/><br/>
+        <strong>Note:</strong> Automatic mapping of the 3rd Party Item is performed only during
+        the initial 3rd Party Listing importing. Afterward, you can map and move the 3rd Party Items manually
+        under <i>Walmart Integration > Listings > 3rd Party</i>.<br/><br/>
 
         The detailed information can be found <a href="%url%" target="_blank">here</a>.
 HTML
@@ -96,7 +102,7 @@ HTML
                     Account::OTHER_LISTINGS_SYNCHRONIZATION_NO => $this->__('No'),
                 ],
                 'value' => $formData['other_listings_synchronization'],
-                'tooltip' => $this->__('Allows importing 3rd Party Listings.')
+                'tooltip' => $this->__('Enable to automatically import the 3rd Party Items.')
             ]
         );
 
@@ -109,7 +115,7 @@ HTML
                 'label' => $this->__('Related Store View'),
                 'value' => $formData['related_store_id'],
                 'tooltip' => $this->__(
-                    'Store View, which will be associated with chosen Marketplace of the current Account.'
+                    'Select Magento Store View that will be associated with Marketplace set for the current Account.'
                 )
             ]
         );
@@ -128,8 +134,8 @@ HTML
                 ],
                 'value' => $formData['other_listings_mapping_mode'],
                 'tooltip' => $this->__(
-                    'Choose whether imported Walmart Listings should automatically map to a
-                    Product in your Magento Inventory.'
+                    'Enable to automatically map your 3rd Party Items to Magento
+                    Products based on the mapping Attribute settings.'
                 )
             ]
         );
@@ -143,7 +149,8 @@ HTML
                     '<p>In this section you can provide settings for automatic Mapping of the newly imported
                     3rd Party Listings to the appropriate Magento Products. </p><br>
                     <p>The imported Items are mapped based on the correspondence between Walmart Item values and
-                    Magento Product Attribute values. </p>')
+                    Magento Product Attribute values. </p>'
+                )
             ]
         );
 
@@ -152,8 +159,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                isset($mappingSettings['sku']['mode'])
+            if (isset($mappingSettings['sku']['mode'])
                 && $mappingSettings['sku']['mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE
                 && $mappingSettings['sku']['attribute'] == $attribute['code']
             ) {
@@ -202,7 +208,7 @@ HTML
                                     class="input-text admin__control-text required-entry _required">
 </div>
 HTML
-    )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
+        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
 
         $fieldset->addField(
             'mapping_sku_attribute',
@@ -218,8 +224,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                isset($mappingSettings['upc']['mode'])
+            if (isset($mappingSettings['upc']['mode'])
                 && $mappingSettings['upc']['mode'] == $modeCustomAttribute
                 && $mappingSettings['upc']['attribute'] == $attribute['code']
             ) {
@@ -267,7 +272,7 @@ HTML
                                     class="input-text admin__control-text required-entry _required">
 </div>
 HTML
-    )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
+        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
 
         $fieldset->addField(
             'mapping_upc_attribute',
@@ -282,8 +287,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                isset($mappingSettings['gtin']['mode'])
+            if (isset($mappingSettings['gtin']['mode'])
                 && $mappingSettings['gtin']['mode'] == Account::OTHER_LISTINGS_MAPPING_GTIN_MODE_CUSTOM_ATTRIBUTE
                 && $mappingSettings['gtin']['attribute'] == $attribute['code']
             ) {
@@ -330,7 +334,7 @@ HTML
                                     class="input-text admin__control-text required-entry _required">
 </div>
 HTML
-    )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
+        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
 
         $fieldset->addField(
             'mapping_gtin_attribute',
@@ -346,8 +350,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                isset($mappingSettings['wpid']['mode'])
+            if (isset($mappingSettings['wpid']['mode'])
                 && $mappingSettings['wpid']['mode'] == Account::OTHER_LISTINGS_MAPPING_WPID_MODE_CUSTOM_ATTRIBUTE
                 && $mappingSettings['wpid']['attribute'] == $attribute['code']
             ) {
@@ -360,7 +363,8 @@ HTML
             ];
         }
 
-        $mappingModeCustomAttribute = Account::OTHER_LISTINGS_MAPPING_WPID_MODE_CUSTOM_ATTRIBUTE;
+        $accountMappingWPIDModeCustomAttribute = Account::OTHER_LISTINGS_MAPPING_WPID_MODE_CUSTOM_ATTRIBUTE;
+
         $mappingTitlePriority = isset($mappingSettings['wpid']['priority'])
             ? (int)$mappingSettings['wpid']['priority'] : Account::OTHER_LISTINGS_MAPPING_WPID_DEFAULT_PRIORITY;
         $fieldset->addField(
@@ -382,7 +386,7 @@ HTML
                     ]
                 ],
                 'value' => isset($mappingSettings['wpid']['mode'])
-                           && $mappingSettings['wpid']['mode'] != $mappingModeCustomAttribute
+                           && $mappingSettings['wpid']['mode'] != $accountMappingWPIDModeCustomAttribute
                     ? $mappingSettings['wpid']['mode'] : '',
                 'create_magento_attribute' => true,
             ]
@@ -411,8 +415,7 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                isset($mappingSettings['title']['mode'])
+            if (isset($mappingSettings['title']['mode'])
                 && $mappingSettings['title']['mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE
                 && $mappingSettings['title']['attribute'] == $attribute['code']
             ) {
@@ -425,7 +428,8 @@ HTML
             ];
         }
 
-        $titleModeCustomAttribute = Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE;
+        $accountMappingTitleModeCustomAttribute = Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE;
+
         $mappingTitlePriority = isset($mappingSettings['title']['priority'])
             ? (int)$mappingSettings['title']['priority'] : Account::OTHER_LISTINGS_MAPPING_TITLE_DEFAULT_PRIORITY;
         $fieldset->addField(
@@ -448,7 +452,7 @@ HTML
                     ]
                 ],
                 'value' => isset($mappingSettings['title']['mode'])
-                           && $mappingSettings['title']['mode'] != $titleModeCustomAttribute
+                           && $mappingSettings['title']['mode'] != $accountMappingTitleModeCustomAttribute
                     ? $mappingSettings['title']['mode'] : '',
                 'create_magento_attribute' => true,
             ]

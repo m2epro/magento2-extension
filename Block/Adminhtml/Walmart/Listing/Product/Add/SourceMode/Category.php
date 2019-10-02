@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode
+ */
 class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -33,37 +37,37 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         // ---------------------------------------
 
         // ---------------------------------------
-        if (is_null($this->getRequest()->getParam('back'))) {
-            $url = $this->getUrl('*/walmart_listing_product_add/index', array(
+        if ($this->getRequest()->getParam('back') === null) {
+            $url = $this->getUrl('*/walmart_listing_product_add/index', [
                 'id' => $this->getRequest()->getParam('id'),
                 'wizard' => $this->getRequest()->getParam('wizard')
-            ));
+            ]);
         } else {
             $url = $this->getHelper('Data')->getBackUrl(
                 '*/walmart_listing/index'
             );
         }
-        $this->addButton('back', array(
+        $this->addButton('back', [
             'label'     => $this->__('Back'),
             'onclick'   => 'ListingProductGridObj.backClick(\'' . $url . '\')',
             'class'     => 'back'
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('auto_action', array(
+        $this->addButton('auto_action', [
             'label'     => $this->__('Auto Add/Remove Rules'),
             'onclick'   => 'ListingAutoActionObj.loadAutoActionHtml();',
             'class'     => 'action-primary'
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('save_and_go_to_listing_view', array(
+        $this->addButton('save_and_go_to_listing_view', [
             'label'     => $this->__('Continue'),
             'onclick'   => 'add_category_products()',
             'class'     => 'action-primary forward'
-        ));
+        ]);
         // ---------------------------------------
     }
 
@@ -72,7 +76,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         $this->css->addFile('listing/autoAction.css');
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
 
         return parent::_prepareLayout();
@@ -83,12 +87,14 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
 
         $viewHeaderBlock = $this->createBlock(
-            'Listing\View\Header','', ['data' => ['listing' => $listing]]
+            'Listing_View_Header',
+            '',
+            ['data' => ['listing' => $listing]]
         );
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
-            'Walmart\Listing\AutoAction',
-            array('id' => $this->getRequest()->getParam('id'))
+            'Walmart_Listing_AutoAction',
+            ['id' => $this->getRequest()->getParam('id')]
         ));
 
         $path = 'walmart_listing_autoAction/getCategoryTemplatesList';
@@ -121,7 +127,7 @@ JS
         );
 
         $hideOthersListingsProductsFilterBlock = $this->createBlock(
-            'Listing\Product\ShowOthersListingsProductsFilter'
+            'Listing_Product_ShowOthersListingsProductsFilter'
         )->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
             'controller' => 'walmart_listing_product_add'

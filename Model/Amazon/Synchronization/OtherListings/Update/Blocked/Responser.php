@@ -8,14 +8,18 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update\Blocked;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update\Blocked
+ */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked\ItemsResponser
 {
     protected $resourceConnection;
 
     protected $activeRecordFactory;
 
-    protected $logsActionId = NULL;
-    protected $synchronizationLog = NULL;
+    protected $logsActionId = null;
+    protected $synchronizationLog = null;
 
     // ########################################
 
@@ -26,9 +30,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        array $params = array()
-    )
-    {
+        array $params = []
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($amazonFactory, $response, $helperFactory, $modelFactory, $params);
@@ -41,7 +44,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
         parent::processResponseMessages();
 
         foreach ($this->getResponse()->getMessages()->getEntities() as $message) {
-
             if (!$message->isError() && !$message->isWarning()) {
                 continue;
             }
@@ -88,11 +90,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
     protected function processResponseData()
     {
         try {
-
             $this->updateBlockedListingProducts();
-
         } catch (\Exception $exception) {
-
             $this->getHelper('Module\Exception')->process($exception);
 
             $this->getSynchronizationLog()->addMessage(
@@ -116,19 +115,18 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
         /** @var $stmtTemp \Zend_Db_Statement_Pdo */
         $stmtTemp = $this->resourceConnection->getConnection()->query($this->getPdoStatementExistingListings());
 
-        $tempLog = $this->activeRecordFactory->getObject('Listing\Other\Log');
+        $tempLog = $this->activeRecordFactory->getObject('Listing_Other_Log');
         $tempLog->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
 
-        $notReceivedIds = array();
+        $notReceivedIds = [];
         while ($existingItem = $stmtTemp->fetch()) {
-
             if (in_array($existingItem['sku'], $responseData['data'])) {
                 continue;
             }
 
             $notReceivedItem = $existingItem;
 
-            if (!in_array((int)$notReceivedItem['id'],$notReceivedIds)) {
+            if (!in_array((int)$notReceivedItem['id'], $notReceivedIds)) {
                 $statusChangedFrom = $this->getHelper('Component\Amazon')
                     ->getHumanTitleByListingProductStatus($notReceivedItem['status']);
                 $statusChangedTo = $this->getHelper('Component\Amazon')
@@ -146,7 +144,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
                     (int)$notReceivedItem['id'],
                     \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
                     $this->getLogsActionId(),
-                   \Ess\M2ePro\Model\Listing\Other\Log::ACTION_CHANNEL_CHANGE,
+                    \Ess\M2ePro\Model\Listing\Other\Log::ACTION_CHANNEL_CHANGE,
                     $tempLogMessage,
                     \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
                     \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
@@ -161,30 +159,34 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
             $this->updateLastOtherListingProductsSynchronization();
         }
 
-        $bind = array(
+        $bind = [
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
             'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT
-        );
+        ];
 
         $listingOtherMainTable = $this->activeRecordFactory->getObject('Listing\Other')->getResource()->getMainTable();
 
-        $chunckedIds = array_chunk($notReceivedIds,1000);
+        $chunckedIds = array_chunk($notReceivedIds, 1000);
         foreach ($chunckedIds as $partIds) {
-            $where = '`id` IN ('.implode(',',$partIds).')';
-            $this->resourceConnection->getConnection()->update($listingOtherMainTable,$bind,$where);
+            $where = '`id` IN ('.implode(',', $partIds).')';
+            $this->resourceConnection->getConnection()->update($listingOtherMainTable, $bind, $where);
         }
     }
 
     protected function getPdoStatementExistingListings()
     {
         $collection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
-        $collection->getSelect()->where('`main_table`.account_id = ?',(int)$this->getAccount()->getId());
-        $collection->getSelect()->where('`main_table`.`status` != ?',
-            (int)\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED);
-        $collection->getSelect()->where('`main_table`.`status` != ?',
-            (int)\Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED);
+        $collection->getSelect()->where('`main_table`.account_id = ?', (int)$this->getAccount()->getId());
+        $collection->getSelect()->where(
+            '`main_table`.`status` != ?',
+            (int)\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
+        );
+        $collection->getSelect()->where(
+            '`main_table`.`status` != ?',
+            (int)\Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED
+        );
 
-        $tempColumns = array('main_table.id','main_table.status', 'second_table.sku');
+        $tempColumns = ['main_table.id','main_table.status', 'second_table.sku'];
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns($tempColumns);
 
         return $collection->getSelect()->__toString();
@@ -197,7 +199,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
      */
     protected function getAccount()
     {
-        return $this->getObjectByParam('Account','account_id');
+        return $this->getObjectByParam('Account', 'account_id');
     }
 
     /**
@@ -213,9 +215,9 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
     protected function updateLastOtherListingProductsSynchronization()
     {
         $additionalData = $this->getHelper('Data')->jsonDecode($this->getAccount()->getAdditionalData());
-        $lastSynchData = array(
+        $lastSynchData = [
             'last_other_listing_products_synchronization' => $this->getHelper('Data')->getCurrentGmtDate()
-        );
+        ];
 
         if (!empty($additionalData)) {
             $additionalData = array_merge($additionalData, $lastSynchData);
@@ -232,17 +234,17 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
 
     protected function getLogsActionId()
     {
-        if (!is_null($this->logsActionId)) {
+        if ($this->logsActionId !== null) {
             return $this->logsActionId;
         }
 
-        return $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Other\Log')
+        return $this->logsActionId = $this->activeRecordFactory->getObject('Listing_Other_Log')
                                           ->getResource()->getNextActionId();
     }
 
     protected function getSynchronizationLog()
     {
-        if (!is_null($this->synchronizationLog)) {
+        if ($this->synchronizationLog !== null) {
             return $this->synchronizationLog;
         }
 

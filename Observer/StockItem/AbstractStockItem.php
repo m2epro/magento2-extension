@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Observer\StockItem;
 
+/**
+ * Class AbstractStockItem
+ * @package Ess\M2ePro\Observer\StockItem
+ */
 abstract class AbstractStockItem extends \Ess\M2ePro\Observer\AbstractModel
 {
     protected $registry;
@@ -15,16 +19,16 @@ abstract class AbstractStockItem extends \Ess\M2ePro\Observer\AbstractModel
     /**
      * @var null|\Magento\CatalogInventory\Api\Data\StockItemInterface
      */
-    protected $stockItem = NULL;
+    protected $stockItem = null;
 
     /**
      * @var null|int
      */
-    protected $stockItemId = NULL;
+    protected $stockItemId = null;
     /**
      * @var null|int
      */
-    protected $storeId = NULL;
+    protected $storeId = null;
 
     //########################################
 
@@ -34,8 +38,7 @@ abstract class AbstractStockItem extends \Ess\M2ePro\Observer\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->registry = $registry;
         $this->stockItemFactory = $stockItemFactory;
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Update;
 
+/**
+ * Class ItemsRequester
+ * @package Ess\M2ePro\Model\Amazon\Connector\Orders\Update
+ */
 abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {
     protected $activeRecordFactory;
@@ -20,8 +24,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Account $account = null,
         array $params = []
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct(
             $helperFactory,
@@ -35,7 +38,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     public function getCommand()
     {
-        return array('orders','update','entities');
+        return ['orders','update','entities'];
     }
 
     // ########################################
@@ -50,19 +53,19 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Amazon\Connector\Orders\Update\ProcessingRunner';
+        return 'Amazon_Connector_Orders_Update_ProcessingRunner';
     }
 
     protected function getProcessingParams()
     {
         return array_merge(
             parent::getProcessingParams(),
-            array(
+            [
                 'request_data' => $this->getRequestData(),
                 'order_id'     => $this->params['order']['order_id'],
                 'change_id'    => $this->params['order']['change_id'],
                 'start_date'   => $this->getHelper('Data')->getCurrentGmtDate(),
-            )
+            ]
         );
     }
 
@@ -73,7 +76,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
         $order = $this->params['order'];
         $fulfillmentDate = new \DateTime($order['fulfillment_date'], new \DateTimeZone('UTC'));
 
-        $request = array(
+        $request = [
             'id'               => $order['change_id'],
             'order_id'         => $order['amazon_order_id'],
             'tracking_number'  => $order['tracking_number'],
@@ -81,16 +84,15 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
             'carrier_code'     => $order['carrier_code'],
             'fulfillment_date' => $fulfillmentDate->format('c'),
             'shipping_method'  => isset($order['shipping_method']) ? $order['shipping_method'] : null,
-            'items'            => array()
-        );
+            'items'            => []
+        ];
 
         if (isset($order['items']) && is_array($order['items'])) {
-
             foreach ($order['items'] as $item) {
-                $request['items'][] = array(
+                $request['items'][] = [
                     'item_code' => $item['amazon_order_item_id'],
                     'qty'       => (int)$item['qty']
-                );
+                ];
             }
         }
 

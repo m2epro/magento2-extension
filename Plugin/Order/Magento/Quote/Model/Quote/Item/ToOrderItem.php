@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\Item;
 
+/**
+ * Class ToOrderItem
+ * @package Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\Item
+ */
 class ToOrderItem extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     protected $eventManager;
@@ -18,8 +22,7 @@ class ToOrderItem extends \Ess\M2ePro\Plugin\AbstractPlugin
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->eventManager = $eventManager;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -36,7 +39,7 @@ class ToOrderItem extends \Ess\M2ePro\Plugin\AbstractPlugin
     protected function processConvert($interceptor, \Closure $callback, array $arguments)
     {
         $orderItem = $callback(...$arguments);
-        $quoteItem = isset($arguments[0]) ? $arguments[0] : NULL;
+        $quoteItem = isset($arguments[0]) ? $arguments[0] : null;
 
         if (!($quoteItem instanceof \Magento\Quote\Model\Quote\Item)) {
             return $orderItem;

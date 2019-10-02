@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation;
 
+/**
+ * Class Manager
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation
+ */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
@@ -187,15 +191,15 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         $model = null;
 
         if ($this->isIndividualType()) {
-            $model = $this->modelFactory->getObject('Walmart\Listing\Product\Variation\Manager\Type\Individual');
+            $model = $this->modelFactory->getObject('Walmart_Listing_Product_Variation_Manager_Type_Individual');
         } else {
             if ($this->isRelationParentType()) {
                 $model = $this->modelFactory
-                    ->getObject('Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation');
+                    ->getObject('Walmart_Listing_Product_Variation_Manager_Type_Relation_ParentRelation');
             } else {
                 if ($this->isRelationChildType()) {
                     $model = $this->modelFactory
-                        ->getObject('Walmart\Listing\Product\Variation\Manager\Type\Relation\Child');
+                        ->getObject('Walmart_Listing_Product_Variation_Manager_Type_Relation_Child');
                 } else {
                     throw new \Ess\M2ePro\Model\Exception('This Product is not a Variation Product.');
                 }

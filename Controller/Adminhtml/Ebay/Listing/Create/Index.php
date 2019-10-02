@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Create;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Create
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     protected $sessionKey = 'ebay_listing_create';
@@ -40,7 +44,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                 break;
             default:
                 $this->clearSession();
-                $this->_redirect('*/*/index', array('_current' => true, 'step' => 1));
+                $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
                 break;
         }
 
@@ -56,8 +60,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     {
         if ($this->getRequest()->getParam('clear')) {
             $this->clearSession();
-            $this->getRequest()->setParam('clear',null);
-            $this->_redirect('*/*/index',array('_current' => true, 'step' => 1));
+            $this->getRequest()->setParam('clear', null);
+            $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
             return $this->getResult();
         }
 
@@ -65,7 +69,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         // ---------------------------------------
         if ($this->getRequest()->isPost()) {
-
             // save data
             $post = $this->getRequest()->getPost();
 
@@ -83,7 +86,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $this->setSessionValue('marketplace_id', (int)$post['marketplace_id']);
             $this->setSessionValue('store_id', (int)$post['store_id']);
 
-            $this->_redirect('*/*/index', array('_current' => true, 'step' => 2));
+            $this->_redirect('*/*/index', ['_current' => true, 'step' => 2]);
 
             return $this->getResult();
         }
@@ -97,7 +100,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $this->getHelper('Data\GlobalData')->setValue('ebay_account_id', $this->getSessionValue('account_id'));
         $this->getHelper('Data\GlobalData')->setValue('ebay_marketplace_id', $this->getSessionValue('marketplace_id'));
 
-        $this->addContent($this->createBlock('Ebay\Listing\Create\General'));
+        $this->addContent($this->createBlock('Ebay_Listing_Create_General'));
     }
 
     //########################################
@@ -106,12 +109,12 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     {
         // Check exist temp data
         // ---------------------------------------
-        if (is_null($this->getSessionValue('account_id'))
+        if ($this->getSessionValue('account_id') === null
             ||
-            is_null($this->getSessionValue('marketplace_id'))
+            $this->getSessionValue('marketplace_id') === null
         ) {
             $this->clearSession();
-            $this->_redirect('*/*/index', array('_current' => true, 'step' => 1));
+            $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
             return $this->getResult();
         }
         // ---------------------------------------
@@ -120,11 +123,11 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $this->setWizardStep('listingGeneral');
         // ---------------------------------------
 
-        $templateNicks = array(
+        $templateNicks = [
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT,
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING,
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY,
-        );
+        ];
 
         // ---------------------------------------
         if ($this->getRequest()->isPost()) {
@@ -138,7 +141,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                 $this->setSessionValue("template_mode_{$nick}", $templateData['mode']);
             }
 
-            $this->_redirect('*/*/index', array('_current' => true, 'step' => 3));
+            $this->_redirect('*/*/index', ['_current' => true, 'step' => 3]);
             return $this->getResult();
         }
         // ---------------------------------------
@@ -148,10 +151,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         // ---------------------------------------
 
         // ---------------------------------------
-        $data = array(
-            'allowed_tabs' => array('general')
-        );
-        $content = $this->createBlock('Ebay\Listing\Edit');
+        $data = [
+            'allowed_tabs' => ['general']
+        ];
+        $content = $this->createBlock('Ebay_Listing_Edit');
         $content->setData($data);
         // ---------------------------------------
 
@@ -166,12 +169,12 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     {
         // Check exist temp data
         // ---------------------------------------
-        if (is_null($this->getSessionValue('account_id'))
+        if ($this->getSessionValue('account_id') === null
             ||
-            is_null($this->getSessionValue('marketplace_id'))
+            $this->getSessionValue('marketplace_id') === null
         ) {
             $this->clearSession();
-            $this->_redirect('*/*/index', array('_current' => true, 'step' => 1));
+            $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
             return $this->getResult();
         }
         // ---------------------------------------
@@ -180,10 +183,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $this->setWizardStep('listingSelling');
         // ---------------------------------------
 
-        $templateNicks = array(
+        $templateNicks = [
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT,
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION,
-        );
+        ];
 
         // ---------------------------------------
         if ($this->getRequest()->isPost()) {
@@ -199,7 +202,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                 $this->setSessionValue("template_mode_{$nick}", $templateData['mode']);
             }
 
-            $this->_redirect('*/*/index', array('_current' => true, 'step' => 4));
+            $this->_redirect('*/*/index', ['_current' => true, 'step' => 4]);
             return $this->getResult();
         }
         // ---------------------------------------
@@ -209,10 +212,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         // ---------------------------------------
 
         // ---------------------------------------
-        $data = array(
-            'allowed_tabs' => array('selling')
-        );
-        $content = $this->createBlock('Ebay\Listing\Edit');
+        $data = [
+            'allowed_tabs' => ['selling']
+        ];
+        $content = $this->createBlock('Ebay_Listing_Edit');
         $content->setData($data);
         // ---------------------------------------
 
@@ -226,12 +229,12 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     {
         // Check exist temp data
         // ---------------------------------------
-        if (is_null($this->getSessionValue('account_id'))
+        if ($this->getSessionValue('account_id') === null
             ||
-            is_null($this->getSessionValue('marketplace_id'))
+            $this->getSessionValue('marketplace_id') === null
         ) {
             $this->clearSession();
-            $this->_redirect('*/*/index', array('step' => 1,'_current' => true));
+            $this->_redirect('*/*/index', ['step' => 1,'_current' => true]);
             return $this->getResult();
         }
         // ---------------------------------------
@@ -240,9 +243,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $this->setWizardStep('listingSynchronization');
         // ---------------------------------------
 
-        $templateNicks = array(
+        $templateNicks = [
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION,
-        );
+        ];
 
         // ---------------------------------------
         if ($this->getRequest()->isPost()) {
@@ -267,17 +270,17 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $this->clearSession();
             // ---------------------------------------
 
-            if ((bool)$this->getRequest()->getParam('wizard',false)) {
+            if ((bool)$this->getRequest()->getParam('wizard', false)) {
                 $this->setWizardStep('sourceMode');
                 return $this->_redirect('*/wizard_installationEbay');
             }
 
             return $this->_redirect(
                 '*/ebay_listing_product_add/sourceMode',
-                array(
+                [
                     'id' => $listing->getId(),
                     'listing_creation' => true
-                )
+                ]
             );
         }
         // ---------------------------------------
@@ -287,10 +290,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         // ---------------------------------------
 
         // ---------------------------------------
-        $data = array(
-            'allowed_tabs' => array('synchronization')
-        );
-        $content = $this->createBlock('Ebay\Listing\Edit');
+        $data = [
+            'allowed_tabs' => ['synchronization']
+        ];
+        $content = $this->createBlock('Ebay_Listing_Edit');
         $content->setData($data);
         // ---------------------------------------
 
@@ -302,7 +305,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
     private function createListing()
     {
-        $data = array();
+        $data = [];
         $data['title'] = $this->getSessionValue('listing_title');
         $data['account_id'] = $this->getSessionValue('account_id');
         $data['marketplace_id'] = $this->getSessionValue('marketplace_id');
@@ -316,10 +319,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $data['parts_compatibility_mode'] = \Ess\M2ePro\Model\Ebay\Listing::PARTS_COMPATIBILITY_MODE_KTYPES;
         }
 
-        $templateManager = $this->modelFactory->getObject('Ebay\Template\Manager');
+        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
 
         foreach ($templateManager->getAllTemplates() as $nick) {
-            $manager = $this->modelFactory->getObject('Ebay\Template\Manager')->setTemplate($nick);
+            $manager = $this->modelFactory->getObject('Ebay_Template_Manager')->setTemplate($nick);
 
             $templateId = $this->getSessionValue("template_id_{$nick}");
             $templateMode = $this->getSessionValue("template_mode_{$nick}");
@@ -342,7 +345,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $tempLog->addListingMessage(
             $model->getId(),
             \Ess\M2ePro\Helper\Data::INITIATOR_USER,
-            NULL,
+            null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_LISTING,
             // M2ePro_TRANSLATIONS
             // Listing was successfully Added
@@ -363,8 +366,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $listingTitle = $this->getSessionValue('listing_title');
         $this->getHelper('Data\GlobalData')->setValue('ebay_custom_template_title', $listingTitle);
 
-        $dataLoader = $this->getHelper('Component\Ebay\Template\Switcher\DataLoader');
-        $dataLoader->load($this->getHelper('Data\Session'), array('session_key' => $this->sessionKey));
+        $dataLoader = $this->getHelper('Component_Ebay_Template_Switcher_DataLoader');
+        $dataLoader->load($this->getHelper('Data\Session'), ['session_key' => $this->sessionKey]);
         // ---------------------------------------
     }
 
@@ -380,26 +383,26 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         return $this;
     }
 
-    protected function getSessionValue($key = NULL)
+    protected function getSessionValue($key = null)
     {
         $sessionData = $this->getHelper('Data\Session')->getValue($this->sessionKey);
 
-        if (is_null($sessionData)) {
-            $sessionData = array();
+        if ($sessionData === null) {
+            $sessionData = [];
         }
 
-        if (is_null($key)) {
+        if ($key === null) {
             return $sessionData;
         }
 
-        return isset($sessionData[$key]) ? $sessionData[$key] : NULL;
+        return isset($sessionData[$key]) ? $sessionData[$key] : null;
     }
 
     //########################################
 
     private function clearSession()
     {
-        $this->getHelper('Data\Session')->setValue($this->sessionKey, NULL);
+        $this->getHelper('Data\Session')->setValue($this->sessionKey, null);
     }
 
     //########################################
@@ -412,7 +415,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             return;
         }
 
-        $wizardHelper->setStep(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK,$step);
+        $wizardHelper->setStep(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK, $step);
     }
 
     //########################################

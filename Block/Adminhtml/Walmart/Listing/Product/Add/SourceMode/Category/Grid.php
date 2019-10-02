@@ -8,11 +8,15 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Product\Grid
 {
-    private $selectedIds = array();
+    private $selectedIds = [];
 
-    private $currentCategoryId = NULL;
+    private $currentCategoryId = null;
 
     //########################################
 
@@ -31,15 +35,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\Sourc
 
     private function getCollectionIds()
     {
-        if (!is_null($ids = $this->getData('collection_ids'))) {
+        $ids = $this->getData('collection_ids');
+
+        if ($ids !== null) {
             return $ids;
         }
 
         $ids = $this->getHelper('Magento\Category')->getProductsFromCategories(
-            array($this->getCurrentCategoryId()), $this->_getStore()->getId()
+            [$this->getCurrentCategoryId()],
+            $this->_getStore()->getId()
         );
 
-        $this->setData('collection_ids',$ids);
+        $this->setData('collection_ids', $ids);
         return $ids;
     }
 
@@ -55,12 +62,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\Sourc
             return parent::_prepareMassaction();
         }
 
-        $ids = array_filter(explode(',',$ids));
-        $ids = array_merge($ids,$this->getSelectedIds());
-        $ids = array_intersect($ids,$this->getCollectionIds());
+        $ids = array_filter(explode(',', $ids));
+        $ids = array_merge($ids, $this->getSelectedIds());
+        $ids = array_intersect($ids, $this->getCollectionIds());
         $ids = array_values(array_unique($ids));
 
-        $this->getRequest()->setPostValue($this->getMassactionBlock()->getFormFieldNameInternal(), implode(',',$ids));
+        $this->getRequest()->setPostValue($this->getMassactionBlock()->getFormFieldNameInternal(), implode(',', $ids));
 
         $this->css->add(<<<CSS
 
@@ -121,12 +128,12 @@ CSS
     public function setCollection($collection)
     {
         $collection->joinTable(
-            array(
-                'ccp' => $this->getHelper('Module\Database\Structure')
+            [
+                'ccp' => $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('catalog_category_product')
-            ),
+            ],
             'product_id=entity_id',
-            array('category_id' => 'category_id')
+            ['category_id' => 'category_id']
         );
 
         $collection->addFieldToFilter('category_id', $this->currentCategoryId);
@@ -165,7 +172,6 @@ var add_category_products = function(callback) {
     });
 };
 JS;
-
     }
 
     //########################################
@@ -208,7 +214,6 @@ JS
     {$this->getSelectedProductsCallback()}
 </script>
 HTML;
-
     }
 
     //########################################

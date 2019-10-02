@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders\Update;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders\Update
+ */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsResponser
 {
     /** @var \Ess\M2ePro\Model\Order $order */
-    private $order = NULL;
+    private $order = null;
 
     protected $activeRecordFactory;
 
@@ -23,9 +27,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        array $params = array()
-    )
-    {
+        array $params = []
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($amazonFactory, $response, $helperFactory, $modelFactory, $params);
 
@@ -37,7 +40,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
         parent::failDetected($messageText);
 
         $this->order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
-        $this->order->addErrorLog('Amazon Order status was not updated. Reason: %msg%', array('msg' => $messageText));
+        $this->order->addErrorLog('Amazon Order status was not updated. Reason: %msg%', ['msg' => $messageText]);
     }
 
     // ########################################
@@ -45,7 +48,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
     protected function processResponseData()
     {
         $this->activeRecordFactory->getObject('Order\Change')->getResource()
-             ->deleteByIds(array($this->params['order']['change_id']));
+             ->deleteByIds([$this->params['order']['change_id']]);
 
         $responseData = $this->getResponse()->getResponseData();
 
@@ -54,18 +57,17 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
         $isFailed = false;
 
         /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messagesSet */
-        $messagesSet = $this->modelFactory->getObject('Connector\Connection\Response\Message\Set');
+        $messagesSet = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
         $messagesSet->init($responseData['messages']);
 
         foreach ($messagesSet->getEntities() as $message) {
-
             $this->order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
 
             if ($message->isError()) {
                 $isFailed = true;
                 $this->order->addErrorLog(
                     'Amazon Order status was not updated. Reason: %msg%',
-                    array('msg' => $message->getText())
+                    ['msg' => $message->getText()]
                 );
             } else {
                 $this->order->addWarningLog($message->getText());

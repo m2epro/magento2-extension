@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Model\Synchronization;
 
+/**
+ * Class OperationHistory
+ * @package Ess\M2ePro\Model\Synchronization
+ */
 class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
 {
-    private $timePoints = array();
+    private $timePoints = [];
     private $leftPadding = 0;
     private $bufferString = '';
 
@@ -42,15 +46,15 @@ class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
 
     // ---------------------------------------
 
-    public function addText($text = NULL)
+    public function addText($text = null)
     {
         $this->appendText($text);
         $this->saveBufferString();
     }
 
-    public function appendText($text = NULL)
+    public function appendText($text = null)
     {
-        $text && $text = str_repeat(' ',$this->leftPadding).$text;
+        $text && $text = str_repeat(' ', $this->leftPadding).$text;
         $this->bufferString .= (string)$text.PHP_EOL;
     }
 
@@ -59,7 +63,7 @@ class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
     public function saveBufferString()
     {
         $profilerData = (string)$this->getContentData('profiler');
-        $this->setContentData('profiler',$profilerData.$this->bufferString);
+        $this->setContentData('profiler', $profilerData.$this->bufferString);
         $this->bufferString = '';
     }
 
@@ -74,11 +78,11 @@ class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
             }
         }
 
-        $this->timePoints[] = array(
+        $this->timePoints[] = [
             'id' => $id,
             'title' => $title,
             'time' => microtime(true)
-        );
+        ];
 
         return true;
     }
@@ -86,9 +90,7 @@ class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
     public function updateTimePoint($id)
     {
         foreach ($this->timePoints as $point) {
-
             if ($point['id'] == $id) {
-
                 $point['time'] = microtime(true);
                 return true;
             }
@@ -100,11 +102,9 @@ class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
     public function saveTimePoint($id, $immediatelySave = true)
     {
         foreach ($this->timePoints as $point) {
-
             if ($point['id'] == $id) {
-
                 $this->appendText(
-                    $point['title'].': '.round(microtime(true) - $point['time'],2).' sec.'
+                    $point['title'].': '.round(microtime(true) - $point['time'], 2).' sec.'
                 );
 
                 $immediatelySave && $this->saveBufferString();
@@ -132,15 +132,15 @@ class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
 
     public function getProfilerInfo($nestingLevel = 0)
     {
-        if (is_null($this->getObject())) {
-            return NULL;
+        if ($this->getObject() === null) {
+            return null;
         }
 
         $offset = str_repeat(' ', $nestingLevel * 7);
-        $separationLine = str_repeat('#',80 - strlen($offset));
+        $separationLine = str_repeat('#', 80 - strlen($offset));
 
         $nick = strtoupper($this->getObject()->getData('nick'));
-        strpos($nick,'_') !== false && $nick = str_replace('SYNCHRONIZATION_','',$nick);
+        strpos($nick, '_') !== false && $nick = str_replace('SYNCHRONIZATION_', '', $nick);
 
         $profilerData = preg_replace('/^/m', "{$offset}", $this->getContentData('profiler'));
 
@@ -155,7 +155,6 @@ class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
 INFO;
 
         if ($fatalInfo = $this->getContentData('fatal_error')) {
-
             $info .= <<<INFO
 
 {$offset}<span style="color: red; font-weight: bold;">Fatal: {$fatalInfo['message']}</span>
@@ -165,7 +164,6 @@ INFO;
         }
 
         if ($exceptions = $this->getContentData('exceptions')) {
-
             foreach ($exceptions as $exception) {
                 $info .= <<<INFO
 
@@ -185,8 +183,8 @@ INFO;
 
     public function getFullProfilerInfo($nestingLevel = 0)
     {
-        if (is_null($this->getObject())) {
-            return NULL;
+        if ($this->getObject() === null) {
+            return null;
         }
 
         $profilerInfo = $this->getProfilerInfo($nestingLevel);
@@ -198,7 +196,6 @@ INFO;
         $childObjects->getSize() > 0 && $nestingLevel++;
 
         foreach ($childObjects as $item) {
-
             $object = $this->activeRecordFactory->getObject('Synchronization\OperationHistory');
             $object->setObject($item);
 

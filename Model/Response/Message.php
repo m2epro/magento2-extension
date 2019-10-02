@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Response;
 
+/**
+ * Class Message
+ * @package Ess\M2ePro\Model\Response
+ */
 class Message extends \Ess\M2ePro\Model\AbstractModel
 {
     const TEXT_KEY   = 'text';
@@ -21,7 +25,7 @@ class Message extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     protected $text = '';
-    protected $type = NULL;
+    protected $type = null;
 
     //########################################
 
@@ -47,10 +51,10 @@ class Message extends \Ess\M2ePro\Model\AbstractModel
 
     public function asArray()
     {
-        return array(
+        return [
             self::TEXT_KEY   => $this->text,
             self::TYPE_KEY   => $this->type,
-        );
+        ];
     }
 
     //########################################

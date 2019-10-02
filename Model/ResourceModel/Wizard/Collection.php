@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Wizard;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Wizard
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     //########################################

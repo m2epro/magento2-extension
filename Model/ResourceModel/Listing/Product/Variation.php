@@ -8,12 +8,19 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Product;
 
+use Ess\M2ePro\Model\ResourceModel\MSI\Listing\Product\Variation\StockDataResolver as MSIStockDataResolver;
+
+/**
+ * Class Variation
+ * @package Ess\M2ePro\Model\ResourceModel\Listing\Product
+ */
 class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {
-    private $variationsProductsIds = array();
+    protected $variationsProductsIds = [];
 
     protected $magentoProductStatus;
     protected $catalogInventoryConfiguration;
+    protected $variationStockDataResolver;
 
     //########################################
 
@@ -24,11 +31,16 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        \Magento\Framework\ObjectManagerInterface $objectManager,
         $connectionName = null
-    )
-    {
+    ) {
         $this->magentoProductStatus = $magentoProductStatus;
         $this->catalogInventoryConfiguration = $catalogInventoryConfiguration;
+
+        $this->variationStockDataResolver = $helperFactory->getObject('Magento')->isMSISupportingVersion()
+            ? $objectManager->get(MSIStockDataResolver::class)
+            : $objectManager->get(Variation\StockDataResolver::class);
+
         parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
     }
 
@@ -46,13 +58,13 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
         $variationsProductsIds = $this->getVariationsProductsIds($listingProductId);
 
         if (count($variationsProductsIds) <= 0) {
-            return NULL;
+            return null;
         }
 
         $statuses = $this->getVariationsStatuses($variationsProductsIds, $storeId);
 
         if (empty($statuses)) {
-            return NULL;
+            return null;
         }
 
         return (int)max($statuses) == \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED;
@@ -63,13 +75,13 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
         $variationsProductsIds = $this->getVariationsProductsIds($listingProductId);
 
         if (count($variationsProductsIds) <= 0) {
-            return NULL;
+            return null;
         }
 
         $statuses = $this->getVariationsStatuses($variationsProductsIds, $storeId);
 
         if (empty($statuses)) {
-            return NULL;
+            return null;
         }
 
         return (int)min($statuses) == \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_DISABLED;
@@ -82,13 +94,13 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
         $variationsProductsIds = $this->getVariationsProductsIds($listingProductId);
 
         if (count($variationsProductsIds) <= 0) {
-            return NULL;
+            return null;
         }
 
         $stocks = $this->getVariationsStockAvailabilities($variationsProductsIds, $storeId);
 
         if (empty($stocks)) {
-            return NULL;
+            return null;
         }
 
         return (int)min($stocks);
@@ -99,13 +111,13 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
         $variationsProductsIds = $this->getVariationsProductsIds($listingProductId);
 
         if (count($variationsProductsIds) <= 0) {
-            return NULL;
+            return null;
         }
 
         $stocks = $this->getVariationsStockAvailabilities($variationsProductsIds, $storeId);
 
         if (empty($stocks)) {
-            return NULL;
+            return null;
         }
 
         return !(int)max($stocks);
@@ -119,23 +131,23 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
             return $this->variationsProductsIds[$listingProductId];
         }
 
-        $optionTable = $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')->getResource()
+        $optionTable = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')->getResource()
             ->getMainTable();
 
         $select = $this->getConnection()
                         ->select()
                         ->from(
-                            array('lpv' => $this->getMainTable()),
-                            array('variation_id' => 'id')
+                            ['lpv' => $this->getMainTable()],
+                            ['variation_id' => 'id']
                         )
                         ->join(
-                            array('lpvo' => $optionTable),
+                            ['lpvo' => $optionTable],
                             '`lpv`.`id` = `lpvo`.`listing_product_variation_id`',
-                            array('product_id')
+                            ['product_id']
                         )
-                        ->where('`lpv`.`listing_product_id` = ?',(int)$listingProductId);
+                        ->where('`lpv`.`listing_product_id` = ?', (int)$listingProductId);
 
-        $result = array();
+        $result = [];
 
         foreach ($select->query()->fetchAll() as $value) {
             if (empty($value['product_id'])) {
@@ -150,9 +162,9 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
 
     // ---------------------------------------
 
-    private function getVariationsStatuses(array $variationsProductsIds, $storeId)
+    protected function getVariationsStatuses(array $variationsProductsIds, $storeId)
     {
-        $productsIds = array();
+        $productsIds = [];
 
         foreach ($variationsProductsIds as $variationProductsIds) {
             foreach ($variationProductsIds as $variationProductId) {
@@ -163,14 +175,14 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
         $productsIds = array_values(array_unique($productsIds));
         $statuses = $this->magentoProductStatus->getProductStatus($productsIds, $storeId);
 
-        $variationsProductsStatuses = array();
+        $variationsProductsStatuses = [];
         foreach ($variationsProductsIds as $key => $variationProductsIds) {
             foreach ($variationProductsIds as $variationProductId) {
                 $variationsProductsStatuses[$key][] = $statuses[$variationProductId];
             }
         }
 
-        $variationsStatuses = array();
+        $variationsStatuses = [];
         foreach ($variationsProductsStatuses as $key => $variationProductsStatuses) {
             $variationsStatuses[$key] = max($variationProductsStatuses);
         }
@@ -178,42 +190,21 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
         return $variationsStatuses;
     }
 
-    private function getVariationsStockAvailabilities(array $variationsProductsIds, $storeId)
+    protected function getVariationsStockAvailabilities(array $variationsProductsIds, $storeId)
     {
-        $productsIds = array();
+        $stockItems = $this->variationStockDataResolver->resolve($variationsProductsIds, $storeId);
+        $stockItemsCount = count($stockItems);
 
-        foreach ($variationsProductsIds as $variationProductsIds) {
-            foreach ($variationProductsIds as $variationProductId) {
-                $productsIds[] = $variationProductId;
-            }
-        }
-
-        $productsIds = array_values(array_unique($productsIds));
-        $catalogInventoryTable = $this->getHelper('Module\Database\Structure')
-            ->getTableNameWithPrefix('cataloginventory_stock_item');
-
-        $select = $this->getConnection()
-           ->select()
-           ->from(
-                array('cisi' => $catalogInventoryTable),
-                array('product_id','is_in_stock', 'manage_stock', 'use_config_manage_stock')
-           )
-           ->where('cisi.product_id IN ('.implode(',',$productsIds).')')
-           ->where('cisi.stock_id = ?', $this->helperFactory->getObject('Magento\Stock')->getStockId($storeId))
-           ->where('cisi.website_id = ?', $this->helperFactory->getObject('Magento\Stock')->getWebsiteId($storeId));
-
-        $stocks = $select->query()->fetchAll();
-
-        $variationsProductsStocks = array();
+        $variationsProductsStocks = [];
         foreach ($variationsProductsIds as $key => $variationProductsIds) {
             foreach ($variationProductsIds as $id) {
-                $count = count($stocks);
-                for ($i = 0; $i < $count; $i++) {
-                    if ($stocks[$i]['product_id'] == $id) {
+
+                for ($i = 0; $i < $stockItemsCount; $i++) {
+                    if ($stockItems[$i]['product_id'] == $id) {
                         $stockAvailability = $this->getHelper('Magento\Product')->calculateStockAvailability(
-                            $stocks[$i]['is_in_stock'],
-                            $stocks[$i]['manage_stock'],
-                            $stocks[$i]['use_config_manage_stock']
+                            $stockItems[$i]['is_in_stock'],
+                            $stockItems[$i]['manage_stock'],
+                            $stockItems[$i]['use_config_manage_stock']
                         );
                         $variationsProductsStocks[$key][] = $stockAvailability;
                         break;
@@ -222,7 +213,7 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
             }
         }
 
-        $variationsStocks = array();
+        $variationsStocks = [];
         foreach ($variationsProductsStocks as $key => $variationProductsStocks) {
             $variationsStocks[$key] = min($variationProductsStocks);
         }

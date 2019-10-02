@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Voca
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
+/**
+ * Class AddOptions
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Vocabulary
+ */
 class AddOptions extends Main
 {
     public function execute()
@@ -26,7 +30,7 @@ class AddOptions extends Main
             return;
         }
 
-        $vocabularyHelper = $this->getHelper('Component\Walmart\Vocabulary');
+        $vocabularyHelper = $this->getHelper('Component_Walmart_Vocabulary');
 
         if ($isRememberAutoAction && !$needAddToVocabulary) {
             $vocabularyHelper->disableOptionAutoAction();

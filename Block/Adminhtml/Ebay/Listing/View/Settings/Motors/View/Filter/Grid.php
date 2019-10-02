@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Filter;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Filter
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     //########################################
@@ -40,7 +44,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        $motorsHelper = $this->getHelper('Component\Ebay\Motors');
+        $motorsHelper = $this->getHelper('Component_Ebay_Motors');
 
         $attributeValue = $this->getListingProduct()->getMagentoProduct()->getAttributeValue(
             $motorsHelper->getAttribute($this->getMotorsType())
@@ -48,7 +52,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $motorsData = $motorsHelper->parseAttributeValue($attributeValue);
 
-        $collection = $this->activeRecordFactory->getObject('Ebay\Motor\Filter')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Ebay_Motor_Filter')->getCollection();
         $collection->getSelect()->where('id IN (?)', $motorsData['filters']);
 
         $this->setCollection($collection);
@@ -107,7 +111,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _toHtml()
     {
         if (!$this->canDisplayContainer()) {
-
             $this->js->add(<<<JS
     EbayListingViewSettingsMotorsViewFilterGridObj.afterInitPage();
 JS
@@ -155,7 +158,7 @@ JS
 
     public function getMotorsType()
     {
-        if (is_null($this->motorsType)) {
+        if ($this->motorsType === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Motors type not set.');
         }
 
@@ -166,7 +169,7 @@ JS
 
     public function getItemsColumnTitle()
     {
-        if ($this->getHelper('Component\Ebay\Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
+        if ($this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
             return $this->__('ePID(s)');
         }
 
@@ -195,9 +198,11 @@ JS
 
     public function getListingProduct()
     {
-        if (is_null($this->listingProduct)) {
+        if ($this->listingProduct === null) {
             $this->listingProduct = $this->parentFactory->getObjectLoaded(
-                \Ess\M2ePro\Helper\Component\Ebay::NICK , 'Listing\Product', $this->getListingProductId()
+                \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                'Listing\Product',
+                $this->getListingProductId()
             );
         }
 

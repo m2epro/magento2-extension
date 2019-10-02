@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Custom;
 
+/**
+ * Class WalmartOnlinePrice
+ * @package Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Custom
+ */
 class WalmartOnlinePrice extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
     //########################################
@@ -46,10 +50,10 @@ class WalmartOnlinePrice extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\A
         $maxPrice = $product->getData('max_online_price');
 
         if (!empty($minPrice) && !empty($maxPrice) && $minPrice != $maxPrice) {
-            return array(
+            return [
                 $product->getData('min_online_price'),
                 $product->getData('max_online_price'),
-            );
+            ];
         }
 
         return $product->getData('min_online_price');

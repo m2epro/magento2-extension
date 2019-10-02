@@ -1,11 +1,21 @@
 <?php
-    $stepsCount = count($block->getSteps());
-    $width = 100 / $stepsCount - 0.25;
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
 
-    $containerStyles = $block->getContainerData('style');
-    $containerIdPrefix = $block->getContainerData('id_prefix');
+// @codingStandardsIgnoreFile
 
-    $id = $containerIdPrefix ? $containerIdPrefix.'_breadcrumb_container' : 'breadcrumb_container';
+/** @var \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb $block */
+
+$stepsCount = count($block->getSteps());
+$width = 100 / $stepsCount - 0.25;
+
+$containerStyles = $block->getContainerData('style');
+$containerIdPrefix = $block->getContainerData('id_prefix');
+
+$id = $containerIdPrefix ? $containerIdPrefix.'_breadcrumb_container' : 'breadcrumb_container';
 ?>
 
 <style type="text/css">
@@ -45,8 +55,10 @@
 
 <div id="<?php echo $id; ?>" <?php echo $containerStyles ? 'style="'.$containerStyles.'"' : ''; ?>>
 
-    <?php foreach($block->getSteps() as $step) :?>
-        <div id="step_<?php echo $step['id']; ?>" class="breadcrumb <?php if ($block->getSelectedStep() === $step['id']) echo 'selected' ?>">
+    <?php foreach ($block->getSteps() as $step) :?>
+        <div id="step_<?php echo $step['id']; ?>" class="breadcrumb <?php if ($block->getSelectedStep() === $step['id']) {
+            echo 'selected';
+                      } ?>">
 
         <span>
             <?php echo $step['title'] ?>:

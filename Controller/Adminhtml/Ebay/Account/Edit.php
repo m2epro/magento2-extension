@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account
+ */
 class Edit extends Account
 {
     protected function getLayoutType()
@@ -24,12 +28,12 @@ class Edit extends Account
             $account = $this->ebayFactory->getObjectLoaded('Account', $id);
         }
 
-        if (is_null($account) && $id) {
+        if ($account === null && $id) {
             $this->messageManager->addError($this->__('Account does not exist.'));
             return $this->_redirect('*/ebay_account');
         }
 
-        if (!is_null($account)) {
+        if ($account !== null) {
             $this->addLicenseMessage($account);
         }
 
@@ -48,8 +52,8 @@ class Edit extends Account
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
-        $this->addLeft($this->createBlock('Ebay\Account\Edit\Tabs'));
-        $this->addContent($this->createBlock('Ebay\Account\Edit'));
+        $this->addLeft($this->createBlock('Ebay_Account_Edit_Tabs'));
+        $this->addContent($this->createBlock('Ebay_Account_Edit'));
         $this->setPageHelpLink('x/4gEtAQ');
 
         return $this->getResultPage();
@@ -59,10 +63,10 @@ class Edit extends Account
     {
         try {
             $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector('account','get','info', array(
+            $connectorObj = $dispatcherObject->getVirtualConnector('account', 'get', 'info', [
                 'account' => $account->getChildObject()->getServerHash(),
                 'channel' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            ));
+            ]);
 
             $dispatcherObject->process($connectorObj);
             $response = $connectorObj->getResponseData();
@@ -84,7 +88,7 @@ class Edit extends Account
 
         $errorMessage = $this->__(
             'Work with this Account is currently unavailable for the following reason: <br/> %error_message%',
-            array('error_message' => $note)
+            ['error_message' => $note]
         );
 
         $this->addExtendedErrorMessage($errorMessage);

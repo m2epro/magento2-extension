@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Order
+ */
 class Index extends Order
 {
     public function execute()

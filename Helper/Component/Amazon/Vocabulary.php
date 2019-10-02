@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
+/**
+ * Class Vocabulary
+ * @package Ess\M2ePro\Helper\Component\Amazon
+ */
 class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const VOCABULARY_AUTO_ACTION_NOT_SET = 0;
@@ -34,8 +38,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->amazonParentFactory = $amazonParentFactory;
@@ -73,7 +76,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $massProcessor = $this->modelFactory->getObject(
-            'Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass'
+            'Amazon_Listing_Product_Variation_Manager_Type_Relation_ParentRelation_Processor_Mass'
         );
         $massProcessor->setListingsProducts($affectedParentListingsProducts);
         $massProcessor->setForceExecuting(false);
@@ -87,10 +90,13 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     {
         /** @var \Ess\M2ePro\Model\Registry $registry */
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::LOCAL_DATA_REGISTRY_KEY, 'key', false
+            'Registry',
+            self::LOCAL_DATA_REGISTRY_KEY,
+            'key',
+            false
         );
 
-        if (is_null($registry)) {
+        if ($registry === null) {
             $registry = $this->activeRecordFactory->getObject('Registry');
         }
 
@@ -98,7 +104,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
         $vocabularyData[$channelAttribute]['names'][] = $productAttribute;
 
         if (!isset($vocabularyData[$channelAttribute]['options'])) {
-            $vocabularyData[$channelAttribute]['options'] = array();
+            $vocabularyData[$channelAttribute]['options'] = [];
         }
 
         $registry->setData('key', self::LOCAL_DATA_REGISTRY_KEY);
@@ -112,18 +118,19 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
         try {
 
             /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
-            $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+            $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
-                'product','add','vocabulary',
-                array(
+                'product',
+                'add',
+                'vocabulary',
+                [
                     'type'     => self::VALUE_TYPE_ATTRIBUTE,
                     'original' => $channelAttribute,
                     'value'    => $productAttribute
-                )
+                ]
             );
 
             $dispatcherObject->process($connectorObj);
-
         } catch (\Exception $exception) {
             $this->getHelper('Module\Exception')->process($exception);
         }
@@ -135,10 +142,13 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     {
         /** @var \Ess\M2ePro\Model\Registry $registry */
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::LOCAL_DATA_REGISTRY_KEY, 'key', false
+            'Registry',
+            self::LOCAL_DATA_REGISTRY_KEY,
+            'key',
+            false
         );
 
-        if (is_null($registry)) {
+        if ($registry === null) {
             $registry = $this->activeRecordFactory->getObject('Registry');
         }
 
@@ -166,14 +176,18 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     public function isAttributeExistsInLocalStorage($productAttribute, $channelAttribute)
     {
         return $this->isAttributeExists(
-            $productAttribute, $channelAttribute, $this->getLocalData()
+            $productAttribute,
+            $channelAttribute,
+            $this->getLocalData()
         );
     }
 
     public function isAttributeExistsInServerStorage($productAttribute, $channelAttribute)
     {
         return $this->isAttributeExists(
-            $productAttribute, $channelAttribute, $this->getServerData()
+            $productAttribute,
+            $channelAttribute,
+            $this->getServerData()
         );
     }
 
@@ -202,7 +216,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     public function isAttributeAutoActionEnabled()
     {
         $configValue = $this->getConfigValue('/amazon/vocabulary/attribute/auto_action/', 'enabled');
-        if (is_null($configValue)) {
+        if ($configValue === null) {
             return false;
         }
 
@@ -212,7 +226,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     public function isAttributeAutoActionDisabled()
     {
         $configValue = $this->getConfigValue('/amazon/vocabulary/attribute/auto_action/', 'enabled');
-        if (is_null($configValue)) {
+        if ($configValue === null) {
             return false;
         }
 
@@ -261,7 +275,8 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $affectedParentListingsProducts = $this->getParentListingsProductsAffectedToOption(
-            $channelAttribute, $channelOption
+            $channelAttribute,
+            $channelOption
         );
 
         if (empty($affectedParentListingsProducts)) {
@@ -269,7 +284,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $massProcessor = $this->modelFactory->getObject(
-            'Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass'
+            'Amazon_Listing_Product_Variation_Manager_Type_Relation_ParentRelation_Processor_Mass'
         );
         $massProcessor->setListingsProducts($affectedParentListingsProducts);
         $massProcessor->setForceExecuting(false);
@@ -283,21 +298,24 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     {
         /** @var \Ess\M2ePro\Model\Registry $registry */
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::LOCAL_DATA_REGISTRY_KEY, 'key', false
+            'Registry',
+            self::LOCAL_DATA_REGISTRY_KEY,
+            'key',
+            false
         );
 
-        if (is_null($registry)) {
+        if ($registry === null) {
             $registry = $this->activeRecordFactory->getObject('Registry');
         }
 
         $vocabularyData = $registry->getSettings('value');
 
         if (!isset($vocabularyData[$channelAttribute]['names'])) {
-            $vocabularyData[$channelAttribute]['names'] = array();
+            $vocabularyData[$channelAttribute]['names'] = [];
         }
 
         if (!isset($vocabularyData[$channelAttribute]['options'])) {
-            $vocabularyData[$channelAttribute]['options'] = array();
+            $vocabularyData[$channelAttribute]['options'] = [];
         }
 
         $isAdded = false;
@@ -311,10 +329,10 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (!$isAdded) {
-            $vocabularyData[$channelAttribute]['options'][] = array(
+            $vocabularyData[$channelAttribute]['options'][] = [
                 $channelOption,
                 $productOption,
-            );
+            ];
         }
 
         $registry->setData('key', self::LOCAL_DATA_REGISTRY_KEY);
@@ -328,19 +346,20 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
         try {
 
             /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
-            $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+            $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
-                'product','add','vocabulary',
-                array(
+                'product',
+                'add',
+                'vocabulary',
+                [
                     'type'      => self::VALUE_TYPE_OPTION,
                     'attribute' => $channelAttribute,
                     'original'  => $channelOption,
                     'value'     => $productOption
-                )
+                ]
             );
 
             $dispatcherObject->process($connectorObj);
-
         } catch (\Exception $exception) {
             $this->getHelper('Module\Exception')->process($exception);
         }
@@ -352,10 +371,13 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     {
         /** @var \Ess\M2ePro\Model\Registry $registry */
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::LOCAL_DATA_REGISTRY_KEY, 'key', false
+            'Registry',
+            self::LOCAL_DATA_REGISTRY_KEY,
+            'key',
+            false
         );
 
-        if (is_null($registry)) {
+        if ($registry === null) {
             $registry = $this->activeRecordFactory->getObject('Registry');
         }
 
@@ -365,12 +387,10 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         foreach ($vocabularyData[$channelAttribute]['options'] as $optionsGroupKey => &$options) {
-
             $comparedOptions = array_diff($productOptionsGroup, $options);
             $nameKey = array_search($productOption, $options);
 
             if (empty($comparedOptions) && $nameKey !== false) {
-
                 unset($options[$nameKey]);
 
                 $vocabularyData[$channelAttribute]['options'][$optionsGroupKey] = array_values($options);
@@ -393,14 +413,20 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     public function isOptionExistsInLocalStorage($productOption, $channelOption, $channelAttribute)
     {
         return $this->isOptionExists(
-            $productOption, $channelOption, $channelAttribute, $this->getLocalData()
+            $productOption,
+            $channelOption,
+            $channelAttribute,
+            $this->getLocalData()
         );
     }
 
     public function isOptionExistsInServerStorage($productOption, $channelOption, $channelAttribute)
     {
         return $this->isOptionExists(
-            $productOption, $channelOption, $channelAttribute, $this->getServerData()
+            $productOption,
+            $channelOption,
+            $channelAttribute,
+            $this->getServerData()
         );
     }
 
@@ -436,7 +462,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     public function isOptionAutoActionEnabled()
     {
         $configValue = $this->getConfigValue('/amazon/vocabulary/option/auto_action/', 'enabled');
-        if (is_null($configValue)) {
+        if ($configValue === null) {
             return false;
         }
 
@@ -446,7 +472,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     public function isOptionAutoActionDisabled()
     {
         $configValue = $this->getConfigValue('/amazon/vocabulary/option/auto_action/', 'enabled');
-        if (is_null($configValue)) {
+        if ($configValue === null) {
             return false;
         }
 
@@ -483,10 +509,13 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 
         /** @var \Ess\M2ePro\Model\Registry $registry */
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::LOCAL_DATA_REGISTRY_KEY, 'key', false
+            'Registry',
+            self::LOCAL_DATA_REGISTRY_KEY,
+            'key',
+            false
         );
 
-        if (is_null($registry)) {
+        if ($registry === null) {
             $registry = $this->activeRecordFactory->getObject('Registry');
         }
 
@@ -520,10 +549,13 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 
         /** @var \Ess\M2ePro\Model\Registry $registry */
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::SERVER_DATA_REGISTRY_KEY, 'key', false
+            'Registry',
+            self::SERVER_DATA_REGISTRY_KEY,
+            'key',
+            false
         );
 
-        if (is_null($registry)) {
+        if ($registry === null) {
             $registry = $this->activeRecordFactory->getObject('Registry');
         }
         $vocabularyData = $registry->getSettings('value');
@@ -548,7 +580,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     public function getAttributeNames($attribute, $vocabularyData)
     {
         if (empty($vocabularyData[$attribute]['names'])) {
-            return array();
+            return [];
         }
 
         return $vocabularyData[$attribute]['names'];
@@ -557,10 +589,10 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     public function getOptionNames($attribute, $option, $vocabularyData)
     {
         if (empty($vocabularyData[$attribute]['options'])) {
-            return array();
+            return [];
         }
 
-        $resultNames = array();
+        $resultNames = [];
 
         foreach ($vocabularyData[$attribute]['options'] as $optionNames) {
             $preparedOption      = strtolower($option);
@@ -582,10 +614,13 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     {
         /** @var \Ess\M2ePro\Model\Registry $registry */
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::LOCAL_DATA_REGISTRY_KEY, 'key', false
+            'Registry',
+            self::LOCAL_DATA_REGISTRY_KEY,
+            'key',
+            false
         );
 
-        if (is_null($registry)) {
+        if ($registry === null) {
             $registry = $this->activeRecordFactory->getObject('Registry');
         }
 
@@ -599,10 +634,13 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     {
         /** @var \Ess\M2ePro\Model\Registry $registry */
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::SERVER_DATA_REGISTRY_KEY, 'key', false
+            'Registry',
+            self::SERVER_DATA_REGISTRY_KEY,
+            'key',
+            false
         );
 
-        if (is_null($registry)) {
+        if ($registry === null) {
             $registry = $this->activeRecordFactory->getObject('Registry');
         }
 
@@ -619,14 +657,15 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $existListingProductCollection */
         $existListingProductCollection = $this->amazonParentFactory->getObject('Listing\Product')->getCollection();
         $existListingProductCollection->addFieldToFilter('is_variation_parent', 1);
-        $existListingProductCollection->addFieldToFilter('general_id', array('notnull' => true));
+        $existListingProductCollection->addFieldToFilter('general_id', ['notnull' => true]);
 
         $existListingProductCollection->getSelect()->where(
-            'additional_data NOT REGEXP ?', '"variation_matched_attributes":{.+}'
+            'additional_data NOT REGEXP ?',
+            '"variation_matched_attributes":{.+}'
         );
         $existListingProductCollection->addFieldToFilter(
             'additional_data',
-            array('regexp'=> '"variation_channel_attributes_sets":.*"'.$channelAttribute.'":')
+            ['regexp'=> '"variation_channel_attributes_sets":.*"'.$channelAttribute.'":']
         );
 
         $affectedListingsProducts = $existListingProductCollection->getItems();
@@ -635,10 +674,11 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
         $newListingProductCollection = $this->amazonParentFactory->getObject('Listing\Product')->getCollection();
         $newListingProductCollection->addFieldToFilter('is_variation_parent', 1);
         $newListingProductCollection->addFieldToFilter('is_general_id_owner', 1);
-        $newListingProductCollection->addFieldToFilter('general_id', array('null' => true));
+        $newListingProductCollection->addFieldToFilter('general_id', ['null' => true]);
 
         $newListingProductCollection->getSelect()->where(
-            'additional_data NOT REGEXP ?', '"variation_channel_theme":\s*".*"'
+            'additional_data NOT REGEXP ?',
+            '"variation_channel_theme":\s*".*"'
         );
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $newListingsProducts */
@@ -648,7 +688,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
             return $affectedListingsProducts;
         }
 
-        $productRequirementsCache = array();
+        $productRequirementsCache = [];
 
         foreach ($newListingsProducts as $newListingProduct) {
             if (isset($affectedListingsProducts[$newListingProduct->getId()])) {
@@ -669,7 +709,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
                 continue;
             }
 
-            $marketplaceDetails = $this->modelFactory->getObject('Amazon\Marketplace\Details');
+            $marketplaceDetails = $this->modelFactory->getObject('Amazon_Marketplace_Details');
             $marketplaceDetails->setMarketplaceId($newListingProduct->getListing()->getMarketplaceId());
 
             $productDataNick = $amazonDescriptionTemplate->getProductDataNick();
@@ -700,17 +740,17 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->amazonParentFactory->getObject('Listing\Product')->getCollection();
         $listingProductCollection->addFieldToFilter('is_variation_parent', 1);
-        $listingProductCollection->addFieldToFilter('general_id', array('notnull' => true));
+        $listingProductCollection->addFieldToFilter('general_id', ['notnull' => true]);
 
         $listingProductCollection->addFieldToFilter(
             'additional_data',
-            array('regexp'=> '"variation_matched_attributes":{.+}')
+            ['regexp'=> '"variation_matched_attributes":{.+}']
         );
         $listingProductCollection->addFieldToFilter(
             'additional_data',
-            array('regexp'=>
+            ['regexp'=>
                 '"variation_channel_attributes_sets":.*"'.$channelAttribute.'":\s*[\[|{].*'.$channelOption.'.*[\]|}]'
-            )
+            ]
         );
 
         return $listingProductCollection->getItems();
@@ -721,13 +761,13 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     private function getLocalDataCache()
     {
         $cacheKey = __CLASS__.self::LOCAL_DATA_REGISTRY_KEY;
-        return $this->getHelper('Data\Cache\Permanent')->getValue($cacheKey);
+        return $this->getHelper('Data_Cache_Permanent')->getValue($cacheKey);
     }
 
     private function getServerDataCache()
     {
         $cacheKey = __CLASS__.self::SERVER_DATA_REGISTRY_KEY;
-        return $this->getHelper('Data\Cache\Permanent')->getValue($cacheKey);
+        return $this->getHelper('Data_Cache_Permanent')->getValue($cacheKey);
     }
 
     // ---------------------------------------
@@ -735,13 +775,13 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     private function setLocalDataCache(array $data)
     {
         $cacheKey = __CLASS__.self::LOCAL_DATA_REGISTRY_KEY;
-        $this->getHelper('Data\Cache\Permanent')->setValue($cacheKey, $data);
+        $this->getHelper('Data_Cache_Permanent')->setValue($cacheKey, $data);
     }
 
     private function setServerDataCache(array $data)
     {
         $cacheKey = __CLASS__.self::SERVER_DATA_REGISTRY_KEY;
-        $this->getHelper('Data\Cache\Permanent')->setValue($cacheKey, $data);
+        $this->getHelper('Data_Cache_Permanent')->setValue($cacheKey, $data);
     }
 
     // ---------------------------------------
@@ -749,13 +789,13 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     private function removeLocalDataCache()
     {
         $cacheKey = __CLASS__.self::LOCAL_DATA_REGISTRY_KEY;
-        $this->getHelper('Data\Cache\Permanent')->removeValue($cacheKey);
+        $this->getHelper('Data_Cache_Permanent')->removeValue($cacheKey);
     }
 
     private function removeServerDataCache()
     {
         $cacheKey = __CLASS__.self::SERVER_DATA_REGISTRY_KEY;
-        $this->getHelper('Data\Cache\Permanent')->removeValue($cacheKey);
+        $this->getHelper('Data_Cache_Permanent')->removeValue($cacheKey);
     }
 
     //########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License;
 
+/**
+ * Class Change
+ * @package Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License
+ */
 class Change extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     //########################################
@@ -25,7 +29,8 @@ class Change extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldSet = $form->addFieldset('change_license', ['legend' => '', 'collapsable' => false]);
 
         $key = $this->getHelper('Data')->escapeHtml($this->getHelper('Module\License')->getKey());
-        $fieldSet->addField('new_license_key',
+        $fieldSet->addField(
+            'new_license_key',
             'text',
             [
                 'name' => 'new_license_key',

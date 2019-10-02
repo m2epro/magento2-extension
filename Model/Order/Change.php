@@ -65,7 +65,7 @@ class Change extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     {
         $params = $this->getHelper('Data')->jsonDecode($this->getData('params'));
 
-        return is_array($params) ? $params : array();
+        return is_array($params) ? $params : [];
     }
 
     public function getHash()
@@ -80,12 +80,12 @@ class Change extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public static function getAllowedActions()
     {
-        return array(
+        return [
             self::ACTION_UPDATE_PAYMENT,
             self::ACTION_UPDATE_SHIPPING,
             self::ACTION_CANCEL,
             self::ACTION_REFUND,
-        );
+        ];
     }
 
     //########################################
@@ -134,7 +134,7 @@ class Change extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             throw new \InvalidArgumentException('Action is invalid.');
         }
 
-        if (!in_array($creatorType, array(self::CREATOR_TYPE_OBSERVER))) {
+        if (!in_array($creatorType, [self::CREATOR_TYPE_OBSERVER])) {
             throw new \InvalidArgumentException('Creator is invalid.');
         }
 
@@ -153,14 +153,14 @@ class Change extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return;
         }
 
-        $change->addData(array(
+        $change->addData([
             'order_id'     => $orderId,
             'action'       => $action,
             'params'       => $this->getHelper('Data')->jsonEncode($params),
             'creator_type' => $creatorType,
             'component'    => $component,
             'hash'         => $hash
-        ));
+        ]);
         $change->save();
     }
 
@@ -168,7 +168,8 @@ class Change extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public static function generateHash($orderId, $action, array $params)
     {
-        return sha1($orderId.'-'.$action.'-'.serialize($params));
+        $helper = \Magento\Framework\App\ObjectManager::getInstance()->get(\Ess\M2ePro\Helper\Data::class);
+        return sha1($orderId .'-'. $action .'-'. $helper->serialize($params));
     }
 
     //########################################

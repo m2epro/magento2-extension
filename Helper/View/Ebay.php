@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\View;
 
+/**
+ * Class Ebay
+ * @package Ess\M2ePro\Helper\View
+ */
 class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 {
     // M2ePro_TRANSLATIONS
@@ -35,8 +39,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\ActiveRecord\Factory $modelFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->cacheConfig = $cacheConfig;
@@ -82,7 +85,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     public function setMode($mode)
     {
         $mode = strtolower($mode);
-        if (!in_array($mode,[self::MODE_SIMPLE,self::MODE_ADVANCED])) {
+        if (!in_array($mode, [self::MODE_SIMPLE,self::MODE_ADVANCED])) {
             return;
         }
         $this->cacheConfig->setGroupValue('/view/ebay/', 'mode', $mode);
@@ -102,21 +105,24 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function isFeedbacksShouldBeShown($accountId = NULL)
+    public function isFeedbacksShouldBeShown($accountId = null)
     {
         $accountCollection = $this->modelFactory->getObject('Ebay\Account')->getCollection();
         $accountCollection->addFieldToFilter(
-            'feedbacks_receive', \Ess\M2ePro\Model\Ebay\Account::FEEDBACKS_RECEIVE_YES
+            'feedbacks_receive',
+            \Ess\M2ePro\Model\Ebay\Account::FEEDBACKS_RECEIVE_YES
         );
 
         $feedbackCollection = $this->activeRecordFactory->getObject('Ebay\Feedback')->getCollection();
 
-        if (!is_null($accountId)) {
+        if ($accountId !== null) {
             $accountCollection->addFieldToFilter(
-                'account_id', $accountId
+                'account_id',
+                $accountId
             );
             $feedbackCollection->addFieldToFilter(
-                'account_id', $accountId
+                'account_id',
+                $accountId
             );
         }
 
@@ -127,9 +133,9 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isDuplicatesFilterShouldBeShown($listingId = null)
     {
-        $sessionCache = $this->getHelper('Data\Cache\Runtime');
+        $sessionCache = $this->getHelper('Data_Cache_Runtime');
 
-        if (!is_null($sessionCache->getValue('is_duplicates_filter_should_be_shown'))) {
+        if ($sessionCache->getValue('is_duplicates_filter_should_be_shown') !== null) {
             return $sessionCache->getValue('is_duplicates_filter_should_be_shown');
         }
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
+/**
+ * Class AssignByMagentoCategorySaveCategory
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+ */
 class AssignByMagentoCategorySaveCategory extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
     //########################################
@@ -22,7 +26,7 @@ class AssignByMagentoCategorySaveCategory extends \Ess\M2ePro\Controller\Adminht
         }
 
         !is_array($magentoCategoryIds) && $magentoCategoryIds = array_filter(explode(',', $magentoCategoryIds));
-        $templatesData = $this->getListing()->getSetting('additional_data', 'adding_category_templates_data', array());
+        $templatesData = $this->getListing()->getSetting('additional_data', 'adding_category_templates_data', []);
 
         foreach ($magentoCategoryIds as $magentoCategoryId) {
             $templatesData[$magentoCategoryId] = $templateId;

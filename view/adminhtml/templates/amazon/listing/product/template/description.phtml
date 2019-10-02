@@ -1,13 +1,22 @@
 <?php
-    /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description $block */
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description $block */
+
 ?>
 
 <div id="template_description_pop_up_content">
     <div>
 
-        <?php if(count($block->getMessages()) > 0) : ?>
+        <?php if (!empty($block->getMessages())) : ?>
             <div id="template_description_error_block">
-                <?php echo $this->getWarnings(); ?>
+                <?php echo $block->getWarnings(); ?>
             </div>
         <?php endif; ?>
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Tabs;
 
+/**
+ * Class AbstractVerticalTabs
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Tabs
+ */
 abstract class AbstractVerticalTabs extends AbstractTabs
 {
     protected $_template = 'Ess_M2ePro::magento/tabs/vertical.phtml';

@@ -8,18 +8,22 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization;
 
+/**
+ * Class Launcher
+ * @package Ess\M2ePro\Model\Amazon\Synchronization
+ */
 class Launcher extends AbstractModel
 {
     //########################################
 
     protected function getType()
     {
-        return NULL;
+        return null;
     }
 
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------

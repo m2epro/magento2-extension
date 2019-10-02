@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\ListingsProducts;
 
+/**
+ * Class Update
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\ListingsProducts
+ */
 class Update extends AbstractModel
 {
     const EBAY_STATUS_ACTIVE    = 'Active';
@@ -18,11 +22,11 @@ class Update extends AbstractModel
     const INCREASE_SINCE_TIME_BY               = 2;
     const INCREASE_SINCE_TIME_MIN_INTERVAL_SEC = 10;
 
-    private $logsActionId = NULL;
+    private $logsActionId = null;
 
-    private $listingsProductsLockStatus = array();
+    private $listingsProductsLockStatus = [];
 
-    private $listingsProductsIdsForNeedSynchRulesCheck = array();
+    private $listingsProductsIdsForNeedSynchRulesCheck = [];
 
     //########################################
 
@@ -92,11 +96,8 @@ class Update extends AbstractModel
             );
 
             try {
-
                 $this->processAccount($account);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Update Listings Products" Action for eBay Account: "%account%" was completed with error.',
                     $account->getTitle()
@@ -139,19 +140,20 @@ class Update extends AbstractModel
             return;
         }
 
-        $this->getHelper('Data\Cache\Runtime')->setValue(
-            'item_get_changes_data_' . $account->getId(), $changesByAccount
+        $this->getHelper('Data_Cache_Runtime')->setValue(
+            'item_get_changes_data_' . $account->getId(),
+            $changesByAccount
         );
 
         foreach ($changesByAccount['items'] as $change) {
-
-            /* @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+            /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
 
             $listingProduct = $this->getHelper('Component\Ebay')->getListingProductByEbayItem(
-                $change['id'], $account->getId()
+                $change['id'],
+                $account->getId()
             );
 
-            if (is_null($listingProduct)) {
+            if ($listingProduct === null) {
                 continue;
             }
 
@@ -190,7 +192,6 @@ class Update extends AbstractModel
                 $listingProduct->getChildObject()->addData($dataForUpdate);
                 $listingProduct->save();
             } else {
-
                 $listingProductVariations = $listingProduct->getVariations(true);
 
                 $this->processVariationChanges($listingProduct, $listingProductVariations, $change['variations']);
@@ -225,13 +226,11 @@ class Update extends AbstractModel
         $toTime    = clone $now;
 
         $operationHistory = $this->getActualOperationHistory()->getParentObject('synchronization');
-        if (!is_null($operationHistory)) {
-
+        if ($operationHistory !== null) {
             $toTime = $operationHistory->getData('start_date');
             $toTime = new \DateTime($toTime, new \DateTimeZone('UTC'));
 
             if ($sinceTime->getTimestamp() >= $toTime->getTimestamp()) {
-
                 $sinceTime = clone $toTime;
                 $sinceTime->modify('- 1 minute');
             }
@@ -239,10 +238,10 @@ class Update extends AbstractModel
 
         $response = $this->receiveChangesFromEbay(
             $account,
-            array(
+            [
                 'since_time' => $sinceTime->format('Y-m-d H:i:s'),
                 'to_time'    => $toTime->format('Y-m-d H:i:s')
-            )
+            ]
         );
 
         if ($response) {
@@ -252,16 +251,15 @@ class Update extends AbstractModel
         // -- to many changes are received. try to receive changes for the latest day
         $currentInterval = $toTime->diff($sinceTime);
         if ($currentInterval->days >= 1) {
-
             $sinceTime = clone $toTime;
             $sinceTime->modify('-1 day');
 
             $response = $this->receiveChangesFromEbay(
                 $account,
-                array(
+                [
                     'since_time' => $sinceTime->format('Y-m-d H:i:s'),
                     'to_time'    => $toTime->format('Y-m-d H:i:s')
-                )
+                ]
             );
 
             if ($response) {
@@ -273,7 +271,6 @@ class Update extends AbstractModel
         // -- to many changes are received. increase the sinceData step by step by 2
         $iteration = 0;
         do {
-
             $iteration++;
 
             $offset = ceil(($toTime->getTimestamp() - $sinceTime->getTimestamp()) / self::INCREASE_SINCE_TIME_BY);
@@ -282,8 +279,7 @@ class Update extends AbstractModel
             $currentInterval = $toTime->getTimestamp() - $sinceTime->getTimestamp();
 
             if ($currentInterval < self::INCREASE_SINCE_TIME_MIN_INTERVAL_SEC ||
-                $iteration > self::INCREASE_SINCE_TIME_MAX_ATTEMPTS)
-            {
+                $iteration > self::INCREASE_SINCE_TIME_MAX_ATTEMPTS) {
                 $sinceTime = clone $now;
                 $sinceTime->modify('-5 seconds');
 
@@ -292,30 +288,37 @@ class Update extends AbstractModel
 
             $response = $this->receiveChangesFromEbay(
                 $account,
-                array(
+                [
                     'since_time' => $sinceTime->format('Y-m-d H:i:s'),
                     'to_time'    => $toTime->format('Y-m-d H:i:s')
-                ),
+                ],
                 $iteration
             );
 
             if ($response) {
                 return (array)$response;
             }
-
         } while ($iteration <= self::INCREASE_SINCE_TIME_MAX_ATTEMPTS);
         // --
 
-        return array();
+        return [];
     }
 
-    private function receiveChangesFromEbay(\Ess\M2ePro\Model\Account $account,
-                                            array $paramsConnector = array(), $tryNumber = 0)
-    {
-        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorObj = $dispatcherObj->getVirtualConnector('item','get','changes',
-                                                            $paramsConnector,NULL,
-                                                            NULL,$account->getId());
+    private function receiveChangesFromEbay(
+        \Ess\M2ePro\Model\Account $account,
+        array $paramsConnector = [],
+        $tryNumber = 0
+    ) {
+        $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        $connectorObj = $dispatcherObj->getVirtualConnector(
+            'item',
+            'get',
+            'changes',
+            $paramsConnector,
+            null,
+            null,
+            $account->getId()
+        );
 
         $dispatcherObj->process($connectorObj);
         $this->processResponseMessages($connectorObj->getResponseMessages());
@@ -323,18 +326,18 @@ class Update extends AbstractModel
         $responseData = $connectorObj->getResponseData();
 
         if (!isset($responseData['items']) || !isset($responseData['to_time'])) {
-
-            $logData = array(
+            $logData = [
                 'params'            => $paramsConnector,
                 'account_id'        => $account->getId(),
                 'response_data'     => $responseData,
                 'response_messages' => $connectorObj->getResponseMessages()
-            );
+            ];
             $this->helperFactory->getObject('Module\Logger')->process(
-                $logData, "ebay no changes received - #{$tryNumber} try"
+                $logData,
+                "ebay no changes received - #{$tryNumber} try"
             );
 
-            return NULL;
+            return null;
         }
 
         return $responseData;
@@ -345,11 +348,10 @@ class Update extends AbstractModel
     private function processResponseMessages(array $messages)
     {
         /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messagesSet */
-        $messagesSet = $this->modelFactory->getObject('Connector\Connection\Response\Message\Set');
+        $messagesSet = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
         $messagesSet->init($messages);
 
         foreach ($messagesSet->getEntities() as $message) {
-
             if ($message->getCode() == 21917062) {
                 continue;
             }
@@ -373,15 +375,15 @@ class Update extends AbstractModel
 
     private function getProductDatesChanges(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $change)
     {
-        return array(
+        return [
             'start_date' => $this->getHelper('Component\Ebay')->timeToString($change['startTime']),
             'end_date'   => $this->getHelper('Component\Ebay')->timeToString($change['endTime'])
-        );
+        ];
     }
 
     private function getProductStatusChanges(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $change)
     {
-        $data = array();
+        $data = [];
 
         $qty = (int)$change['quantity'] < 0 ? 0 : (int)$change['quantity'];
         $qtySold = (int)$change['quantitySold'] < 0 ? 0 : (int)$change['quantitySold'];
@@ -390,38 +392,26 @@ class Update extends AbstractModel
              $change['listingStatus'] == self::EBAY_STATUS_ENDED) &&
              $listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN &&
              $qty == $qtySold) {
-
             $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD;
-
-        } else if ($change['listingStatus'] == self::EBAY_STATUS_COMPLETED) {
-
+        } elseif ($change['listingStatus'] == self::EBAY_STATUS_COMPLETED) {
             $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
-
-        } else if ($change['listingStatus'] == self::EBAY_STATUS_ENDED) {
-
+        } elseif ($change['listingStatus'] == self::EBAY_STATUS_ENDED) {
             $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED;
-
-        } else if ($change['listingStatus'] == self::EBAY_STATUS_ACTIVE &&
+        } elseif ($change['listingStatus'] == self::EBAY_STATUS_ACTIVE &&
                    $qty - $qtySold <= 0) {
-
             $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN;
-
-        } else if ($change['listingStatus'] == self::EBAY_STATUS_ACTIVE) {
-
+        } elseif ($change['listingStatus'] == self::EBAY_STATUS_ACTIVE) {
             $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
         }
 
         $accountOutOfStockControl = $listingProduct->getAccount()->getChildObject()->getOutOfStockControl(true);
 
         if (isset($change['out_of_stock'])) {
-
-            $data['additional_data'] = array('out_of_stock_control' => (bool)$change['out_of_stock']);
-
+            $data['additional_data'] = ['out_of_stock_control' => (bool)$change['out_of_stock']];
         } elseif ($data['status'] == \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN &&
-            !is_null($accountOutOfStockControl) && !$accountOutOfStockControl) {
-
+            $accountOutOfStockControl !== null && !$accountOutOfStockControl) {
             // Listed Hidden Status can be only for GTC items
-            if (is_null($listingProduct->getChildObject()->getOnlineDuration())) {
+            if ($listingProduct->getChildObject()->getOnlineDuration() === null) {
                 $data['online_duration'] = \Ess\M2ePro\Helper\Component\Ebay::LISTING_DURATION_GTC;
             }
 
@@ -452,7 +442,8 @@ class Update extends AbstractModel
         }
 
         $this->activeRecordFactory->getObject('ProductChange')->addUpdateAction(
-            $listingProduct->getProductId(),\Ess\M2ePro\Model\ProductChange::INITIATOR_SYNCHRONIZATION
+            $listingProduct->getProductId(),
+            \Ess\M2ePro\Model\ProductChange::INITIATOR_SYNCHRONIZATION
         );
 
         if ($this->listingsProductsLockStatus[$listingProduct->getId()]) {
@@ -464,7 +455,7 @@ class Update extends AbstractModel
 
     private function getProductQtyChanges(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $change)
     {
-        $data = array();
+        $data = [];
 
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
         $ebayListingProduct = $listingProduct->getChildObject();
@@ -485,7 +476,6 @@ class Update extends AbstractModel
 
         if ($ebayListingProduct->getOnlineQty() != $data['online_qty'] ||
             $ebayListingProduct->getOnlineQtySold() != $data['online_qty_sold']) {
-
             $this->logReportChange($listingProduct, $this->getHelper('Module\Translation')->__(
                 'Item QTY was successfully changed from %from% to %to% .',
                 ($ebayListingProduct->getOnlineQty() - $ebayListingProduct->getOnlineQtySold()),
@@ -493,7 +483,8 @@ class Update extends AbstractModel
             ));
 
             $this->activeRecordFactory->getObject('ProductChange')->addUpdateAction(
-                $listingProduct->getProductId(), \Ess\M2ePro\Model\ProductChange::INITIATOR_SYNCHRONIZATION
+                $listingProduct->getProductId(),
+                \Ess\M2ePro\Model\ProductChange::INITIATOR_SYNCHRONIZATION
             );
 
             if ($this->listingsProductsLockStatus[$listingProduct->getId()]) {
@@ -508,7 +499,7 @@ class Update extends AbstractModel
 
     private function getSimpleProductPriceChanges(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $change)
     {
-        $data = array();
+        $data = [];
 
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
         $ebayListingProduct = $listingProduct->getChildObject();
@@ -524,7 +515,6 @@ class Update extends AbstractModel
         $listingType = $this->getActualListingType($listingProduct, $change);
 
         if ($listingType == \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_FIXED) {
-
             if ($ebayListingProduct->getOnlineCurrentPrice() != $data['online_current_price']) {
                 $this->logReportChange($listingProduct, $this->getHelper('Module\Translation')->__(
                     'Item Price was successfully changed from %from% to %to% .',
@@ -533,7 +523,8 @@ class Update extends AbstractModel
                 ));
 
                 $this->activeRecordFactory->getObject('ProductChange')->addUpdateAction(
-                    $listingProduct->getProductId(), \Ess\M2ePro\Model\ProductChange::INITIATOR_SYNCHRONIZATION
+                    $listingProduct->getProductId(),
+                    \Ess\M2ePro\Model\ProductChange::INITIATOR_SYNCHRONIZATION
                 );
             }
         }
@@ -548,15 +539,16 @@ class Update extends AbstractModel
      * @param \Ess\M2ePro\Model\Listing\Product\Variation[] $variations
      * @return array
      */
-    private function getVariationProductPriceChanges(\Ess\M2ePro\Model\Listing\Product $listingProduct,
-                                                     array $variations)
-    {
+    private function getVariationProductPriceChanges(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        array $variations
+    ) {
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
         $ebayListingProduct = $listingProduct->getChildObject();
 
         $calculateWithEmptyQty = $ebayListingProduct->isOutOfStockControlEnabled();
 
-        $onlineCurrentPrice  = NULL;
+        $onlineCurrentPrice  = null;
 
         foreach ($variations as $variation) {
 
@@ -567,21 +559,23 @@ class Update extends AbstractModel
                 continue;
             }
 
-            if (!is_null($onlineCurrentPrice) && $ebayVariation->getOnlinePrice() >= $onlineCurrentPrice) {
+            if ($onlineCurrentPrice !== null && $ebayVariation->getOnlinePrice() >= $onlineCurrentPrice) {
                 continue;
             }
 
             $onlineCurrentPrice = $ebayVariation->getOnlinePrice();
         }
 
-        return array('online_current_price' => $onlineCurrentPrice);
+        return ['online_current_price' => $onlineCurrentPrice];
     }
 
     //########################################
 
-    private function processVariationChanges(\Ess\M2ePro\Model\Listing\Product $listingProduct,
-                                             array $listingProductVariations, array $changeVariations)
-    {
+    private function processVariationChanges(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        array $listingProductVariations,
+        array $changeVariations
+    ) {
         $variationsSnapshot = $this->getVariationsSnapshot($listingProductVariations);
         if (count($variationsSnapshot) <= 0) {
             return;
@@ -592,17 +586,16 @@ class Update extends AbstractModel
 
         foreach ($changeVariations as $changeVariation) {
             foreach ($variationsSnapshot as $variationSnapshot) {
-
-                if (!$this->isVariationEqualWithChange($listingProduct,$changeVariation,$variationSnapshot)) {
+                if (!$this->isVariationEqualWithChange($listingProduct, $changeVariation, $variationSnapshot)) {
                     continue;
                 }
 
-                $updateData = array(
+                $updateData = [
                     'online_price' => (float)$changeVariation['price'] < 0 ? 0 : (float)$changeVariation['price'],
                     'online_qty' => (int)$changeVariation['quantity'] < 0 ? 0 : (int)$changeVariation['quantity'],
                     'online_qty_sold' => (int)$changeVariation['quantitySold'] < 0 ?
                         0 : (int)$changeVariation['quantitySold']
-                );
+                ];
 
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $ebayVariation */
                 $ebayVariation = $variationSnapshot['variation']->getChildObject();
@@ -623,7 +616,6 @@ class Update extends AbstractModel
 
                 if ($ebayVariation->getOnlineQty() != $updateData['online_qty'] ||
                     $ebayVariation->getOnlineQtySold() != $updateData['online_qty_sold']) {
-
                     $hasVariationQtyChanges = true;
                     $isVariationChanged     = true;
                 }
@@ -651,7 +643,8 @@ class Update extends AbstractModel
 
         if ($hasVariationPriceChanges || $hasVariationQtyChanges) {
             $this->activeRecordFactory->getObject('ProductChange')->addUpdateAction(
-                $listingProduct->getProductId(), \Ess\M2ePro\Model\ProductChange::INITIATOR_SYNCHRONIZATION
+                $listingProduct->getProductId(),
+                \Ess\M2ePro\Model\ProductChange::INITIATOR_SYNCHRONIZATION
             );
         }
     }
@@ -664,36 +657,37 @@ class Update extends AbstractModel
      */
     private function getVariationsSnapshot(array $variations)
     {
-        $variationIds = array();
+        $variationIds = [];
         foreach ($variations as $variation) {
             $variationIds[] = $variation->getId();
         }
 
-        $optionCollection = $this->ebayFactory->getObject('Listing\Product\Variation\Option')->getCollection();
-        $optionCollection->addFieldToFilter('listing_product_variation_id', array('in' => $variationIds));
+        $optionCollection = $this->ebayFactory->getObject('Listing_Product_Variation_Option')->getCollection();
+        $optionCollection->addFieldToFilter('listing_product_variation_id', ['in' => $variationIds]);
 
-        $snapshot = array();
+        $snapshot = [];
 
         foreach ($variations as $variation) {
-
             $options = $optionCollection->getItemsByColumnValue('listing_product_variation_id', $variation->getId());
 
             if (count($options) <= 0) {
                 continue;
             }
 
-            $snapshot[] = array(
+            $snapshot[] = [
                 'variation' => $variation,
                 'options'   => $options
-            );
+            ];
         }
 
         return $snapshot;
     }
 
-    private function isVariationEqualWithChange(\Ess\M2ePro\Model\Listing\Product $listingProduct,
-                                                array $changeVariation, array $variationSnapshot)
-    {
+    private function isVariationEqualWithChange(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        array $changeVariation,
+        array $variationSnapshot
+    ) {
         if (count($variationSnapshot['options']) != count($changeVariation['specifics'])) {
             return false;
         }
@@ -714,11 +708,9 @@ class Update extends AbstractModel
 
             $haveOption = false;
 
-            foreach ($changeVariation['specifics'] as $changeVariationOption=>$changeVariationValue) {
-
+            foreach ($changeVariation['specifics'] as $changeVariationOption => $changeVariationValue) {
                 if ($variationSnapshotOptionName == trim($changeVariationOption) &&
-                    $variationSnapshotOptionValue == trim($changeVariationValue))
-                {
+                    $variationSnapshotOptionValue == trim($changeVariationValue)) {
                     $haveOption = true;
                     break;
                 }
@@ -737,7 +729,6 @@ class Update extends AbstractModel
     private function prepareSinceTime($sinceTime)
     {
         if (empty($sinceTime)) {
-
             $sinceTime = new \DateTime('now', new \DateTimeZone('UTC'));
             $sinceTime->modify('-5 seconds');
 
@@ -767,7 +758,7 @@ class Update extends AbstractModel
 
     private function getLogsActionId()
     {
-        if (is_null($this->logsActionId)) {
+        if ($this->logsActionId === null) {
             $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')
                                        ->getResource()->getNextActionId();
         }
@@ -776,13 +767,12 @@ class Update extends AbstractModel
 
     private function getActualListingType(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $change)
     {
-        $validEbayValues = array(
+        $validEbayValues = [
            \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Selling::LISTING_TYPE_AUCTION,
            \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Selling::LISTING_TYPE_FIXED
-        );
+        ];
 
-        if (isset($change['listingType']) && in_array($change['listingType'],$validEbayValues)) {
-
+        if (isset($change['listingType']) && in_array($change['listingType'], $validEbayValues)) {
             switch ($change['listingType']) {
                 case \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Selling::LISTING_TYPE_AUCTION:
                     $result =\Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_AUCTION;
@@ -791,7 +781,6 @@ class Update extends AbstractModel
                     $result =\Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_FIXED;
                     break;
             }
-
         } else {
             $result = $listingProduct->getChildObject()->getListingType();
         }

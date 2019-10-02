@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Search\ByIdentifier;
 
+/**
+ * Class ItemsRequester
+ * @package Ess\M2ePro\Model\Amazon\Connector\Search\ByIdentifier
+ */
 abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {
     // ########################################
 
     public function getCommand()
     {
-        return array('product','search','byIdentifier');
+        return ['product','search','byIdentifier'];
     }
 
     // ########################################
@@ -29,11 +33,11 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     protected function getRequestData()
     {
-        return array(
+        return [
             'item' => $this->getQuery(),
             'id_type' => $this->getQueryType(),
             'variation_bad_parent_modify_child_to_simple' => $this->getVariationBadParentModifyChildToSimple()
-        );
+        ];
     }
 
     // ########################################

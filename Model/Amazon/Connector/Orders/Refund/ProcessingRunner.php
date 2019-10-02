@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Refund;
 
+/**
+ * Class ProcessingRunner
+ * @package Ess\M2ePro\Model\Amazon\Connector\Orders\Refund
+ */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {
     // ########################################
@@ -17,15 +21,15 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $params = $this->getParams();
 
         /** @var \Ess\M2ePro\Model\Amazon\Processing\Action $processingAction */
-        $processingAction = $this->activeRecordFactory->getObject('Amazon\Processing\Action');
-        $processingAction->setData(array(
+        $processingAction = $this->activeRecordFactory->getObject('Amazon_Processing_Action');
+        $processingAction->setData([
             'account_id'    => $params['account_id'],
             'processing_id' => $this->getProcessingObject()->getId(),
             'related_id'    => $params['change_id'],
             'type'          => \Ess\M2ePro\Model\Amazon\Processing\Action::TYPE_ORDER_REFUND,
             'request_data'  => $this->getHelper('Data')->jsonEncode($params['request_data']),
             'start_date'    => $params['start_date'],
-        ));
+        ]);
         $processingAction->save();
     }
 

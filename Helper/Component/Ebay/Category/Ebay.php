@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Component\Ebay\Category;
 
+/**
+ * Class Ebay
+ * @package Ess\M2ePro\Helper\Component\Ebay\Category
+ */
 class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const CACHE_TAG = '_ebay_dictionary_data_';
@@ -32,8 +36,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\Message\ManagerInterface $messageManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;
@@ -52,7 +55,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
      */
     public function getPath($categoryId, $marketplaceId, $includeTitle = true)
     {
-        $category = $this->ebayFactory->getObjectLoaded('Marketplace',(int)$marketplaceId)
+        $category = $this->ebayFactory->getObjectLoaded('Marketplace', (int)$marketplaceId)
             ->getChildObject()
             ->getCategory((int)$categoryId);
 
@@ -71,15 +74,14 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
      */
     public function getTopLevel($categoryId, $marketplaceId)
     {
-        $topLevel = NULL;
+        $topLevel = null;
         for ($i = 1; $i < 10; $i++) {
-
-            $category = $this->ebayFactory->getObjectLoaded('Marketplace',(int)$marketplaceId)
+            $category = $this->ebayFactory->getObjectLoaded('Marketplace', (int)$marketplaceId)
                 ->getChildObject()
                 ->getCategory((int)$categoryId);
 
             if (!$category || ($i == 1 && !$category['is_leaf'])) {
-                return NULL;
+                return null;
             }
 
             $topLevel = $category['category_id'];
@@ -104,8 +106,8 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     public function isVariationEnabled($categoryId, $marketplaceId)
     {
         $features = $this->getFeatures($categoryId, $marketplaceId);
-        if (is_null($features)) {
-            return NULL;
+        if ($features === null) {
+            return null;
         }
 
         return !empty($features['variation_enabled']);
@@ -144,34 +146,34 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $cacheKey = '_ebay_category_features_'.$marketplaceId.'_'.$categoryId;
 
-        if (($cacheValue = $this->getHelper('Data\Cache\Permanent')->getValue($cacheKey)) !== NULL) {
+        if (($cacheValue = $this->getHelper('Data_Cache_Permanent')->getValue($cacheKey)) !== null) {
             return $cacheValue;
         }
 
         /** @var $connRead \Magento\Framework\DB\Adapter\AdapterInterface */
         $connRead = $this->resourceConnection->getConnection();
-        $tableDictCategory = $this->getHelper('Module\Database\Structure')
+        $tableDictCategory = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
         $dbSelect = $connRead->select()
                              ->from($tableDictCategory, 'features')
-                             ->where('`marketplace_id` = ?',(int)$marketplaceId)
-                             ->where('`category_id` = ?',(int)$categoryId);
+                             ->where('`marketplace_id` = ?', (int)$marketplaceId)
+                             ->where('`category_id` = ?', (int)$categoryId);
 
         $categoryRow = $connRead->fetchAssoc($dbSelect);
         $categoryRow = array_shift($categoryRow);
 
         // not found marketplace category row
         if (!$categoryRow) {
-            return NULL;
+            return null;
         }
 
-        $features = array();
-        if (!is_null($categoryRow['features'])) {
+        $features = [];
+        if ($categoryRow['features'] !== null) {
             $features = (array)$this->getHelper('Data')->jsonDecode($categoryRow['features']);
         }
 
-        $this->getHelper('Data\Cache\Permanent')->setValue($cacheKey,$features,array(self::CACHE_TAG));
+        $this->getHelper('Data_Cache_Permanent')->setValue($cacheKey, $features, [self::CACHE_TAG]);
         return $features;
     }
 
@@ -184,17 +186,17 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $cacheKey = '_ebay_category_item_specifics_'.$categoryId.'_'.$marketplaceId;
 
-        if (($cacheValue = $this->getHelper('Data\Cache\Permanent')->getValue($cacheKey)) !== NULL) {
+        if (($cacheValue = $this->getHelper('Data_Cache_Permanent')->getValue($cacheKey)) !== null) {
             return $cacheValue;
         }
 
         /** @var $connRead \Magento\Framework\DB\Adapter\AdapterInterface */
         $connRead = $this->resourceConnection->getConnection();
-        $tableDictCategory = $this->getHelper('Module\Database\Structure')
+        $tableDictCategory = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
         $dbSelect = $connRead->select()
-                             ->from($tableDictCategory,'*')
+                             ->from($tableDictCategory, '*')
                              ->where('`marketplace_id` = ?', (int)$marketplaceId)
                              ->where('`category_id` = ?', (int)$categoryId);
 
@@ -203,50 +205,52 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
         // not found marketplace category row
         if (!$categoryRow) {
-            return NULL;
+            return null;
         }
 
         if (!$categoryRow['is_leaf']) {
-            $this->getHelper('Data\Cache\Permanent')->setValue($cacheKey,array(),array(self::CACHE_TAG));
-            return array();
+            $this->getHelper('Data_Cache_Permanent')->setValue($cacheKey, [], [self::CACHE_TAG]);
+            return [];
         }
 
-        if (!is_null($categoryRow['item_specifics'])) {
-
+        if ($categoryRow['item_specifics'] !== null) {
             $specifics = (array)$this->getHelper('Data')->jsonDecode($categoryRow['item_specifics']);
-
         } else {
-
             try {
 
                 /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
-                $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-                $connectorObj = $dispatcherObject->getVirtualConnector('category','get','specifics',
-                                                                       array('category_id' => $categoryId),'specifics',
-                                                                       $marketplaceId, NULL, NULL);
+                $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+                $connectorObj = $dispatcherObject->getVirtualConnector(
+                    'category',
+                    'get',
+                    'specifics',
+                    ['category_id' => $categoryId],
+                    'specifics',
+                    $marketplaceId,
+                    null,
+                    null
+                );
 
                 $dispatcherObject->process($connectorObj);
                 $specifics = (array)$connectorObj->getResponseData();
-
             } catch (\Exception $exception) {
-
                 $this->getHelper('Module\Exception')->process($exception);
-                return NULL;
+                return null;
             }
 
             /** @var $connWrite \Magento\Framework\DB\Adapter\AdapterInterface */
             $connWrite = $this->resourceConnection->getConnection();
             $connWrite->update(
                 $tableDictCategory,
-                array('item_specifics' => $this->getHelper('Data')->jsonEncode($specifics)),
-                array(
+                ['item_specifics' => $this->getHelper('Data')->jsonEncode($specifics)],
+                [
                     'marketplace_id = ?' => (int)$marketplaceId,
                     'category_id = ?'    => (int)$categoryId
-                )
+                ]
             );
         }
 
-        $this->getHelper('Data\Cache\Permanent')->setValue($cacheKey,$specifics,array(self::CACHE_TAG));
+        $this->getHelper('Data_Cache_Permanent')->setValue($cacheKey, $specifics, [self::CACHE_TAG]);
         return $specifics;
     }
 
@@ -254,9 +258,10 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getSameTemplatesData($ids)
     {
-        return $this->getHelper('Component\Ebay\Category')->getSameTemplatesData(
-            $ids, $this->activeRecordFactory->getObject('Ebay\Template\Category')->getResource()->getMainTable(),
-            array('category_main')
+        return $this->getHelper('Component_Ebay_Category')->getSameTemplatesData(
+            $ids,
+            $this->activeRecordFactory->getObject('Ebay_Template_Category')->getResource()->getMainTable(),
+            ['category_main']
         );
     }
 
@@ -264,7 +269,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     {
         /** @var $connRead \Magento\Framework\DB\Adapter\AdapterInterface */
         $connRead = $this->resourceConnection->getConnection();
-        $tableDictCategories = $this->getHelper('Module\Database\Structure')
+        $tableDictCategories = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
         $dbSelect = $connRead->select()
@@ -280,47 +285,47 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         /** @var $connRead \Magento\Framework\DB\Adapter\AdapterInterface */
         $connRead = $this->resourceConnection->getConnection();
 
-        $etcTable = $this->activeRecordFactory->getObject('Ebay\Template\Category')->getResource()->getMainTable();
-        $etocTable = $this->activeRecordFactory->getObject('Ebay\Template\OtherCategory')
+        $etcTable = $this->activeRecordFactory->getObject('Ebay_Template_Category')->getResource()->getMainTable();
+        $etocTable = $this->activeRecordFactory->getObject('Ebay_Template_OtherCategory')
             ->getResource()->getMainTable();
-        $edcTable = $this->getHelper('Module\Database\Structure')
+        $edcTable = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
         $etcSelect = $connRead->select();
         $etcSelect->from(
-                array('etc' => $etcTable)
-            )
+            ['etc' => $etcTable]
+        )
             ->reset(\Zend_Db_Select::COLUMNS)
-            ->columns(array(
+            ->columns([
                 'category_main_id as category_id',
                 'marketplace_id',
-            ))
+            ])
             ->where('category_main_mode = ?', \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY)
-            ->group(array('category_id', 'marketplace_id'));
+            ->group(['category_id', 'marketplace_id']);
 
         $etocSelect = $connRead->select();
         $etocSelect->from(
-                array('etc' => $etocTable)
-            )
+            ['etc' => $etocTable]
+        )
             ->reset(\Zend_Db_Select::COLUMNS)
-            ->columns(array(
+            ->columns([
                 'category_secondary_id as category_id',
                 'marketplace_id',
-            ))
+            ])
             ->where('category_secondary_mode = ?', \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY)
-            ->group(array('category_id', 'marketplace_id'));
+            ->group(['category_id', 'marketplace_id']);
 
         $unionSelect = $connRead->select();
-        $unionSelect->union(array(
+        $unionSelect->union([
             $etcSelect,
             $etocSelect,
-        ));
+        ]);
 
         $mainSelect = $connRead->select();
         $mainSelect->reset()
-            ->from(array('main_table' => $unionSelect))
+            ->from(['main_table' => $unionSelect])
             ->joinLeft(
-                array('edc' => $edcTable),
+                ['edc' => $edcTable],
                 'edc.marketplace_id = main_table.marketplace_id
                  AND edc.category_id = main_table.category_id'
             )

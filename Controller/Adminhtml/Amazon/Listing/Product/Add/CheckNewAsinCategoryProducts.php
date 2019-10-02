@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
+/**
+ * Class CheckNewAsinCategoryProducts
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
+ */
 class CheckNewAsinCategoryProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {
     public function execute()
@@ -15,7 +19,8 @@ class CheckNewAsinCategoryProducts extends \Ess\M2ePro\Controller\Adminhtml\Amaz
         $listing = $this->getListing();
 
         $descriptionTemplatesIds = $listing->getSetting(
-            'additional_data', 'adding_new_asin_description_templates_data'
+            'additional_data',
+            'adding_new_asin_description_templates_data'
         );
 
         foreach ($descriptionTemplatesIds as $listingProductId => $descriptionTemplateId) {
@@ -31,7 +36,7 @@ class CheckNewAsinCategoryProducts extends \Ess\M2ePro\Controller\Adminhtml\Amaz
 
         $listing = $this->getListing();
 
-        $listing->setSetting('additional_data', 'adding_new_asin_description_templates_data', array());
+        $listing->setSetting('additional_data', 'adding_new_asin_description_templates_data', []);
         $listing->save();
 
         $this->setAjaxContent(1, false);

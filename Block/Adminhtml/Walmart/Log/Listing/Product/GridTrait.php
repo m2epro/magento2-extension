@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Product;
 
+/**
+ * Trait GridTrait
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Product
+ */
 trait GridTrait
 {
     //########################################

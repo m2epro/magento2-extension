@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template;
 
+/**
+ * Class Payment
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Template
+ */
 class Payment extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
@@ -21,7 +25,7 @@ class Payment extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 
     public function setSynchStatusNeed($newData, $oldData, $listingsProducts)
     {
-        $listingsProductsIds = array();
+        $listingsProductsIds = [];
         foreach ($listingsProducts as $listingProduct) {
             $listingsProductsIds[] = (int)$listingProduct['id'];
         }
@@ -30,26 +34,26 @@ class Payment extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
             return;
         }
 
-        if (!$this->isDifferent($newData,$oldData)) {
+        if (!$this->isDifferent($newData, $oldData)) {
             return;
         }
 
-        $templates = array('paymentTemplate');
+        $templates = ['paymentTemplate'];
 
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
 
         $this->getConnection()->update(
             $lpTable,
-            array(
+            [
                 'synch_status' => \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_NEED,
                 'synch_reasons' => new \Zend_Db_Expr(
                     "IF(synch_reasons IS NULL,
-                        '".implode(',',$templates)."',
-                        CONCAT(synch_reasons,'".','.implode(',',$templates)."')
+                        '".implode(',', $templates)."',
+                        CONCAT(synch_reasons,'".','.implode(',', $templates)."')
                     )"
                 )
-            ),
-            array('id IN ('.implode(',', $listingsProductsIds).')')
+            ],
+            ['id IN ('.implode(',', $listingsProductsIds).')']
         );
     }
 
@@ -57,18 +61,18 @@ class Payment extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 
     public function isDifferent($newData, $oldData)
     {
-        $ignoreFields = array(
+        $ignoreFields = [
             $this->getIdFieldName(),
             'title', 'is_custom_template',
             'create_date', 'update_date'
-        );
+        ];
 
         foreach ($ignoreFields as $ignoreField) {
-            unset($newData[$ignoreField],$oldData[$ignoreField]);
+            unset($newData[$ignoreField], $oldData[$ignoreField]);
         }
 
-        !isset($newData['services']) && $newData['services'] = array();
-        !isset($oldData['services']) && $oldData['services'] = array();
+        !isset($newData['services']) && $newData['services'] = [];
+        !isset($oldData['services']) && $oldData['services'] = [];
 
         foreach ($newData['services'] as $key => $newService) {
             unset($newData['services'][$key]['id'], $newData['services'][$key]['template_payment_id']);
@@ -79,13 +83,13 @@ class Payment extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 
         ksort($newData);
         ksort($oldData);
-        array_walk($newData['services'],'ksort');
-        array_walk($oldData['services'],'ksort');
+        array_walk($newData['services'], 'ksort');
+        array_walk($oldData['services'], 'ksort');
 
         $encodedNewData = $this->getHelper('Data')->jsonEncode($newData);
         $encodedOldData = $this->getHelper('Data')->jsonEncode($oldData);
 
-        return md5($encodedNewData) !== md5($encodedOldData);
+        return sha1($encodedNewData) !== sha1($encodedOldData);
     }
 
     //########################################

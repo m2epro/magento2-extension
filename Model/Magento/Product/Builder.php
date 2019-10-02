@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Product;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Magento\Product
+ */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Magento\Framework\Filesystem\DriverPool  */
@@ -58,8 +62,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\CatalogInventory\Model\Indexer\Stock\Processor $indexStockProcessor,
         \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration
-    )
-    {
+    ) {
         $this->driverPool           = $driverPool;
         $this->filesystem           = $filesystem;
         $this->storeFactory         = $storeFactory;
@@ -122,14 +125,14 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
         // ---------------------------------------
 
-        $websiteIds = array();
-        if (!is_null($this->getData('store_id'))) {
+        $websiteIds = [];
+        if ($this->getData('store_id') !== null) {
             $store = $this->storeFactory->create()->load($this->getData('store_id'));
-            $websiteIds = array($store->getWebsiteId());
+            $websiteIds = [$store->getWebsiteId()];
         }
 
         if (empty($websiteIds)) {
-            $websiteIds = array($this->helperFactory->getObject('Magento\Store')->getDefaultWebsiteId());
+            $websiteIds = [$this->helperFactory->getObject('Magento\Store')->getDefaultWebsiteId()];
         }
 
         $this->product->setWebsiteIds($websiteIds);
@@ -138,7 +141,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
         $gallery = $this->makeGallery();
 
-        if (count($gallery) > 0) {
+        if (!empty($gallery)) {
             $firstImage = reset($gallery);
             $firstImage = $firstImage['file'];
 
@@ -146,15 +149,15 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             $this->product->setData('thumbnail', $firstImage);
             $this->product->setData('small_image', $firstImage);
 
-            $this->product->setData('media_gallery', array(
+            $this->product->setData('media_gallery', [
                 'images' => $gallery,
-                'values' => array(
+                'values' => [
                     'main'        => $firstImage,
                     'image'       => $firstImage,
                     'small_image' => $firstImage,
                     'thumbnail'   => $firstImage
-                )
-            ));
+                ]
+            ]);
         }
 
         // ---------------------------------------
@@ -189,7 +192,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     private function makeGallery()
     {
         if (!is_array($this->getData('images')) || count($this->getData('images')) == 0) {
-            return array();
+            return [];
         }
 
         $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
@@ -198,7 +201,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         )->getAbsolutePath()
         . $this->productMediaConfig->getBaseTmpMediaPath() . DIRECTORY_SEPARATOR;
 
-        $gallery = array();
+        $gallery = [];
         $imagePosition = 1;
 
         foreach ($this->getData('images') as $tempImageName) {
@@ -206,12 +209,12 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            $gallery[] = array(
+            $gallery[] = [
                 'file'     => $tempImageName,
                 'label'    => '',
                 'position' => $imagePosition++,
                 'disabled' => 0
-            );
+            ];
         }
 
         return $gallery;

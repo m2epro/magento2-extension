@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization;
 
 use Ess\M2ePro\Model\Ebay\Template\Synchronization as SynchronizationPolicy;
 
+/**
+ * Class ListActions
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization
+ */
 class ListActions extends AbstractModel
 {
     private $cacheConfig;
@@ -77,23 +81,24 @@ class ListActions extends AbstractModel
 
     private function immediatelyChangedProducts()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Immediately when Product was changed');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Immediately when Product was changed');
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstances(
-            array(\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE)
+            [\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE]
         );
 
         $lpForAdvancedRules = [];
 
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -109,24 +114,21 @@ class ListActions extends AbstractModel
                 $ebayTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
 
                 if ($ebayTemplate->isListAdvancedRulesEnabled()) {
-
                     $templateId = $ebayTemplate->getId();
                     $storeId    = $listingProduct->getListing()->getStoreId();
                     $magentoProductId  = $listingProduct->getProductId();
 
                     $lpForAdvancedRules[$templateId][$storeId][$magentoProductId][] = $listingProduct;
-
                 } else {
-
                     $this->getRunner()->addProduct(
-                        $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator
+                        $listingProduct,
+                        \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                        $configurator
                     );
 
                     $this->setListAttemptData($listingProduct);
                 }
-
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -139,11 +141,11 @@ class ListActions extends AbstractModel
 
     private function immediatelyNotCheckedProducts()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Immediately when Product was not checked');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Immediately when Product was not checked');
         $limit = $this->getConfigValue($this->getFullSettingsPath().'immediately_not_checked/', 'items_limit');
 
         $collection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
-        $collection->addFieldToFilter('tried_to_list',0);
+        $collection->addFieldToFilter('tried_to_list', 0);
         $collection->getSelect()->limit($limit);
 
         $listingsProducts = $collection->getItems();
@@ -151,7 +153,6 @@ class ListActions extends AbstractModel
         $lpForAdvancedRules = [];
 
         foreach ($listingsProducts as $listingProduct) {
-
             try {
                 /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
 
@@ -159,10 +160,12 @@ class ListActions extends AbstractModel
                 $listingProduct->setData('tried_to_list', 1)->save();
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -178,24 +181,21 @@ class ListActions extends AbstractModel
                 $ebayTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
 
                 if ($ebayTemplate->isListAdvancedRulesEnabled()) {
-
                     $templateId = $ebayTemplate->getId();
                     $storeId = $listingProduct->getListing()->getStoreId();
                     $magentoProductId = $listingProduct->getProductId();
 
                     $lpForAdvancedRules[$templateId][$storeId][$magentoProductId][] = $listingProduct;
-
                 } else {
-
                     $this->getRunner()->addProduct(
-                        $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator
+                        $listingProduct,
+                        \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                        $configurator
                     );
 
                     $this->setListAttemptData($listingProduct);
                 }
-
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -213,13 +213,12 @@ class ListActions extends AbstractModel
         $affectedListingProducts = [];
 
         try {
-
             $affectedListingProducts = $this->getInspector()->getMeetAdvancedRequirementsProducts(
-                $lpForAdvancedRules, SynchronizationPolicy::LIST_ADVANCED_RULES_PREFIX, 'list'
+                $lpForAdvancedRules,
+                SynchronizationPolicy::LIST_ADVANCED_RULES_PREFIX,
+                'list'
             );
-
         } catch (\Exception $exception) {
-
             foreach ($lpForAdvancedRules as $templateId => $productsByTemplate) {
                 foreach ($productsByTemplate as $storeId => $productsByStore) {
                     foreach ($productsByStore as $magentoProductId => $productsByMagentoProduct) {
@@ -237,16 +236,16 @@ class ListActions extends AbstractModel
             try {
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                    $configurator
                 );
 
                 $this->setListAttemptData($listingProduct);
-
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }

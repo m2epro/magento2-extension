@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocab
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class AddOptions
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocabulary
+ */
 class AddOptions extends Main
 {
     public function execute()
@@ -26,7 +30,7 @@ class AddOptions extends Main
             return;
         }
 
-        $vocabularyHelper = $this->getHelper('Component\Amazon\Vocabulary');
+        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
 
         if ($isRememberAutoAction && !$needAddToVocabulary) {
             $vocabularyHelper->disableOptionAutoAction();

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order\View;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Order\View
+ */
 class Item extends AbstractGrid
 {
     /** @var $order \Ess\M2ePro\Model\Order */
@@ -28,11 +32,11 @@ class Item extends AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->productModel = $productModel;
         $this->resourceConnection = $resourceConnection;
         $this->amazonFactory = $amazonFactory;
+
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -58,115 +62,93 @@ class Item extends AbstractGrid
         $this->order = $this->getHelper('Data\GlobalData')->getValue('order');
     }
 
+    //########################################
+
     protected function _prepareCollection()
     {
-        $collection = $this->amazonFactory->getObject('Order\Item')
-            ->getCollection()
+        $collection = $this->amazonFactory->getObject('Order\Item')->getCollection()
             ->addFieldToFilter('order_id', $this->order->getId());
 
-        $where = [
-            'cisi.product_id = `main_table`.product_id',
-            'cisi.stock_id = '   . $this->getHelper('Magento\Stock')->getStockId($this->order->getStore()),
-            'cisi.website_id = ' . $this->getHelper('Magento\Stock')->getWebsiteId($this->order->getStore())
-        ];
-
-        $collection->getSelect()->joinLeft(
-            array(
-                'cisi' => $this->getHelper('Module\Database\Structure')
-                    ->getTableNameWithPrefix('cataloginventory_stock_item')
-            ),
-            sprintf("(%s)", implode(' AND ', $where)),
-            array('is_in_stock')
-        );
-
         $this->setCollection($collection);
-
         return parent::_prepareCollection();
     }
 
     protected function _prepareColumns()
     {
-        $this->addColumn('products', array(
+        $this->addColumn('products', [
             'header'    => $this->__('Product'),
             'align'     => 'left',
             'width'     => '*',
             'index'     => 'product_id',
-            'frame_callback' => array($this, 'callbackColumnProduct')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProduct']
+        ]);
 
-        $this->addColumn('stock_availability', array(
+        $this->addColumn('stock_availability', [
             'header'=> $this->__('Stock Availability'),
             'width' => '100px',
-            'index' => 'is_in_stock',
-            'filter_index' => 'cisi.is_in_stock',
-            'type'  => 'options',
             'sortable'  => false,
-            'options' => array(
-                1 => $this->__('In Stock'),
-                0 => $this->__('Out of Stock')
-            ),
-            'frame_callback' => array($this, 'callbackColumnStockAvailability')
-        ));
+            'frame_callback' => [$this, 'callbackColumnIsInStock']
+        ]);
 
-        $this->addColumn('original_price', array(
+        $this->addColumn('original_price', [
             'header'    => $this->__('Original Price'),
             'align'     => 'left',
             'width'     => '80px',
             'filter'    => false,
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnOriginalPrice')
-        ));
+            'frame_callback' => [$this, 'callbackColumnOriginalPrice']
+        ]);
 
-        $this->addColumn('qty_purchased', array(
+        $this->addColumn('qty_purchased', [
             'header'    => $this->__('QTY'),
             'align'     => 'left',
             'width'     => '80px',
             'index'     => 'qty_purchased',
-            'frame_callback' => array($this, 'callbackColumnQty')
-        ));
+            'frame_callback' => [$this, 'callbackColumnQty']
+        ]);
 
-        $this->addColumn('price', array(
+        $this->addColumn('price', [
             'header'    => $this->__('Price'),
             'align'     => 'left',
             'width'     => '80px',
             'index'     => 'price',
-            'frame_callback' => array($this, 'callbackColumnPrice')
-        ));
+            'frame_callback' => [$this, 'callbackColumnPrice']
+        ]);
 
-        $this->addColumn('discount_amount', array(
+        $this->addColumn('discount_amount', [
             'header'    => $this->__('Promotions'),
             'align'     => 'left',
             'width'     => '80px',
             'filter'    => false,
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnDiscountAmount')
-        ));
+            'frame_callback' => [$this, 'callbackColumnDiscountAmount']
+        ]);
 
         if ($this->activeRecordFactory->getObject('Amazon\Order')->getResource()->hasGifts($this->order->getId())) {
-            $this->addColumn('gift_price', array(
+            $this->addColumn('gift_price', [
                 'header'    => $this->__('Gift Wrap Price'),
                 'align'     => 'left',
                 'width'     => '80px',
                 'index'     => 'gift_price',
-                'frame_callback' => array($this, 'callbackColumnGiftPrice')
-            ));
+                'frame_callback' => [$this, 'callbackColumnGiftPrice']
+            ]);
 
-            $this->addColumn('gift_options', array(
+            $this->addColumn('gift_options', [
                 'header'    => $this->__('Gift Options'),
                 'align'     => 'left',
                 'width'     => '250px',
                 'filter'    => false,
                 'sortable'  => false,
-                'frame_callback' => array($this, 'callbackColumnGiftOptions')
-            ));
+                'frame_callback' => [$this, 'callbackColumnGiftOptions']
+            ]);
         }
 
-        $this->addColumn('row_total', array(
+        $this->addColumn('row_total', [
             'header'    => $this->__('Row Total'),
             'align'     => 'left',
             'width'     => '80px',
-            'frame_callback' => array($this, 'callbackColumnRowTotal')
-        ));
+            'frame_callback' => [$this, 'callbackColumnRowTotal']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -207,7 +189,8 @@ HTML;
         } else {
             $itemLinkText = $this->__('View on Amazon');
             $itemUrl = $this->getHelper('Component\Amazon')->getItemUrl(
-                $row->getChildObject()->getData('general_id'), $this->order->getData('marketplace_id')
+                $row->getChildObject()->getData('general_id'),
+                $this->order->getData('marketplace_id')
             );
 
             $amazonLink = <<<HTML
@@ -217,7 +200,10 @@ HTML;
 
         $productLink = '';
         if ($productId = $row->getData('product_id')) {
-            $productUrl = $this->getUrl('catalog/product/edit', array('id' => $productId));
+            $productUrl = $this->getUrl('catalog/product/edit', [
+                'id'    => $productId,
+                'store' => $row->getOrder()->getStoreId()
+            ]);
             $productLink = ' | <a href="'.$productUrl.'" target="_blank">'.$this->__('View').'</a>';
         }
 
@@ -226,7 +212,6 @@ HTML;
 
         $editLink = '';
         if (!$row->getProductId() || $row->getMagentoProduct()->isProductWithVariations()) {
-
             if (!$row->getProductId()) {
                 $action = $this->__('Map to Magento Product');
             } else {
@@ -264,17 +249,19 @@ HTML;
 HTML;
     }
 
-    public function callbackColumnStockAvailability($value, $row, $column, $isExport)
+    public function callbackColumnIsInStock($value, $row, $column, $isExport)
     {
-        if (is_null($row->getData('is_in_stock'))) {
+        /**@var \Ess\M2ePro\Model\Order\Item $row */
+
+        if ($row->getMagentoProduct() === null) {
             return $this->__('N/A');
         }
 
-        if ((int)$row->getData('is_in_stock') <= 0) {
-            return '<span style="color: red;">'.$value.'</span>';
+        if (!$row->getMagentoProduct()->isStockAvailability()) {
+            return '<span style="color: red;">'.$this->__('Out Of Stock').'</span>';
         }
 
-        return $value;
+        return $this->__('In Stock');
     }
 
     public function callbackColumnOriginalPrice($value, $row, $column, $isExport)
@@ -302,7 +289,8 @@ HTML;
         }
 
         return $this->modelFactory->getObject('Currency')->formatPrice(
-            $currency, $row->getChildObject()->getData('price')
+            $currency,
+            $row->getChildObject()->getData('price')
         );
     }
 
@@ -314,7 +302,8 @@ HTML;
         }
 
         return $this->modelFactory->getObject('Currency')->formatPrice(
-            $currency, $row->getChildObject()->getData('gift_price')
+            $currency,
+            $row->getChildObject()->getData('gift_price')
         );
     }
 
@@ -336,7 +325,8 @@ HTML;
         }
 
         return $this->modelFactory->getObject('Currency')->formatPrice(
-            $currency, $discountDetails['promotion']['value']
+            $currency,
+            $discountDetails['promotion']['value']
         );
     }
 
@@ -379,7 +369,8 @@ HTML;
         $price = $price - $aOrderItem->getDiscountAmount();
 
         return $this->modelFactory->getObject('Currency')->formatPrice(
-            $currency, $price * $aOrderItem->getQtyPurchased()
+            $currency,
+            $price * $aOrderItem->getQtyPurchased()
         );
     }
 
@@ -390,7 +381,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/orderItemGrid', array('_current' => true));
+        return $this->getUrl('*/*/orderItemGrid', ['_current' => true]);
     }
 
     //########################################

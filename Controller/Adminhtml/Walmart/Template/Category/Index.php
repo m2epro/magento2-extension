@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category
+ */
 class Index extends Category
 {
     //########################################

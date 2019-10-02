@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Account\Add;
 
+/**
+ * Class EntityRequester
+ * @package Ess\M2ePro\Model\Amazon\Connector\Account\Add
+ */
 class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {
     protected $amazonFactory;
@@ -20,8 +24,7 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Account $account = null,
         array $params = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         parent::__construct($helperFactory, $modelFactory, $account, $params);
     }
@@ -33,27 +36,28 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending
         /** @var $marketplaceObject \Ess\M2ePro\Model\Marketplace */
 
         $marketplaceObject = $this->amazonFactory->getCachedObjectLoaded(
-            'Marketplace', $this->params['marketplace_id']
+            'Marketplace',
+            $this->params['marketplace_id']
         );
 
-        return array(
+        return [
             'title'          => $this->account->getTitle(),
             'merchant_id'    => $this->params['merchant_id'],
             'token'          => $this->params['token'],
             'marketplace_id' => $marketplaceObject->getNativeId(),
-        );
+        ];
     }
 
     protected function getCommand()
     {
-        return array('account','add','entity');
+        return ['account','add','entity'];
     }
 
     //########################################
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Amazon\Connector\Account\Add\ProcessingRunner';
+        return 'Amazon_Connector_Account_Add_ProcessingRunner';
     }
 
     //########################################

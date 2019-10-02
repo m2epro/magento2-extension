@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon;
 
+/**
+ * Class Marketplace
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon
+ */
 abstract class Marketplace extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
     //########################################

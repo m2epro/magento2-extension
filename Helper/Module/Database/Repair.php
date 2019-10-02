@@ -8,6 +8,12 @@
 
 namespace Ess\M2ePro\Helper\Module\Database;
 
+use Magento\Framework\DB\Ddl\Table as DdlTable;
+
+/**
+ * Class Repair
+ * @package Ess\M2ePro\Helper\Module\Database
+ */
 class Repair extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $resourceConnection;
@@ -20,8 +26,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->cacheConfig = $cacheConfig;
         parent::__construct($helperFactory, $context);
@@ -29,23 +34,116 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
+    private function convertColumnDefinitionToArray($definition)
+    {
+        $pattern = "#^(?P<type>[a-z]+(?:\(\d+,?\d?\))?)";
+        $pattern .= '(?:';
+        $pattern .= "(?P<unsigned>\sUNSIGNED)?";
+        $pattern .= "(?P<nullable>\s(?:NOT\s)?NULL)?";
+        $pattern .= "(?P<default>\sDEFAULT\s[^\s]+)?";
+        $pattern .= "(?P<auto_increment>\sAUTO_INCREMENT)?";
+        $pattern .= "(?P<primary_key>\sPRIMARY\sKEY)?";
+        $pattern .= "(?P<after>\sAFTER\s[^\s]+)?";
+        $pattern .= ')?#i';
+
+        $matches = [];
+        if (preg_match($pattern, $definition, $matches) === false || !isset($matches['type'])) {
+            return $definition;
+        }
+
+        $typeMap = [
+            DdlTable::TYPE_SMALLINT => ['TINYINT', 'SMALLINT'],
+            DdlTable::TYPE_INTEGER => ['INT'],
+            DdlTable::TYPE_FLOAT => ['FLOAT'],
+            DdlTable::TYPE_DECIMAL => ['DECIMAL'],
+            DdlTable::TYPE_DATETIME => ['DATETIME'],
+            DdlTable::TYPE_TEXT => ['VARCHAR', 'TEXT', 'LONGTEXT'],
+            DdlTable::TYPE_BLOB => ['BLOB', 'LONGBLOB'],
+        ];
+
+        $size = null;
+        $type = $matches['type'];
+        if (strpos($type, '(') !== false) {
+            $size = str_replace(['(', ')'], '', substr($type, strpos($type, '(')));
+            $type = substr($type, 0, strpos($type, '('));
+        }
+
+        if (strtoupper('LONGTEXT') === strtoupper($type)) {
+            $size = 16777217;
+        }
+
+        $definitionData = [];
+        foreach ($typeMap as $ddlType => $types) {
+            if (!in_array(strtoupper($type), $types)) {
+                continue;
+            }
+
+            if ($ddlType == DdlTable::TYPE_TEXT || $ddlType == DdlTable::TYPE_BLOB) {
+                $definitionData['length'] = $size;
+            }
+
+            if (($ddlType == DdlTable::TYPE_FLOAT || $ddlType == DdlTable::TYPE_DECIMAL) &&
+                strpos($size, ',') !== false) {
+                list($precision, $scale) = array_map('trim', explode(',', $size, 2));
+                $definitionData['precision'] = (int)$precision;
+                $definitionData['scale'] = (int)$scale;
+            }
+
+            $definitionData['type'] = $ddlType;
+            break;
+        }
+
+        if (!empty($matches['unsigned'])) {
+            $definitionData['unsigned'] = true;
+        }
+
+        if (!empty($matches['nullable'])) {
+            $definitionData['nullable'] = strpos(
+                strtolower($matches['nullable']), 'not null'
+            ) ==! false  ? false : true;
+        }
+
+        if (!empty($matches['default'])) {
+            list(,$defaultData) = explode(' ', trim($matches['default']), 2);
+            $defaultData = trim($defaultData);
+            $definitionData['default'] = strtolower($defaultData) == 'null' ? null : $defaultData;
+        }
+
+        if (!empty($matches['auto_increment'])) {
+            $definitionData['auto_increment'] = true;
+        }
+
+        if (!empty($matches['primary_key'])) {
+            $definitionData['primary'] = true;
+        }
+
+        if (!empty($matches['after'])) {
+            list(,$afterColumn) = explode(' ', trim($matches['after']), 2);
+            $definitionData['after'] = trim($afterColumn, " \t\n\r\0\x0B`");
+        }
+
+        $definitionData['comment'] = 'field';
+
+        return $definitionData;
+    }
+
+    //########################################
+
     public function getBrokenTablesInfo()
     {
-        $horizontalTables = $this->getHelper('Module\Database\Structure')->getHorizontalTables();
+        $horizontalTables = $this->getHelper('Module_Database_Structure')->getHorizontalTables();
 
-        $brokenParentTables   = array();
-        $brokenChildrenTables = array();
+        $brokenParentTables   = [];
+        $brokenChildrenTables = [];
         $totalBrokenTables = 0;
 
         foreach ($horizontalTables as $parentTable => $childrenTables) {
-
             if ($brokenItemsCount = $this->getBrokenRecordsInfo($parentTable, true)) {
                 $brokenParentTables[$parentTable] = $brokenItemsCount;
                 $totalBrokenTables++;
             }
 
             foreach ($childrenTables as $childrenTable) {
-
                 if ($brokenItemsCount = $this->getBrokenRecordsInfo($childrenTable, true)) {
                     $brokenChildrenTables[$childrenTable] = $brokenItemsCount;
                     $totalBrokenTables++;
@@ -53,59 +151,66 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
             }
         }
 
-        return array(
+        return [
             'parent'      => $brokenParentTables,
             'children'    => $brokenChildrenTables,
             'total_count' => $totalBrokenTables
-        );
+        ];
     }
 
     public function getBrokenRecordsInfo($table, $returnOnlyCount = false)
     {
         $connection = $this->resourceConnection->getConnection();
-        $allTables = $this->getHelper('Module\Database\Structure')->getHorizontalTables();
+        $allTables = $this->getHelper('Module_Database_Structure')->getHorizontalTables();
 
-        $result = $returnOnlyCount ? 0 : array();
+        $result = $returnOnlyCount ? 0 : [];
 
         foreach ($allTables as $parentTable => $childTables) {
             foreach ($childTables as $component => $childTable) {
-
-                if (!in_array($table, array($parentTable, $childTable))) {
+                if (!in_array($table, [$parentTable, $childTable])) {
                     continue;
                 }
 
-                $parentTablePrefix = $this->getHelper('Module\Database\Structure')
+                $parentTablePrefix = $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix($parentTable);
-                $childTablePrefix  = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($childTable);
+                $childTablePrefix  = $this->getHelper('Module_Database_Structure')
+                                        ->getTableNameWithPrefix($childTable);
 
-                $parentIdColumn = $this->getHelper('Module\Database\Structure')->getIdColumn($parentTable);
-                $childIdColumn  = $this->getHelper('Module\Database\Structure')->getIdColumn($childTable);
+                $parentIdColumn = $this->getHelper('Module_Database_Structure')->getIdColumn($parentTable);
+                $childIdColumn  = $this->getHelper('Module_Database_Structure')->getIdColumn($childTable);
 
                 if ($table == $parentTable) {
-
                     $stmtQuery = $connection->select()
-                        ->from(array('parent' => $parentTablePrefix),
-                               $returnOnlyCount ? new \Zend_Db_Expr('count(*) as `count_total`')
-                                                : array('id' => $parentIdColumn))
-                        ->joinLeft(array('child' => $childTablePrefix),
-                                   '`parent`.`'.$parentIdColumn.'` = `child`.`'.$childIdColumn.'`',
-                                   array())
-                        ->where('`parent`.`component_mode` = \''.$component.'\' OR
+                        ->from(
+                            ['parent' => $parentTablePrefix],
+                            $returnOnlyCount ? new \Zend_Db_Expr('count(*) as `count_total`')
+                            : ['id' => $parentIdColumn]
+                        )
+                        ->joinLeft(
+                            ['child' => $childTablePrefix],
+                            '`parent`.`'.$parentIdColumn.'` = `child`.`'.$childIdColumn.'`',
+                            []
+                        )
+                        ->where(
+                            '`parent`.`component_mode` = \''.$component.'\' OR
                                 (`parent`.`component_mode` NOT IN (?) OR `parent`.`component_mode` IS NULL)',
-                                $this->getHelper('Component')->getComponents())
+                            $this->getHelper('Component')->getComponents()
+                        )
                         ->where('`child`.`'.$childIdColumn.'` IS NULL')
                         ->query();
-
-                } else if ($table == $childTable) {
-
+                } elseif ($table == $childTable) {
                     $stmtQuery = $connection->select()
-                        ->from(array('child' => $childTablePrefix),
-                               $returnOnlyCount ? new \Zend_Db_Expr('count(*) as `count_total`')
-                                                : array('id' => $childIdColumn))
-                        ->joinLeft(array('parent' => $parentTablePrefix),
-                                   "`child`.`{$childIdColumn}` = `parent`.`{$parentIdColumn}` AND
+                        ->from(
+                            ['child' => $childTablePrefix],
+                            $returnOnlyCount ? new \Zend_Db_Expr('count(*) as `count_total`')
+                            : ['id' => $childIdColumn]
+                        )
+                        ->joinLeft(
+                            ['parent' => $parentTablePrefix],
+                            "`child`.`{$childIdColumn}` = `parent`.`{$parentIdColumn}` AND
                                    `parent`.`component_mode` = '{$component}'",
-                                   array())
+                            []
+                        )
                         ->where('`parent`.`'.$parentIdColumn.'` IS NULL')
                         ->query();
                 }
@@ -136,25 +241,23 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
         $logData = [];
 
         foreach ($tables as $table) {
-
             $brokenIds = $this->getBrokenRecordsInfo($table);
             if (count($brokenIds) <= 0) {
                 continue;
             }
-            $brokenIds = array_slice($brokenIds,0,50000);
+            $brokenIds = array_slice($brokenIds, 0, 50000);
 
-            $tableWithPrefix = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($table);
-            $idColumnName = $this->getHelper('Module\Database\Structure')->getIdColumn($table);
+            $tableWithPrefix = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($table);
+            $idColumnName = $this->getHelper('Module_Database_Structure')->getIdColumn($table);
 
-            foreach (array_chunk($brokenIds,1000) as $brokenIdsPart) {
-
+            foreach (array_chunk($brokenIds, 1000) as $brokenIdsPart) {
                 if (count($brokenIdsPart) <= 0) {
                     continue;
                 }
 
                 $connection->delete(
                     $tableWithPrefix,
-                    '`'.$idColumnName.'` IN ('.implode (',',$brokenIdsPart).')'
+                    '`'.$idColumnName.'` IN ('.implode(',', $brokenIdsPart).')'
                 );
             }
 
@@ -174,7 +277,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $connWrite = $this->resourceConnection->getConnection();
 
-        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName);
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName);
 
         $result = $connWrite->query("REPAIR TABLE `{$tableName}`")->fetch();
         return $result['Msg_text'];
@@ -189,7 +292,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $writeConnection = $this->resourceConnection->getConnection();
-        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName);
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName);
 
         if (empty($columnInfo['key'])) {
             $writeConnection->dropIndex($tableName, $columnInfo['name']);
@@ -217,14 +320,30 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
         !empty($columnInfo['after']) && $definition .= "AFTER `{$columnInfo['after']}`";
 
         $writeConnection = $this->resourceConnection->getConnection();
-        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName);
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName);
+
+        $magentoVersion = $this->helperFactory->getObject('Magento')->getVersion();
+        $isConvertColumnDefinitionToArray = version_compare($magentoVersion, '2.3.0', '>=');
 
         if ($writeConnection->tableColumnExists($tableName, $columnInfo['name']) === false) {
-            $writeConnection->addColumn($tableName, $columnInfo['name'], $definition);
+            if ($isConvertColumnDefinitionToArray) {
+                $writeConnection->addColumn(
+                    $tableName, $columnInfo['name'], $this->convertColumnDefinitionToArray($definition)
+                );
+            } else {
+                $writeConnection->addColumn($tableName, $columnInfo['name'], $definition);
+            }
+
             return;
         }
 
-        $writeConnection->changeColumn($tableName, $columnInfo['name'], $columnInfo['name'], $definition);
+        if ($isConvertColumnDefinitionToArray) {
+            $writeConnection->changeColumn(
+                $tableName, $columnInfo['name'], $columnInfo['name'], $this->convertColumnDefinitionToArray($definition)
+            );
+        } else {
+            $writeConnection->changeColumn($tableName, $columnInfo['name'], $columnInfo['name'], $definition);
+        }
     }
 
     public function dropColumn($tableName, array $columnInfo)
@@ -234,7 +353,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $writeConnection = $this->resourceConnection->getConnection();
-        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName);
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName);
 
         $writeConnection->dropColumn($tableName, $columnInfo['name']);
     }

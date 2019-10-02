@@ -14,6 +14,10 @@ use Ess\M2ePro\Model\Setup\Database\Modifier\Table;
 use Ess\M2ePro\Model\Setup\Database\Modifier\Config;
 use Magento\Framework\Module\Setup;
 
+/**
+ * Class AbstractFeature
+ * @package Ess\M2ePro\Model\Setup\Upgrade\Entity
+ */
 abstract class AbstractFeature
 {
     protected $helperFactory;
@@ -54,7 +58,8 @@ abstract class AbstractFeature
      */
     protected function getTableModifier($tableName)
     {
-        return $this->modelFactory->getObject('Setup\Database\Modifier\Table',
+        return $this->modelFactory->getObject(
+            'Setup_Database_Modifier_Table',
             [
                 'installer' => $this->installer,
                 'tableName' => $tableName,
@@ -70,7 +75,8 @@ abstract class AbstractFeature
     {
         $tableName = $configName.'_config';
 
-        return $this->modelFactory->getObject('Setup\Database\Modifier\Config',
+        return $this->modelFactory->getObject(
+            'Setup_Database_Modifier_Config',
             [
                 'installer' => $this->installer,
                 'tableName' => $tableName,
@@ -90,7 +96,7 @@ abstract class AbstractFeature
 
     protected function getFullTableName($tableName)
     {
-        return $this->helperFactory->getObject('Module\Database\Tables')->getFullName($tableName);
+        return $this->helperFactory->getObject('Module_Database_Tables')->getFullName($tableName);
     }
 
     //########################################

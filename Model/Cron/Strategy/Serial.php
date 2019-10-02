@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Strategy;
 
+/**
+ * Class Serial
+ * @package Ess\M2ePro\Model\Cron\Strategy
+ */
 class Serial extends AbstractModel
 {
     const LOCK_ITEM_NICK = 'cron_strategy_serial';
@@ -15,7 +19,7 @@ class Serial extends AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Lock\Item\Manager
      */
-    private $lockItem = NULL;
+    private $lockItem = null;
 
     //########################################
 
@@ -41,7 +45,7 @@ class Serial extends AbstractModel
         $result = true;
 
         /** @var \Ess\M2ePro\Model\Lock\Transactional\Manager $transactionalManager */
-        $transactionalManager = $this->modelFactory->getObject('Lock\Transactional\Manager');
+        $transactionalManager = $this->modelFactory->getObject('Lock_Transactional_Manager');
         $transactionalManager->setNick(self::INITIALIZATION_TRANSACTIONAL_LOCK_NICK);
 
         $transactionalManager->lock();
@@ -68,27 +72,23 @@ class Serial extends AbstractModel
         $result = true;
 
         foreach ($this->getAllowedTasks() as $taskNick) {
-
             try {
-
                 $tempResult = $this->getTaskObject($taskNick)->process();
 
-                if (!is_null($tempResult) && !$tempResult) {
+                if ($tempResult !== null && !$tempResult) {
                     $result = false;
                 }
 
                 $this->getLockItem()->activate();
-
             } catch (\Exception $exception) {
-
                 $result = false;
 
-                $this->getOperationHistory()->addContentData('exceptions', array(
+                $this->getOperationHistory()->addContentData('exceptions', [
                     'message' => $exception->getMessage(),
                     'file'    => $exception->getFile(),
                     'line'    => $exception->getLine(),
                     'trace'   => $exception->getTraceAsString(),
-                ));
+                ]);
 
                 $this->getHelper('Module\Exception')->process($exception);
             }
@@ -104,11 +104,11 @@ class Serial extends AbstractModel
      */
     protected function getLockItem()
     {
-        if (!is_null($this->lockItem)) {
+        if ($this->lockItem !== null) {
             return $this->lockItem;
         }
 
-        $this->lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+        $this->lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
         $this->lockItem->setNick(self::LOCK_ITEM_NICK);
 
         return $this->lockItem;
@@ -120,7 +120,7 @@ class Serial extends AbstractModel
     protected function isParallelStrategyInProgress()
     {
         for ($i = 1; $i <= Parallel::MAX_PARALLEL_EXECUTED_CRONS_COUNT; $i++) {
-            $lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+            $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
             $lockItem->setNick(Parallel::GENERAL_LOCK_ITEM_PREFIX.$i);
 
             if ($lockItem->isExist()) {

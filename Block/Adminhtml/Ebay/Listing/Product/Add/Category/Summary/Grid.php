@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Summary;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Summary
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 {
     //########################################
 
     public function setProductsForEachCategory($productsForEachCategory)
     {
-        $this->setData('products_for_each_category',$productsForEachCategory);
+        $this->setData('products_for_each_category', $productsForEachCategory);
         return $this;
     }
 
@@ -25,7 +29,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
     public function setProductsIds($productsIds)
     {
-        $this->setData('products_ids',$productsIds);
+        $this->setData('products_ids', $productsIds);
         return $this;
     }
 
@@ -63,10 +67,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $dbSelect = $collection->getConnection()
              ->select()
              ->from(
-                 $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_category_product'),
+                 $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('catalog_category_product'),
                  'category_id'
              )
-             ->where('`product_id` IN(?)',$this->getProductsIds());
+             ->where('`product_id` IN(?)', $this->getProductsIds());
 
         $collection->getSelect()->where('entity_id IN ('.$dbSelect->__toString().')');
 
@@ -87,9 +91,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $this->getMassactionBlock()->setFormFieldName('ids');
         // ---------------------------------------
 
-        $this->getMassactionBlock()->addItem('remove', array(
+        $this->getMassactionBlock()->addItem('remove', [
              'label'    => $this->__('Remove'),
-        ));
+        ]);
 
         // ---------------------------------------
 
@@ -100,25 +104,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('magento_category', array(
+        $this->addColumn('magento_category', [
             'header'    => $this->__('Magento Category'),
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'name',
             'filter'    => false,
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnMagentoCategory')
-        ));
+            'frame_callback' => [$this, 'callbackColumnMagentoCategory']
+        ]);
 
-        $this->addColumn('action', array(
+        $this->addColumn('action', [
             'header'    => $this->__('Action'),
             'align'     => 'center',
             'width'     => '75px',
             'type'      => 'text',
             'filter'    => false,
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnActions')
-        ));
+            'frame_callback' => [$this, 'callbackColumnActions']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -201,7 +205,7 @@ HTML;
         );
     });
 JS
-);
+            );
         }
 
         $this->js->add(<<<JS
@@ -212,10 +216,10 @@ JS
         EbayListingProductAddCategorySummaryGridObj.afterInitPage();
     });
 JS
-);
+        );
 
         if ($this->getRequest()->getParam('grid')) {
-            $beforeHtml = NULL;
+            $beforeHtml = null;
         }
 
         return $beforeHtml . parent::_toHtml();
@@ -225,7 +229,7 @@ JS
 
     public function getGridUrl()
     {
-        return $this->getCurrentUrl(array('grid' => true));
+        return $this->getCurrentUrl(['grid' => true]);
     }
 
     //########################################

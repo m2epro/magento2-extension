@@ -8,6 +8,13 @@
 
 namespace Ess\M2ePro\Model\Walmart\Connector\Product\Stop;
 
+use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child;
+use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
+
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Walmart\Connector\Product\Stop
+ */
 class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $parentForProcessing */
@@ -37,9 +44,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
                     ->getTypeModel()
                     ->getWalmartParentListingProduct();
 
-                /**
-                 *@var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child $childTypeModel
-                 */
+                /** @var Child $childTypeModel */
                 $childTypeModel = $variationManager->getTypeModel();
 
                 if ($childTypeModel->isVariationProductMatched()) {
@@ -57,9 +62,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
             $this->listingProduct->isDeleted(true);
 
             if ($parentWalmartListingProduct !== null) {
-                /**
-                 *@var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Parent $parentTypeModel
-                 */
+                /** @var ParentRelation $parentTypeModel */
                 $parentTypeModel = $parentWalmartListingProduct->getVariationManager()->getTypeModel();
                 $parentTypeModel->getProcessor()->process();
             }
@@ -79,7 +82,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
             return;
         }
 
-        if (is_null($this->parentForProcessing)) {
+        if ($this->parentForProcessing === null) {
             return;
         }
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Group;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Group
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     //########################################
@@ -20,7 +24,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'method' => 'post'
         ]]);
 
-        $form->addField('filter_form_add_group_help_block',
+        $form->addField(
+            'filter_form_add_group_help_block',
             self::HELP_BLOCK,
             [
                 'content' => $this->__('
@@ -38,7 +43,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('title',
+        $fieldset->addField(
+            'title',
             'text',
             [
                 'name' => 'title',

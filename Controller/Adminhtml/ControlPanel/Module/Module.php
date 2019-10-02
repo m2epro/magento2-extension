@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module;
 
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
+/**
+ * Class Module
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module
+ */
 class Module extends Command
 {
     //########################################
@@ -21,7 +25,7 @@ class Module extends Command
      */
     public function runCronAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Cron was successfully performed.');
@@ -40,10 +44,10 @@ class Module extends Command
      */
     public function issuesResolverAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\IssuesResolver::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Issues Resolver Task was successfully performed.');
@@ -60,10 +64,10 @@ class Module extends Command
      */
     public function healthStatusNotificationsAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\HealthStatus::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Health Status was successfully performed.');
@@ -80,10 +84,10 @@ class Module extends Command
      */
     public function archiveOrdersEntitiesAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\ArchiveOrdersEntities::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Archive Orders Entities was successfully performed.');
@@ -101,10 +105,10 @@ class Module extends Command
      */
     public function processLogsAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\LogsClearing::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Logs Clearing was successfully performed.');
@@ -123,10 +127,10 @@ class Module extends Command
      */
     public function synchronizationAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\Synchronization::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Synchronization was successfully performed.');
@@ -144,10 +148,10 @@ class Module extends Command
      */
     public function processServicingAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\Servicing::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Servicing was successfully performed.');
@@ -166,10 +170,10 @@ class Module extends Command
      */
     public function ebayActionsAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\Ebay\Actions::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('eBay Actions was successfully performed.');
@@ -187,10 +191,10 @@ class Module extends Command
      */
     public function ebayAccountPreferencesAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\Ebay\UpdateAccountsPreferences::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('eBay Update Account Preferences was successfully performed.');
@@ -210,10 +214,10 @@ class Module extends Command
      */
     public function amazonActionsAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\Amazon\Actions::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Amazon Actions was successfully performed.');
@@ -233,10 +237,10 @@ class Module extends Command
      */
     public function walmartActionsAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\Walmart\Actions::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Walmart Actions was successfully performed.');
@@ -255,10 +259,10 @@ class Module extends Command
      */
     public function requestPendingSingleAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\RequestPendingSingle::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Request Pending Single was successfully performed.');
@@ -275,10 +279,10 @@ class Module extends Command
      */
     public function requestPendingPartialAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\RequestPendingPartial::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Request Pending Partial was successfully performed.');
@@ -295,10 +299,10 @@ class Module extends Command
      */
     public function connectorPendingSingleAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\ConnectorRequesterPendingSingle::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Connector Pending Single was successfully performed.');
@@ -316,10 +320,10 @@ class Module extends Command
      */
     public function connectorPendingPartialAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\ConnectorRequesterPendingPartial::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Connector Pending Partial was successfully performed.');
@@ -338,10 +342,10 @@ class Module extends Command
      */
     public function repricingUpdateSettingsAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingUpdateSettings::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Repricing Send Data was successfully performed.');
@@ -358,10 +362,10 @@ class Module extends Command
      */
     public function repricingSynchronizationGeneralAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingSynchronizationGeneral::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Repricing Synchronization General was successfully performed.');
@@ -378,10 +382,10 @@ class Module extends Command
      */
     public function repricingSynchronizationActualPriceAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingSynchronizationActualPrice::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()
@@ -399,10 +403,10 @@ class Module extends Command
      */
     public function repricingRepricingInspectProductsAction()
     {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
+        $cronRunner = $this->modelFactory->getObject('Cron_Runner_Developer');
+        $cronRunner->setAllowedTasks([
             \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingInspectProducts::NICK
-        ));
+        ]);
 
         if ($cronRunner->process()) {
             $this->getMessageManager()->addSuccess('Repricing Inspect Products was successfully performed.');

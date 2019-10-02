@@ -8,6 +8,12 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
+use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\AbstractModel;
+
+/**
+ * Class Processor
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation
+ */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
     //########################################
@@ -74,7 +80,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     public function process()
     {
-        if (is_null($this->listingProduct)) {
+        if ($this->listingProduct === null) {
             throw new \Ess\M2ePro\Model\Exception('Listing Product was not set.');
         }
 
@@ -92,16 +98,20 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     private function getSortedProcessors()
     {
-        return array(
+        return [
             'Template',
             'Attributes',
             'MatchedAttributes',
             'Options',
             'Status',
             'Selling',
-        );
+        ];
     }
 
+    /**
+     * @param  string $processorName
+     * @return AbstractModel
+     */
     private function getProcessorModel($processorName)
     {
         $model = $this->modelFactory->getObject(
@@ -138,7 +148,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getTypeModel()
     {
-        if (!is_null($this->typeModel)) {
+        if ($this->typeModel !== null) {
             return $this->typeModel;
         }
 
@@ -175,7 +185,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getDescriptionTemplate()
     {
-        if (!is_null($this->descriptionTemplate)) {
+        if ($this->descriptionTemplate !== null) {
             return $this->descriptionTemplate;
         }
 
@@ -197,7 +207,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getWalmartCategoryTemplate()
     {
-        if (!is_null($this->walmartCategoryTemplate)) {
+        if ($this->walmartCategoryTemplate !== null) {
             return $this->walmartCategoryTemplate;
         }
 
@@ -211,11 +221,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getPossibleChannelAttributes()
     {
-        if (!is_null($this->possibleChannelAttributes)) {
+        if ($this->possibleChannelAttributes !== null) {
             return $this->possibleChannelAttributes;
         }
 
-        $possibleChannelAttributes = $this->modelFactory->getObject('Walmart\Marketplace\Details')
+        $possibleChannelAttributes = $this->modelFactory->getObject('Walmart_Marketplace_Details')
             ->setMarketplaceId($this->getMarketplaceId())
             ->getVariationAttributes(
                 $this->getWalmartCategoryTemplate()->getProductDataNick()
@@ -229,7 +239,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getMarketplaceId()
     {
-        if (!is_null($this->marketplaceId)) {
+        if ($this->marketplaceId !== null) {
             return $this->marketplaceId;
         }
 

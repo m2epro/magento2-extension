@@ -10,13 +10,17 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
+/**
+ * Class GetDebugInformation
+ * @package Ess\M2ePro\Controller\Adminhtml\Order
+ */
 class GetDebugInformation extends Order
 {
     public function execute()
     {
         $id = $this->getRequest()->getParam('id');
 
-        if (is_null($id)) {
+        if ($id === null) {
             $this->setAjaxContent('', false);
             return $this->getResult();
         }

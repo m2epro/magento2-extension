@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Order;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Order
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Order
 {
     //########################################
@@ -19,7 +23,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Order
         if ($orderId) {
             $order = $this->amazonFactory->getObjectLoaded('Order', $orderId, 'id', false);
 
-            if (is_null($order)) {
+            if ($order === null) {
                 $order = $this->amazonFactory->getObject('Order');
             }
 
@@ -35,7 +39,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Order
             $this->getResult()->getConfig()->getTitle()->prepend($this->__('Orders Logs & Events'));
         }
 
-        $this->addContent($this->createBlock('Amazon\Log\Order'));
+        $this->addContent($this->createBlock('Amazon_Log_Order'));
         return $this->getResult();
     }
 

@@ -1,4 +1,12 @@
 <?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
 /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs\BusinessHours\SpecialHours $block */
 
 $formData = $block->getData('form_data');
@@ -35,7 +43,6 @@ $formData = $block->getData('form_data');
                     ?>
 
                     <?php foreach ($dateSetting as $date => $time) : ?>
-
                         <tr>
                             <td class="table_td">
                                 <input id="date<?php echo $index == 0 ? '' : '-' . $index; ?>"
@@ -52,14 +59,18 @@ $formData = $block->getData('form_data');
                                     <select id="date_from_hours" class="date_time_select">
                                         <option style="display: none;"></option>
                                         <?php for ($i = 1; $i < 25; $i++) { ?>
-                                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>" <?php if (isset($time['from_hours']) && $time['from_hours'] == $i): echo ' selected="selected"'; endif; ?>><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
+                                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>" <?php if (isset($time['from_hours']) && $time['from_hours'] == $i) :
+                                                echo ' selected="selected"';
+                                                           endif; ?>><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
                                         <?php } ?>
                                     </select>
                                     <span style="display: inline-block; width: 4px; text-align: center;">:</span>
                                     <select id="date_from_minutes" class="date_time_select">
                                         <option style="display: none;"></option>
                                         <?php for ($i = 0; $i < 60; $i += 15) { ?>
-                                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>" <?php if (isset($time['from_minutes']) && $time['from_minutes'] == $i): echo ' selected="selected"'; endif; ?>><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
+                                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>" <?php if (isset($time['from_minutes']) && $time['from_minutes'] == $i) :
+                                                echo ' selected="selected"';
+                                                           endif; ?>><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
                                         <?php } ?>
                                     </select>
 
@@ -79,14 +90,18 @@ $formData = $block->getData('form_data');
                                     <select id="date_to_hours" class="date_time_select">
                                         <option style="display: none;"></option>
                                         <?php for ($i = 1; $i < 25; $i++) { ?>
-                                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>" <?php if (isset($time['to_hours']) && $time['to_hours'] == $i): echo ' selected="selected"'; endif; ?>><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
+                                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>" <?php if (isset($time['to_hours']) && $time['to_hours'] == $i) :
+                                                echo ' selected="selected"';
+                                                           endif; ?>><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
                                         <?php } ?>
                                     </select>
                                     <span style="display: inline-block; width: 4px; text-align: center;">:</span>
                                     <select id="date_to_minutes" class="date_time_select">
                                         <option style="display: none;"></option>
                                         <?php for ($i = 0; $i < 60; $i += 15) { ?>
-                                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>" <?php if (isset($time['to_minutes']) && $time['to_minutes'] == $i): echo ' selected="selected"'; endif; ?>><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
+                                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>" <?php if (isset($time['to_minutes']) && $time['to_minutes'] == $i) :
+                                                echo ' selected="selected"';
+                                                           endif; ?>><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
                                         <?php } ?>
                                     </select>
 
@@ -105,7 +120,7 @@ $formData = $block->getData('form_data');
                                 <input id="date_to" name="special_hours[date_settings][<?php echo $date; ?>][close]" type="hidden">
 
                                 <?php echo $block->createBlock('Magento\Button')->setData([
-                                    'label' => $this->__('Remove'),
+                                    'label' => $block->__('Remove'),
                                     'class' => 'scalable delete icon-btn remove_date'
                                 ])->toHtml(); ?>
                             </td>
@@ -130,7 +145,7 @@ $formData = $block->getData('form_data');
 
     <div class="add_btn_wrapper">
         <?php echo $block->createBlock('Magento\Button')->setData([
-            'label' => $this->__('Add New'),
+            'label' => $block->__('Add New'),
             'style' => 'width: 12.5%',
             'class' => 'primary add_date right',
         ])->toHtml(); ?>
@@ -203,7 +218,7 @@ $formData = $block->getData('form_data');
                 <input id="date_to" name="special_hours[date_settings][0000-00-00][close]" type="hidden">
 
                 <?php echo $block->createBlock('Magento\Button')->setData([
-                    'label' => $this->__('Remove'),
+                    'label' => $block->__('Remove'),
                     'class' => 'scalable delete icon-btn remove_date'
                 ])->toHtml(); ?>
             </td>

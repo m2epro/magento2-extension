@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module;
 
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
+/**
+ * Class Servicing
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module
+ */
 class Servicing extends Command
 {
     //########################################

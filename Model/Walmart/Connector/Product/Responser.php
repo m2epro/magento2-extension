@@ -13,6 +13,10 @@ use Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner;
 use Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization\Inspector;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Walmart\Connector\Product
+ */
 abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Responser
 {
     protected $activeRecordFactory;
@@ -57,7 +61,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        array $params = array()
+        array $params = []
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($walmartFactory, $response, $helperFactory, $modelFactory, $params);
@@ -73,7 +77,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
     {
         parent::failDetected($messageText);
 
-        $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
             $messageText,
             \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
@@ -105,23 +109,24 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
             return;
         }
 
-        $runner = $this->modelFactory->getObject('Synchronization\Templates\Synchronization\Runner');
-        $runner->setConnectorModel('Walmart\Connector\Product\Dispatcher');
+        /** @var \Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner $runner */
+        $runner = $this->modelFactory->getObject('Synchronization_Templates_Synchronization_Runner');
+        $runner->setConnectorModel('Walmart_Connector_Product_Dispatcher');
         $runner->setMaxProductsPerStep(100);
 
         /** @var \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization\Inspector $inspector */
-        $inspector = $this->modelFactory->getObject('Walmart\Synchronization\Templates\Synchronization\Inspector');
+        $inspector = $this->modelFactory->getObject('Walmart_Synchronization_Templates_Synchronization_Inspector');
 
         $responseData = $this->getPreparedResponseData();
 
         if (empty($responseData['request_time']) && $this->listingProduct->needSynchRulesCheck()) {
             $configurator = $this->getConfigurator();
         } else {
-            $configurator = $this->modelFactory->getObject('Walmart\Listing\Product\Action\Configurator');
+            $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
         }
 
         if (empty($responseData['request_time']) && !empty($responseData['start_processing_date'])) {
-            $configurator->setParams(array('start_processing_date' => $responseData['start_processing_date']));
+            $configurator->setParams(['start_processing_date' => $responseData['start_processing_date']]);
         }
 
         if ($this->inspectStopRequirements($inspector, $runner, $configurator)) {
@@ -145,10 +150,12 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
             return false;
         }
 
-        if ($inspector->isMeetStopRequirements($this->listingProduct)) {
-
+        if ($inspector->isMeetStopRequirements($this->listingProduct) ||
+            $inspector->isMeetAdvancedStopRequirements($this->listingProduct)) {
             $runner->addProduct(
-                $this->listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP, $configurator
+                $this->listingProduct,
+                \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
+                $configurator
             );
 
             $runner->execute();
@@ -184,7 +191,9 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
 
         if ($needRevise) {
             $runner->addProduct(
-                $this->listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                $this->listingProduct,
+                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                $configurator
             );
 
             $runner->execute();
@@ -220,12 +229,29 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
             $configurator->allowPromotions();
         }
 
-        $runner->addProduct(
-            $this->listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST, $configurator
-        );
+        if ($walmartListingProduct->getWalmartSynchronizationTemplate()->isRelistAdvancedRulesEnabled()) {
+            if ($inspector->isMeetAdvancedRelistRequirements($this->listingProduct)) {
+                $runner->addProduct(
+                    $this->listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST,
+                    $configurator
+                );
 
-        $runner->execute();
-        return true;
+                $runner->execute();
+                return true;
+            }
+        } else {
+            $runner->addProduct(
+                $this->listingProduct,
+                \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST,
+                $configurator
+            );
+
+            $runner->execute();
+            return true;
+        }
+
+        return false;
     }
 
     protected function processParentProcessor()
@@ -266,13 +292,13 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
 
     protected function processResponseData()
     {
-        $messages = array();
+        $messages = [];
 
         $responseData = $this->getPreparedResponseData();
 
         if (isset($responseData['errors'])) {
             foreach ($responseData['errors'] as $messageData) {
-                $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+                $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
                 $message->initFromResponseData($messageData);
 
                 $messages[] = $message;
@@ -300,25 +326,27 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
             !$hasError && $hasError = $message->isError();
 
             $this->getLogger()->logListingProductMessage(
-                $this->listingProduct, $message
+                $this->listingProduct,
+                $message
             );
         }
 
         return !$hasError;
     }
 
-    protected function processSuccess(array $params = array())
+    protected function processSuccess(array $params = [])
     {
         $this->getResponseObject()->processSuccess($params);
 
-        $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
             $this->getSuccessfulMessage(),
             \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
         );
 
         $this->getLogger()->logListingProductMessage(
-            $this->listingProduct, $message
+            $this->listingProduct,
+            $message
         );
 
         $this->isSuccess = true;
@@ -345,11 +373,11 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
      */
     protected function getLogger()
     {
-        if (is_null($this->logger)) {
+        if ($this->logger === null) {
 
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Logger $logger */
 
-            $logger = $this->modelFactory->getObject('Walmart\Listing\Product\Action\Logger');
+            $logger = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Logger');
 
             $logger->setActionId($this->getLogsActionId());
             $logger->setAction($this->getLogsAction());
@@ -376,9 +404,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
 
     protected function getConfigurator()
     {
-        if (is_null($this->configurator)) {
-
-            $configurator = $this->modelFactory->getObject('Walmart\Listing\Product\Action\Configurator');
+        if ($this->configurator === null) {
+            $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
             $configurator->setData($this->params['product']['configurator']);
 
             $this->configurator = $configurator;
@@ -394,9 +421,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
      */
     protected function getResponseObject()
     {
-        if (is_null($this->responseObject)) {
-
-            /* @var $response \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Response */
+        if ($this->responseObject === null) {
+            /** @var $response \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Response */
             $response = $this->modelFactory->getObject(
                 'Walmart\Listing\Product\Action\Type\\' . $this->getOrmActionType() . '\Response'
             );
@@ -417,10 +443,10 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
      */
     protected function getRequestDataObject()
     {
-        if (is_null($this->requestDataObject)) {
+        if ($this->requestDataObject === null) {
 
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\RequestData $requestData */
-            $requestData = $this->modelFactory->getObject('Walmart\Listing\Product\Action\RequestData');
+            $requestData = $this->modelFactory->getObject('Walmart_Listing_Product_Action_RequestData');
 
             $requestData->setData($this->params['product']['request']);
             $requestData->setListingProduct($this->listingProduct);
@@ -503,8 +529,11 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
     // ########################################
 
     protected function checkUpdatePriceOrPromotionsFeedsLock(
-        Product $listingProduct, Configurator $configurator, array &$tags, $action
-    ){
+        Product $listingProduct,
+        Configurator $configurator,
+        array &$tags,
+        $action
+    ) {
         if (count($configurator->getAllowedDataTypes()) !== 1) {
             return;
         }
@@ -518,8 +547,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
         }
 
         if ($configurator->isPriceAllowed()) {
-
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 'Item Price cannot yet be submitted. Walmart allows updating the Price information no sooner than
                 24 hours after the relevant product is listed on their website.',
@@ -528,10 +556,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
 
             $configurator->disallowPrice();
             unset($tags['price']);
-
         } else {
-
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 'Item Promotion Price cannot yet be submitted. Walmart allows updating the Promotion Price
                 information no sooner than 24 hours after the relevant product is listed on their website.',
@@ -542,7 +568,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
             unset($tags['promotions']);
         }
 
-        $logger = $this->modelFactory->getObject('Walmart\Listing\Product\Action\Logger');
+        $logger = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Logger');
         $logger->setAction($action);
         $logger->setActionId($this->activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId());
         $logger->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
@@ -554,7 +580,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
         $walmartListingProduct = $listingProduct->getChildObject();
 
-        if (is_null($walmartListingProduct->getListDate())) {
+        if ($walmartListingProduct->getListDate() === null) {
             return false;
         }
 

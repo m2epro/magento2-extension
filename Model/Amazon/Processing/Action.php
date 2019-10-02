@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Processing;
 
+/**
+ * Class Action
+ * @package Ess\M2ePro\Model\Amazon\Processing
+ */
 class Action extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     const TYPE_PRODUCT_ADD    = 0;
@@ -21,10 +25,10 @@ class Action extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     //####################################
 
     /** @var \Ess\M2ePro\Model\Processing $processing */
-    private $processing = NULL;
+    private $processing = null;
 
     /** @var \Ess\M2ePro\Model\Request\Pending\Single $requestPendingSingle */
-    private $requestPendingSingle = NULL;
+    private $requestPendingSingle = null;
 
     //####################################
 
@@ -52,12 +56,15 @@ class Action extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             throw new \Ess\M2ePro\Model\Exception\Logic('Instance must be loaded first.');
         }
 
-        if (!is_null($this->processing)) {
+        if ($this->processing !== null) {
             return $this->processing;
         }
 
         return $this->processing = $this->activeRecordFactory->getObjectLoaded(
-            'Processing', $this->getProcessingId(), NULL, false
+            'Processing',
+            $this->getProcessingId(),
+            null,
+            false
         );
     }
 
@@ -83,12 +90,13 @@ class Action extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return null;
         }
 
-        if (!is_null($this->requestPendingSingle)) {
+        if ($this->requestPendingSingle !== null) {
             return $this->requestPendingSingle;
         }
 
         return $this->requestPendingSingle = $this->activeRecordFactory->getObjectLoaded(
-            'Request\Pending\Single', $this->getRequestPendingSingleId()
+            'Request_Pending_Single',
+            $this->getRequestPendingSingleId()
         );
     }
 

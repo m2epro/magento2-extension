@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist;
 
+/**
+ * Class Response
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist
+ */
 class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
 {
     //########################################
@@ -15,13 +19,13 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
     /**
      * @param array $params
      */
-    public function processSuccess($params = array())
+    public function processSuccess($params = [])
     {
-        $data = array();
+        $data = [];
 
         if ($this->getConfigurator()->isDefaultMode()) {
             $data['synch_status'] = \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_OK;
-            $data['synch_reasons'] = NULL;
+            $data['synch_reasons'] = null;
         }
 
         if ($this->getConfigurator()->isDetailsAllowed() || $this->getConfigurator()->isImagesAllowed()) {

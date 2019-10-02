@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Connector\Connection\Response;
 
+/**
+ * Class Message
+ * @package Ess\M2ePro\Model\Connector\Connection\Response
+ */
 class Message extends \Ess\M2ePro\Model\Response\Message
 {
     const SENDER_KEY = 'sender';
@@ -18,8 +22,8 @@ class Message extends \Ess\M2ePro\Model\Response\Message
 
     //########################################
 
-    protected $sender = NULL;
-    protected $code   = NULL;
+    protected $sender = null;
+    protected $code   = null;
 
     //########################################
 
@@ -31,7 +35,7 @@ class Message extends \Ess\M2ePro\Model\Response\Message
         $this->code   = $responseData[self::CODE_KEY];
     }
 
-    public function initFromPreparedData($text, $type, $sender = NULL, $code = NULL)
+    public function initFromPreparedData($text, $type, $sender = null, $code = null)
     {
         parent::initFromPreparedData($text, $type);
 
@@ -43,10 +47,10 @@ class Message extends \Ess\M2ePro\Model\Response\Message
 
     public function asArray()
     {
-        return array_merge(parent::asArray(), array(
+        return array_merge(parent::asArray(), [
             self::SENDER_KEY => $this->sender,
             self::CODE_KEY   => $this->code,
-        ));
+        ]);
     }
 
     //########################################

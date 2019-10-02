@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Template\SellingFormat;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Template\SellingFormat
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent\AbstractModel
 {
     //########################################

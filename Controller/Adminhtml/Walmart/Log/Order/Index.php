@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Order;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Order
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Order
 {
     //########################################
@@ -19,7 +23,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Order
         if ($orderId) {
             $order = $this->walmartFactory->getObjectLoaded('Order', $orderId, 'id', false);
 
-            if (is_null($order)) {
+            if ($order === null) {
                 $order = $this->walmartFactory->getObject('Order');
             }
 
@@ -36,7 +40,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Order
         }
 
         $this->setPageHelpLink('x/WgBhAQ');
-        $this->addContent($this->createBlock('Walmart\Log\Order'));
+        $this->addContent($this->createBlock('Walmart_Log_Order'));
         return $this->getResult();
     }
 

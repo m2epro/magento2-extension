@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
+/**
+ * Class GetSaveFilterForm
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ */
 class GetSaveFilterForm extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -15,7 +19,7 @@ class GetSaveFilterForm extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter\Form $block */
-        $block = $this->createBlock('Ebay\Listing\View\Settings\Motors\Add\Filter\Form');
+        $block = $this->createBlock('Ebay_Listing_View_Settings_Motors_Add_Filter_Form');
 
         $this->setAjaxContent($block);
 

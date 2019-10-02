@@ -8,22 +8,26 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Relist;
 
+/**
+ * Class Response
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Relist
+ */
 class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response
 {
     //########################################
 
-    public function processSuccess(array $response, array $responseParams = array())
+    public function processSuccess(array $response, array $responseParams = [])
     {
         $this->prepareMetadata();
 
-        $data = array(
+        $data = [
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
             'ebay_item_id' => $this->createEbayItem($response['ebay_item_id'])->getId()
-        );
+        ];
 
         if ($this->getConfigurator()->isDefaultMode()) {
             $data['synch_status'] = \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_OK;
-            $data['synch_reasons'] = NULL;
+            $data['synch_reasons'] = null;
         }
 
         $data = $this->appendStatusHiddenValue($data);
@@ -62,10 +66,10 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         }
     }
 
-    public function processAlreadyActive(array $response, array $responseParams = array())
+    public function processAlreadyActive(array $response, array $responseParams = [])
     {
         $responseParams['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT;
-        $this->processSuccess($response,$responseParams);
+        $this->processSuccess($response, $responseParams);
     }
 
     //########################################

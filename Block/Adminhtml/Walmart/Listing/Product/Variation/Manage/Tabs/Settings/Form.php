@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Ta
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Settings
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     const MESSAGE_TYPE_ERROR = 'error';
@@ -28,7 +32,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Matcher\Attribute $matcherAttribute */
     protected $matcherAttributes;
 
-    protected $messages = array();
+    protected $messages = [];
 
     //########################################
 
@@ -56,9 +60,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'collapsable' => true,
                 'direction_class' => 'to-right',
                 'tooltip' => $this->__(
-                    'Select Walmart Variant Attribute you will use to vary your Item on the Channel.
-                    You can set more than one Variant Attribute for VariationalItem that varies by multiple attributes.
-                    <br><br>
+                    'Select Walmart Variant Attribute you will use to vary your Item on the Channel. You can set more
+                    than one Variant Attribute for Variational Item that varies by multiple attributes.<br><br>
 
                     <strong>Note:</strong> the list of Walmart Variant Attributes available for the selection is
                     determined by Walmart Category assigned to your Product.'
@@ -116,7 +119,6 @@ HTML;
 
         if (!$this->getListingProductTypeModel()->hasChannelGroupId() &&
             !$this->getListingProduct()->isSetProcessingLock('child_products_in_action')) {
-
             $button = $this->createBlock('Magento\Button')->setData([
                 'class' => 'action primary',
                 'label' => $this->getListingProductTypeModel()->hasChannelAttributes() ?
@@ -149,7 +151,6 @@ HTML;
             </tr>
 HTML;
         foreach ($possibleAttributes as $key => $attribute) {
-
             $checked = '';
             if (in_array($attribute, $channelAttributes)) {
                 $checked = 'checked="checked"';
@@ -160,10 +161,14 @@ HTML;
                 <td class="label" style="border-right: none;">
                     <input name="channel_attribute[]"
                            class="M2ePro-walmart-required-channel-attribute admin__control-checkbox"
-                           type="checkbox" value="{$attribute}" {$checked}>
+                           type="checkbox" value="{$attribute}" {$checked}
+                           style="margin-top: 0 !important;">
                     <label>&nbsp;&nbsp;
                         {$this->__($attribute)}
                     </label>
+                    <label class="mage-error"
+                           id="M2ePro-walmart-required-channel-attribute-error" style="display: none;">
+</label>
                 </td>
             </tr>
 HTML;
@@ -175,7 +180,7 @@ HTML;
             'onclick' => 'ListingGridHandlerObj.variationProductManageHandler.setChannelAttributes(this)'
         ])->toHtml();
 
-       $html .= <<<HTML
+        $html .= <<<HTML
         </tbody>
 
         <tfoot>
@@ -203,9 +208,8 @@ HTML;
         );
 
         if ($this->getListingProductTypeModel()->hasChannelAttributes()) {
-
             $this->js->add(
-<<<JS
+                <<<JS
     ListingGridHandlerObj.variationProductManageHandler.virtualWalmartMatchedAttributes = false;
     ListingGridHandlerObj.variationProductManageHandler.walmartVariationSet = false;
 JS
@@ -214,7 +218,7 @@ JS
             $this->jsTranslator->addTranslations([
                 'help_icon_magento_greater_left' =>
                     $this->__('This Walmart Attribute and its Value are virtualized based on the selected Magento
-                        Variational Attribute and its Value as physically this Walmart Attribute does not exist.'),
+                Variational Attribute and its Value as physically this Walmart Attribute does not exist.'),
                 'help_icon_magento_greater_right' =>
                     $this->__('Select a particular Option of the Attribute to fix it for virtualized Walmart Attribute.
                         Please, be thoughtful as only those Variations of Magento Product which contains the selected
@@ -253,8 +257,7 @@ JS
                         Attribute(s) again.<br><br>
 
                         <strong>Note:</strong> Matching of Attributes is required. Otherwise, your Variational Item
-                        cannot be listed on the Channel.'
-                    )
+                        cannot be listed on the Channel.')
                 ]
             );
 
@@ -292,14 +295,13 @@ HTML;
 HTML;
 
                 if ($this->getMatcherAttributes()->isSourceAmountGreater()) {
-
                     $matchedAttriutes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
                     $productAttributes = $this->getHelper('Data')->jsonEncode($this->getProductAttributes());
                     $destinationAttributes = $this->getHelper('Data')->jsonEncode($this->getDestinationAttributes());
                     $magentoVariationSet = $this->getHelper('Data')->jsonEncode($magentoProductVariations['set']);
 
                     $this->js->add(
-<<<JS
+                        <<<JS
     ListingGridHandlerObj.variationProductManageHandler.matchingType = ListingGridHandlerObj
         .variationProductManageHandler.MATCHING_TYPE_VIRTUAL_WALMART;
     ListingGridHandlerObj.variationProductManageHandler.matchedAttributes = {$matchedAttriutes};
@@ -310,14 +312,12 @@ HTML;
     ListingGridHandlerObj.variationProductManageHandler.renderMatchedAttributesNotSetView();
 JS
                     );
-
                 } elseif ($this->getMatcherAttributes()->isDestinationAmountGreater()) {
-
                     $matchedAttriutes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
                     $destinationAttributes = $this->getHelper('Data')->jsonEncode($this->getDestinationAttributes());
 
                     $this->js->add(
-<<<JS
+                        <<<JS
     ListingGridHandlerObj.variationProductManageHandler.matchingType = ListingGridHandlerObj
         .variationProductManageHandler.MATCHING_TYPE_VIRTUAL_MAGENTO;
 
@@ -329,7 +329,6 @@ JS
                     );
                 }
             } else {
-
                 $html .= <<<HTML
     <table class="data-grid data-grid-not-hovered" cellspacing="0" cellpadding="0">
         <tr>
@@ -351,7 +350,6 @@ HTML;
                 $virtualChannelAttributes = $this->getVirtualChannelAttributes();
 
                 foreach ($this->getMatchedAttributes() as $magentoAttr => $walmartAttr) {
-
                     $isVirtual = ($magentoAttr == $walmartAttr)
                         && in_array($magentoAttr, array_keys($virtualAttributes));
 
@@ -432,7 +430,6 @@ HTML;
         <span style="{$style}">{$walmartAttr} ({$virtualAttributes[$walmartAttr]})</span>
         <input type="hidden" name="variation_attributes[walmart_attributes][]" value="{$walmartAttr}" />
 HTML;
-
                     }
 
                     $html .= <<<HTML
@@ -440,7 +437,6 @@ HTML;
         </td></tr>
 HTML;
                     $attrId++;
-
                 }
 
                 $style = $this->isChangeMatchedAttributesAllowed() ? '' : 'display: none;';
@@ -506,7 +502,8 @@ HTML;
             'style' => 'margin-left: 70px;'
         ]);
 
-        $fieldset->addField('swatch_images_attributes',
+        $fieldset->addField(
+            'swatch_images_attributes',
             'select',
             [
                 'label' => $this->__('Swatch Variant Attribute'),
@@ -543,10 +540,10 @@ CSS
      */
     public function addMessage($message, $type = self::MESSAGE_TYPE_ERROR)
     {
-        $this->messages[] = array(
+        $this->messages[] = [
             'type' => $type,
             'text' => $message
-        );
+        ];
     }
     /**
      * @param array $messages
@@ -567,7 +564,7 @@ CSS
     {
         $type = self::MESSAGE_TYPE_WARNING;
         foreach ($this->messages as $message) {
-            if ($message['type'] === self::MESSAGE_TYPE_ERROR)     {
+            if ($message['type'] === self::MESSAGE_TYPE_ERROR) {
                 $type = $message['type'];
                 break;
             }
@@ -607,7 +604,7 @@ CSS
      */
     public function getListingProductTypeModel()
     {
-        if (is_null($this->listingProductTypeModel)) {
+        if ($this->listingProductTypeModel === null) {
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
             $walmartListingProduct = $this->getListingProduct()->getChildObject();
             /** @var ParentRelation $typeModel */
@@ -626,7 +623,7 @@ CSS
     {
         if (empty($this->matcherAttributes)) {
             $this->matcherAttributes = $this->modelFactory->getObject(
-                'Walmart\Listing\Product\Variation\Matcher\Attribute'
+                'Walmart_Listing_Product_Variation_Matcher_Attribute'
             );
             $this->matcherAttributes->setMagentoProduct($this->getListingProduct()->getMagentoProduct());
             $this->matcherAttributes->setDestinationAttributes($this->getDestinationAttributes());
@@ -640,12 +637,11 @@ CSS
     public function getWarnings()
     {
         /** @var \Magento\Framework\View\Element\Messages $messages */
-        $messages = $this->getLayout()->createBlock('\Magento\Framework\View\Element\Messages');
+        $messages = $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class);
 
         foreach ($this->getMessages() as $message) {
             $addMethod = 'add'.ucfirst($message['type']);
             $messages->$addMethod($message['text']);
-
         }
         return $messages->toHtml();
     }
@@ -653,7 +649,6 @@ CSS
     public function calculateWarnings()
     {
         if (!$this->warningsCalculated) {
-
             $this->warningsCalculated = true;
 
             if (!$this->getListingProductTypeModel()->hasChannelAttributes()) {
@@ -663,7 +658,7 @@ CSS
                     ),
                     self::MESSAGE_TYPE_ERROR
                 );
-            } else if (!$this->hasMatchedAttributes()) {
+            } elseif (!$this->hasMatchedAttributes()) {
                 $this->addMessage(
                     $this->__(
                         'Item Variations cannot be added/updated on the Channel. The correspondence between Magento
@@ -673,7 +668,6 @@ CSS
                     self::MESSAGE_TYPE_ERROR
                 );
             }
-
         }
     }
 
@@ -689,7 +683,7 @@ CSS
     protected function _toHtml()
     {
         $this->css->add(
-<<<CSS
+            <<<CSS
     #variation_manager_product_options_form select {
         min-width: 200px;
     }
@@ -718,7 +712,7 @@ CSS
 
     public function getPossibleAttributes()
     {
-        $possibleAttributes = $this->modelFactory->getObject('Walmart\Marketplace\Details')
+        $possibleAttributes = $this->modelFactory->getObject('Walmart_Marketplace_Details')
             ->setMarketplaceId($this->getListingProduct()->getMarketplace()->getId())
             ->getVariationAttributes(
                 $this->getListingProduct()->getChildObject()->getCategoryTemplate()->getProductDataNick()
@@ -769,7 +763,7 @@ CSS
             return $virtualChannelAttributes;
         }
 
-        return array();
+        return [];
     }
 
     public function getVirtualProductAttributes()
@@ -780,7 +774,7 @@ CSS
             return $virtualProductAttributes;
         }
 
-        return array();
+        return [];
     }
 
     public function getVirtualChannelAttributes()
@@ -791,14 +785,14 @@ CSS
             return $virtualChannelAttributes;
         }
 
-        return array();
+        return [];
     }
 
     // ---------------------------------------
 
     public function isChangeMatchedAttributesAllowed()
     {
-        if ($this->isInAction() ) {
+        if ($this->isInAction()) {
             return false;
         }
         if ($this->hasMatchedAttributes()) {
@@ -818,7 +812,7 @@ CSS
 
     public function getChildListingProducts()
     {
-        if (!is_null($this->childListingProducts)) {
+        if ($this->childListingProducts !== null) {
             return $this->childListingProducts;
         }
 
@@ -827,7 +821,7 @@ CSS
 
     public function getCurrentProductVariations()
     {
-        if (!is_null($this->currentProductVariations)) {
+        if ($this->currentProductVariations !== null) {
             return $this->currentProductVariations;
         }
 
@@ -836,10 +830,10 @@ CSS
             ->getVariationInstance()
             ->getVariationsTypeStandard();
 
-        $productVariations = array();
+        $productVariations = [];
 
         foreach ($magentoProductVariations['variations'] as $option) {
-            $productOption = array();
+            $productOption = [];
 
             foreach ($option as $attribute) {
                 $productOption[$attribute['attribute']] = $attribute['option'];
@@ -866,12 +860,12 @@ CSS
             return false;
         }
 
-        $attributesOptions = array();
+        $attributesOptions = [];
 
         foreach ($variations as $variation) {
             foreach ($variation as $attr => $option) {
                 if (!isset($attributesOptions[$attr])) {
-                    $attributesOptions[$attr] = array();
+                    $attributesOptions[$attr] = [];
                 }
                 if (!in_array($option, $attributesOptions[$attr])) {
                     $attributesOptions[$attr][] = $option;

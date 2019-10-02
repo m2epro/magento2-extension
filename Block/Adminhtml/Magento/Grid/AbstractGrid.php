@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid;
 use Magento\Backend\Block\Widget\Grid\Extended;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
+/**
+ * Class AbstractGrid
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Grid
+ */
 abstract class AbstractGrid extends Extended
 {
     use Traits\BlockTrait;
@@ -36,8 +40,7 @@ abstract class AbstractGrid extends Extended
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->helperFactory = $context->getHelperFactory();
         $this->modelFactory = $context->getModelFactory();
         $this->activeRecordFactory = $context->getActiveRecordFactory();
@@ -56,7 +59,7 @@ abstract class AbstractGrid extends Extended
 
     public function addColumn($columnId, $column)
     {
-        if (is_array($column)){
+        if (is_array($column)) {
             if (!array_key_exists('header_css_class', $column)) {
                 $column['header_css_class'] = 'grid-listing-column-' . $columnId;
             }

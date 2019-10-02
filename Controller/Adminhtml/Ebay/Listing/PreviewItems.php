@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+/**
+ * Class PreviewItems
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ */
 class PreviewItems extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     protected function getLayoutType()
@@ -18,7 +22,7 @@ class PreviewItems extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     public function execute()
     {
         $this->addContent(
-            $this->createBlock('Ebay\Listing\Preview')
+            $this->createBlock('Ebay_Listing_Preview')
         );
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(

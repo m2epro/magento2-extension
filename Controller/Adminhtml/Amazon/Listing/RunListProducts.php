@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
+/**
+ * Class RunListProducts
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ */
 class RunListProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\ActionAbstract
 {
     public function execute()

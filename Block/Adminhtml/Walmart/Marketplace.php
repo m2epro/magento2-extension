@@ -10,6 +10,10 @@ namespace  Ess\M2ePro\Block\Adminhtml\Walmart;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
+/**
+ * Class Marketplace
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart
+ */
 class Marketplace extends AbstractContainer
 {
     //########################################
@@ -28,19 +32,19 @@ class Marketplace extends AbstractContainer
         $this->removeButton('back');
 
         // ---------------------------------------
-        $this->addButton('run_update_all', array(
+        $this->addButton('run_update_all', [
             'label' => $this->__('Update All Now'),
             'onclick' => 'MarketplaceObj.updateAction()',
             'class' => 'save update_all_marketplace primary'
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('run_synch_now', array(
+        $this->addButton('run_synch_now', [
             'label'     => $this->__('Save'),
             'onclick'   => 'MarketplaceObj.saveAction();',
             'class'     => 'save save_and_update_marketplaces primary'
-        ));
+        ]);
         // ---------------------------------------
     }
 
@@ -51,15 +55,12 @@ class Marketplace extends AbstractContainer
         $this->appendHelpBlock([
             'content' => $this->__(
                 '<p>In this section, you can set up Walmart Marketplaces you will work with.
-                Enable the required Marketplaces and press <strong>Save</strong>. The Marketplace data will
-                be downloaded and synchronized with your M2E Pro installation.</p><br>
+                Enable the required Marketplaces and press <strong>Save</strong>. The Marketplace data will be
+                downloaded and synchronized with your M2E Pro installation.</p><br>
                 <p>It is recommended to update Marketplaces when any related changes are announced by Walmart.
-                To do this, press <strong>Update All Now</strong>. </p><br>
-                <p><strong>Note:</strong> update process might be a time-consuming depending on the number
-                of enabled Marketplaces and your server environment.</p><br>
-
-                <p>The detailed information can be found <a href="#" target="_blank">here</a></p>',
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/JQBhAQ')
+                To do it, press <strong>Update All Now</strong>.</p><br>
+                <p><strong>Note:</strong> installation and update processes might be a time-consuming depending
+                on the number of enabled Marketplaces and your server environment.</p><br>'
             )
         ]);
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Amazon\Synchronization
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent
 {
     protected $amazonFactory;
@@ -19,8 +23,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Synchronization\Task\Abst
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         parent::__construct($activeRecordFactory, $helperFactory, $modelFactory);
     }

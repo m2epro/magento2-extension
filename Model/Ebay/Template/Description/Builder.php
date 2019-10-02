@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Description;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Ebay\Template\Description
+ */
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 {
     protected $driverPool;
@@ -20,8 +24,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->driverPool = $driverPool;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
         parent::__construct($activeRecordFactory, $ebayFactory, $helperFactory, $modelFactory);
@@ -32,7 +35,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
     public function build(array $data)
     {
         if (empty($data)) {
-            return NULL;
+            return null;
         }
 
         $this->validate($data);
@@ -60,7 +63,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
     {
         $prepared = parent::prepareData($data);
 
-        $defaultData = $this->activeRecordFactory->getObject('Ebay\Template\Description')->getDefaultSettings();
+        $defaultData = $this->activeRecordFactory->getObject('Ebay_Template_Description')->getDefaultSettings();
 
         $defaultData['enhancement'] = explode(',', $defaultData['enhancement']);
         $defaultData['product_details'] = $this->getHelper('Data')->jsonDecode($defaultData['product_details']);
@@ -113,7 +116,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         }
 
         if (isset($data['product_details'])) {
-
             $prepared['product_details'] = $data['product_details'];
 
             if (is_array($prepared['product_details'])) {
@@ -134,7 +136,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         }
 
         if (isset($data['enhancement'])) {
-
             $prepared['enhancement'] = $data['enhancement'];
 
             if (is_array($prepared['enhancement'])) {
@@ -206,7 +207,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
         // ---------------------------------------
 
-        $watermarkSettings = array();
+        $watermarkSettings = [];
         $hashChange = false;
 
         if (isset($data['watermark_settings']['position'])) {
@@ -241,7 +242,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         $watermarkImageFile = $this->phpEnvironmentRequest->getFiles('watermark_image');
 
         if (!empty($watermarkImageFile['tmp_name'])) {
-
             $hashChange = true;
 
             $prepared['watermark_image'] = file_get_contents($watermarkImageFile['tmp_name']);
@@ -260,7 +260,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
                     $fileDriver->deleteFile($watermarkPath);
                 }
             }
-
         } elseif (!empty($data['old_watermark_image']) && !isset($prepared['id'])) {
             $prepared['watermark_image'] = base64_decode($data['old_watermark_image']);
         }

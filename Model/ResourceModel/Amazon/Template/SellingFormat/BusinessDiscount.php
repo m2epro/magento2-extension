@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Template\SellingFormat;
 
+/**
+ * Class BusinessDiscount
+ * @package Ess\M2ePro\Model\ResourceModel\Amazon\Template\SellingFormat
+ */
 class BusinessDiscount extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################

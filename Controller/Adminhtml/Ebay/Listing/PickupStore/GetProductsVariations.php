@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore;
 
+/**
+ * Class GetProductsVariations
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
+ */
 class GetProductsVariations extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
 {
     //########################################
 
     public function execute()
     {
-        $this->setAjaxContent($this->createBlock('Ebay\Listing\PickupStore\Variation\Product\View'));
+        $this->setAjaxContent($this->createBlock('Ebay_Listing_PickupStore_Variation_Product_View'));
         return $this->getResult();
     }
 

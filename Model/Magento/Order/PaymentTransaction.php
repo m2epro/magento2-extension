@@ -10,13 +10,17 @@ namespace Ess\M2ePro\Model\Magento\Order;
 
 use Ess\M2ePro\Model\AbstractModel;
 
+/**
+ * Class PaymentTransaction
+ * @package Ess\M2ePro\Model\Magento\Order
+ */
 class PaymentTransaction extends AbstractModel
 {
     /** @var $magentoOrder \Magento\Sales\Model\Order */
-    protected $magentoOrder = NULL;
+    protected $magentoOrder = null;
 
     /** @var $transaction \Magento\Sales\Model\Order\Payment\Transaction */
-    protected $transaction = NULL;
+    protected $transaction = null;
 
     //########################################
 
@@ -55,16 +59,17 @@ class PaymentTransaction extends AbstractModel
         $existTransaction = $payment->getTransaction($this->getData('transaction_id'));
 
         if ($existTransaction && $existTransaction->getTxnType() == $transactionType) {
-            return NULL;
+            return null;
         }
 
         $payment->setTransactionId($this->getData('transaction_id'));
         $this->transaction = $payment->addTransaction($transactionType);
 
-        if (@defined('\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS')) {
+        if (defined('\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS')) {
             $this->unsetData('transaction_id');
             $this->transaction->setAdditionalInformation(
-                \Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, $this->getData()
+                \Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS,
+                $this->getData()
             );
         }
 

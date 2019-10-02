@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Motor;
 
+/**
+ * Class Filter
+ * @package Ess\M2ePro\Model\Ebay\Motor
+ */
 class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     //########################################
@@ -27,9 +31,9 @@ class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         }
 
         $connection = $this->getResource()->getConnection();
-        $filterGroupRelation = $this->getHelper('Module\Database\Structure')
+        $filterGroupRelation = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
-        $connection->delete($filterGroupRelation, array('filter_id = ?' => $this->getId()));
+        $connection->delete($filterGroupRelation, ['filter_id = ?' => $this->getId()]);
 
         return true;
     }
@@ -61,11 +65,11 @@ class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function isTypeEpid()
     {
-        return in_array($this->getType(), array(
+        return in_array($this->getType(), [
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_MOTOR,
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_UK,
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_DE,
-        ));
+        ]);
     }
 
     /**

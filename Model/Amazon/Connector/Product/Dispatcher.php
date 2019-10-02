@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Product;
 
+/**
+ * Class Dispatcher
+ * @package Ess\M2ePro\Model\Amazon\Connector\Product
+ */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
-    private $logsActionId = NULL;
+    private $logsActionId = null;
 
     protected $activeRecordFactory;
     protected $amazonFactory;
@@ -22,8 +26,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->amazonFactory = $amazonFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -37,11 +40,11 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      * @param array $params
      * @return int
      */
-    public function process($action, $products, array $params = array())
+    public function process($action, $products, array $params = [])
     {
-        $params = array_merge(array(
+        $params = array_merge([
             'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN
-        ), $params);
+        ], $params);
 
         if (empty($params['logs_action_id'])) {
             $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')
@@ -73,14 +76,14 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @return int
      */
-    protected function processGroupedProducts(array $sortedProductsData,
-                                              $action,
-                                              array $params = array())
-    {
-        $results = array();
+    protected function processGroupedProducts(
+        array $sortedProductsData,
+        $action,
+        array $params = []
+    ) {
+        $results = [];
 
         foreach ($sortedProductsData as $products) {
-
             if (empty($products)) {
                 continue;
             }
@@ -99,11 +102,10 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      * @param array $params
      * @return int
      */
-    protected function processProduct(\Ess\M2ePro\Model\Listing\Product $product, $action, array $params = array())
+    protected function processProduct(\Ess\M2ePro\Model\Listing\Product $product, $action, array $params = [])
     {
         try {
-
-            $dispatcher = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+            $dispatcher = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorName = 'Amazon\Connector\Product\\'.$this->getActionNick($action).'\Requester';
 
             /** @var \Ess\M2ePro\Model\Amazon\Connector\Product\Requester $connector */
@@ -113,12 +115,10 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             $dispatcher->process($connector);
 
             return $connector->getStatus();
-
         } catch (\Exception $exception) {
-
             $this->getHelper('Module\Exception')->process($exception);
 
-            $logModel = $this->activeRecordFactory->getObject('Amazon\Listing\Log');
+            $logModel = $this->activeRecordFactory->getObject('Amazon_Listing_Log');
 
             $action = $this->recognizeActionForLogging($action, $params);
             $initiator = $this->recognizeInitiatorForLogging($params);
@@ -146,21 +146,21 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     protected function prepareProducts($products)
     {
         if (!is_array($products)) {
-            $products = array($products);
+            $products = [$products];
         }
 
-        $preparedProducts     = array();
-        $parentsForProcessing = array();
+        $preparedProducts     = [];
+        $parentsForProcessing = [];
 
         foreach ($products as $listingProduct) {
-
             if (is_numeric($listingProduct)) {
                 if (isset($preparedProducts[(int)$listingProduct])) {
                     continue;
                 }
 
                 $listingProduct = $this->amazonFactory->getObjectLoaded(
-                    'Listing\Product', (int)$listingProduct
+                    'Listing\Product',
+                    (int)$listingProduct
                 );
             }
 
@@ -201,15 +201,15 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $massProcessor = $this->modelFactory->getObject(
-            'Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass'
+            'Amazon_Listing_Product_Variation_Manager_Type_Relation_ParentRelation_Processor_Mass'
         );
         $massProcessor->setListingsProducts($parentsForProcessing);
 
         $massProcessor->execute();
 
-        $actionConfigurators = array();
+        $actionConfigurators = [];
         foreach ($preparedProducts as $id => $listingProduct) {
-            if (is_null($listingProduct->getActionConfigurator())) {
+            if ($listingProduct->getActionConfigurator() === null) {
                 continue;
             }
 
@@ -218,17 +218,17 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('id', array('in' => array_keys($preparedProducts)));
+        $listingProductCollection->addFieldToFilter('id', ['in' => array_keys($preparedProducts)]);
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $actualListingsProducts */
         $actualListingsProducts = $listingProductCollection->getItems();
 
         if (empty($actualListingsProducts)) {
-            return array();
+            return [];
         }
 
         foreach ($actualListingsProducts as $id => $actualListingProduct) {
-            if (is_null($actionConfigurators[$id])) {
+            if ($actionConfigurators[$id] === null) {
                 continue;
             }
 
@@ -240,7 +240,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     protected function sortProductsByAccount($products)
     {
-        $sortedProducts = array();
+        $sortedProducts = [];
 
         /** @var $product \Ess\M2ePro\Model\Listing\Product */
         foreach ($products as $product) {
@@ -260,7 +260,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
         if ($statusChanger == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN) {
             $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
-        } else if ($statusChanger == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER) {
+        } elseif ($statusChanger == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER) {
             $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_USER;
         } else {
             $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION;
@@ -273,8 +273,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     {
         $logAction = \Ess\M2ePro\Model\Listing\Log::ACTION_UNKNOWN;
 
-        switch ($action)
-        {
+        switch ($action) {
             case \Ess\M2ePro\Model\Listing\Product::ACTION_DELETE:
                 if (isset($params['remove']) && (bool)$params['remove']) {
                     $logAction = \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_AND_REMOVE_PRODUCT;

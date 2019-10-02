@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection;
 
+/**
+ * Class Caches
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection
+ */
 class Caches extends AbstractInspection
 {
     //########################################

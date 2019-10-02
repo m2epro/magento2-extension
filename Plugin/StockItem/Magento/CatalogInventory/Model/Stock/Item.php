@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Plugin\StockItem\Magento\CatalogInventory\Model\Stock;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Plugin\StockItem\Magento\CatalogInventory\Model\Stock
+ */
 class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     protected $eventManager;
@@ -18,8 +22,7 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->eventManager = $eventManager;
         parent::__construct($helperFactory, $modelFactory);
     }

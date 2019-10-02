@@ -19,40 +19,44 @@ use \Magento\Framework\Controller\Result\RawFactory;
 use \Magento\Framework\View\LayoutFactory;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer\CssRenderer;
 
+/**
+ * Class Context
+ * @package Ess\M2ePro\Controller\Adminhtml
+ */
 class Context extends ActionContext
 {
     /** @var HelperFactory $helperFactory */
-    protected $helperFactory = NULL;
+    protected $helperFactory = null;
 
     /** @var ModelFactory $modelFactory */
-    protected $modelFactory = NULL;
+    protected $modelFactory = null;
 
     /** @var ParentFactory */
-    protected $parentFactory = NULL;
+    protected $parentFactory = null;
 
     /** @var ActiveRecordFactory $activeRecordFactory */
-    protected $activeRecordFactory = NULL;
+    protected $activeRecordFactory = null;
 
     /** @var PageFactory $resultPageFactory */
-    protected $resultPageFactory = NULL;
+    protected $resultPageFactory = null;
 
     /** @var \Magento\Framework\Controller\Result\RawFactory $resultRawFactory  */
-    protected $resultRawFactory = NULL;
+    protected $resultRawFactory = null;
 
     /** @var \Magento\Framework\View\LayoutFactory $layoutFactory */
-    protected $layoutFactory = NULL;
+    protected $layoutFactory = null;
 
     /** @var CssRenderer|null  */
-    protected $cssRenderer = NULL;
+    protected $cssRenderer = null;
 
     /** @var \Magento\Framework\App\ResourceConnection|null  */
-    protected $resourceConnection = NULL;
+    protected $resourceConnection = null;
 
     /** @var \Magento\Config\Model\Config|null  */
-    protected $magentoConfig = NULL;
+    protected $magentoConfig = null;
 
     /** @var \Ess\M2ePro\Model\Setup\PublicVersionsChecker $publicVersionsChecker */
-    private $publicVersionsChecker = NULL;
+    private $publicVersionsChecker = null;
 
     public function __construct(
         CssRenderer $cssRenderer,
@@ -74,7 +78,8 @@ class Context extends ActionContext
         \Magento\Framework\App\ViewInterface $view,
         \Magento\Framework\Message\ManagerInterface $messageManager,
         \Magento\Backend\Model\View\Result\RedirectFactory $resultRedirectFactory,
-        ResultFactory $resultFactory, \Magento\Backend\Model\Session $session,
+        ResultFactory $resultFactory,
+        \Magento\Backend\Model\Session $session,
         \Magento\Framework\AuthorizationInterface $authorization,
         \Magento\Backend\Model\Auth $auth,
         \Magento\Backend\Helper\Data $helper,
@@ -84,8 +89,7 @@ class Context extends ActionContext
         \Magento\Config\Model\Config $magentoConfig,
         \Ess\M2ePro\Model\Setup\PublicVersionsChecker $publicVersionsChecker,
         $canUseBaseUrl = false
-    )
-    {
+    ) {
         $this->cssRenderer = $cssRenderer;
 
         $this->modelFactory  = $modelFactory;

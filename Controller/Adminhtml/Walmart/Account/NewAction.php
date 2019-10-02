@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
+/**
+ * Class NewAction
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Account
+ */
 class NewAction extends Account
 {
     public function execute()

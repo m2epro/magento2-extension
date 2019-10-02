@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model;
 
+/**
+ * Class ProductChange
+ * @package Ess\M2ePro\Model
+ */
 class ProductChange extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     const ACTION_CREATE = 'create';
@@ -43,7 +47,6 @@ class ProductChange extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $tempChanges = $tempCollection->toArray();
 
         if ($tempChanges['totalRecords'] <= 0) {
-
             $dataForAdd = [
                 'product_id' => $productId,
                 'action' => self::ACTION_CREATE,
@@ -70,7 +73,6 @@ class ProductChange extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $tempChanges = $tempCollection->toArray();
 
         if ($tempChanges['totalRecords'] <= 0) {
-
             $dataForAdd = [
                 'product_id' => $productId,
                 'action' => self::ACTION_DELETE,
@@ -98,7 +100,6 @@ class ProductChange extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $tempChanges = $changeCollection->toArray();
 
         if ($tempChanges['totalRecords'] <= 0) {
-
             $dataForAdd = [
                 'product_id' => $productId,
                 'action' => self::ACTION_UPDATE,
@@ -139,18 +140,21 @@ class ProductChange extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     // ---------------------------------------
 
-    public function updateAttribute($productId, $attribute,
-                                    $valueOld, $valueNew,
-                                    $initiator = self::INITIATOR_UNKNOWN,
-                                    $storeId = NULL)
-    {
+    public function updateAttribute(
+        $productId,
+        $attribute,
+        $valueOld,
+        $valueNew,
+        $initiator = self::INITIATOR_UNKNOWN,
+        $storeId = null
+    ) {
         $tempCollection = $this->activeRecordFactory->getObject('ProductChange')
                                 ->getCollection()
                                 ->addFieldToFilter('product_id', $productId)
                                 ->addFieldToFilter('action', self::ACTION_UPDATE)
                                 ->addFieldToFilter('attribute', $attribute);
 
-        if (is_null($storeId)) {
+        if ($storeId === null) {
             $tempCollection->addFieldToFilter('store_id', ['null'=>true]);
         } else {
             $tempCollection->addFieldToFilter('store_id', $storeId);
@@ -159,10 +163,9 @@ class ProductChange extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $tempChanges = $tempCollection->toArray();
 
         if ($tempChanges['totalRecords'] <= 0) {
-
-             if ($valueOld == $valueNew) {
-                 return false;
-             }
+            if ($valueOld == $valueNew) {
+                return false;
+            }
 
              $dataForAdd = [
                 'product_id' => $productId,
@@ -183,14 +186,12 @@ class ProductChange extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         }
 
         if ($tempChanges['items'][0]['value_old'] == $valueNew) {
-
               $this->activeRecordFactory->getObject('ProductChange')
                     ->setId($tempChanges['items'][0]['id'])
                     ->delete();
 
               return true;
-
-        } else if ($valueOld != $valueNew) {
+        } elseif ($valueOld != $valueNew) {
              $initiators = explode(',', $tempChanges['items'][0]['initiators']);
              $initiators[] = $initiator;
              $initiators = implode(',', array_unique($initiators));

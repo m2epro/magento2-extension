@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search\Settings\ByAsin;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Amazon\Search\Settings\ByAsin
+ */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByAsin\ItemsRequester
 {
     // ########################################
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Amazon\Search\Settings\ProcessingRunner';
+        return 'Amazon_Search_Settings_ProcessingRunner';
     }
 
     protected function getResponserParams()

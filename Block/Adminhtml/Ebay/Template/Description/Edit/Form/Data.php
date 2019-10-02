@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Edit\Form;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Template\Description;
 
+/**
+ * Class Data
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Edit\Form
+ */
 class Data extends AbstractForm
 {
     protected $attributes = [];
@@ -35,19 +39,19 @@ class Data extends AbstractForm
         $generalAttributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
         $attributesConfigurable = $magentoAttributeHelper->getAllConfigurable();
 
-        $attributesByInputTypes = array(
-            'text' => $magentoAttributeHelper->filterByInputTypes($this->attributes, array('text')),
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($this->attributes, array('text', 'select')),
-        );
+        $attributesByInputTypes = [
+            'text' => $magentoAttributeHelper->filterByInputTypes($this->attributes, ['text']),
+            'text_select' => $magentoAttributeHelper->filterByInputTypes($this->attributes, ['text', 'select']),
+        ];
 
-        $generalAttributesByTypes = array(
-            'text' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, array('text')),
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, array('text', 'select')),
+        $generalAttributesByTypes = [
+            'text' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, ['text']),
+            'text_select' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, ['text', 'select']),
             'text_images' => $magentoAttributeHelper->filterByInputTypes(
                 $generalAttributes,
-                array('text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect')
+                ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
             ),
-        );
+        ];
 
         $formData = $this->getFormData();
 
@@ -58,7 +62,8 @@ class Data extends AbstractForm
 
         $form = $this->_formFactory->create();
 
-        $form->addField('description_id',
+        $form->addField(
+            'description_id',
             'hidden',
             [
                 'name' => 'description[id]',
@@ -66,7 +71,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $form->addField('description_title',
+        $form->addField(
+            'description_title',
             'hidden',
             [
                 'name' => 'description[title]',
@@ -74,7 +80,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $form->addField('description_is_custom_template',
+        $form->addField(
+            'description_is_custom_template',
             'hidden',
             [
                 'name' => 'description[is_custom_template]',
@@ -82,7 +89,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $form->addField('description_editor_type',
+        $form->addField(
+            'description_editor_type',
             'hidden',
             [
                 'name' => 'description[editor_type]',
@@ -90,7 +98,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_template_description_form_data_condition',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_template_description_form_data_condition',
             [
                 'legend' => $this->__('Condition'),
                 'collapsable' => false
@@ -139,8 +148,7 @@ class Data extends AbstractForm
 
         $preparedConditions = [];
         foreach ($conditions as $condition) {
-            if (
-                $formData['condition_mode'] == Description::CONDITION_MODE_EBAY
+            if ($formData['condition_mode'] == Description::CONDITION_MODE_EBAY
                 && $formData['condition_value'] == $condition['attrs']['attribute_code']
             ) {
                 $condition['attrs']['selected'] = 'selected';
@@ -152,8 +160,7 @@ class Data extends AbstractForm
         $preparedAttributes = [];
         foreach ($generalAttributesByTypes['text_select'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['condition_mode'] == Description::CONDITION_MODE_ATTRIBUTE
+            if ($formData['condition_mode'] == Description::CONDITION_MODE_ATTRIBUTE
                 && $formData['condition_attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -165,7 +172,8 @@ class Data extends AbstractForm
             ];
         }
 
-        $fieldset->addField('item_condition',
+        $fieldset->addField(
+            'item_condition',
             self::SELECT,
             [
                 'name' => 'description[condition_mode]',
@@ -203,7 +211,8 @@ class Data extends AbstractForm
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
-        $fieldset->addField('condition_value',
+        $fieldset->addField(
+            'condition_value',
             'hidden',
             [
                 'name' => 'description[condition_value]',
@@ -211,7 +220,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $fieldset->addField('condition_attribute',
+        $fieldset->addField(
+            'condition_attribute',
             'hidden',
             [
                 'name' => 'description[condition_attribute]',
@@ -219,9 +229,10 @@ class Data extends AbstractForm
             ]
         );
 
-        $fieldset->addField('condition_note_mode',
-        'select',
-        [
+        $fieldset->addField(
+            'condition_note_mode',
+            'select',
+            [
             'container_id' => 'condition_note_tr',
             'label' => $this->__('Seller Notes'),
             'name' => 'description[condition_note_mode]',
@@ -235,8 +246,8 @@ class Data extends AbstractForm
                     such as whether it has defects, missing parts, scratches, or other wear and tear.
                     You have up to 1000 characters.'
             )
-        ]
-    );
+            ]
+        );
 
         $preparedAttributes = [];
         foreach ($this->attributes as $attribute) {
@@ -246,7 +257,8 @@ class Data extends AbstractForm
             ];
         }
 
-        $fieldset->addField('condition_note_template',
+        $fieldset->addField(
+            'condition_note_template',
             'textarea',
             [
                 'container_id' => 'custom_condition_note_tr',
@@ -256,7 +268,7 @@ class Data extends AbstractForm
                 'style' => 'width: 70%;margin-top: 0px;margin-bottom: 0px;height: 101px;',
                 'class' => 'M2ePro-validate-condition-note-length',
                 'required' => true,
-                'after_element_html' => $this->createBlock('Magento\Button\MagentoAttribute')->addData([
+                'after_element_html' => $this->createBlock('Magento_Button_MagentoAttribute')->addData([
                     'label' => $this->__('Insert Attribute'),
                     'destination_id' => 'condition_note_template',
                     'magento_attributes' => $preparedAttributes,
@@ -266,7 +278,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_template_description_form_data_image',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_template_description_form_data_image',
             [
                 'legend' => $this->__('Images'),
                 'collapsable' => true,
@@ -280,8 +293,7 @@ class Data extends AbstractForm
         $preparedAttributes = [];
         foreach ($generalAttributesByTypes['text_images'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['image_main_mode'] == Description::IMAGE_MAIN_MODE_ATTRIBUTE
+            if ($formData['image_main_mode'] == Description::IMAGE_MAIN_MODE_ATTRIBUTE
                 && $formData['image_main_attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -293,7 +305,8 @@ class Data extends AbstractForm
             ];
         }
 
-        $fieldset->addField('image_main',
+        $fieldset->addField(
+            'image_main',
             self::SELECT,
             [
                 'name' => 'description[image_main_mode]',
@@ -321,7 +334,8 @@ class Data extends AbstractForm
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select,multiselect');
 
-        $fieldset->addField('image_main_attribute',
+        $fieldset->addField(
+            'image_main_attribute',
             'hidden',
             [
                 'name' => 'description[image_main_attribute]',
@@ -329,7 +343,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $fieldset->addField('default_image_url',
+        $fieldset->addField(
+            'default_image_url',
             'text',
             [
                 'container_id' => 'default_image_url_tr',
@@ -344,7 +359,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $fieldset->addField('use_supersize_images',
+        $fieldset->addField(
+            'use_supersize_images',
             self::SELECT,
             [
                 'container_id' => 'use_supersize_images_tr',
@@ -362,7 +378,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $fieldset->addField('gallery_images_limit',
+        $fieldset->addField(
+            'gallery_images_limit',
             'hidden',
             [
                 'name' => 'description[gallery_images_limit]',
@@ -370,7 +387,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $fieldset->addField('gallery_images_attribute',
+        $fieldset->addField(
+            'gallery_images_attribute',
             'hidden',
             [
                 'name' => 'description[gallery_images_attribute]',
@@ -410,7 +428,8 @@ class Data extends AbstractForm
             ];
         }
 
-        $fieldset->addField('gallery_images',
+        $fieldset->addField(
+            'gallery_images',
             self::SELECT,
             [
                 'container_id' => 'gallery_images_mode_tr',
@@ -443,7 +462,7 @@ class Data extends AbstractForm
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select,multiselect');
 
-        if (count($attributesConfigurable) > 0) {
+        if (!empty($attributesConfigurable)) {
             $preparedAttributes = [];
             foreach ($attributesConfigurable as $attribute) {
                 $preparedAttributes[] = [
@@ -452,7 +471,8 @@ class Data extends AbstractForm
                 ];
             }
 
-            $fieldset->addField('variation_configurable_images',
+            $fieldset->addField(
+                'variation_configurable_images',
                 'multiselect',
                 [
                     'container_id' => 'variation_configurable_images_container',
@@ -469,7 +489,8 @@ class Data extends AbstractForm
             );
         }
 
-        $fieldset->addField('variation_images_limit',
+        $fieldset->addField(
+            'variation_images_limit',
             'hidden',
             [
                 'name' => 'description[variation_images_limit]',
@@ -477,7 +498,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $fieldset->addField('variation_images_attribute',
+        $fieldset->addField(
+            'variation_images_attribute',
             'hidden',
             [
                 'name' => 'description[variation_images_attribute]',
@@ -498,8 +520,7 @@ class Data extends AbstractForm
 
         for ($i = 2; $i <= Description\Source::VARIATION_IMAGES_COUNT_MAX; $i++) {
             $attrs = ['attribute_code' => $i];
-            if (
-                $i == $formData['variation_images_limit']
+            if ($i == $formData['variation_images_limit']
                 && $formData['variation_images_mode'] == Description::VARIATION_IMAGES_MODE_PRODUCT
             ) {
                 $attrs['selected'] = 'selected';
@@ -514,8 +535,7 @@ class Data extends AbstractForm
         $preparedAttributes = [];
         foreach ($generalAttributesByTypes['text_images'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['variation_images_mode'] == Description::VARIATION_IMAGES_MODE_ATTRIBUTE
+            if ($formData['variation_images_mode'] == Description::VARIATION_IMAGES_MODE_ATTRIBUTE
                 && $formData['variation_images_attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -527,7 +547,8 @@ class Data extends AbstractForm
             ];
         }
 
-        $fieldset->addField('variation_images',
+        $fieldset->addField(
+            'variation_images',
             self::SELECT,
             [
                 'container_id' => 'variation_images_mode_tr',
@@ -560,13 +581,15 @@ class Data extends AbstractForm
                     <br/>
                     <strong>e.g.</strong> http://mymagentostore.com/images/baseimage1.jpg,
                     http://mymagentostore.com/images/baseimage2.jpg
-                ')
+                '
+                )
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select,multiselect');
 
         $watermarkFieldset = $fieldset->addFieldset('watermark_block', []);
 
-        $watermarkFieldset->addField('old_watermark_settings_transparent',
+        $watermarkFieldset->addField(
+            'old_watermark_settings_transparent',
             'hidden',
             [
                 'name' => 'description[old_watermark_settings][transparent]',
@@ -574,7 +597,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $watermarkFieldset->addField('old_watermark_settings_scale',
+        $watermarkFieldset->addField(
+            'old_watermark_settings_scale',
             'hidden',
             [
                 'name' => 'description[old_watermark_settings][scale]',
@@ -582,7 +606,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $watermarkFieldset->addField('old_watermark_settings_position',
+        $watermarkFieldset->addField(
+            'old_watermark_settings_position',
             'hidden',
             [
                 'name' => 'description[old_watermark_settings][position]',
@@ -590,7 +615,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $watermarkFieldset->addField('old_watermark_settings_hashes_current',
+        $watermarkFieldset->addField(
+            'old_watermark_settings_hashes_current',
             'hidden',
             [
                 'name' => 'description[old_watermark_settings][hashes][current]',
@@ -598,7 +624,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $watermarkFieldset->addField('old_watermark_settings_hashes_previous',
+        $watermarkFieldset->addField(
+            'old_watermark_settings_hashes_previous',
             'hidden',
             [
                 'name' => 'description[old_watermark_settings][hashes][previous]',
@@ -606,7 +633,8 @@ class Data extends AbstractForm
             ]
         );
 
-        $watermarkFieldset->addField('watermark_mode',
+        $watermarkFieldset->addField(
+            'watermark_mode',
             'select',
             [
                 'label' => $this->__('Use Watermark'),
@@ -623,13 +651,14 @@ class Data extends AbstractForm
             ]
         );
 
-        $watermarkFieldset->addField('watermark_image',
+        $watermarkFieldset->addField(
+            'watermark_image',
             'file',
             [
                 'container_id' => 'watermark_image_container',
                 'label' => $this->__('Watermark Upload'),
                 'name' => 'watermark_image',
-                'required' => is_null($formData['watermark_image']),
+                'required' => $formData['watermark_image'] === null,
                 'values' => [
                     Description::WATERMARK_MODE_NO => $this->__('No'),
                     Description::WATERMARK_MODE_YES => $this->__('Yes'),
@@ -639,10 +668,10 @@ class Data extends AbstractForm
             ]
         )->addCustomAttribute('accept', 'image/png');
 
-        if (!is_null($formData['watermark_image'])) {
-
+        if ($formData['watermark_image'] !== null) {
             $encodedImage = base64_encode($formData['watermark_image']);
-            $watermarkFieldset->addField('old_watermark_image',
+            $watermarkFieldset->addField(
+                'old_watermark_image',
                 'hidden',
                 [
                     'name' => 'description[old_watermark_image]',
@@ -650,7 +679,8 @@ class Data extends AbstractForm
                 ]
             );
 
-            $watermarkFieldset->addField('watermark_uploaded_image',
+            $watermarkFieldset->addField(
+                'watermark_uploaded_image',
                 'note',
                 [
                     'label' => $this->__('Watermark Preview'),
@@ -662,7 +692,8 @@ HTML
             );
         }
 
-        $watermarkFieldset->addField('watermark_transparent',
+        $watermarkFieldset->addField(
+            'watermark_transparent',
             'select',
             [
                 'container_id' => 'watermark_transparent_container',
@@ -677,7 +708,8 @@ HTML
             ]
         );
 
-        $watermarkFieldset->addField('watermark_scale',
+        $watermarkFieldset->addField(
+            'watermark_scale',
             'select',
             [
                 'container_id' => 'watermark_scale_container',
@@ -693,7 +725,8 @@ HTML
             ]
         );
 
-        $watermarkFieldset->addField('watermark_position',
+        $watermarkFieldset->addField(
+            'watermark_position',
             'select',
             [
                 'container_id' => 'watermark_position_container',
@@ -709,14 +742,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_template_description_form_data_details',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_template_description_form_data_details',
             [
                 'legend' => $this->__('Details'),
                 'collapsable' => true,
             ]
         );
 
-        $fieldset->addField('title_mode',
+        $fieldset->addField(
+            'title_mode',
             'select',
             [
                 'label' => $this->__('Title'),
@@ -741,7 +776,8 @@ HTML
             ];
         }
 
-        $fieldset->addField('title_template',
+        $fieldset->addField(
+            'title_template',
             'text',
             [
                 'container_id' => 'custom_title_tr',
@@ -750,7 +786,7 @@ HTML
                 'name' => 'description[title_template]',
                 'class' => 'input-text-title',
                 'required' => true,
-                'after_element_html' => $this->createBlock('Magento\Button\MagentoAttribute')->addData([
+                'after_element_html' => $this->createBlock('Magento_Button_MagentoAttribute')->addData([
                     'label' => $this->__('Insert Attribute'),
                     'destination_id' => 'title_template',
                     'magento_attributes' => $preparedAttributes,
@@ -763,7 +799,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('subtitle_mode',
+        $fieldset->addField(
+            'subtitle_mode',
             'select',
             [
                 'label' => $this->__('Subtitle'),
@@ -790,7 +827,8 @@ HTML
             ];
         }
 
-        $fieldset->addField('subtitle_template',
+        $fieldset->addField(
+            'subtitle_template',
             'text',
             [
                 'container_id' => 'custom_subtitle_tr',
@@ -799,7 +837,7 @@ HTML
                 'name' => 'description[subtitle_template]',
                 'class' => 'input-text-title',
                 'required' => true,
-                'after_element_html' => $this->createBlock('Magento\Button\MagentoAttribute')->addData([
+                'after_element_html' => $this->createBlock('Magento_Button_MagentoAttribute')->addData([
                     'label' => $this->__('Insert Attribute'),
                     'destination_id' => 'subtitle_template',
                     'magento_attributes' => $preparedAttributes,
@@ -812,7 +850,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('cut_long_titles',
+        $fieldset->addField(
+            'cut_long_titles',
             'select',
             [
                 'label' => $this->__('Cut Long Titles'),
@@ -828,7 +867,8 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_template_description_form_data_description',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_template_description_form_data_description',
             [
                 'legend' => $this->__('Description'),
                 'collapsable' => true,
@@ -842,7 +882,8 @@ HTML
             'style' => 'margin-left: 70px;'
         ]);
 
-        $fieldset->addField('description_mode',
+        $fieldset->addField(
+            'description_mode',
             'select',
             [
                 'label' => $this->__('Description'),
@@ -854,18 +895,20 @@ HTML
                 ],
                 'value' => $formData['description_mode'],
                 'after_element_html' => $this->getTooltipHtml(
-                        $this->__(<<<HTML
+                    $this->__(<<<HTML
                         <p>Choose whether to use Magento <strong>Product Description</strong> or <strong>Product Short
                     Description</strong> for the eBay Listing Description</p><br>
                     <p>Alternatively, you can create a <strong>Custom Description</strong> and apply it to all
                     of the Items Listed on eBay using this M2E Pro Listing. </p>
 HTML
-                    )) . $button->toHtml()
+                    )
+                ) . $button->toHtml()
             ]
         );
 
         if ($isCustomDescription) {
-            $fieldset->addField('view_edit_custom_description_link',
+            $fieldset->addField(
+                'view_edit_custom_description_link',
                 'link',
                 [
                     'container_id' => 'view_edit_custom_description',
@@ -891,7 +934,8 @@ HTML
             'class' => 'action-primary'
         ]);
 
-        $fieldset->addField('description_template',
+        $fieldset->addField(
+            'description_template',
             'editor',
             [
                 'container_id' => 'description_template_tr',
@@ -918,7 +962,8 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_template_description_form_data_product_details',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_template_description_form_data_product_details',
             [
                 'legend' => $this->__('eBay Catalog Identifiers'),
                 'collapsable' => true,
@@ -949,8 +994,7 @@ HTML
         $preparedAttributes = [];
         foreach ($generalAttributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['product_details']['upc']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
+            if ($formData['product_details']['upc']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                 && $formData['product_details']['upc']['attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -962,7 +1006,8 @@ HTML
             ];
         }
 
-        $fieldset->addField('product_details_upc',
+        $fieldset->addField(
+            'product_details_upc',
             self::SELECT,
             [
                 'container_id' => 'product_details_upc_tr',
@@ -990,7 +1035,8 @@ HTML
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
-        $fieldset->addField('product_details_upc_attribute',
+        $fieldset->addField(
+            'product_details_upc_attribute',
             'hidden',
             [
                 'name' => 'description[product_details][upc][attribute]',
@@ -1001,8 +1047,7 @@ HTML
         $preparedAttributes = [];
         foreach ($generalAttributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['product_details']['ean']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
+            if ($formData['product_details']['ean']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                 && $formData['product_details']['ean']['attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -1014,7 +1059,8 @@ HTML
             ];
         }
 
-        $fieldset->addField('product_details_ean',
+        $fieldset->addField(
+            'product_details_ean',
             self::SELECT,
             [
                 'container_id' => 'product_details_ean_tr',
@@ -1043,7 +1089,8 @@ HTML
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
-        $fieldset->addField('product_details_ean_attribute',
+        $fieldset->addField(
+            'product_details_ean_attribute',
             'hidden',
             [
                 'name' => 'description[product_details][ean][attribute]',
@@ -1054,8 +1101,7 @@ HTML
         $preparedAttributes = [];
         foreach ($generalAttributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['product_details']['isbn']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
+            if ($formData['product_details']['isbn']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                 && $formData['product_details']['isbn']['attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -1067,7 +1113,8 @@ HTML
             ];
         }
 
-        $fieldset->addField('product_details_isbn',
+        $fieldset->addField(
+            'product_details_isbn',
             self::SELECT,
             [
                 'container_id' => 'product_details_isbn_tr',
@@ -1095,7 +1142,8 @@ HTML
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
-        $fieldset->addField('product_details_isbn_attribute',
+        $fieldset->addField(
+            'product_details_isbn_attribute',
             'hidden',
             [
                 'name' => 'description[product_details][isbn][attribute]',
@@ -1106,8 +1154,7 @@ HTML
         $preparedAttributes = [];
         foreach ($generalAttributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['product_details']['epid']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
+            if ($formData['product_details']['epid']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                 && $formData['product_details']['epid']['attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -1119,7 +1166,8 @@ HTML
             ];
         }
 
-        $fieldset->addField('product_details_epid',
+        $fieldset->addField(
+            'product_details_epid',
             self::SELECT,
             [
                 'container_id' => 'product_details_epid_tr',
@@ -1142,7 +1190,8 @@ HTML
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
-        $fieldset->addField('product_details_epid_attribute',
+        $fieldset->addField(
+            'product_details_epid_attribute',
             'hidden',
             [
                 'name' => 'description[product_details][epid][attribute]',
@@ -1153,8 +1202,7 @@ HTML
         $preparedAttributes = [];
         foreach ($generalAttributesByTypes['text_select'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['product_details']['brand']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
+            if ($formData['product_details']['brand']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                 && $formData['product_details']['brand']['attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -1166,7 +1214,8 @@ HTML
             ];
         }
 
-        $fieldset->addField('product_details_brand',
+        $fieldset->addField(
+            'product_details_brand',
             self::SELECT,
             [
                 'container_id' => 'product_details_brand_tr',
@@ -1193,7 +1242,8 @@ HTML
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
-        $fieldset->addField('product_details_brand_attribute',
+        $fieldset->addField(
+            'product_details_brand_attribute',
             'hidden',
             [
                 'name' => 'description[product_details][brand][attribute]',
@@ -1204,8 +1254,7 @@ HTML
         $preparedAttributes = [];
         foreach ($generalAttributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['product_details']['mpn']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
+            if ($formData['product_details']['mpn']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                 && $formData['product_details']['mpn']['attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -1217,7 +1266,8 @@ HTML
             ];
         }
 
-        $fieldset->addField('product_details_mpn',
+        $fieldset->addField(
+            'product_details_mpn',
             self::SELECT,
             [
                 'container_id' => 'product_details_mpn_tr',
@@ -1244,7 +1294,8 @@ HTML
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
-        $fieldset->addField('product_details_mpn_attribute',
+        $fieldset->addField(
+            'product_details_mpn_attribute',
             'hidden',
             [
                 'name' => 'description[product_details][mpn][attribute]',
@@ -1259,7 +1310,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('product_details_include_description',
+        $fieldset->addField(
+            'product_details_include_description',
             self::SELECT,
             [
                 'css_class' => 'product-details-specification',
@@ -1279,7 +1331,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('product_details_include_image',
+        $fieldset->addField(
+            'product_details_include_image',
             self::SELECT,
             [
                 'css_class' => 'product-details-specification',
@@ -1295,14 +1348,16 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_ebay_template_description_form_data_upgrade_tools',
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_template_description_form_data_upgrade_tools',
             [
                 'legend' => $this->__('Upgrade Tools'),
                 'collapsable' => true,
             ]
         );
 
-        $fieldset->addField('upgrade_tools_value_pack',
+        $fieldset->addField(
+            'upgrade_tools_value_pack',
             'checkboxes',
             [
                 'label' => $this->__('Value Pack'),
@@ -1315,7 +1370,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('upgrade_tools_listing_upgrades',
+        $fieldset->addField(
+            'upgrade_tools_listing_upgrades',
             'checkboxes',
             [
                 'label' => $this->__('Listing Upgrades'),
@@ -1331,7 +1387,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('upgrade_tools_highlight',
+        $fieldset->addField(
+            'upgrade_tools_highlight',
             'checkboxes',
             [
                 'label' => '',
@@ -1344,7 +1401,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('gallery_type',
+        $fieldset->addField(
+            'gallery_type',
             self::SELECT,
             [
                 'label' => $this->__('Gallery Type'),
@@ -1364,7 +1422,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('hit_counter',
+        $fieldset->addField(
+            'hit_counter',
             self::SELECT,
             [
                 'label' => $this->__('Hit Counter'),
@@ -1395,7 +1454,7 @@ HTML
             ),
         ]);
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Template\Description'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Template_Description'));
 
         $this->jsTranslator->addTranslations([
             'Adding Image' => $this->__('Adding Image'),
@@ -1450,7 +1509,7 @@ JS
 
         $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_description');
 
-        if (is_null($template)) {
+        if ($template === null) {
             return '';
         }
 
@@ -1461,8 +1520,8 @@ JS
     {
         $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_description');
 
-        if (is_null($template) || is_null($template->getId())) {
-            return array();
+        if ($template === null || $template->getId() === null) {
+            return [];
         }
 
         $data = array_merge($template->getData(), $template->getChildObject()->getData());
@@ -1488,7 +1547,6 @@ JS
         }
 
         if (!empty($data['watermark_settings']) && is_string($data['watermark_settings'])) {
-
             $watermarkSettings = $this->getHelper('Data')->jsonDecode($data['watermark_settings']);
             unset($data['watermark_settings']);
 
@@ -1519,7 +1577,7 @@ JS
 
     public function getDefault()
     {
-        $default = $this->activeRecordFactory->getObject('Ebay\Template\Description')->getDefaultSettings();
+        $default = $this->activeRecordFactory->getObject('Ebay_Template_Description')->getDefaultSettings();
 
         $default['enhancement'] = explode(',', $default['enhancement']);
         $default['product_details'] = $this->getHelper('Data')->jsonDecode($default['product_details']);
@@ -1554,7 +1612,8 @@ JS
             'style' => 'margin-left: 15px;'
         ]);
 
-        $fieldset->addField('custom_inserts_product_attribute',
+        $fieldset->addField(
+            'custom_inserts_product_attribute',
             self::SELECT,
             [
                 'label' => $this->__('Magento Product'),
@@ -1565,7 +1624,7 @@ JS
             ]
         )->addCustomAttribute('apply_to_all_attribute_sets', 0);
 
-        $M2eProAttributes = array(
+        $M2eProAttributes = [
             'title' => $this->__('Title'),
             'subtitle' => $this->__('Subtitle'),
             'condition' => $this->__('Condition'),
@@ -1606,11 +1665,12 @@ JS
             'international_shipping_cost[1]' => $this->__('International Shipping First Cost'),
             'international_shipping_additional_cost[1]' =>
                 $this->__('International Shipping First Additional Cost'),
-        );
+        ];
 
         $button->setData('onclick', 'EbayTemplateDescriptionObj.insertM2eProAttribute()');
 
-        $fieldset->addField('custom_inserts_m2epro_attribute',
+        $fieldset->addField(
+            'custom_inserts_m2epro_attribute',
             'select',
             [
                 'label' => $this->__('M2E Pro'),
@@ -1621,7 +1681,8 @@ JS
 
         $fieldset = $form->addFieldset('product_images', ['legend' => $this->__('Image(s)')]);
 
-        $fieldset->addField('select_attributes_image',
+        $fieldset->addField(
+            'select_attributes_image',
             'select',
             [
                 'label' => $this->__('Insert'),
@@ -1641,7 +1702,8 @@ JS
             $preparedValues[$i] = $i;
         }
 
-        $fieldset->addField('select_attributes_image_order_position',
+        $fieldset->addField(
+            'select_attributes_image_order_position',
             'select',
             [
                 'label' => $this->__('Position'),
@@ -1652,7 +1714,8 @@ JS
 
         $preparedValues[0] = $this->__('All');
 
-        $fieldset->addField('select_attributes_image_count',
+        $fieldset->addField(
+            'select_attributes_image_count',
             'select',
             [
                 'label' => $this->__('Quantity'),
@@ -1661,7 +1724,8 @@ JS
             ]
         );
 
-        $fieldset->addField('display_products_images',
+        $fieldset->addField(
+            'display_products_images',
             'select',
             [
                 'label' => $this->__('Displaying'),
@@ -1679,7 +1743,8 @@ JS
             'class' => 'custom_inserts_images_input M2ePro-required-when-visible validate-digits'
         ])->setForm($form);
 
-        $fieldset->addField('image_width_mode',
+        $fieldset->addField(
+            'image_width_mode',
             'select',
             [
                 'label' => $this->__('Width'),
@@ -1692,7 +1757,7 @@ JS
 <span class="custom_settings hidden">{$this->__('Width')}</span>
 <span class="gallery_view hidden">{$this->__('Main Image Width')}</span>
 HTML
-            ,
+                ,
                 'css_class' => 'products-images-mode-change-label'
             ]
         );
@@ -1703,7 +1768,8 @@ HTML
             'class' => 'custom_inserts_images_input M2ePro-required-when-visible validate-digits'
         ])->setForm($form);
 
-        $fieldset->addField('image_height_mode',
+        $fieldset->addField(
+            'image_height_mode',
             'select',
             [
                 'label' => $this->__('Height'),
@@ -1716,7 +1782,7 @@ HTML
 <span class="custom_settings hidden">{$this->__('Height')}</span>
 <span class="gallery_view hidden">{$this->__('Main Image Height')}</span>
 HTML
-            ,
+                ,
                 'css_class' => 'products-images-mode-change-label'
             ]
         );
@@ -1727,7 +1793,8 @@ HTML
             'class' => 'custom_inserts_images_input M2ePro-required-when-visible validate-digits'
         ])->setForm($form);
 
-        $fieldset->addField('image_margin_mode',
+        $fieldset->addField(
+            'image_margin_mode',
             'select',
             [
                 'label' => $this->__('Margin'),
@@ -1740,7 +1807,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('select_attributes_image_layout',
+        $fieldset->addField(
+            'select_attributes_image_layout',
             'select',
             [
                 'label' => $this->__('Layout'),
@@ -1752,7 +1820,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('gallery_hint_text',
+        $fieldset->addField(
+            'gallery_hint_text',
             'textarea',
             [
                 'label' => $this->__('Gallery Hint'),
@@ -1761,7 +1830,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('image_insertion_watermark_mode',
+        $fieldset->addField(
+            'image_insertion_watermark_mode',
             'select',
             [
                 'container_id' => 'products_images_watermark_mode',
@@ -1773,7 +1843,8 @@ HTML
             ]
         );
 
-        $fieldset->addField($this->mathRandom->getUniqueHash('id_'),
+        $fieldset->addField(
+            $this->mathRandom->getUniqueHash('id_'),
             'button',
             [
                 'label' => '',
@@ -1796,7 +1867,8 @@ HTML;
 
         $fieldset = $form->addFieldset('description_preview_fieldset', ['legend' => '']);
 
-        $fieldset->addField('description_preview_help_block',
+        $fieldset->addField(
+            'description_preview_help_block',
             self::HELP_BLOCK,
             [
                 'content' => $this->__('
@@ -1807,8 +1879,7 @@ HTML;
                     eBay basing on the settings you specified.<br />
 
                     Also, you can press a <strong>Select Randomly</strong> button to allow M2E Pro to automatically
-                    select the most suitable Product for its previewing.'
-                )
+                    select the most suitable Product for its previewing.')
             ]
         );
 
@@ -1819,7 +1890,8 @@ HTML;
             'style' => 'margin-left: 25px'
         ]);
 
-        $fieldset->addField('description_preview_magento_product_id',
+        $fieldset->addField(
+            'description_preview_magento_product_id',
             'text',
             [
                 'label' => $this->__('Magento Product ID'),
@@ -1831,7 +1903,8 @@ HTML;
             ]
         );
 
-        $fieldset->addField('description_preview_store_id',
+        $fieldset->addField(
+            'description_preview_store_id',
             self::STORE_SWITCHER,
             [
                 'label' => $this->__('Store View'),

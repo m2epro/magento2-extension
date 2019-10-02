@@ -1,3 +1,65 @@
+* 1.4.2 (r3104) (24/09/2019)
+
+* Common: [Added] Migration from 6.5.6 to 1.4.2
+* Common: [Fixed] Error while saving shipment with a tracking number on 2.2.8
+* Common: [Fixed] Attributes dropdown does not contain all appropriate Magento attributes
+* Common: [Fixed] Magento Order was not created. Reason: Notice: Array to string conversion in magento/framework/Model/AbstractModel.php
+* Common: [Fixed] Changes for Variational Products (child) are not tracked if new Source was added or so on (MSI)
+* Common: [Fixed] Incorrect supported serialize "Additional Data" after 2.2.0-RC1.1 version
+* Common: [Fixed] Magento MSI issues
+* Common: [Fixed] Shipment was not created. Reason: Source item not found by source code: default and sku: %sku%
+* Common: [Fixed] SQLSTATE[42S22]: Column not found: 1054 Unknown column 'min_online_price' in 'having clause'
+* Common: [Fixed] Incorrect behavior when trying to Add New Listing on Move product
+* Common: [Fixed] Skipped manual Revise of Simple Product
+* Common: [Fixed] Channel order URL does not work in the payment information of Magento order
+* eBay: [Fixed] Errors are not displayed when trying to link an eBay account on Wizard
+* Amazon: [Fixed] It is possible to Assign Description Policy when it should be disabled
+* Amazon: [Fixed] Error message "Warning: Invalid argument supplied for foreach() in Model/Listing/Product/PriceCalculator.php on any action in some cases.
+* Amazon: [Fixed] Notice: Undefined index: county in Order/Edit/ShippingAddress/Form.php
+* Amazon  [Fixed] Selected specifics are not saved in the Description policy
+* Walmart: [Fixed] Partially shipped order
+* Walmart: [Fixed] "Create a New One Attribute" does not work for Promotions (Selling Policy)
+* Walmart: [Fixed] Add Advanced Conditions to List, Relist and Stop Rules in Synchronization Policy
+* Walmart: [Fixed] Channel changes are not tracked (listing product synchronization)
+* Walmart: [Fixed] All products change status to "Inactive (Blocked)" on unauthorized error
+* Walmart: [Fixed] Could not update account credentials
+* Walmart: [Fixed] Filter works incorrectly (add filter by consumer_id)
+* Walmart: [Fixed] Customer ID for Predefined Customer is not displayed before saving an account
+* Walmart: [Fixed] Fatal error "Table walmart_indexer_listing_product_variation_parent is not found"
+* Walmart: [Fixed] Fatal Error: Undefined constant 'Ess\M2ePro\Helper\Component\Walmart'
+* Walmart: [Fixed]  "Inactive Blocked" item cannot be reset
+* Walmart: [Fixed] Walmart orders are not imported after migration
+* Walmart: [Fixed] Walmart item is not created on List action
+* Walmart: [Fixed] Notice: Undefined index: county in Order/Edit/ShippingAddress/Form.php
+* Walmart: [Fixed] Description Policy can't be changed on Edit Settings page
+* Walmart  [Fixed] It is possible to set a Selling Policy with for US marketplace in CA listing
+* Walmart: [Improved] Receiving order updates
+* Walmart: [Improved] SKU is not updated on Revise Сhannel item
+* Walmart: [Improved] Ability to send lag time in the separate feed for the US Marketplace
+
+* 1.4.1 (r2954) (10/06/2019)
+
+* Common: [Added] Migration from 6.5.5 to 1.4.1
+* Common: [Improved] Implement Multi-Source Inventory compatibility
+* Common: [Fixed] Incorrect Memory Limit value is shown in System Requirements
+* Common: [Fixed] Compatibility fixes for Magento version ~2.1 + php ~5.6
+* Common: [Fixed] JS error on Update All Now in Marketplaces
+* Common: [Fixed] List of Interface problems
+* Common: [Fixed] "Back" button works incorrectly after creation an account
+* Amazon: [Fixed] "The quantities you provided for order id (%order_id%) were larger than the quantities that could be fulfilled." error on Order status update in some cases.
+* eBay: [Fixed] Order receiving stuck in some cases.
+* eBay: [Fixed] Selected Attribute is skipped after Policy was saved
+* Walmart: [Fixed] Category is not required field
+* Walmart: [Fixed] Route "walmart_listing_product/variationReset" not found on click "Manage Variations"
+* Walmart: [Fixed] Missing "component_mode" column in walmart_indexer_listing_product_variation_parent table after update
+* Walmart: [Fixed] Exception when try to create New Listing during Move action
+* Walmart: [Fixed] Impossibly fix Inactive Blocked item
+* Walmart: [Fixed] Impossibly add New Child to Parent/Child Product
+* Walmart: [Fixed] Exception when try to use Advanced Filter by Walmart Values
+* Walmart: [Fixed] Impossibly performs the Stop on Channel / Remove from Listing Action for Not Listed item (both Simple and Child)
+* Walmart: [Fixed] Extra button when creating a new listing on Moving eBay Items
+* Walmart: [Fixed] Extra block is shown on Amazon Listing Search Settings
+
 * 1.4.0 (r2890) (07/05/2019)
 
 * Common: [Added] Implement Multi-Source Inventory compatibility

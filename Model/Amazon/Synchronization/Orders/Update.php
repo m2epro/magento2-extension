@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders;
 
+/**
+ * Class Update
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders
+ */
 class Update extends AbstractModel
 {
     //########################################
@@ -69,11 +73,8 @@ class Update extends AbstractModel
             // ---------------------------------------
 
             try {
-
                 $this->processAccount($account);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Update" Action for Amazon Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -121,12 +122,12 @@ class Update extends AbstractModel
             ->incrementAttemptCount(array_keys($relatedChanges));
 
         /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
 
         foreach ($relatedChanges as $change) {
             $changeParams = $change->getParams();
 
-            $connectorData = array(
+            $connectorData = [
                 'order_id'         => $change->getOrderId(),
                 'change_id'        => $change->getId(),
                 'amazon_order_id'  => $changeParams['amazon_order_id'],
@@ -136,11 +137,11 @@ class Update extends AbstractModel
                 'fulfillment_date' => $changeParams['fulfillment_date'],
                 'shipping_method'  => isset($changeParams['shipping_method']) ? $changeParams['shipping_method'] : null,
                 'items'            => $changeParams['items']
-            );
+            ];
 
             $connectorObj = $dispatcherObject->getCustomConnector(
-                'Amazon\Synchronization\Orders\Update\Requester',
-                array('order' => $connectorData),
+                'Amazon_Synchronization_Orders_Update_Requester',
+                ['order' => $connectorData],
                 $account
             );
             $dispatcherObject->process($connectorObj);
@@ -160,7 +161,7 @@ class Update extends AbstractModel
         $changesCollection->addProcessingAttemptDateFilter();
         $changesCollection->addFieldToFilter('component', \Ess\M2ePro\Helper\Component\Amazon::NICK);
         $changesCollection->addFieldToFilter('action', \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING);
-        $changesCollection->getSelect()->group(array('order_id'));
+        $changesCollection->getSelect()->group(['order_id']);
 
         return $changesCollection->getItems();
     }
@@ -171,8 +172,8 @@ class Update extends AbstractModel
     {
         $this->activeRecordFactory->getObject('Order\Change')->getResource()
             ->deleteByProcessingAttemptCount(
-               \Ess\M2ePro\Model\Order\Change::MAX_ALLOWED_PROCESSING_ATTEMPTS,
-               \Ess\M2ePro\Helper\Component\Amazon::NICK
+                \Ess\M2ePro\Model\Order\Change::MAX_ALLOWED_PROCESSING_ATTEMPTS,
+                \Ess\M2ePro\Helper\Component\Amazon::NICK
             );
     }
 

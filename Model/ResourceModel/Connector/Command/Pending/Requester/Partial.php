@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Connector\Command\Pending\Requester;
 
+/**
+ * Class Partial
+ * @package Ess\M2ePro\Model\ResourceModel\Connector\Command\Pending\Requester
+ */
 class Partial extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     // ########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Synchronization\Log;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Synchronization\Log
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     //########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request;
 
+/**
+ * Class Shipping
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request
+ */
 class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\AbstractModel
 {
     const SHIPPING_TYPE_FLAT       = 'flat';
@@ -25,9 +29,9 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Shipping
      */
-    private $shippingTemplate = NULL;
+    private $shippingTemplate = null;
 
-    private $calculatedShippingData = NULL;
+    private $calculatedShippingData = null;
 
     //########################################
 
@@ -36,19 +40,17 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
      */
     public function getRequestData()
     {
-        $data = array();
+        $data = [];
 
         if ($this->getConfigurator()->isGeneralAllowed()) {
-
-            $data = array(
+            $data = [
                 'country' => $this->getShippingSource()->getCountry(),
                 'address' => $this->getShippingSource()->getAddress(),
                 'postal_code' => $this->getShippingSource()->getPostalCode()
-            );
+            ];
 
             if ($this->getShippingTemplate()->isLocalShippingFlatEnabled() ||
                 $this->getShippingTemplate()->isLocalShippingCalculatedEnabled()) {
-
                 $data['dispatch_time'] = $this->getEbayListingProduct()->getShippingTemplate()->getDispatchTime();
 
                 // there are permissions by marketplace (interface management)
@@ -57,13 +59,13 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
                 // there are permissions by marketplace (interface management)
                 if ($this->getShippingTemplate()->isCrossBorderTradeNorthAmerica()) {
                     $data['cross_border_trade'] = self::CROSS_BORDER_TRADE_NORTH_AMERICA;
-                } else if ($this->getShippingTemplate()->isCrossBorderTradeUnitedKingdom()) {
+                } elseif ($this->getShippingTemplate()->isCrossBorderTradeUnitedKingdom()) {
                     $data['cross_border_trade'] = self::CROSS_BORDER_TRADE_UNITED_KINGDOM;
                 } else {
                     $data['cross_border_trade'] = self::CROSS_BORDER_TRADE_NONE;
                 }
 
-                $data['excluded_locations'] = array();
+                $data['excluded_locations'] = [];
                 foreach ($this->getShippingTemplate()->getExcludedLocations() as $location) {
                     $data['excluded_locations'][] = $location['code'];
                 }
@@ -74,14 +76,13 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
         }
 
         if ($this->getConfigurator()->isShippingServicesAllowed()) {
-
             $data = array_merge(
                 $data,
                 $this->getShippingData()
             );
         }
 
-        return empty($data) ? array() : array('shipping' => $data);
+        return empty($data) ? [] : ['shipping' => $data];
     }
 
     //########################################
@@ -91,7 +92,7 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
      */
     public function getShippingData()
     {
-        $shippingData = array();
+        $shippingData = [];
 
         $shippingData['local'] = $this->getLocalShippingData();
 
@@ -106,7 +107,6 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
 
         if ($this->getShippingTemplate()->isInternationalShippingFlatEnabled() ||
             $this->getShippingTemplate()->isInternationalShippingCalculatedEnabled()) {
-
             $shippingData['international'] = $this->getInternationalShippingData();
 
             if ($this->getShippingTemplate()->isInternationalShippingCalculatedEnabled()) {
@@ -117,12 +117,10 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
         }
 
         if (!isset($shippingData['calculated'])) {
-
             if (($this->getShippingTemplate()->isLocalShippingFlatEnabled() &&
                  $this->getShippingTemplate()->isLocalShippingRateTableEnabled()) ||
                 ($this->getShippingTemplate()->isInternationalShippingFlatEnabled() &&
                  $this->getShippingTemplate()->isInternationalShippingRateTableEnabled())) {
-
                 $calculatedData = $this->getCalculatedData();
                 unset($calculatedData['package_size']);
                 unset($calculatedData['dimensions']);
@@ -144,19 +142,19 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
      */
     public function getCalculatedData()
     {
-        if (!is_null($this->calculatedShippingData)) {
+        if ($this->calculatedShippingData !== null) {
             return $this->calculatedShippingData;
         }
 
-        if (is_null($this->getCalculatedShippingTemplate())) {
-            return array();
+        if ($this->getCalculatedShippingTemplate() === null) {
+            return [];
         }
 
-        $data = array(
+        $data = [
             'package_size' => $this->getCalculatedShippingSource()->getPackageSize(),
             'dimensions'   => $this->getCalculatedShippingSource()->getDimension(),
             'weight'       => $this->getCalculatedShippingSource()->getWeight()
-        );
+        ];
 
         switch ($this->getCalculatedShippingTemplate()->getMeasurementSystem()) {
             case \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated::MEASUREMENT_SYSTEM_ENGLISH:
@@ -178,9 +176,9 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
      */
     public function getLocalShippingData()
     {
-        $data = array(
+        $data = [
             'type' => $this->getLocalType()
-        );
+        ];
 
         if ($this->getEbayMarketplace()->isInStorePickupEnabled() &&
             $this->getEbayAccount()->isPickupStoreEnabled()
@@ -200,7 +198,6 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
                                             );
 
         if ($this->getShippingTemplate()->isLocalShippingFlatEnabled()) {
-
             // there are permissions by marketplace (interface management)
             $data['rate_table_enabled'] = $this->getShippingTemplate()->isLocalShippingRateTableEnabled();
 
@@ -240,22 +237,21 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
 
     private function getLocalServices()
     {
-        $services = array();
+        $services = [];
 
         foreach ($this->getShippingTemplate()->getServices(true) as $service) {
 
             /** @var $service \Ess\M2ePro\Model\Ebay\Template\Shipping\Service */
 
             if (!$service->isShippingTypeLocal()) {
-               continue;
+                continue;
             }
 
-            $tempDataMethod = array(
+            $tempDataMethod = [
                 'service' => $service->getShippingValue()
-            );
+            ];
 
             if ($this->getShippingTemplate()->isLocalShippingFlatEnabled()) {
-
                 $store = $this->getListing()->getStoreId();
                 $tempDataMethod['cost'] = $service->getSource($this->getMagentoProduct())
                                                   ->getCost($store);
@@ -264,11 +260,10 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
                                                              ->getCostAdditional($store);
 
                 if (!$this->getShippingTemplate()->isLocalShippingRateTableEnabled() &&
-                    in_array($this->getShippingTemplate()->getMarketplaceId(), array(
+                    in_array($this->getShippingTemplate()->getMarketplaceId(), [
                        \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_US,
                        \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_MOTORS,
-                    )) && preg_match('/(FedEx|UPS)/', $service->getShippingValue())) {
-
+                    ]) && preg_match('/(FedEx|UPS)/', $service->getShippingValue())) {
                     $tempDataMethod['cost_surcharge'] = $service->getSource($this->getMagentoProduct())
                                                                 ->getCostSurcharge($store);
                 }
@@ -292,9 +287,9 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
      */
     public function getInternationalShippingData()
     {
-        $data = array(
+        $data = [
             'type' => $this->getInternationalType()
-        );
+        ];
 
         $data['discount_enabled'] = $this->getShippingTemplate()->isInternationalShippingDiscountEnabled();
         $data['discount_profile_id'] = $this->getShippingTemplate()
@@ -333,23 +328,22 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
 
     private function getInternationalServices()
     {
-        $services = array();
+        $services = [];
 
         foreach ($this->getShippingTemplate()->getServices(true) as $service) {
 
             /** @var $service \Ess\M2ePro\Model\Ebay\Template\Shipping\Service */
 
             if (!$service->isShippingTypeInternational()) {
-               continue;
+                continue;
             }
 
-            $tempDataMethod = array(
+            $tempDataMethod = [
                 'service' => $service->getShippingValue(),
                 'locations' => $service->getLocations()
-            );
+            ];
 
             if ($this->getShippingTemplate()->isInternationalShippingFlatEnabled()) {
-
                 $store = $this->getListing()->getStoreId();
                 $tempDataMethod['cost'] = $service->getSource($this->getMagentoProduct())
                                                   ->getCost($store);
@@ -392,7 +386,7 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
      */
     private function getShippingTemplate()
     {
-        if (is_null($this->shippingTemplate)) {
+        if ($this->shippingTemplate === null) {
             $this->shippingTemplate = $this->getEbayListingProduct()->getShippingTemplate();
         }
 
@@ -404,7 +398,9 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
      */
     private function getShippingSource()
     {
-        if (!is_null($shippingTemplate = $this->getShippingTemplate())) {
+        $shippingTemplate = $this->getShippingTemplate();
+
+        if ($shippingTemplate !== null) {
             return $shippingTemplate->getSource($this->getMagentoProduct());
         }
 
@@ -426,7 +422,9 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
      */
     private function getCalculatedShippingSource()
     {
-        if (!is_null($calculatedShipping = $this->getCalculatedShippingTemplate())) {
+        $calculatedShipping = $this->getCalculatedShippingTemplate();
+
+        if ($calculatedShipping !== null) {
             return $calculatedShipping->getSource($this->getMagentoProduct());
         }
 

@@ -1,9 +1,17 @@
 <?php
-    /** @var $block \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Vocabulary */
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
 
-    $data = $this->prepareData();
-    $localVocabulary = $data['local_vocabulary'];
-    $fixedAttributes = $data['fixed_attributes'];
+// @codingStandardsIgnoreFile
+
+/** @var $block \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Vocabulary */
+
+$data = $block->prepareData();
+$localVocabulary = $data['local_vocabulary'];
+$fixedAttributes = $data['fixed_attributes'];
 ?>
 
 <?php echo $block->createBlock('HelpBlock')->setData([
@@ -15,8 +23,7 @@
         Please, note that the selected Value is a Global Setting for all of the Products. Thus, the Option will be applied to all of the Products.</li>
         <li><strong>Saved Attributes and Options</strong> — this Setting will allow browsing/removing saved Attributes and Options.<br/>
         Please, note that the list of the saved Attributes and Options contains all of the ever saved associations related to the combination of the particular Magento Variational Attributes and Walmart Variational Attributes.</li>
-        </ul>'
-    )
+        </ul>')
 ])->toHtml() ?>
 
 <form id="auto_action_settings_form" action="javascript:void(0);">
@@ -73,29 +80,29 @@
             </thead>
 
         <?php
-            foreach ($localVocabulary as $magentoAttribute => $walmartAttributes) {
-                foreach ($walmartAttributes as $walmartAttribute => $magentoOptions) {
-        ?>
+        foreach ($localVocabulary as $magentoAttribute => $walmartAttributes) {
+            foreach ($walmartAttributes as $walmartAttribute => $magentoOptions) {
+                ?>
 
             <tr class="matched-attributes-pair">
                 <td class="label" style="padding: 1rem 0 0 1rem !important; border-right: 1px solid #D6D6D6 !important;">
-                    <?php echo $magentoAttribute ?>
+                <?php echo $magentoAttribute ?>
                 </td>
                 <td class="value" style="padding: 1rem 0 0 1rem !important;">
                     <div class="magento-attribute-name" style="display: none;"><?php echo $magentoAttribute; ?></div>
                     <div class="channel-attribute-name" style="display: none;"><?php echo $walmartAttribute; ?></div>
                     <span><?php echo $walmartAttribute ?></span>&nbsp;
-                    <?php if (empty($fixedAttributes[$magentoAttribute]) || !in_array($walmartAttribute, $fixedAttributes[$magentoAttribute])) { ?>
+                <?php if (empty($fixedAttributes[$magentoAttribute]) || !in_array($walmartAttribute, $fixedAttributes[$magentoAttribute])) { ?>
                     <a title="<?php echo $block->__('Remove') ?>"
                        href="javascript:void(0)"
                        class="walmart-listing-view-icon walmart-listing-view-remove"
                        onclick="ListingGridHandlerObj.variationProductManageHandler.removeAttributeFromVocabulary(this);">
                     </a>
-                    <?php } ?>
+                <?php } ?>
                 </td>
             </tr>
 
-        <?php foreach ($magentoOptions as $magentoOption => $walmartOptions) { ?>
+                <?php foreach ($magentoOptions as $magentoOption => $walmartOptions) { ?>
 
             <tr class="magento-attribute-options">
                 <td class="label" style="padding: 1rem 0 0 1rem !important; border-right: 1px solid #D6D6D6 !important;">
@@ -111,9 +118,9 @@
                             <div class="product-options-group" style="display: none;"><?php echo $block->getHelper('Data')->escapeHtml($block->getHelper('Data')->jsonEncode($walmartOptionsGroup)) ?></div>
                             <div class="channel-attribute-name" style="display: none;"><?php echo $walmartAttribute ?></div>
                             <?php
-                                if(($key = array_search($magentoOption, $walmartOptionsGroup)) !== false) {
-                                    unset($walmartOptionsGroup[$key]);
-                                }
+                            if (($key = array_search($magentoOption, $walmartOptionsGroup)) !== false) {
+                                unset($walmartOptionsGroup[$key]);
+                            }
                             ?>
                             <span><?php echo implode(', ', $walmartOptionsGroup) ?></span>&nbsp;
                             <a title="<?php echo $block->__('Remove') ?>"
@@ -129,10 +136,10 @@
                 </td>
             </tr>
 
-        <?php
-                    }
+                    <?php
                 }
             }
+        }
         ?>
         </table>
 

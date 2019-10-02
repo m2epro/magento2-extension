@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category
+ */
 class Edit extends Category
 {
     //########################################
@@ -18,7 +22,7 @@ class Edit extends Category
     {
         /** @var \Ess\M2ePro\Model\Walmart\Template\Category $templateModel */
         $id = $this->getRequest()->getParam('id');
-        $templateModel = $this->activeRecordFactory->getObject('Walmart\Template\Category');
+        $templateModel = $this->activeRecordFactory->getObject('Walmart_Template_Category');
 
         if ($id) {
             $templateModel->load($id);
@@ -33,12 +37,13 @@ class Edit extends Category
 
         $this->getHelper('Data\GlobalData')->setValue('tmp_template', $templateModel);
 
-        $this->addContent($this->createBlock('Walmart\Template\Category\Edit'));
+        $this->addContent($this->createBlock('Walmart_Template_Category_Edit'));
 
         if ($templateModel->getId()) {
             $headerText = $this->__("Edit Category Policy");
             $headerText .= ' "'.$this->getHelper('Data')->escapeHtml(
-                                $templateModel->getTitle()).'"';
+                $templateModel->getTitle()
+            ).'"';
         } else {
             $headerText = $this->__("Add Category Policy");
         }

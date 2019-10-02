@@ -10,12 +10,16 @@ namespace Ess\M2ePro\Block\Adminhtml\Template;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class Messages
+ * @package Ess\M2ePro\Block\Adminhtml\Template
+ */
 class Messages extends AbstractBlock
 {
     const TYPE_ATTRIBUTES_AVAILABILITY = 'attributes_availability';
 
-    protected $templateNick = NULL;
-    protected $componentMode = NULL;
+    protected $templateNick = null;
+    protected $componentMode = null;
 
     //########################################
 
@@ -24,20 +28,19 @@ class Messages extends AbstractBlock
         $block = $this;
 
         switch ($templateNick) {
-
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING:
-
                 $isPriceConvertEnabled = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/magento/attribute/', 'price_type_converting'
+                    '/magento/attribute/',
+                    'price_type_converting'
                 );
 
                 if ($isPriceConvertEnabled && $componentMode == \Ess\M2ePro\Helper\Component\Ebay::NICK) {
-                    $block = $this->createBlock('Ebay\Template\Shipping\Messages');
+                    $block = $this->createBlock('Ebay_Template_Shipping_Messages');
                 }
                 break;
 
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT:
-                $block = $this->createBlock('Template\SellingFormat\Messages');
+                $block = $this->createBlock('Template_SellingFormat_Messages');
                 break;
         }
 
@@ -51,10 +54,12 @@ class Messages extends AbstractBlock
 
     public function getMessages()
     {
-        $messages = array();
+        $messages = [];
 
         // ---------------------------------------
-        if (!is_null($message = $this->getAttributesAvailabilityMessage())) {
+        $message = $this->getAttributesAvailabilityMessage();
+
+        if ($message !== null) {
             $messages[self::TYPE_ATTRIBUTES_AVAILABILITY] = $message;
         }
         // ---------------------------------------
@@ -64,7 +69,7 @@ class Messages extends AbstractBlock
 
     //########################################
 
-    public function getMessagesHtml(array $messages = array())
+    public function getMessagesHtml(array $messages = [])
     {
         if (empty($messages)) {
             $messages = $this->getMessages();
@@ -74,7 +79,7 @@ class Messages extends AbstractBlock
             return '';
         }
 
-        $messagesBlock = $this->getLayout()->createBlock('Magento\Framework\View\Element\Messages');
+        $messagesBlock = $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class);
 
         $first = true;
         foreach ($messages as $messageType => $messageText) {
@@ -99,7 +104,7 @@ HTML;
     public function getAttributesAvailabilityMessage()
     {
         if (!$this->canDisplayAttributesAvailabilityMessage()) {
-            return NULL;
+            return null;
         }
 
         $productIds = $this->activeRecordFactory->getObject('Listing\Product')->getResource()
@@ -108,21 +113,18 @@ HTML;
             ->getSetsFromProductsWhichLacksAttributes($this->getUsedAttributes(), $productIds);
 
         if (count($attributeSets) == 0) {
-            return NULL;
+            return null;
         }
 
         $attributeSetsNames = $this->getHelper('Magento\AttributeSet')->getNames($attributeSets);
 
-        // M2ePro_TRANSLATIONS
-        // Some attributes which are used in this Policy were not found in Products Settings. Please, check if all of them are in [%set_name%] Attribute Set(s) as it can cause List, Revise or Relist issues.
         return
             $this->__(
                 'Some Attributes which are used in this Policy were not found in Products Settings.'
                 . ' Please, check if all of them are in [%set_name%] Attribute Set(s)'
-                . ' as it can cause List, Revise or Relist issues.'
-            ,
-            implode('", "', $attributeSetsNames)
-        );
+                . ' as it can cause List, Revise or Relist issues.',
+                implode('", "', $attributeSetsNames)
+            );
     }
 
     //########################################
@@ -133,7 +135,7 @@ HTML;
     public function getMarketplace()
     {
         if (!isset($this->_data['marketplace_id'])) {
-            return NULL;
+            return null;
         }
 
         return $this->parentFactory->getCachedObjectLoaded(
@@ -151,7 +153,7 @@ HTML;
     public function getStore()
     {
         if (!isset($this->_data['store_id'])) {
-            return NULL;
+            return null;
         }
 
         return $this->_storeManager->getStore((int)$this->_data['store_id']);
@@ -167,7 +169,7 @@ HTML;
 
     public function getTemplateNick()
     {
-        if (is_null($this->templateNick)) {
+        if ($this->templateNick) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Policy nick is not set.');
         }
 
@@ -184,7 +186,7 @@ HTML;
 
     public function getComponentMode()
     {
-        if (is_null($this->componentMode)) {
+        if ($this->componentMode === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Component Mode is not set.');
         }
 
@@ -206,7 +208,7 @@ HTML;
 
     protected function getUsedAttributes()
     {
-        return isset($this->_data['used_attributes']) ? $this->_data['used_attributes'] : array();
+        return isset($this->_data['used_attributes']) ? $this->_data['used_attributes'] : [];
     }
 
     //########################################
@@ -216,7 +218,7 @@ HTML;
         $listingProductIds = $this->getRequest()->getParam('listing_product_ids', '');
         $listingProductIds = explode(',', $listingProductIds);
 
-        return $listingProductIds ? $listingProductIds : array();
+        return $listingProductIds ? $listingProductIds : [];
     }
 
     //########################################
@@ -227,7 +229,7 @@ HTML;
             return false;
         }
 
-        if (is_null($this->componentMode) || $this->componentMode != \Ess\M2ePro\Helper\Component\Ebay::NICK) {
+        if ($this->componentMode === null || $this->componentMode != \Ess\M2ePro\Helper\Component\Ebay::NICK) {
             return false;
         }
 

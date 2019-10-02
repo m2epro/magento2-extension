@@ -12,7 +12,6 @@ namespace Ess\M2ePro\Model\Walmart\Template;
  * @method \Ess\M2ePro\Model\Template\Synchronization getParentObject()
  * @method \Ess\M2ePro\Model\ResourceModel\Walmart\Template\Synchronization getResource()
  */
-
 class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     const LIST_MODE_NONE = 0;
@@ -79,6 +78,13 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
     const STOP_QTY_BETWEEN = 2;
     const STOP_QTY_MORE = 3;
 
+    const ADVANCED_RULES_MODE_NONE = 0;
+    const ADVANCED_RULES_MODE_YES  = 1;
+
+    const LIST_ADVANCED_RULES_PREFIX   = 'walmart_template_synchronization_list_advanced_rules';
+    const RELIST_ADVANCED_RULES_PREFIX = 'walmart_template_synchronization_relist_advanced_rules';
+    const STOP_ADVANCED_RULES_PREFIX   = 'walmart_template_synchronization_stop_advanced_rules';
+
     //########################################
 
     public function _construct()
@@ -113,7 +119,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getListings($asObjects = false, array $filters = array())
+    public function getListings($asObjects = false, array $filters = [])
     {
         return $this->getRelatedComponentItems('Listing', 'template_synchronization_id', $asObjects, $filters);
     }
@@ -158,6 +164,15 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
     public function isListWhenQtyCalculatedHasValue()
     {
         return $this->getData('list_qty_calculated') != self::LIST_QTY_NONE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isListAdvancedRulesEnabled()
+    {
+        return $this->getData('list_advanced_rules_mode') != self::ADVANCED_RULES_MODE_NONE &&
+            !empty($this->getListAdvancedRulesFilters());
     }
 
     // ---------------------------------------
@@ -330,6 +345,15 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
         return $this->getData('relist_qty_calculated') != self::RELIST_QTY_NONE;
     }
 
+    /**
+     * @return bool
+     */
+    public function isRelistAdvancedRulesEnabled()
+    {
+        return $this->getData('relist_advanced_rules_mode') != self::ADVANCED_RULES_MODE_NONE &&
+            !empty($this->getRelistAdvancedRulesFilters());
+    }
+
     // ---------------------------------------
 
     /**
@@ -372,6 +396,15 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
         return $this->getData('stop_qty_calculated') != self::STOP_QTY_NONE;
     }
 
+    /**
+     * @return bool
+     */
+    public function isStopAdvancedRulesEnabled()
+    {
+        return $this->getData('stop_advanced_rules_mode') != self::ADVANCED_RULES_MODE_NONE &&
+            !empty($this->getStopAdvancedRulesFilters());
+    }
+
     //########################################
 
     public function getListWhenQtyMagentoHasValueType()
@@ -404,6 +437,13 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
     public function getListWhenQtyCalculatedHasValueMax()
     {
         return $this->getData('list_qty_calculated_value_max');
+    }
+
+    // ---------------------------------------
+
+    public function getListAdvancedRulesFilters()
+    {
+        return $this->getData('list_advanced_rules_filters');
     }
 
     // ---------------------------------------
@@ -442,6 +482,13 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
 
     // ---------------------------------------
 
+    public function getRelistAdvancedRulesFilters()
+    {
+        return $this->getData('relist_advanced_rules_filters');
+    }
+
+    // ---------------------------------------
+
     public function getStopWhenQtyMagentoHasValueType()
     {
         return $this->getData('stop_qty_magento');
@@ -472,6 +519,13 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
     public function getStopWhenQtyCalculatedHasValueMax()
     {
         return $this->getData('stop_qty_calculated_value_max');
+    }
+
+    // ---------------------------------------
+
+    public function getStopAdvancedRulesFilters()
+    {
+        return $this->getData('stop_advanced_rules_filters');
     }
 
     //########################################

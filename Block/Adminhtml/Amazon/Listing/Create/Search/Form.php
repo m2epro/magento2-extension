@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Search;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Listing;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Search
+ */
 class Form extends AbstractForm
 {
     protected $sessionKey = 'amazon_listing_create';
@@ -29,8 +33,7 @@ class Form extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -52,9 +55,9 @@ class Form extends AbstractForm
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
 
-        $attributesByTypes = array(
-            'text' => $magentoAttributeHelper->filterByInputTypes($this->getData('general_attributes'), array('text'))
-        );
+        $attributesByTypes = [
+            'text' => $magentoAttributeHelper->filterByInputTypes($this->getData('general_attributes'), ['text'])
+        ];
         $formData = $this->getListingData();
 
         // Identifiers Settings
@@ -79,9 +82,9 @@ class Form extends AbstractForm
 
         if ($formData['general_id_mode'] == \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE &&
             !$magentoAttributeHelper->isExistInAttributesArray(
-                $formData['general_id_custom_attribute'], $attributesByTypes['text']
+                $formData['general_id_custom_attribute'],
+                $attributesByTypes['text']
             ) && $formData['general_id_custom_attribute'] != '') {
-
             $attrs = [
                 'attribute_code' => $formData['general_id_custom_attribute'],
                 'selected' => 'selected'
@@ -96,8 +99,7 @@ class Form extends AbstractForm
 
         foreach ($attributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['general_id_mode'] == \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE
+            if ($formData['general_id_mode'] == \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['general_id_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -148,9 +150,9 @@ class Form extends AbstractForm
 
         if ($formData['worldwide_id_mode'] == \Ess\M2ePro\Model\Amazon\Listing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE &&
             !$magentoAttributeHelper->isExistInAttributesArray(
-                $formData['worldwide_id_custom_attribute'], $attributesByTypes['text']
+                $formData['worldwide_id_custom_attribute'],
+                $attributesByTypes['text']
             ) && $formData['worldwide_id_custom_attribute'] != '') {
-
             $attrs = [
                 'attribute_code' => $formData['worldwide_id_custom_attribute'],
                 'selected' => 'selected'
@@ -165,8 +167,7 @@ class Form extends AbstractForm
 
         foreach ($attributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['worldwide_id_mode'] == \Ess\M2ePro\Model\Amazon\Listing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE
+            if ($formData['worldwide_id_mode'] == \Ess\M2ePro\Model\Amazon\Listing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['worldwide_id_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -251,7 +252,7 @@ class Form extends AbstractForm
             $this->getHelper('Magento\Attribute')->getGeneralFromAllAttributeSets()
         );
 
-        foreach ($data as $key=>$value) {
+        foreach ($data as $key => $value) {
             $this->setData($key, $value);
         }
         // ---------------------------------------
@@ -277,7 +278,8 @@ class Form extends AbstractForm
 CSS
         );
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Listing'));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Model\Amazon\Listing::class));
 
         $this->js->add(<<<JS
 require([
@@ -300,7 +302,7 @@ JS
 
     public function getDefaultFieldsValues()
     {
-        return array(
+        return [
             'general_id_mode' => \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_NOT_SET,
             'general_id_custom_attribute' => '',
 
@@ -308,14 +310,14 @@ JS
             'worldwide_id_custom_attribute' => '',
 
             'search_by_magento_title_mode' => \Ess\M2ePro\Model\Amazon\Listing::SEARCH_BY_MAGENTO_TITLE_MODE_NONE
-        );
+        ];
     }
 
     //########################################
 
     protected function getListingData()
     {
-        if (!is_null($this->getRequest()->getParam('id'))) {
+        if ($this->getRequest()->getParam('id') !== null) {
             $data = array_merge($this->getListing()->getData(), $this->getListing()->getChildObject()->getData());
         } else {
             $data = $this->getHelper('Data\Session')->getValue($this->sessionKey);
@@ -333,7 +335,7 @@ JS
             throw new \Ess\M2ePro\Model\Exception('Listing is not defined');
         }
 
-        if (is_null($this->listing)) {
+        if ($this->listing === null) {
             $this->listing = $this->amazonFactory->getCachedObjectLoaded('Listing', $listingId);
         }
 

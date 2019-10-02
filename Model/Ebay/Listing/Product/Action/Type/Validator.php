@@ -11,25 +11,29 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type;
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator;
 
+/**
+ * Class Validator
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type
+ */
 abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
      * @var array
      */
-    private $params = array();
+    private $params = [];
 
     /** @var Configurator $configurator */
-    private $configurator = NULL;
+    private $configurator = null;
 
     /**
      * @var array
      */
-    private $messages = array();
+    private $messages = [];
 
     /**
      * @var \Ess\M2ePro\Model\Listing\Product
      */
-    private $listingProduct = NULL;
+    private $listingProduct = null;
 
     //########################################
 
@@ -97,10 +101,10 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     protected function addMessage($message, $type = Message::TYPE_ERROR)
     {
-        $this->messages[] = array(
+        $this->messages[] = [
             'text' => $message,
             'type' => $type,
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -190,7 +194,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     protected function validateCategory()
     {
         if (!$this->getEbayListingProduct()->isSetCategoryTemplate()) {
-
             // M2ePro\TRANSLATIONS
             // Categories Settings are not set
             $this->addMessage('Categories Settings are not set');
@@ -206,7 +209,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     protected function validatePrice()
     {
         if ($this->getEbayListingProduct()->isVariationsReady()) {
-
             if (!$this->validateVariationsFixedPrice()) {
                 return false;
             }
@@ -215,7 +217,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getEbayListingProduct()->isListingTypeAuction()) {
-
             if (!$this->validateStartPrice()) {
                 return false;
             }
@@ -229,9 +230,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             }
 
             return true;
-
         } else {
-
             if (!$this->validateFixedPrice()) {
                 return false;
             }
@@ -250,7 +249,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
         $qty = $this->getQty();
         if ($qty <= 0) {
-
 // M2ePro\TRANSLATIONS
 // The Quantity must be greater than 0. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
@@ -271,8 +269,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     {
         if ($this->getEbayListingProduct()->isVariationMode() &&
             !$this->getEbayListingProduct()->isVariationsReady()) {
-            // M2ePro_TRANSLATIONS
-            // M2E Pro identifies this Product as a Variational one. But no Variations can be obtained from it. The problem could be related to the fact that Product Variations are not assigned to Magento Store View your M2E Pro Listing is created for. In order to be processed, the Product data should be available within Website that M2E Pro appeals to. Another possible reason is an impact of the external plugins. The 3rd party tools override Magento core functionality, therefore, prevent M2E Pro from processing the Product data correctly. Make sure you have selected an appropriate Website in each Associated Product and no 3rd party extension overrides your settings. Otherwise, contact M2E Pro Support Team to resolve the issue.
             $this->addMessage(
                 'M2E Pro identifies this Product as a Variational one. But no Variations can be obtained from it.
                 The problem could be related to the fact that Product Variations are not assigned to Magento Store
@@ -294,7 +290,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     {
         $totalVariationsCount = 0;
         $totalDeletedVariationsCount = 0;
-        $uniqueAttributesValues = array();
+        $uniqueAttributesValues = [];
 
         foreach ($this->getEbayListingProduct()->getVariations(true) as $variation) {
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
@@ -310,7 +306,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                 // Max 5 pair attribute-option:
                 // Color: Blue, Size: XL, ...
                 if (count($uniqueAttributesValues) > 5) {
-
                     $this->addMessage(
                         'Variations of this Magento Product are out of the eBay Variational Items limits.
                         Its number of Variational Attributes is more than 5.
@@ -323,7 +318,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                 // Maximum 60 options by one attribute:
                 // Color: Red, Blue, Green, ...
                 if (count($uniqueAttributesValues[$option->getAttribute()]) > 60) {
-
                     $this->addMessage(
                         'Variations of this Magento Product are out of the eBay Variational Items limits.
                         Its number of Options for some Variational Attribute(s) is more than 60.
@@ -339,7 +333,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
             // Not more that 250 possible variations
             if ($totalVariationsCount > 250) {
-
                 $this->addMessage(
                     'Variations of this Magento Product are out of the eBay Variational Items limits.
                     The Number of Variations is more than 250. That is why, this Product cannot be updated on eBay.
@@ -350,7 +343,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($totalVariationsCount == $totalDeletedVariationsCount) {
-
             $this->addMessage(
                 'This Product was listed to eBay as Variational Item.
                 Changing of the Item type from Variational to Non-Variational during Revise/Relist
@@ -387,7 +379,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             }
 
             if ($variationPrice < 0.99) {
-
 // M2ePro_TRANSLATIONS
 // The Fixed Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.
                 $this->addMessage(
@@ -414,7 +405,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
         $price = $this->getFixedPrice();
         if ($price < 0.99) {
-
 // M2ePro\TRANSLATIONS
 // The Fixed Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
@@ -437,7 +427,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
         $price = $this->getStartPrice();
         if ($price < 0.99) {
-
 // M2ePro\TRANSLATIONS
 // The Start Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
@@ -464,7 +453,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
         $price = $this->getReservePrice();
         if ($price < 0.99) {
-
 // M2ePro\TRANSLATIONS
 // The Reserve Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
@@ -491,12 +479,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
         $price = $this->getBuyItNowPrice();
         if ($price < 0.99) {
-
-// M2ePro\TRANSLATIONS
-// The Buy It Now Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
-                'The Buy It Now Price must be greater than 0.99.
-                Please, check the Selling Policy and Product Settings.'
+                'The Buy It Now Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.'
             );
 
             return false;

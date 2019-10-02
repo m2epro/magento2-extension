@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Template\Category;
 
+/**
+ * Class Specific
+ * @package Ess\M2ePro\Model\ResourceModel\Walmart\Template\Category
+ */
 class Specific extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################

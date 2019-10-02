@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action
+ */
 abstract class Request extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
      * @var array
      */
-    private $params = array();
+    private $params = [];
 
     /**
      * @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator
@@ -28,12 +32,12 @@ abstract class Request extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @var array
      */
-    private $warningMessages = array();
+    private $warningMessages = [];
 
     /**
      * @var array
      */
-    protected $metaData = array();
+    protected $metaData = [];
 
     //########################################
 
@@ -44,7 +48,7 @@ abstract class Request extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param array $params
      */
-    public function setParams(array $params = array())
+    public function setParams(array $params = [])
     {
         $this->params = $params;
     }
@@ -179,7 +183,7 @@ abstract class Request extends \Ess\M2ePro\Model\AbstractModel
 
     protected function addWarningMessage($message)
     {
-        $this->warningMessages[md5($message)] = $message;
+        $this->warningMessages[sha1($message)] = $message;
     }
 
     /**

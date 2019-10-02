@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Log;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Listing\Log
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     //########################################

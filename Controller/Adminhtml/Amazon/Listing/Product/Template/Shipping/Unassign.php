@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping;
 
+/**
+ * Class Unassign
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
+ */
 class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
 {
     public function execute()
@@ -24,25 +28,26 @@ class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
             $productsIds = explode(',', $productsIds);
         }
 
-        $messages = array();
+        $messages = [];
         $productsIdsLocked = $this->filterLockedProducts($productsIds);
 
         if (count($productsIdsLocked) < count($productsIds)) {
-            $messages[] = array(
+            $messages[] = [
                 'type' => 'warning',
                 'text' => '<p>' . $this->__(
-                        'Shipping Policy cannot be unassigned from some Products
-                         because the Products are in Action'). '</p>'
-            );
+                    'Shipping Policy cannot be unassigned from some Products
+                         because the Products are in Action'
+                ). '</p>'
+            ];
         }
 
         if (!empty($productsIdsLocked)) {
-            $messages[] = array(
+            $messages[] = [
                 'type' => 'success',
                 'text' => $this->__('Shipping Policy was successfully unassigned.')
-            );
+            ];
 
-            $this->setShippingTemplateForProducts($productsIdsLocked, NULL, $shippingMode);
+            $this->setShippingTemplateForProducts($productsIdsLocked, null, $shippingMode);
             $this->runProcessorForParents($productsIdsLocked);
         }
 

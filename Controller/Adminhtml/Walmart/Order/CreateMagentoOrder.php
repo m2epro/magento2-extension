@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
+/**
+ * Class CreateMagentoOrder
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Order
+ */
 class CreateMagentoOrder extends Order
 {
     public function execute()
@@ -23,14 +27,14 @@ class CreateMagentoOrder extends Order
 
         // M2ePro_TRANSLATIONS
         // Magento Order is already created for this Walmart Order.
-        if (!is_null($order->getMagentoOrderId()) && $force != 'yes') {
+        if ($order->getMagentoOrderId() !== null && $force != 'yes') {
             $message = 'Magento Order is already created for this Walmart Order. ' .
                 'Press Create Order Button to create new one.';
 
             $this->messageManager->addWarning(
                 $this->__($message)
             );
-            $this->_redirect('*/*/view', array('id' => $id));
+            $this->_redirect('*/*/view', ['id' => $id]);
             return;
         }
 
@@ -73,6 +77,6 @@ class CreateMagentoOrder extends Order
         $order->updateMagentoOrderStatus();
         // ---------------------------------------
 
-        $this->_redirect('*/*/view', array('id' => $id));
+        $this->_redirect('*/*/view', ['id' => $id]);
     }
 }

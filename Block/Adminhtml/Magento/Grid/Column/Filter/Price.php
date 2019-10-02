@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter;
 
+/**
+ * Class Price
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter
+ */
 class Price extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Price
 {
     /**

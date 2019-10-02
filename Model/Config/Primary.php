@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Config;
 
+/**
+ * Class Primary
+ * @package Ess\M2ePro\Model\Config
+ */
 class Primary extends AbstractModel
 {
     //########################################

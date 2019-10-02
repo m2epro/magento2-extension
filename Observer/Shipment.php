@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Observer;
 
+/**
+ * Class Shipment
+ * @package Ess\M2ePro\Observer
+ */
 class Shipment extends AbstractModel
 {
     protected $messageManager;
@@ -21,8 +25,7 @@ class Shipment extends AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->messageManager = $messageManager;
         $this->urlBuilder = $urlBuilder;
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
@@ -48,7 +51,7 @@ class Shipment extends AbstractModel
             return;
         }
 
-        if (is_null($order)) {
+        if ($order === null) {
             return;
         }
 
@@ -59,7 +62,7 @@ class Shipment extends AbstractModel
         $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
 
         /** @var $shipmentHandler \Ess\M2ePro\Model\Order\Shipment\Handler */
-        $shipmentHandler = $this->modelFactory->getObject('Order\Shipment\Handler')
+        $shipmentHandler = $this->modelFactory->getObject('Order_Shipment_Handler')
                                               ->factory($order->getComponentMode());
         $shipmentHandler->handle($order, $shipment);
     }

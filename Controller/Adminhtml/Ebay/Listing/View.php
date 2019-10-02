@@ -8,12 +8,15 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ */
 class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     public function execute()
     {
         if ($this->getRequest()->getQuery('ajax')) {
-
             $id = $this->getRequest()->getParam('id');
             $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $id);
 
@@ -25,23 +28,22 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             // ---------------------------------------
 
             $this->setAjaxContent(
-                $this->createBlock('Ebay\Listing\View')->getGridHtml()
+                $this->createBlock('Ebay_Listing_View')->getGridHtml()
             );
             return $this->getResult();
         }
 
         if ((bool)$this->getRequest()->getParam('do_list', false)) {
-
             $this->getHelper('Data\Session')->setValue(
                 'products_ids_for_list',
                 implode(',', $this->getHelper('Data\Session')->getValue('added_products_ids'))
             );
 
-            return $this->_redirect('*/*/*', array(
+            return $this->_redirect('*/*/*', [
                 '_current'  => true,
-                'do_list'   => NULL,
+                'do_list'   => null,
                 'view_mode' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Switcher::VIEW_MODE_EBAY
-            ));
+            ]);
         }
 
         $id = $this->getRequest()->getParam('id');
@@ -57,12 +59,11 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $productAddIds = array_filter((array)$this->getHelper('Data')->jsonDecode($productAddIds));
 
         if (!empty($productAddIds)) {
-
             $this->getMessageManager()->addNotice($this->__(
                 'Please make sure you finish adding new Products before moving to the next step.'
             ));
 
-            return $this->_redirect('*/ebay_listing_product_category_settings',array('id' => $id, 'step' => 1));
+            return $this->_redirect('*/ebay_listing_product_category_settings', ['id' => $id, 'step' => 1]);
         }
 
         $this->getHelper('Data\GlobalData')->setValue('view_listing', $listing);
@@ -76,7 +77,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $this->__('M2E Pro Listing "%listing_title%"', $listing->getTitle())
         );
 
-        $this->addContent($this->createBlock('Ebay\Listing\View'));
+        $this->addContent($this->createBlock('Ebay_Listing_View'));
 
         return $this->getResult();
     }
@@ -91,7 +92,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $prefix .= isset($listingData['id']) ? '_'.$listingData['id'] : '';
         $this->getHelper('Data\GlobalData')->setValue('rule_prefix', $prefix);
 
-        $ruleModel = $this->activeRecordFactory->getObject('Ebay\Magento\Product\Rule')->setData(
+        $ruleModel = $this->activeRecordFactory->getObject('Ebay_Magento_Product_Rule')->setData(
             [
                 'prefix' => $prefix,
                 'store_id' => $storeId,
@@ -101,9 +102,10 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $ruleParam = $this->getRequest()->getPost('rule');
         if (!empty($ruleParam)) {
             $this->getHelper('Data\Session')->setValue(
-                $prefix, $ruleModel->getSerializedFromPost($this->getRequest()->getPostValue())
+                $prefix,
+                $ruleModel->getSerializedFromPost($this->getRequest()->getPostValue())
             );
-        } elseif (!is_null($ruleParam)) {
+        } elseif ($ruleParam !== null) {
             $this->getHelper('Data\Session')->setValue($prefix, []);
         }
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping;
 
+/**
+ * Class Calculated
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping
+ */
 class Calculated extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     protected $_isPkAutoIncrement = false;

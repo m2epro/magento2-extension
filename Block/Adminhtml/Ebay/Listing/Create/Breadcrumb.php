@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create;
 
+/**
+ * Class Breadcrumb
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create
+ */
 class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
 {
     //########################################
@@ -43,7 +47,6 @@ class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
                 'description' => $this->__('Synchronization Settings')
             ],
         ]);
-
     }
 
     //########################################

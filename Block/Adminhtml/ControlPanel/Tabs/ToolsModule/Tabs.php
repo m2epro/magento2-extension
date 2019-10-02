@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ToolsModule;
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 use Ess\M2ePro\Helper\View\ControlPanel\Command;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ToolsModule
+ */
 class Tabs extends AbstractTabs
 {
     //########################################
@@ -36,8 +40,8 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Module'),
                 'title' => __('Module'),
-                'content' => $this->getLayout()->createBlock(
-                    '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group',
+                'content' => $this->createBlock(
+                    'ControlPanel_Tabs_Command_Group',
                     '',
                     [
                         'data' => [
@@ -53,8 +57,8 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Synchronization'),
                 'title' => __('Synchronization'),
-                'content' => $this->getLayout()->createBlock(
-                    '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group',
+                'content' => $this->createBlock(
+                    'ControlPanel_Tabs_Command_Group',
                     '',
                     [
                         'data' => [
@@ -70,8 +74,8 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Integration'),
                 'title' => __('Integration'),
-                'content' => $this->getLayout()->createBlock(
-                    '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group',
+                'content' => $this->createBlock(
+                    'ControlPanel_Tabs_Command_Group',
                     '',
                     [
                         'data' => [
@@ -87,8 +91,8 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Integration [eBay]'),
                 'title' => __('Integration [eBay]'),
-                'content' => $this->getLayout()->createBlock(
-                    '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group',
+                'content' => $this->createBlock(
+                    'ControlPanel_Tabs_Command_Group',
                     '',
                     [
                         'data' => [
@@ -104,8 +108,8 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Integration [Amazon]'),
                 'title' => __('Integration [Amazon]'),
-                'content' => $this->getLayout()->createBlock(
-                    '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group',
+                'content' => $this->createBlock(
+                    'ControlPanel_Tabs_Command_Group',
                     '',
                     [
                         'data' => [
@@ -117,12 +121,29 @@ class Tabs extends AbstractTabs
         );
 
         $this->addTab(
+            'integration_walmart',
+            [
+                'label' => __('Integration [Walmart]'),
+                'title' => __('Integration [Walmart]'),
+                'content' => $this->createBlock(
+                    'ControlPanel_Tabs_Command_Group',
+                    '',
+                    [
+                        'data' => [
+                            'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION_WALMART
+                        ]
+                    ]
+                )->toHtml()
+            ]
+        );
+
+        $this->addTab(
             'servicing',
             [
                 'label' => __('Servicing'),
                 'title' => __('Servicing'),
-                'content' => $this->getLayout()->createBlock(
-                    '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group',
+                'content' => $this->createBlock(
+                    'ControlPanel_Tabs_Command_Group',
                     '',
                     [
                         'data' => [

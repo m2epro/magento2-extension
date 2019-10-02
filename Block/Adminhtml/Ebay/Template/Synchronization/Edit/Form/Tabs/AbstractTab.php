@@ -10,12 +10,16 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tab
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class AbstractTab
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs
+ */
 abstract class AbstractTab extends AbstractForm
 {
     public function isCustom()
     {
         $isCustom = $this->getHelper('Data\GlobalData')->getValue('is_custom');
-        if (!is_null($isCustom)) {
+        if ($isCustom !== null) {
             return (bool)$isCustom;
         }
 
@@ -26,12 +30,12 @@ abstract class AbstractTab extends AbstractForm
     {
         if ($this->isCustom()) {
             $customTitle = $this->getHelper('Data\GlobalData')->getValue('custom_title');
-            return !is_null($customTitle) ? $customTitle : '';
+            return $customTitle !== null ? $customTitle : '';
         }
 
         $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_synchronization');
 
-        if (is_null($template)) {
+        if ($template === null) {
             return '';
         }
 
@@ -44,8 +48,8 @@ abstract class AbstractTab extends AbstractForm
     {
         $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_synchronization');
 
-        if (is_null($template) || is_null($template->getId())) {
-            return array();
+        if ($template === null || $template->getId() === null) {
+            return [];
         }
 
         $data = array_merge($template->getData(), $template->getChildObject()->getData());

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Template;
 
+/**
+ * Class Synchronization
+ * @package Ess\M2ePro\Model\Template
+ */
 class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
     const REVISE_CHANGE_LISTING_NONE = 0;
@@ -54,13 +58,13 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ab
 
     public function save($reloadOnCreate = false)
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_synchronization');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_synchronization');
         return parent::save($reloadOnCreate);
     }
 
     public function delete()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_synchronization');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_synchronization');
         return parent::delete();
     }
 

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template
+ */
 abstract class Edit extends AbstractContainer
 {
     protected function _beforeToHtml()
@@ -27,15 +31,15 @@ abstract class Edit extends AbstractContainer
         $saveConfirmation = '';
         $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
 
-        if (is_null($id) && !is_null($template)) {
+        if ($id === null && $template !== null) {
             $id = $template->getId();
         }
 
         if ($id) {
             $saveConfirmation = $this->getHelper('Data')->escapeJs(
                 $this->__('<br/>
-<b>Note:</b> All changes you have made will be automatically applied to all M2E Pro Listings where this Policy is used.'
-                )
+<b>Note:</b> All changes you have made will be automatically
+applied to all M2E Pro Listings where this Policy is used.')
             );
         }
 

@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping;
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class AutoMap
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping
+ */
 class AutoMap extends Listing
 {
     public function execute()
@@ -30,12 +34,12 @@ class AutoMap extends Listing
 
         $productIds = explode(',', $productIds);
 
-        $productsForMapping = array();
+        $productsForMapping = [];
         foreach ($productIds as $productId) {
 
             /** @var $listingOther \Ess\M2ePro\Model\Listing\Other */
             $listingOther = $this->parentFactory
-                ->getObjectLoaded($componentMode,'Listing\Other',$productId);
+                ->getObjectLoaded($componentMode, 'Listing\Other', $productId);
 
             if ($listingOther->getProductId()) {
                 continue;

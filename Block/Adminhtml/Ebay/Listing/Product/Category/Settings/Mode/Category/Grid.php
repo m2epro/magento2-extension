@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Category;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Category
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 {
 
@@ -44,9 +48,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $collection = $this->categoryCollectionFactory->create();
         $collection->addAttributeToSelect('name');
 
-        $collection->addFieldToFilter(array(
-            array('attribute' => 'entity_id', 'in' => array_keys($this->getCategoriesData()))
-        ));
+        $collection->addFieldToFilter([
+            ['attribute' => 'entity_id', 'in' => array_keys($this->getCategoriesData())]
+        ]);
 
         $this->setCollection($collection);
 
@@ -57,7 +61,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('magento_category', array(
+        $this->addColumn('magento_category', [
             'header'    => $this->__('Magento Category'),
             'align'     => 'left',
             'width'     => '500px',
@@ -65,29 +69,29 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
             'index'     => 'name',
             'filter'    => false,
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnMagentoCategory')
-        ));
+            'frame_callback' => [$this, 'callbackColumnMagentoCategory']
+        ]);
 
-        $category = $this->getHelper('Component\Ebay\Category')
+        $category = $this->getHelper('Component_Ebay_Category')
             ->getCategoryTitle(\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN);
 
-        $this->addColumn('ebay_categories', array(
+        $this->addColumn('ebay_categories', [
             'header'    => $this->__('eBay Categories'),
             'align'     => 'left',
             'width'     => '*',
             'type'      => 'options',
-            'options'   => array(
+            'options'   => [
                 //eBay Catalog Primary Category Selected
                 1 => $this->__('%1% Selected', $category),
                 //eBay Catalog Primary Category Not Selected
                 0 => $this->__('%1% Not Selected', $category)
-            ),
+            ],
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnEbayCategories'),
-            'filter_condition_callback' => array($this, 'callbackFilterEbayCategories')
-        ));
+            'frame_callback' => [$this, 'callbackColumnEbayCategories'],
+            'filter_condition_callback' => [$this, 'callbackFilterEbayCategories']
+        ]);
 
-        $this->addColumn('actions', array(
+        $this->addColumn('actions', [
             'header'    => $this->__('Actions'),
             'align'     => 'center',
             'width'     => '100px',
@@ -96,7 +100,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
             'filter'    => false,
             'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
             'actions'   => $this->getColumnActionsItems()
-        ));
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -109,20 +113,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
         // Set mass-action
         // ---------------------------------------
-        $this->getMassactionBlock()->addItem('editCategories', array(
+        $this->getMassactionBlock()->addItem('editCategories', [
             'label'    => $this->__('Edit All Categories')
-        ));
+        ]);
 
-        $this->getMassactionBlock()->addItem('editPrimaryCategories', array(
+        $this->getMassactionBlock()->addItem('editPrimaryCategories', [
             'label' => $this->__('Edit eBay Catalog Primary Categories'),
             'url'   => '',
-        ));
+        ]);
 
         if ($this->listing->getAccount()->getChildObject()->getEbayStoreCategories()) {
-            $this->getMassactionBlock()->addItem('editStorePrimaryCategories', array(
+            $this->getMassactionBlock()->addItem('editStorePrimaryCategories', [
                 'label' => $this->__('Edit Store Catalog Primary Categories'),
                 'url'   => '',
-            ));
+            ]);
         }
         // ---------------------------------------
 
@@ -141,7 +145,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
     public function callbackColumnEbayCategories($value, $row, $column, $isExport)
     {
         $categoriesData = $this->getCategoriesData();
-        $categoryTitles = $this->getHelper('Component\Ebay\Category')->getCategoryTitles();
+        $categoryTitles = $this->getHelper('Component_Ebay_Category')->getCategoryTitles();
 
         $html = '';
 
@@ -169,11 +173,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         );
 
         if (empty($html)) {
-
             $html .= <<<HTML
 <span class="icon-warning" style="font-style: italic; color: gray">{$this->__('Not Selected')}</span>
 HTML;
-
         }
 
         return $html;
@@ -189,7 +191,7 @@ HTML;
             return;
         }
 
-        $primaryCategory = array('selected' => array(), 'blank' => array());
+        $primaryCategory = ['selected' => [], 'blank' => []];
 
         foreach ($this->getCategoriesData() as $categoryId => $templateData) {
             if ($templateData['category_main_mode'] != \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE) {
@@ -201,9 +203,9 @@ HTML;
         }
 
         if ($value == 0) {
-            $collection->addFieldToFilter('entity_id', array('in' => $primaryCategory['blank']));
+            $collection->addFieldToFilter('entity_id', ['in' => $primaryCategory['blank']]);
         } else {
-            $collection->addFieldToFilter('entity_id', array('in' => $primaryCategory['selected']));
+            $collection->addFieldToFilter('entity_id', ['in' => $primaryCategory['selected']]);
         }
     }
 
@@ -226,7 +228,7 @@ HTML;
             );
         }
 
-        return $this->renderCategoryInfo($title,$info);
+        return $this->renderCategoryInfo($title, $info);
     }
 
     protected function renderStoreCategoryInfo($title, $data, $key)
@@ -246,7 +248,7 @@ HTML;
             );
         }
 
-        return $this->renderCategoryInfo($title,$info);
+        return $this->renderCategoryInfo($title, $info);
     }
 
     protected function renderCategoryInfo($title, $info)
@@ -263,24 +265,23 @@ HTML;
     </p>
 </div>
 HTML;
-
     }
 
     //########################################
 
     protected function getColumnActionsItems()
     {
-        $categories = $this->getHelper('Component\Ebay\Category')->getCategoryTitles();
+        $categories = $this->getHelper('Component_Ebay_Category')->getCategoryTitles();
 
-        $actions = array(
-            'editCategories' => array(
+        $actions = [
+            'editCategories' => [
                 'caption' => $this->__('Edit All Categories'),
                 'field'   => 'id',
                 'onclick_action' => 'EbayListingProductCategorySettingsModeCategoryGridObj.'
                                     .'actions[\'editCategoriesAction\']'
-            ),
+            ],
 
-            'editPrimaryCategories' => array(
+            'editPrimaryCategories' => [
                 //Edit Primary Category
                 'caption' => $this->__('Edit %1%', $categories[
                     \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN
@@ -288,18 +289,18 @@ HTML;
                 'field'   => 'id',
                 'onclick_action' => 'EbayListingProductCategorySettingsModeCategoryGridObj.'
                                     .'actions[\'editPrimaryCategoriesAction\']'
-            )
-        );
+            ]
+        ];
 
         if ($this->listing->getAccount()->getChildObject()->getEbayStoreCategories()) {
-            $actions['editStorePrimaryCategories'] = array(
+            $actions['editStorePrimaryCategories'] = [
                 'caption' => $this->__('Edit %1%', $categories[
                     \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN
                 ]),
                 'field'   => 'id',
                 'onclick_action' => 'EbayListingProductCategorySettingsModeCategoryGridObj.'
                                     .'actions[\'editStorePrimaryCategoriesAction\']'
-            );
+            ];
         }
 
         return $actions;
@@ -310,7 +311,6 @@ HTML;
     protected function _toHtml()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
-
             $this->js->add(
                 <<<JS
     EbayListingProductCategorySettingsModeCategoryGridObj.afterInitPage();
@@ -322,13 +322,14 @@ JS
 
         // ---------------------------------------
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
-            'Ebay\Listing\Product\Category\Settings', array('_current' => true)
+            'Ebay_Listing_Product_Category_Settings',
+            ['_current' => true]
         ));
 
-        $this->jsUrl->add($this->getUrl('*/ebay_listing_product_category_settings', array(
+        $this->jsUrl->add($this->getUrl('*/ebay_listing_product_category_settings', [
             'step' => 3,
             '_current' => true
-        )), 'ebay_listing_product_category_settings');
+        ]), 'ebay_listing_product_category_settings');
         // ---------------------------------------
 
         // ---------------------------------------
@@ -338,7 +339,7 @@ JS
 
         // ---------------------------------------
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Ebay\Category')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay\Category::class)
         );
         // ---------------------------------------
 
@@ -364,7 +365,7 @@ JS;
         EbayListingProductCategorySettingsModeCategoryGridObj.afterInitPage();
     });
 JS
-    );
+        );
 
         $this->css->add('.grid-listing-column-actions { width:100px; }');
 

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
+/**
+ * Class CreateMagentoOrder
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Order
+ */
 class CreateMagentoOrder extends Order
 {
     public function execute()
@@ -21,7 +25,7 @@ class CreateMagentoOrder extends Order
         $order = $this->ebayFactory->getObjectLoaded('Order', (int)$id);
         $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
 
-        if (!is_null($order->getMagentoOrderId()) && $force != 'yes') {
+        if ($order->getMagentoOrderId() !== null && $force != 'yes') {
             // M2ePro_TRANSLATIONS
             // Magento Order is already created for this eBay Order. Press Create Order Button to create new one.
             $message = 'Magento Order is already created for this eBay Order. ' .
@@ -30,7 +34,7 @@ class CreateMagentoOrder extends Order
             $this->messageManager->addWarning(
                 $this->__($message)
             );
-            return $this->_redirect('*/*/view', array('id' => $id));
+            return $this->_redirect('*/*/view', ['id' => $id]);
         }
 
         // Create magento order

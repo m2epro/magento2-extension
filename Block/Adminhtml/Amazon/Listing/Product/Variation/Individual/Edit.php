@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Individual;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Individual
+ */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Individual
 {
-    public $currentVariation = array();
+    public $currentVariation = [];
 
     //########################################
 
@@ -45,10 +49,10 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\
             ]);
         }
 
-        /* @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+        /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
         $variation = reset($variations);
 
-        /* @var $optionInstance \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+        /** @var $optionInstance \Ess\M2ePro\Model\Listing\Product\Variation\Option */
         foreach ($variation->getOptions(true) as $optionInstance) {
             $option = $optionInstance->getOption();
             $attribute = $optionInstance->getAttribute();

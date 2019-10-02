@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Runner\Service;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Cron\Runner\Service
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Cron\Runner\AbstractModel
 {
     protected $requestAuthKey;
@@ -27,7 +31,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Cron\Runner\AbstractModel
      */
     protected function getStrategyObject()
     {
-        return $this->modelFactory->getObject('Cron\Strategy\Parallel');
+        return $this->modelFactory->getObject('Cron_Strategy_Parallel');
     }
 
     //########################################
@@ -50,8 +54,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Cron\Runner\AbstractModel
             return false;
         }
 
-        $authKey = $this->getHelper('Module')->getConfig()->getGroupValue('/cron/service/','auth_key');
-        if (is_null($authKey) || is_null($this->requestAuthKey) || is_null($this->requestConnectionId)) {
+        $authKey = $this->getHelper('Module')->getConfig()->getGroupValue('/cron/service/', 'auth_key');
+        if ($authKey === null || $this->requestAuthKey === null || $this->requestConnectionId === null) {
             return false;
         }
 
@@ -62,10 +66,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Cron\Runner\AbstractModel
 
     protected function getOperationHistoryData()
     {
-        return array_merge(parent::getOperationHistoryData(), array(
+        return array_merge(parent::getOperationHistoryData(), [
             'auth_key'      => $this->requestAuthKey,
             'connection_id' => $this->requestConnectionId
-        ));
+        ]);
     }
 
     //########################################
@@ -81,10 +85,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Cron\Runner\AbstractModel
         $config = $this->getHelper('Module')->getConfig();
 
         $startDate = new \DateTime($this->getHelper('Data')->getCurrentGmtDate(), new \DateTimeZone('UTC'));
-        $shift = 60 + rand(0,(int)$config->getGroupValue('/cron/task/'.$taskName.'/','interval'));
+        $shift = 60 + rand(0, (int)$config->getGroupValue('/cron/task/'.$taskName.'/', 'interval'));
         $startDate->modify('+'.$shift.' seconds');
 
-        $config->setGroupValue('/cron/task/'.$taskName.'/','start_from',$startDate->format('Y-m-d H:i:s'));
+        $config->setGroupValue('/cron/task/'.$taskName.'/', 'start_from', $startDate->format('Y-m-d H:i:s'));
     }
 
     //########################################

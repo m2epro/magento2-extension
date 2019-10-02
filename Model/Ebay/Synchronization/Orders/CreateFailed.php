@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\Orders;
 
 use Ess\M2ePro\Model\Order;
 
+/**
+ * Class CreateFailed
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\Orders
+ */
 class CreateFailed extends AbstractModel
 {
     const MAX_TRIES_TO_CREATE_ORDER = 3;
@@ -24,8 +28,7 @@ class CreateFailed extends AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->orderBuilderFactory = $orderBuilderFactory;
         parent::__construct($ebayFactory, $activeRecordFactory, $helperFactory, $modelFactory);
     }
@@ -82,7 +85,6 @@ class CreateFailed extends AbstractModel
             /** @var $account \Ess\M2ePro\Model\Account **/
 
             try {
-
                 $this->getActualOperationHistory()->addText('Starting account "'.$account->getTitle().'"');
 
                 // M2ePro_TRANSLATIONS
@@ -94,15 +96,13 @@ class CreateFailed extends AbstractModel
 
                 $ebayOrders = $this->getEbayOrders($account);
 
-                if (count($ebayOrders) > 0) {
+                if (!empty($ebayOrders)) {
                     $percentsForOneOrder = (int)(($this->getPercentsStart() + $iteration * $percentsForOneAcc)
                         / count($ebayOrders));
 
                     $this->createMagentoOrders($ebayOrders, $percentsForOneOrder);
                 }
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Create Failed Orders" Action for eBay Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -142,7 +142,8 @@ class CreateFailed extends AbstractModel
         $collection->addFieldToFilter('magento_order_creation_failure', Order::MAGENTO_ORDER_CREATION_FAILED_YES);
         $collection->addFieldToFilter('magento_order_creation_fails_count', ['lt' => self::MAX_TRIES_TO_CREATE_ORDER]);
         $collection->addFieldToFilter(
-            'magento_order_creation_latest_attempt_date', ['lt' => $backToDate->format('Y-m-d H:i:s')]
+            'magento_order_creation_latest_attempt_date',
+            ['lt' => $backToDate->format('Y-m-d H:i:s')]
         );
         $collection->getSelect()->order('magento_order_creation_latest_attempt_date ASC');
         $collection->setPageSize(25);
@@ -165,7 +166,6 @@ class CreateFailed extends AbstractModel
             }
 
             if ($order->canCreateMagentoOrder()) {
-
                 try {
                     $order->addNoticeLog(
                         'Magento order creation rules are met. M2E Pro will attempt to create Magento order.'
@@ -174,13 +174,11 @@ class CreateFailed extends AbstractModel
                 } catch (\Exception $exception) {
                     continue;
                 }
-
             } else {
-
                 $order->addData([
                     'magento_order_creation_failure'             => Order::MAGENTO_ORDER_CREATION_FAILED_NO,
                     'magento_order_creation_fails_count'         => 0,
-                    'magento_order_creation_latest_attempt_date' => NULL
+                    'magento_order_creation_latest_attempt_date' => null
                 ]);
                 $order->save();
 

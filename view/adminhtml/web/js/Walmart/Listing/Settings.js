@@ -33,7 +33,7 @@ define([
         },
 
         reloadSellingFormatTemplates: function () {
-            WalmartListingSettingsObj.reload(M2ePro.url.get('getSellingFormatTemplates'), 'template_selling_format_id');
+            WalmartListingSettingsObj.reload(M2ePro.url.get('getSellingFormatTemplates')  + 'marketplace_id/' + $('marketplace_id').value, 'template_selling_format_id');
         },
 
         reloadDescriptionTemplates: function () {

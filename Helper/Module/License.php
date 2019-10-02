@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Module;
 
+/**
+ * Class License
+ * @package Ess\M2ePro\Helper\Module
+ */
 class License extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $modelFactory;
@@ -68,40 +72,44 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
     public function isValidDomain()
     {
         $isValid = $this->primaryConfig->getGroupValue('/license/valid/', 'domain');
-        return is_null($isValid) || (bool)$isValid;
+        return $isValid === null || (bool)$isValid;
     }
 
     public function isValidIp()
     {
-        $isValid = $this->primaryConfig->getGroupValue('/license/valid/','ip');
-        return is_null($isValid) || (bool)$isValid;
+        $isValid = $this->primaryConfig->getGroupValue('/license/valid/', 'ip');
+        return $isValid === null || (bool)$isValid;
     }
 
     //########################################
 
-    public function obtainRecord($email = NULL, $firstName = NULL, $lastName = NULL,
-                                 $country = NULL, $city = NULL, $postalCode = NULL, $phone = NULL)
-    {
-        $requestParams = array(
+    public function obtainRecord(
+        $email = null,
+        $firstName = null,
+        $lastName = null,
+        $country = null,
+        $city = null,
+        $postalCode = null,
+        $phone = null
+    ) {
+        $requestParams = [
             'domain' => $this->getHelper('Client')->getDomain(),
             'directory' => $this->getHelper('Client')->getBaseDirectory()
-        );
+        ];
 
-        !is_null($email) && $requestParams['email'] = $email;
-        !is_null($firstName) && $requestParams['first_name'] = $firstName;
-        !is_null($lastName) && $requestParams['last_name'] = $lastName;
-        !is_null($phone) && $requestParams['phone'] = $phone;
-        !is_null($country) && $requestParams['country'] = $country;
-        !is_null($city) && $requestParams['city'] = $city;
-        !is_null($postalCode) && $requestParams['postal_code'] = $postalCode;
+        $email !== null && $requestParams['email'] = $email;
+        $firstName !== null && $requestParams['first_name'] = $firstName;
+        $lastName !== null && $requestParams['last_name'] = $lastName;
+        $phone !== null && $requestParams['phone'] = $phone;
+        $country !== null && $requestParams['country'] = $country;
+        $city !== null && $requestParams['city'] = $city;
+        $postalCode !== null && $requestParams['postal_code'] = $postalCode;
 
         try {
-
             $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector('license', 'add', 'record', $requestParams);
             $dispatcherObject->process($connectorObj);
             $response = $connectorObj->getResponseData();
-
         } catch (\Exception $e) {
             return false;
         }
@@ -113,7 +121,7 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
         $this->primaryConfig->setGroupValue('/license/', 'key', (string)$response['key']);
 
         $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
-            $this->modelFactory->getObject('Servicing\Task\License')->getPublicNick()
+            $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
         );
 
         return true;
@@ -130,14 +138,16 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         try {
-
             $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector('license','set','trial',
-                                                                   array('key' => $this->getKey(),
-                                                                         'component' => $component));
+            $connectorObj = $dispatcherObject->getVirtualConnector(
+                'license',
+                'set',
+                'trial',
+                ['key' => $this->getKey(),
+                'component' => $component]
+            );
             $dispatcherObject->process($connectorObj);
             $response = $connectorObj->getResponseData();
-
         } catch (\Exception $exception) {
             return false;
         }
@@ -147,7 +157,7 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
-            $this->modelFactory->getObject('Servicing\Task\License')->getPublicNick()
+            $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
         );
 
         return true;

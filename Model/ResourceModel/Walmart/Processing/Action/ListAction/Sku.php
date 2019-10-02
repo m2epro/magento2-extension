@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Processing\Action\ListAction;
 
+/**
+ * Class Sku
+ * @package Ess\M2ePro\Model\ResourceModel\Walmart\Processing\Action\ListAction
+ */
 class Sku extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     // ########################################

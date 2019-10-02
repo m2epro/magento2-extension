@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class Wizard
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay
+ */
 abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 {
     protected $ebayFactory;
@@ -20,8 +24,7 @@ abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         Context $context
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct($nameBuilder, $context);
     }
@@ -37,7 +40,7 @@ abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 
     protected function initResultPage()
     {
-        if (!is_null($this->resultPage)) {
+        if ($this->resultPage !== null) {
             return;
         }
 

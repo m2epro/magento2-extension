@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\ReturnPolicy\Edit\Form;
 
+/**
+ * Class Data
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\ReturnPolicy\Edit\Form
+ */
 class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $returnPolicyTemplate;
@@ -23,8 +27,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->returnPolicyTemplate = $returnPolicyTemplate;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -48,40 +51,50 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {
         $form = $this->_formFactory->create();
 
-        $form->addField('return_policy_id',
-            'hidden', [
+        $form->addField(
+            'return_policy_id',
+            'hidden',
+            [
                 'name' => 'return_policy[id]',
                 'value' => (!$this->isCustom() && isset($this->formData['id'])) ? (int)$this->formData['id'] : ''
             ]
         );
 
-        $form->addField('return_policy_title', 'hidden',
+        $form->addField(
+            'return_policy_title',
+            'hidden',
             [
                 'name' => 'return_policy[title]',
                 'value' => $this->getTitle()
             ]
         );
 
-        $form->addField('hidden_marketplace_id_'.$this->marketplaceData['id'], 'hidden',
+        $form->addField(
+            'hidden_marketplace_id_'.$this->marketplaceData['id'],
+            'hidden',
             [
                 'name' => 'return_policy[marketplace_id]',
                 'value' => $this->marketplaceData['id']
             ]
         );
 
-        $form->addField('is_custom_template',
-            'hidden', [
+        $form->addField(
+            'is_custom_template',
+            'hidden',
+            [
                 'name' => 'return_policy[is_custom_template]',
                 'value' => $this->isCustom() ? 1 : 0
             ]
         );
 
-        $fieldset = $form->addFieldset('return_policy_fieldset',
+        $fieldset = $form->addFieldset(
+            'return_policy_fieldset',
             ['legend' => __('Return Policy'), 'collapsable' => false]
         );
 
         if (!empty($this->marketplaceData['info']['returns_accepted'])) {
-            $fieldset->addField('return_accepted',
+            $fieldset->addField(
+                'return_accepted',
                 self::SELECT,
                 [
                     'name' => 'return_policy[accepted]',
@@ -101,7 +114,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         if (!empty($this->marketplaceData['info']['refund'])) {
-            $fieldset->addField('return_option',
+            $fieldset->addField(
+                'return_option',
                 self::SELECT,
                 [
                     'name' => 'return_policy[option]',
@@ -114,7 +128,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         if (!empty($this->marketplaceData['info']['returns_within'])) {
-            $fieldset->addField('return_within',
+            $fieldset->addField(
+                'return_within',
                 self::SELECT,
                 [
                     'name' => 'return_policy[within]',
@@ -127,7 +142,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         if ($this->canShowHolidayReturnOption()) {
-            $fieldset->addField('return_holiday_mode',
+            $fieldset->addField(
+                'return_holiday_mode',
                 self::SELECT,
                 [
                     'name' => 'return_policy[holiday_mode]',
@@ -160,7 +176,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         if (!empty($this->marketplaceData['info']['shipping_cost_paid_by'])) {
-            $fieldset->addField('return_shipping_cost',
+            $fieldset->addField(
+                'return_shipping_cost',
                 self::SELECT,
                 [
                     'name' => 'return_policy[shipping_cost]',
@@ -173,7 +190,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         if (!empty($this->marketplaceData['info']['restocking_fee_value'])) {
-            $fieldset->addField('return_restocking_fee',
+            $fieldset->addField(
+                'return_restocking_fee',
                 self::SELECT,
                 [
                     'name' => 'return_policy[restocking_fee]',
@@ -186,7 +204,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             );
         }
 
-        $fieldset->addField('return_description',
+        $fieldset->addField(
+            'return_description',
             'textarea',
             [
                 'name' => 'return_policy[description]',
@@ -220,7 +239,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_return_policy');
 
-        if (is_null($template)) {
+        if ($template === null) {
             return '';
         }
 
@@ -232,7 +251,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_return_policy');
 
         $default = $this->getDefault();
-        if (is_null($template) || is_null($template->getId())) {
+        if ($template === null || $template->getId() === null) {
             return $default;
         }
 
@@ -252,10 +271,10 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             throw new \Ess\M2ePro\Model\Exception\Logic('Marketplace is required for editing Return Policy.');
         }
 
-        $data = array(
+        $data = [
             'id' => $marketplace->getId(),
             'info' => $marketplace->getChildObject()->getReturnPolicyInfo()
-        );
+        ];
 
         $policyLocalization = $this->getData('policy_localization');
 

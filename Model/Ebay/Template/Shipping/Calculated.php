@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Shipping;
 
+/**
+ * Class Calculated
+ * @package Ess\M2ePro\Model\Ebay\Template\Shipping
+ */
 class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     const MEASUREMENT_SYSTEM_ENGLISH = 1;
@@ -29,12 +33,12 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Shipping
      */
-    private $shippingTemplateModel = NULL;
+    private $shippingTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated\Source[]
      */
-    private $shippingCalculatedSourceModels = array();
+    private $shippingCalculatedSourceModels = [];
 
     //########################################
 
@@ -48,7 +52,7 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('ebay_template_shipping_calculated');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_shipping_calculated');
         return parent::save();
     }
 
@@ -57,10 +61,10 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function delete()
     {
         $temp = parent::delete();
-        $temp && $this->shippingTemplateModel = NULL;
-        $temp && $this->shippingCalculatedSourceModels = array();
+        $temp && $this->shippingTemplateModel = null;
+        $temp && $this->shippingCalculatedSourceModels = [];
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('ebay_template_shipping_calculated');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_shipping_calculated');
 
         return $temp;
     }
@@ -72,10 +76,10 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getShippingTemplate()
     {
-        if (is_null($this->shippingTemplateModel)) {
-
+        if ($this->shippingTemplateModel === null) {
             $this->shippingTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Ebay\Template\Shipping', $this->getId()
+                'Ebay_Template_Shipping',
+                $this->getId()
             );
         }
 
@@ -105,7 +109,7 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         }
 
         $this->shippingCalculatedSourceModels[$productId] = $this->modelFactory->getObject(
-            'Ebay\Template\Shipping\Calculated\Source'
+            'Ebay_Template_Shipping_Calculated_Source'
         );
         $this->shippingCalculatedSourceModels[$productId]->setMagentoProduct($magentoProduct);
         $this->shippingCalculatedSourceModels[$productId]->setShippingCalculatedTemplate($this);
@@ -148,11 +152,11 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getPackageSizeSource()
     {
-        return array(
+        return [
             'mode'      => (int)$this->getData('package_size_mode'),
             'value'     => $this->getData('package_size_value'),
             'attribute' => $this->getData('package_size_attribute')
-        );
+        ];
     }
 
     /**
@@ -160,7 +164,7 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getPackageSizeAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getPackageSizeSource();
 
         if ($src['mode'] == self::PACKAGE_SIZE_CUSTOM_ATTRIBUTE) {
@@ -177,7 +181,7 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getDimensionSource()
     {
-        return array(
+        return [
             'mode' => (int)$this->getData('dimension_mode'),
 
             'width_value'  => $this->getData('dimension_width_value'),
@@ -188,7 +192,7 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
             'depth_value'  => $this->getData('dimension_depth_value'),
             'depth_attribute'  => $this->getData('dimension_depth_attribute')
-        );
+        ];
     }
 
     /**
@@ -196,7 +200,7 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getDimensionAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getDimensionSource();
 
         if ($src['mode'] == self::DIMENSION_CUSTOM_ATTRIBUTE) {
@@ -215,12 +219,12 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getWeightSource()
     {
-        return array(
+        return [
             'mode' => (int)$this->getData('weight_mode'),
             'major' => $this->getData('weight_major'),
             'minor' => $this->getData('weight_minor'),
             'attribute' => $this->getData('weight_attribute')
-        );
+        ];
     }
 
     /**
@@ -228,7 +232,7 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getWeightAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getWeightSource();
 
         if ($src['mode'] == self::WEIGHT_CUSTOM_ATTRIBUTE) {
@@ -263,7 +267,7 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getTrackingAttributes()
     {
-        return array();
+        return [];
     }
 
     /**

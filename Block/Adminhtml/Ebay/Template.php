@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 use Ess\M2ePro\Model\Ebay\Template\Manager;
 
+/**
+ * Class Template
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay
+ */
 class Template extends AbstractContainer
 {
     //########################################

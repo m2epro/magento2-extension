@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Cron;
 
 use Magento\Framework\App\Action\Context;
 
+/**
+ * Class Reset
+ * @package Ess\M2ePro\Controller\Cron
+ */
 class Reset extends \Magento\Framework\App\Action\Action
 {
     /** @var \Ess\M2ePro\Model\Cron\Runner\Service\Controller */
@@ -20,7 +24,7 @@ class Reset extends \Magento\Framework\App\Action\Action
     public function __construct(
         Context $context,
         \Ess\M2ePro\Model\Cron\Runner\Service\Controller $cronRunner
-    ){
+    ) {
         parent::__construct($context);
         $this->cronRunner = $cronRunner;
     }

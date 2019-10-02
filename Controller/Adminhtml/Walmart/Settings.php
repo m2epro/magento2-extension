@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
+/**
+ * Class Settings
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart
+ */
 abstract class Settings extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {
     //########################################

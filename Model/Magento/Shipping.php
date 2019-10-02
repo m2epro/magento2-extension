@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Model\Magento;
 
-class Shipping
-    extends \Magento\Shipping\Model\Carrier\AbstractCarrier
-    implements \Magento\Shipping\Model\Carrier\CarrierInterface
+use Magento\Shipping\Model\Carrier\CarrierInterface;
+
+/**
+ * Class Shipping
+ * @package Ess\M2ePro\Model\Magento
+ */
+class Shipping extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements CarrierInterface
 {
     protected $_code = 'm2eproshipping';
 
@@ -30,8 +34,7 @@ class Shipping
         \Psr\Log\LoggerInterface $logger,
         \Magento\Shipping\Model\Rate\ResultFactory $resultFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
         $this->resultFactory = $resultFactory;
         $this->rateRequestFactory = $rateRequestFactory;

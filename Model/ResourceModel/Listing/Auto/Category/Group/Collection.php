@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category\Group;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category\Group
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent\AbstractModel
 {
     //########################################

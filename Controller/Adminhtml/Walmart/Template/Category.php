@@ -10,21 +10,25 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template
+ */
 abstract class Category extends Template
 {
     // ---------------------------------------
 
     protected function formatCategoryRow(&$row)
     {
-        $row['product_data_nicks'] = !is_null($row['product_data_nicks'])
-            ? (array)$this->getHelper('Data')->jsonDecode($row['product_data_nicks']) : array();
+        $row['product_data_nicks'] = $row['product_data_nicks'] !== null
+            ? (array)$this->getHelper('Data')->jsonDecode($row['product_data_nicks']) : [];
     }
 
     protected function prepareGridBlock()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Specific\Add\Grid $grid */
         $grid = $this->createBlock(
-            'Walmart\Template\Category\Categories\Specific\Add\Grid'
+            'Walmart_Template_Category_Categories_Specific_Add_Grid'
         );
 
         $grid->setMarketplaceId($this->getRequest()->getParam('marketplace_id'));

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter;
 
+/**
+ * Class AbstractFilter
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter
+ */
 class AbstractFilter extends \Magento\Backend\Block\Widget\Grid\Column\Filter\AbstractFilter
 {
     use \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait;
@@ -26,8 +30,7 @@ class AbstractFilter extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Ab
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\DB\Helper $resourceHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
         $this->modelFactory = $modelFactory;
 

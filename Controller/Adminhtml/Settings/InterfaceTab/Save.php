@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Settings\InterfaceTab;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Settings\InterfaceTab
+ */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
     //########################################
@@ -21,11 +25,13 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
         }
 
         $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/view/','show_products_thumbnails',
+            '/view/',
+            'show_products_thumbnails',
             (int)$post['products_show_thumbnails']
         );
         $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/view/', 'show_block_notices',
+            '/view/',
+            'show_block_notices',
             (int)$post['block_notices_show']
         );
 

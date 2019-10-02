@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
+/**
+ * Class PickupStore
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account
+ */
 class PickupStore extends AbstractContainer
 {
     //########################################
@@ -44,8 +48,10 @@ class PickupStore extends AbstractContainer
         // ---------------------------------------
         $this->addButton('add', [
             'label'   => $this->__('Add Store'),
-            'onclick' => 'setLocation(\''.$this->getUrl('*/ebay_account_pickupStore/new',
-                        ['_current' => true]).'\');',
+            'onclick' => 'setLocation(\''.$this->getUrl(
+                '*/ebay_account_pickupStore/new',
+                ['_current' => true]
+            ).'\');',
             'class'   => 'add primary'
         ]);
         // ---------------------------------------

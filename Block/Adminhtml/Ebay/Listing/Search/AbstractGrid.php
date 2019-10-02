@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search;
 
+/**
+ * Class AbstractGrid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search
+ */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $magentoProductCollectionFactory;
@@ -25,8 +29,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->localeCurrency = $localeCurrency;
         $this->ebayFactory = $ebayFactory;
@@ -56,79 +59,79 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
     protected function _prepareColumns()
     {
-        $this->addColumn('product_id', array(
+        $this->addColumn('product_id', [
             'header'    => $this->__('Product ID'),
             'align'     => 'right',
             'width'     => '100px',
             'type'      => 'number',
             'index'     => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => array($this, 'callbackColumnProductId'),
-            'filter_condition_callback' => array($this, 'callbackFilterProductId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductId'],
+            'filter_condition_callback' => [$this, 'callbackFilterProductId']
+        ]);
 
-        $this->addColumn('name', array(
+        $this->addColumn('name', [
             'header'    => $this->__('Product Title / Listing / Product SKU'),
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'name',
             'filter_index' => 'name',
             'escape'    => false,
-            'frame_callback' => array($this, 'callbackColumnProductTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+        ]);
 
-        $this->addColumn('item_id', array(
+        $this->addColumn('item_id', [
             'header'    => $this->__('Item ID'),
             'align'     => 'left',
             'width'     => '100px',
             'type'      => 'text',
             'index'     => 'item_id',
             'filter_index' => 'item_id',
-            'frame_callback' => array($this, 'callbackColumnEbayItemId'),
-            'filter_condition_callback' => array($this, 'callbackFilterItemId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnEbayItemId'],
+            'filter_condition_callback' => [$this, 'callbackFilterItemId']
+        ]);
 
-        $this->addColumn('online_qty', array(
+        $this->addColumn('online_qty', [
             'header'    => $this->__('Available QTY'),
             'align'     => 'right',
             'width'     => '50px',
             'type'      => 'number',
             'index'     => 'online_qty',
             'filter_index' => 'online_qty',
-            'frame_callback' => array($this, 'callbackColumnOnlineAvailableQty'),
-            'filter_condition_callback' => array($this, 'callbackFilterOnlineQty')
-        ));
+            'frame_callback' => [$this, 'callbackColumnOnlineAvailableQty'],
+            'filter_condition_callback' => [$this, 'callbackFilterOnlineQty']
+        ]);
 
-        $this->addColumn('online_qty_sold', array(
+        $this->addColumn('online_qty_sold', [
             'header'    => $this->__('Sold QTY'),
             'align'     => 'right',
             'width'     => '50px',
             'type'      => 'number',
             'index'     => 'online_qty_sold',
             'filter_index' => 'online_qty_sold',
-            'frame_callback' => array($this, 'callbackColumnOnlineQtySold')
-        ));
+            'frame_callback' => [$this, 'callbackColumnOnlineQtySold']
+        ]);
 
-        $this->addColumn('price', array(
+        $this->addColumn('price', [
             'header'    => $this->__('Price'),
             'align'     =>'right',
             'width'     => '50px',
             'type'      => 'number',
             'index'     => 'online_current_price',
             'filter_index' => 'online_current_price',
-            'frame_callback' => array($this, 'callbackColumnPrice'),
-            'filter_condition_callback' => array($this, 'callbackFilterPrice')
-        ));
+            'frame_callback' => [$this, 'callbackColumnPrice'],
+            'filter_condition_callback' => [$this, 'callbackFilterPrice']
+        ]);
 
-        $statusColumn = array(
+        $statusColumn = [
             'header'       => $this->__('Status'),
             'width'        => '100px',
             'index'        => 'status',
             'filter_index' => 'status',
             'type'         => 'options',
             'sortable'     => false,
-            'options'      => array(
+            'options'      => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED     => $this->__('Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN     => $this->__('Listed (Hidden)'),
@@ -136,17 +139,17 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED    => $this->__('Stopped'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED   => $this->__('Finished'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED    => $this->__('Pending')
-            ),
-            'frame_callback' => array($this, 'callbackColumnStatus'),
-            'filter_condition_callback' => array($this, 'callbackFilterStatus')
-        );
+            ],
+            'frame_callback' => [$this, 'callbackColumnStatus'],
+            'filter_condition_callback' => [$this, 'callbackFilterStatus']
+        ];
 
         $listingType = $this->getRequest()->getParam(
-            'listing_type', \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_M2E_PRO
+            'listing_type',
+            \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_M2E_PRO
         );
 
-        if (
-            $this->getHelper('View\Ebay')->isDuplicatesFilterShouldBeShown()
+        if ($this->getHelper('View\Ebay')->isDuplicatesFilterShouldBeShown()
             && $listingType == \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_M2E_PRO
         ) {
             $statusColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\Status';
@@ -158,15 +161,15 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
         $this->addColumn('status', $statusColumn);
 
-        $this->addColumn('goto_listing_item', array(
+        $this->addColumn('goto_listing_item', [
             'header'    => $this->__('Manage'),
             'align'     => 'center',
             'width'     => '50px',
             'type'      => 'text',
             'filter'    => false,
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnActions')
-        ));
+            'frame_callback' => [$this, 'callbackColumnActions']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -175,18 +178,18 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
     public function callbackColumnProductId($value, $row, $column, $isExport)
     {
-        if (is_null($row->getData('entity_id'))) {
+        if ($row->getData('entity_id') === null) {
             return $this->__('N/A');
         }
 
         $productId = (int)$row->getData('entity_id');
         $storeId   = (int)$row->getData('store_id');
 
-        $url = $this->getUrl('catalog/product/edit', array('id' => $productId));
+        $url = $this->getUrl('catalog/product/edit', ['id' => $productId]);
         $withoutImageHtml = '<a href="'.$url.'" target="_blank">'.$productId.'</a>';
 
         $showProductsThumbnails = (bool)(int)$this->getHelper('Module')
-                                                  ->getConfig()->getGroupValue('/view/','show_products_thumbnails');
+                                                  ->getConfig()->getGroupValue('/view/', 'show_products_thumbnails');
         if (!$showProductsThumbnails) {
             return $withoutImageHtml;
         }
@@ -197,7 +200,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         $magentoProduct->setStoreId($storeId);
 
         $imageUrlResized = $magentoProduct->getThumbnailImage();
-        if (is_null($imageUrlResized)) {
+        if ($imageUrlResized === null) {
             return $withoutImageHtml;
         }
 
@@ -205,7 +208,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
         $imageHtml = $productId.'<div style="margin-top: 5px;">'.
             '<img style="max-width: 100px; max-height: 100px;" src="' .$imageUrlResizedUrl. '" /></div>';
-        $withImageHtml = str_replace('>'.$productId.'<','>'.$imageHtml.'<',$withoutImageHtml);
+        $withImageHtml = str_replace('>'.$productId.'<', '>'.$imageHtml.'<', $withoutImageHtml);
 
         return $withImageHtml;
     }
@@ -233,17 +236,17 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
         $url = $this->getUrl(
             '*/ebay_listing/gotoEbay/',
-            array(
+            [
                 'item_id'        => $row->getData('item_id'),
                 'account_id'     => $row->getData('account_id'),
                 'marketplace_id' => $row->getData('marketplace_id'),
-            )
+            ]
         );
 
         return '<a href="'. $url . '" target="_blank">'.$value.'</a>';
@@ -255,7 +258,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -276,7 +279,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -296,7 +299,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         $onlineStartPrice   = $row->getData('online_start_price');
         $onlineCurrentPrice = $row->getData('online_current_price');
 
-        if (is_null($onlineCurrentPrice) || $onlineCurrentPrice === '') {
+        if ($onlineCurrentPrice === null || $onlineCurrentPrice === '') {
             return $this->__('N/A');
         }
 
@@ -308,12 +311,11 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
         if (strpos($currency, ',') !== false) {
             $currency = $this->ebayFactory
-                ->getObjectLoaded('Marketplace',$row->getMarketplaceId())
+                ->getObjectLoaded('Marketplace', $row->getMarketplaceId())
                 ->getChildObject()->getCurrency();
         }
 
         if (!empty($onlineStartPrice)) {
-
             $onlineReservePrice  = $row->getData('online_reserve_price');
             $onlineBuyItNowPrice = $row->getData('online_buyitnow_price');
 
@@ -324,6 +326,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             $onlineCurrentPriceHtml  = '';
             $onlineReservePriceHtml  = '';
             $onlineBuyItNowPriceHtml = '';
+            $onlineCurrentStr = '';
 
             if ($row->getData('online_bids') > 0 || $onlineCurrentPrice > $onlineStartPrice) {
                 $currentPriceText = $this->__('Current Price');
@@ -361,7 +364,6 @@ HTML;
                 $resultHtml = '<span style="color: grey; text-decoration: line-through;">'.$onlineStartStr.'</span>';
                 $resultHtml .= '<br/>'.$intervalHtml.'&nbsp;'.
                     '<span class="product-price-value">'.$onlineCurrentStr.'</span>';
-
             } else {
                 $resultHtml = $intervalHtml.'&nbsp;'.'<span class="product-price-value">'.$onlineStartStr.'</span>';
             }
@@ -375,7 +377,6 @@ HTML;
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $listingProductId);
             if ($listingProduct->getChildObject()->isVariationsReady()) {
-
                 $noticeText = $this->__('The value is calculated as minimum price of all Child Products.');
                 $noticeHtml = <<<HTML
 <div class="m2epro-field-tooltip admin__field-tooltip" style="display: inline;">
@@ -399,7 +400,6 @@ HTML;
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
         switch ($row->getData('status')) {
-
             case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
                 $value = '<span style="color: gray;">'.$value.'</span>';
                 break;
@@ -434,7 +434,6 @@ HTML;
 
         $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
         if ($row->getData('is_duplicate') && isset($additionalData['item_duplicate_action_required'])) {
-
             $linkContent = $this->__('Duplicate');
 
             $value .= <<<HTML
@@ -452,9 +451,7 @@ HTML;
         }
 
         foreach ($processingLocks as $lock) {
-
             switch ($lock->getTag()) {
-
                 case 'list_action':
                     $value .= '<br/><span style="color: #605fff">[List in Progress...]</span>';
                     break;
@@ -487,7 +484,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/ebay_listing_search/index', array('_current'=>true));
+        return $this->getUrl('*/ebay_listing_search/index', ['_current'=>true]);
     }
 
     public function getRowUrl($row)

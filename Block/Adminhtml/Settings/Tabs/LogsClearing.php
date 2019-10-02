@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs;
 
 use \Ess\M2ePro\Model\Log\Clearing as LogClearing;
 
+/**
+ * Class LogsClearing
+ * @package Ess\M2ePro\Block\Adminhtml\Settings\Tabs
+ */
 class LogsClearing extends AbstractTab
 {
     protected $modes;
@@ -28,22 +32,19 @@ class LogsClearing extends AbstractTab
             ]
         ]);
 
-        $form->addField('settings_tab_logs_clearing', self::HELP_BLOCK,
+        $form->addField(
+            'settings_tab_logs_clearing',
+            self::HELP_BLOCK,
             [
                 'content' => $this->__(
-                    'Set preferences for automatic clearing of Log data then click <b>Save</b>.<br/><br/>
-                    To clear a Log completely, click <b>Clear All</b>. To clear a Log of data more than
-                    a certain number of days old, choose the number of days then click <b>Run Now</b>.<br/><br/>
-                    More detailed information about ability to work with this Page you can find
-                    <a href="%url%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl(
-                        'x/ZQBhAQ'
-                    )
+                    'Set preferences for automatic clearing of Log data, then click <strong>Save</strong>.
+                    You may clear the relevant logs manually by clicking <strong>Clear All</strong>.'
                 )
             ]
         );
 
-        $fieldSet = $form->addFieldset('magento_block_configuration_logs_clearing_listings',
+        $fieldSet = $form->addFieldset(
+            'magento_block_configuration_logs_clearing_listings',
             [
                 'legend' => $this->__('M2E Pro Listings Logs & Events Clearing'),
                 'collapsable' => false
@@ -57,7 +58,8 @@ class LogsClearing extends AbstractTab
         );
         $logsType = LogClearing::LOG_LISTINGS;
 
-        $fieldSet->addField(LogClearing::LOG_LISTINGS . '_log_mode',
+        $fieldSet->addField(
+            LogClearing::LOG_LISTINGS . '_log_mode',
             self::SELECT,
             [
                 'name' => LogClearing::LOG_LISTINGS . '_log_mode',
@@ -80,7 +82,8 @@ HTML
             ]
         );
 
-        $fieldSet->addField(LogClearing::LOG_LISTINGS . '_log_days',
+        $fieldSet->addField(
+            LogClearing::LOG_LISTINGS . '_log_days',
             'text',
             [
                 'name' => LogClearing::LOG_LISTINGS . '_log_days',
@@ -96,7 +99,8 @@ HTML
             ]
         );
 
-        $fieldSet = $form->addFieldset('magento_block_logs_configuration_clearing_orders',
+        $fieldSet = $form->addFieldset(
+            'magento_block_logs_configuration_clearing_orders',
             [
                 'legend' => $this->__('Orders Logs & Events Clearing'),
                 'collapsable' => false
@@ -109,7 +113,8 @@ HTML
         );
         $logsType = LogClearing::LOG_ORDERS;
 
-        $fieldSet->addField(LogClearing::LOG_ORDERS . '_log_mode',
+        $fieldSet->addField(
+            LogClearing::LOG_ORDERS . '_log_mode',
             self::SELECT,
             [
                 'name' => LogClearing::LOG_ORDERS . '_log_mode',
@@ -132,7 +137,8 @@ HTML
             ]
         );
 
-        $fieldSet->addField(LogClearing::LOG_ORDERS . '_log_days',
+        $fieldSet->addField(
+            LogClearing::LOG_ORDERS . '_log_days',
             'text',
             [
                 'name' => LogClearing::LOG_ORDERS . '_log_days',
@@ -149,7 +155,8 @@ HTML
             ]
         );
 
-        $fieldSet = $form->addFieldset('magento_block_configuration_logs_clearing_listings_other',
+        $fieldSet = $form->addFieldset(
+            'magento_block_configuration_logs_clearing_listings_other',
             [
                 'legend' => $this->__('3rd Party Listings Logs & Events Clearing'),
                 'collapsable' => false
@@ -163,7 +170,8 @@ HTML
         );
         $logsType = LogClearing::LOG_OTHER_LISTINGS;
 
-        $fieldSet->addField(LogClearing::LOG_OTHER_LISTINGS . '_log_mode',
+        $fieldSet->addField(
+            LogClearing::LOG_OTHER_LISTINGS . '_log_mode',
             self::SELECT,
             [
                 'name' => LogClearing::LOG_OTHER_LISTINGS . '_log_mode',
@@ -186,7 +194,8 @@ HTML
             ]
         );
 
-        $fieldSet->addField(LogClearing::LOG_OTHER_LISTINGS . '_log_days',
+        $fieldSet->addField(
+            LogClearing::LOG_OTHER_LISTINGS . '_log_days',
             'text',
             [
                 'name' => LogClearing::LOG_OTHER_LISTINGS . '_log_days',
@@ -202,7 +211,8 @@ HTML
             ]
         );
 
-        $fieldSet = $form->addFieldset('magento_block_configuration_logs_clearing_synch',
+        $fieldSet = $form->addFieldset(
+            'magento_block_configuration_logs_clearing_synch',
             [
                 'legend' => $this->__('Synchronization Logs & Events Clearing'),
                 'collapsable' => false
@@ -216,7 +226,8 @@ HTML
         );
         $logsType = LogClearing::LOG_SYNCHRONIZATIONS;
 
-        $fieldSet->addField(LogClearing::LOG_SYNCHRONIZATIONS . '_log_mode',
+        $fieldSet->addField(
+            LogClearing::LOG_SYNCHRONIZATIONS . '_log_mode',
             self::SELECT,
             [
                 'name' => LogClearing::LOG_SYNCHRONIZATIONS . '_log_mode',
@@ -239,7 +250,8 @@ HTML
             ]
         );
 
-        $fieldSet->addField(LogClearing::LOG_SYNCHRONIZATIONS . '_log_days',
+        $fieldSet->addField(
+            LogClearing::LOG_SYNCHRONIZATIONS . '_log_days',
             'text',
             [
                 'name' => LogClearing::LOG_SYNCHRONIZATIONS . '_log_days',
@@ -255,8 +267,9 @@ HTML
             ]
         );
 
-        if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
-            $fieldSet = $form->addFieldset('magento_block_configuration_logs_clearing_instore_pickup',
+        if ($this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
+            $fieldSet = $form->addFieldset(
+                'magento_block_configuration_logs_clearing_instore_pickup',
                 [
                     'legend' => $this->__('In-Store Pickup Log Clearing'),
                     'collapsable' => false
@@ -270,7 +283,8 @@ HTML
             );
             $logsType = LogClearing::LOG_EBAY_PICKUP_STORE;
 
-            $fieldSet->addField(LogClearing::LOG_EBAY_PICKUP_STORE . '_log_mode',
+            $fieldSet->addField(
+                LogClearing::LOG_EBAY_PICKUP_STORE . '_log_mode',
                 self::SELECT,
                 [
                     'name' => LogClearing::LOG_EBAY_PICKUP_STORE . '_log_mode',
@@ -293,7 +307,8 @@ HTML
                 ]
             );
 
-            $fieldSet->addField(LogClearing::LOG_EBAY_PICKUP_STORE . '_log_days',
+            $fieldSet->addField(
+                LogClearing::LOG_EBAY_PICKUP_STORE . '_log_days',
                 'text',
                 [
                     'name' => LogClearing::LOG_EBAY_PICKUP_STORE . '_log_days',
@@ -321,24 +336,24 @@ HTML
     protected function prepareFormData()
     {
         $config = $this->getHelper('Module')->getConfig();
-        $tasks = array(
+        $tasks = [
             LogClearing::LOG_LISTINGS,
             LogClearing::LOG_OTHER_LISTINGS,
             LogClearing::LOG_SYNCHRONIZATIONS,
             LogClearing::LOG_ORDERS
-        );
+        ];
 
-        if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
+        if ($this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
             $tasks[] = LogClearing::LOG_EBAY_PICKUP_STORE;
         }
 
         // ---------------------------------------
-        $modes = array();
-        $days  = array();
+        $modes = [];
+        $days  = [];
 
         foreach ($tasks as $task) {
-            $modes[$task] = $config->getGroupValue('/logs/clearing/'.$task.'/','mode');
-            $days[$task] = $config->getGroupValue('/logs/clearing/'.$task.'/','days');
+            $modes[$task] = $config->getGroupValue('/logs/clearing/'.$task.'/', 'mode');
+            $days[$task] = $config->getGroupValue('/logs/clearing/'.$task.'/', 'days');
         }
 
         $this->modes = $modes;
@@ -346,18 +361,17 @@ HTML
         // ---------------------------------------
 
         foreach ($tasks as $task) {
-
             if ($task == LogClearing::LOG_ORDERS) {
                 continue;
             }
 
             // ---------------------------------------
-            $data = array(
+            $data = [
                 'label'   => $this->__('Clear All'),
                 'onclick' => 'LogClearingObj.clearAllLog(\'' . $task . '\', this)',
                 'class'   => 'clear_all_' . $task . ' primary',
                 'style'   => 'margin-left: 15px'
-            );
+            ];
             $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
             $this->setChild('clear_all_'.$task, $buttonBlock);
             // ---------------------------------------
@@ -391,7 +405,7 @@ HTML
         ];
 
         $pickupStoreJs = '';
-        if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
+        if ($this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
             $pickupStoreJs = "LogClearingObj.changeModeLog('{$logData[4]}');";
         }
 
@@ -406,7 +420,7 @@ HTML
         LogClearingObj.changeModeLog('{$logData[3]}');
         {$pickupStoreJs}
 JS
-);
+        );
 
         return parent::_beforeToHtml();
     }

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore
+ */
 class Edit extends AbstractContainer
 {
     //########################################
@@ -48,7 +52,6 @@ class Edit extends AbstractContainer
         ]);
 
         if ($pickupStoreModel && $pickupStoreModel->getId()) {
-
             $duplicateHeaderText = $this->__('Add Store');
 
             $this->addButton('duplicate', [
@@ -66,7 +69,8 @@ class Edit extends AbstractContainer
             ]);
         }
 
-        $url = $this->getUrl('*/ebay_account_pickupStore/save',
+        $url = $this->getUrl(
+            '*/ebay_account_pickupStore/save',
             ['back' => $this->getHelper('Data')->makeBackUrlParam('edit', [])]
         );
 

@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Model\Walmart\Order\Action\Handler;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\Walmart\Order\Action\Handler
+ */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Order $order */
     protected $order = null;
 
-    protected $activeRecordFactory = NULL;
+    protected $activeRecordFactory = null;
 
     //########################################
 
@@ -45,13 +49,17 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         }
 
         /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcher */
-        $dispatcher = $this->modelFactory->getObject('Walmart\Connector\Dispatcher');
+        $dispatcher = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
 
         $serverCommand = $this->getServerCommand();
 
         $connector = $dispatcher->getVirtualConnector(
-            $serverCommand[0], $serverCommand[1], $serverCommand[2],
-            $this->getRequestData(), null, $this->order->getAccount()
+            $serverCommand[0],
+            $serverCommand[1],
+            $serverCommand[2],
+            $this->getRequestData(),
+            null,
+            $this->order->getAccount()
         );
 
         try {
@@ -59,10 +67,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         } catch (\Exception $exception) {
             $this->getHelper('Module\Exception')->process($exception);
 
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromException($exception);
 
-            $this->processError(array($message));
+            $this->processError([$message]);
 
             return;
         }
@@ -92,7 +100,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param \Ess\M2ePro\Model\Connector\Connection\Response\Message[] $messages
      */
-    abstract protected function processError(array $messages = array());
+    abstract protected function processError(array $messages = []);
 
     //########################################
 

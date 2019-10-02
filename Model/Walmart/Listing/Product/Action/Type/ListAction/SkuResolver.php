@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction;
 
+/**
+ * Class SkuResolver
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction
+ */
 class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Listing\Product */
@@ -15,10 +19,10 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
 
     private $skusInProcessing = null;
 
-    private $skusInCurrentRequest = array();
+    private $skusInCurrentRequest = [];
 
     /** @var \Ess\M2ePro\Model\Response\Message[] */
-    private $messages = array();
+    private $messages = [];
 
     protected $walmartFactory;
     protected $activeRecordFactory;
@@ -68,14 +72,13 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
         $sku = $this->getSku();
 
         if (empty($sku)) {
-
             // M2ePro\TRANSLATIONS
             // SKU is not provided. Please, check Listing Settings.
             $this->addMessage('SKU is not provided. Please, check Listing Settings.');
             return null;
         }
 
-        $generateSkuMode = $this->getHelper('Component\Walmart\Configuration')->isGenerateSkuModeYes();
+        $generateSkuMode = $this->getHelper('Component_Walmart_Configuration')->isGenerateSkuModeYes();
 
         if (!$this->isExistInM2ePro($sku, !$generateSkuMode)) {
             return $sku;
@@ -131,8 +134,6 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
     private function isExistInM2ePro($sku, $addMessages = false)
     {
         if ($this->isAlreadyInCurrentRequest($sku) || $this->isAlreadyInProcessing($sku)) {
-// M2ePro\TRANSLATIONS
-// Another Product with the same SKU is being Listed simultaneously with this one. Please change the SKU or enable the Option Generate Merchant SKU.
             $addMessages && $this->addMessage(
                 'Another Product with the same SKU is being Listed simultaneously with this one.
                 Please change the SKU or enable the Option Generate Merchant SKU.'
@@ -141,8 +142,6 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->isExistInM2eProListings($sku)) {
-// M2ePro\TRANSLATIONS
-// Product with the same SKU is found in other M2E Pro Listing that is created from the same Merchant ID for the same Marketplace.
             $addMessages && $this->addMessage(
                 'Product with the same SKU is found in other M2E Pro Listing that is created
                  from the same Merchant ID for the same Marketplace.'
@@ -151,8 +150,6 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->isExistInOtherListings($sku)) {
-// M2ePro\TRANSLATIONS
-// Product with the same SKU is found in M2E Pro 3rd Party Listing. Please change the SKU or enable the Option Generate Merchant SKU.
             $addMessages && $this->addMessage(
                 'Product with the same SKU is found in M2E Pro 3rd Party Listing.
                 Please change the SKU or enable the Option Generate Merchant SKU.'
@@ -182,13 +179,13 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
         $collection->getSelect()->join(
-            array('l' => $listingTable),
+            ['l' => $listingTable],
             '`main_table`.`listing_id` = `l`.`id`',
-            array()
+            []
         );
 
         $collection->addFieldToFilter('sku', $sku);
-        $collection->addFieldToFilter('main_table.id', array('neq' => $this->listingProduct->getId()));
+        $collection->addFieldToFilter('main_table.id', ['neq' => $this->listingProduct->getId()]);
         $collection->addFieldToFilter('l.account_id', $this->getListingProduct()->getAccount()->getId());
 
         return $collection->getSize() > 0;
@@ -209,12 +206,12 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
 
     private function getSkusInProcessing()
     {
-        if (!is_null($this->skusInProcessing)) {
+        if ($this->skusInProcessing !== null) {
             return $this->skusInProcessing;
         }
 
         $processingActionListSkuCollection = $this->activeRecordFactory
-            ->getObject('Walmart\Processing\Action\ListAction\Sku')
+            ->getObject('Walmart_Processing_Action_ListAction_Sku')
             ->getCollection();
         $processingActionListSkuCollection->addFieldToFilter('account_id', $this->getListingProduct()
                                                                                 ->getListing()
@@ -230,13 +227,15 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
         ) {
             $variations = $this->getListingProduct()->getVariations(true);
             if (count($variations) <= 0) {
-                throw new \Ess\M2ePro\Model\Exception\Logic('There are no variations for a variation product.',
-                    array(
+                throw new \Ess\M2ePro\Model\Exception\Logic(
+                    'There are no variations for a variation product.',
+                    [
                         'listing_product_id' => $this->getListingProduct()->getId()
-                    ));
+                    ]
+                );
             }
 
-            /* @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
             $variation = reset($variations);
             $sku = $variation->getChildObject()->getSku();
 
@@ -258,7 +257,7 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
             return $sku;
         }
 
-        $helper = $this->getHelper('Component\Walmart\Configuration');
+        $helper = $this->getHelper('Component_Walmart_Configuration');
 
         $sku = '';
 
@@ -288,7 +287,7 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
 
     private function applySkuModification($sku)
     {
-        $helper = $this->getHelper('Component\Walmart\Configuration');
+        $helper = $this->getHelper('Component_Walmart_Configuration');
 
         if ($helper->isSkuModificationModeNone()) {
             return $sku;
@@ -312,15 +311,14 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $newSku = preg_replace('/[.\s-]/', '_', $sku);
-// M2ePro\TRANSLATIONS
-// The Item SKU will be automatically changed to "%s". Special characters, i.e. hyphen (-), space ( ), and period (.), are not allowed by Walmart and will be replaced with the underscore ( _ ). The Item will remain associated with Magento Product "%s".
         $this->addMessage(
             sprintf(
                 'The Item SKU will be automatically changed to "%s".
                 Special characters, i.e. hyphen (-), space ( ), and period (.), are not allowed by Walmart and
                 will be replaced with the underscore ( _ ).
                 The Item will remain associated with Magento Product "%s".',
-                $newSku, $sku
+                $newSku,
+                $sku
             ),
             \Ess\M2ePro\Model\Response\Message::TYPE_WARNING
         );
@@ -368,7 +366,7 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
 
     private function addMessage($text, $type = \Ess\M2ePro\Model\Response\Message::TYPE_ERROR)
     {
-        $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData($text, $type);
 
         $this->messages[] = $message;

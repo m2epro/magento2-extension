@@ -8,12 +8,17 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
+/**
+ * Class Selling
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub
+ */
 class Selling extends AbstractModel
 {
     //########################################
 
     protected function check()
     {
+        return null;
     }
 
     protected function execute()
@@ -39,15 +44,15 @@ class Selling extends AbstractModel
 
             $actualOnlinePrice = $walmartListingProduct->getOnlinePrice();
 
-            if (!is_null($actualOnlinePrice) && (is_null($price) || $price > $actualOnlinePrice)) {
+            if ($actualOnlinePrice !== null && ($price === null || $price > $actualOnlinePrice)) {
                 $price = $actualOnlinePrice;
             }
         }
 
-        $this->getProcessor()->getListingProduct()->getChildObject()->addData(array(
+        $this->getProcessor()->getListingProduct()->getChildObject()->addData([
             'online_qty'   => $qty,
             'online_price' => $price,
-        ));
+        ]);
     }
 
     //########################################

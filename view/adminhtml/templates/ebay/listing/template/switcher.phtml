@@ -1,5 +1,14 @@
 <?php
-    /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher $block */
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher $block */
+
 ?>
 
 <style>
@@ -31,51 +40,57 @@
                 <?php $display = $block->canDisplaySwitcher() ? '' : 'none'; ?>
                 <td class="template-switcher-td" style="display: <?php echo $display ?>;">
                     <select name="<?php echo $block->getSwitcherName() ?>" id="<?php echo $block->getSwitcherId() ?>" class="template-switcher M2ePro-validate-ebay-template-switcher select admin__control-select">
-                        <?php if ($block->canDisplayUseDefaultOption() && $block->isTemplateModeParentForced()): ?>
-                            <option value="<?php echo base64_encode(json_encode(array('mode' => null))) ?>" selected="selected" class="template-switcher-empty-option empty"></option>
+                        <?php if ($block->canDisplayUseDefaultOption() && $block->isTemplateModeParentForced()) : ?>
+                            <option value="<?php echo base64_encode(json_encode(['mode' => null])) ?>" selected="selected" class="template-switcher-empty-option empty"></option>
                         <?php endif; ?>
 
                         <?php
-                        $value = base64_encode(json_encode(array(
+                        $value = base64_encode(json_encode([
                             'id' => $block->isTemplateModeCustom() ? $block->getTemplateId() : null,
                             'mode' => \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_CUSTOM,
                             'nick' => $block->getTemplateNick()
-                        )));
+                        ]));
                         $selected = $block->isTemplateModeCustom();
                         ?>
 
-                        <option value="<?php echo $value ?>" <?php if ($selected): ?>selected="selected"<?php endif; ?> class="template-switcher-custom-option">
+                        <option value="<?php echo $value ?>" <?php if ($selected) :
+                            ?>selected="selected"<?php
+                                       endif; ?> class="template-switcher-custom-option">
                             <?php echo $block->__('Custom Settings') ?>
                         </option>
 
-                        <?php if ($block->canDisplayUseDefaultOption()): ?>
+                        <?php if ($block->canDisplayUseDefaultOption()) : ?>
                             <?php
-                            $value = base64_encode(json_encode(array(
+                            $value = base64_encode(json_encode([
                                 'id' => null,
                                 'mode' => \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_PARENT,
                                 'nick' => $block->getTemplateNick()
-                            )));
+                            ]));
                             $selected = $block->isTemplateModeParent() && !$block->isTemplateModeParentForced();
                             ?>
-                            <option value="<?php echo $value; ?>" <?php if ($selected): ?>selected="selected"<?php endif; ?> class="template-switcher-parent-option">
+                            <option value="<?php echo $value; ?>" <?php if ($selected) :
+                                ?>selected="selected"<?php
+                                           endif; ?> class="template-switcher-parent-option">
                                 <?php echo $block->__('Use From Listing Settings') ?>
                             </option>
                         <?php endif; ?>
 
                         <?php $templates = $block->getTemplates(); ?>
 
-                        <?php if (count($templates) > 0): ?>
+                        <?php if (!empty($templates)) : ?>
                             <optgroup label="<?php echo $block->getHelper('Data')->escapeHtml($block->__('Policies')) ?>" class="templates-group">
-                                <?php foreach ($templates as $template): ?>
+                                <?php foreach ($templates as $template) : ?>
                                     <?php
-                                    $value = base64_encode(json_encode(array(
+                                    $value = base64_encode(json_encode([
                                         'id' => $template->getId(),
                                         'mode' => \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE,
                                         'nick' => $block->getTemplateNick()
-                                    )));
+                                    ]));
                                     $selected = $block->isTemplateModeTemplate() && $block->getTemplateId() == $template->getId();
                                     ?>
-                                    <option value="<?php echo $value; ?>" <?php if ($selected): ?>selected="selected"<?php endif; ?> class="template-switcher-template-option">
+                                    <option value="<?php echo $value; ?>" <?php if ($selected) :
+                                        ?>selected="selected"<?php
+                                                   endif; ?> class="template-switcher-template-option">
                                         <?php echo $block->getHelper('Data')->escapeHtml($template->getTitle()) ?>
                                     </option>
                                 <?php endforeach; ?>

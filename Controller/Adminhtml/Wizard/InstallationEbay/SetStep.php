@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 
+/**
+ * Class SetStep
+ * @package Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay
+ */
 class SetStep extends InstallationEbay
 {
     public function execute()

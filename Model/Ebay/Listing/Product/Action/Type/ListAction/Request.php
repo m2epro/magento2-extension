@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction
+ */
 class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 {
     protected $isVerifyCall = false;
@@ -53,25 +57,21 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
     public function getActionData()
     {
         if (!$uuid = $this->getEbayListingProduct()->getItemUUID()) {
-
             $uuid = $this->getEbayListingProduct()->generateItemUUID();
             $this->getEbayListingProduct()->setData('item_uuid', $uuid)->save();
         }
 
         $data = array_merge(
 
-            array(
+            [
                 'sku'       => $this->getEbayListingProduct()->getSku(),
                 'item_uuid' => $uuid,
-            ),
-
+            ],
             $this->getRequestVariations()->getRequestData(),
             $this->getRequestCategories()->getRequestData(),
-
             $this->getRequestPayment()->getRequestData(),
             $this->getRequestReturn()->getRequestData(),
             $this->getRequestShipping()->getRequestData(),
-
             $this->getRequestSelling()->getRequestData(),
             $this->getRequestDescription()->getRequestData()
         );
@@ -144,7 +144,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
     protected function getIsEpsImagesMode()
     {
-        return NULL;
+        return null;
     }
 
     //########################################
@@ -153,11 +153,10 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
     {
         if (!$this->getIsVariationItem() || !$this->getMagentoProduct()->isConfigurableType() ||
             empty($data['variations_sets']) || !is_array($data['variations_sets'])) {
-
             return $data;
         }
 
-        $confAttributes = array();
+        $confAttributes = [];
         $additionalData = $this->getListingProduct()->getAdditionalData();
         if (!empty($additionalData['configurable_attributes'])) {
             $confAttributes = $additionalData['configurable_attributes'];
@@ -167,10 +166,9 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
             return $data;
         }
 
-        $replacements = array();
+        $replacements = [];
 
         foreach ($this->getEbayListingProduct()->getCategoryTemplate()->getSpecifics(true) as $specific) {
-
             if (!$specific->isItemSpecificsMode() || !$specific->isCustomAttributeValueMode()) {
                 continue;
             }

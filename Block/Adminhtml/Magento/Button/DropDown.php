@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Button;
 
+/**
+ * Class DropDown
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Button
+ */
 class DropDown extends \Magento\Backend\Block\Widget\Button\SplitButton
 {
     //########################################

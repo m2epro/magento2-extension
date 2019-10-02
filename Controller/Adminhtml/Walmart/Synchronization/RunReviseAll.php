@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Settings;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class RunReviseAll
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization
+ */
 class RunReviseAll extends Settings
 {
     /** @var  \Magento\Framework\Stdlib\DateTime\TimezoneInterface */
@@ -22,8 +26,7 @@ class RunReviseAll extends Settings
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         Context $context
-    )
-    {
+    ) {
         $this->localeDate = $localeDate;
         parent::__construct($walmartFactory, $context);
     }
@@ -34,18 +37,22 @@ class RunReviseAll extends Settings
     {
         $startDate = $this->getHelper('M2ePro')->getCurrentGmtDate();
 
-        $synchConfig = $this->modelFactory->getObject('Config\Manager\Synchronization');
+        $synchConfig = $this->modelFactory->getObject('Config_Manager_Synchronization');
 
         $synchConfig->setGroupValue(
-            '/walmart/templates/synchronization/revise/total/', 'start_date', $startDate
+            '/walmart/templates/synchronization/revise/total/',
+            'start_date',
+            $startDate
         );
         $synchConfig->setGroupValue(
-            '/walmart/templates/synchronization/revise/total/', 'last_listing_product_id', 0
+            '/walmart/templates/synchronization/revise/total/',
+            'last_listing_product_id',
+            0
         );
 
-        $this->setJsonContent(array(
+        $this->setJsonContent([
             'start_date' => $this->localeDate->formatDate($startDate, \IntlDateFormatter::MEDIUM)
-        ));
+        ]);
     }
 
     //########################################

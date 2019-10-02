@@ -19,6 +19,8 @@ define([
 
             $super(gridHandler);
 
+            this.initValidators();
+
             self.searchBlock = $('productSearch_pop_up_content').outerHTML;
             $('productSearch_pop_up_content').remove();
         },
@@ -42,26 +44,17 @@ define([
 
         // ---------------------------------------
 
-        options: {},
-
-        setOptions: function (options) {
-            this.options = Object.extend(this.options, options);
-            this.initValidators();
-            return this;
-        },
-
         initValidators: function () {
-            var self = this;
 
-            jQuery.validator.addMethod('M2ePro-amazon-attribute-unique-value', function (value, el) {
+            Validation.add('M2ePro-amazon-attribute-unique-value', M2ePro.translator.translate('variation_manage_matched_attributes_error_duplicate'), function(value, el) {
 
                 var existedValues = [],
                     isValid = true,
-                    form = el.parent('form');
+                    form = el.up('form');
 
-                form.select('select').each(function (index, el) {
+                form.select('select').each(function(el) {
                     if (el.value != '') {
-                        if (existedValues.indexOf(el.value) === -1) {
+                        if(existedValues.indexOf(el.value) === -1) {
                             existedValues.push(el.value);
                         } else {
                             isValid = false;
@@ -70,8 +63,7 @@ define([
                 });
 
                 return isValid;
-
-            }, M2ePro.translator.translate('variation_manage_matched_attributes_error_duplicate'));
+            });
         },
 
         // ---------------------------------------

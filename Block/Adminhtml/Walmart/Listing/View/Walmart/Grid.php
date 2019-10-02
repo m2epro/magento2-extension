@@ -11,9 +11,13 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Walmart;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 use Ess\M2ePro\Model\Listing\Log;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Walmart
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
-    private $lockedDataCache = array();
+    private $lockedDataCache = [];
 
     private $childProductsWarningsData;
 
@@ -38,8 +42,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->walmartFactory = $walmartFactory;
         $this->localeCurrency = $localeCurrency;
@@ -78,7 +81,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         // Get collection
         // ---------------------------------------
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
@@ -100,24 +103,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // ---------------------------------------
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
         $collection->joinTable(
-            array('lp' => $lpTable),
+            ['lp' => $lpTable],
             'product_id=entity_id',
-            array(
+            [
                 'id'              => 'id',
                 'walmart_status'   => 'status',
                 'component_mode'  => 'component_mode',
                 'additional_data' => 'additional_data'
-            ),
-            array(
+            ],
+            [
                 'listing_id' => (int)$this->listing['id']
-            )
+            ]
         );
 
-        $wlpTable = $this->activeRecordFactory->getObject('Walmart\Listing\Product')->getResource()->getMainTable();
+        $wlpTable = $this->activeRecordFactory->getObject('Walmart_Listing_Product')->getResource()->getMainTable();
         $collection->joinTable(
-            array('wlp' => $wlpTable),
+            ['wlp' => $wlpTable],
             'listing_product_id=id',
-            array(
+            [
                 'variation_child_statuses'       => 'variation_child_statuses',
                 'walmart_sku'                    => 'sku',
                 'gtin'                           => 'gtin',
@@ -135,7 +138,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'online_start_date'              => 'online_start_date',
                 'online_end_date'                => 'online_end_date',
                 'status_change_reasons'          => 'status_change_reasons'
-            ),
+            ],
             '{{table}}.variation_parent_id is NULL'
         );
 
@@ -152,57 +155,57 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('product_id', array(
+        $this->addColumn('product_id', [
             'header'    => $this->__('Product ID'),
             'align'     => 'right',
             'width'     => '100px',
             'type'      => 'number',
             'index'     => 'entity_id',
-            'frame_callback' => array($this, 'callbackColumnProductId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductId']
+        ]);
 
-        $this->addColumn('name', array(
+        $this->addColumn('name', [
             'header'    => $this->__('Product Title / Product SKU'),
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'name',
             'filter_index' => 'name',
             'escape'       => false,
-            'frame_callback' => array($this, 'callbackColumnProductTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+        ]);
 
-        $this->addColumn('sku', array(
+        $this->addColumn('sku', [
             'header' => $this->__('SKU'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'text',
             'index' => 'walmart_sku',
             'filter_index' => 'walmart_sku',
-            'frame_callback' => array($this, 'callbackColumnWalmartSku')
-        ));
+            'frame_callback' => [$this, 'callbackColumnWalmartSku']
+        ]);
 
-        $this->addColumn('gtin', array(
+        $this->addColumn('gtin', [
             'header' => $this->__('GTIN'),
             'align' => 'left',
             'width' => '140px',
             'type' => 'text',
             'index' => 'gtin',
             'filter_index' => 'gtin',
-            'frame_callback' => array($this, 'callbackColumnGtin'),
-            'filter_condition_callback' => array($this, 'callbackFilterGtin')
-        ));
+            'frame_callback' => [$this, 'callbackColumnGtin'],
+            'filter_condition_callback' => [$this, 'callbackFilterGtin']
+        ]);
 
-        $this->addColumn('online_qty', array(
+        $this->addColumn('online_qty', [
             'header' => $this->__('QTY'),
             'align' => 'right',
             'width' => '70px',
             'type' => 'number',
             'index' => 'online_qty',
             'filter_index' => 'online_qty',
-            'frame_callback' => array($this, 'callbackColumnAvailableQty'),
-            'filter_condition_callback' => array($this, 'callbackFilterQty')
-        ));
+            'frame_callback' => [$this, 'callbackColumnAvailableQty'],
+            'filter_condition_callback' => [$this, 'callbackFilterQty']
+        ]);
 
         $dir = $this->getParam($this->getVarNameDir(), $this->_defaultDir);
 
@@ -212,33 +215,39 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             $priceSortField = 'min_online_price';
         }
 
-        $this->addColumn('online_price', array(
+        $this->addColumn('online_price', [
             'header' => $this->__('Price'),
             'align' => 'right',
             'width' => '110px',
             'type' => 'number',
             'index' => $priceSortField,
             'filter_index' => $priceSortField,
-            'frame_callback' => array($this, 'callbackColumnPrice'),
-            'filter_condition_callback' => array($this, 'callbackFilterPrice')
-        ));
+            'frame_callback' => [$this, 'callbackColumnPrice'],
+            'filter_condition_callback' => [$this, 'callbackFilterPrice']
+        ]);
 
-        $this->addColumn('status', array(
+        $statusColumn = [
             'header' => $this->__('Status'),
             'width' => '155px',
             'index' => 'walmart_status',
             'filter_index' => 'walmart_status',
             'type' => 'options',
             'sortable' => false,
-            'options' => array(
+            'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Inactive (Blocked)')
-            ),
-            'frame_callback' => array($this, 'callbackColumnStatus'),
-            'filter_condition_callback' => array($this, 'callbackFilterStatus')
-        ));
+            ],
+            'frame_callback' => [$this, 'callbackColumnStatus'],
+            'filter_condition_callback' => [$this, 'callbackFilterStatus']
+        ];
+
+        if ($this->getHelper('View\Walmart')->isResetFilterShouldBeShown($this->listing->getId())) {
+            $statusColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter\Status';
+        }
+
+        $this->addColumn('status', $statusColumn);
 
         return parent::_prepareColumns();
     }
@@ -253,50 +262,58 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         // Set mass-action
         // ---------------------------------------
-        $groups = array(
-            'actions'            => $this->__('Actions'),
-            'other'              => $this->__('Other'),
-        );
+        $groups = [
+            'actions' => $this->__('Actions'),
+            'other'   => $this->__('Other'),
+        ];
 
         $this->getMassactionBlock()->setGroups($groups);
 
-        $this->getMassactionBlock()->addItem('list', array(
+        $this->getMassactionBlock()->addItem('list', [
             'label'    => $this->__('List Item(s)'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'actions');
+        ], 'actions');
 
-        $this->getMassactionBlock()->addItem('revise', array(
+        $this->getMassactionBlock()->addItem('revise', [
             'label'    => $this->__('Revise Item(s)'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'actions');
+        ], 'actions');
 
-        $this->getMassactionBlock()->addItem('relist', array(
+        $this->getMassactionBlock()->addItem('relist', [
             'label'    => $this->__('Relist Item(s)'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'actions');
+        ], 'actions');
 
-        $this->getMassactionBlock()->addItem('stop', array(
+        $this->getMassactionBlock()->addItem('stop', [
             'label'    => $this->__('Stop Item(s)'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'actions');
+        ], 'actions');
 
-        $this->getMassactionBlock()->addItem('stopAndRemove', array(
+        $this->getMassactionBlock()->addItem('stopAndRemove', [
             'label'    => $this->__('Stop on Channel / Remove from Listing'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'actions');
+        ], 'actions');
 
-        $this->getMassactionBlock()->addItem('deleteAndRemove', array(
+        $this->getMassactionBlock()->addItem('deleteAndRemove', [
             'label'    => $this->__('Retire on Channel / Remove from Listing'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'actions');
+        ], 'actions');
 
         // ---------------------------------------
+
+        if ($this->getHelper('View\Walmart')->isResetFilterShouldBeShown($this->listing->getId())) {
+            $this->getMassactionBlock()->addItem('resetProducts', [
+                'label'    => $this->__('Reset Inactive (Blocked) Item(s)'),
+                'url'      => '',
+                'confirm'  => $this->__('Are you sure?')
+            ], 'other');
+        }
 
         return parent::_prepareMassaction();
     }
@@ -309,7 +326,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $value = '<span>'.$productTitle.'</span>';
 
-        if (is_null($sku = $row->getData('sku'))) {
+        $sku = $row->getData('sku');
+
+        if ($row->getData('sku') === null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
                 ->setProductId($row->getData('entity_id'))
                 ->getSku();
@@ -334,7 +353,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $parentType = $variationManager->getTypeModel();
 
         if ($variationManager->isRelationParentType()) {
-
             $productAttributes = (array)$variationManager->getTypeModel()->getProductAttributes();
             $virtualProductAttributes = $variationManager->getTypeModel()->getVirtualProductAttributes();
             $virtualChannelAttributes = $variationManager->getTypeModel()->getVirtualChannelAttributes();
@@ -346,15 +364,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             } else {
                 foreach ($productAttributes as $attribute) {
                     if (in_array($attribute, array_keys($virtualProductAttributes))) {
-
                         $attributesStr .= '<span style="border-bottom: 2px dotted grey">' . $attribute .
                             ' (' . $virtualProductAttributes[$attribute] . ')</span>, ';
-
-                    } else if (in_array($attribute, array_keys($virtualChannelAttributes))) {
-
+                    } elseif (in_array($attribute, array_keys($virtualChannelAttributes))) {
                         $attributesStr .= '<span>' . $attribute .
                             ' (' . $virtualChannelAttributes[$attribute] . ')</span>, ';
-
                     } else {
                         $attributesStr .= $attribute . ', ';
                     }
@@ -363,15 +377,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             }
             $value .= $attributesStr;
 
-            if (!$parentType->hasChannelGroupId() && !$listingProduct->isSetProcessingLock('child_products_in_action')
-            ) {
+            if (!$parentType->hasChannelGroupId() &&
+                !$listingProduct->isSetProcessingLock('child_products_in_action')) {
                 $popupTitle = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml(
-                    $this->__('Manage Magento Product Variations'))
-                );
+                    $this->__('Manage Magento Product Variations')
+                ));
 
                 $linkTitle = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml(
-                    $this->__('Change "Magento Variations" Mode'))
-                );
+                    $this->__('Change "Magento Variations" Mode')
+                ));
 
                 $switchToIndividualJsMethod = <<<JS
 WalmartListingProductVariationObj
@@ -413,14 +427,12 @@ HTML;
             $linkTitle = $this->__('Open Manage Variations Tool');
 
             if (!$parentType->hasMatchedAttributes() || !$parentType->hasChannelAttributes()) {
-
                 $linkTitle = $this->__('Action Required');
                 $problemStyle = 'style="font-weight: bold; color: #FF0000;" ';
                 $iconPath = $this->getViewFileUrl('Ess_M2ePro::images/error.png');
                 $problemIcon = '<img style="vertical-align: middle;" src="'
                     . $iconPath . '" title="' . $linkTitle . '" alt="" width="16" height="16">';
             } elseif ($this->hasChildWithWarning($listingProductId)) {
-
                 $linkTitle = $this->__('Action Required');
                 $problemStyle = 'style="font-weight: bold;" ';
                 $iconPath = $this->getViewFileUrl('Ess_M2ePro::images/warning.png');
@@ -457,7 +469,6 @@ HTML;
         // ---------------------------------------
 
         if (!$hasInActionLock) {
-
             $popupTitle = $this->__('Manage Magento Product Variation');
             $linkTitle  = $this->__('Edit Variation');
 
@@ -474,7 +485,7 @@ HTML;
 HTML;
         }
 
-        $popupTitle = $this->__('Manage Magento Product Variations')   ;
+        $popupTitle = $this->__('Manage Magento Product Variations');
         $linkTitle  = $this->__('Add Another Variation(s)');
 
         $value.= <<<HTML
@@ -490,8 +501,8 @@ HTML;
 
         if (empty($gtin)) {
             $linkTitle = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml(
-                $this->__('Change "Magento Variations" Mode'))
-            );
+                $this->__('Change "Magento Variations" Mode')
+            ));
 
             $switchToParentJsMethod = <<<JS
 WalmartListingProductVariationObj
@@ -524,15 +535,14 @@ HTML;
     {
         $isVariationParent = $row->getData('is_variation_parent');
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             $value = $this->__('N/A');
         }
 
         $productId = $row->getData('id');
 
         if ($row->getData('walmart_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED &&
-            !$row->getData('is_variation_parent'))
-        {
+            !$row->getData('is_variation_parent')) {
             $value = <<<HTML
 <div class="walmart-sku">
     {$value}&nbsp;&nbsp;
@@ -543,8 +553,7 @@ HTML;
         }
 
         if (!$isVariationParent &&
-            ($row->getData('is_details_data_changed') || $row->getData('is_online_price_invalid')))
-        {
+            ($row->getData('is_details_data_changed') || $row->getData('is_online_price_invalid'))) {
             $msg = '';
 
             if ($row->getData('is_details_data_changed')) {
@@ -598,8 +607,7 @@ HTML;
         $html = '<div class="walmart-identifiers-gtin">'.$gtinHtml;
 
         if ($row->getData('walmart_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED &&
-            !$row->getData('is_variation_parent'))
-        {
+            !$row->getData('is_variation_parent')) {
             $html .= <<<HTML
 &nbsp;&nbsp;<a href="#" class="walmart-identifiers-gtin-edit"
    onclick="ListingGridHandlerObj.editChannelDataHandler.showIdentifiersPopup('$productId')">(edit)</a>
@@ -608,13 +616,13 @@ HTML;
 
         $html .= '</div>';
 
-        $identifiers = array(
+        $identifiers = [
             'UPC'        => $row->getData('upc'),
             'EAN'        => $row->getData('ean'),
             'ISBN'       => $row->getData('isbn'),
             'Walmart ID' => $row->getData('wpid'),
             'Item ID'    => $row->getData('item_id')
-        );
+        ];
 
         $htmlAdditional = '';
         foreach ($identifiers as $title => $value) {
@@ -623,8 +631,7 @@ HTML;
             }
 
             if (($row->getData('upc') || $row->getData('ean') || $row->getData('isbn')) &&
-                ($row->getData('wpid') || $row->getData('item_id')) && $title == 'Walmart ID')
-            {
+                ($row->getData('wpid') || $row->getData('item_id')) && $title == 'Walmart ID') {
                 $htmlAdditional .= "<div class='separator-line'></div>";
             }
             $identifierCode  = $this->__($title);
@@ -657,15 +664,13 @@ HTML;
     public function callbackColumnAvailableQty($value, $row, $column, $isExport)
     {
         if (!$row->getData('is_variation_parent')) {
-
             if ($row->getData('walmart_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
                 return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
             }
 
-            if (is_null($value) || $value === '' ||
+            if ($value === null || $value === '' ||
                 ($row->getData('walmart_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
-                    !$row->getData('is_online_price_invalid')))
-            {
+                    !$row->getData('is_online_price_invalid'))) {
                 return $this->__('N/A');
             }
 
@@ -678,7 +683,7 @@ HTML;
 
         $variationChildStatuses = $this->getHelper('Data')->jsonDecode($row->getData('variation_child_statuses'));
 
-        if (empty($variationChildStatuses) || is_null($value) || $value === '') {
+        if (empty($variationChildStatuses) || $value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -705,7 +710,6 @@ HTML;
     {
         if ((!$row->getData('is_variation_parent') &&
             $row->getData('walmart_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED)) {
-
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
@@ -714,15 +718,13 @@ HTML;
 
         if (empty($onlineMinPrice) ||
             ($row->getData('walmart_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
-                !$row->getData('is_online_price_invalid')))
-        {
+                !$row->getData('is_online_price_invalid'))) {
             return $this->__('N/A');
         }
 
         $currency = $this->listing->getMarketplace()->getChildObject()->getDefaultCurrency();
 
         if ($row->getData('is_variation_parent')) {
-
             $onlinePriceStr = '<span style="color: #f00;">0</span>';
             if (!empty($onlineMinPrice) && !empty($onlineMaxPrice)) {
                 $onlineMinPriceStr = $this->convertAndFormatPriceCurrency($onlineMinPrice, $currency);
@@ -762,7 +764,6 @@ HTML;
         $html = $this->getViewLogIconHtml($listingProductId, $isVariationParent);
 
         if (!empty($additionalData['synch_template_list_rules_note'])) {
-
             $synchNote = $this->getHelper('View')->getModifiedLogMessage(
                 $additionalData['synch_template_list_rules_note']
             );
@@ -782,8 +783,7 @@ HTML;
 
         $resetHtml = '';
         if ($row->getData('walmart_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
-            !$row->getData('is_online_price_invalid'))
-        {
+            !$row->getData('is_online_price_invalid')) {
             $resetHtml = <<<HTML
 <br/>
 <span style="color: gray">[Can be fixed]</span>
@@ -793,7 +793,7 @@ HTML;
         if (!$isVariationParent) {
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->walmartFactory
-                ->getObjectLoaded('Listing\Product',$listingProductId);
+                ->getObjectLoaded('Listing\Product', $listingProductId);
 
             $statusChangeReasons = $listingProduct->getChildObject()->getStatusChangeReasons();
 
@@ -802,7 +802,6 @@ HTML;
                 . $resetHtml
                 . $this->getLockedTag($row);
         } else {
-
             $statusNotListed = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
             $statusListed    = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
             $statusStopped   = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
@@ -817,7 +816,7 @@ HTML;
 
             $variationChildStatuses = $this->getHelper('Data')->jsonDecode($variationChildStatuses);
 
-            $sortedStatuses = array();
+            $sortedStatuses = [];
 
             if (isset($variationChildStatuses[$statusNotListed])) {
                 $sortedStatuses[$statusNotListed] = $variationChildStatuses[$statusNotListed];
@@ -861,7 +860,7 @@ HTML;
         return $html;
     }
 
-    private function getProductStatus($status, $statusChangeReasons = array(), $isListAction = false)
+    private function getProductStatus($status, $statusChangeReasons = [], $isListAction = false)
     {
         $html = '';
 
@@ -869,7 +868,6 @@ HTML;
             $html = '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         } else {
             switch ($status) {
-
                 case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
                     $html = '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
                     break;
@@ -920,9 +918,7 @@ HTML;
             $tempLocks = $tempLocks['object_locks'];
 
             foreach ($tempLocks as $lock) {
-
                 switch ($lock->getTag()) {
-
                     case 'list_action':
                         $html .= '<br/><span style="color: #605fff">[List in Progress...]</span>';
                         break;
@@ -975,10 +971,10 @@ HTML;
         }
 
         $collection->addFieldToFilter(
-            array(
-                array('attribute'=>'sku','like'=>'%'.$value.'%'),
-                array('attribute'=>'name', 'like'=>'%'.$value.'%')
-            )
+            [
+                ['attribute'=>'sku','like'=>'%'.$value.'%'],
+                ['attribute'=>'name', 'like'=>'%'.$value.'%']
+            ]
         );
     }
 
@@ -1037,7 +1033,6 @@ SQL;
         $condition = '';
 
         if (isset($value['from']) || isset($value['to'])) {
-
             if (isset($value['from']) && $value['from'] != '') {
                 $condition = 'min_online_price >= \''.(float)$value['from'].'\'';
             }
@@ -1061,7 +1056,6 @@ SQL;
             }
 
             $condition .= ')';
-
         }
 
         $collection->getSelect()->having($condition);
@@ -1077,7 +1071,6 @@ SQL;
         }
 
         if (is_array($value) && isset($value['value']) || is_string($value)) {
-
             if (is_string($value)) {
                 $status = (int)$value;
             } else {
@@ -1091,7 +1084,7 @@ SQL;
         }
 
         if (is_array($value) && isset($value['is_reset'])) {
-            $collection->addFieldToFilter($index , \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED)
+            $collection->addFieldToFilter($index, \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED)
                        ->addFieldToFilter('is_online_price_invalid', 0);
         }
     }
@@ -1110,10 +1103,10 @@ SQL;
         $dbSelect = $connection->select()
             ->from(
                 $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getMainTable(),
-                array('action_id','action','type','description','create_date','initiator','listing_product_id')
+                ['action_id','action','type','description','create_date','initiator','listing_product_id']
             )
             ->where('`action` IN (?)', $availableActionsId)
-            ->order(array('id DESC'))
+            ->order(['id DESC'])
             ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::PRODUCTS_LIMIT);
 
         if ($isVariationParent) {
@@ -1130,7 +1123,7 @@ SQL;
 
         // ---------------------------------------
 
-        $summary = $this->createBlock('Walmart\Listing\Log\Grid\LastActions')->setData([
+        $summary = $this->createBlock('Walmart_Listing_Log_Grid_LastActions')->setData([
             'entity_id' => $listingProductId,
             'logs'      => $logs,
             'available_actions' => $this->getAvailableActions(),
@@ -1153,6 +1146,7 @@ SQL;
             Log::ACTION_STOP_AND_REMOVE_PRODUCT         => $this->__('Stop on Channel / Remove from Listing'),
             Log::ACTION_DELETE_AND_REMOVE_PRODUCT       => $this->__('Remove from Channel & Listing'),
             Log::ACTION_DELETE_PRODUCT_FROM_LISTING     => $this->__('Remove from Listing'),
+            Log::ACTION_RESET_BLOCKED_PRODUCT           => $this->__('Reset Inactive (Blocked) Item'),
             Log::ACTION_CHANNEL_CHANGE                  => $this->__('Channel Change'),
             Log::ACTION_SWITCH_TO_AFN_ON_COMPONENT      => $this->__('Switch to AFN'),
             Log::ACTION_SWITCH_TO_MFN_ON_COMPONENT      => $this->__('Switch to MFN'),
@@ -1188,7 +1182,7 @@ HTML;
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
-<<<JS
+                <<<JS
     ListingGridHandlerObj.afterInitPage();
 JS
             );
@@ -1205,10 +1199,10 @@ JS
         if (!isset($this->lockedDataCache[$listingProductId])) {
             $objectLocks = $this->activeRecordFactory->getObjectLoaded('Listing\Product', $listingProductId)
                 ->getProcessingLocks();
-            $tempArray = array(
+            $tempArray = [
                 'object_locks' => $objectLocks,
                 'in_action' => !empty($objectLocks),
-            );
+            ];
             $this->lockedDataCache[$listingProductId] = $tempArray;
         }
 
@@ -1219,21 +1213,21 @@ JS
 
     protected function getChildProductsWarningsData()
     {
-        if (is_null($this->childProductsWarningsData)) {
-            $this->childProductsWarningsData = array();
+        if ($this->childProductsWarningsData === null) {
+            $this->childProductsWarningsData = [];
 
-            $productsIds = array();
+            $productsIds = [];
             foreach ($this->getCollection()->getItems() as $row) {
                 $productsIds[] = $row['id'];
             }
 
             $connection = $this->resourceConnection->getConnection();
             $tableWalmartListingProduct = $this->activeRecordFactory
-                ->getObject('Walmart\Listing\Product')->getResource()->getMainTable();
+                ->getObject('Walmart_Listing_Product')->getResource()->getMainTable();
 
             $select = $connection->select();
             $select->distinct(true);
-            $select->from(array('wlp' => $tableWalmartListingProduct), array('variation_parent_id'))
+            $select->from(['wlp' => $tableWalmartListingProduct], ['variation_parent_id'])
                 ->where('variation_parent_id IN (?)', $productsIds)
                 ->where(
                     'is_variation_product_matched = 0'

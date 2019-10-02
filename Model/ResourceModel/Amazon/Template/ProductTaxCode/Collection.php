@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductTaxCode;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductTaxCode
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     //########################################

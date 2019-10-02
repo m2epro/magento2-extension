@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Categ
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
+/**
+ * Class ViewGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category
+ */
 class ViewGrid extends Main
 {
     public function execute()
@@ -28,7 +32,7 @@ class ViewGrid extends Main
         !is_array($magentoCategoryIds) && $magentoCategoryIds = array_filter(explode(',', $magentoCategoryIds));
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Template\Category\Grid $grid */
-        $grid = $this->createBlock('Walmart\Listing\Product\Template\Category\Grid');
+        $grid = $this->createBlock('Walmart_Listing_Product_Template_Category_Grid');
         $grid->setProductsIds($listingProductsIds);
         $grid->setMagentoCategoryIds($magentoCategoryIds);
         if ($mapToTemplateJsFn !== false) {

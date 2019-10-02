@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode;
 
+/**
+ * Class Website
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode
+ */
 class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Website
 {
     //########################################
@@ -22,7 +26,7 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
         // ---------------------------------------
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Listing::class)
         );
     }
 
@@ -48,7 +52,7 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Listing::class)
         );
 
         return parent::_afterToHtml($html);
@@ -74,7 +78,7 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
             ]
         );
 
-        $breadcrumb = $this->createBlock('Ebay\Listing\AutoAction\Mode\Breadcrumb', '', ['data' => [
+        $breadcrumb = $this->createBlock('Ebay_Listing_AutoAction_Mode_Breadcrumb', '', ['data' => [
             'id_prefix' => 'website'
         ]]);
         $breadcrumb->setSelectedStep(1);

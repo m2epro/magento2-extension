@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Order\Change;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Order\Change
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     //########################################
@@ -30,9 +34,9 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         $mpTable = $this->activeRecordFactory->getObject('Order')->getResource()->getMainTable();
 
         $this->getSelect()->join(
-            array('mo' => $mpTable),
+            ['mo' => $mpTable],
             '(`mo`.`id` = `main_table`.`order_id` AND `mo`.`account_id` = '.$accountId.')',
-            array('account_id', 'marketplace_id')
+            ['account_id', 'marketplace_id']
         );
     }
 
@@ -50,7 +54,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         $currentDate->modify("-{$interval} seconds");
 
         $this->getSelect()->where(
-            'processing_attempt_date IS NULL OR processing_attempt_date <= ?', $currentDate->format('Y-m-d H:i:s')
+            'processing_attempt_date IS NULL OR processing_attempt_date <= ?',
+            $currentDate->format('Y-m-d H:i:s')
         );
     }
 
@@ -60,9 +65,9 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         $mysqlTag = $this->getConnection()->quote($tag);
         $this->getSelect()->joinLeft(
-            array('lo' => $this->activeRecordFactory->getObject('Processing\Lock')->getResource()->getMainTable()),
+            ['lo' => $this->activeRecordFactory->getObject('Processing\Lock')->getResource()->getMainTable()],
             '(`lo`.`object_id` = `main_table`.`order_id` AND `lo`.`tag` = '.$mysqlTag.')',
-            array()
+            []
         );
         $this->getSelect()->where(
             '`lo`.`object_id` IS NULL'

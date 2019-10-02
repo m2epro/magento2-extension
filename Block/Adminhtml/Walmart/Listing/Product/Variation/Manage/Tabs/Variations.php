@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs;
 
+/**
+ * Class Variations
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs
+ */
 class Variations extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     /** @var  \Ess\M2ePro\Model\Listing\Product */
@@ -78,7 +82,7 @@ class Variations extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
     public function getGridHtml()
     {
         $this->js->add(
-<<<JS
+            <<<JS
     require([
         'M2ePro/Walmart/Listing/Product/Variation/Manage/Tabs/Variations/Grid'
     ], function(){

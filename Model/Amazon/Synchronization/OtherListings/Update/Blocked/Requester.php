@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update\Blocked;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update\Blocked
+ */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked\ItemsRequester
 {
     //########################################
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Amazon\Synchronization\OtherListings\Update\Blocked\ProcessingRunner';
+        return 'Amazon_Synchronization_OtherListings_Update_Blocked_ProcessingRunner';
     }
 
     //########################################

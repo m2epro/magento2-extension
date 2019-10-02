@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 use Magento\Backend\App\Action;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template
+ */
 class Edit extends Template
 {
     //########################################
@@ -40,18 +44,19 @@ class Edit extends Template
 
         // ---------------------------------------
         /** @var \Ess\M2ePro\Helper\Component\Ebay\Template\Switcher\DataLoader $dataLoader */
-        $dataLoader = $this->getHelper('Component\Ebay\Template\Switcher\DataLoader');
+        $dataLoader = $this->getHelper('Component_Ebay_Template_Switcher_DataLoader');
         $dataLoader->load($template);
         // ---------------------------------------
 
-        $content = $this->getLayout()->createBlock(
-            'Ess\\M2ePro\\Block\\Adminhtml\\Ebay\\Template\\Edit', '', ['data' => [
+        $content = $this->createBlock(
+            'Ebay_Template_Edit',
+            '',
+            ['data' => [
                 'template_nick' => $nick
             ]]
         );
 
         switch ($nick) {
-
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY:
                 $this->setPageHelpLink('x/TgMtAQ');
                 break;
@@ -79,12 +84,14 @@ class Edit extends Template
 
         if ($template->getId()) {
             $headerText =
-                $this->__('Edit "%template_title%" %template_name% Policy',
+                $this->__(
+                    'Edit "%template_title%" %template_name% Policy',
                     $this->getHelper('Data')->escapeHtml($template->getTitle()),
                     $this->getTemplateName($nick)
                 );
         } else {
-            $headerText = $this->__('Add %template_name% Policy',
+            $headerText = $this->__(
+                'Add %template_name% Policy',
                 $this->getTemplateName($nick)
             );
         }

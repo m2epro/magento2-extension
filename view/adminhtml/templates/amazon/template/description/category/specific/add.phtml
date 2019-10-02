@@ -1,3 +1,16 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Specific\Add $block */
+
+?>
+
 <div style="height: 300px;">
 
     <input id="specific_popup_title" type="hidden" value="<?php echo $block->escapeHtml($block->getData('additional_title') ? $block->__('Add Specifics to "%additional_title%" Block', $block->getData('additional_title')) : $block->__('Add Specifics')); ?>">
@@ -12,7 +25,7 @@
                 <!-- #selected specifics inserts here -->
             </div>
             <div style="float: right; line-height: 2;">
-                <a style="margin-top: 5px;" class="specifics_reset_selected_button" href="javascript:void(0);"><?php echo $this->__('Reset'); ?></a>
+                <a style="margin-top: 5px;" class="specifics_reset_selected_button" href="javascript:void(0);"><?php echo $block->__('Reset'); ?></a>
             </div>
         </div>
 

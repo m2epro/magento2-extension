@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractVerticalTabs;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form
+ */
 class Tabs extends AbstractVerticalTabs
 {
     protected $_template = 'Magento_Backend::widget/tabs.phtml';
@@ -28,7 +32,7 @@ class Tabs extends AbstractVerticalTabs
                 'label' => __('List Rules'),
                 'title' => __('List Rules'),
                 'content' => $this->createBlock(
-                    'Ebay\Template\Synchronization\Edit\Form\Tabs\ListRules'
+                    'Ebay_Template_Synchronization_Edit_Form_Tabs_ListRules'
                 )->toHtml(),
             ]
         );
@@ -39,7 +43,7 @@ class Tabs extends AbstractVerticalTabs
                 'label' => __('Revise Rules'),
                 'title' => __('Revise Rules'),
                 'content' => $this->createBlock(
-                    'Ebay\Template\Synchronization\Edit\Form\Tabs\ReviseRules'
+                    'Ebay_Template_Synchronization_Edit_Form_Tabs_ReviseRules'
                 )->toHtml(),
             ]
         );
@@ -50,7 +54,7 @@ class Tabs extends AbstractVerticalTabs
                 'label' => __('Relist Rules'),
                 'title' => __('Relist Rules'),
                 'content' => $this->createBlock(
-                    'Ebay\Template\Synchronization\Edit\Form\Tabs\RelistRules'
+                    'Ebay_Template_Synchronization_Edit_Form_Tabs_RelistRules'
                 )->toHtml(),
             ]
         );
@@ -61,7 +65,7 @@ class Tabs extends AbstractVerticalTabs
                 'label' => __('Stop Rules'),
                 'title' => __('Stop Rules'),
                 'content' => $this->createBlock(
-                    'Ebay\Template\Synchronization\Edit\Form\Tabs\StopRules'
+                    'Ebay_Template_Synchronization_Edit_Form_Tabs_StopRules'
                 )->toHtml(),
             ]
         );

@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Command\Pending;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Amazon\Connector\Command\Pending
+ */
 abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\Pending\Requester
 {
     /**
      * @var \Ess\M2ePro\Model\Account|null
      */
-    protected $account = NULL;
+    protected $account = null;
 
     //########################################
 
@@ -29,8 +33,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\Pending\Req
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Account $account = null,
         array $params = []
-    )
-    {
+    ) {
         $this->account = $account;
         parent::__construct($helperFactory, $modelFactory, $params);
     }
@@ -42,7 +45,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\Pending\Req
         $request = parent::buildRequestInstance();
 
         $requestData = $request->getData();
-        if (!is_null($this->account)) {
+        if ($this->account !== null) {
             $requestData['account'] = $this->account->getChildObject()->getServerHash();
         }
         $request->setData($requestData);
@@ -56,7 +59,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\Pending\Req
     {
         $params = parent::getProcessingParams();
 
-        if (!is_null($this->account)) {
+        if ($this->account !== null) {
             $params['account_id'] = $this->account->getId();
         }
 
@@ -67,7 +70,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\Pending\Req
     {
         $params = parent::getResponserParams();
 
-        if (!is_null($this->account)) {
+        if ($this->account !== null) {
             $params['account_id'] = $this->account->getId();
         }
 

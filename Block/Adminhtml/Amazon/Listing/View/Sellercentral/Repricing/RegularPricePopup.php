@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Sellercentral\Repricing;
 
+/**
+ * Class RegularPricePopup
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Sellercentral\Repricing
+ */
 class RegularPricePopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     public function _construct()

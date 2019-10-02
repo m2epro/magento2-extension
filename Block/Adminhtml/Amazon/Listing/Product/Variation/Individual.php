@@ -8,14 +8,18 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation;
 
+/**
+ * Class Individual
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation
+ */
 abstract class Individual extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
-    private $magentoVariationsSets = NULL;
-    private $magentoVariationsCombinations = NULL;
+    private $magentoVariationsSets = null;
+    private $magentoVariationsCombinations = null;
 
-    private $magentoVariationsTree = NULL;
+    private $magentoVariationsTree = null;
 
-    private $listingProduct = NULL;
+    private $listingProduct = null;
 
     //########################################
 
@@ -24,9 +28,11 @@ abstract class Individual extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBl
      */
     public function getListingProduct()
     {
-        if (is_null($this->listingProduct)) {
+        if ($this->listingProduct === null) {
             $this->listingProduct = $this->parentFactory->getObjectLoaded(
-                \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Product', $this->getListingProductId()
+                \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                'Listing\Product',
+                $this->getListingProductId()
             );
             $this->listingProduct->getMagentoProduct()->enableCache();
         }
@@ -35,7 +41,7 @@ abstract class Individual extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBl
 
     public function getMagentoVariationsSets()
     {
-        if (is_null($this->magentoVariationsSets)) {
+        if ($this->magentoVariationsSets === null) {
             $temp = $this->getListingProduct()
                 ->getMagentoProduct()
                 ->getVariationInstance()
@@ -48,7 +54,7 @@ abstract class Individual extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBl
 
     public function getMagentoVariationsCombinations()
     {
-        if (is_null($this->magentoVariationsCombinations)) {
+        if ($this->magentoVariationsCombinations === null) {
             $temp = $this->getListingProduct()
                 ->getMagentoProduct()
                 ->getVariationInstance()
@@ -63,13 +69,13 @@ abstract class Individual extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBl
 
     public function getMagentoVariationsTree()
     {
-        if (is_null($this->magentoVariationsTree)) {
-
+        if ($this->magentoVariationsTree === null) {
             $firstAttribute = $this->getMagentoVariationsSets();
             $firstAttribute = key($firstAttribute);
 
             $this->magentoVariationsTree = $this->prepareVariations(
-                $firstAttribute,$this->getMagentoVariationsCombinations()
+                $firstAttribute,
+                $this->getMagentoVariationsCombinations()
             );
         }
 
@@ -78,7 +84,7 @@ abstract class Individual extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBl
 
     // ---------------------------------------
 
-    private function prepareVariations($currentAttribute,$magentoVariations,$filters = array())
+    private function prepareVariations($currentAttribute, $magentoVariations, $filters = [])
     {
         $return = false;
 
@@ -86,20 +92,24 @@ abstract class Individual extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBl
 
         $temp = array_flip(array_keys($magentoVariationsSets));
 
+        if (!isset($temp[$currentAttribute])) {
+            return false;
+        }
+
         $lastAttributePosition = count($magentoVariationsSets) - 1;
         $currentAttributePosition = $temp[$currentAttribute];
 
         if ($currentAttributePosition != $lastAttributePosition) {
-
             $temp = array_keys($magentoVariationsSets);
             $nextAttribute = $temp[$currentAttributePosition + 1];
 
             foreach ($magentoVariationsSets[$currentAttribute] as $value) {
-
                 $filters[$currentAttribute] = $value;
 
                 $result = $this->prepareVariations(
-                    $nextAttribute,$magentoVariations,$filters
+                    $nextAttribute,
+                    $magentoVariations,
+                    $filters
                 );
 
                 if (!$result) {
@@ -115,18 +125,16 @@ abstract class Individual extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBl
         $return = false;
         foreach ($magentoVariations as $key => $magentoVariation) {
             foreach ($magentoVariation as $option) {
-
                 $value = $option['option'];
                 $attribute = $option['attribute'];
 
                 if ($attribute == $currentAttribute) {
-
                     if (count($magentoVariationsSets) != 1) {
                         continue;
                     }
 
                     $values = array_flip($magentoVariationsSets[$currentAttribute]);
-                    $return = array($currentAttribute => $values);
+                    $return = [$currentAttribute => $values];
 
                     foreach ($return[$currentAttribute] as &$value) {
                         $value = true;

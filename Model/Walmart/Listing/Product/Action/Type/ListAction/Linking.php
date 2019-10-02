@@ -9,13 +9,18 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction;
 
 use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory;
+use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
+/**
+ * Class Linking
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction
+ */
 class Linking extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     private $listingProduct = null;
 
-    private $productIdentifiers = array();
+    private $productIdentifiers = [];
 
     private $sku = null;
 
@@ -95,13 +100,13 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
      */
     public function createWalmartItem()
     {
-        $data = array(
+        $data = [
             'account_id'     => $this->getListingProduct()->getListing()->getAccountId(),
             'marketplace_id' => $this->getListingProduct()->getListing()->getMarketplaceId(),
             'sku'            => $this->getSku(),
             'product_id'     => $this->getListingProduct()->getProductId(),
             'store_id'       => $this->getListingProduct()->getListing()->getStoreId(),
-        );
+        ];
 
         $helper = $this->getHelper('Data');
 
@@ -155,9 +160,9 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
     private function linkSimpleOrIndividualProduct()
     {
-        $data = array(
+        $data = [
             'sku' => $this->getSku(),
-        );
+        ];
 
         $data = array_merge($data, $this->getProductIdentifiers());
 
@@ -169,9 +174,9 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
     private function linkChildProduct()
     {
-        $data = array(
+        $data = [
             'sku' => $this->getSku(),
-        );
+        ];
 
         $data = array_merge($data, $this->getProductIdentifiers());
 
@@ -181,9 +186,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child $typeModel */
         $typeModel = $this->getVariationManager()->getTypeModel();
 
-        /**
-         *@var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation $parentTypeModel
-         */
+        /** @var ParentRelation $parentTypeModel */
         $parentTypeModel = $typeModel->getParentListingProduct()
             ->getChildObject()
             ->getVariationManager()
@@ -229,7 +232,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
     private function getSku()
     {
-        if (!is_null($this->sku)) {
+        if ($this->sku !== null) {
             return $this->sku;
         }
 

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
+/**
+ * Class GetGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback\Template
+ */
 class GetGrid extends Account
 {
     public function execute()
@@ -19,7 +23,7 @@ class GetGrid extends Account
 
         $this->getHelper('Data\GlobalData')->setValue('edit_account', $model);
 
-        $this->setAjaxContent($this->createBlock('Ebay\Account\Edit\Tabs\Feedback\Template\Grid'));
+        $this->setAjaxContent($this->createBlock('Ebay_Account_Edit_Tabs_Feedback_Template_Grid'));
 
         return $this->getResult();
     }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Synchronization;
 
+/**
+ * Class Dispatcher
+ * @package Ess\M2ePro\Model\Synchronization
+ */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
     const MAX_MEMORY_LIMIT = 512;
@@ -17,17 +21,17 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     private $synchConfig;
     private $eventManager;
 
-    private $allowedComponents = array();
-    private $allowedTasksTypes = array();
+    private $allowedComponents = [];
+    private $allowedTasksTypes = [];
 
-    private $lockItem = NULL;
-    private $operationHistory = NULL;
+    private $lockItem = null;
+    private $operationHistory = null;
 
-    private $parentLockItem = NULL;
-    private $parentOperationHistory = NULL;
+    private $parentLockItem = null;
+    private $parentOperationHistory = null;
 
-    private $log = NULL;
-    private $params = array();
+    private $log = null;
+    private $params = [];
     private $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
 
     //########################################
@@ -39,8 +43,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->synchConfig = $synchConfig;
         $this->resourceConnection = $resourceConnection;
         $this->activeRecordFactory = $activeRecordFactory;
@@ -65,7 +68,6 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         $result = true;
 
         try {
-
             // global tasks
             $result = !$this->processGlobal() ? false : $result;
 
@@ -73,19 +75,17 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             $result = !$this->processComponent(\Ess\M2ePro\Helper\Component\Ebay::NICK) ? false : $result;
             $result = !$this->processComponent(\Ess\M2ePro\Helper\Component\Amazon::NICK) ? false : $result;
             $result = !$this->processComponent(\Ess\M2ePro\Helper\Component\Walmart::NICK) ? false : $result;
-
         } catch (\Exception $exception) {
-
             $result = false;
 
             $this->getHelper('Module\Exception')->process($exception);
 
-            $this->getOperationHistory()->addContentData('exception', array(
+            $this->getOperationHistory()->addContentData('exception', [
                 'message' => $exception->getMessage(),
                 'file'    => $exception->getFile(),
                 'line'    => $exception->getLine(),
                 'trace'   => $exception->getTraceAsString(),
-            ));
+            ]);
 
             $this->getLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($exception->getMessage()),
@@ -103,12 +103,12 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     protected function processGlobal()
     {
-        return $this->processTask('Synchronization\GlobalTask\Launcher');
+        return $this->processTask('Synchronization_GlobalTask_Launcher');
     }
 
     protected function processComponent($component)
     {
-        if (!in_array($component,$this->getAllowedComponents())) {
+        if (!in_array($component, $this->getAllowedComponents())) {
             return false;
         }
 
@@ -118,7 +118,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     protected function processTask($taskPath)
     {
         $result = $this->makeTask($taskPath)->process();
-        return is_null($result) || $result;
+        return $result === null || $result;
     }
 
     protected function makeTask($taskPath)
@@ -257,60 +257,70 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     protected function updateLastAccess()
     {
         $currentDateTime = $this->getHelper('Data')->getCurrentGmtDate();
-        $this->setConfigValue(NULL,'last_access',$currentDateTime);
+        $this->setConfigValue(null, 'last_access', $currentDateTime);
     }
 
     protected function isPossibleToRun()
     {
-        return (bool)(int)$this->getConfigValue(NULL,'mode') &&
+        return (bool)(int)$this->getConfigValue(null, 'mode') &&
                !$this->getLockItem()->isExist();
     }
 
     protected function updateLastRun()
     {
         $currentDateTime = $this->getHelper('Data')->getCurrentGmtDate();
-        $this->setConfigValue(NULL,'last_run',$currentDateTime);
+        $this->setConfigValue(null, 'last_run', $currentDateTime);
     }
 
     // ---------------------------------------
 
     protected function beforeStart()
     {
-        $lockItemParentId = $this->getParentLockItem() ? $this->getParentLockItem()->getRealId() : NULL;
+        $lockItemParentId = $this->getParentLockItem() ? $this->getParentLockItem()->getRealId() : null;
         $this->getLockItem()->create($lockItemParentId);
         $this->getLockItem()->makeShutdownFunction();
 
         $this->getOperationHistory()->cleanOldData();
 
         $operationHistoryParentId = $this->getParentOperationHistory() ?
-                $this->getParentOperationHistory()->getObject()->getId() : NULL;
-        $this->getOperationHistory()->start('synchronization',
-                                            $operationHistoryParentId,
-                                            $this->getInitiator());
+                $this->getParentOperationHistory()->getObject()->getId() : null;
+        $this->getOperationHistory()->start(
+            'synchronization',
+            $operationHistoryParentId,
+            $this->getInitiator()
+        );
         $this->getOperationHistory()->makeShutdownFunction();
 
         $this->getLog()->setOperationHistoryId($this->getOperationHistory()->getObject()->getId());
 
-        if (in_array(\Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::ORDERS,
-            $this->getAllowedTasksTypes())) {
-            $this->eventManager->dispatch('ess_synchronization_before_start', array());
+        if (in_array(
+            \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::ORDERS,
+            $this->getAllowedTasksTypes()
+        )) {
+            $this->eventManager->dispatch('ess_synchronization_before_start', []);
         }
 
-        if (in_array(\Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::TEMPLATES,
-            $this->getAllowedTasksTypes())) {
+        if (in_array(
+            \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::TEMPLATES,
+            $this->getAllowedTasksTypes()
+        )) {
             $this->clearOutdatedProductChanges();
         }
     }
 
     protected function afterEnd()
     {
-        if (in_array(\Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::ORDERS,
-            $this->getAllowedTasksTypes())) {
-            $this->eventManager->dispatch('ess_synchronization_after_end', array());
+        if (in_array(
+            \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::ORDERS,
+            $this->getAllowedTasksTypes()
+        )) {
+            $this->eventManager->dispatch('ess_synchronization_after_end', []);
         }
 
-        if (in_array(\Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::TEMPLATES,
-            $this->getAllowedTasksTypes())) {
+        if (in_array(
+            \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::TEMPLATES,
+            $this->getAllowedTasksTypes()
+        )) {
             $this->clearProcessedProductChanges();
         }
 
@@ -325,8 +335,8 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function getLockItem()
     {
-        if (is_null($this->lockItem)) {
-            $this->lockItem = $this->modelFactory->getObject('Synchronization\Lock\Item\Manager');
+        if ($this->lockItem === null) {
+            $this->lockItem = $this->modelFactory->getObject('Synchronization_Lock_Item_Manager');
         }
         return $this->lockItem;
     }
@@ -336,7 +346,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getOperationHistory()
     {
-        if (is_null($this->operationHistory)) {
+        if ($this->operationHistory === null) {
             $this->operationHistory = $this->activeRecordFactory->getObject('Synchronization\OperationHistory');
         }
         return $this->operationHistory;
@@ -347,7 +357,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function getLog()
     {
-        if (is_null($this->log)) {
+        if ($this->log === null) {
             $this->log = $this->activeRecordFactory->getObject('Synchronization\Log');
             $this->log->setInitiator($this->getInitiator());
             $this->log->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_UNKNOWN);
@@ -366,10 +376,10 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         $tempDate = $this->getHelper('Data')->getDate($tempDate->format('U'));
 
         $connWrite->delete(
-            $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_product_change'),
-            array(
+            $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_product_change'),
+            [
                 'update_date <= (?)' => $tempDate
-            )
+            ]
         );
     }
 
@@ -385,12 +395,12 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         $connWrite = $this->resourceConnection->getConnection();
 
         $connWrite->delete(
-            $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_product_change'),
-            array(
+            $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_product_change'),
+            [
                 'id IN (?)' => $productChangeCollection->getColumnValues('id'),
                 '(update_date <= \''.$this->getOperationHistory()->getObject()->getData('start_date').'\' OR
                   initiators NOT LIKE \'%'.\Ess\M2ePro\Model\ProductChange::INITIATOR_OBSERVER.'%\')'
-            )
+            ]
         );
     }
 

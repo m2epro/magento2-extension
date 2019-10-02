@@ -8,6 +8,10 @@
 
 namespace  Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter;
 
+/**
+ * Class Status
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter
+ */
 class Status extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
 {
     protected $helperFactory;
@@ -19,8 +23,7 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\DB\Helper $resourceHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
 
         parent::__construct($context, $resourceHelper, $data);
@@ -34,7 +37,7 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
         $isResetChecked = !empty($value['is_reset']) ? 'checked="checked"' : '';
 
         $html = <<<HTML
-<div class="range" style="width: 95px;">
+<div class="range">
     <div class="range-line" style="width: auto; padding-top: 5px;">
         <input id="{$this->_getHtmlId()}_checkbox"
                type="checkbox"
@@ -59,9 +62,8 @@ HTML;
         $value = $this->getData('value');
 
         if (is_array($value) &&
-            (isset($value['value']) && !is_null($value['value'])) ||
-            (isset($value['is_reset']) && $value['is_reset'] == 1))
-        {
+            (isset($value['value']) && $value['value'] !== null) ||
+            (isset($value['is_reset']) && $value['is_reset'] == 1)) {
             return $value;
         }
 

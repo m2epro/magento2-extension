@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationAmazon;
 
+/**
+ * Class Breadcrumb
+ * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationAmazon
+ */
 class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
 {
     public function _construct()

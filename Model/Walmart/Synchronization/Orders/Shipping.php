@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization\Orders;
 
+/**
+ * Class Shipping
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\Orders
+ */
 class Shipping extends AbstractModel
 {
     const MAX_ORDERS_CHANGES_COUNT = 50;
@@ -69,11 +73,8 @@ class Shipping extends AbstractModel
             // ---------------------------------------
 
             try {
-
                 $this->processAccount($account);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Shipping" Action for Walmart Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -122,7 +123,7 @@ class Shipping extends AbstractModel
             $order = $this->walmartFactory->getObjectLoaded('Order', $orderChange->getOrderId());
 
             /** @var \Ess\M2ePro\Model\Walmart\Order\Action\Handler\Shipping $actionHandler */
-            $actionHandler = $this->modelFactory->getObject('Walmart\Order\Action\Handler\Shipping');
+            $actionHandler = $this->modelFactory->getObject('Walmart_Order_Action_Handler_Shipping');
             $actionHandler->setOrder($order);
             $actionHandler->setParams($orderChange->getParams());
 
@@ -147,7 +148,7 @@ class Shipping extends AbstractModel
         $changesCollection->addFieldToFilter('component', \Ess\M2ePro\Helper\Component\Walmart::NICK);
         $changesCollection->addFieldToFilter('action', \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING);
         $changesCollection->getSelect()->limit(self::MAX_ORDERS_CHANGES_COUNT);
-        $changesCollection->getSelect()->group(array('order_id'));
+        $changesCollection->getSelect()->group(['order_id']);
 
         return $changesCollection->getItems();
     }

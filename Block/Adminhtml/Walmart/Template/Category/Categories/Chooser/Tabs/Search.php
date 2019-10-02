@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs;
 
+/**
+ * Class Search
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs
+ */
 class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     protected $_template = 'walmart/template/category/categories/chooser/tabs/search.phtml';

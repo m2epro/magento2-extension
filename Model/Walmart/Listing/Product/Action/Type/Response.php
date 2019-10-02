@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type;
 
+/**
+ * Class Response
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type
+ */
 abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $resourceConnection;
@@ -16,7 +20,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @var array
      */
-    private $params = array();
+    private $params = [];
 
     /**
      * @var \Ess\M2ePro\Model\Listing\Product
@@ -36,7 +40,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @var array
      */
-    protected $requestMetaData = array();
+    protected $requestMetaData = [];
 
     //########################################
 
@@ -54,11 +58,11 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    abstract public function processSuccess($params = array());
+    abstract public function processSuccess($params = []);
 
     //########################################
 
-    public function setParams(array $params = array())
+    public function setParams(array $params = [])
     {
         $this->params = $params;
     }
@@ -129,7 +133,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
     public function getRequestMetaData($key = null)
     {
-        if (!is_null($key)) {
+        if ($key !== null) {
             return isset($this->requestMetaData[$key]) ? $this->requestMetaData[$key] : null;
         }
 
@@ -241,6 +245,11 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
+        return $data;
+    }
+
+    protected function appendLagTimeValues($data)
+    {
         if ($this->getRequestData()->hasLagTime()) {
             $data['online_lag_time'] = $this->getRequestData()->getLagTime();
         }
@@ -312,6 +321,10 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         if (!$this->getRequestData()->getIsNeedSkuUpdate()) {
             return $data;
         }
+
+        $walmartItem = $this->getListingProduct()->getChildObject()->getWalmartItem();
+        $walmartItem->setData('sku', $this->getRequestData()->getSku());
+        $walmartItem->save();
 
         $data['sku'] = $this->getRequestData()->getSku();
 

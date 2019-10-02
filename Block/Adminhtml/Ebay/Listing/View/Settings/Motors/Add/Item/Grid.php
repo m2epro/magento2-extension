@@ -10,10 +10,14 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item;
 
 use \Ess\M2ePro\Helper\Component\Ebay\Motors;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item
+ */
 abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    private $listingId  = NULL;
-    private $motorsType = NULL;
+    private $listingId  = null;
+    private $motorsType = null;
 
     //########################################
 
@@ -25,7 +29,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
 
         // Initialization block
         //------------------------------
-        $motorsType = $this->getHelper('Component\Ebay\Motors')->getIdentifierKey($this->getMotorsType());
+        $motorsType = $this->getHelper('Component_Ebay_Motors')->getIdentifierKey($this->getMotorsType());
         $this->setId('ebayMotor'.$motorsType.'Grid');
         //------------------------------
 
@@ -66,7 +70,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
 
     protected function _prepareMassaction()
     {
-        $typeIdentifier = $this->getHelper('Component\Ebay\Motors')->getIdentifierKey(
+        $typeIdentifier = $this->getHelper('Component_Ebay_Motors')->getIdentifierKey(
             $this->getMotorsType()
         );
 
@@ -112,7 +116,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
     {
         $type = $this->getMotorsType();
 
-        $idKey = $this->getHelper('Component\Ebay\Motors')->getIdentifierKey($type);
+        $idKey = $this->getHelper('Component_Ebay_Motors')->getIdentifierKey($type);
 
         $removeTitle = $this->__('Remove this record.');
 
@@ -151,7 +155,8 @@ HTML;
     public function getGridUrl()
     {
         return $this->getUrl(
-            '*/ebay_listing_settings_motors/addItemGrid', [
+            '*/ebay_listing_settings_motors/addItemGrid',
+            [
                 '_current' => true,
                 'listing_id' => $this->getListingId()
             ]
@@ -203,7 +208,6 @@ HTML;
     protected function _toHtml()
     {
         if (!$this->canDisplayContainer()) {
-
             $this->js->add(<<<JS
                 EbayListingViewSettingsMotorsAddItemGridObj.afterInitPage();
 JS
@@ -226,7 +230,8 @@ CSS
         );
 
         $this->jsTranslator->addTranslations([
-            'It is impossible to select all the items.' => $this->__(<<<HTML
+            'It is impossible to select all the items.' => $this->__(
+                <<<HTML
 It is impossible to select such a large number of items due to technical reasons.
 You can add up to <b>%limitation%</b> Compatible Vehicles at once.<br/>
 Select <b>%limitation%</b> or fewer records and submit the <i>Select</i> action.
@@ -276,7 +281,8 @@ JS
 
     public function getEmptyText()
     {
-        return $this->__(<<<HTML
+        return $this->__(
+            <<<HTML
     No records found. You can <a href="javascript:void(0)"
     onclick="EbayListingViewSettingsMotorsObj.openAddRecordPopup()">add Custom Compatible Vehicles</a> manually
     or through the <a target="_blank" href="%settings_link%">Import Tool</a>.
@@ -292,7 +298,7 @@ HTML
 
     public function getItemTitle()
     {
-        if ($this->getHelper('Component\Ebay\Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
+        if ($this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
             return $this->__('ePID(s)');
         }
 

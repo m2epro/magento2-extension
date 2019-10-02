@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\Manual;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\Manual
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     /** @var \Ess\M2ePro\Model\Listing */
-    protected $listing = NULL;
+    protected $listing = null;
 
     protected $magentoProductCollectionFactory;
     protected $walmartFactory;
@@ -24,8 +28,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->walmartFactory = $walmartFactory;
 
@@ -61,7 +64,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     {
         // Get collection
         // ---------------------------------------
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->setListingProductModeOn();
 
@@ -77,21 +80,21 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
         $collection->joinTable(
-            array('lp' => $lpTable),
+            ['lp' => $lpTable],
             'product_id=entity_id',
-            array(
+            [
                 'id' => 'id'
-            ),
+            ],
             '{{table}}.listing_id='.(int)$this->listing->getId()
         );
-        $wlpTable = $this->activeRecordFactory->getObject('Walmart\Listing\Product')->getResource()->getMainTable();
+        $wlpTable = $this->activeRecordFactory->getObject('Walmart_Listing_Product')->getResource()->getMainTable();
         $collection->joinTable(
-            array('alp' => $wlpTable),
+            ['alp' => $wlpTable],
             'listing_product_id=id',
-            array(
+            [
                 'listing_product_id'        => 'listing_product_id',
                 'template_category_id'   => 'template_category_id'
-            )
+            ]
         );
 
         $collection->getSelect()->where('lp.id IN (?)', $listingProductsIds);
@@ -106,17 +109,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('product_id', array(
+        $this->addColumn('product_id', [
             'header'    => $this->__('Product ID'),
             'align'     => 'right',
             'width'     => '100px',
             'type'      => 'number',
             'index'     => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => array($this, 'callbackColumnProductId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductId']
+        ]);
 
-        $this->addColumn('name', array(
+        $this->addColumn('name', [
             'header'    => $this->__('Product Title / Product SKU'),
             'align'     => 'left',
             'width'     => '400px',
@@ -124,11 +127,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'index'     => 'name',
             'filter_index' => 'name',
             'escape'       => false,
-            'frame_callback' => array($this, 'callbackColumnProductTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterProductTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterProductTitle']
+        ]);
 
-        $this->addColumn('category_template', array(
+        $this->addColumn('category_template', [
             'header'    => $this->__('Category Policy'),
             'align'     => 'left',
             'width'     => '*',
@@ -136,15 +139,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'type'      => 'options',
             'index'     => 'category_template_id',
             'filter_index' => 'category_template_id',
-            'options'   => array(
+            'options'   => [
                 1 => $this->__('Category Policy Selected'),
                 0 => $this->__('Category Policy Not Selected')
-            ),
-            'frame_callback' => array($this, 'callbackColumnCategoryTemplateCallback'),
-            'filter_condition_callback' => array($this, 'callbackColumnCategoryTemplateFilterCallback')
-        ));
+            ],
+            'frame_callback' => [$this, 'callbackColumnCategoryTemplateCallback'],
+            'filter_condition_callback' => [$this, 'callbackColumnCategoryTemplateFilterCallback']
+        ]);
 
-        $actionsColumn = array(
+        $actionsColumn = [
             'header'    => $this->__('Actions'),
             'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
             'no_link' => true,
@@ -154,16 +157,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'field'     => 'id',
             'sortable'  => false,
             'filter'    => false,
-            'actions'   => array()
-        );
+            'actions'   => []
+        ];
 
-        $actions = array(
-            array(
+        $actions = [
+            [
                 'caption' => $this->__('Set Category Policy'),
                 'field'   => 'id',
                 'onclick_action' => 'ListingGridHandlerObj.setCategoryTemplateRowAction'
-            )
-        );
+            ]
+        ];
 
         $actionsColumn['actions'] = $actions;
 
@@ -178,10 +181,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $this->setMassactionIdFieldOnlyIndexValue(true);
 
         // ---------------------------------------
-        $this->getMassactionBlock()->addItem('setCategoryTemplate', array(
+        $this->getMassactionBlock()->addItem('setCategoryTemplate', [
             'label' => $this->__('Set Category Policy'),
             'url'   => ''
-        ));
+        ]);
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -220,11 +223,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         } else {
             $productOptions = $walmartListingProduct->getVariationManager()
                 ->getTypeModel()->getProductOptions();
-            $productAttributes = !empty($productOptions) ? array_keys($productOptions) : array();
+            $productAttributes = !empty($productOptions) ? array_keys($productOptions) : [];
         }
 
         if (!empty($productAttributes)) {
-
             $value .= '<div style="font-size: 11px; font-weight: bold; color: grey; margin-left: 7px"><br/>';
             $value .= implode(', ', $productAttributes);
             $value .= '</div>';
@@ -245,13 +247,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 HTML;
         }
 
-        $templateCategoryEditUrl = $this->getUrl('*/walmart_template_category/edit', array(
+        $templateCategoryEditUrl = $this->getUrl('*/walmart_template_category/edit', [
             'id' => $categoryTemplateId
-        ));
+        ]);
 
         /** @var \Ess\M2ePro\Model\Walmart\Template\Category $categoryTemplate */
         $categoryTemplate = $this->activeRecordFactory->getObjectLoaded(
-            'Walmart\Template\Category', $categoryTemplateId
+            'Walmart_Template_Category',
+            $categoryTemplateId
         );
 
         $title = $this->getHelper('Data')->escapeHtml($categoryTemplate->getData('title'));
@@ -272,10 +275,10 @@ HTML;
         }
 
         $collection->addFieldToFilter(
-            array(
-                array('attribute'=>'sku','like'=>'%'.$value.'%'),
-                array('attribute'=>'name', 'like'=>'%'.$value.'%')
-            )
+            [
+                ['attribute'=>'sku','like'=>'%'.$value.'%'],
+                ['attribute'=>'name', 'like'=>'%'.$value.'%']
+            ]
         );
     }
 
@@ -290,9 +293,9 @@ HTML;
         }
 
         if ($value) {
-            $collection->addFieldToFilter('template_category_id', array('notnull' => null));
+            $collection->addFieldToFilter('template_category_id', ['notnull' => null]);
         } else {
-            $collection->addFieldToFilter('template_category_id', array('null' => null));
+            $collection->addFieldToFilter('template_category_id', ['null' => null]);
         }
     }
 
@@ -309,7 +312,7 @@ HTML;
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
-<<<JS
+                <<<JS
     ListingGridHandlerObj.afterInitPage();
 JS
             );

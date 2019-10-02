@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductTaxCode;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductTaxCode
+ */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 {
     //########################################
@@ -34,11 +38,11 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 
         // ---------------------------------------
         $url = $this->getHelper('Data')->getBackUrl('list');
-        $this->addButton('back', array(
+        $this->addButton('back', [
             'label'     => $this->__('Back'),
             'onclick'   => 'AmazonTemplateProductTaxCodeObj.backClick(\'' . $url . '\')',
             'class'     => 'back'
-        ));
+        ]);
         // ---------------------------------------
 
         $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
@@ -48,20 +52,20 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
             && $this->getHelper('Data\GlobalData')->getValue('tmp_template')->getId()
         ) {
             // ---------------------------------------
-            $this->addButton('duplicate', array(
+            $this->addButton('duplicate', [
                 'label'   => $this->__('Duplicate'),
                 'onclick' => 'AmazonTemplateProductTaxCodeObj.duplicateClick'
                     .'(\'amazon-template-productTaxCode\')',
                 'class'   => 'add M2ePro_duplicate_button primary'
-            ));
+            ]);
             // ---------------------------------------
 
             // ---------------------------------------
-            $this->addButton('delete', array(
+            $this->addButton('delete', [
                 'label'     => $this->__('Delete'),
                 'onclick'   => 'AmazonTemplateProductTaxCodeObj.deleteClick()',
                 'class'     => 'delete M2ePro_delete_button primary'
-            ));
+            ]);
             // ---------------------------------------
         }
 
@@ -92,7 +96,6 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                 ],
             ];
         } else {
-
             $saveButtons = [
                 'id' => 'save_and_continue',
                 'label' => $this->__('Save And Continue Edit'),

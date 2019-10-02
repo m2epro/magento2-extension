@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
+/**
+ * Class CheckSearchResults
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
+ */
 class CheckSearchResults extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {
     public function execute()
@@ -23,12 +27,11 @@ class CheckSearchResults extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
         if (empty($listingProductsIds) ||
             !$this->getListing()->getMarketplace()->getChildObject()->isNewAsinAvailable()) {
-
-            $redirectUrl = $this->getUrl('*/*/index', array(
+            $redirectUrl = $this->getUrl('*/*/index', [
                 'step' => 5,
                 'id' => $this->getRequest()->getParam('id'),
                 'wizard' => $this->getRequest()->getParam('wizard')
-            ));
+            ]);
             $this->setJsonContent(['redirect' => $redirectUrl]);
 
             return $this->getResult();
@@ -41,17 +44,17 @@ class CheckSearchResults extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         $showNewAsinStep = $this->getListing()->getSetting('additional_data', 'show_new_asin_step');
         if (isset($showNewAsinStep)) {
             $this->setJsonContent([
-                'redirect' => $this->getUrl('*/*/index', array(
+                'redirect' => $this->getUrl('*/*/index', [
                     'id' => $this->getRequest()->getParam('id'),
                     'step' => $showNewAsinStep ? 4 : 5,
                     'wizard' => $this->getRequest()->getParam('wizard')
-                ))
+                ])
             ]);
 
             return $this->getResult();
         }
 
-        $newAsinPopup = $this->createBlock('Amazon\Listing\Product\Add\SearchAsin\NewAsinPopup');
+        $newAsinPopup = $this->createBlock('Amazon_Listing_Product_Add_SearchAsin_NewAsinPopup');
 
         $this->setJsonContent(['html' => $newAsinPopup->toHtml()]);
 

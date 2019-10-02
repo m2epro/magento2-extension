@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request;
 
 use \Ess\M2ePro\Model\Magento\Product as MagentoProduct;
 
+/**
+ * Class Qty
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request
+ */
 class Qty extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\AbstractModel
 {
     const FULFILLMENT_MODE_AFN = 'AFN';
@@ -23,23 +27,23 @@ class Qty extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Abstra
     public function getRequestData()
     {
         if (!$this->getConfigurator()->isQtyAllowed()) {
-            return array();
+            return [];
         }
 
         $params = $this->getParams();
         if (!empty($params['switch_to']) && $params['switch_to'] === self::FULFILLMENT_MODE_AFN) {
-            return array(
+            return [
                 'switch_to' => self::FULFILLMENT_MODE_AFN
-            );
+            ];
         }
 
         if (!isset($this->validatorsData['qty'])) {
             $this->validatorsData['qty'] = $this->getAmazonListingProduct()->getQty();
         }
 
-        $data = array(
+        $data = [
             'qty' => $this->validatorsData['qty'],
-        );
+        ];
 
         $this->checkQtyWarnings();
 
@@ -75,13 +79,11 @@ class Qty extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Abstra
         $qtyMode = $this->getAmazonListing()->getAmazonSellingFormatTemplate()->getQtyMode();
         if ($qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED ||
             $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT) {
-
             $listingProductId = $this->getListingProduct()->getId();
             $productId = $this->getAmazonListingProduct()->getActualMagentoProduct()->getProductId();
             $storeId = $this->getListing()->getStoreId();
 
             if (!empty(MagentoProduct::$statistics[$listingProductId][$productId][$storeId]['qty'])) {
-
                 $qtys = MagentoProduct::$statistics[$listingProductId][$productId][$storeId]['qty'];
                 foreach ($qtys as $type => $override) {
                     $this->addQtyWarnings($type);
@@ -93,8 +95,6 @@ class Qty extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Abstra
     public function addQtyWarnings($type)
     {
         if ($type === MagentoProduct::FORCING_QTY_TYPE_MANAGE_STOCK_NO) {
-            // M2ePro\TRANSLATIONS
-            // During the Quantity Calculation the Settings in the "Manage Stock No" field were taken into consideration.
             $this->addWarningMessage('During the Quantity Calculation the Settings in the "Manage Stock No" '.
                 'field were taken into consideration.');
         }

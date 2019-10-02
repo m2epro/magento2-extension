@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\General;
 
 use Ess\M2ePro\Block\Adminhtml\StoreSwitcher;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\General
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $ebayFactory;
@@ -22,8 +26,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -75,10 +78,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $sessionKey = 'ebay_listing_create';
         $sessionData = $this->getHelper('Data\Session')->getValue($sessionKey);
 
-        isset($sessionData['listing_title'])  && $title = $sessionData['listing_title'];
-        isset($sessionData['account_id'])     && $accountId = $sessionData['account_id'];
+        isset($sessionData['listing_title']) && $title = $sessionData['listing_title'];
+        isset($sessionData['account_id']) && $accountId = $sessionData['account_id'];
         isset($sessionData['marketplace_id']) && $marketplaceId = $sessionData['marketplace_id'];
-        isset($sessionData['store_id'])       && $storeId = $sessionData['store_id'];
+        isset($sessionData['store_id']) && $storeId = $sessionData['store_id'];
         // ---------------------------------------
 
         $fieldset->addField(
@@ -105,7 +108,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
         $accountsCollection = $this->ebayFactory->getObject('Account')->getCollection()
-            ->setOrder('title','ASC');
+            ->setOrder('title', 'ASC');
 
         $accountsCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS)
             ->columns([
@@ -116,7 +119,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $accountSelectionDisabled = false;
 
-        if($this->getRequest()->getParam('account_id')) {
+        if ($this->getRequest()->getParam('account_id')) {
             $accountId = $this->getRequest()->getParam('account_id');
             $fieldset->addField(
                 'account_id_hidden',
@@ -143,6 +146,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         ]);
         $accountSelect->setForm($form);
 
+        $isAddAccountButtonHidden = $this->getRequest()->getParam('wizard', false) || $accountSelectionDisabled;
+
         $fieldset->addField(
             'account_container',
             self::CUSTOM_CONTAINER,
@@ -159,7 +164,7 @@ HTML
                     'id' => 'add_account_button',
                     'label' => $this->__('Add Another'),
                     'style' => 'margin-left: 5px;' .
-                        ($this->getRequest()->getParam('wizard',false) ? 'display: none;' : ''),
+                        ($isAddAccountButtonHidden ? 'display: none;' : ''),
                     'onclick' => '',
                     'class' => 'primary'
                 ])->toHtml()
@@ -179,7 +184,8 @@ HTML
         // ---------------------------------------
 
         if ($this->getRequest()->getParam('marketplace_id', false) !== false) {
-            $fieldset->addField('marketplace_id_hidden',
+            $fieldset->addField(
+                'marketplace_id_hidden',
                 'hidden',
                 [
                     'name' => 'marketplace_id',
@@ -245,12 +251,12 @@ HTML
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Account'));
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Marketplace'));
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Ebay\Listing\Create', ['_current' => true])
+            $this->getHelper('Data')->getControllerActions('Ebay_Listing_Create', ['_current' => true])
         );
 
         $this->jsUrl->add($this->getUrl('*/ebay_account/newAction', [
             'close_on_save' => true,
-            'wizard' => (bool)$this->getRequest()->getParam('wizard',false)
+            'wizard' => (bool)$this->getRequest()->getParam('wizard', false)
         ]), 'ebay_account/newAction');
 
         $this->jsTranslator->add(
@@ -260,10 +266,12 @@ HTML
             )
         );
         $this->jsTranslator->add(
-            'Account not found, please create it.', $this->__('Account not found, please create it.')
+            'Account not found, please create it.',
+            $this->__('Account not found, please create it.')
         );
         $this->jsTranslator->add(
-            'Preparing to start. Please wait ...', $this->__('Preparing to start. Please wait ...')
+            'Preparing to start. Please wait ...',
+            $this->__('Preparing to start. Please wait ...')
         );
         $this->jsTranslator->add('Add Another', $this->__('Add Another'));
         $this->jsTranslator->add(
@@ -271,13 +279,16 @@ HTML
             $this->__('Please wait while Synchronization is finished.')
         );
         $this->jsTranslator->add(
-            'Another Synchronization Is Already Running.', $this->__('Another Synchronization Is Already Running.')
+            'Another Synchronization Is Already Running.',
+            $this->__('Another Synchronization Is Already Running.')
         );
         $this->jsTranslator->add(
-            'Getting information. Please wait ...', $this->__('Getting information. Please wait ...')
+            'Getting information. Please wait ...',
+            $this->__('Getting information. Please wait ...')
         );
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Ebay'));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay::class));
 
         $marketplaces = $this->getHelper('Data')->jsonEncode($marketplaces);
 

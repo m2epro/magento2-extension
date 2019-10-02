@@ -8,17 +8,21 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Item;
 
+/**
+ * Class ProcessingRunner
+ * @package Ess\M2ePro\Model\Ebay\Connector\Item
+ */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-    private $listingProduct = NULL;
+    private $listingProduct = null;
 
     // ########################################
 
     public function processSuccess()
     {
         // listing product can be removed during processing action
-        if (is_null($this->getListingProduct()->getId())) {
+        if ($this->getListingProduct()->getId() === null) {
             return true;
         }
 
@@ -28,7 +32,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
     public function processExpired()
     {
         // listing product can be removed during processing action
-        if (is_null($this->getListingProduct()->getId())) {
+        if ($this->getListingProduct()->getId() === null) {
             return;
         }
 
@@ -38,7 +42,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
     public function complete()
     {
         // listing product can be removed during processing action
-        if (is_null($this->getListingProduct()->getId())) {
+        if ($this->getListingProduct()->getId() === null) {
             $this->getProcessingObject()->delete();
             return;
         }
@@ -53,8 +57,8 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $params = $this->getParams();
 
         /** @var \Ess\M2ePro\Model\Ebay\Processing\Action $processingAction */
-        $processingAction = $this->activeRecordFactory->getObject('Ebay\Processing\Action');
-        $processingAction->setData(array(
+        $processingAction = $this->activeRecordFactory->getObject('Ebay_Processing_Action');
+        $processingAction->setData([
             'account_id'      => $params['account_id'],
             'marketplace_id'  => $params['marketplace_id'],
             'processing_id'   => $this->getProcessingObject()->getId(),
@@ -64,7 +68,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
             'request_timeout' => $params['request_timeout'],
             'request_data'    => $this->getHelper('Data')->jsonEncode($params['request_data']),
             'start_date'      => $params['start_date'],
-        ));
+        ]);
         $processingAction->save();
     }
 
@@ -74,13 +78,14 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         $params = $this->getParams();
 
-        $this->getListingProduct()->addProcessingLock(NULL, $this->getProcessingObject()->getId());
+        $this->getListingProduct()->addProcessingLock(null, $this->getProcessingObject()->getId());
         $this->getListingProduct()->addProcessingLock('in_action', $this->getProcessingObject()->getId());
         $this->getListingProduct()->addProcessingLock(
-            $params['lock_identifier'].'_action', $this->getProcessingObject()->getId()
+            $params['lock_identifier'].'_action',
+            $this->getProcessingObject()->getId()
         );
 
-        $this->getListingProduct()->getListing()->addProcessingLock(NULL, $this->getProcessingObject()->getId());
+        $this->getListingProduct()->getListing()->addProcessingLock(null, $this->getProcessingObject()->getId());
     }
 
     protected function unsetLocks()
@@ -93,13 +98,14 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         $params = $this->getParams();
 
-        $this->getListingProduct()->deleteProcessingLocks(NULL, $this->getProcessingObject()->getId());
+        $this->getListingProduct()->deleteProcessingLocks(null, $this->getProcessingObject()->getId());
         $this->getListingProduct()->deleteProcessingLocks('in_action', $this->getProcessingObject()->getId());
         $this->getListingProduct()->deleteProcessingLocks(
-            $params['lock_identifier'].'_action', $this->getProcessingObject()->getId()
+            $params['lock_identifier'].'_action',
+            $this->getProcessingObject()->getId()
         );
 
-        $this->getListingProduct()->getListing()->deleteProcessingLocks(NULL, $this->getProcessingObject()->getId());
+        $this->getListingProduct()->getListing()->deleteProcessingLocks(null, $this->getProcessingObject()->getId());
     }
 
     // ########################################

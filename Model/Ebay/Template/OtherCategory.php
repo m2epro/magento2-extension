@@ -11,22 +11,26 @@
  */
 namespace Ess\M2ePro\Model\Ebay\Template;
 
+/**
+ * Class OtherCategory
+ * @package Ess\M2ePro\Model\Ebay\Template
+ */
 class OtherCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
-    private $marketplaceModel = NULL;
+    private $marketplaceModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Account
      */
-    private $accountModel = NULL;
+    private $accountModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory\Source[]
      */
-    private $otherCategorySourceModels = array();
+    private $otherCategorySourceModels = [];
 
     protected $ebayFactory;
 
@@ -50,8 +54,7 @@ class OtherCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct(
             $modelFactory,
@@ -69,7 +72,7 @@ class OtherCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('ebay_template_othercategory');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_othercategory');
         return parent::save();
     }
 
@@ -81,11 +84,11 @@ class OtherCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
             return false;
         }
 
-        $this->marketplaceModel = NULL;
-        $this->accountModel = NULL;
-        $this->otherCategorySourceModels = array();
+        $this->marketplaceModel = null;
+        $this->accountModel = null;
+        $this->otherCategorySourceModels = [];
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('ebay_template_othercategory');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_othercategory');
 
         return parent::delete();
     }
@@ -97,9 +100,10 @@ class OtherCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
      */
     public function getMarketplace()
     {
-        if (is_null($this->marketplaceModel)) {
+        if ($this->marketplaceModel === null) {
             $this->marketplaceModel = $this->ebayFactory->getCachedObjectLoaded(
-                'Marketplace', $this->getMarketplaceId()
+                'Marketplace',
+                $this->getMarketplaceId()
             );
         }
 
@@ -121,9 +125,10 @@ class OtherCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
      */
     public function getAccount()
     {
-        if (is_null($this->accountModel)) {
+        if ($this->accountModel === null) {
             $this->accountModel = $this->ebayFactory->getCachedObjectLoaded(
-                'Account', $this->getAccountId()
+                'Account',
+                $this->getAccountId()
             );
         }
 
@@ -153,7 +158,7 @@ class OtherCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
         }
 
         $this->otherCategorySourceModels[$productId] = $this->modelFactory
-            ->getObject('Ebay\Template\OtherCategory\Source');
+            ->getObject('Ebay_Template_OtherCategory_Source');
         $this->otherCategorySourceModels[$productId]->setMagentoProduct($magentoProduct);
         $this->otherCategorySourceModels[$productId]->setOtherCategoryTemplate($this);
 
@@ -197,12 +202,12 @@ class OtherCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
      */
     public function getCategorySecondarySource()
     {
-        return array(
+        return [
             'mode'      => $this->getData('category_secondary_mode'),
             'value'     => $this->getData('category_secondary_id'),
             'path'      => $this->getData('category_secondary_path'),
             'attribute' => $this->getData('category_secondary_attribute')
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -212,12 +217,12 @@ class OtherCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
      */
     public function getStoreCategoryMainSource()
     {
-        return array(
+        return [
             'mode'      => $this->getData('store_category_main_mode'),
             'value'     => $this->getData('store_category_main_id'),
             'path'      => $this->getData('store_category_main_path'),
             'attribute' => $this->getData('store_category_main_attribute')
-        );
+        ];
     }
 
     /**
@@ -225,12 +230,12 @@ class OtherCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
      */
     public function getStoreCategorySecondarySource()
     {
-        return array(
+        return [
             'mode'      => $this->getData('store_category_secondary_mode'),
             'value'     => $this->getData('store_category_secondary_id'),
             'path'      => $this->getData('store_category_secondary_path'),
             'attribute' => $this->getData('store_category_secondary_attribute')
-        );
+        ];
     }
 
     //########################################
@@ -240,7 +245,7 @@ class OtherCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
      */
     public function getDefaultSettings()
     {
-        return array(
+        return [
 
             'category_secondary_id'        => 0,
             'category_secondary_path'      => '',
@@ -256,7 +261,7 @@ class OtherCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
             'store_category_secondary_path'      => '',
             'store_category_secondary_mode'      => \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE,
             'store_category_secondary_attribute' => ''
-        );
+        ];
     }
 
     //########################################
@@ -282,12 +287,12 @@ class OtherCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'));
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id']);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

@@ -14,6 +14,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product;
 
+/**
+ * Class PriceCalculator
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product
+ */
 class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
 {
     //########################################

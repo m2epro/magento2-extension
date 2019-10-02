@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Same;
 
+/**
+ * Class Specific
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Same
+ */
 class Specific extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     //########################################
@@ -25,22 +29,22 @@ class Specific extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         $this->setTemplate('ebay/listing/product/category/settings/mode/same/specific.phtml');
 
-        $this->addButton('back', array(
+        $this->addButton('back', [
             'label'     => $this->__('Back'),
             'class'     => 'back',
-            'onclick'   => 'setLocation(\'' . $this->getUrl('*/*/*', array('_current' => true, 'step' => 2)) . '\');'
-        ));
+            'onclick'   => 'setLocation(\'' . $this->getUrl('*/*/*', ['_current' => true, 'step' => 2]) . '\');'
+        ]);
 
-        $saveUrl = $this->getUrl('*/*/*', array(
+        $saveUrl = $this->getUrl('*/*/*', [
             'step' => 3,
             '_current' => true
-        ));
+        ]);
 
-        $this->addButton('save', array(
+        $this->addButton('save', [
             'label'     => $this->__('Continue'),
             'class'     => 'action-primary forward',
             'onclick'   => "EbayListingProductCategorySettingsSpecificObj.submitData('{$saveUrl}');"
-        ));
+        ]);
     }
 
     //########################################
@@ -58,7 +62,7 @@ class Specific extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         // ---------------------------------------
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_category_settings');
-        $viewHeaderBlock = $this->createBlock('Listing\View\Header','', [
+        $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
             'data' => ['listing' => $listing]
         ]);
 
@@ -72,7 +76,7 @@ class Specific extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         $internalData = $this->getData('internal_data');
         $specifics = $this->getData('specifics');
 
-        $specificBlock = $this->createBlock('Ebay\Listing\Product\Category\Settings\Specific');
+        $specificBlock = $this->createBlock('Ebay_Listing_Product_Category_Settings_Specific');
         $specificBlock->setMarketplaceId($listing['marketplace_id']);
         $specificBlock->setCategoryMode($categoryMode);
         $specificBlock->setCategoryValue($categoryValue);
@@ -90,8 +94,9 @@ class Specific extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         // ---------------------------------------
         if ($categoryMode == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY) {
-            $this->_selectedCategoryPath = $this->getHelper('Component\Ebay\Category\Ebay')->getPath(
-                $categoryValue, $listing['marketplace_id']
+            $this->_selectedCategoryPath = $this->getHelper('Component_Ebay_Category_Ebay')->getPath(
+                $categoryValue,
+                $listing['marketplace_id']
             );
         } else {
             $attributeLabel = $this->getHelper('Magento\Attribute')->getAttributeLabel($categoryValue);

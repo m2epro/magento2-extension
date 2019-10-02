@@ -7,6 +7,10 @@
  */
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     //########################################
@@ -20,7 +24,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]]
         );
 
-        $form->addField('source_help_block',
+        $form->addField(
+            'source_help_block',
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
@@ -33,11 +38,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         $fieldset = $form->addFieldset(
-            'source_mode', []
+            'source_mode',
+            []
         );
 
         $defaultSource = $this->getRequest()
-            ->getParam('source',\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_PRODUCT);
+            ->getParam('source', \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_PRODUCT);
 
         $fieldset->addField(
             'block-title',

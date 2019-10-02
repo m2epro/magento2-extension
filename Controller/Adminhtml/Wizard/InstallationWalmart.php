@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Wizard;
 
+/**
+ * Class InstallationWalmart
+ * @package Ess\M2ePro\Controller\Adminhtml\Wizard
+ */
 abstract class InstallationWalmart extends Wizard
 {
     protected function _isAllowed()
@@ -20,8 +24,10 @@ abstract class InstallationWalmart extends Wizard
     protected function init()
     {
         $this->getResultPage()->getConfig()->getTitle()->prepend(
-            $this->__('Configuration of %channel% Integration', $this->getHelper('Component\Walmart')
-                                                                     ->getChannelTitle())
+            $this->__(
+                'Configuration of %channel% Integration',
+                $this->getHelper('Component\Walmart')->getChannelTitle()
+            )
         );
     }
 

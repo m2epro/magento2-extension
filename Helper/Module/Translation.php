@@ -8,17 +8,21 @@
 
 namespace Ess\M2ePro\Helper\Module;
 
+/**
+ * Class Translation
+ * @package Ess\M2ePro\Helper\Module
+ */
 class Translation extends \Ess\M2ePro\Helper\AbstractHelper
 {
     private $text;
-    private $placeholders = array();
+    private $placeholders = [];
 
-    private $values = array();
-    private $args = array();
+    private $values = [];
+    private $args = [];
 
     private $translatedText;
-    private $processedPlaceholders = array();
-    private $processedArgs = array();
+    private $processedPlaceholders = [];
+    private $processedArgs = [];
 
     //########################################
 
@@ -45,7 +49,7 @@ class Translation extends \Ess\M2ePro\Helper\AbstractHelper
         $this->translatedText = __($this->text);
 
         !empty($this->values) && $this->replacePlaceholdersByValue();
-        !empty($this->args)   && $this->replacePlaceholdersByArgs();
+        !empty($this->args) && $this->replacePlaceholdersByArgs();
 
         $unprocessedArgs = array_diff($this->args, $this->processedArgs);
         if (!$unprocessedArgs) {
@@ -60,11 +64,11 @@ class Translation extends \Ess\M2ePro\Helper\AbstractHelper
     private function clear()
     {
         $this->text = null;
-        $this->values = array();
-        $this->args = array();
-        $this->placeholders = array();
-        $this->processedPlaceholders = array();
-        $this->processedArgs = array();
+        $this->values = [];
+        $this->args = [];
+        $this->placeholders = [];
+        $this->processedPlaceholders = [];
+        $this->processedArgs = [];
         $this->translatedText = null;
     }
 
@@ -78,8 +82,8 @@ class Translation extends \Ess\M2ePro\Helper\AbstractHelper
             $this->values = array_shift($input);
         }
 
-        array_walk($input, function(&$el) {
-            is_null($el) && $el = (string)$el;
+        array_walk($input, function (&$el) {
+            $el === null && $el = (string)$el;
         });
 
         $this->args = $input;
@@ -87,7 +91,7 @@ class Translation extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function parsePlaceholders()
     {
-        preg_match_all('/%[\w\d]+%/', $this->text , $placeholders);
+        preg_match_all('/%[\w\d]+%/', $this->text, $placeholders);
         $this->placeholders = array_unique($placeholders[0]);
     }
 
@@ -95,8 +99,7 @@ class Translation extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function replacePlaceholdersByValue()
     {
-        foreach ($this->values as $placeholder=>$value) {
-
+        foreach ($this->values as $placeholder => $value) {
             $newText = str_replace('%'.$placeholder.'%', $value, $this->translatedText, $count);
 
             if ($count <= 0) {
@@ -114,10 +117,9 @@ class Translation extends \Ess\M2ePro\Helper\AbstractHelper
         $unprocessedArgs = $this->args;
 
         foreach ($unprocessedPlaceholders as $placeholder) {
-
             $value = array_shift($unprocessedArgs);
 
-            if (is_null($value)) {
+            if ($value === null) {
                 break;
             }
 

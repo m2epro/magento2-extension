@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
+/**
+ * Class GetCategoriesJson
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+ */
 class GetCategoriesJson extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
     //########################################
@@ -15,10 +19,10 @@ class GetCategoriesJson extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
     public function execute()
     {
         $tempSession = $this->getSessionValue('source_categories');
-        $selectedProductsIds = !isset($tempSession['products_ids']) ? array() : $tempSession['products_ids'];
+        $selectedProductsIds = !isset($tempSession['products_ids']) ? [] : $tempSession['products_ids'];
 
-        /* @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category\Tree */
-        $treeBlock = $this->createBlock('Walmart\Listing\Product\Add\SourceMode\Category\Tree', '', [
+        /** @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category\Tree */
+        $treeBlock = $this->createBlock('Walmart_Listing_Product_Add_SourceMode_Category_Tree', '', [
             'data' => [
                 'tree_settings' => [
                     'show_products_amount' => true,

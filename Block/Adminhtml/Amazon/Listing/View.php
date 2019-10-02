@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing
+ */
 class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     /** @var  \Ess\M2ePro\Model\Listing */
@@ -22,7 +26,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Switcher $viewModeSwitcher */
-        $viewModeSwitcher = $this->createBlock('Amazon\Listing\View\Switcher');
+        $viewModeSwitcher = $this->createBlock('Amazon_Listing_View_Switcher');
 
         // Initialization block
         // ---------------------------------------
@@ -43,7 +47,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->css->addFile('amazon/listing/product/variation/grid.css');
 
         if (!$this->getRequest()->isXmlHttpRequest()) {
-
             $this->appendHelpBlock([
                 'content' => $this->__(
                     '<p>M2E Pro Listing is a group of Magento Products sold on a certain Marketplace from a
@@ -54,49 +57,49 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             ]);
 
             $this->setPageActionsBlock(
-                'Amazon\Listing\View\Switcher',
+                'Amazon_Listing_View_Switcher',
                 'amazon_listing_view_switcher'
             );
         }
 
         // ---------------------------------------
-        $this->addButton('back', array(
+        $this->addButton('back', [
             'label'   => $this->__('Back'),
             'onclick' => 'setLocation(\''.$this->getUrl('*/amazon_listing/index') . '\');',
             'class'   => 'back'
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('view_logs', array(
+        $this->addButton('view_logs', [
             'label'   => $this->__('View Log'),
             'onclick' => 'window.open(\''.$this->getUrl('*/amazon_log_listing_product/index', [
                 \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD =>
                     $this->listing->getId()
             ]) . '\');',
             'class'   => '',
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('edit_settings', array(
+        $this->addButton('edit_settings', [
             'label'   => $this->__('Edit Settings'),
             'onclick' => '',
             'class'   => 'drop_down edit_default_settings_drop_down primary',
             'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
             'options' => $this->getSettingsButtonDropDownItems()
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('add_products', array(
+        $this->addButton('add_products', [
             'id'        => 'add_products',
             'label'     => $this->__('Add Products'),
             'class'     => 'add',
             'button_class' => '',
             'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
             'options' => $this->getAddProductsDropDownItems(),
-        ));
+        ]);
         // ---------------------------------------
 
         return parent::_prepareLayout();
@@ -122,21 +125,22 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         }
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(
-            '\Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid'
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::class
         ));
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Account')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Account::class)
         );
 
         $showAutoAction = $this->getHelper('Data')->jsonEncode((bool)$this->getRequest()->getParam('auto_actions'));
 
         // ---------------------------------------
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
-            'Amazon\Listing\AutoAction', array('id' => $this->getRequest()->getParam('id'))
+            'Amazon_Listing_AutoAction',
+            ['id' => $this->getRequest()->getParam('id')]
         ));
 
         $path = 'amazon_listing_autoAction/getDescriptionTemplatesList';
@@ -151,9 +155,9 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $path = 'amazon_listing/duplicateProducts';
         $this->jsUrl->add($this->getUrl('*/' . $path), $path);
 
-        $this->jsUrl->add($this->getUrl('*/amazon_log_listing_product/index', array(
+        $this->jsUrl->add($this->getUrl('*/amazon_log_listing_product/index', [
             \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD => $this->listing['id'],
-        )), 'logViewUrl');
+        ]), 'logViewUrl');
 
         $this->jsUrl->add($this->getUrl('*/listing/getErrorsSummary'), 'getErrorsSummary');
 
@@ -168,33 +172,35 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'runDeleteAndRemoveProducts' => $this->getUrl('*/amazon_listing/runDeleteAndRemoveProducts'),
         ]);
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing\Product'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Fulfillment'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Search'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Listing_Product'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Fulfillment'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Search'));
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Template\Description')
+            $this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Template_Description')
         );
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Template\Shipping')
+            $this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Template_Shipping')
         );
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Template\ProductTaxCode')
+            $this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Template_ProductTaxCode')
         );
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Variation'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Variation'));
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Variation\Manage')
-        );
-        $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Variation\Vocabulary')
+            $this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Variation_Manage')
         );
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Variation\Individual')
+            $this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Variation_Vocabulary')
+        );
+        $this->jsUrl->addUrls(
+            $this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Variation_Individual')
         );
 
         $this->jsUrl->add(
-            $this->getUrl('*/amazon_listing_view_settings_moving/moveToListingGrid',
+            $this->getUrl(
+                '*/amazon_listing_view_settings_moving/moveToListingGrid',
                 ['listing_view' => true]
-            ), 'moveToListingGridHtml'
+            ),
+            'moveToListingGridHtml'
         );
         $this->jsUrl->add($this->getUrl('*/listing_moving/prepareMoveToListing'), 'prepareData');
         $this->jsUrl->add($this->getUrl('*/listing_moving/getFailedProducts'), 'getFailedProductsHtml');
@@ -208,18 +214,18 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         ]), 'saveListingAdditionalData');
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
-            'Amazon\Listing\Product\Repricing',
-            array(
+            'Amazon_Listing_Product_Repricing',
+            [
                 'id' => $this->listing['id'],
                 'account_id' => $this->listing['account_id']
-            )
+            ]
         ));
 
         // ---------------------------------------
 
         $component = \Ess\M2ePro\Helper\Component\Amazon::NICK;
         $gridId = $this->getChildBlock('grid')->getId();
-        $ignoreListings = $this->getHelper('Data')->jsonEncode(array($this->listing['id']));
+        $ignoreListings = $this->getHelper('Data')->jsonEncode([$this->listing['id']]);
         $marketplace = $this->getHelper('Data')->jsonEncode(array_merge(
             $this->listing->getMarketplace()->getData(),
             $this->listing->getMarketplace()->getChildObject()->getData()
@@ -289,7 +295,8 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'The new ASIN/ISBN creation functionality is not available in %code% Marketplace yet.'
         );
         $notSynchronizedMarketplace = $this->__(
-            'In order to use New ASIN/ISBN functionality, please re-synchronize Marketplace data.') . ' ' .
+            'In order to use New ASIN/ISBN functionality, please re-synchronize Marketplace data.'
+        ) . ' ' .
             $this->__('Press "Save And Update" Button after redirect on Marketplace Page.');
 
         $noVariationsLeftText = $this->__('All variations are already added.');
@@ -393,7 +400,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         ]);
 
         $this->js->addOnReadyJs(
-<<<JS
+            <<<JS
     require([
         'M2ePro/Amazon/Listing/View/Grid',
         'M2ePro/Amazon/Listing/AfnQty',
@@ -441,10 +448,10 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 JS
         );
 
-        $productSearchBlock = $this->createBlock('Amazon\Listing\Product\Search\Main');
+        $productSearchBlock = $this->createBlock('Amazon_Listing_Product_Search_Main');
 
         // ---------------------------------------
-        $viewHeaderBlock = $this->createBlock('Listing\View\Header','', [
+        $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
             'data' => ['listing' => $this->listing]
         ]);
         // ---------------------------------------

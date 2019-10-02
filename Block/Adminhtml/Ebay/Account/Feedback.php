@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account;
 
+/**
+ * Class Feedback
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account
+ */
 class Feedback extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     protected function _construct()
@@ -25,7 +29,8 @@ class Feedback extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     {
         $helpBlock = $this->createBlock('HelpBlock');
         $helpBlock->setData([
-            'content' => $this->__(<<<HTML
+            'content' => $this->__(
+                <<<HTML
 This page contains Feedbacks received from eBay Buyers and your responses to them.<br/><br/>
 You can respond to a newly received Feedback by clicking the <strong>Send Response</strong> button for the Order.<br />
 <strong>Note:</strong> Auto-responses to Feedback are sent according to the eBay Accounts > Feedback Settings.

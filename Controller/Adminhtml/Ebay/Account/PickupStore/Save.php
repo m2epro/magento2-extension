@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore
+ */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {
     //########################################
@@ -15,7 +19,8 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
     public function execute()
     {
         if (!$post = $this->getRequest()->getPostValue()) {
-            return $this->_redirect('*/*/index',
+            return $this->_redirect(
+                '*/*/index',
                 ['account_id' => $this->getRequest()->getParam('account_id')]
             );
         }
@@ -102,8 +107,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 
         // creating of pickup store
         // ---------------------------------------
-        if (!$this->getHelper('Component\Ebay\PickupStore')->validateRequiredFields($data)) {
-
+        if (!$this->getHelper('Component_Ebay_PickupStore')->validateRequiredFields($data)) {
             $this->getHelper('Data\Session')->setValue('pickup_store_form_data', $data);
 
             $this->getMessageManager()->addErrorMessage(
@@ -116,23 +120,25 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
         }
 
         try {
-
-            $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+            $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
-                'store','add','entity',
-                $this->getHelper('Component\Ebay\PickupStore')->prepareRequestData($data),
-                NULL, NULL, $this->getRequest()->getParam('account_id')
+                'store',
+                'add',
+                'entity',
+                $this->getHelper('Component_Ebay_PickupStore')->prepareRequestData($data),
+                null,
+                null,
+                $this->getRequest()->getParam('account_id')
             );
 
             $dispatcherObject->process($connectorObj);
-
         } catch (\Exception $exception) {
-
             $this->getHelper('Module\Exception')->process($exception);
             $this->getHelper('Data\Session')->setValue('pickup_store_form_data', $data);
 
             $this->getMessageManager()->addErrorMessage($this->__(
-                'The New Store has not been created. <br/>Reason: %error_message%', $exception->getMessage()
+                'The New Store has not been created. <br/>Reason: %error_message%',
+                $exception->getMessage()
             ));
 
             return $id ? $this->_redirect('*/*/edit', ['id' => $id])
@@ -140,7 +146,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
         }
         // ---------------------------------------
 
-        $model = $this->activeRecordFactory->getObject('Ebay\Account\PickupStore');
+        $model = $this->activeRecordFactory->getObject('Ebay_Account_PickupStore');
         if ($id) {
             $model->load($id);
             $model->addData($data);
@@ -155,7 +161,8 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
         );
 
         return $this->_redirect($this->getHelper('Data')->getBackUrl(
-            'list', [],
+            'list',
+            [],
             [
                 'list' => ['account_id' => $model->getAccountId()],
                 'edit' => ['id' => $model->getId()]

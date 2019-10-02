@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Order\Item;
 
+/**
+ * Class Importer
+ * @package Ess\M2ePro\Model\Ebay\Order\Item
+ */
 class Importer extends \Ess\M2ePro\Model\AbstractModel
 {
     private $fileDriver;
@@ -19,7 +23,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
     private $currencyFactory;
 
     /** @var $item \Ess\M2ePro\Model\Ebay\Order\Item */
-    private $item = NULL;
+    private $item = null;
 
     //########################################
 
@@ -31,8 +35,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Ebay\Order\Item $item,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->fileDriver = $driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
         $this->filesystem = $filesystem;
         $this->productMediaConfig = $productMediaConfig;
@@ -45,7 +48,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
 
     public function getDataFromChannel()
     {
-        $params = array();
+        $params = [];
         $params['item_id'] = $this->item->getItemId();
 
         $variationSku = $this->item->getVariationSku();
@@ -53,10 +56,16 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
             $params['variation_sku'] = $variationSku;
         }
 
-        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorObj = $dispatcherObj->getVirtualConnector('item', 'get', 'info',
-                                                            $params, 'result', NULL,
-                                                            $this->item->getParentObject()->getOrder()->getAccount());
+        $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        $connectorObj = $dispatcherObj->getVirtualConnector(
+            'item',
+            'get',
+            'info',
+            $params,
+            'result',
+            null,
+            $this->item->getParentObject()->getOrder()->getAccount()
+        );
 
         $dispatcherObj->process($connectorObj);
 
@@ -71,7 +80,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
      */
     public function prepareDataForProductCreation(array $rawData)
     {
-        $preparedData = array();
+        $preparedData = [];
 
         $preparedData['title'] = trim(strip_tags($rawData['title']));
         $preparedData['short_description'] = trim($this->getHelper('Data')->stripInvisibleTags($rawData['title']));
@@ -86,13 +95,13 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if (strlen($sku) > \Ess\M2ePro\Helper\Magento\Product::SKU_MAX_LENGTH) {
-
             $hashLength = 10;
             $savedSkuLength = \Ess\M2ePro\Helper\Magento\Product::SKU_MAX_LENGTH - $hashLength - 1;
             $hash = $this->getHelper('Data')->generateUniqueHash($sku, $hashLength);
 
             $isSaveStart = (bool)$this->getHelper('Module')->getConfig()->getGroupValue(
-                '/order/magento/settings/', 'save_start_of_long_sku_for_new_product'
+                '/order/magento/settings/',
+                'save_start_of_long_sku_for_new_product'
             );
 
             if ($isSaveStart) {
@@ -152,16 +161,16 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
     private function getNewProductImages(array $itemData)
     {
         if (count($itemData['pictureUrl']) == 0) {
-            return array();
+            return [];
         }
 
         try {
             $destinationFolder = $this->createDestinationFolder($itemData['title']);
         } catch (\Exception $e) {
-            return array();
+            return [];
         }
 
-        $images = array();
+        $images = [];
         $imageCounter = 1;
 
         $mediaPath = $this->filesystem->getDirectoryRead(
@@ -233,7 +242,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
         fclose($fileHandler);
         // ---------------------------------------
 
-        $imageInfo = $this->fileDriver->isFile($imagePath) ? getimagesize($imagePath) : NULL;
+        $imageInfo = $this->fileDriver->isFile($imagePath) ? getimagesize($imagePath) : null;
 
         if (empty($imageInfo)) {
             // M2ePro\TRANSLATIONS

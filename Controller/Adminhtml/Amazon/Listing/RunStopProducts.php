@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
+/**
+ * Class RunStopProducts
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ */
 class RunStopProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\ActionAbstract
 {
     public function execute()

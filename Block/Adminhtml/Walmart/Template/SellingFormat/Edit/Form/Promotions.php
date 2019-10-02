@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form;
 use \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm as Form;
 use \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion;
 
+/**
+ * Class Promotions
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form
+ */
 class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     private $elementFactory;
@@ -65,10 +69,10 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
         $addPromotionPriceButton = $this
             ->createBlock('Magento\Button')
-            ->addData(array(
+            ->addData([
                 'onclick' => 'WalmartTemplateSellingFormatObj.addPromotionsPriceRow();',
                 'class'   => 'add add_promotion_price_button primary'
-            ));
+            ]);
         $this->setData('add_promotion_price_button', $addPromotionPriceButton);
 
         // ---------------------------------------
@@ -86,13 +90,12 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $promotionsFromDateMode = $this->createElement(
             Form::SELECT,
             [
-                'html_id'                  => 'promotions_from_date_mode_%i%',
-                'name'                     => 'promotions[%i%][from_date][mode]',
-                'values'                   => $this->getPromotionsFromDateModeOptions(),
-                'value'                    => '',
-                'class'                    => 'promotions_from_date_mode',
-                'disabled'                 => true,
-                'create_magento_attribute' => true
+                'html_id'  => 'promotions_from_date_mode_%i%',
+                'name'     => 'promotions[%i%][from_date][mode]',
+                'values'   => $this->getPromotionsFromDateModeOptions(),
+                'value'    => '',
+                'class'    => 'promotions_from_date_mode',
+                'disabled' => true,
             ]
         );
         $promotionsFromDateMode->addCustomAttribute('allowed_attribute_types', 'text,date');
@@ -128,13 +131,12 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $promotionsToDateMode = $this->createElement(
             Form::SELECT,
             [
-                'html_id'                  => 'promotions_to_date_mode_%i%',
-                'name'                     => 'promotions[%i%][to_date][mode]',
-                'values'                   => $this->getPromotionsToDateModeOptions(),
-                'value'                    => '',
-                'class'                    => 'promotions_to_date_mode',
-                'disabled'                 => true,
-                'create_magento_attribute' => true
+                'html_id'  => 'promotions_to_date_mode_%i%',
+                'name'     => 'promotions[%i%][to_date][mode]',
+                'values'   => $this->getPromotionsToDateModeOptions(),
+                'value'    => '',
+                'class'    => 'promotions_to_date_mode',
+                'disabled' => true,
             ]
         );
         $promotionsToDateMode->addCustomAttribute('allowed_attribute_types', 'text,date');
@@ -170,14 +172,13 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $promotionsPriceMode = $this->createElement(
             Form::SELECT,
             [
-                'html_id'                  => 'promotions_price_mode_%i%',
-                'name'                     => 'promotions[%i%][price][mode]',
-                'required'                 => true,
-                'values'                   => $this->getPromotionsPriceModeOptions(),
-                'value'                    => '',
-                'class'                    => 'promotions_price_mode',
-                'disabled'                 => true,
-                'create_magento_attribute' => true
+                'html_id'  => 'promotions_price_mode_%i%',
+                'name'     => 'promotions[%i%][price][mode]',
+                'required' => true,
+                'values'   => $this->getPromotionsPriceModeOptions(),
+                'value'    => '',
+                'class'    => 'promotions_price_mode',
+                'disabled' => true,
             ]
         );
         $promotionsPriceMode->addCustomAttribute('allowed_attribute_types', 'text,price');
@@ -213,14 +214,13 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $promotionsComparisonPriceMode = $this->createElement(
             Form::SELECT,
             [
-                'html_id'                  => 'promotions_comparison_price_mode_%i%',
-                'name'                     => 'promotions[%i%][comparison_price][mode]',
-                'required'                 => true,
-                'values'                   => $this->getPromotionsComparisonPriceModeOptions(),
-                'value'                    => '',
-                'class'                    => 'promotions_comparison_price_mode',
-                'disabled'                 => true,
-                'create_magento_attribute' => true
+                'html_id'  => 'promotions_comparison_price_mode_%i%',
+                'name'     => 'promotions[%i%][comparison_price][mode]',
+                'required' => true,
+                'values'   => $this->getPromotionsComparisonPriceModeOptions(),
+                'value'    => '',
+                'class'    => 'promotions_comparison_price_mode',
+                'disabled' => true,
             ]
         );
         $promotionsComparisonPriceMode->addCustomAttribute('allowed_attribute_types', 'text,price');
@@ -268,11 +268,11 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
         $removePromotionPriceButton = $this
             ->createBlock('Magento\Button')
-            ->addData(array(
+            ->addData([
                 'label'   => $this->__('Remove'),
                 'onclick' => 'WalmartTemplateSellingFormatObj.removePromotionsPriceRow(this);',
                 'class'   => 'delete icon-btn remove_promotion_price_button'
-            ));
+            ]);
         $this->setData('remove_promotion_price_button', $removePromotionPriceButton);
 
         // ---------------------------------------
@@ -292,7 +292,8 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         ];
 
         return array_merge($optionsResult, $this->getMagentoAttributesOptions(
-            'text_date', Promotion::START_DATE_MODE_ATTRIBUTE
+            'text_date',
+            Promotion::START_DATE_MODE_ATTRIBUTE
         ));
     }
 
@@ -306,7 +307,8 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         ];
 
         return array_merge($optionsResult, $this->getMagentoAttributesOptions(
-            'text_date', Promotion::END_DATE_MODE_ATTRIBUTE
+            'text_date',
+            Promotion::END_DATE_MODE_ATTRIBUTE
         ));
     }
 
@@ -324,7 +326,8 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         ];
 
         return array_merge($optionsResult, $this->getMagentoAttributesOptions(
-            'text_date', Promotion::PRICE_MODE_ATTRIBUTE
+            'text_date',
+            Promotion::PRICE_MODE_ATTRIBUTE
         ));
     }
 
@@ -342,7 +345,8 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         ];
 
         return array_merge($optionsResult, $this->getMagentoAttributesOptions(
-            'text_date', Promotion::COMPARISON_PRICE_MODE_ATTRIBUTE
+            'text_date',
+            Promotion::COMPARISON_PRICE_MODE_ATTRIBUTE
         ));
     }
 
@@ -357,12 +361,12 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $optionsResult = [];
 
         foreach ($this->attributesByInputTypes[$type] as $attribute) {
-
             $optionsResult[] = [
                 'value' => $value,
                 'label' => $this->escapeHtml($attribute['label']),
                 'attrs' => ['attribute_code' => $attribute['code']]
-            ];;
+            ];
+            ;
         }
 
         return [
@@ -387,7 +391,7 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $element->setForm($this->parentForm);
 
         if ($this->renderer === null) {
-            $this->renderer = $this->createBlock('Magento\Form\Renderer\Element');
+            $this->renderer = $this->createBlock('Magento_Form_Renderer_Element');
         }
 
         $element->setRenderer($this->renderer);

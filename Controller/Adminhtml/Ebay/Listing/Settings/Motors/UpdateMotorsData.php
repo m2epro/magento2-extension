@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
+/**
+ * Class UpdateMotorsData
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ */
 class UpdateMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -28,12 +32,12 @@ class UpdateMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         parse_str($items, $items);
-        $itemsData = array();
+        $itemsData = [];
         foreach ($items as $id => $note) {
-            $itemsData[] = array(
+            $itemsData[] = [
                 'id' => $id,
                 'note' => $note
-            );
+            ];
         }
 
         if (!empty($filtersIds) && !is_array($filtersIds)) {
@@ -44,16 +48,20 @@ class UpdateMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $groupsIds = explode(',', $groupsIds);
         }
 
-        $attrValue = $this->getHelper('Component\Ebay\Motors')->buildAttributeValue(array(
+        $attrValue = $this->getHelper('Component_Ebay_Motors')->buildAttributeValue([
             'items' => $itemsData,
             'filters' => $filtersIds,
             'groups' => $groupsIds
-        ));
+        ]);
 
-        $motorsAttribute = $this->getHelper('Component\Ebay\Motors')->getAttribute($motorsType);
+        $motorsAttribute = $this->getHelper('Component_Ebay_Motors')->getAttribute($motorsType);
 
         $this->activeRecordFactory->getObject('Ebay\Listing')->getResource()->updateMotorsAttributesData(
-            $listingId, $listingProductIds, $motorsAttribute, $attrValue, $overwrite
+            $listingId,
+            $listingProductIds,
+            $motorsAttribute,
+            $attrValue,
+            $overwrite
         );
 
         $this->setAjaxContent(0, false);

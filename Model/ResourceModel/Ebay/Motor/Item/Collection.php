@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Item;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Item
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\Collection\Wrapper
 {
     protected $scope;
@@ -23,7 +27,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Collection\Wrapper
     {
         $this->scope = $scope;
 
-        if (!is_null($this->scope)) {
+        if ($this->scope !== null) {
             $this->getSelect()->where('scope = ?', $scope);
         }
     }

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Marketplace;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Marketplace;
 
+/**
+ * Class RunSynchNow
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Marketplace
+ */
 class RunSynchNow extends Marketplace
 {
     //########################################
@@ -24,13 +28,13 @@ class RunSynchNow extends Marketplace
         /** @var $dispatcher \Ess\M2ePro\Model\Synchronization\Dispatcher */
         $dispatcher = $this->modelFactory->getObject('Synchronization\Dispatcher');
 
-        $dispatcher->setAllowedComponents(array($marketplaceObj->getComponentMode()));
-        $dispatcher->setAllowedTasksTypes(array(
+        $dispatcher->setAllowedComponents([$marketplaceObj->getComponentMode()]);
+        $dispatcher->setAllowedTasksTypes([
             \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::MARKETPLACES
-        ));
+        ]);
 
         $dispatcher->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
-        $dispatcher->setParams(array('marketplace_id' => $marketplaceId));
+        $dispatcher->setParams(['marketplace_id' => $marketplaceId]);
 
         $dispatcher->process();
     }

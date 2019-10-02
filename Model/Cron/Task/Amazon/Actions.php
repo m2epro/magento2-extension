@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon;
 
+/**
+ * Class Actions
+ * @package Ess\M2ePro\Model\Cron\Task\Amazon
+ */
 class Actions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'amazon/actions';
@@ -29,7 +33,7 @@ class Actions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
-        $actionsProcessor = $this->modelFactory->getObject('Amazon\Actions\Processor');
+        $actionsProcessor = $this->modelFactory->getObject('Amazon_Actions_Processor');
         $actionsProcessor->setLockItem($this->getLockItem());
         $actionsProcessor->process();
     }

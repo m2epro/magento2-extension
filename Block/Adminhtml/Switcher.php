@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Block\Adminhtml
+ */
 abstract class Switcher extends Magento\AbstractBlock
 {
     const SIMPLE_STYLE   = 0;
@@ -40,7 +44,7 @@ abstract class Switcher extends Magento\AbstractBlock
 
     public function getItems()
     {
-        if (is_null($this->items)) {
+        if ($this->items === null) {
             $this->loadItems();
         }
 
@@ -57,7 +61,7 @@ abstract class Switcher extends Magento\AbstractBlock
         $controllerName = $this->getData('controller_name') ? $this->getData('controller_name') : '*';
         return $this->getUrl(
             "*/{$controllerName}/*",
-            array('_current' => true, $this->getParamName() => $this->getParamPlaceHolder())
+            ['_current' => true, $this->getParamName() => $this->getParamPlaceHolder()]
         );
     }
 

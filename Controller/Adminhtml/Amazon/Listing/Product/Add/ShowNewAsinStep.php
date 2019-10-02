@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
+/**
+ * Class ShowNewAsinStep
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
+ */
 class ShowNewAsinStep extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {
     public function execute()

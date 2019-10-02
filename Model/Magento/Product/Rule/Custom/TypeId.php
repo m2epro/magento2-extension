@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Product\Rule\Custom;
 
+/**
+ * Class TypeId
+ * @package Ess\M2ePro\Model\Magento\Product\Rule\Custom
+ */
 class TypeId extends AbstractModel
 {
     protected $type;
@@ -15,17 +19,22 @@ class TypeId extends AbstractModel
     //########################################
 
     public function __construct(
-        $filterOperator, $filterCondition,
+        $filterOperator,
+        $filterCondition,
         \Magento\Catalog\Model\Product\Type $type,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
-        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
-        \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    ){
-        parent::__construct($filterOperator, $filterCondition,
-                            $localeDate, $stockRegistry, $stockConfiguration, $helperFactory, $modelFactory, $data);
+    ) {
+        parent::__construct(
+            $filterOperator,
+            $filterCondition,
+            $localeDate,
+            $helperFactory,
+            $modelFactory,
+            $data
+        );
         $this->type = $type;
     }
 

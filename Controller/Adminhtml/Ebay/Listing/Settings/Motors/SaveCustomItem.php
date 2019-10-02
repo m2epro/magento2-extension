@@ -8,19 +8,23 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
+/**
+ * Class SaveCustomItem
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ */
 class SaveCustomItem extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
 
     public function execute()
     {
-        $helper = $this->getHelper('Component\Ebay\Motors');
+        $helper = $this->getHelper('Component_Ebay_Motors');
         $motorsType = $this->getRequest()->getParam('motors_type');
 
         $tableName = $helper->getDictionaryTable($motorsType);
         $idKey = $helper->getIdentifierKey($motorsType);
 
-        $insertData = $this->getRequest()->getParam('item', array());
+        $insertData = $this->getRequest()->getParam('item', []);
         foreach ($insertData as &$item) {
             $item == '' && $item = null;
         }

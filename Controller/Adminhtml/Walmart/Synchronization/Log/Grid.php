@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization\Log;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization\Log
+ */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
 {
     //########################################
 
     public function execute()
     {
-        $this->setAjaxContent($this->createBlock('Walmart\Synchronization\Log\Grid'));
+        $this->setAjaxContent($this->createBlock('Walmart_Synchronization_Log_Grid'));
 
         return $this->getResult();
     }

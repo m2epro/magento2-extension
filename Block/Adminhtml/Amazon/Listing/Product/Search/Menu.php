@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search;
 
+/**
+ * Class Menu
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search
+ */
 class Menu extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
 
@@ -74,7 +78,7 @@ class Menu extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
             \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND) {
 
             /** @var \Magento\Framework\View\Element\Messages $messages */
-            $messages = $this->getLayout()->createBlock('\Magento\Framework\View\Element\Messages');
+            $messages = $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class);
             $messages->addWarning(
                 'There were no Products found on Amazon according to the Listing Search Settings.'
             );
@@ -87,7 +91,6 @@ HTML;
         }
 
         return '';
-
     }
 
     //########################################

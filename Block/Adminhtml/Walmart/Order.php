@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
+/**
+ * Class Order
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart
+ */
 class Order extends AbstractContainer
 {
     //########################################
@@ -29,7 +33,6 @@ class Order extends AbstractContainer
         $this->removeButton('save');
         $this->removeButton('edit');
         // ---------------------------------------
-
     }
 
     //########################################
@@ -56,27 +59,28 @@ HTML;
         $this->appendHelpBlock([
             'content' => $this->__(
                 <<<HTML
-                <p>On this page, you can review the Channel Sales imported from Walmart.</p><br>
-
-                <p>In the grid below, filter the records to narrow your search results, then click
-                the Order line to review the details. Use the Action menu to manage each Channel Order
-                individually or update them in bulk.</p><br>
+                <p>On this page, you can review the Channel Sales imported from Walmart.
+                In the grid below, filter the records to narrow your search results,
+                then click the Order line to review the details. Use the Action menu to manage
+                each Channel Order individually or update them in bulk.
+                </p><br>
                 <p><strong>Note:</strong> you can enable an automatic creation of Magento Orders, Invoices,
-                and Shipments in the Account Settings (Walmart Integration > Configuration > Accounts).</p>
+                and Shipments in the Account Configuration under
+                <i>Walmart Integration > Configuration > Accounts > Edit Account > Orders</i>.</p>
 HTML
             )
         ]);
 
         // ---------------------------------------
 
-        $this->setPageActionsBlock('Walmart\Order\PageActions');
+        $this->setPageActionsBlock('Walmart_Order_PageActions');
 
         return parent::_prepareLayout();
     }
 
     public function getGridHtml()
     {
-        $editItemBlock = $this->createBlock('Order\Item\Edit');
+        $editItemBlock = $this->createBlock('Order_Item_Edit');
 
         return
           $editItemBlock->toHtml()
@@ -86,7 +90,7 @@ HTML
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Controller\Adminhtml\Order\EditItem')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Controller\Adminhtml\Order\EditItem::class)
         );
 
         return parent::_beforeToHtml();

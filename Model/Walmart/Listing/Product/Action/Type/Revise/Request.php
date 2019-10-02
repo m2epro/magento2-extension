@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise
+ */
 class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Request
 {
     const PRODUCT_ID_UPDATE_METADATA_KEY = 'product_id_update_details';
@@ -17,11 +21,12 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
     protected function getActionData()
     {
         $data = array_merge(
-            array(
+            [
                 'sku'  => $this->getWalmartListingProduct()->getSku(),
                 'wpid' => $this->getWalmartListingProduct()->getWpid(),
-            ),
+            ],
             $this->getQtyData(),
+            $this->getLagTimeData(),
             $this->getPriceData(),
             $this->getPromotionsData(),
             $this->getDetailsData()
@@ -51,10 +56,10 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
             unset($productIdData);
 
             if (!$isUpdated) {
-                $data['product_ids_data'][] = array(
+                $data['product_ids_data'][] = [
                     'type' => $changedType,
                     'id'   => $changedValue,
-                );
+                ];
             }
 
             $this->addMetaData(self::PRODUCT_ID_UPDATE_METADATA_KEY, $params['changed_identifier']);

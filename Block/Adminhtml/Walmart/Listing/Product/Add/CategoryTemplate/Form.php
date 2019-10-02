@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var  \Ess\M2ePro\Model\Listing */
@@ -20,7 +24,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         parent::_construct();
 
         $this->listing = $this->parentFactory->getObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Walmart::NICK, 'Listing', $this->getRequest()->getParam('id')
+            \Ess\M2ePro\Helper\Component\Walmart::NICK,
+            'Listing',
+            $this->getRequest()->getParam('id')
         );
     }
 
@@ -63,7 +69,7 @@ CSS
             'block-notice',
             'label',
             [
-                'value' => $this->__('Below you can select the most convenient for you way to set Category Policy:'),
+                'value' => $this->__('Select the most convenient way to set the Category Policy below:'),
                 'field_extra_attributes' => 'style="margin-bottom: 0;"',
             ]
         );
@@ -82,7 +88,7 @@ CSS
                 ],
                 'note' => <<<HTML
 <div style="padding-top: 3px; padding-left: 26px; font-weight: normal">
-    {$this->__('All Products will have the same Category Policy')}
+    {$this->__('All Products will have the same Category Policy.')}
 </div>
 <div style="margin: 7px 52px">
     <b>{$this->__('Category Policy')}</b>:
@@ -112,7 +118,7 @@ HTML
                 ],
                 'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">'.
                     $this->__(
-                        'Products will have Category Policies set according to the Magento Categories.'
+                        'Category Policy will be set for Products based on their Magento Categories.'
                     ).'</div>'
             ]
         );
@@ -130,7 +136,8 @@ HTML
                     ]
                 ],
                 'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">'.
-                    $this->__('Set Category Policies for each Product (or a group of Products) manually.').'</div>'
+                    $this->__('Allows you to set Category Policy for each Product or a group of Products manually.')
+                          .'</div>'
             ]
         );
 
@@ -174,8 +181,11 @@ HTML
     {
         $productsIds = implode(',', $this->getProductsIds());
 
+        $viewTemplateCategoryPopupUrl =
+            $this->getUrl('*/walmart_listing_product_template_category/ViewTemplateCategoryPopup');
+
         $this->js->add(
-<<<JS
+            <<<JS
     require([
         'Magento_Ui/js/modal/modal'
     ],function(modal) {
@@ -258,8 +268,7 @@ HTML
         $('edit_category_template').observe('click', function(event) {
 
             var popupContent = '';
-            new Ajax.Request('{$this->getUrl('*/walmart_listing_product_template_category/ViewTemplateCategoryPopup')}',
-            {
+            new Ajax.Request('{$viewTemplateCategoryPopupUrl}', {
                 method: 'post',
                 parameters: {
                     products_ids : '{$productsIds}'

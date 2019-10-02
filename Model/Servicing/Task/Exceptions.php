@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task;
 
+/**
+ * Class Exceptions
+ * @package Ess\M2ePro\Model\Servicing\Task
+ */
 class Exceptions extends \Ess\M2ePro\Model\Servicing\Task
 {
     //########################################
@@ -27,7 +31,7 @@ class Exceptions extends \Ess\M2ePro\Model\Servicing\Task
      */
     public function getRequestData()
     {
-        return array();
+        return [];
     }
 
     public function processResponseData(array $data)
@@ -35,28 +39,37 @@ class Exceptions extends \Ess\M2ePro\Model\Servicing\Task
         $data = $this->prepareAndCheckReceivedData($data);
 
         $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/debug/exceptions/','filters_mode',(int)$data['is_filter_enable']
+            '/debug/exceptions/',
+            'filters_mode',
+            (int)$data['is_filter_enable']
         );
         $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/debug/fatal_error/','send_to_server',(int)$data['send_to_server']['fatal']
+            '/debug/fatal_error/',
+            'send_to_server',
+            (int)$data['send_to_server']['fatal']
         );
         $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/debug/exceptions/','send_to_server',(int)$data['send_to_server']['exception']
+            '/debug/exceptions/',
+            'send_to_server',
+            (int)$data['send_to_server']['exception']
         );
 
         /**  @var $registryModel \Ess\M2ePro\Model\Registry */
         $registryModel = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', '/exceptions_filters/', 'key', false
+            'Registry',
+            '/exceptions_filters/',
+            'key',
+            false
         );
 
-        if (is_null($registryModel)) {
+        if ($registryModel === null) {
             $registryModel = $this->activeRecordFactory->getObject('Registry');
         }
 
-        $registryModel->addData(array(
+        $registryModel->addData([
             'key' => '/exceptions_filters/',
             'value' => $this->getHelper('Data')->jsonEncode($data['filters'])
-        ))->save();
+        ])->save();
     }
 
     //########################################
@@ -80,21 +93,20 @@ class Exceptions extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         if (!isset($data['filters']) || !is_array($data['filters'])) {
-            $data['filters'] = array();
+            $data['filters'] = [];
         }
 
-        $validatedFilters = array();
+        $validatedFilters = [];
 
-        $allowedFilterTypes = array(
+        $allowedFilterTypes = [
             \Ess\M2ePro\Helper\Module\Exception::FILTER_TYPE_TYPE,
             \Ess\M2ePro\Helper\Module\Exception::FILTER_TYPE_INFO,
             \Ess\M2ePro\Helper\Module\Exception::FILTER_TYPE_MESSAGE
-        );
+        ];
 
         foreach ($data['filters'] as $filter) {
-
             if (!isset($filter['preg_match']) || $filter['preg_match'] == '' ||
-                !in_array($filter['type'],$allowedFilterTypes)) {
+                !in_array($filter['type'], $allowedFilterTypes)) {
                 continue;
             }
 

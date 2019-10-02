@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Observer\Order;
 
+/**
+ * Class Quote
+ * @package Ess\M2ePro\Observer\Order
+ */
 class Quote extends \Ess\M2ePro\Observer\AbstractModel
 {
     /** @var \Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory  */
@@ -17,12 +21,12 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
     private $stockRegistry;
 
     /** @var null|\Magento\Catalog\Model\Product  */
-    private $product = NULL;
+    private $product = null;
 
     /** @var null|\Magento\CatalogInventory\Api\Data\StockItemInterface  */
-    private $stockItem = NULL;
+    private $stockItem = null;
 
-    private $affectedListingsProducts = array();
+    private $affectedListingsProducts = [];
 
     //########################################
 
@@ -32,8 +36,7 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->stockItemFactory = $stockItemFactory;
         $this->stockRegistry    = $stockRegistry;
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
@@ -43,10 +46,10 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
 
     public function beforeProcess()
     {
-        /* @var $quoteItem \Magento\Quote\Model\Quote\Item */
+        /** @var $quoteItem \Magento\Quote\Model\Quote\Item */
         $quoteItem = $this->getEvent()->getItem();
 
-        /* @var $product \Magento\Catalog\Model\Product */
+        /** @var $product \Magento\Catalog\Model\Product */
         $product = $quoteItem->getProduct();
 
         if (!($product instanceof \Magento\Catalog\Model\Product) || (int)$product->getId() <= 0) {
@@ -75,7 +78,7 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
 
     private function processQty()
     {
-        /* @var $quoteItem \Magento\Quote\Model\Quote\Item */
+        /** @var $quoteItem \Magento\Quote\Model\Quote\Item */
         $quoteItem = $this->getEvent()->getItem();
 
         if ($quoteItem->getHasChildren()) {
@@ -85,7 +88,7 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
         $oldValue = (int)$this->getStockItem()->getQty();
         $newValue = $oldValue - (int)$quoteItem->getTotalQty();
 
-        if (!$this->updateProductChangeRecord('qty',$oldValue,$newValue) || $oldValue == $newValue) {
+        if (!$this->updateProductChangeRecord('qty', $oldValue, $newValue) || $oldValue == $newValue) {
             return;
         }
 
@@ -93,15 +96,18 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
 
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
-            $this->logListingProductMessage($listingProduct,
-                                            \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_QTY,
-                                            $oldValue, $newValue);
+            $this->logListingProductMessage(
+                $listingProduct,
+                \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_QTY,
+                $oldValue,
+                $newValue
+            );
         }
     }
 
     private function processStockAvailability()
     {
-        /* @var $quoteItem \Magento\Quote\Model\Quote\Item */
+        /** @var $quoteItem \Magento\Quote\Model\Quote\Item */
         $quoteItem = $this->getEvent()->getItem();
 
         if ($quoteItem->getHasChildren()) {
@@ -121,7 +127,7 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
         $oldValue = $oldValue ? 'IN Stock' : 'OUT of Stock';
         $newValue = $newValue ? 'IN Stock' : 'OUT of Stock';
 
-        if (!$this->updateProductChangeRecord('stock_availability',(int)$oldValue,(int)$newValue) ||
+        if (!$this->updateProductChangeRecord('stock_availability', (int)$oldValue, (int)$newValue) ||
             $oldValue == $newValue) {
             return;
         }
@@ -130,9 +136,12 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
 
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
-            $this->logListingProductMessage($listingProduct,
-                                            \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_STOCK_AVAILABILITY,
-                                            $oldValue, $newValue);
+            $this->logListingProductMessage(
+                $listingProduct,
+                \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_STOCK_AVAILABILITY,
+                $oldValue,
+                $newValue
+            );
         }
     }
 
@@ -156,7 +165,7 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
      */
     private function getStockItem()
     {
-        if (!is_null($this->stockItem)) {
+        if ($this->stockItem !== null) {
             return $this->stockItem;
         }
 
@@ -183,7 +192,7 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
 
     private function areThereAffectedItems()
     {
-        return count($this->getAffectedListingsProducts()) > 0;
+        return !empty($this->getAffectedListingsProducts());
     }
 
     // ---------------------------------------
@@ -202,9 +211,12 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
 
     //########################################
 
-    private function logListingProductMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct, $action,
-                                              $oldValue, $newValue)
-    {
+    private function logListingProductMessage(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        $action,
+        $oldValue,
+        $newValue
+    ) {
         // M2ePro\TRANSLATIONS
         // From [%from%] to [%to%].
 
@@ -216,11 +228,11 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
             $listingProduct->getProductId(),
             $listingProduct->getId(),
             \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-            NULL,
+            null,
             $action,
             $this->getHelper('Module\Log')->encodeDescription(
                 'From [%from%] to [%to%].',
-                array('!from'=>$oldValue,'!to'=>$newValue)
+                ['!from'=>$oldValue,'!to'=>$newValue]
             ),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW

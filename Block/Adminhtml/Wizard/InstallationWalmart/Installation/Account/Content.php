@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\Acc
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Content
+ * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\Account
+ */
 class Content extends AbstractForm
 {
     protected $walmartFactory;
@@ -20,8 +24,7 @@ class Content extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->walmartFactory = $walmartFactory;
 
         parent::__construct($context, $registry, $formFactory, $data);
@@ -29,58 +32,17 @@ class Content extends AbstractForm
 
     protected function _prepareLayout()
     {
-        $marketplaceUS = \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US;
-        $marketplaceCA = \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA;
-
-        $docUS = $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XgBhAQ');
-        $docCA = $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XgBhAQ');
-
-        $this->getLayout()->getBlock('wizard.help.block')->setContent($this->__(<<<HTML
-<div class="marketplace-required-field marketplace-required-field-id{$marketplaceUS}">
-    Under this section, you need to connect M2E Pro with your Walmart account. Please complete the following steps:<br>
-    <ul class="list">
-        <li>Select Walmart marketplace.</li>
-        <li>Click <b>Get Access Data</b>. You will be redirected to the Walmart Developer Center.</li>
-        <li>Log in using your Walmart Seller credentials.</li>
-        <li>Under <i>Username > API Keys > Digital Signature</i>, copy your <i>Consumer ID</i>
-        and paste it into the current M2E Pro page. </li>
-        <li>Under <i>Username > Delegate Access</i>, provide M2E Pro with the full access permissions
-        to all API sections. Click <b>API Keys</b> to generate <i>Client ID</i> and <i>Client Secret</i>.</li>
-        <li>Copy your <i>Client ID</i> and <i>Client Secret</i> and paste the keys into the current M2E Pro page.</li>
-        <li>Click <b>Continue</b>. Extension will be granted access to your Walmart account data.</li>
-    </ul>
-
-    <strong>Important note</strong>: Your <i>Consumer ID</i> must not be changed once it is obtain.
-    <i>Consumer ID</i> is unique seller identifier M2E Pro requires to act on your behalf. <br/>
-
-    If you need to reauthorize Extension, please generate new <i>Client ID</i> and <i>Client Secret</i> for
-    M2E Pro under <i>Username > Delegate Access</i> in Developer Center. <br/>
-
-    The detailed information can be found <a href="{$docUS}" target="_blank">here</a>.<br/><br/>
-</div>
-
-<div class="marketplace-required-field marketplace-required-field-id{$marketplaceCA}">
-
-    Under this section, you need to connect M2E Pro with your Walmart account.
-    Please complete the following steps:<br/>
-    <ul class="list">
-        <li>Click Get Access Data. You will be redirected to the Walmart website.</li>
-        <li>Log in to your Seller Center Account.</li>
-        <li>In admin panel, navigate to <i>Settings > API > Consumer IDs & Private Keys</i>.</li>
-        <li>Copy the generated Consumer ID and Private Key to the corresponding fields on the current page.</li>
-        <li>Click Continue. Extension will be granted access to your Walmart Account data.</li>
-    </ul>
-
-    <strong>Note</strong>: Make sure that you copy valid API credentials, i.e. Consumer ID and Private Key..<br/>
-
-    <strong>Important note</strong>: Private Key is common for all applications you are using.
-    Regeneration of the Key will deactivate your previous Private Key.
-    This may cause the apps to no longer function properly. <br>
-
-    The detailed information can be found <a href="{$docCA}">here</a>. <br><br>
+        $this->getLayout()->getBlock('wizard.help.block')->setContent(
+            $this->__(<<<HTML
+<div>
+    Under this section, you can link your Walmart account to M2E Pro.
+    Read how to <a href="%url%" target="_blank">get the API credentials</a>.
 </div>
 HTML
-        ));
+                ,
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XgBhAQ')
+            )
+        );
 
         parent::_prepareLayout();
     }
@@ -100,7 +62,7 @@ HTML
         );
 
         $marketplacesCollection = $this->walmartFactory->getObject('Marketplace')->getCollection()
-            ->addFieldToFilter('developer_key', array('notnull' => true))
+            ->addFieldToFilter('developer_key', ['notnull' => true])
             ->setOrder('sorder', 'ASC');
 
         $marketplaces = [[
@@ -200,8 +162,10 @@ HTML
             ]
         )->setFieldExtraAttributes('style="display: none;"');
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Walmart\Account'));
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Walmart'));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Model\Walmart\Account::class));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class));
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Wizard\InstallationWalmart'));
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action;
 
+/**
+ * Class Logger
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action
+ */
 class Logger extends \Ess\M2ePro\Model\AbstractModel
 {
     private $action = \Ess\M2ePro\Model\Listing\Log::ACTION_UNKNOWN;
@@ -105,7 +109,8 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Connector\Connection\Response\Message $message,
         $priority = \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
     ) {
-        $this->getListingLog()->addProductMessage($listingProduct->getListingId(),
+        $this->getListingLog()->addProductMessage(
+            $listingProduct->getListingId(),
             $listingProduct->getProductId(),
             $listingProduct->getId(),
             $this->initiator,
@@ -113,7 +118,8 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
             $this->action,
             $message->getText(),
             $this->initLogType($message),
-            $priority);
+            $priority
+        );
     }
 
     //########################################
@@ -123,10 +129,10 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
      */
     private function getListingLog()
     {
-        if (is_null($this->listingLog)) {
+        if ($this->listingLog === null) {
 
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Log $listingLog */
-            $listingLog = $this->activeRecordFactory->getObject('Walmart\Listing\Log');
+            $listingLog = $this->activeRecordFactory->getObject('Walmart_Listing_Log');
 
             $this->listingLog = $listingLog;
         }

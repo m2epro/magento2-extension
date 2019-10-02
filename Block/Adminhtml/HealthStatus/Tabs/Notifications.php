@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs;
 use Ess\M2ePro\Model\HealthStatus\Notification\Settings;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
+/**
+ * Class Notifications
+ * @package Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs
+ */
 class Notifications extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /**
@@ -26,7 +30,7 @@ class Notifications extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    ){
+    ) {
         parent::__construct($context, $registry, $formFactory, $data);
         $this->auth = $auth;
     }
@@ -35,7 +39,7 @@ class Notifications extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
 
     protected function _prepareForm()
     {
-        $notificationSettings = $this->modelFactory->getObject('HealthStatus\Notification\Settings');
+        $notificationSettings = $this->modelFactory->getObject('HealthStatus_Notification_Settings');
 
         $form = $this->_formFactory->create(
             ['data' => [
@@ -50,7 +54,7 @@ class Notifications extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
-<<<HTML
+                    <<<HTML
 You can specify how M2E Pro should notify you about Health Status of your M2E Pro by selecting:
 <ul>
     <li>
@@ -87,10 +91,12 @@ HTML
         );
 
         $fieldSet = $form->addFieldset(
-            'notification_field_set', ['legend' => false, 'collabsable' => false]
+            'notification_field_set',
+            ['legend' => false, 'collabsable' => false]
         );
 
-        $fieldSet->addField('notification_mode',
+        $fieldSet->addField(
+            'notification_mode',
             self::SELECT,
             [
                 'name' => 'notification_mode',
@@ -124,7 +130,8 @@ HTML
         $email = $notificationSettings->getEmail();
         empty($email) && $email = $this->auth->getUser()->getEmail();
 
-        $fieldSet->addField('notification_email',
+        $fieldSet->addField(
+            'notification_email',
             'text',
             [
                 'container_id' => 'notification_email_value_container',
@@ -136,7 +143,8 @@ HTML
             ]
         );
 
-        $fieldSet->addField('notification_level',
+        $fieldSet->addField(
+            'notification_level',
             self::SELECT,
             [
                 'name' => 'notification_level',
@@ -189,7 +197,7 @@ HTML
         $this->jsUrl->add($this->getUrl('*/*/save'), 'formSubmit');
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\HealthStatus\Notification\Settings')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\HealthStatus\Notification\Settings::class)
         );
 
         $this->js->addRequireJs(['hS' => 'M2ePro/HealthStatus'], <<<JS

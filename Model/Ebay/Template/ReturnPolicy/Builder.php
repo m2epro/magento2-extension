@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\ReturnPolicy;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Ebay\Template\ReturnPolicy
+ */
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 {
     //########################################
@@ -15,7 +19,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
     public function build(array $data)
     {
         if (empty($data)) {
-            return NULL;
+            return null;
         }
 
         $this->validate($data);
@@ -23,10 +27,11 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         $data = $this->prepareData($data);
 
         $marketplace = $this->ebayFactory->getCachedObjectLoaded(
-            'Marketplace', $data['marketplace_id']
+            'Marketplace',
+            $data['marketplace_id']
         );
 
-        $template = $this->activeRecordFactory->getObject('Ebay\Template\ReturnPolicy');
+        $template = $this->activeRecordFactory->getObject('Ebay_Template_ReturnPolicy');
 
         if (isset($data['id'])) {
             $template->load($data['id']);

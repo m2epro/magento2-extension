@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Feedback;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\Feedback
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     //########################################
@@ -33,7 +37,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareCollection()
     {
         $accountId = $this->getRequest()->getParam('id');
-        if (is_null($accountId)) {
+        if ($accountId === null) {
             return parent::_prepareCollection();
         }
 
@@ -42,9 +46,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $dbExpr = new \Zend_Db_Expr('if(`main_table`.`seller_feedback_text` = \'\', 0, 1)');
         $collection->getSelect()
             ->joinLeft(
-                array('mea' => $this->activeRecordFactory->getObject('Ebay\Account')->getResource()->getMainTable()),
+                ['mea' => $this->activeRecordFactory->getObject('Ebay\Account')->getResource()->getMainTable()],
                 '(`mea`.`account_id` = `main_table`.`account_id`)',
-                array('account_mode'=>'mode','have_seller_feedback' => $dbExpr)
+                ['account_mode'=>'mode','have_seller_feedback' => $dbExpr]
             );
 
         $collection->addFieldToFilter('main_table.account_id', $accountId);
@@ -72,11 +76,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     if ($field == 'have_seller_feedback') {
                         if ((int)$cond['eq'] == 0) {
                             $this->getCollection()->getSelect()->where('`main_table`.`seller_feedback_text` = \'\'');
-                        } else if ((int)$cond['eq'] == 1) {
+                        } elseif ((int)$cond['eq'] == 1) {
                             $this->getCollection()->getSelect()->where('`main_table`.`seller_feedback_text` != \'\'');
                         }
                     } else {
-                        $this->getCollection()->addFieldToFilter($field , $cond);
+                        $this->getCollection()->addFieldToFilter($field, $cond);
                     }
                 }
             }
@@ -86,33 +90,33 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('ebay_item_id', array(
+        $this->addColumn('ebay_item_id', [
             'header' => $this->__('Item ID'),
             'align'  => 'right',
             'type'   => 'text',
             'width'  => '50px',
             'index'  => 'ebay_item_id',
-            'frame_callback' => array($this, 'callbackColumnEbayItemId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnEbayItemId']
+        ]);
 
-        $this->addColumn('transaction_id', array(
+        $this->addColumn('transaction_id', [
             'header' => $this->__('Transaction ID'),
             'align'  => 'right',
             'type'   => 'text',
             'width'  => '105px',
             'index'  => 'ebay_transaction_id',
-            'frame_callback' => array($this, 'callbackColumnTransactionId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTransactionId']
+        ]);
 
-        $this->addColumn('buyer_feedback', array(
+        $this->addColumn('buyer_feedback', [
             'header' => $this->__('Buyer Feedback'),
             'width'  => '155px',
             'type'   => 'text',
             'index'  => 'buyer_feedback_text',
-            'frame_callback' => array($this, 'callbackColumnBuyerFeedback')
-        ));
+            'frame_callback' => [$this, 'callbackColumnBuyerFeedback']
+        ]);
 
-        $this->addColumn('buyer_feedback_date', array(
+        $this->addColumn('buyer_feedback_date', [
             'header' => $this->__('Buyer Feedback Date'),
             'width'  => '155px',
             'type'   => 'datetime',
@@ -120,18 +124,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'format' => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'index'  => 'buyer_feedback_date',
-            'frame_callback' => array($this, 'callbackColumnBuyerFeedbackDate')
-        ));
+            'frame_callback' => [$this, 'callbackColumnBuyerFeedbackDate']
+        ]);
 
-        $this->addColumn('seller_feedback', array(
+        $this->addColumn('seller_feedback', [
             'header' => $this->__('Seller Feedback'),
             'width'  => '155px',
             'type'   => 'text',
             'index'  => 'seller_feedback_text',
-            'frame_callback' => array($this, 'callbackColumnSellerFeedback')
-        ));
+            'frame_callback' => [$this, 'callbackColumnSellerFeedback']
+        ]);
 
-        $this->addColumn('seller_feedback_date', array(
+        $this->addColumn('seller_feedback_date', [
             'header' => $this->__('Seller Feedback Date'),
             'width'  => '155px',
             'type'   => 'datetime',
@@ -139,37 +143,37 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'format' => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'index'  => 'seller_feedback_date',
-            'frame_callback' => array($this, 'callbackColumnSellerFeedbackDate')
-        ));
+            'frame_callback' => [$this, 'callbackColumnSellerFeedbackDate']
+        ]);
 
-        $this->addColumn('buyer_feedback_type', array(
+        $this->addColumn('buyer_feedback_type', [
             'header'       => $this->__('Type'),
             'width'        => '50px',
             'align'        => 'center',
             'type'         => 'options',
             'filter_index' => 'buyer_feedback_type',
             'sortable'     => false,
-            'options'      => array(
+            'options'      => [
                 'Neutral'  => $this->__('Neutral'),
                 'Positive' => $this->__('Positive'),
                 'Negative' => $this->__('Negative')
-            ),
-            'frame_callback' => array($this, 'callbackColumnFeedbackType'),
-            'filter_condition_callback' => array($this, 'callbackFilterFeedbackType'),
-        ));
+            ],
+            'frame_callback' => [$this, 'callbackColumnFeedbackType'],
+            'filter_condition_callback' => [$this, 'callbackFilterFeedbackType'],
+        ]);
 
-        $this->addColumn('feedback_respond_status', array(
+        $this->addColumn('feedback_respond_status', [
             'header'       => $this->__('Status'),
             'align'        => 'center',
             'type'         => 'options',
             'index'        => 'have_seller_feedback',
             'filter_index' => 'have_seller_feedback',
             'sortable'     => false,
-            'options'      => array(
+            'options'      => [
                 0 => $this->__('Unresponded'),
                 1 => $this->__('Responded')
-            )
-        ));
+            ]
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -178,7 +182,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnEbayItemId($value, $row, $column, $isExport)
     {
-        $url = $this->getUrl('*/*/goToItem', array('feedback_id' => $row->getData('id')));
+        $url = $this->getUrl('*/*/goToItem', ['feedback_id' => $row->getData('id')]);
 
         return '<a href="'.$url.'" target="_blank">'
                 . $this->getHelper('Data')->escapeHtml($value)
@@ -188,7 +192,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnTransactionId($value, $row, $column, $isExport)
     {
         $value == 0 && $value = $this->__('No ID For Auction');
-        $url = $this->getUrl('*/*/goToOrder/', array('feedback_id' => $row->getData('id')));
+        $url = $this->getUrl('*/*/goToOrder/', ['feedback_id' => $row->getData('id')]);
 
         return '<a href="'.$url.'" target="_blank">'.$this->getHelper('Data')->escapeHtml($value).'</a>';
     }
@@ -280,16 +284,22 @@ HTML;
 
         switch ($value) {
             case \Ess\M2ePro\Model\Ebay\Feedback::TYPE_NEGATIVE:
-                $this->getCollection()->addFieldToFilter('buyer_feedback_type',
-                    \Ess\M2ePro\Model\Ebay\Feedback::TYPE_NEGATIVE);
+                $this->getCollection()->addFieldToFilter(
+                    'buyer_feedback_type',
+                    \Ess\M2ePro\Model\Ebay\Feedback::TYPE_NEGATIVE
+                );
                 break;
             case \Ess\M2ePro\Model\Ebay\Feedback::TYPE_NEUTRAL:
-                $this->getCollection()->addFieldToFilter('buyer_feedback_type',
-                    \Ess\M2ePro\Model\Ebay\Feedback::TYPE_NEUTRAL);
+                $this->getCollection()->addFieldToFilter(
+                    'buyer_feedback_type',
+                    \Ess\M2ePro\Model\Ebay\Feedback::TYPE_NEUTRAL
+                );
                 break;
             case \Ess\M2ePro\Model\Ebay\Feedback::TYPE_POSITIVE:
-                $this->getCollection()->addFieldToFilter('buyer_feedback_type',
-                    \Ess\M2ePro\Model\Ebay\Feedback::TYPE_POSITIVE);
+                $this->getCollection()->addFieldToFilter(
+                    'buyer_feedback_type',
+                    \Ess\M2ePro\Model\Ebay\Feedback::TYPE_POSITIVE
+                );
                 break;
         }
     }
@@ -298,7 +308,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/getGrid', array('_current'=>true));
+        return $this->getUrl('*/*/getGrid', ['_current'=>true]);
     }
 
     public function getRowUrl($row)

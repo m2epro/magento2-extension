@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs;
 
 use Ess\M2ePro\Model\Amazon\Template\Description;
 
+/**
+ * Class General
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs
+ */
 class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     public $templateModel = null;
@@ -42,7 +46,9 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $form->addField('general_id', 'hidden',
+        $form->addField(
+            'general_id',
+            'hidden',
             [
                 'name' => 'general[id]',
                 'value' => $this->formData['id']
@@ -67,7 +73,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     you should enable New ASIN/ISBN Creation feature.<br/><br/>
                     More detailed information about ability to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.',
-                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/EAItAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/EAItAQ')
                 )
             ]
         );
@@ -94,7 +100,9 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ];
         }
 
-        $fieldSet->addField('marketplace_id', self::SELECT,
+        $fieldSet->addField(
+            'marketplace_id',
+            self::SELECT,
             array_merge(
                 [
                     'name' => 'general[marketplace_id]',
@@ -103,7 +111,8 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'values' => $this->getMarketplaceDataOptions(),
                     'value' => $this->formData['marketplace_id'],
                     'required' => true,
-                ], $additionalData
+                ],
+                $additionalData
             )
         );
 
@@ -131,7 +140,8 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ')
         ]);
 
-        $fieldSet->addField('template_description_edit_category_container',
+        $fieldSet->addField(
+            'template_description_edit_category_container',
             self::CUSTOM_CONTAINER,
             [
                 'container_id' => 'category_path_container',
@@ -145,7 +155,9 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $productDataNick = $this->getHelper('Data')->escapeHtml($this->formData['product_data_nick']);
 
-        $fieldSet->addField('product_data_nick_select', self::SELECT,
+        $fieldSet->addField(
+            'product_data_nick_select',
+            self::SELECT,
             [
                 'label' => $this->__('Product Type'),
                 'title' => $this->__('Product Type'),
@@ -192,7 +204,9 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                                                             value="'.$this->formData['is_new_asin_accepted'].'" />';
         }
 
-        $fieldSet->addField('new_asin_accepted', self::SELECT,
+        $fieldSet->addField(
+            'new_asin_accepted',
+            self::SELECT,
             array_merge(
                 [
                     'name' => 'general[is_new_asin_accepted]',
@@ -204,13 +218,16 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     ],
                     'value' => $this->formData['is_new_asin_accepted'],
                     'class' => 'required-entry',
-                ], $additionalData
+                ],
+                $additionalData
             )
         );
 
         $fieldSet->addField('asin_options', self::SEPARATOR, ['class' => 'hide-when-asin-is-disabled']);
 
-        $fieldSet->addField('worldwide_id_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'worldwide_id_custom_attribute',
+            'hidden',
             [
                 'name' => 'general[worldwide_id_custom_attribute]',
                 'value' => $this->formData['worldwide_id_custom_attribute'],
@@ -223,7 +240,9 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = Description::WORLDWIDE_ID_MODE_NONE;
         }
 
-        $fieldSet->addField('registered_parameter', self::SELECT,
+        $fieldSet->addField(
+            'registered_parameter',
+            self::SELECT,
             [
                 'name' => 'general[registered_parameter]',
                 'label' => $this->__('Product ID Override'),
@@ -241,13 +260,14 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     Option to one of the values from the Dropdown. <br/>
                     You have to be approved by Amazon in order to use it. <br/><br/>
                     <b>Note:</b> Those approvals can be received only for the specific Categories.
-                    Please, contact Amazon Support to apply for approval. '
-                ),
+                    Please, contact Amazon Support to apply for approval. '),
                 'css_class' => 'hide-when-asin-is-disabled'
             ]
         );
 
-        $fieldSet->addField('worldwide_id_mode', self::SELECT,
+        $fieldSet->addField(
+            'worldwide_id_mode',
+            self::SELECT,
             [
                 'name' => 'general[worldwide_id_mode]',
                 'label' => $this->__('UPC / EAN'),
@@ -315,8 +335,8 @@ HTML;
         $html = '<span style="font-style: italic; color: grey;">'.$this->__('Not Selected').'</span>';
         if (!empty($this->formData['category_path']) && !empty($this->formData['browsenode_id'])) {
             $html = '<span>'.$this->escapeHtml(
-                    "{$this->formData['category_path']} ({$this->formData['browsenode_id']})"
-                ).'</span>';
+                "{$this->formData['category_path']} ({$this->formData['browsenode_id']})"
+            ).'</span>';
         }
 
         $html = '<span id="category_path_span">' . $html . '</span>';
@@ -371,7 +391,6 @@ HTML;
        {$tooltip}
        <a id="edit_category_link" href="#" style="margin-left: 5px;">{$this->__('Edit')}</a>
 HTML;
-
     }
 
     // ---------------------------------------
@@ -418,21 +437,19 @@ HTML;
         );
 
         if ($this->formData['worldwide_id_custom_attribute'] != '' && !$isExistInAttributesArray) {
-
             $optionsResult['opt_group']['value'][] = [
                 'value' => Description::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $this->getHelper('Data')->escapeHtml(
-                    $magentoAttributeHelper->getAttributeLabel($this->formData['worldwide_id_custom_attribute']
-                )),
+                    $magentoAttributeHelper->getAttributeLabel($this->formData['worldwide_id_custom_attribute'])
+                ),
                 'attrs' => [
                     'attribute_code' => $this->formData['worldwide_id_custom_attribute'],
                     'selected' => 'selected'
                 ]
             ];
-
         }
 
-        foreach($generalAttributesByInputTypes['text'] as $attribute) {
+        foreach ($generalAttributesByInputTypes['text'] as $attribute) {
             $tmpOption = [
                 'value' => Description::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $this->getHelper('Data')->escapeHtml($attribute['label']),
@@ -604,7 +621,7 @@ HTML;
             AmazonTemplateDescriptionDefinitionObj.initObservers();
         });
 JS
-    );
+        );
 
         return parent::_beforeToHtml();
     }

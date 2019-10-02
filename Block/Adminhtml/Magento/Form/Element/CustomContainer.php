@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Form\Element;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Escaper;
 
+/**
+ * Class CustomContainer
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Form\Element
+ */
 class CustomContainer extends AbstractElement
 {
     /**

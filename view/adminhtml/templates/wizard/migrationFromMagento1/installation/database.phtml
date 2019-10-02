@@ -1,0 +1,32 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Database\Content $block */
+
+?>
+
+<div class="wizard_block">
+
+    <p>
+        <?php echo $block->__('At this step, you need to migrate M2E Pro database from Magento v1.x to Magento v2.x.'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('Please go to Magento v1.x to create a dump of all the tables with \'m2epro_\' prefix including both the structure and data. It can be done using the mysqldump utility or phpMyAdmin options.'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('After you create the dump, please import it into MySQL database of Magento v2.x, then click <strong>Continue</strong>. M2E Pro will adapt the imported data to Magento v2.x environment. Once the process is completed, you will be redirected to the 3rd Migration Wizard step.'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('<b>Note</b>: The step is rather time-consuming. If you are logged out from Magento, please log in and go to <i>Stores > Configuration > Multi Channels > Migration from Magento v1.x</i> to get back to the Migration Wizard.'); ?>
+    </p>
+
+</div>

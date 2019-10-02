@@ -13,6 +13,10 @@ use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Escaper;
 
+/**
+ * Class StoreSwitcher
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Form\Element
+ */
 class StoreSwitcher extends AbstractElement
 {
     protected $layout;
@@ -23,8 +27,7 @@ class StoreSwitcher extends AbstractElement
         CollectionFactory $factoryCollection,
         Escaper $escaper,
         array $data = []
-    )
-    {
+    ) {
         $this->layout = $layout;
 
         parent::__construct($factoryElement, $factoryCollection, $escaper, $data);

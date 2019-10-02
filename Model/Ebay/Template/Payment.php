@@ -13,6 +13,10 @@ namespace Ess\M2ePro\Model\Ebay\Template;
 
 use Ess\M2ePro\Model\ActiveRecord\Factory;
 
+/**
+ * Class Payment
+ * @package Ess\M2ePro\Model\Ebay\Template
+ */
 class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     private $ebayParentFactory;
@@ -20,7 +24,7 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
-    private $marketplaceModel = NULL;
+    private $marketplaceModel = null;
 
     //########################################
 
@@ -79,14 +83,18 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
         return (bool)$this->activeRecordFactory->getObject('Ebay\Listing')
                             ->getCollection()
-                            ->addFieldToFilter('template_payment_mode',
-                                               \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE)
+                            ->addFieldToFilter(
+                                'template_payment_mode',
+                                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                            )
                             ->addFieldToFilter('template_payment_id', $this->getId())
                             ->getSize() ||
-               (bool)$this->activeRecordFactory->getObject('Ebay\Listing\Product')
+               (bool)$this->activeRecordFactory->getObject('Ebay_Listing_Product')
                             ->getCollection()
-                            ->addFieldToFilter('template_payment_mode',
-                                               \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE)
+                            ->addFieldToFilter(
+                                'template_payment_mode',
+                                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                            )
                             ->addFieldToFilter('template_payment_id', $this->getId())
                             ->getSize();
     }
@@ -95,7 +103,7 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('ebay_template_payment');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_payment');
         return parent::save();
     }
 
@@ -112,9 +120,9 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             $service->delete();
         }
 
-        $this->marketplaceModel = NULL;
+        $this->marketplaceModel = null;
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('ebay_template_payment');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_payment');
 
         return parent::delete();
     }
@@ -126,9 +134,10 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getMarketplace()
     {
-        if (is_null($this->marketplaceModel)) {
+        if ($this->marketplaceModel === null) {
             $this->marketplaceModel = $this->ebayParentFactory->getCachedObjectLoaded(
-                'Marketplace', $this->getMarketplaceId()
+                'Marketplace',
+                $this->getMarketplaceId()
             );
         }
 
@@ -150,10 +159,14 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      * @param array $filters
      * @return array|\Ess\M2ePro\Model\Ebay\Template\Payment\Service[]
      */
-    public function getServices($asObjects = false, array $filters = array())
+    public function getServices($asObjects = false, array $filters = [])
     {
-        return $this->getRelatedSimpleItems('Ebay\Template\Payment\Service','template_payment_id',
-                                            $asObjects, $filters);
+        return $this->getRelatedSimpleItems(
+            'Ebay_Template_Payment_Service',
+            'template_payment_id',
+            $asObjects,
+            $filters
+        );
     }
 
     //########################################
@@ -221,7 +234,7 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getTrackingAttributes()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -229,7 +242,7 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getUsedAttributes()
     {
-        return array();
+        return [];
     }
 
     //########################################
@@ -242,7 +255,7 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
         foreach ($data['services'] as &$serviceData) {
             foreach ($serviceData as &$value) {
-                !is_null($value) && !is_array($value) && $value = (string)$value;
+                $value !== null && !is_array($value) && $value = (string)$value;
             }
         }
 
@@ -254,12 +267,12 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getDefaultSettingsSimpleMode()
     {
-        return array(
+        return [
             'pay_pal_mode'              => 0,
             'pay_pal_email_address'     => '',
             'pay_pal_immediate_payment' => 0,
-            'services'                  => array()
-        );
+            'services'                  => []
+        ];
     }
 
     /**
@@ -279,23 +292,28 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getAffectedListingsProducts($asArrays = true, $columns = '*')
     {
-        $templateManager = $this->modelFactory->getObject('Ebay\Template\Manager');
+        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
         $templateManager->setTemplate(\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT);
 
         $listingsProducts = $templateManager->getAffectedOwnerObjects(
-           \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING_PRODUCT, $this->getId(), $asArrays, $columns
+            \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING_PRODUCT,
+            $this->getId(),
+            $asArrays,
+            $columns
         );
 
         $listings = $templateManager->getAffectedOwnerObjects(
-           \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING, $this->getId(), false
+            \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING,
+            $this->getId(),
+            false
         );
 
         foreach ($listings as $listing) {
-
             $tempListingsProducts = $listing->getChildObject()
                                             ->getAffectedListingsProductsByTemplate(
-                                               \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT,
-                                                $asArrays, $columns
+                                                \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT,
+                                                $asArrays,
+                                                $columns
                                             );
 
             foreach ($tempListingsProducts as $listingProduct) {
@@ -310,12 +328,12 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'));
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id']);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Magento;
 
+/**
+ * Class Admin
+ * @package Ess\M2ePro\Helper\Magento
+ */
 class Admin extends AbstractHelper
 {
     private $user;
@@ -52,14 +56,14 @@ class Admin extends AbstractHelper
         $userInfo['country'] = $this->storeManager->getStore($defaultStoreId)->getConfig('general/country/default');
         // ---------------------------------------
 
-        $requiredKeys = array(
+        $requiredKeys = [
             'email',
             'firstname',
             'lastname',
             'country',
             'city',
             'postal_code',
-        );
+        ];
 
         foreach ($userInfo as $key => $value) {
             if (!in_array($key, $requiredKeys)) {

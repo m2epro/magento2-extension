@@ -14,6 +14,10 @@ use Ess\M2ePro\Helper\Component\Amazon;
 use Ess\M2ePro\Helper\Component\Ebay;
 use Ess\M2ePro\Model\Exception\Connection;
 
+/**
+ * Class General
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\M2ePro
+ */
 class General extends Command
 {
     /** @var \Magento\Store\Model\StoreManager $storeManager */
@@ -81,14 +85,14 @@ class General extends Command
      */
     public function checkTablesAction()
     {
-        $tableNames = $this->getRequest()->getParam('table', array());
+        $tableNames = $this->getRequest()->getParam('table', []);
 
         if (!empty($tableNames)) {
-            $this->getHelper('Module\Database\Repair')->repairBrokenTables($tableNames);
+            $this->getHelper('Module_Database_Repair')->repairBrokenTables($tableNames);
             return $this->_redirect($this->getUrl('*/*/*', ['action' => 'checkTables']));
         }
 
-        $brokenTables = $this->getHelper('Module\Database\Repair')->getBrokenTablesInfo();
+        $brokenTables = $this->getHelper('Module_Database_Repair')->getBrokenTablesInfo();
 
         if ($brokenTables['total_count'] <= 0) {
             return $this->getEmptyResultsHtml('No Broken Tables');
@@ -108,8 +112,7 @@ class General extends Command
             <input type="hidden" name="action" value="repair" />
             <table class="grid" cellpadding="0" cellspacing="0">
 HTML;
-        if (count($brokenTables['parent'])) {
-
+        if (!empty($brokenTables['parent'])) {
             $html .= <<<HTML
 <tr bgcolor="#E7E7E7">
     <td colspan="4">
@@ -124,7 +127,6 @@ HTML;
 </tr>
 HTML;
             foreach ($brokenTables['parent'] as $parentTable => $brokenItemsCount) {
-
                 $html .= <<<HTML
 <tr>
     <td>
@@ -144,8 +146,7 @@ HTML;
             }
         }
 
-        if (count($brokenTables['children'])) {
-
+        if (!empty($brokenTables['children'])) {
             $html .= <<<HTML
 <tr height="100%">
     <td><div style="height: 10px;"></div></td>
@@ -163,7 +164,6 @@ HTML;
 </tr>
 HTML;
             foreach ($brokenTables['children'] as $childrenTable => $brokenItemsCount) {
-
                 $html .= <<<HTML
 <tr>
     <td>
@@ -207,14 +207,14 @@ HTML;
      */
     public function showBrokenTableIdsAction()
     {
-        $tableNames = $this->getRequest()->getParam('table', array());
+        $tableNames = $this->getRequest()->getParam('table', []);
 
         if (empty($tableNames)) {
             return $this->_redirect($this->getUrl('*/*/*', ['action' => 'checkTables']));
         }
 
         $tableName = array_pop($tableNames);
-        $info = $this->getHelper('Module\Database\Repair')->getBrokenRecordsInfo($tableName);
+        $info = $this->getHelper('Module_Database_Repair')->getBrokenRecordsInfo($tableName);
 
         return '<pre>' .
                "<span>Broken Records '{$tableName}'<span><br>" .
@@ -230,18 +230,17 @@ HTML;
     public function showRemovedMagentoStoresAction()
     {
         $existsStoreIds = array_keys($this->storeManager->getStores(true));
-        $storeRelatedColumns = $this->getHelper('Module\Database\Structure')->getStoreRelatedColumns();
+        $storeRelatedColumns = $this->getHelper('Module_Database_Structure')->getStoreRelatedColumns();
 
-        $usedStoresIds = array();
+        $usedStoresIds = [];
 
         foreach ($storeRelatedColumns as $tableName => $columnsInfo) {
             foreach ($columnsInfo as $columnInfo) {
-
                 $tempResult = $this->resourceConnection->getConnection()->select()
                     ->distinct()
                     ->from(
-                        $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName),
-                        array($columnInfo['name'])
+                        $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName),
+                        [$columnInfo['name']]
                     )
                     ->where("{$columnInfo['name']} IS NOT NULL")
                     ->query()
@@ -255,15 +254,15 @@ HTML;
                 // json
                 foreach ($tempResult as $itemRow) {
                     preg_match_all('/"(store|related_store)_id":"?([\d]+)"?/', $itemRow, $matches);
-                    !empty($matches[2]) && $usedStoresIds = array_merge($usedStoresIds,$matches[2]);
+                    !empty($matches[2]) && $usedStoresIds = array_merge($usedStoresIds, $matches[2]);
                 }
             }
         }
 
-        $usedStoresIds = array_values(array_unique(array_map('intval',$usedStoresIds)));
+        $usedStoresIds = array_values(array_unique(array_map('intval', $usedStoresIds)));
         $removedStoreIds = array_diff($usedStoresIds, $existsStoreIds);
 
-        if (count($removedStoreIds) <= 0) {
+        if (empty($removedStoreIds)) {
             return $this->getEmptyResultsHtml('No Removed Magento Stores');
         }
 
@@ -300,7 +299,7 @@ HTML;
         $replaceIdFrom = $this->getRequest()->getParam('replace_from');
         $replaceIdTo   = $this->getRequest()->getParam('replace_to');
 
-        if (is_null($replaceIdFrom) || is_null($replaceIdTo)) {
+        if ($replaceIdFrom === null || $replaceIdTo === null) {
             $this->getMessageManager()->addError('Required params are not presented.');
             return $this->_redirect($this->getHelper('View\ControlPanel')->getPageToolsTabUrl());
         }
@@ -308,15 +307,13 @@ HTML;
         $replaceIdFrom = (int)$replaceIdFrom;
         $replaceIdTo   = (int)$replaceIdTo;
 
-        $storeRelatedColumns = $this->getHelper('Module\Database\Structure')->getStoreRelatedColumns();
+        $storeRelatedColumns = $this->getHelper('Module_Database_Structure')->getStoreRelatedColumns();
         foreach ($storeRelatedColumns as $tableName => $columnsInfo) {
             foreach ($columnsInfo as $columnInfo) {
-
                 if ($columnInfo['type'] == 'int') {
-
                     $this->resourceConnection->getConnection()->update(
-                        $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName),
-                        array($columnInfo['name'] => $replaceIdTo),
+                        $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName),
+                        [$columnInfo['name'] => $replaceIdTo],
                         "`{$columnInfo['name']}` = {$replaceIdFrom}"
                     );
 
@@ -324,7 +321,7 @@ HTML;
                 }
 
                 // json ("store_id":"10" | "store_id":10, | "store_id":10})
-                $bind = array($columnInfo['name'] => new \Zend_Db_Expr(
+                $bind = [$columnInfo['name'] => new \Zend_Db_Expr(
                     "REPLACE(
                         REPLACE(
                             REPLACE(
@@ -338,10 +335,10 @@ HTML;
                         'store_id\":{$replaceIdFrom}}',
                         'store_id\":{$replaceIdTo}}'
                     )"
-                ));
+                )];
 
                 $this->resourceConnection->getConnection()->update(
-                    $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName),
+                    $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName),
                     $bind,
                     "`{$columnInfo['name']}` LIKE '%store_id\":\"{$replaceIdFrom}\"%' OR
                      `{$columnInfo['name']}` LIKE '%store_id\":{$replaceIdFrom},%' OR
@@ -373,30 +370,29 @@ HTML;
             'main_table.account_id=ma.id',
             []
         );
-        $collection->addFieldToFilter('ma.id', array('null' => true));
+        $collection->addFieldToFilter('ma.id', ['null' => true]);
         $collection->getSelect()->group('main_table.id');
 
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-        $collection->getSelect()->columns(array(
+        $collection->getSelect()->columns([
             'main_table.id', 'main_table.component_mode'
-        ));
+        ]);
 
         $itemsIdsToDelete = $collection->getColumnValues('id');
         $deletedListings = count($itemsIdsToDelete);
 
         if ($itemsIdsToDelete) {
-
-            /* @var $item \Ess\M2ePro\Model\Listing\Product */
+            /** @var $item \Ess\M2ePro\Model\Listing\Product */
             $item = $collection->getFirstItem();
 
             $item->getResource()->getConnection()->delete(
                 $item->getResource()->getMainTable(),
-                array('id IN (?)' => $itemsIdsToDelete)
+                ['id IN (?)' => $itemsIdsToDelete]
             );
 
             $item->getResource()->getConnection()->delete(
                 $item->getChildObject()->getResource()->getMainTable(),
-                array('listing_id IN (?)' => $itemsIdsToDelete)
+                ['listing_id IN (?)' => $itemsIdsToDelete]
             );
         }
         // --
@@ -411,30 +407,29 @@ HTML;
             'main_table.listing_id=ml.id',
             []
         );
-        $collection->addFieldToFilter('ml.id', array('null' => true));
+        $collection->addFieldToFilter('ml.id', ['null' => true]);
         $collection->getSelect()->group('main_table.id');
 
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-        $collection->getSelect()->columns(array(
+        $collection->getSelect()->columns([
             'main_table.id', 'main_table.component_mode'
-        ));
+        ]);
 
         $itemsIdsToDelete = $collection->getColumnValues('id');
         $deletedProducts = count($itemsIdsToDelete);
 
         if ($itemsIdsToDelete) {
-
-            /* @var $item \Ess\M2ePro\Model\Listing\Product */
+            /** @var $item \Ess\M2ePro\Model\Listing\Product */
             $item = $collection->getFirstItem();
 
             $item->getResource()->getConnection()->delete(
                 $item->getResource()->getMainTable(),
-                array('id IN (?)' => $itemsIdsToDelete)
+                ['id IN (?)' => $itemsIdsToDelete]
             );
 
             $item->getResource()->getConnection()->delete(
                 $item->getChildObject()->getResource()->getMainTable(),
-                array('listing_product_id IN (?)' => $itemsIdsToDelete)
+                ['listing_product_id IN (?)' => $itemsIdsToDelete]
             );
         }
         // --
@@ -443,11 +438,11 @@ HTML;
         $listingProductTable = $this->activeRecordFactory->getObject('Listing\Product')
             ->getResource()->getMainTable();
 
-        $listingProductVariationOptionTable = $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')
+        $listingProductVariationOptionTable = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')
             ->getResource()->getMainTable();
 
         /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
-        $collection = $this->activeRecordFactory->getObject('Listing\Product\Variation')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Listing_Product_Variation')->getCollection();
         $collection->getSelect()->joinLeft(
             ['mlp' => $listingProductTable],
             'main_table.listing_product_id=mlp.id',
@@ -463,65 +458,63 @@ HTML;
         $collection->getSelect()->group('main_table.id');
 
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-        $collection->getSelect()->columns(array(
+        $collection->getSelect()->columns([
             'main_table.id', 'main_table.component_mode'
-        ));
+        ]);
 
         $itemsIdsToDelete = $collection->getColumnValues('id');
         $deletedVariations = count($itemsIdsToDelete);
 
         if ($itemsIdsToDelete) {
-
-            /* @var $item \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var $item \Ess\M2ePro\Model\Listing\Product\Variation */
             $item = $collection->getFirstItem();
 
             $item->getResource()->getConnection()->delete(
                 $item->getResource()->getMainTable(),
-                array('id IN (?)' => $itemsIdsToDelete)
+                ['id IN (?)' => $itemsIdsToDelete]
             );
 
             $item->getResource()->getConnection()->delete(
                 $item->getChildObject()->getResource()->getMainTable(),
-                array('listing_product_variation_id IN (?)' => $itemsIdsToDelete)
+                ['listing_product_variation_id IN (?)' => $itemsIdsToDelete]
             );
         }
         // --
 
         // -- Listing_Product_Variation_Option to un-existed Listing_Product_Variation
-        $listingProductVariationTable = $this->activeRecordFactory->getObject('Listing\Product\Variation')
+        $listingProductVariationTable = $this->activeRecordFactory->getObject('Listing_Product_Variation')
             ->getResource()->getMainTable();
 
         /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
-        $collection = $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')->getCollection();
         $collection->getSelect()->joinLeft(
             ['mlpv' => $listingProductVariationTable],
             'main_table.listing_product_variation_id=mlpv.id',
             []
         );
-        $collection->addFieldToFilter('mlpv.id', array('null' => true));
+        $collection->addFieldToFilter('mlpv.id', ['null' => true]);
         $collection->getSelect()->group('main_table.id');
 
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-        $collection->getSelect()->columns(array(
+        $collection->getSelect()->columns([
             'main_table.id', 'main_table.component_mode'
-        ));
+        ]);
 
         $itemsIdsToDelete = $collection->getColumnValues('id');
         $deletedOptions = count($itemsIdsToDelete);
 
         if ($itemsIdsToDelete) {
-
-            /* @var $item \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+            /** @var $item \Ess\M2ePro\Model\Listing\Product\Variation\Option */
             $item = $collection->getFirstItem();
 
             $item->getResource()->getConnection()->delete(
                 $item->getResource()->getMainTable(),
-                array('id IN (?)' => $itemsIdsToDelete)
+                ['id IN (?)' => $itemsIdsToDelete]
             );
 
             $item->getResource()->getConnection()->delete(
                 $item->getChildObject()->getResource()->getMainTable(),
-                array('listing_product_variation_option_id IN (?)' => $itemsIdsToDelete)
+                ['listing_product_variation_option_id IN (?)' => $itemsIdsToDelete]
             );
         }
         // --
@@ -557,11 +550,11 @@ HTML;
             'main_table.order_id=mo.id',
             []
         );
-        $collection->addFieldToFilter('mo.id', array('null' => true));
+        $collection->addFieldToFilter('mo.id', ['null' => true]);
 
         $deletedOrderItems = 0;
 
-        /* @var $item \Ess\M2ePro\Model\Order\Item */
+        /** @var $item \Ess\M2ePro\Model\Order\Item */
         while ($item = $collection->fetchItem()) {
             $item->delete() && $deletedOrderItems++;
         }
@@ -588,18 +581,19 @@ HTML;
 
         $collection = $this->parentFactory->getObject(Ebay::NICK, 'Listing\Product')->getCollection();
         $collection->getSelect()->joinLeft(
-            array('ei' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()),
+            ['ei' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()],
             '`second_table`.`ebay_item_id` = `ei`.`id`',
-            array('item_id' => 'item_id')
+            ['item_id' => 'item_id']
         );
-        $collection->addFieldToFilter('status',
-                                      array('nin' => array(\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
-                                                           \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN)));
+        $collection->addFieldToFilter(
+            'status',
+            ['nin' => [\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
+            \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN]]
+        );
 
-        $collection->addFieldToFilter('item_id', array('null' => true));
+        $collection->addFieldToFilter('item_id', ['null' => true]);
 
         while ($item = $collection->fetchItem()) {
-
             $item->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED)->save();
             $items++;
         }
@@ -625,22 +619,21 @@ HTML;
         ini_set('display_errors', 1);
         $items = 0;
 
-        $listingProductVariationTable = $this->activeRecordFactory->getObject('Listing\Product\Variation')
+        $listingProductVariationTable = $this->activeRecordFactory->getObject('Listing_Product_Variation')
             ->getResource()
             ->getMainTable();
 
         $collection = $this->parentFactory->getObject(Amazon::NICK, 'Listing\Product')->getCollection();
         $collection->getSelect()->joinLeft(
-            array('mlpv' => $listingProductVariationTable),
+            ['mlpv' => $listingProductVariationTable],
             '`second_table`.`listing_product_id` = `mlpv`.`listing_product_id`',
-            array()
+            []
         );
         $collection->addFieldToFilter('is_variation_product', 1);
         $collection->addFieldToFilter('is_variation_product_matched', 1);
-        $collection->addFieldToFilter('mlpv.id', array('null' => true));
+        $collection->addFieldToFilter('mlpv.id', ['null' => true]);
 
         while ($item = $collection->fetchItem()) {
-
             $item->getChildObject()->setData('is_variation_product_matched', 0)->save();
             $items++;
         }
@@ -672,7 +665,7 @@ HTML;
 
         $amazonComponentTitle = (string)$this->getHelper('Component\Amazon');
         $eBayComponentTitle = (string)$this->getHelper('Component\Ebay');
-        $logs = array();
+        $logs = [];
 
         /** @var \Ess\M2ePro\Helper\Data $dataHelper */
         $dataHelper = $this->getHelper('Data');
@@ -680,7 +673,6 @@ HTML;
         //########################################
 
         if ('' !== $this->getRequest()->getParam('account_data', '')) {
-
             $accountData = $dataHelper->jsonDecode(
                 $this->getRequest()->getParam('account_data', '')
             );
@@ -690,7 +682,6 @@ HTML;
             }
 
             foreach ($accountData as $data) {
-
                 if (empty($data['time'])) {
                     $logs[] = "Account: <b>\"{$data['title']}\"</b> skipped. The date empty.";
                     continue;
@@ -708,10 +699,12 @@ HTML;
                 $componentTitle = (string)$account->getComponentTitle();
 
                 if ($amazonComponentTitle === $componentTitle) {
-
                     $key = "/amazon/orders/receive/{$account->getChildObject()->getMerchantId()}/from_update_date/";
                     $registry = $this->activeRecordFactory->getObjectLoaded(
-                        'Registry', $key, 'key', false
+                        'Registry',
+                        $key,
+                        'key',
+                        false
                     );
                     $registry === null && $registry = $this->activeRecordFactory->getObject('Registry');
                     $registry->setData('key', $key);
@@ -742,17 +735,19 @@ HTML;
             return $this->getEmptyResultsHtml('There are no accounts.');
         }
 
-        $accountData = array();
+        $accountData = [];
 
         foreach ($accounts as $account) {
-
             $componentTitle = (string)$account->getComponentTitle();
             $time = null;
 
             if ($amazonComponentTitle === $componentTitle) {
                 $key = "/amazon/orders/receive/{$account->getChildObject()->getMerchantId()}/from_update_date/";
                 $registry = $this->activeRecordFactory->getObjectLoaded(
-                    'Registry', $key, 'key', false
+                    'Registry',
+                    $key,
+                    'key',
+                    false
                 );
                 $time = $registry->getData('value');
             }
@@ -761,12 +756,12 @@ HTML;
                 $time = $account->getChildObject()->getData('orders_last_synchronization');
             }
 
-            $accountData[] = array(
+            $accountData[] = [
                 'component' => $componentTitle,
                 'title'     => $account->getTitle(),
                 'id'        => $account->getId(),
                 'time'      => $time
-            );
+            ];
         }
 
         //########################################
@@ -776,7 +771,7 @@ HTML;
 
         /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('server','get','gmtTime');
+        $connectorObj = $dispatcherObject->getVirtualConnector('server', 'get', 'gmtTime');
         $dispatcherObject->process($connectorObj);
 
         $responseData = $connectorObj->getResponseData();
@@ -894,13 +889,14 @@ HTML;
     public function serverCheckConnectionAction()
     {
         try {
-
             $response = $this->getHelper('Server\Request')->single(
-                array('timeout' => 30), null, null, false, false
+                ['timeout' => 30],
+                null,
+                null,
+                false,
+                false
             );
-
         } catch (Connection $e) {
-
             $result = "<h2>{$e->getMessage()}</h2><pre><br/>";
             $additionalData = $e->getAdditionalData();
 
@@ -917,7 +913,6 @@ HTML;
             }
 
             return $result;
-
         } catch (\Exception $e) {
             return "<h2>{$e->getMessage()}</h2><pre><br/>";
         }

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Plugin\Menu\Magento\Backend\Model\Menu;
 
 use Ess\M2ePro\Helper\View;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Plugin\Menu\Magento\Backend\Model\Menu
+ */
 class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     private $menuTitlesUsing = [];
@@ -28,8 +32,7 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
         \Ess\M2ePro\Helper\Module\Support $support,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->wizardHelper = $wizardHelper;
         $this->ebayView     = $ebayView;
         $this->amazonView   = $amazonView;
@@ -80,43 +83,40 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     protected function processGetTitle($interceptor, \Closure $callback, array $arguments)
     {
-        if (
-            $interceptor->getId() == View\Ebay::MENU_ROOT_NODE_NICK
+        if ($interceptor->getId() == View\Ebay::MENU_ROOT_NODE_NICK
             && !isset($this->menuTitlesUsing[View\Ebay::MENU_ROOT_NODE_NICK])
         ) {
             $ebayWizard = $this->wizardHelper->getActiveWizard(
                 View\Ebay::NICK
             );
 
-            if (is_null($ebayWizard)) {
+            if ($ebayWizard === null) {
                 $this->menuTitlesUsing[View\Ebay::MENU_ROOT_NODE_NICK] = true;
                 return 'eBay Integration';
             }
         }
 
-        if (
-            $interceptor->getId() == View\Amazon::MENU_ROOT_NODE_NICK
+        if ($interceptor->getId() == View\Amazon::MENU_ROOT_NODE_NICK
             && !isset($this->menuTitlesUsing[View\Amazon::MENU_ROOT_NODE_NICK])
         ) {
             $amazonWizard = $this->wizardHelper->getActiveWizard(
                 View\Amazon::NICK
             );
 
-            if (is_null($amazonWizard)) {
+            if ($amazonWizard === null) {
                 $this->menuTitlesUsing[View\Amazon::MENU_ROOT_NODE_NICK] = true;
                 return 'Amazon Integration';
             }
         }
 
-        if (
-            $interceptor->getId() == View\Walmart::MENU_ROOT_NODE_NICK
+        if ($interceptor->getId() == View\Walmart::MENU_ROOT_NODE_NICK
             && !isset($this->menuTitlesUsing[View\Walmart::MENU_ROOT_NODE_NICK])
         ) {
             $walmartWizard = $this->wizardHelper->getActiveWizard(
                 View\Walmart::NICK
             );
 
-            if (is_null($walmartWizard)) {
+            if ($walmartWizard === null) {
                 $this->menuTitlesUsing[View\Walmart::MENU_ROOT_NODE_NICK] = true;
                 return 'Walmart Integration';
             }
@@ -142,8 +142,8 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
 
             'Ess_M2ePro::walmart_help_center_documentation'   => $this->support->getDocumentationArticleUrl('x/JQBhAQ'),
             'Ess_M2ePro::walmart_help_center_ideas_workshop'  => $this->support->getIdeasComponentUrl('walmart'),
-            'Ess_M2ePro::walmart_help_center_knowledge_base'  => $this->support
-                                                                      ->getKnowledgebaseComponentUrl('walmart'),
+            'Ess_M2ePro::walmart_help_center_knowledge_base'  =>
+                $this->support->getKnowledgebaseComponentUrl('walmart'),
             'Ess_M2ePro::walmart_help_center_community_forum' => $this->support->getForumComponentUrl('walmart'),
         ];
     }

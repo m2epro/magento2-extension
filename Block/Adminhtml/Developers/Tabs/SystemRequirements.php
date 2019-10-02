@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class SystemRequirements
+ * @package Ess\M2ePro\Block\Adminhtml\Developers\Tabs
+ */
 class SystemRequirements extends AbstractBlock
 {
     protected $formFactory;
@@ -17,7 +21,7 @@ class SystemRequirements extends AbstractBlock
     protected $_template = 'developers/tabs/system_requirements.phtml';
 
     public $requirements = [];
-    public $additionalInfo = NULL;
+    public $additionalInfo = null;
 
     //########################################
 
@@ -25,8 +29,7 @@ class SystemRequirements extends AbstractBlock
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
-    )
-    {
+    ) {
         $this->formFactory = $formFactory;
         parent::__construct($context, $data);
     }
@@ -37,14 +40,16 @@ class SystemRequirements extends AbstractBlock
     {
         $form = $this->formFactory->create();
 
-        $fieldSet = $form->addFieldset('field_system',
+        $fieldSet = $form->addFieldset(
+            'field_system',
             [
                 'legend' => $this->__('System'),
                 'collapsable' => false
             ]
         );
 
-        $fieldSet->addField('system_name',
+        $fieldSet->addField(
+            'system_name',
             'note',
             [
                 'label' => $this->__('Name'),
@@ -52,7 +57,8 @@ class SystemRequirements extends AbstractBlock
             ]
         );
 
-        $fieldSet->addField('system_current_date',
+        $fieldSet->addField(
+            'system_current_date',
             'note',
             [
                 'label' => $this->__('Current Date'),
@@ -60,14 +66,16 @@ class SystemRequirements extends AbstractBlock
             ]
         );
 
-        $fieldSet = $form->addFieldset('field_php',
+        $fieldSet = $form->addFieldset(
+            'field_php',
             [
                 'legend' => $this->__('PHP'),
                 'collapsable' => false
             ]
         );
 
-        $fieldSet->addField('php_version',
+        $fieldSet->addField(
+            'php_version',
             'note',
             [
                 'label' => $this->__('Version'),
@@ -75,7 +83,8 @@ class SystemRequirements extends AbstractBlock
             ]
         );
 
-        $fieldSet->addField('php_server_api',
+        $fieldSet->addField(
+            'php_server_api',
             'note',
             [
                 'label' => $this->__('Server API'),
@@ -85,7 +94,8 @@ class SystemRequirements extends AbstractBlock
 
         $phpSettings = $this->getHelper('Client')->getPhpSettings();
 
-        $fieldSet->addField('php_memory_limit',
+        $fieldSet->addField(
+            'php_memory_limit',
             'note',
             [
                 'label' => $this->__('Memory Limit'),
@@ -95,7 +105,8 @@ class SystemRequirements extends AbstractBlock
             ]
         );
 
-        $fieldSet->addField('php_max_execution_time',
+        $fieldSet->addField(
+            'php_max_execution_time',
             'note',
             [
                 'label' => $this->__('Max Execution Time'),
@@ -105,14 +116,16 @@ class SystemRequirements extends AbstractBlock
             ]
         );
 
-        $fieldSet = $form->addFieldset('field_mysql',
+        $fieldSet = $form->addFieldset(
+            'field_mysql',
             [
                 'legend' => $this->__('MySQL'),
                 'collapsable' => false
             ]
         );
 
-        $fieldSet->addField('mysql_version',
+        $fieldSet->addField(
+            'mysql_version',
             'note',
             [
                 'label' => $this->__('Version'),
@@ -120,7 +133,8 @@ class SystemRequirements extends AbstractBlock
             ]
         );
 
-        $fieldSet->addField('mysql_database_name',
+        $fieldSet->addField(
+            'mysql_database_name',
             'note',
             [
                 'label' => $this->__('Database Name'),
@@ -129,7 +143,8 @@ class SystemRequirements extends AbstractBlock
         );
 
         $tablesPrefix = $this->getHelper('Magento')->getDatabaseTablesPrefix();
-        $fieldSet->addField('mysql_tables_prefix',
+        $fieldSet->addField(
+            'mysql_tables_prefix',
             'note',
             [
                 'label' => $this->__('Tables Prefix'),
@@ -140,7 +155,8 @@ class SystemRequirements extends AbstractBlock
 
         $mySqlSettings = $this->getHelper('Client')->getMysqlSettings();
 
-        $fieldSet->addField('mysql_timeout',
+        $fieldSet->addField(
+            'mysql_timeout',
             'note',
             [
                 'label' => $this->__('Connection Timeout'),
@@ -148,7 +164,8 @@ class SystemRequirements extends AbstractBlock
             ]
         );
 
-        $fieldSet->addField('mysql_wait_timeout',
+        $fieldSet->addField(
+            'mysql_wait_timeout',
             'note',
             [
                 'label' => $this->__('Wait Timeout'),

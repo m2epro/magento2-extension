@@ -148,13 +148,13 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     public function afterMapProduct()
     {
-        $dataForAdd = array(
+        $dataForAdd = [
             'account_id' => $this->getParentObject()->getAccountId(),
             'marketplace_id' => $this->getParentObject()->getMarketplaceId(),
             'sku' => $this->getSku(),
             'product_id' => $this->getParentObject()->getProductId(),
             'store_id' => $this->getRelatedStoreId()
-        );
+        ];
 
         $this->activeRecordFactory->getObject('Amazon\Item')->setData($dataForAdd)->save();
     }
@@ -164,13 +164,18 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         $connection = $this->getResource()->getConnection();
 
         $itemTable = $this->activeRecordFactory->getObject('Amazon\Item')->getResource()->getMainTable();
-        $productTable = $this->activeRecordFactory->getObject('Amazon\Listing\Product')->getResource()->getMainTable();
+        $productTable = $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable();
 
         $existedRelation = $connection->select()
-            ->from(array('ai' => $itemTable),
-                   array())
-            ->join(array('alp' => $productTable),
-                   '(`alp`.`sku` = `ai`.`sku`)', array('alp.listing_product_id'))
+            ->from(
+                ['ai' => $itemTable],
+                []
+            )
+            ->join(
+                ['alp' => $productTable],
+                '(`alp`.`sku` = `ai`.`sku`)',
+                ['alp.listing_product_id']
+            )
             ->where('`ai`.`sku` = ?', $this->getSku())
             ->where('`ai`.`account_id` = ?', $this->getParentObject()->getAccountId())
             ->where('`ai`.`marketplace_id` = ?', $this->getParentObject()->getMarketplaceId())
@@ -183,12 +188,12 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
         $connection->delete(
             $itemTable,
-            array(
+            [
                 '`account_id` = ?' => $this->getParentObject()->getAccountId(),
                 '`marketplace_id` = ?' => $this->getParentObject()->getMarketplaceId(),
                 '`sku` = ?' => $this->getSku(),
                 '`product_id` = ?' => $this->getParentObject()->getProductId()
-            )
+            ]
         );
     }
 

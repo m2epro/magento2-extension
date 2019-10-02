@@ -12,6 +12,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Template;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Model\Walmart\Template
+ */
 class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     /**
@@ -34,8 +38,16 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        parent::__construct($modelFactory, $activeRecordFactory, $helperFactory, $context, $registry, $resource,
-            $resourceCollection, $data);
+        parent::__construct(
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
 
         $this->walmartFactory = $walmartFactory;
     }
@@ -65,11 +77,11 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             ->where("main_table.auto_global_adding_category_template_id = {$this->getId()} OR
                      main_table.auto_website_adding_category_template_id = {$this->getId()}");
 
-        return (bool)$this->activeRecordFactory->getObject('Walmart\Listing\Product')
+        return (bool)$this->activeRecordFactory->getObject('Walmart_Listing_Product')
                                                ->getCollection()
                                                ->addFieldToFilter('template_category_id', $this->getId())
                                                ->getSize() ||
-               (bool)$this->activeRecordFactory->getObject('Walmart\Listing\Auto\Category\Group')
+               (bool)$this->activeRecordFactory->getObject('Walmart_Listing_Auto_Category_Group')
                                                ->getCollection()
                                                ->addFieldToFilter('adding_category_template_id', $this->getId())
                                                ->getSize() ||
@@ -84,6 +96,8 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         if ($collection->getSize() <= 0) {
             return false;
         }
+
+        // todo check not empty variation_group_id or locked for list
 
         return false;
     }
@@ -108,10 +122,10 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getMarketplace()
     {
-        if (is_null($this->marketplaceModel)) {
-
+        if ($this->marketplaceModel === null) {
             $this->marketplaceModel = $this->walmartFactory->getCachedObjectLoaded(
-                'Marketplace', $this->getMarketplaceId()
+                'Marketplace',
+                $this->getMarketplaceId()
             );
         }
 
@@ -133,10 +147,14 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      * @param array $filters
      * @return array|\Ess\M2ePro\Model\Walmart\Template\Category\Specific[]
      */
-    public function getSpecifics($asObjects = false, array $filters = array())
+    public function getSpecifics($asObjects = false, array $filters = [])
     {
-        $specifics = $this->getRelatedSimpleItems('Walmart\Template\Category\Specific', 'template_category_id',
-            $asObjects, $filters);
+        $specifics = $this->getRelatedSimpleItems(
+            'Walmart_Template_Category_Specific',
+            'template_category_id',
+            $asObjects,
+            $filters
+        );
         if ($asObjects) {
             /** @var \Ess\M2ePro\Model\Walmart\Template\Category\Specific $specific */
             foreach ($specifics as $specific) {
@@ -227,12 +245,12 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'), true);
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id'], true);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     public function isCacheEnabled()

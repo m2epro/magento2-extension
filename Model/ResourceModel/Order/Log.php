@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Order;
 
+/**
+ * Class Log
+ * @package Ess\M2ePro\Model\ResourceModel\Order
+ */
 class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
 {
     //########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote;
 
+/**
+ * Class TotalsCollectorList
+ * @package Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote
+ */
 class TotalsCollectorList extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     /**
@@ -29,8 +33,7 @@ class TotalsCollectorList extends \Ess\M2ePro\Plugin\AbstractPlugin
         \Magento\Quote\Model\Quote\Address\Total\CollectorFactory $totalCollectorFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->totalCollectorFactory = $totalCollectorFactory;
         $this->storeManager          = $storeManager;
 
@@ -55,9 +58,9 @@ class TotalsCollectorList extends \Ess\M2ePro\Plugin\AbstractPlugin
      */
     protected function processGetCollectors($interceptor, \Closure $callback, array $arguments)
     {
-        $storeId = isset($arguments[0]) ? $arguments[0] : NULL;
+        $storeId = isset($arguments[0]) ? $arguments[0] : null;
 
-        if (is_null($storeId)) {
+        if ($storeId === null) {
             return $callback(...$arguments);
         }
 

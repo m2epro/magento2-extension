@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Module;
 
+/**
+ * Class Support
+ * @package Ess\M2ePro\Helper\Module
+ */
 class Support extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $urlBuilder;
@@ -24,8 +28,7 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->urlBuilder = $urlBuilder;
         $this->modelFactory = $modelFactory;
         $this->moduleConfig = $moduleConfig;

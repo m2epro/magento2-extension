@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist;
 
+/**
+ * Class Validator
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist
+ */
 class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
 {
     //########################################
@@ -30,9 +34,6 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
         }
 
         if ($this->getAmazonListingProduct()->isAfnChannel()) {
-
-            // M2ePro\TRANSLATIONS
-            // Relist Action for FBA Items is impossible as their Quantity is unknown. You can run Revise Action for such Items, but the Quantity value will be ignored.
             $this->addMessage('Relist Action for FBA Items is impossible as their Quantity is unknown. You can run
             Revise Action for such Items, but the Quantity value will be ignored.');
 
@@ -48,7 +49,6 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
         }
 
         if (!$this->getListingProduct()->isStopped() || !$this->getListingProduct()->isRelistable()) {
-
             // M2ePro\TRANSLATIONS
             // The Item either is Listed, or not Listed yet or not available
             $this->addMessage(

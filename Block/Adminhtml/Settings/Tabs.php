@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Settings;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Settings
+ */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 {
     const TAB_ID_SYNCHRONIZATION   = 'synchronization';
@@ -33,11 +37,11 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 
         // ---------------------------------------
 
-        $tab = array(
+        $tab = [
             'label' => $this->__('Interface'),
             'title' => $this->__('Interface'),
-            'content' => $this->createBlock('Settings\Tabs\InterfaceTab')->toHtml()
-        );
+            'content' => $this->createBlock('Settings_Tabs_InterfaceTab')->toHtml()
+        ];
 
         $this->addTab(self::TAB_ID_INTERFACE, $tab);
 
@@ -45,11 +49,11 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 
         // ---------------------------------------
 
-        $tab = array(
+        $tab = [
             'label' => $this->__('Magento Inventory'),
             'title' => $this->__('Magento Inventory'),
-            'content' => $this->createBlock('Settings\Tabs\MagentoInventory')->toHtml()
-        );
+            'content' => $this->createBlock('Settings_Tabs_MagentoInventory')->toHtml()
+        ];
 
         $this->addTab(self::TAB_ID_MAGENTO_INVENTORY, $tab);
 
@@ -57,11 +61,11 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 
         // ---------------------------------------
 
-        $tab = array(
+        $tab = [
             'label' => $this->__('Logs Clearing'),
             'title' => $this->__('Logs Clearing'),
-            'content' => $this->createBlock('Settings\Tabs\LogsClearing')->toHtml()
-        );
+            'content' => $this->createBlock('Settings_Tabs_LogsClearing')->toHtml()
+        ];
 
         $this->addTab(self::TAB_ID_LOGS_CLEARING, $tab);
 
@@ -69,11 +73,11 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 
         // ---------------------------------------
 
-        $tab = array(
+        $tab = [
             'label' => $this->__('License'),
             'title' => $this->__('License'),
-            'content' => $this->createBlock('Settings\Tabs\License')->toHtml()
-        );
+            'content' => $this->createBlock('Settings_Tabs_License')->toHtml()
+        ];
 
         $this->addTab(self::TAB_ID_LICENSE, $tab);
 
@@ -88,7 +92,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 
     public function getActiveTabById($id)
     {
-        return isset($this->_tabs[$id]) ? $this->_tabs[$id] : NULL;
+        return isset($this->_tabs[$id]) ? $this->_tabs[$id] : null;
     }
 
     //########################################

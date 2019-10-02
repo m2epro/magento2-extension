@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento;
 
+/**
+ * Class Payment
+ * @package Ess\M2ePro\Model\Magento
+ */
 class Payment extends \Magento\Payment\Model\Method\AbstractMethod
 {
     protected $_code = 'm2epropayment';
@@ -31,7 +35,7 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
     {
         $data = $data->getData()['additional_data'];
 
-        $details = array(
+        $details = [
             'component_mode'        => $data['component_mode'],
             'payment_method'        => $data['payment_method'],
             'channel_order_id'      => $data['channel_order_id'],
@@ -39,7 +43,7 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
             'cash_on_delivery_cost' => $data['cash_on_delivery_cost'],
             'transactions'          => $data['transactions'],
             'tax_id'                => isset($data['tax_id']) ? $data['tax_id'] : null,
-        );
+        ];
 
         $this->getInfoInstance()->setAdditionalInformation($details);
 

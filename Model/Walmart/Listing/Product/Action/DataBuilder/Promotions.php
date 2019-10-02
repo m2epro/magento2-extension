@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder;
 
+/**
+ * Class Promotions
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder
+ */
 class Promotions extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\AbstractModel
 {
     //########################################
@@ -17,7 +21,7 @@ class Promotions extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBu
      */
     public function getRequestData()
     {
-        $data = array();
+        $data = [];
 
         if (!isset($this->cachedData['promotions'])) {
             $this->cachedData['promotions'] = $this->getWalmartListingProduct()->getPromotions();

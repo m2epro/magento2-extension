@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Synchronization;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
+/**
+ * Class Delete
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Synchronization
+ */
 class Delete extends Template
 {
     public function execute()
@@ -30,7 +34,6 @@ class Delete extends Template
                 $template->delete();
                 $deleted++;
             }
-
         }
 
         $tempString = $this->__('%amount% record(s) were successfully deleted.', $deleted);

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity\Search;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity\Search
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $customCollectionFactory;
@@ -21,8 +25,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->customCollectionFactory = $customCollectionFactory;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($context, $backendHelper, $data);
@@ -58,10 +61,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collection = $this->customCollectionFactory->create();
 
         foreach ($data as $item) {
-            $temp = array(
+            $temp = [
                 'id' => $item['id'],
                 'name' => $item['name'],
-            );
+            ];
 
             $collection->addItem(new \Magento\Framework\DataObject($temp));
         }
@@ -75,7 +78,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('id', array(
+        $this->addColumn('id', [
             'header'        => $this->__('ID'),
             'width'         => '50px',
             'align'         => 'left',
@@ -84,9 +87,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'escape'        => true,
             'sortable'      => false,
             'filter'        => false,
-        ));
+        ]);
 
-        $this->addColumn('name', array(
+        $this->addColumn('name', [
             'header'        => $this->__('Name'),
             'align'         => 'left',
             'type'          => 'text',
@@ -94,23 +97,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'escape'        => true,
             'sortable'      => false,
             'filter'        => false,
-        ));
+        ]);
 
-        $this->addColumn('action', array(
+        $this->addColumn('action', [
             'header'    => $this->__('Action'),
             'align'     => 'left',
             'width'     => '50px',
             'type'      => 'text',
             'sortable'  => false,
             'filter'    => false,
-            'actions'   => array(
-                0 => array(
+            'actions'   => [
+                0 => [
                     'label' => $this->__('Select'),
                     'value' => 'selectNewCharity',
-                )
-            ),
-            'frame_callback' => array($this, 'callbackColumnActions')
-        ));
+                ]
+            ],
+            'frame_callback' => [$this, 'callbackColumnActions']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -145,7 +148,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/*', array('_current'=>true));
+        return $this->getUrl('*/*/*', ['_current'=>true]);
     }
 
     //########################################

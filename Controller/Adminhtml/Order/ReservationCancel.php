@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
+/**
+ * Class ReservationCancel
+ * @package Ess\M2ePro\Controller\Adminhtml\Order
+ */
 class ReservationCancel extends Order
 {
     public function execute()
@@ -25,7 +29,7 @@ class ReservationCancel extends Order
         /** @var $orders \Ess\M2ePro\Model\Order[] */
         $orders = $this->activeRecordFactory->getObject('Order')
             ->getCollection()
-            ->addFieldToFilter('id', array('in' => $ids))
+            ->addFieldToFilter('id', ['in' => $ids])
             ->addFieldToFilter('reservation_state', \Ess\M2ePro\Model\Order\Reserve::STATE_PLACED);
 
         try {
@@ -48,11 +52,11 @@ class ReservationCancel extends Order
                     $this->__('QTY reserve for selected Order(s) was not canceled.')
                 );
             }
-
         } catch (\Exception $e) {
             $this->messageManager->addError(
                 $this->__(
-                    'QTY reserve for selected Order(s) was not canceled. Reason: %error_message%', $e->getMessage()
+                    'QTY reserve for selected Order(s) was not canceled. Reason: %error_message%',
+                    $e->getMessage()
                 )
             );
         }

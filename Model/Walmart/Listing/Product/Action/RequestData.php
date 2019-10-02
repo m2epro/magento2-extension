@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action;
 
+/**
+ * Class RequestData
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action
+ */
 class RequestData extends \Ess\M2ePro\Model\AbstractModel
 {
     //########################################

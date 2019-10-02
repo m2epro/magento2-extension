@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\System\Config\Module\Mode;
 
+/**
+ * Class Field
+ * @package Ess\M2ePro\Block\Adminhtml\System\Config\Module\Mode
+ */
 class Field extends \Ess\M2ePro\Block\Adminhtml\System\Config\Integration
 {
     /**
@@ -16,7 +20,7 @@ class Field extends \Ess\M2ePro\Block\Adminhtml\System\Config\Integration
 
     public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
-        $buttonHtml = $this->getLayout()->createBlock('\Magento\Backend\Block\Widget\Button')->setData([
+        $buttonHtml = $this->getLayout()->createBlock(\Magento\Backend\Block\Widget\Button::class)->setData([
             'label' => 'Proceed',
             'class' => 'action-primary',
             'onclick' => 'toggleM2EProModuleStatus()',

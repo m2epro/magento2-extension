@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\View;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\View
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     const VARIATION_STATUS_ADD     = 1;
@@ -25,13 +29,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected $listingProductId;
 
-    protected $identifiers = array(
+    protected $identifiers = [
         'upc'  => 'UPC',
         'ean'  => 'EAN',
         'isbn' => 'ISBN',
         'mpn'  => 'MPN',
         'epid' => 'ePID'
-    );
+    ];
 
     //########################################
 
@@ -43,8 +47,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->localeCurrency     = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->wrapperCollection  = $wrapperCollection;
@@ -100,25 +103,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         // Get collection
         // ---------------------------------------
-        $collection = $this->ebayFactory->getObject('Listing\Product\Variation')->getCollection();
-        $collection->getSelect()->where('main_table.listing_product_id = ?',(int)$this->getListingProductId());
+        $collection = $this->ebayFactory->getObject('Listing_Product_Variation')->getCollection();
+        $collection->getSelect()->where('main_table.listing_product_id = ?', (int)$this->getListingProductId());
         $collection->getSelect()->group('main_table.id');
         // ---------------------------------------
 
         // Join variation option tables
         // ---------------------------------------
         $collection->getSelect()->join(
-            array(
-                'mlpvo' => $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')
+            [
+                'mlpvo' => $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')
                     ->getResource()->getMainTable()
-            ),
+            ],
             '`mlpvo`.`listing_product_variation_id`=`main_table`.`id`',
-            array()
+            []
         );
 
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $collection->getSelect()->columns(
-            array(
+            [
                 'id'                 => 'main_table.id',
                 'listing_product_id' => 'main_table.listing_product_id',
                 'additional_data'    => 'main_table.additional_data',
@@ -131,14 +134,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'status'             => 'second_table.status',
                 'attributes'       => 'GROUP_CONCAT(`mlpvo`.`attribute`, \'==\', `mlpvo`.`option` SEPARATOR \'||\')',
                 'products_ids'     => 'GROUP_CONCAT(`mlpvo`.`attribute`, \'==\', `mlpvo`.`product_id` SEPARATOR \'||\')'
-            )
+            ]
         );
 
         $resultCollection = $this->wrapperCollection->create();
         $resultCollection->setConnection($this->resourceConnection->getConnection());
         $resultCollection->getSelect()->reset()->from(
-            array('main_table' => $collection->getSelect()),
-            array(
+            ['main_table' => $collection->getSelect()],
+            [
                 'id',
                 'listing_product_id',
                 'additional_data',
@@ -151,7 +154,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'status',
                 'attributes',
                 'products_ids'
-            )
+            ]
         );
 
         // Set collection to grid
@@ -162,58 +165,58 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('variation', array(
+        $this->addColumn('variation', [
             'header' => $this->__('Magento Variation'),
             'align' => 'left',
             'width' => '210px',
             'sortable' => false,
             'index' => 'attributes',
             'filter_index' => 'attributes',
-            'frame_callback' => array($this, 'callbackColumnVariations'),
+            'frame_callback' => [$this, 'callbackColumnVariations'],
             'filter' => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions',
             'options' => $this->getVariationsAttributes(),
-            'filter_condition_callback' => array($this, 'callbackFilterVariations')
-        ));
+            'filter_condition_callback' => [$this, 'callbackFilterVariations']
+        ]);
 
-        $this->addColumn('online_sku', array(
+        $this->addColumn('online_sku', [
             'header'    => $this->__('SKU'),
             'align'     => 'left',
             'width'     => '150px',
             'index'     => 'online_sku',
             'filter_index' => 'online_sku',
-            'frame_callback' => array($this, 'callbackColumnOnlineSku')
-        ));
+            'frame_callback' => [$this, 'callbackColumnOnlineSku']
+        ]);
 
-        $this->addColumn('available_qty', array(
+        $this->addColumn('available_qty', [
             'header'    => $this->__('Available QTY'),
             'align'     => 'right',
             'width'     => '40px',
             'type'      => 'number',
             'index'     => 'available_qty',
             'filter'    => false,
-            'frame_callback' => array($this, 'callbackColumnAvailableQty')
-        ));
+            'frame_callback' => [$this, 'callbackColumnAvailableQty']
+        ]);
 
-        $this->addColumn('online_qty_sold', array(
+        $this->addColumn('online_qty_sold', [
             'header' => $this->__('Sold QTY'),
             'align' => 'right',
             'width' => '40px',
             'type' => 'number',
             'index' => 'online_qty_sold',
-            'frame_callback' => array($this, 'callbackColumnOnlineQtySold')
-        ));
+            'frame_callback' => [$this, 'callbackColumnOnlineQtySold']
+        ]);
 
-        $this->addColumn('price', array(
+        $this->addColumn('price', [
             'header' => $this->__('Price'),
             'align' => 'right',
             'width' => '40px',
             'type' => 'number',
             'index' => 'online_price',
             'filter_index' => 'online_price',
-            'frame_callback' => array($this, 'callbackColumnPrice'),
-        ));
+            'frame_callback' => [$this, 'callbackColumnPrice'],
+        ]);
 
-        $this->addColumn('identifiers', array(
+        $this->addColumn('identifiers', [
             'header' => $this->__('eBay Catalog Identifiers'),
             'align' => 'left',
             'width' => '150px',
@@ -222,18 +225,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_index' => 'additional_data',
             'filter' => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions',
             'options' => $this->identifiers,
-            'frame_callback' => array($this, 'callbackColumnIdentifiers'),
-            'filter_condition_callback' => array($this, 'callbackFilterIdentifiers')
-        ));
+            'frame_callback' => [$this, 'callbackColumnIdentifiers'],
+            'filter_condition_callback' => [$this, 'callbackFilterIdentifiers']
+        ]);
 
-        $this->addColumn('status', array(
+        $this->addColumn('status', [
             'header'=> $this->__('Status'),
             'width' => '60px',
             'index' => 'status',
             'filter_index' => 'status',
             'type' => 'options',
             'sortable' => false,
-            'options' => array(
+            'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED     => $this->__('Active'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN     => $this->__('Inactive'),
@@ -241,9 +244,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED    => $this->__('Stopped'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED   => $this->__('Finished'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED    => $this->__('Pending')
-            ),
-            'frame_callback' => array($this, 'callbackColumnStatus')
-        ));
+            ],
+            'frame_callback' => [$this, 'callbackColumnStatus']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -258,7 +261,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $html = '<div class="m2ePro-variation-attributes" style="margin-left: 5px;">';
         if (!$uniqueProductsIds) {
-            $url = $this->getUrl('catalog/product/edit', array('id' => reset($productsIds)));
+            $url = $this->getUrl('catalog/product/edit', ['id' => reset($productsIds)]);
             $html .= '<a href="' . $url . '" target="_blank" style="color: grey;">';
         }
         foreach ($attributes as $attribute => $option) {
@@ -266,7 +269,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 '</b>:&nbsp;' . $this->getHelper('Data')->escapeHtml($option);
 
             if ($uniqueProductsIds) {
-                $url = $this->getUrl('catalog/product/edit', array('id' => $productsIds[$attribute]));
+                $url = $this->getUrl('catalog/product/edit', ['id' => $productsIds[$attribute]]);
                 $html .= '<a href="' . $url . '" target="_blank" style="color: grey;">' . $optionHtml . '</a><br/>';
             } else {
                 $html .= $optionHtml . '<br/>';
@@ -283,11 +286,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnOnlineSku($value, $row, $column, $isExport)
     {
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED &&
-            (is_null($value) || $value === '')) {
+            ($value === null || $value === '')) {
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -297,11 +300,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnAvailableQty($value, $row, $column, $isExport)
     {
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED &&
-            (is_null($value) || $value === '')) {
+            ($value === null || $value === '')) {
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -319,11 +322,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnOnlineQtySold($value, $row, $column, $isExport)
     {
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED &&
-            (is_null($value) || $value === '')) {
+            ($value === null || $value === '')) {
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -337,11 +340,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED &&
-            (is_null($value) || $value === '')) {
+            ($value === null || $value === '')) {
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -372,7 +375,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         if (!empty($additionalData['product_details'])) {
             foreach ($additionalData['product_details'] as $identifier => $identifierValue) {
-
                 $identifier = isset($this->identifiers[$identifier])
                     ? $this->getHelper('Data')->escapeHtml($this->identifiers[$identifier])
                     : $this->getHelper('Data')->escapeHtml($identifier);
@@ -443,7 +445,6 @@ HTML;
         $html = '';
 
         switch ($row->getData('status')) {
-
             case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
                 $html = '<span style="color: gray;">'.$value.'</span>';
                 break;
@@ -519,9 +520,9 @@ HTML;
             if (is_array($value) && !empty($value['value'])) {
                 $collection->addFieldToFilter(
                     'additional_data',
-                    array('regexp'=> '"product_details":[^}]*'.$value['attr'].'[[:space:]]*":"[[:space:]]*' .
+                    ['regexp'=> '"product_details":[^}]*'.$value['attr'].'[[:space:]]*":"[[:space:]]*' .
                         // trying to screen slashes that in json
-                        addslashes(addslashes($value['value']).'[[:space:]]*'))
+                        addslashes(addslashes($value['value']).'[[:space:]]*')]
                 );
             }
         }
@@ -531,10 +532,10 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/ebay_listing_variation_product_manage/getGridHtml', array(
+        return $this->getUrl('*/ebay_listing_variation_product_manage/getGridHtml', [
             'product_id' => $this->getListingProductId(),
             '_current' => true
-        ));
+        ]);
     }
 
     public function getRowUrl($row)
@@ -546,11 +547,11 @@ HTML;
 
     protected function _toHtml()
     {
-        $urls = array(
+        $urls = [
             'ebay_listing_variation_product_manage/setIdentifiers' => $this->getUrl(
                 '*/ebay_listing_variation_product_manage/setIdentifiers'
             )
-        );
+        ];
 
         $urls = $this->getHelper('Data')->jsonEncode($urls);
 
@@ -569,7 +570,7 @@ HTML;
             }
         }, 350);
 JS
-);
+        );
         return parent::_toHtml();
     }
 
@@ -577,18 +578,18 @@ JS
 
     private function getVariationsAttributes()
     {
-        if (is_null($this->variationAttributes)) {
-            $tableVariation = $this->activeRecordFactory->getObject('Listing\Product\Variation')
+        if ($this->variationAttributes === null) {
+            $tableVariation = $this->activeRecordFactory->getObject('Listing_Product_Variation')
                 ->getResource()->getMainTable();
-            $tableOption = $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')
+            $tableOption = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')
                 ->getResource()->getMainTable();
 
             $select = $this->resourceConnection->getConnection()->select();
-            $select->from(array('mlpv' => $tableVariation), array())
+            $select->from(['mlpv' => $tableVariation], [])
                 ->join(
-                    array('mlpvo' => $tableOption),
+                    ['mlpvo' => $tableOption],
                     'mlpvo.listing_product_variation_id = mlpv.id',
-                    array('attribute')
+                    ['attribute']
                 )
                 ->where('listing_product_id = ?', (int)$this->getListingProductId());
 
@@ -602,7 +603,7 @@ JS
 
     private function parseGroupedData($data)
     {
-        $result = array();
+        $result = [];
 
         $variationData = explode('||', $data);
         foreach ($variationData as $variationAttribute) {

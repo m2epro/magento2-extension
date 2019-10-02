@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping\Edit\Form;
 
 use Ess\M2ePro\Model\Ebay\Template\Shipping;
 
+/**
+ * Class Data
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping\Edit\Form
+ */
 class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $regionFactory;
@@ -32,8 +36,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->regionFactory = $regionFactory;
         $this->ebayFactory = $ebayFactory;
         parent::__construct($context, $registry, $formFactory, $data);
@@ -62,7 +65,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text_price' => $magentoAttributeHelper->filterByInputTypes($this->attributes, ['text', 'price']),
             'text_weight' => $magentoAttributeHelper->filterByInputTypes($this->attributes, ['text', 'weight']),
             'text_price_select' => $magentoAttributeHelper->filterByInputTypes(
-                $this->attributes, ['text', 'price', 'select']
+                $this->attributes,
+                ['text', 'price', 'select']
             ),
         ];
 
@@ -77,7 +81,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $form->addField('shipping_id', 'hidden',
+        $form->addField(
+            'shipping_id',
+            'hidden',
             [
                 'name' => 'shipping[id]',
                 'value' => (!$this->isCustom() && isset($this->formData['id'])) ?
@@ -85,21 +91,27 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $form->addField('shipping_title', 'hidden',
+        $form->addField(
+            'shipping_title',
+            'hidden',
             [
                 'name' => 'shipping[title]',
                 'value' => $this->getTitle()
             ]
         );
 
-        $form->addField('hidden_marketplace_id_'.$this->marketplaceData['id'], 'hidden',
+        $form->addField(
+            'hidden_marketplace_id_'.$this->marketplaceData['id'],
+            'hidden',
             [
                 'name' => 'shipping[marketplace_id]',
                 'value' => $this->marketplaceData['id']
             ]
         );
 
-        $form->addField('is_custom_template', 'hidden',
+        $form->addField(
+            'is_custom_template',
+            'hidden',
             [
                 'name' => 'shipping[is_custom_template]',
                 'value' => $this->isCustom() ? 1 : 0
@@ -112,38 +124,47 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // Location Block
         // ---------------------------------------
 
-        $fieldSet = $form->addFieldset('shipping_location_fieldset',
+        $fieldSet = $form->addFieldset(
+            'shipping_location_fieldset',
             ['legend' => __('Item Location'), 'collapsable' => true]
         );
 
         // ---------------------------------------
 
-        $fieldSet->addField('country_custom_value', 'hidden',
+        $fieldSet->addField(
+            'country_custom_value',
+            'hidden',
             [
                 'name' => 'shipping[country_custom_value]',
                 'value' => $this->formData['country_custom_value']
             ]
         );
 
-        $fieldSet->addField('country_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'country_custom_attribute',
+            'hidden',
             [
                 'name' => 'shipping[country_custom_attribute]',
                 'value' => $this->formData['country_custom_attribute']
             ]
         );
 
-        $fieldSet->addField('country_mode', self::SELECT,
+        $fieldSet->addField(
+            'country_mode',
+            self::SELECT,
             [
                 'name' => 'shipping[country_mode]',
                 'label' => $this->__('Country'),
                 'title' => $this->__('Country'),
                 'values' => [
                     $this->getCountryOptions(),
-                    $this->getAttributesOptions(Shipping::COUNTRY_MODE_CUSTOM_ATTRIBUTE,
+                    $this->getAttributesOptions(
+                        Shipping::COUNTRY_MODE_CUSTOM_ATTRIBUTE,
                         function ($attribute) {
                             return $this->formData['country_mode'] == Shipping::COUNTRY_MODE_CUSTOM_ATTRIBUTE
                                    && $attribute['code'] == $this->formData['country_custom_attribute'];
-                    })
+                        }
+                    )
                 ],
                 'class' => 'required-entry',
                 'create_magento_attribute' => true
@@ -152,7 +173,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('postal_code_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'postal_code_custom_attribute',
+            'hidden',
             [
                 'name' => 'shipping[postal_code_custom_attribute]',
                 'value' => $this->formData['postal_code_custom_attribute']
@@ -164,7 +187,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = $this->formData['postal_code_mode'];
         }
 
-        $fieldSet->addField('postal_code_mode', self::SELECT,
+        $fieldSet->addField(
+            'postal_code_mode',
+            self::SELECT,
             [
                 'name' => 'shipping[postal_code_mode]',
                 'label' => $this->__('Zip/Postal Code'),
@@ -172,8 +197,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'values' => [
                     ['label' => $this->__('None'), 'value' => Shipping::POSTAL_CODE_MODE_NONE],
                     ['label' => $this->__('Custom Value'), 'value' => Shipping::POSTAL_CODE_MODE_CUSTOM_VALUE],
-                    $this->getAttributesOptions(Shipping::POSTAL_CODE_MODE_CUSTOM_ATTRIBUTE,
-                        function($attribute) {
+                    $this->getAttributesOptions(
+                        Shipping::POSTAL_CODE_MODE_CUSTOM_ATTRIBUTE,
+                        function ($attribute) {
                             return $this->formData['postal_code_mode'] == Shipping::POSTAL_CODE_MODE_CUSTOM_ATTRIBUTE
                                    && $attribute['code'] == $this->formData['postal_code_custom_attribute'];
                         }
@@ -185,7 +211,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
-        $fieldSet->addField('postal_code_custom_value', 'text',
+        $fieldSet->addField(
+            'postal_code_custom_value',
+            'text',
             [
                 'name' => 'shipping[postal_code_custom_value]',
                 'label' => $this->__('Zip/Postal Code Value'),
@@ -199,7 +227,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('address_custom_attribute', 'hidden',
+        $fieldSet->addField(
+            'address_custom_attribute',
+            'hidden',
             [
                 'name' => 'shipping[address_custom_attribute]',
                 'value' => $this->formData['address_custom_attribute']
@@ -211,7 +241,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = $this->formData['address_mode'];
         }
 
-        $fieldSet->addField('address_mode', self::SELECT,
+        $fieldSet->addField(
+            'address_mode',
+            self::SELECT,
             [
                 'name' => 'shipping[address_mode]',
                 'label' => $this->__('City, State'),
@@ -221,7 +253,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     ['label' => $this->__('Custom Value'), 'value' => Shipping::ADDRESS_MODE_CUSTOM_VALUE],
                     $this->getAttributesOptions(
                         Shipping::ADDRESS_MODE_CUSTOM_ATTRIBUTE,
-                        function($attribute) {
+                        function ($attribute) {
                             return $this->formData['address_mode'] == Shipping::ADDRESS_MODE_CUSTOM_ATTRIBUTE
                                     && $attribute['code'] == $this->formData['address_custom_attribute'];
                         }
@@ -233,7 +265,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
-        $fieldSet->addField('address_custom_value', 'text',
+        $fieldSet->addField(
+            'address_custom_value',
+            'text',
             [
                 'name' => 'shipping[address_custom_value]',
                 'label' => $this->__('City, State Value'),
@@ -251,11 +285,14 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // Domestic Shipping
         // ---------------------------------------
 
-        $fieldSet = $form->addFieldset('domestic_shipping_fieldset',
+        $fieldSet = $form->addFieldset(
+            'domestic_shipping_fieldset',
             ['legend' => __('Domestic Shipping'), 'collapsable' => true]
         );
 
-        $fieldSet->addField('local_shipping_mode', self::SELECT,
+        $fieldSet->addField(
+            'local_shipping_mode',
+            self::SELECT,
             [
                 'name' => 'shipping[local_shipping_mode]',
                 'label' => $this->__('Type'),
@@ -268,7 +305,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         if ($this->canDisplayLocalShippingRateTable()) {
-            $fieldSet->addField('local_shipping_rate_table_mode', self::SELECT,
+            $fieldSet->addField(
+                'local_shipping_rate_table_mode',
+                self::SELECT,
                 [
                     'name' => 'shipping[local_shipping_rate_table_mode]',
                     'label' => $this->__('Use eBay Shipping Rate Table'),
@@ -291,7 +330,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('shipping_local_table_messages',
+        $fieldSet->addField(
+            'shipping_local_table_messages',
             self::CUSTOM_CONTAINER,
             [
                 'text' => '',
@@ -299,7 +339,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('local_shipping_methods_tr_wrapper', self::CUSTOM_CONTAINER,
+        $fieldSet->addField(
+            'local_shipping_methods_tr_wrapper',
+            self::CUSTOM_CONTAINER,
             [
                 'text' => $this->getShippingLocalTable(),
                 'css_class' => 'm2epro-fieldset-table',
@@ -309,7 +351,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('dispatch_time', self::SELECT,
+        $fieldSet->addField(
+            'dispatch_time',
+            self::SELECT,
             [
                 'name' => 'shipping[dispatch_time]',
                 'label' => $this->__('Dispatch Time'),
@@ -331,7 +375,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         if ($this->canDisplayClickAndCollectOption()) {
-            $fieldSet->addField('click_and_collect_mode', self::SELECT,
+            $fieldSet->addField(
+                'click_and_collect_mode',
+                self::SELECT,
                 [
                     'name' => 'shipping[click_and_collect_mode]',
                     'label' => $this->__('Click And Collect Opt-out'),
@@ -357,7 +403,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('local_handling_cost', 'text',
+        $fieldSet->addField(
+            'local_handling_cost',
+            'text',
             [
                 'name' => 'shipping[local_handling_cost]',
                 'label' => $this->__('Handling Cost'),
@@ -372,8 +420,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        if (!is_null($this->getAccountId())) {
-            $fieldsetCombined = $fieldSet->addFieldset('combined_shipping_profile',
+        if ($this->getAccountId() !== null) {
+            $fieldsetCombined = $fieldSet->addFieldset(
+                'combined_shipping_profile',
                 [
                     'legend' => __('Combined Shipping Profile'),
                     'collapsable' => false,
@@ -381,7 +430,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 ]
             );
 
-            $fieldsetCombined->addField('local_shipping_discount_profile_id_'.$this->getAccountId(),
+            $fieldsetCombined->addField(
+                'local_shipping_discount_profile_id_'.$this->getAccountId(),
                 self::SELECT,
                 [
                     'name' => 'shipping[local_shipping_discount_profile_id]['.$this->getAccountId().']',
@@ -403,10 +453,10 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
              ->setData('after_element_html', "<a href=\"javascript:void(0);\"
                     onclick=\"EbayTemplateShippingObj.updateDiscountProfiles(".$this->getAccountId().");\">"
                     .$this->__('Refresh Profiles')
-                    ."</a>"
-            );
+                    ."</a>");
         } else {
-            $fieldSet->addField('account_combined_shipping_profile_local',
+            $fieldSet->addField(
+                'account_combined_shipping_profile_local',
                 self::CUSTOM_CONTAINER,
                 [
                     'text' => $this->getAccountCombinedShippingProfile('local'),
@@ -417,7 +467,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('local_shipping_discount_mode', self::SELECT,
+        $fieldSet->addField(
+            'local_shipping_discount_mode',
+            self::SELECT,
             [
                 'name' => 'shipping[local_shipping_discount_mode]',
                 'label' => $this->__('Promotional Shipping Rule'),
@@ -440,7 +492,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         if ($this->canDisplayCashOnDeliveryCost()) {
-            $fieldSet->addField('cash_on_delivery_cost', 'text',
+            $fieldSet->addField(
+                'cash_on_delivery_cost',
+                'text',
                 [
                     'name' => 'shipping[cash_on_delivery_cost]',
                     'label' => $this->__('"Cash On Delivery" Cost'),
@@ -455,7 +509,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet = $form->addFieldset('magento_block_ebay_template_shipping_form_data_international',
+        $fieldSet = $form->addFieldset(
+            'magento_block_ebay_template_shipping_form_data_international',
             [
                 'legend' => __('International Shipping'),
                 'collapsable' => true
@@ -464,8 +519,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         if ($this->canDisplayNorthAmericaCrossBorderTradeOption()
             || $this->canDisplayUnitedKingdomCrossBorderTradeOption()) {
-
-            $fieldSet->addField('cross_border_trade', self::SELECT,
+            $fieldSet->addField(
+                'cross_border_trade',
+                self::SELECT,
                 [
                     'name' => 'shipping[cross_border_trade]',
                     'label' => $this->__('Cross Border Trade'),
@@ -484,7 +540,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         if ($this->canDisplayGlobalShippingProgram()) {
-            $fieldSet->addField('global_shipping_program', self::SELECT,
+            $fieldSet->addField(
+                'global_shipping_program',
+                self::SELECT,
                 [
                     'name' => 'shipping[global_shipping_program]',
                     'label' => $this->__('Offer Global Shipping Program'),
@@ -507,7 +565,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('international_shipping_mode', self::SELECT,
+        $fieldSet->addField(
+            'international_shipping_mode',
+            self::SELECT,
             [
                 'name' => 'shipping[international_shipping_mode]',
                 'label' => $this->__('Type'),
@@ -520,7 +580,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         if ($this->canDisplayInternationalShippingRateTable()) {
-            $fieldSet->addField('international_shipping_rate_table_mode', self::SELECT,
+            $fieldSet->addField(
+                'international_shipping_rate_table_mode',
+                self::SELECT,
                 [
                     'name' => 'shipping[international_shipping_rate_table_mode]',
                     'label' => $this->__('Use eBay Shipping Rate Table'),
@@ -544,7 +606,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('shipping_international_table_messages',
+        $fieldSet->addField(
+            'shipping_international_table_messages',
             self::CUSTOM_CONTAINER,
             [
                 'text' => '',
@@ -552,7 +615,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('international_shipping_methods_tr_wrapper',
+        $fieldSet->addField(
+            'international_shipping_methods_tr_wrapper',
             self::CUSTOM_CONTAINER,
             [
                 'text' => $this->getShippingInternationalTable(),
@@ -564,7 +628,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('international_handling_cost', 'text',
+        $fieldSet->addField(
+            'international_handling_cost',
+            'text',
             [
                 'name' => 'shipping[international_handling_cost]',
                 'label' => $this->__('Handling Cost'),
@@ -578,8 +644,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        if (!is_null($this->getAccountId())) {
-            $fieldsetCombined = $fieldSet->addFieldset('international_shipping_profile',
+        if ($this->getAccountId() !== null) {
+            $fieldsetCombined = $fieldSet->addFieldset(
+                'international_shipping_profile',
                 [
                     'legend' => __('Combined Shipping Profile'),
                     'collapsable' => false,
@@ -587,7 +654,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 ]
             );
 
-            $fieldsetCombined->addField('international_shipping_discount_profile_id_'.$this->getAccountId(),
+            $fieldsetCombined->addField(
+                'international_shipping_discount_profile_id_'.$this->getAccountId(),
                 self::SELECT,
                 [
                     'name' => 'shipping[international_shipping_discount_profile_id]['.$this->getAccountId().']',
@@ -610,10 +678,10 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
              ->setData('after_element_html', "<a href=\"javascript:void(0);\"
                     onclick=\"EbayTemplateShippingObj.updateDiscountProfiles(".$this->getAccountId().");\">"
                     .$this->__('Refresh Profiles')
-                    ."</a>"
-            );
+                    ."</a>");
         } else {
-            $fieldSet->addField('account_international_shipping_profile_international',
+            $fieldSet->addField(
+                'account_international_shipping_profile_international',
                 self::CUSTOM_CONTAINER,
                 [
                     'text' => $this->getAccountCombinedShippingProfile('international'),
@@ -624,7 +692,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('international_shipping_discount_mode', self::SELECT,
+        $fieldSet->addField(
+            'international_shipping_discount_mode',
+            self::SELECT,
             [
                 'name' => 'shipping[international_shipping_discount_mode]',
                 'label' => $this->__('Promotional Shipping Rule'),
@@ -646,11 +716,14 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // Package details
         // ---------------------------------------
 
-        $fieldSet = $form->addFieldset('magento_block_ebay_template_shipping_form_data_calculated',
+        $fieldSet = $form->addFieldset(
+            'magento_block_ebay_template_shipping_form_data_calculated',
             ['legend' => __('Package details'), 'collapsable' => true]
         );
 
-        $fieldSet->addField('measurement_system', self::SELECT,
+        $fieldSet->addField(
+            'measurement_system',
+            self::SELECT,
             [
                 'name' => 'shipping[measurement_system]',
                 'label' => $this->__('Measurement System'),
@@ -663,21 +736,27 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('package_size_mode', 'hidden',
+        $fieldSet->addField(
+            'package_size_mode',
+            'hidden',
             [
                 'name' => 'shipping[package_size_mode]',
                 'value' => $this->formData['package_size_mode']
             ]
         );
 
-        $fieldSet->addField('package_size_value', 'hidden',
+        $fieldSet->addField(
+            'package_size_value',
+            'hidden',
             [
                 'name' => 'shipping[package_size_value]',
                 'value' => $this->formData['package_size_value']
             ]
         );
 
-        $fieldSet->addField('package_size_attribute', 'hidden',
+        $fieldSet->addField(
+            'package_size_attribute',
+            'hidden',
             [
                 'name' => 'shipping[package_size_attribute]',
                 'value' => $this->formData['package_size_attribute']
@@ -686,7 +765,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('package_size', self::SELECT,
+        $fieldSet->addField(
+            'package_size',
+            self::SELECT,
             [
                 'label' => $this->__('Package Size Source'),
                 'title' => $this->__('Package Size Source'),
@@ -698,7 +779,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('dimension_mode', self::SELECT,
+        $fieldSet->addField(
+            'dimension_mode',
+            self::SELECT,
             [
                 'name' => 'shipping[dimension_mode]',
                 'label' => $this->__('Dimension Source'),
@@ -751,7 +834,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         ]])->addCustomAttribute('allowed_attribute_types', 'text');
         $depthAttrBlock->setForm($form);
 
-        $fieldSet->addField('dimension', self::SELECT,
+        $fieldSet->addField(
+            'dimension',
+            self::SELECT,
             [
                 'css_class' => 'dimensions_ca_tr',
                 'name' => 'shipping[dimension_width_attribute]',
@@ -784,7 +869,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         ]]);
         $depthValBlock->setForm($form);
 
-        $fieldSet->addField('dimension_width_attribute_text', 'text',
+        $fieldSet->addField(
+            'dimension_width_attribute_text',
+            'text',
             [
                 'css_class' => 'dimensions_cv_tr',
                 'name' => 'shipping[dimension_width_value]',
@@ -802,14 +889,18 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('weight_mode', 'hidden',
+        $fieldSet->addField(
+            'weight_mode',
+            'hidden',
             [
                 'name' => 'shipping[weight_mode]',
                 'value' => $this->formData['weight_mode']
             ]
         );
 
-        $fieldSet->addField('weight_attribute', 'hidden',
+        $fieldSet->addField(
+            'weight_attribute',
+            'hidden',
             [
                 'name' => 'shipping[weight_attribute]',
                 'value' => $this->formData['weight_attribute']
@@ -818,7 +909,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('weight', self::SELECT,
+        $fieldSet->addField(
+            'weight',
+            self::SELECT,
             [
                 'name' => 'shipping[test]',
                 'label' => $this->__('Weight Source'),
@@ -842,7 +935,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         ]]);
         $weightMinorBlock->setForm($form);
 
-        $fieldSet->addField('weight_mode_container',
+        $fieldSet->addField(
+            'weight_mode_container',
             'text',
             [
                 'container_id' => 'weight_cv',
@@ -863,7 +957,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // Excluded Locations
         // ---------------------------------------
 
-        $fieldSet = $form->addFieldset('magento_block_ebay_template_shipping_form_data_excluded_locations',
+        $fieldSet = $form->addFieldset(
+            'magento_block_ebay_template_shipping_form_data_excluded_locations',
             [
                 'legend' => $this->__('Excluded Locations'),
                 'collapsable' => true,
@@ -874,7 +969,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('excluded_locations_hidden', 'hidden',
+        $fieldSet->addField(
+            'excluded_locations_hidden',
+            'hidden',
             [
                 'name' => 'shipping[excluded_locations]',
                 'value' => $this->getHelper('Data')->jsonEncode($this->formData['excluded_locations'])
@@ -883,12 +980,12 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $excludedLocationTitles = $this->__('No Locations are currently excluded.');
         if (!empty($this->formData['excluded_locations'])) {
-            $excludedLocationTitles = array();
+            $excludedLocationTitles = [];
             foreach ($this->formData['excluded_locations'] as $location) {
-                is_null($location['region']) && $location['title'] = '<b>'.$location['title'].'</b>';
+                $location['region'] === null && $location['title'] = '<b>'.$location['title'].'</b>';
                 $excludedLocationTitles[] = $location['title'];
             }
-            $excludedLocationTitles = implode(', ',$excludedLocationTitles) . '<br/>';
+            $excludedLocationTitles = implode(', ', $excludedLocationTitles) . '<br/>';
         }
         $fieldSet->addField(
             'excluded_locations',
@@ -914,10 +1011,10 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {
         $localShippingMethodButton = $this
         ->createBlock('Magento\Button')
-        ->setData(array(
+        ->setData([
             'onclick' => 'EbayTemplateShippingObj.addRow(\'local\');',
             'class' => 'add add_local_shipping_method_button primary'
-        ));
+        ]);
 
         return <<<HTML
 
@@ -983,10 +1080,10 @@ HTML;
 
         $buttonBlock = $this
             ->createBlock('Magento\Button')
-            ->setData(array(
+            ->setData([
                 'onclick' => 'EbayTemplateShippingObj.addRow(\'international\');',
                 'class' => 'add add_international_shipping_method_button primary'
-            ));
+            ]);
 
         return <<<HTML
         <table id="shipping_international_table"
@@ -1050,7 +1147,7 @@ HTML;
         $html = '';
         $discountProfiles = $this->getDiscountProfiles();
 
-        if (count($discountProfiles) > 0) {
+        if (!empty($discountProfiles)) {
             foreach ($discountProfiles as $accountId => $value) {
                 $html .= <<<HTML
                     <tr class="{$locationType}-discount-profile-account-tr" account_id="{$accountId}">
@@ -1085,7 +1182,6 @@ HTML;
             $html .= "<tr><td colspan=\"4\" style=\"text-align: center\">
                         {$this->__('You do not have eBay Accounts added to M2E Pro.')}
                      </td></tr>";
-
         }
 
         return <<<HTML
@@ -1105,7 +1201,6 @@ HTML;
             {$html}
         </table>
 HTML;
-
     }
 
     // ---------------------------------------
@@ -1204,7 +1299,7 @@ HTML;
 
         $isExceptionHandlingTimes = false;
         foreach ($this->marketplaceData['dispatch'] as $index => $dispatchOption) {
-            if($dispatchOption['ebay_id'] > 3 && !$isExceptionHandlingTimes) {
+            if ($dispatchOption['ebay_id'] > 3 && !$isExceptionHandlingTimes) {
                 $options['opt_group'] = ['value' => [], 'label' => $this->__('Exception Handling Times')];
                 $isExceptionHandlingTimes = true;
             }
@@ -1212,7 +1307,7 @@ HTML;
             if ($dispatchOption['ebay_id'] == 0) {
                 $label = $this->__('Same Business Day');
             } else {
-                $label = $this->__(str_replace('Day','Business Day',$dispatchOption['title']));
+                $label = $this->__(str_replace('Day', 'Business Day', $dispatchOption['title']));
             }
 
             $tmpOption = [
@@ -1305,7 +1400,6 @@ HTML;
 
         $ebayValues = ['value' => [], 'label' => $this->__('eBay Values')];
         foreach ($this->marketplaceData['packages'] as $package) {
-
             $tmp = [
                 'value' => Shipping\Calculated::PACKAGE_SIZE_CUSTOM_VALUE,
                 'label' => $package['title'],
@@ -1339,7 +1433,6 @@ HTML;
         }
 
         foreach ($this->attributesByInputTypes['text_select'] as $attribute) {
-
             $tmp = [
                 'value' => Shipping\Calculated::PACKAGE_SIZE_CUSTOM_ATTRIBUTE,
                 'label' => $helper->escapeHtml($attribute['label']),
@@ -1462,7 +1555,7 @@ HTML;
         $account = $this->getHelper('Data\GlobalData')->getValue('ebay_account');
 
         if (!$account instanceof \Ess\M2ePro\Model\Account) {
-            return NULL;
+            return null;
         }
 
         return $account;
@@ -1470,7 +1563,7 @@ HTML;
 
     public function getAccountId()
     {
-        return $this->getAccount() ? $this->getAccount()->getId() : NULL;
+        return $this->getAccount() ? $this->getAccount()->getId() : null;
     }
 
     //########################################
@@ -1482,28 +1575,28 @@ HTML;
         $localDiscount = $template->getData('local_shipping_discount_profile_id');
         $internationalDiscount = $template->getData('international_shipping_discount_profile_id');
 
-        !is_null($localDiscount) && $localDiscount = $this->getHelper('Data')->jsonDecode($localDiscount);
-        !is_null($internationalDiscount) && $internationalDiscount = $this->getHelper('Data')->jsonDecode(
+        $localDiscount !== null && $localDiscount = $this->getHelper('Data')->jsonDecode($localDiscount);
+        $internationalDiscount !== null && $internationalDiscount = $this->getHelper('Data')->jsonDecode(
             $internationalDiscount
         );
 
         $accountCollection = $this->ebayFactory->getObject('Account')->getCollection();
 
-        $profiles = array();
+        $profiles = [];
 
         foreach ($accountCollection as $account) {
             $accountId = $account->getId();
 
-            $temp = array();
+            $temp = [];
             $temp['account_name'] = $account->getTitle();
             $temp['selected']['local'] = isset($localDiscount[$accountId]) ? $localDiscount[$accountId] : '';
             $temp['selected']['international'] = isset($internationalDiscount[$accountId]) ?
                 $internationalDiscount[$accountId] : '';
 
             $accountProfiles = $account->getChildObject()->getData('ebay_shipping_discount_profiles');
-            $temp['profiles'] = array();
+            $temp['profiles'] = [];
 
-            if (is_null($accountProfiles)) {
+            if ($accountProfiles === null) {
                 $profiles[$accountId] = $temp;
                 continue;
             }
@@ -1513,11 +1606,11 @@ HTML;
 
             if (is_array($accountProfiles) && isset($accountProfiles[$marketplaceId]['profiles'])) {
                 foreach ($accountProfiles[$marketplaceId]['profiles'] as $profile) {
-                    $temp['profiles'][] = array(
+                    $temp['profiles'][] = [
                         'type' => $this->getHelper('Data')->escapeHtml($profile['type']),
                         'profile_id' => $this->getHelper('Data')->escapeHtml($profile['profile_id']),
                         'profile_name' => $this->getHelper('Data')->escapeHtml($profile['profile_name'])
-                    );
+                    ];
                 }
             }
 
@@ -1546,7 +1639,7 @@ HTML;
 
         $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_shipping');
 
-        if (is_null($template)) {
+        if ($template === null) {
             return '';
         }
 
@@ -1563,7 +1656,7 @@ HTML;
         $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_shipping');
 
         $default = $this->getDefault();
-        if (is_null($template) || is_null($template->getId())) {
+        if ($template === null || $template->getId() === null) {
             return $default;
         }
 
@@ -1572,13 +1665,13 @@ HTML;
 
         $calculated = $template->getCalculatedShipping();
 
-        if (!is_null($calculated)) {
+        if ($calculated !== null) {
             $this->formData = array_merge($this->formData, $calculated->getData());
         }
 
         if (is_string($this->formData['excluded_locations'])) {
             $excludedLocations = $this->getHelper('Data')->jsonDecode($this->formData['excluded_locations']);
-            $this->formData['excluded_locations'] = is_array($excludedLocations) ? $excludedLocations : array();
+            $this->formData['excluded_locations'] = is_array($excludedLocations) ? $excludedLocations : [];
         } else {
             unset($this->formData['excluded_locations']);
         }
@@ -1588,7 +1681,7 @@ HTML;
 
     public function getDefault()
     {
-        $default = $this->activeRecordFactory->getObject('Ebay\Template\Shipping')
+        $default = $this->activeRecordFactory->getObject('Ebay_Template_Shipping')
                                              ->getDefaultSettingsAdvancedMode();
 
         $default['excluded_locations'] = $this->getHelper('Data')->jsonDecode($default['excluded_locations']);
@@ -1602,7 +1695,7 @@ HTML;
         $countryId = $store->getConfig('shipping/origin/country_id');
         $postalCode = $store->getConfig('shipping/origin/postcode');
 
-        $address = array(trim($city));
+        $address = [trim($city)];
 
         if ($regionId) {
             $region = $this->regionFactory->create()->load($regionId);
@@ -1636,7 +1729,7 @@ HTML;
 
     public function getMarketplaceData()
     {
-        $data = array(
+        $data = [
             'id' => $this->getMarketplace()->getId(),
             'currency' => $this->getMarketplace()->getChildObject()->getCurrency(),
             'services' => $this->getMarketplace()->getChildObject()->getShippingInfo(),
@@ -1645,14 +1738,13 @@ HTML;
             'locations' => $this->getMarketplace()->getChildObject()->getShippingLocationInfo(),
             'locations_exclude' => $this->getSortedLocationExcludeInfo(),
             'origin_country' => $this->getMarketplace()->getChildObject()->getOriginCountry(),
-        );
+        ];
 
         $data['services'] = $this->modifyNonUniqueShippingServicesTitles($data['services']);
 
         $policyLocalization = $this->getData('policy_localization');
 
         if (!empty($policyLocalization)) {
-
             $translator = $this->getHelper('Module\Translation');
 
             foreach ($data['services'] as $serviceKey => $service) {
@@ -1682,7 +1774,7 @@ HTML;
     {
         $dispatchInfo = $this->getMarketplace()->getChildObject()->getDispatchInfo();
 
-        $ebayIds = array();
+        $ebayIds = [];
         foreach ($dispatchInfo as $dispatchRecord) {
             $ebayIds[] = $dispatchRecord['ebay_id'];
         }
@@ -1693,14 +1785,13 @@ HTML;
 
     private function getSortedLocationExcludeInfo()
     {
-        $sortedInfo = array(
-            'international' => array(),
-            'domestic' => array(),
-            'additional' => array()
-        );
+        $sortedInfo = [
+            'international' => [],
+            'domestic' => [],
+            'additional' => []
+        ];
 
         foreach ($this->getMarketplace()->getChildObject()->getShippingLocationExcludeInfo() as $item) {
-
             $region = $item['region'];
 
             strpos(strtolower($item['region']), 'worldwide') !== false && $region = 'international';
@@ -1711,7 +1802,6 @@ HTML;
         }
 
         foreach ($sortedInfo as $code => $info) {
-
             if ($code == 'domestic' || $code == 'international' || $code == 'additional') {
                 continue;
             }
@@ -1721,8 +1811,7 @@ HTML;
             $isAdditional = array_key_exists($code, $sortedInfo['additional']);
 
             if (!$isInternational && !$isDomestic && !$isAdditional) {
-
-                $foundedItem = array();
+                $foundedItem = [];
                 foreach ($this->getMarketplace()->getChildObject()->getShippingLocationExcludeInfo() as $item) {
                     $item['ebay_id'] == $code && $foundedItem = $item;
                 }
@@ -1744,15 +1833,13 @@ HTML;
     private function modifyNonUniqueShippingServicesTitles($services)
     {
         foreach ($services as &$category) {
-
-            $nonUniqueTitles = array();
+            $nonUniqueTitles = [];
             foreach ($category['methods'] as $key => $method) {
                 $nonUniqueTitles[$method['title']][] = $key;
             }
 
             foreach ($nonUniqueTitles as $methodsKeys) {
                 if (count($methodsKeys) > 1) {
-
                     foreach ($methodsKeys as $key) {
                         $ebayId = $category['methods'][$key]['ebay_id'];
                         $title = $category['methods'][$key]['title'];
@@ -1777,7 +1864,8 @@ HTML;
         $html = '';
 
         $attributes = $this->getHelper('Magento\Attribute')->filterByInputTypes(
-            $this->attributes, array('text', 'price', 'select')
+            $this->attributes,
+            ['text', 'price', 'select']
         );
 
         foreach ($attributes as $attribute) {
@@ -1793,14 +1881,14 @@ HTML;
         $formData = $this->getFormData();
 
         if (empty($formData)) {
-            return array();
+            return [];
         }
 
-        $attributes = array();
+        $attributes = [];
 
         // m2epro_ebay_template_shipping_service
         // ---------------------------------------
-        $attributes['services'] = array();
+        $attributes['services'] = [];
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
 
         foreach ($formData['services'] as $i => $service) {
@@ -2001,11 +2089,11 @@ HTML;
         // ---------------------------------------
         $buttonBlock = $this
             ->createBlock('Magento\Button')
-            ->setData(array(
+            ->setData([
                 'label'   => $this->__('Remove'),
                 'onclick' => 'EbayTemplateShippingObj.removeRow.call(this, \'%type%\');',
                 'class' => 'delete icon-btn remove_shipping_method_button'
-            ));
+            ]);
         $this->setChild('remove_shipping_method_button', $buttonBlock);
         // ---------------------------------------
 
@@ -2046,13 +2134,13 @@ HTML;
         ]);
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Template\Shipping')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Shipping::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Template\Shipping\Service')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Shipping\Service::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated::class)
         );
 
         $missingAttributes = $this->getHelper('Data')->jsonEncode($this->missingAttributes);
@@ -2110,10 +2198,10 @@ JS
         $store       = $this->getHelper('Data\GlobalData')->getValue('ebay_store');
         $template    = $this->getHelper('Data\GlobalData')->getValue('ebay_template_selling_format');
 
-        if (is_null($template) || is_null($template->getId())) {
+        if ($template === null || $template->getId() === null) {
             $templateData = $this->getDefault();
             $templateData['component_mode'] = \Ess\M2ePro\Helper\Component\Ebay::NICK;
-            $usedAttributes = array();
+            $usedAttributes = [];
         } else {
             $templateData = $template->getData();
             $usedAttributes = $template->getUsedAttributes();

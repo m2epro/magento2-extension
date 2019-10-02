@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Template;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Template
+ */
 class Category extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Template
 {
     protected $newAsin = false;
@@ -25,7 +29,8 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Templ
     protected function _beforeToHtml()
     {
         $helpBlock = $this->createBlock('HelpBlock')->setData([
-            'content' => $this->__('
+            'content' => $this->__(
+                '
     From the list below, select the relevant Category Policy for your Products.<br>
     Press Add New Category Policy, to create a new Category Policy template.<br><br>
 

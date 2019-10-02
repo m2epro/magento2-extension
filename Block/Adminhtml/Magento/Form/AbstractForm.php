@@ -12,6 +12,10 @@ use Magento\Backend\Block\Widget\Form\Generic;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
+/**
+ * Class AbstractForm
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Form
+ */
 abstract class AbstractForm extends Generic
 {
     const CUSTOM_CONTAINER = 'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\CustomContainer';
@@ -47,8 +51,7 @@ abstract class AbstractForm extends Generic
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->helperFactory = $context->getHelperFactory();
         $this->modelFactory = $context->getModelFactory();
         $this->activeRecordFactory = $context->getActiveRecordFactory();
@@ -71,11 +74,11 @@ abstract class AbstractForm extends Generic
         parent::_prepareLayout();
 
         \Magento\Framework\Data\Form::setFieldsetElementRenderer(
-            $this->createBlock('Magento\Form\Renderer\Element')
+            $this->createBlock('Magento_Form_Renderer_Element')
         );
 
         \Magento\Framework\Data\Form::setFieldsetRenderer(
-            $this->createBlock('Magento\Form\Renderer\Fieldset')
+            $this->createBlock('Magento_Form_Renderer_Fieldset')
         );
 
         return $this;

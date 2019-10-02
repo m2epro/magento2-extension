@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode;
 
+/**
+ * Class GlobalMode
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode
+ */
 class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\GlobalMode
 {
 
@@ -45,7 +49,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Listing::class)
         );
 
         return parent::_afterToHtml($html);
@@ -69,7 +73,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
             ]
         );
 
-        $breadcrumb = $this->createBlock('Ebay\Listing\AutoAction\Mode\Breadcrumb', '', ['data' => [
+        $breadcrumb = $this->createBlock('Ebay_Listing_AutoAction_Mode_Breadcrumb', '', ['data' => [
             'id_prefix' => 'global'
         ]]);
         $breadcrumb->setSelectedStep(1);

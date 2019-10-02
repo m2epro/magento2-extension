@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class ItemDuplicate
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay
+ */
 class ItemDuplicate extends AbstractForm
 {
     /** @var \Ess\M2ePro\Model\Listing\Product */
@@ -56,11 +60,11 @@ class ItemDuplicate extends AbstractForm
         if ($itemId) {
             $url = $this->getUrl(
                 '*/ebay_listing/gotoEbay/',
-                array(
+                [
                     'item_id' => $itemId,
                     'account_id' => $this->listingProduct->getAccount()->getId(),
                     'marketplace_id' => $this->listingProduct->getMarketplace()->getId()
-                )
+                ]
             );
 
             $fieldset->addField(
@@ -119,7 +123,6 @@ class ItemDuplicate extends AbstractForm
         $this->setForm($form);
 
         return parent::_prepareForm();
-
     }
 
     protected function _toHtml()

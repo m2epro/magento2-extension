@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
+/**
+ * Class MerchantFulfillment
+ * @package Ess\M2ePro\Helper\Component\Amazon
+ */
 class MerchantFulfillment extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const STATUS_PURCHASED       = 'Purchased';
@@ -37,8 +41,8 @@ class MerchantFulfillment extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getPredefinedPackageDimensions()
     {
-        return array(
-            'FedEx' => array(
+        return [
+            'FedEx' => [
                 'FedEx_Box_10kg' => 'FedEx Box 10 kg (15.81 x 12.94 x 10.19 in)',
                 'FedEx_Box_25kg' => 'FedEx Box 25 kg (54.80 x 42.10 x 33.50 in)',
                 'FedEx_Box_Extra_Large_1' => 'FedEx Box Extra Large 1 (11.88 x 11.00 x 10.75 in)',
@@ -55,8 +59,8 @@ class MerchantFulfillment extends \Ess\M2ePro\Helper\AbstractHelper
                 'FedEx_Pak_2' => 'FedEx Pak 2 (12.75 x 10.25 x 0.80 in)',
                 'FedEx_Tube' => 'FedEx Tube (38.00 x 6.00 x 6.00 in)',
                 'FedEx_XL_Pak' => 'FedEx XL Pak (17.50 x 20.75 x 2.00 in)'
-            ),
-            'UPS' => array(
+            ],
+            'UPS' => [
                 'UPS_Box_10kg' => 'UPS Box 10 kg (41.00 x 33.50 x 26.50 cm)',
                 'UPS_Box_25kg' => 'UPS Box 25 kg (48.40 x 43.30 x 35.00 cm)',
                 'UPS_Express_Box' => 'UPS Express Box (46.00 x 31.50 x 9.50 cm)',
@@ -71,8 +75,8 @@ class MerchantFulfillment extends \Ess\M2ePro\Helper\AbstractHelper
                 'UPS_Laboratory_Pak' => 'UPS Laboratory Pak (17.25 x 12.75 x 2.00 in)',
                 'UPS_Pad_Pak' => 'UPS Pad Pak (14.75 x 11.00 x 2.00 in)',
                 'UPS_Pallet' => 'UPS Pallet (120.00 x 80.00 x 200.00 cm)'
-            ),
-            'USPS' => array(
+            ],
+            'USPS' => [
                 'USPS_Card' => 'USPS Card (6.00 x 4.25 x 0.01 in)',
                 'USPS_Flat' => 'USPS Flat (15.00 x 12.00 x 0.75 in)',
                 'USPS_FlatRateCardboardEnvelope' => 'USPS Flat Rate Cardboard Envelope (12.50 x 9.50 x 4.00 in)',
@@ -93,8 +97,8 @@ class MerchantFulfillment extends \Ess\M2ePro\Helper\AbstractHelper
                 'USPS_RegionalRateBoxC' => 'USPS Regional Rate Box C (15.00 x 12.00 x 12.00 in)',
                 'USPS_SmallFlatRateBox' => 'USPS Small Flat Rate Box (8.69 x 5.44 x 1.75 in)',
                 'USPS_SmallFlatRateEnvelope' => 'USPS Small Flat Rate Envelope (10.00 x 6.00 x 4.00 in)'
-            )
-        );
+            ]
+        ];
     }
 
     //########################################

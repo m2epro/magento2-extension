@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Amazon\Order\Item;
 
 use Ess\M2ePro\Model\AbstractModel;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Amazon\Order\Item
+ */
 class Builder extends AbstractModel
 {
     private $amazonFactory;
@@ -21,8 +25,7 @@ class Builder extends AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
         parent::__construct($helperFactory, $modelFactory, $data);
     }

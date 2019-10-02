@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
 {
     public function execute()
@@ -25,10 +29,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
         }
 
         $autoModes = [
-            \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL => 'Walmart\Listing\AutoAction\Mode\GlobalMode',
-            \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE => 'Walmart\Listing\AutoAction\Mode\Website',
-            \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY => 'Walmart\Listing\AutoAction\Mode\Category',
-            \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE => 'Walmart\Listing\AutoAction\Mode'
+            \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL => 'Walmart_Listing_AutoAction_Mode_GlobalMode',
+            \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE => 'Walmart_Listing_AutoAction_Mode_Website',
+            \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY => 'Walmart_Listing_AutoAction_Mode_Category',
+            \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE => 'Walmart_Listing_AutoAction_Mode'
         ];
 
         if (isset($autoModes[$autoMode])) {

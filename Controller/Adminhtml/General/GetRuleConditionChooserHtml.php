@@ -9,6 +9,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\General;
 
 use Ess\M2ePro\Controller\Adminhtml\General;
 
+/**
+ * Class GetRuleConditionChooserHtml
+ * @package Ess\M2ePro\Controller\Adminhtml\General
+ */
 class GetRuleConditionChooserHtml extends General
 {
     //########################################
@@ -20,7 +24,7 @@ class GetRuleConditionChooserHtml extends General
         switch ($request->getParam('attribute')) {
             case 'sku':
                 $block = $this->createBlock(
-                    'Magento\Product\Rule\Chooser\Sku',
+                    'Magento_Product_Rule_Chooser_Sku',
                     'product_rule_chooser_sku',
                     [
                         'data' => [
@@ -47,7 +51,7 @@ class GetRuleConditionChooserHtml extends General
                 }
 
                 $block = $this->getLayout()->createBlock(
-                    'Magento\Catalog\Block\Adminhtml\Category\Checkboxes\Tree',
+                    \Magento\Catalog\Block\Adminhtml\Category\Checkboxes\Tree::class,
                     'promo_widget_chooser_category_ids',
                     [
                         'data' => [

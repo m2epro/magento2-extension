@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing;
 
+/**
+ * Class TypeSwitcher
+ * @package Ess\M2ePro\Block\Adminhtml\Listing
+ */
 abstract class TypeSwitcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
 {
     const LISTING_TYPE_M2E_PRO       = 'product';

@@ -35,8 +35,7 @@ class ShippingTemplate extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
 
         parent::__construct(
@@ -71,7 +70,7 @@ class ShippingTemplate extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
             return true;
         }
 
-        return (bool)$this->activeRecordFactory->getObject('Amazon\Listing\Product')
+        return (bool)$this->activeRecordFactory->getObject('Amazon_Listing_Product')
             ->getCollection()
             ->addFieldToFilter('template_shipping_template_id', $this->getId())
             ->getSize();
@@ -92,7 +91,7 @@ class ShippingTemplate extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
         }
 
         $this->shippingTemplateSourceModels[$id] = $this->modelFactory->getObject(
-            'Amazon\Template\ShippingTemplate\Source'
+            'Amazon_Template_ShippingTemplate_Source'
         );
 
         $this->shippingTemplateSourceModels[$id]->setMagentoProduct($magentoProduct);
@@ -153,7 +152,7 @@ class ShippingTemplate extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
 
     public function getTemplateNameAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         if ($this->isTemplateNameModeAttribute()) {
             $attributes[] = $this->getTemplateNameAttribute();
@@ -209,26 +208,26 @@ class ShippingTemplate extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'), true);
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id'], true);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('amazon_template_shippingtemplate');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('amazon_template_shippingtemplate');
 
         return parent::save();
     }
 
     public function delete()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('amazon_template_shippingtemplate');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('amazon_template_shippingtemplate');
 
         return parent::delete();
     }

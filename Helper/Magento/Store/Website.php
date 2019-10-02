@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Helper\Magento\Store;
 
+/**
+ * Class Website
+ * @package Ess\M2ePro\Helper\Magento\Store
+ */
 class Website extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    private $defaultWebsite = NULL;
+    private $defaultWebsite = null;
 
     protected $websiteFactory;
     protected $storeManager;
@@ -22,8 +26,7 @@ class Website extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->websiteFactory = $websiteFactory;
         $this->storeManager = $storeManager;
         parent::__construct($helperFactory, $context);
@@ -56,11 +59,12 @@ class Website extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getDefault()
     {
-        if (!is_null($this->defaultWebsite)) {
+        if ($this->defaultWebsite !== null) {
             return $this->defaultWebsite;
         }
 
-        $this->defaultWebsite = $this->storeManager->getWebsite(true);;
+        $this->defaultWebsite = $this->storeManager->getWebsite(true);
+        ;
 
         return $this->defaultWebsite;
     }
@@ -77,7 +81,7 @@ class Website extends \Ess\M2ePro\Helper\AbstractHelper
         try {
             $store = $this->storeManager->getStore($storeId);
         } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
-            return NULL;
+            return null;
         }
 
         return $this->storeManager->getWebsite($store->getWebsiteId());

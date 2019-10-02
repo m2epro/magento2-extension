@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Component\Ebay;
 
+/**
+ * Class PickupStore
+ * @package Ess\M2ePro\Helper\Component\Ebay
+ */
 class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $modelFactory;
@@ -22,8 +26,7 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\Message\ManagerInterface $messageManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->messageManager = $messageManager;
@@ -34,7 +37,7 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isFeatureEnabled()
     {
-        return (int)$this->modelFactory->getObject('Config\Manager\Module')
+        return (int)$this->modelFactory->getObject('Config_Manager_Module')
                                        ->getGroupValue('/ebay/in_store_pickup/', 'mode');
     }
 
@@ -79,12 +82,12 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function validateRequiredFields(array $data)
     {
-        $requiredFields = array(
+        $requiredFields = [
             'name', 'location_id', 'account_id', 'marketplace_id',
             'phone', 'postal_code', 'utc_offset',
             'country', 'region', 'city', 'address_1',
             'business_hours'
-        );
+        ];
 
         foreach ($requiredFields as $requiredField) {
             if (empty($data[$requiredField])) {
@@ -99,7 +102,7 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function prepareRequestData(array $data)
     {
-        $requestData = array();
+        $requestData = [];
         $requestData['location_id'] = $data['location_id'];
         $requestData['location'] = $this->getLocationData($data);
         $requestData['info'] = $this->getInfoData($data);
@@ -110,30 +113,30 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
 
     protected function getLocationData(array $data)
     {
-        $physical = array(
+        $physical = [
             'country' => $data['country'],
             'city' => $data['city'],
             'region' => $data['region'],
             'postal_code' => $data['postal_code'],
             'address_1' => $data['address_1']
-        );
+        ];
 
         if (!empty($data['address_second'])) {
             $physical['address_2'] = $data['address_2'];
         }
 
-        $geoData = array(
+        $geoData = [
             'latitude' => $data['latitude'],
             'longitude' => $data['longitude'],
             'utc_offset' => $data['utc_offset']
-        );
+        ];
 
-        return array('physical' => $physical, 'geo_data' => $geoData);
+        return ['physical' => $physical, 'geo_data' => $geoData];
     }
 
     protected function getInfoData(array $data)
     {
-        $info = array();
+        $info = [];
 
         $info['name'] = $data['name'];
         $info['phone'] = $data['phone'];
@@ -148,7 +151,7 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
     protected function getWorkingHoursData(array $data)
     {
         $weekHours = $this->getHelper('Data')->jsonDecode($data['business_hours']);
-        $weekValues = array(
+        $weekValues = [
             'monday'    => 1,
             'tuesday'   => 2,
             'wednesday' => 3,
@@ -156,9 +159,9 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
             'friday'    => 5,
             'saturday'  => 6,
             'sunday'    => 7
-        );
+        ];
 
-        $parsedWeekHours = array();
+        $parsedWeekHours = [];
         foreach ($weekHours['week_days'] as $weekDay) {
             if (!isset($weekHours['week_settings'][$weekDay])) {
                 continue;
@@ -168,10 +171,10 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $holidaysHours = $this->getHelper('Data')->jsonDecode($data['special_hours']);
-        return array(
+        return [
             'week' => $parsedWeekHours,
             'holidays' => $holidaysHours['date_settings']
-        );
+        ];
     }
 
     //########################################

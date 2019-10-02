@@ -372,7 +372,7 @@ class AmazonBusiness extends AbstractFeature
                 continue;
             }
 
-            $params = (array)@json_decode($processing['params'], true);
+            $params = (array)json_decode($processing['params'], true);
             if (!isset($params['responser_params']['products'])) {
                 continue;
             }

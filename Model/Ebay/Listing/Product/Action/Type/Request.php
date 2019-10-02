@@ -10,12 +10,16 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type;
 
 use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type
+ */
 abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request
 {
     /**
      * @var array
      */
-    private $requestsTypes = array(
+    private $requestsTypes = [
         'selling',
         'description',
         'categories',
@@ -23,12 +27,12 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         'shipping',
         'payment',
         'returnPolicy'
-    );
+    ];
 
     /**
      * @var array[Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abstract]
      */
-    private $requests = array();
+    private $requests = [];
 
     protected $activeRecordFactory;
     protected $ebayFactory;
@@ -42,8 +46,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;
         $this->moduleConfig = $moduleConfig;
@@ -91,24 +94,20 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         $this->setIsVariationItem($this->getEbayListingProduct()->isVariationsReady());
     }
 
-    protected function beforeBuildDataEvent() {}
+    protected function beforeBuildDataEvent()
+    {
+        return null;
+    }
 
     protected function afterBuildDataEvent(array $data)
     {
         if ($this->getIsVariationItem() || isset($data['price_fixed'])) {
-
             $isListingTypeFixed = true;
-
         } elseif (isset($data['price_start'])) {
-
             $isListingTypeFixed = false;
-
-        } elseif (!is_null($this->getEbayListingProduct()->isOnlineAuctionType())) {
-
+        } elseif ($this->getEbayListingProduct()->isOnlineAuctionType() !== null) {
             $isListingTypeFixed = !$this->getEbayListingProduct()->isOnlineAuctionType();
-
         } else {
-
             $isListingTypeFixed = $this->getEbayListingProduct()->isListingTypeFixed();
         }
 
@@ -121,7 +120,8 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
     {
         $data['is_eps_ebay_images_mode'] = $this->getIsEpsImagesMode();
         $data['upload_images_mode'] = (int)$this->moduleConfig->getGroupValue(
-            '/ebay/description/', 'upload_images_mode'
+            '/ebay/description/',
+            'upload_images_mode'
         );
 
         $data = $this->insertOutOfStockControl($data);
@@ -148,7 +148,6 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
     {
         if (!$this->getIsVariationItem() || !$this->getMagentoProduct()->isConfigurableType() ||
             empty($data['variations_sets']) || !is_array($data['variations_sets'])) {
-
             return $data;
         }
 
@@ -167,7 +166,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
     protected function replaceHttpsToHttpOfImagesUrls(array $data)
     {
         if ($data['is_eps_ebay_images_mode'] === false ||
-            (is_null($data['is_eps_ebay_images_mode']) &&
+            ($data['is_eps_ebay_images_mode'] === null &&
                 $data['upload_images_mode'] ==
                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description::UPLOAD_IMAGES_MODE_SELF)) {
             return $data;
@@ -195,7 +194,6 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         if (!$this->getIsVariationItem() ||
             empty($data['item_specifics']) || !is_array($data['item_specifics']) ||
             empty($data['variations_sets']) || !is_array($data['variations_sets'])) {
-
             return $data;
         }
 
@@ -203,7 +201,6 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         $variationAttributes = array_map('strtolower', $variationAttributes);
 
         foreach ($data['item_specifics'] as $key => $itemSpecific) {
-
             if (!in_array(strtolower($itemSpecific['name']), $variationAttributes)) {
                 continue;
             }
@@ -283,6 +280,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
      * @param array $data
      * @return array
      */
+    // todo PHPdoc should be changed
     protected function resolveVariationMpnIssue(array $data)
     {
         if (!$this->getIsVariationItem()) {
@@ -297,7 +295,6 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         }
 
         if (isset($data['variation']) && is_array($data['variation'])) {
-
             foreach ($data['variation'] as &$variationData) {
 
                 /**
@@ -309,7 +306,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
                 }
 
                 if (!isset($variationData['details']['mpn']) &&
-                    ($isMpnOnChannel === true || (is_null($isMpnOnChannel) && !$withoutMpnIssue))
+                    ($isMpnOnChannel === true || ($isMpnOnChannel === null && !$withoutMpnIssue))
                 ) {
                     $variationData['details']['mpn'] = Description::PRODUCT_DETAILS_DOES_NOT_APPLY;
                 }
@@ -322,9 +319,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
     protected function doReplaceVariationSpecifics(array $data, array $replacements)
     {
         if (isset($data['variation_image']['specific'])) {
-
             foreach ($replacements as $findIt => $replaceBy) {
-
                 if ($data['variation_image']['specific'] == $findIt) {
                     $data['variation_image']['specific'] = $replaceBy;
                 }
@@ -332,10 +327,8 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         }
 
         if (isset($data['variation']) && is_array($data['variation'])) {
-
             foreach ($data['variation'] as &$variationItem) {
                 foreach ($replacements as $findIt => $replaceBy) {
-
                     if (!isset($variationItem['specifics'][$findIt])) {
                         continue;
                     }
@@ -347,7 +340,6 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
             unset($variationItem);
 
             foreach ($replacements as $findIt => $replaceBy) {
-
                 if (!isset($data['variations_sets'][$findIt])) {
                     continue;
                 }
@@ -355,16 +347,15 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
                 $data['variations_sets'][$replaceBy] = $data['variations_sets'][$findIt];
                 unset($data['variations_sets'][$findIt]);
 
-                // M2ePro\TRANSLATIONS
-                // The Variational Attribute Label "%replaced_it%" was changed to "%replaced_by%". For Item Specific "%replaced_by%" you select an Attribute by which your Variational Item varies. As it is impossible to send a correct Value for this Item Specific, it’s Label will be used as Variational Attribute Label instead of "%replaced_it%". This replacement cannot be edit in future by Relist/Revise Actions.
                 $this->addWarningMessage(
                     $this->getHelper('Module\Translation')->__(
-                    'The Variational Attribute Label "%replaced_it%" was changed to "%replaced_by%". For Item Specific
-                    "%replaced_by%" you select an Attribute by which your Variational Item varies. As it is impossible
-                    to send a correct Value for this Item Specific, it’s Label will be used as Variational Attribute
-                    Label instead of "%replaced_it%". This replacement cannot be edit in future by
-                    Relist/Revise Actions.',
-                        $findIt, $replaceBy
+                        'The Variational Attribute Label "%replaced_it%" was changed to "%replaced_by%".
+                        For Item Specific "%replaced_by%" you select an Attribute by which your Variational Item
+                        varies. As it is impossible to send a correct Value for this Item Specific, it’s Label will
+                        be used as Variational Attribute Label instead of "%replaced_it%". This replacement cannot be
+                        edit in future by Relist/Revise Actions.',
+                        $findIt,
+                        $replaceBy
                     )
                 );
             }
@@ -376,7 +367,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
     protected function removeImagesIfThereAreNoChanges(array $data)
     {
         /** @var \Ess\M2ePro\Helper\Component\Ebay\Images $imagesHelper */
-        $imagesHelper = $this->getHelper('Component\Ebay\Images');
+        $imagesHelper = $this->getHelper('Component_Ebay_Images');
 
         $additionalData = $this->getListingProduct()->getAdditionalData();
         $metaData = $this->getMetaData();
@@ -385,7 +376,6 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         if (!empty($additionalData[$key]) && !empty($metaData[$key]) && isset($data['images']['images']) &&
             !$imagesHelper->isHashBelated($additionalData[$key]) &&
             $imagesHelper->areHashesTheSame($additionalData[$key], $metaData[$key])) {
-
             unset($data['images']['images']);
             unset($metaData[$key]);
             $this->setMetaData($metaData);
@@ -395,7 +385,6 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         if (!empty($additionalData[$key]) && !empty($metaData[$key]) && isset($data['variation_image']) &&
             !$imagesHelper->isHashBelated($additionalData[$key]) &&
             $imagesHelper->areHashesTheSame($additionalData[$key], $metaData[$key])) {
-
             unset($data['variation_image']);
             unset($metaData[$key]);
             $this->setMetaData($metaData);
@@ -409,7 +398,6 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
     protected function collectRequestsWarningMessages()
     {
         foreach ($this->requestsTypes as $requestType) {
-
             $messages = $this->getRequest($requestType)->getWarningMessages();
 
             foreach ($messages as $message) {
@@ -425,7 +413,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         $additionalData = $this->getListingProduct()->getAdditionalData();
 
         if (!isset($additionalData['is_eps_ebay_images_mode'])) {
-            return NULL;
+            return null;
         }
 
         return $additionalData['is_eps_ebay_images_mode'];

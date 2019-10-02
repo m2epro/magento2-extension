@@ -8,25 +8,29 @@
 
 namespace Ess\M2ePro\Model\Walmart\Connector\Account\Delete;
 
+/**
+ * Class EntityRequester
+ * @package Ess\M2ePro\Model\Walmart\Connector\Account\Delete
+ */
 class EntityRequester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Requester
 {
     //########################################
 
     public function getRequestData()
     {
-        return array();
+        return [];
     }
 
     protected function getCommand()
     {
-        return array('account', 'delete', 'entity');
+        return ['account', 'delete', 'entity'];
     }
 
     //########################################
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Walmart\Connector\Account\Delete\ProcessingRunner';
+        return 'Walmart_Connector_Account_Delete_ProcessingRunner';
     }
 
     //########################################

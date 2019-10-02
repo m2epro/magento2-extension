@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Stores;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Stores
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $listing;
@@ -35,7 +39,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        $pickupStoreCollection = $this->activeRecordFactory->getObject('Ebay\Account\PickupStore')
+        $pickupStoreCollection = $this->activeRecordFactory->getObject('Ebay_Account_PickupStore')
                                                            ->getCollection();
         $pickupStoreCollection->addFieldToFilter('account_id', $this->listing->getAccountId());
         $pickupStoreCollection->addFieldToFilter('marketplace_id', $this->listing->getMarketplaceId());
@@ -48,17 +52,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('name', array(
+        $this->addColumn('name', [
             'header'    => $this->__('Name / Location ID'),
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'name',
             'escape'    => false,
-            'frame_callback' => array($this, 'callbackColumnTitle'),
-            'filter_condition_callback' => array($this, 'callbackFilterTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+        ]);
 
-        $this->addColumn('location_id', array(
+        $this->addColumn('location_id', [
             'header'    => $this->__('Address'),
             'align'     => 'left',
             'type'      => 'text',
@@ -66,11 +70,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'width'     => '350px',
             'sortable'  => false,
             'escape'    => true,
-            'frame_callback' => array($this, 'callbackColumnLocationId'),
-            'filter_condition_callback' => array($this, 'callbackFilterLocation')
-        ));
+            'frame_callback' => [$this, 'callbackColumnLocationId'],
+            'filter_condition_callback' => [$this, 'callbackFilterLocation']
+        ]);
 
-        $this->addColumn('phone', array(
+        $this->addColumn('phone', [
             'header'    => $this->__('Details'),
             'align'     => 'left',
             'type'      => 'text',
@@ -78,9 +82,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'width'     => '250px',
             'sortable'  => false,
             'escape'    => true,
-            'frame_callback' => array($this, 'callbackColumnDetails'),
-            'filter_condition_callback' => array($this, 'callbackFilterDetails')
-        ));
+            'frame_callback' => [$this, 'callbackColumnDetails'],
+            'filter_condition_callback' => [$this, 'callbackFilterDetails']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -93,10 +97,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // Set fake action
         // ---------------------------------------
         if ($this->getMassactionBlock()->getCount() == 0) {
-            $this->getMassactionBlock()->addItem('fake', array(
+            $this->getMassactionBlock()->addItem('fake', [
                 'label' => '&nbsp;&nbsp;&nbsp;&nbsp;',
                 'url'   => '#',
-            ));
+            ]);
             // Header of grid with massactions is rendering in other way, than with no massaction
             // so it causes broken layout when the actions are absent
             $this->css->add(<<<CSS

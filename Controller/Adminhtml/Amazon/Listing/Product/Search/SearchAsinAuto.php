@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class SearchAsinAuto
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search
+ */
 class SearchAsinAuto extends Main
 {
     public function execute()
@@ -24,7 +28,7 @@ class SearchAsinAuto extends Main
             $productsIds = explode(',', $productsIds);
         }
 
-        $productsToSearch = array();
+        $productsToSearch = [];
         foreach ($productsIds as $productId) {
 
             /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
@@ -42,7 +46,7 @@ class SearchAsinAuto extends Main
 
         if (!empty($productsToSearch)) {
             /** @var $dispatcher \Ess\M2ePro\Model\Amazon\Search\Dispatcher */
-            $dispatcher = $this->modelFactory->getObject('Amazon\Search\Dispatcher');
+            $dispatcher = $this->modelFactory->getObject('Amazon_Search_Dispatcher');
             $result = $dispatcher->runSettings($productsToSearch);
 
             if ($result === false) {

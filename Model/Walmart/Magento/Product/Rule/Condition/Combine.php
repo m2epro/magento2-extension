@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Condition;
 
+/**
+ * Class Combine
+ * @package Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Condition
+ */
 class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
 {
     //########################################
@@ -17,10 +21,9 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Rule\Model\Condition\Context $context,
         array $data = []
-    )
-    {
+    ) {
         parent::__construct($helperFactory, $modelFactory, $context, $data);
-        $this->setType('M2ePro/Walmart\Magento\Product\Rule\Condition\Combine');
+        $this->setType('Walmart\Magento\Product\Rule\Condition\Combine');
     }
 
     //########################################
@@ -41,15 +44,15 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
     {
         $attributes = $this->getCustomOptionsAttributes();
         return !empty($attributes) ?
-            $this->getOptions('M2ePro/Walmart\Magento\Product\Rule\Condition\Product', $attributes, array('walmart'))
-            : array();
+            $this->getOptions('Walmart\Magento\Product\Rule\Condition\Product', $attributes, ['walmart'])
+            : [];
     }
 
     protected function getCustomOptionsAttributes()
     {
         $translation = $this->helperFactory->getObject('Module\Translation');
 
-        return array(
+        return [
             'walmart_sku'                  => $translation->__('SKU'),
             'walmart_gtin'                 => $translation->__('GTIN'),
             'walmart_upc'                  => $translation->__('UPC'),
@@ -64,7 +67,7 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
             'walmart_status'               => $translation->__('Status'),
             'walmart_details_data_changed' => $translation->__('Item Details need to be updated'),
             'walmart_online_price_invalid' => $translation->__('Pricing Rules violated'),
-        );
+        ];
     }
 
     //########################################

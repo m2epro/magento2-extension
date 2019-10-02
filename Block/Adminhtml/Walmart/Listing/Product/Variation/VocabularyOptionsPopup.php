@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation;
 
+/**
+ * Class VocabularyOptionsPopup
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation
+ */
 class VocabularyOptionsPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     public function _construct()

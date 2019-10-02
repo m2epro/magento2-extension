@@ -10,13 +10,17 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs;
 
 use Magento\Framework\Message\MessageInterface;
 
+/**
+ * Class Synchronization
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs
+ */
 class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
     //########################################
 
     protected function _prepareForm()
     {
-        $synchronizationConfig = $this->modelFactory->getObject('Config\Manager\Synchronization');
+        $synchronizationConfig = $this->modelFactory->getObject('Config_Manager_Synchronization');
 
         // ---------------------------------------
         $listingsMode = $synchronizationConfig->getGroupValue('/ebay/templates/', 'mode');
@@ -27,13 +31,15 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
         // ---------------------------------------
 
         $this->reviseAllStartDate = $synchronizationConfig->getGroupValue(
-            '/ebay/templates/synchronization/revise/total/', 'start_date'
+            '/ebay/templates/synchronization/revise/total/',
+            'start_date'
         );
         $this->reviseAllStartDate && $this->reviseAllStartDate = $this->templateContext->_localeDate
             ->formatDate($this->reviseAllStartDate, \IntlDateFormatter::MEDIUM);
 
         $this->reviseAllEndDate = $synchronizationConfig->getGroupValue(
-            '/ebay/templates/synchronization/revise/total/', 'end_date'
+            '/ebay/templates/synchronization/revise/total/',
+            'end_date'
         );
         $this->reviseAllEndDate && $this->reviseAllEndDate = $this->templateContext->_localeDate
             ->formatDate($this->reviseAllEndDate, \IntlDateFormatter::MEDIUM);
@@ -41,18 +47,19 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
 
         // ---------------------------------------
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
-        $data = array(
+        $data = [
             'class'   => 'ok_button',
             'label'   => $this->__('Confirm'),
             'onclick' => "ReviseAllConfirmPopup.closeModal(); SynchronizationObj.runReviseAll('{$component}');",
-        );
+        ];
         $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
         $this->setChild('revise_all_confirm_popup_ok_button', $buttonBlock);
         // ---------------------------------------
 
         // ---------------------------------------
         $this->inspectorMode = (int)$synchronizationConfig->getGroupValue(
-            '/global/magento_products/inspector/','mode'
+            '/global/magento_products/inspector/',
+            'mode'
         );
         // ---------------------------------------
 
@@ -63,14 +70,16 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
             ]
         ]);
 
-        $fieldset = $form->addFieldset('ebay_synchronization_templates',
+        $fieldset = $form->addFieldset(
+            'ebay_synchronization_templates',
             [
                 'legend' => $this->__('M2E Pro Listings Synchronization'),
                 'collapsable' => false,
             ]
         );
 
-        $fieldset->addField('templates_mode',
+        $fieldset->addField(
+            'templates_mode',
             self::SELECT,
             [
                 'name'        => 'templates_mode',
@@ -90,20 +99,22 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
         );
 
         if ($this->isShowReviseAll()) {
-            $fieldset->addField('block_notice_ebay_synchronization_revise_all',
+            $fieldset->addField(
+                'block_notice_ebay_synchronization_revise_all',
                 self::MESSAGES,
                 [
                     'messages' => [
                         [
                             'type' => MessageInterface::TYPE_NOTICE,
                             'content' => $this->__(
-                                    'If your eBay Listings for some reason were asynchronized with the Products in
+                                'If your eBay Listings for some reason were asynchronized with the Products in
                                  Magento, <a href="javascript:" onclick="%script_code%">turn on</a> the Revise All
                                  Action to catch data up.
                                  <br/>Revise is performed by the Inventory Synchronization, 100 Items per a cycle.
                                  <br/><br/>',
-                                    'SynchronizationObj.showReviseAllConfirmPopup(\''.
-                                    \Ess\M2ePro\Helper\Component\Ebay::NICK.'\');') .
+                                'SynchronizationObj.showReviseAllConfirmPopup(\''.
+                                \Ess\M2ePro\Helper\Component\Ebay::NICK.'\');'
+                            ) .
                                 '<span id="ebay_revise_all_start" style="display: none">
 
                                         <span style="color: blue">
@@ -132,14 +143,16 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
             );
         }
 
-        $fieldset = $form->addFieldset('ebay_synchronization_orders',
+        $fieldset = $form->addFieldset(
+            'ebay_synchronization_orders',
             [
                 'legend' => $this->__('Orders Synchronization'),
                 'collapsable' => false,
             ]
         );
 
-        $fieldset->addField('templates_orders_mode',
+        $fieldset->addField(
+            'templates_orders_mode',
             self::SELECT,
             [
                 'name'        => 'templates_orders_mode',
@@ -160,14 +173,16 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
             ]
         );
 
-        $fieldset = $form->addFieldset('ebay_synchronization_other_listings',
+        $fieldset = $form->addFieldset(
+            'ebay_synchronization_other_listings',
             [
                 'legend' => $this->__('3rd Party Synchronization '),
                 'collapsable' => false,
             ]
         );
 
-        $fieldset->addField('templates_other_listings_mode',
+        $fieldset->addField(
+            'templates_other_listings_mode',
             self::SELECT,
             [
                 'name'        => 'templates_other_listings_mode',
@@ -194,8 +209,9 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
 
     protected function _toHtml()
     {
-        $reviseAllInProcessingState = $this->modelFactory->getObject('Config\Manager\Synchronization')->getGroupValue(
-            '/ebay/templates/synchronization/revise/total/', 'last_listing_product_id'
+        $reviseAllInProcessingState = $this->modelFactory->getObject('Config_Manager_Synchronization')->getGroupValue(
+            '/ebay/templates/synchronization/revise/total/',
+            'last_listing_product_id'
         );
 
         $js = "require([
@@ -214,7 +230,7 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
         if ($this->isShowReviseAll()) {
             $js .=
                 'SynchronizationObj.initReviseAllInfo(' .
-                $this->getHelper('Data')->jsonEncode(!is_null($reviseAllInProcessingState)) . ',\'' .
+                $this->getHelper('Data')->jsonEncode($reviseAllInProcessingState !== null) . ',\'' .
                 $this->reviseAllStartDate . '\',\'' .
                 $this->reviseAllEndDate . '\',\'' .
                 \Ess\M2ePro\Helper\Component\Ebay::NICK .'\'
@@ -246,8 +262,8 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
                 '*/ebay_synchronization/save'
             ),
             'synch_formSubmit' => $this->getUrl('*/ebay_synchronization/save'),
-            'logViewUrl' => $this->getUrl('*/ebay_synchronization_log/index',array('back'=>$this->getHelper('Data')
-                ->makeBackUrlParam('*/ebay_synchronization/index'))),
+            'logViewUrl' => $this->getUrl('*/ebay_synchronization_log/index', ['back'=>$this->getHelper('Data')
+                ->makeBackUrlParam('*/ebay_synchronization/index')]),
 
             'runReviseAll'        => $this->getUrl('*/ebay_synchronization/runReviseAll'),
             'runAllEnabledNow'    => $this->getUrl('*/ebay_synchronization/runAllEnabledNow'),
@@ -278,7 +294,8 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
     protected function isShowReviseAll()
     {
         return (bool)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/view/synchronization/revise_total/','show'
+            '/view/synchronization/revise_total/',
+            'show'
         );
     }
 

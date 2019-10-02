@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager;
 
+/**
+ * Class LogicalUnit
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager
+ */
 abstract class LogicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\AbstractModel
 {
     //########################################
@@ -30,13 +34,15 @@ abstract class LogicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Var
 
     public function getProductAttributes()
     {
-        return $this->getListingProduct()->getSetting('additional_data', 'variation_product_attributes', array());
+        return $this->getListingProduct()->getSetting('additional_data', 'variation_product_attributes', []);
     }
 
     public function resetProductAttributes($save = true)
     {
         $this->getListingProduct()->setSetting(
-            'additional_data', 'variation_product_attributes', $this->getMagentoAttributes()
+            'additional_data',
+            'variation_product_attributes',
+            $this->getMagentoAttributes()
         );
 
         $save && $this->getListingProduct()->save();

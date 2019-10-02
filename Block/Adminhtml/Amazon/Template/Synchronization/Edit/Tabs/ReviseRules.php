@@ -11,15 +11,19 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Template\Synchronization;
 
+/**
+ * Class ReviseRules
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs
+ */
 class ReviseRules extends AbstractForm
 {
     protected function _prepareForm()
     {
         $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
-        $formData = !is_null($template)
+        $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $defaults = array(
+        $defaults = [
             'revise_update_qty'                              => Synchronization::REVISE_UPDATE_QTY_YES,
             'revise_update_qty_max_applied_value_mode'       => Synchronization::REVISE_MAX_AFFECTED_QTY_MODE_ON,
             'revise_update_qty_max_applied_value'
@@ -41,7 +45,7 @@ class ReviseRules extends AbstractForm
                     => Synchronization::REVISE_CHANGE_PRODUCT_TAX_CODE_TEMPLATE_YES,
             'revise_change_listing'
                     => \Ess\M2ePro\Model\Template\Synchronization::REVISE_CHANGE_LISTING_YES
-        );
+        ];
 
         $formData = array_merge($defaults, $formData);
 
@@ -59,8 +63,8 @@ Revise Rules are specific conditions that trigger an automatic full or partial P
 
 <ul>
     <li><p>
-        <strong>Partial Revise</strong> - Amazon Item will be partially updated based on the changes made to
-        certain Magento Product parameter you have enabled in Partial Revise settings.
+        <strong>Partial Revise</strong> - Amazon Item will be partially updated based on the changes made to certain
+        Magento Product parameter you have enabled in Partial Revise settings.
     </p></li><br>
     <li><p>
         <strong>Full Revise</strong> - Amazon Item will be fully updated after the changes made to at least one
@@ -87,7 +91,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('revise_update_qty',
+        $fieldset->addField(
+            'revise_update_qty',
             self::SELECT,
             [
                 'name' => 'revise_update_qty',
@@ -104,7 +109,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('revise_update_qty_max_applied_value_mode',
+        $fieldset->addField(
+            'revise_update_qty_max_applied_value_mode',
             self::SELECT,
             [
                 'container_id' => 'revise_update_qty_max_applied_value_mode_tr',
@@ -145,7 +151,8 @@ HTML
             []
         );
 
-        $fieldset->addField('revise_update_price',
+        $fieldset->addField(
+            'revise_update_price',
             self::SELECT,
             [
                 'name' => 'revise_update_price',
@@ -162,7 +169,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('revise_update_price_max_allowed_deviation_mode',
+        $fieldset->addField(
+            'revise_update_price_max_allowed_deviation_mode',
             self::SELECT,
             [
                 'container_id' => 'revise_update_price_max_allowed_deviation_mode_tr',
@@ -187,7 +195,8 @@ HTML
             $priceDeviationValue >= 5 && $percentageStep = 1;
         }
 
-        $fieldset->addField('revise_update_price_max_allowed_deviation',
+        $fieldset->addField(
+            'revise_update_price_max_allowed_deviation',
             self::SELECT,
             [
                 'container_id' => 'revise_update_price_max_allowed_deviation_tr',
@@ -219,7 +228,8 @@ HTML
             []
         );
 
-        $fieldset->addField('revise_update_details',
+        $fieldset->addField(
+            'revise_update_details',
             self::SELECT,
             [
                 'name' => 'revise_update_details',
@@ -238,7 +248,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('revise_update_images',
+        $fieldset->addField(
+            'revise_update_images',
             self::SELECT,
             [
                 'name' => 'revise_update_images',
@@ -263,7 +274,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('revise_change_listing',
+        $fieldset->addField(
+            'revise_change_listing',
             self::SELECT,
             [
                 'name' => 'revise_change_listing',
@@ -277,7 +289,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('revise_change_selling_format_template',
+        $fieldset->addField(
+            'revise_change_selling_format_template',
             self::SELECT,
             [
                 'name' => 'revise_change_selling_format_template',
@@ -295,7 +308,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('revise_change_description_template',
+        $fieldset->addField(
+            'revise_change_description_template',
             self::SELECT,
             [
                 'name' => 'revise_change_description_template',

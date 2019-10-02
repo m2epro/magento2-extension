@@ -11,11 +11,15 @@ namespace Ess\M2ePro\Block\Adminhtml\General\CreateAttribute;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Magento\Attribute\Builder as AttributeBuilder;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\General\CreateAttribute
+ */
 class Form extends AbstractForm
 {
     protected $handlerId;
 
-    protected $allowedTypes = array();
+    protected $allowedTypes = [];
     protected $applyToAllAttributeSets = true;
 
     //########################################
@@ -30,7 +34,8 @@ class Form extends AbstractForm
             'id' => 'edit_form'
         ]]);
 
-        $form->addField('create_attribute_help_block',
+        $form->addField(
+            'create_attribute_help_block',
             self::HELP_BLOCK,
             [
                 'content' => $this->__('
@@ -42,8 +47,7 @@ class Form extends AbstractForm
                 depends on the Option for which the Attribute is being created.<br/>
                 <strong>Note:</strong> This Option does not imply automatic Product Attribute Value set up.
                 After the Attribute
-                becomes available in Magento, you should Manually provide the Value for the Product.'
-                )
+                becomes available in Magento, you should Manually provide the Value for the Product.')
             ]
         );
 
@@ -51,7 +55,8 @@ class Form extends AbstractForm
             'legend' => ' ', 'collapsable' => false
         ]);
 
-        $fieldset->addField('store_label',
+        $fieldset->addField(
+            'store_label',
             'text',
             [
                 'name' => 'store_label',
@@ -63,7 +68,8 @@ class Form extends AbstractForm
         $classes  = 'validate-length maximum-length-30 M2ePro-validate-attribute-code ';
         $classes .= 'M2ePro-validate-attribute-code-to-be-unique';
 
-        $fieldset->addField('code',
+        $fieldset->addField(
+            'code',
             'text',
             [
                 'name' => 'code',
@@ -81,7 +87,8 @@ class Form extends AbstractForm
             ];
         }
 
-        $fieldset->addField('input_type_select',
+        $fieldset->addField(
+            'input_type_select',
             self::SELECT,
             [
                 'name' => 'input_type',
@@ -93,7 +100,8 @@ class Form extends AbstractForm
         );
 
         if ($this->isOneOnlyTypeAllowed()) {
-            $fieldset->addField('input_type',
+            $fieldset->addField(
+                'input_type',
                 'hidden',
                 [
                     'name' => 'input_type',
@@ -102,7 +110,8 @@ class Form extends AbstractForm
             );
         }
 
-        $fieldset->addField('scope',
+        $fieldset->addField(
+            'scope',
             self::SELECT,
             [
                 'name' => 'scope',
@@ -120,7 +129,8 @@ class Form extends AbstractForm
             ]
         );
 
-        $fieldset->addField('default_value',
+        $fieldset->addField(
+            'default_value',
             'text',
             [
                 'name' => 'default_value',
@@ -130,7 +140,7 @@ class Form extends AbstractForm
 
         $attributeSets = [];
         $values = [];
-        foreach($this->getHelper('Magento\AttributeSet')->getAll() as $item) {
+        foreach ($this->getHelper('Magento\AttributeSet')->getAll() as $item) {
             $attributeSets[] = [
                 'value' => $item['attribute_set_id'],
                 'label' => $item['attribute_set_name']
@@ -138,7 +148,8 @@ class Form extends AbstractForm
             $values[] = $item['attribute_set_id'];
         }
 
-        $fieldset->addField('attribute_sets_multiselect',
+        $fieldset->addField(
+            'attribute_sets_multiselect',
             'multiselect',
             [
                 'name' => 'attribute_sets[]',
@@ -152,7 +163,8 @@ class Form extends AbstractForm
         );
 
         if ($this->applyToAll()) {
-            $fieldset->addField('attribute_sets_multiselect_note',
+            $fieldset->addField(
+                'attribute_sets_multiselect_note',
                 'note',
                 [
                     'label' => $this->__('Attribute Sets'),
@@ -182,7 +194,7 @@ class Form extends AbstractForm
         ]);
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Magento\Attribute\Builder')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Magento\Attribute\Builder::class)
         );
 
         $this->jsUrl->addUrls([
@@ -203,7 +215,7 @@ class Form extends AbstractForm
             return handler.validateAttributeCodeToBeUnique(value, element);
         }, M2ePro.translator.translate('Attribute with the same code already exists'));
 JS
-);
+        );
 
         return parent::_toHtml();
     }
@@ -212,7 +224,7 @@ JS
 
     public function handlerId($value = null)
     {
-        if (is_null($value)) {
+        if ($value === null) {
             return $this->handlerId;
         }
 
@@ -222,7 +234,7 @@ JS
 
     public function applyToAll($value = null)
     {
-        if (is_null($value)) {
+        if ($value === null) {
             return $this->applyToAllAttributeSets;
         }
 
@@ -232,7 +244,7 @@ JS
 
     public function allowedTypes($value = null)
     {
-        if (is_null($value)) {
+        if ($value === null) {
             return count($this->allowedTypes) ? $this->allowedTypes : $this->getAllAvailableTypes();
         }
 
@@ -244,7 +256,7 @@ JS
 
     public function getTitleByType($type)
     {
-        $titles =  array(
+        $titles =  [
             AttributeBuilder::TYPE_TEXT            => $this->__('Text Field'),
             AttributeBuilder::TYPE_TEXTAREA        => $this->__('Text Area'),
             AttributeBuilder::TYPE_PRICE           => $this->__('Price'),
@@ -252,14 +264,14 @@ JS
             AttributeBuilder::TYPE_MULTIPLE_SELECT => $this->__('Multiple Select'),
             AttributeBuilder::TYPE_DATE            => $this->__('Date'),
             AttributeBuilder::TYPE_BOOLEAN         => $this->__('Yes/No')
-        );
+        ];
 
         return isset($titles[$type]) ? $titles[$type] : $this->__('N/A');
     }
 
     public function getAllAvailableTypes()
     {
-        return array(
+        return [
             AttributeBuilder::TYPE_TEXT,
             AttributeBuilder::TYPE_TEXTAREA,
             AttributeBuilder::TYPE_PRICE,
@@ -267,7 +279,7 @@ JS
             AttributeBuilder::TYPE_MULTIPLE_SELECT,
             AttributeBuilder::TYPE_DATE,
             AttributeBuilder::TYPE_BOOLEAN
-        );
+        ];
     }
 
     public function isOneOnlyTypeAllowed()

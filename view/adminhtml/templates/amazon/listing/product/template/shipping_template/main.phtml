@@ -1,11 +1,20 @@
 <?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
 /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ShippingTemplate $block */
+
 ?>
 
 <div id="template_shippingTemplate_pop_up_content">
     <div>
 
-        <?php if(count($block->getMessages()) > 0) : ?>
+        <?php if (!empty($block->getMessages())) : ?>
             <div id="template_shippingTemplate_error_block">
                 <?php echo $block->getWarnings(); ?>
             </div>

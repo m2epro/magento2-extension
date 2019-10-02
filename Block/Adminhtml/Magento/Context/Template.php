@@ -12,6 +12,10 @@ use Magento\Backend\Block\Template\Context;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
+/**
+ * Class Template
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Context
+ */
 class Template extends Context
 {
     use Traits\RendererTrait;
@@ -76,8 +80,7 @@ class Template extends Context
         \Magento\Framework\Data\Form\FormKey $formKey,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         \Magento\Cms\Model\Wysiwyg\Config $wysiwygConfig
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;

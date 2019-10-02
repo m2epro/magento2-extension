@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class Shipping
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template
+ */
 abstract class Shipping extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template
 {
     protected $transactionFactory;
@@ -20,8 +24,7 @@ abstract class Shipping extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         Context $context
-    )
-    {
+    ) {
         $this->transactionFactory = $transactionFactory;
         parent::__construct($amazonFactory, $context);
     }
@@ -35,7 +38,7 @@ abstract class Shipping extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
         }
 
         $collection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-        $collection->addFieldToFilter('id', array('in' => $productsIds));
+        $collection->addFieldToFilter('id', ['in' => $productsIds]);
         // ---------------------------------------
 
         if ($collection->getSize() == 0) {
@@ -44,14 +47,15 @@ abstract class Shipping extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
 
         /** @var \Magento\Framework\DB\Transaction $transaction */
         $transaction = $this->transactionFactory->create();
-        $oldSnapshots = array();
+        $oldSnapshots = [];
 
         try {
             foreach ($collection->getItems() as $listingProduct) {
                 /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
                 $oldSnapshots[$listingProduct->getId()] = array_merge(
-                    $listingProduct->getDataSnapshot(), $listingProduct->getChildObject()->getDataSnapshot()
+                    $listingProduct->getDataSnapshot(),
+                    $listingProduct->getChildObject()->getDataSnapshot()
                 );
 
                 $field = $shippingMode == \Ess\M2ePro\Model\Amazon\Account::SHIPPING_MODE_OVERRIDE
@@ -76,7 +80,8 @@ abstract class Shipping extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
 
             $listingProduct->getChildObject()->setSynchStatusNeed(
                 array_merge(
-                    $listingProduct->getDataSnapshot(), $listingProduct->getChildObject()->getDataSnapshot()
+                    $listingProduct->getDataSnapshot(),
+                    $listingProduct->getChildObject()->getDataSnapshot()
                 ),
                 $oldSnapshots[$listingProduct->getId()]
             );

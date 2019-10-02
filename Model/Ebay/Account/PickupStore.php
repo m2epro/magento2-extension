@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Account;
 
+/**
+ * Class PickupStore
+ * @package Ess\M2ePro\Model\Ebay\Account
+ */
 class PickupStore extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     const QTY_MODE_PRODUCT = 1;
@@ -29,7 +33,7 @@ class PickupStore extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('ebay_account_pickup_store');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_account_pickup_store');
         return parent::save();
     }
 
@@ -41,21 +45,21 @@ class PickupStore extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             return false;
         }
 
-        if (is_null($this->getId())) {
+        if ($this->getId() === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Method require loaded instance first');
         }
 
         $connection = $this->getResource()->getConnection();
         $connection->delete(
-            $this->activeRecordFactory->getObject('Ebay\Listing\Product\PickupStore')->getResource()->getMainTable(),
-            array('account_pickup_store_id = ?' => $this->getId())
+            $this->activeRecordFactory->getObject('Ebay_Listing_Product_PickupStore')->getResource()->getMainTable(),
+            ['account_pickup_store_id = ?' => $this->getId()]
         );
         $connection->delete(
-            $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\State')->getResource()->getMainTable(),
-            array('account_pickup_store_id = ?' => $this->getId())
+            $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')->getResource()->getMainTable(),
+            ['account_pickup_store_id = ?' => $this->getId()]
         );
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('ebay_account_pickup_store');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_account_pickup_store');
         return parent::delete();
     }
 
@@ -208,7 +212,7 @@ class PickupStore extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function getQtySource()
     {
-        return array(
+        return [
             'mode'      => $this->getQtyMode(),
             'value'     => $this->getQtyNumber(),
             'attribute' => $this->getData('qty_custom_attribute'),
@@ -216,12 +220,12 @@ class PickupStore extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             'qty_min_posted_value'      => $this->getQtyMinPostedValue(),
             'qty_max_posted_value'      => $this->getQtyMaxPostedValue(),
             'qty_percentage'            => $this->getQtyPercentage()
-        );
+        ];
     }
 
     public function getQtyAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getQtySource();
 
         if ($src['mode'] == self::QTY_MODE_ATTRIBUTE) {

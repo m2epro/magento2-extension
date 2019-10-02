@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization;
 
 use Ess\M2ePro\Model\Ebay\Template\Synchronization as SynchronizationPolicy;
 
+/**
+ * Class Relist
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization
+ */
 class Relist extends AbstractModel
 {
     private $cacheConfig;
@@ -76,26 +80,27 @@ class Relist extends AbstractModel
 
     private function immediatelyChangedProducts()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Immediately when Product was changed');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Immediately when Product was changed');
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstances(
-            array(\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE)
+            [\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE]
         );
 
         $lpForAdvancedRules = [];
 
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
                 $action = $this->getAction($listingProduct);
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
                 $this->prepareConfigurator($listingProduct, $configurator, $action);
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, $action, $configurator
+                    $listingProduct,
+                    $action,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -111,22 +116,19 @@ class Relist extends AbstractModel
                 $ebayTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
 
                 if ($ebayTemplate->isRelistAdvancedRulesEnabled()) {
-
                     $templateId = $ebayTemplate->getId();
                     $storeId    = $listingProduct->getListing()->getStoreId();
                     $magentoProductId  = $listingProduct->getProductId();
 
                     $lpForAdvancedRules[$templateId][$storeId][$magentoProductId][] = $listingProduct;
-
                 } else {
-
                     $this->getRunner()->addProduct(
-                        $listingProduct, $action, $configurator
+                        $listingProduct,
+                        $action,
+                        $configurator
                     );
                 }
-
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -144,13 +146,12 @@ class Relist extends AbstractModel
         $affectedListingProducts = [];
 
         try {
-
             $affectedListingProducts = $this->getInspector()->getMeetAdvancedRequirementsProducts(
-                $lpForAdvancedRules, SynchronizationPolicy::RELIST_ADVANCED_RULES_PREFIX, 'relist'
+                $lpForAdvancedRules,
+                SynchronizationPolicy::RELIST_ADVANCED_RULES_PREFIX,
+                'relist'
             );
-
         } catch (\Exception $exception) {
-
             foreach ($lpForAdvancedRules as $templateId => $productsByTemplate) {
                 foreach ($productsByTemplate as $storeId => $productsByStore) {
                     foreach ($productsByStore as $magentoProductId => $productsByMagentoProduct) {
@@ -166,19 +167,18 @@ class Relist extends AbstractModel
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
             try {
-
                 $action = $this->getAction($listingProduct);
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
                 $this->prepareConfigurator($listingProduct, $configurator, $action);
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, $action, $configurator
+                    $listingProduct,
+                    $action,
+                    $configurator
                 );
-
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -196,12 +196,13 @@ class Relist extends AbstractModel
         return \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST;
     }
 
-    private function prepareConfigurator(\Ess\M2ePro\Model\Listing\Product $listingProduct,
-                                         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator,
-                                         $action)
-    {
+    private function prepareConfigurator(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator,
+        $action
+    ) {
         if ($action != \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST) {
-            $configurator->setParams(array('replaced_action' => \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST));
+            $configurator->setParams(['replaced_action' => \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST]);
         }
 
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */

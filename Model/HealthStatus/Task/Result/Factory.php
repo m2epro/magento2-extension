@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\HealthStatus\Task\Result;
 
 use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 
+/**
+ * Class Factory
+ * @package Ess\M2ePro\Model\HealthStatus\Task\Result
+ */
 class Factory
 {
     /** @var \Ess\M2ePro\Model\HealthStatus\Task\Result\LocationResolver */
@@ -29,7 +33,7 @@ class Factory
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Framework\ObjectManagerInterface $objectManager
-    ){
+    ) {
         $this->locationResolver = $locationResolver;
         $this->_objectManager   = $objectManager;
         $this->helperFactory    = $helperFactory;

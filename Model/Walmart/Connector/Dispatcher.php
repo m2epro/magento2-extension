@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Connector;
 
+/**
+ * Class Dispatcher
+ * @package Ess\M2ePro\Model\Walmart\Connector
+ */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $nameBuilder;
@@ -20,8 +24,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->nameBuilder = $nameBuilder;
         $this->walmartFactory = $walmartFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -29,37 +32,39 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     //####################################
 
-    public function getConnector($entity, $type, $name, array $params = array(), $account = NULL)
+    public function getConnector($entity, $type, $name, array $params = [], $account = null)
     {
         $classParts = ['Walmart\Connector'];
 
         !empty($entity) && $classParts[] = $entity;
-        !empty($type)   && $classParts[] = $type;
-        !empty($name)   && $classParts[] = $name;
+        !empty($type) && $classParts[] = $type;
+        !empty($name) && $classParts[] = $name;
 
         $className = $this->nameBuilder->buildClassName($classParts);
 
         if (is_int($account) || is_string($account)) {
             $account = $this->walmartFactory->getCachedObjectLoaded(
-                'Account',(int)$account
+                'Account',
+                (int)$account
             );
         }
 
         /** @var \Ess\M2ePro\Model\Connector\Command\AbstractModel $connectorObject */
-        $connectorObject = $this->modelFactory->getObject($className, array(
+        $connectorObject = $this->modelFactory->getObject($className, [
             'params' => $params,
             'account' => $account
-        ));
+        ]);
         $connectorObject->setProtocol($this->getProtocol());
 
         return $connectorObject;
     }
 
-    public function getCustomConnector($modelName, array $params = array(), $account = NULL)
+    public function getCustomConnector($modelName, array $params = [], $account = null)
     {
         if (is_int($account) || is_string($account)) {
             $account = $this->walmartFactory->getCachedObjectLoaded(
-                'Account', (int)$account
+                'Account',
+                (int)$account
             );
         }
 
@@ -86,14 +91,18 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         $entity,
         $type,
         $name,
-        array $requestData = array(),
+        array $requestData = [],
         $responseDataKey = null,
         $account = null
     ) {
         return $this->getCustomVirtualConnector(
-            'Connector\Command\RealTime\Virtual',
-            $entity, $type, $name,
-            $requestData, $responseDataKey, $account
+            'Connector_Command_RealTime_Virtual',
+            $entity,
+            $type,
+            $name,
+            $requestData,
+            $responseDataKey,
+            $account
         );
     }
 
@@ -102,14 +111,14 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         $entity,
         $type,
         $name,
-        array $requestData = array(),
+        array $requestData = [],
         $responseDataKey = null,
         $account = null
     ) {
         /** @var \Ess\M2ePro\Model\Connector\Command\RealTime\Virtual $virtualConnector */
         $virtualConnector = $this->modelFactory->getObject($modelName);
         $virtualConnector->setProtocol($this->getProtocol());
-        $virtualConnector->setCommand(array($entity, $type, $name));
+        $virtualConnector->setCommand([$entity, $type, $name]);
         $virtualConnector->setResponseDataKey($responseDataKey);
 
         if (is_int($account) || is_string($account)) {
@@ -136,7 +145,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     private function getProtocol()
     {
-        return $this->modelFactory->getObject('Walmart\Connector\Protocol');
+        return $this->modelFactory->getObject('Walmart_Connector_Protocol');
     }
 
     //####################################

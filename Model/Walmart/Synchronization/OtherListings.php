@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization;
 
+/**
+ * Class OtherListings
+ * @package Ess\M2ePro\Model\Walmart\Synchronization
+ */
 class OtherListings extends AbstractModel
 {
     //########################################
@@ -19,7 +23,7 @@ class OtherListings extends AbstractModel
 
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     protected function getTitle()

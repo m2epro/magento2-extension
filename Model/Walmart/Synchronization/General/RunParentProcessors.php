@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Walmart\Synchronization\General;
 
 use \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass;
 
+/**
+ * Class RunParentProcessors
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\General
+ */
 class RunParentProcessors extends AbstractModel
 {
     //########################################
@@ -60,7 +64,7 @@ class RunParentProcessors extends AbstractModel
         }
 
         $massProcessor = $this->modelFactory->getObject(
-            'Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass'
+            'Walmart_Listing_Product_Variation_Manager_Type_Relation_ParentRelation_Processor_Mass'
         );
         $massProcessor->setListingsProducts($listingsProducts);
 

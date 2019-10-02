@@ -13,6 +13,10 @@
 
 namespace Ess\M2ePro\Model\Walmart;
 
+/**
+ * Class Listing
+ * @package Ess\M2ePro\Model\Walmart
+ */
 class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     //########################################
@@ -44,7 +48,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
     public function delete()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('listing');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('listing');
 
         $temp = parent::delete();
         $temp && $this->descriptionTemplateModel = null;
@@ -96,9 +100,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getDescriptionTemplate()
     {
-        if (is_null($this->descriptionTemplateModel)) {
+        if ($this->descriptionTemplateModel === null) {
             $this->descriptionTemplateModel = $this->walmartFactory->getCachedObjectLoaded(
-                'Template\Description', $this->getData('template_description_id')
+                'Template\Description',
+                $this->getData('template_description_id')
             );
         }
 
@@ -120,9 +125,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getSellingFormatTemplate()
     {
-        if (is_null($this->sellingFormatTemplateModel)) {
+        if ($this->sellingFormatTemplateModel === null) {
             $this->sellingFormatTemplateModel = $this->walmartFactory->getCachedObjectLoaded(
-                'Template\SellingFormat', $this->getData('template_selling_format_id')
+                'Template\SellingFormat',
+                $this->getData('template_selling_format_id')
             );
         }
 
@@ -144,9 +150,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getSynchronizationTemplate()
     {
-        if (is_null($this->synchronizationTemplateModel)) {
+        if ($this->synchronizationTemplateModel === null) {
             $this->synchronizationTemplateModel = $this->walmartFactory->getCachedObjectLoaded(
-                'Template\Synchronization', $this->getData('template_synchronization_id')
+                'Template\Synchronization',
+                $this->getData('template_synchronization_id')
             );
         }
 
@@ -194,7 +201,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      * @param array $filters
      * @return array
      */
-    public function getProducts($asObjects = false, array $filters = array())
+    public function getProducts($asObjects = false, array $filters = [])
     {
         return $this->getParentObject()->getProducts($asObjects, $filters);
     }
@@ -265,7 +272,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Other $walmartListingOther */
         $walmartListingOther = $listingOtherProduct->getChildObject();
 
-        $dataForUpdate = array(
+        $dataForUpdate = [
             'sku'  => $walmartListingOther->getSku(),
             'gtin' => $walmartListingOther->getGtin(),
             'upc'  => $walmartListingOther->getUpc(),
@@ -286,7 +293,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             'lifecycle_status' => $walmartListingOther->getLifecycleStatus(),
 
             'status_change_reasons' => $walmartListingOther->getData('status_change_reasons'),
-        );
+        ];
 
         $listingProduct->addData($dataForUpdate);
         $walmartListingProduct->addData($dataForUpdate);
@@ -355,13 +362,15 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     public function setSynchStatusNeed($newData, $oldData)
     {
         $listingsProducts = $this->getAffectedListingsProducts(
-            true, array('id', 'synch_status', 'synch_reasons'), true
+            true,
+            ['id', 'synch_status', 'synch_reasons'],
+            true
         );
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

@@ -13,6 +13,10 @@
  */
 namespace Ess\M2ePro\Model\Amazon\Listing\Product;
 
+/**
+ * Class QtyCalculator
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product
+ */
 class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
 {
     /**
@@ -55,7 +59,6 @@ class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
     {
         if ($this->getIsMagentoMode() ||
             $this->getSource('mode') == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT) {
-
             if (!$this->getMagentoProduct()->isStatusEnabled() ||
                 !$this->getMagentoProduct()->isStockAvailability()) {
                 return 0;

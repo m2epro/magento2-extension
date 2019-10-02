@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocab
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class RemoveOption
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocabulary
+ */
 class RemoveOption extends Main
 {
     public function execute()
@@ -28,7 +32,7 @@ class RemoveOption extends Main
             $productOptionsGroup = $this->getHelper('Data')->jsonDecode($productOptionsGroup);
         }
 
-        $vocabularyHelper = $this->getHelper('Component\Amazon\Vocabulary');
+        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
         $vocabularyHelper->removeOptionFromLocalStorage($productOption, $productOptionsGroup, $channelAttr);
 
         $this->setJsonContent([

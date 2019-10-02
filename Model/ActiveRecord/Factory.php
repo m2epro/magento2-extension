@@ -5,6 +5,10 @@
  */
 namespace Ess\M2ePro\Model\ActiveRecord;
 
+/**
+ * Class Factory
+ * @package Ess\M2ePro\Model\ActiveRecord
+ */
 class Factory
 {
     protected $helperFactory;
@@ -21,8 +25,7 @@ class Factory
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\ObjectManagerInterface $objectManager
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
         $this->objectManager = $objectManager;
     }
@@ -36,6 +39,9 @@ class Factory
      */
     public function getObject($modelName)
     {
+        // fix for Magento2 sniffs that forcing to use ::class
+        $modelName = str_replace('_', '\\', $modelName);
+
         $model = $this->objectManager->create('\Ess\M2ePro\Model\\'.$modelName);
 
         if (!$model instanceof \Ess\M2ePro\Model\ActiveRecord\AbstractModel) {
@@ -55,7 +61,7 @@ class Factory
      * @return \Ess\M2ePro\Model\ActiveRecord\AbstractModel|NULL
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getObjectLoaded($modelName, $value, $field = NULL, $throwException = true)
+    public function getObjectLoaded($modelName, $value, $field = null, $throwException = true)
     {
         if ($throwException) {
             return $this->getObject($modelName)->load($value, $field);
@@ -64,7 +70,7 @@ class Factory
         try {
             return $this->getObject($modelName)->load($value, $field);
         } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
-            return NULL;
+            return null;
         }
     }
 
@@ -76,7 +82,7 @@ class Factory
      * @return \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getCachedObjectLoaded($modelName, $value, $field = NULL, $throwException = true)
+    public function getCachedObjectLoaded($modelName, $value, $field = null, $throwException = true)
     {
         if ($this->helperFactory->getObject('Module')->isDevelopmentEnvironment()) {
             return $this->getObjectLoaded($modelName, $value, $field);
@@ -94,12 +100,11 @@ class Factory
 
         $cacheKey = strtoupper($modelName.'_data_'.$field.'_'.$value);
 
-        /** @var \Ess\M2ePro\Model\ActiveRecord\Cache $cacheObj */
-        $cacheObj = $this->helperFactory->getObject('Data\Cache\Permanent')->getValue($cacheKey);
-
-        if ($cacheObj !== NULL) {
-            $model->setData($cacheObj->getData());
+        $cacheData = $this->helperFactory->getObject('Data_Cache_Permanent')->getValue($cacheKey);
+        if (!empty($cacheData) && is_array($cacheData)) {
+            $model->setData($cacheData);
             $model->setOrigData();
+
             return $model;
         }
 
@@ -109,18 +114,16 @@ class Factory
             try {
                 $model->load($value, $field);
             } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
-                return NULL;
+                return null;
             }
         }
-
-        $cacheObj = new \Ess\M2ePro\Model\ActiveRecord\Cache($model->getData());
 
         $tags = $model->getCacheGroupTags();
         $tags[] = $model->getCacheInstancesTag();
 
-        $this->helperFactory->getObject('Data\Cache\Permanent')->setValue(
+        $this->helperFactory->getObject('Data_Cache_Permanent')->setValue(
             $cacheKey,
-            $cacheObj,
+            $model->getData(),
             $tags,
             $model->getCacheLifetime()
         );

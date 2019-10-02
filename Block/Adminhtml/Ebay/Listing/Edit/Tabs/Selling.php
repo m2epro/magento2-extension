@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tabs;
 
+/**
+ * Class Selling
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tabs
+ */
 class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     //########################################
@@ -36,7 +40,6 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
                 Quantity-related configurations, etc.</p><br>
                 <p>More detailed information you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-
                 $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/9gItAQ')
             )
         ]);
@@ -44,20 +47,20 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         // ---------------------------------------
 
         // ---------------------------------------
-        $data = array(
+        $data = [
             'template_nick' => \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT,
-        );
-        $switcherBlock = $this->createBlock('Ebay\Listing\Template\Switcher');
+        ];
+        $switcherBlock = $this->createBlock('Ebay_Listing_Template_Switcher');
         $switcherBlock->setData($data);
 
         $this->setChild('selling_format', $switcherBlock);
         // ---------------------------------------
 
         // ---------------------------------------
-        $data = array(
+        $data = [
             'template_nick' => \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION,
-        );
-        $switcherBlock = $this->createBlock('Ebay\Listing\Template\Switcher');
+        ];
+        $switcherBlock = $this->createBlock('Ebay_Listing_Template_Switcher');
         $switcherBlock->setData($data);
 
         $this->setChild('description', $switcherBlock);
@@ -73,8 +76,7 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         return parent::_toHtml()
             . $this->getChildHtml('help')
             . $this->getChildHtml('selling_format')
-            . $this->getChildHtml('description')
-        ;
+            . $this->getChildHtml('description');
     }
 
     //########################################

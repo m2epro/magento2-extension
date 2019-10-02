@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper;
 
+/**
+ * Class Server
+ * @package Ess\M2ePro\Helper
+ */
 class Server extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const MAX_INTERVAL_OF_RETURNING_TO_DEFAULT_BASEURL = 86400;
@@ -22,8 +26,7 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->primary = $primary;
         $this->cacheConfig = $cacheConfig;
         parent::__construct($helperFactory, $context);
@@ -34,13 +37,12 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
     public function getEndpoint()
     {
         if ($this->getCurrentIndex() != $this->getDefaultIndex()) {
-
             $currentTimeStamp = $this->getHelper('Data')->getCurrentGmtDate(true);
 
             $interval = self::MAX_INTERVAL_OF_RETURNING_TO_DEFAULT_BASEURL;
-            $switchingDateTime = $this->cacheConfig->getGroupValue('/server/location/','datetime_of_last_switching');
+            $switchingDateTime = $this->cacheConfig->getGroupValue('/server/location/', 'datetime_of_last_switching');
 
-            if (is_null($switchingDateTime) || strtotime($switchingDateTime) + $interval <= $currentTimeStamp) {
+            if ($switchingDateTime === null || strtotime($switchingDateTime) + $interval <= $currentTimeStamp) {
                 $this->setCurrentIndex($this->getDefaultIndex());
             }
         }
@@ -53,7 +55,7 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
         $previousIndex = $this->getCurrentIndex();
         $nextIndex = $previousIndex + 1;
 
-        if (is_null($this->getBaseUrlByIndex($nextIndex))) {
+        if ($this->getBaseUrlByIndex($nextIndex) === null) {
             $nextIndex = 1;
         }
 
@@ -63,8 +65,11 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
 
         $this->setCurrentIndex($nextIndex);
 
-        $this->cacheConfig->setGroupValue('/server/location/','datetime_of_last_switching',
-                                        $this->getHelper('Data')->getCurrentGmtDate());
+        $this->cacheConfig->setGroupValue(
+            '/server/location/',
+            'datetime_of_last_switching',
+            $this->getHelper('Data')->getCurrentGmtDate()
+        );
 
         return true;
     }
@@ -97,7 +102,7 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function getDefaultIndex()
     {
-        $index = (int)$this->primary->getGroupValue('/server/location/','default_index');
+        $index = (int)$this->primary->getGroupValue('/server/location/', 'default_index');
 
         if ($index <= 0 || $index > $this->getMaxBaseUrlIndex()) {
             $this->setDefaultIndex($index = 1);
@@ -108,7 +113,7 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function getCurrentIndex()
     {
-        $index = (int)$this->cacheConfig->getGroupValue('/server/location/','current_index');
+        $index = (int)$this->cacheConfig->getGroupValue('/server/location/', 'current_index');
 
         if ($index <= 0 || $index > $this->getMaxBaseUrlIndex()) {
             $this->setCurrentIndex($index = $this->getDefaultIndex());
@@ -121,12 +126,12 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function setDefaultIndex($index)
     {
-        $this->primary->setGroupValue('/server/location/','default_index',$index);
+        $this->primary->setGroupValue('/server/location/', 'default_index', $index);
     }
 
     private function setCurrentIndex($index)
     {
-        $this->cacheConfig->setGroupValue('/server/location/','current_index',$index);
+        $this->cacheConfig->setGroupValue('/server/location/', 'current_index', $index);
     }
 
     //########################################
@@ -136,10 +141,9 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
         $index = 1;
 
         for ($tempIndex=2; $tempIndex<100; $tempIndex++) {
-
             $tempBaseUrl = $this->getBaseUrlByIndex($tempIndex);
 
-            if (!is_null($tempBaseUrl)) {
+            if ($tempBaseUrl !== null) {
                 $index = $tempIndex;
             } else {
                 break;
@@ -151,12 +155,12 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function getBaseUrlByIndex($index)
     {
-        return $this->primary->getGroupValue('/server/location/'.$index.'/','baseurl');
+        return $this->primary->getGroupValue('/server/location/'.$index.'/', 'baseurl');
     }
 
     private function getHostNameByIndex($index)
     {
-        return $this->primary->getGroupValue('/server/location/'.$index.'/','hostname');
+        return $this->primary->getGroupValue('/server/location/'.$index.'/', 'hostname');
     }
 
     //########################################

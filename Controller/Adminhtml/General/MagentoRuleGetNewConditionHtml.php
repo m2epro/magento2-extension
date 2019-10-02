@@ -9,6 +9,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\General;
 
 use Ess\M2ePro\Controller\Adminhtml\General;
 
+/**
+ * Class MagentoRuleGetNewConditionHtml
+ * @package Ess\M2ePro\Controller\Adminhtml\General
+ */
 class MagentoRuleGetNewConditionHtml extends General
 {
     //########################################
@@ -36,7 +40,7 @@ class MagentoRuleGetNewConditionHtml extends General
             ->setPrefix($prefix);
 
         if ($type == $ruleModelPrefix.'Magento\Product\Rule\Condition\Combine') {
-            $model->setData($prefix, array());
+            $model->setData($prefix, []);
         }
 
         if (!empty($attributeCode)) {

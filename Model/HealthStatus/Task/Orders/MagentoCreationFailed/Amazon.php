@@ -12,6 +12,10 @@ use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 use Ess\M2ePro\Model\Order;
 
+/**
+ * Class Amazon
+ * @package Ess\M2ePro\Model\HealthStatus\Task\Orders\MagentoCreationFailed
+ */
 class Amazon extends IssueType
 {
     /** @var \Ess\M2ePro\Model\HealthStatus\Task\Result\Factory */
@@ -27,7 +31,7 @@ class Amazon extends IssueType
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory);
         $this->resultFactory = $resultFactory;
         $this->amazonFactory = $amazonFactory;
@@ -41,7 +45,6 @@ class Amazon extends IssueType
         $result->setTaskResult(TaskResult::STATE_SUCCESS);
 
         if ($failedOrders = $this->getCountOfFailedOrders()) {
-
             $result->setTaskResult(TaskResult::STATE_WARNING);
             $result->setTaskData($failedOrders);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
@@ -68,7 +71,8 @@ HTML
         $collection->addFieldToFilter('magento_order_id', ['null' => true]);
         $collection->addFieldToFilter('magento_order_creation_failure', Order::MAGENTO_ORDER_CREATION_FAILED_YES);
         $collection->addFieldToFilter(
-            'magento_order_creation_latest_attempt_date', ['gt' => $backToDate->format('Y-m-d H:i:s')]
+            'magento_order_creation_latest_attempt_date',
+            ['gt' => $backToDate->format('Y-m-d H:i:s')]
         );
 
         return $collection->getSize();

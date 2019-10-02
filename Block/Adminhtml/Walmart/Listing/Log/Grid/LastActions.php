@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Log\Grid;
 
+/**
+ * Class LastActions
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Log\Grid
+ */
 class LastActions extends \Ess\M2ePro\Block\Adminhtml\Listing\Log\Grid\LastActions
 {
     protected $resourceConnection;
@@ -18,8 +22,7 @@ class LastActions extends \Ess\M2ePro\Block\Adminhtml\Listing\Log\Grid\LastActio
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
 
         parent::__construct($context, $data);
@@ -36,7 +39,6 @@ class LastActions extends \Ess\M2ePro\Block\Adminhtml\Listing\Log\Grid\LastActio
         }
 
         foreach ($actions as &$actionsRow) {
-
             if (empty($actionsRow['items'])) {
                 continue;
             }

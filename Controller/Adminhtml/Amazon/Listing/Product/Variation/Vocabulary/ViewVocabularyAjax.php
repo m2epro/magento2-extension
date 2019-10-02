@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocab
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class ViewVocabularyAjax
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocabulary
+ */
 class ViewVocabularyAjax extends Main
 {
     public function execute()
@@ -21,7 +25,7 @@ class ViewVocabularyAjax extends Main
             return $this->getResult();
         }
 
-        $vocabulary = $this->createBlock('Amazon\Listing\Product\Variation\Manage\Tabs\Vocabulary')
+        $vocabulary = $this->createBlock('Amazon_Listing_Product_Variation_Manage_Tabs_Vocabulary')
             ->setListingProduct($this->amazonFactory->getObjectLoaded('Listing\Product', $productId));
 
         $this->setAjaxContent($vocabulary);

@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\HealthStatus\Task\Database\MysqlInfo;
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 
+/**
+ * Class CrashedTables
+ * @package Ess\M2ePro\Model\HealthStatus\Task\Database\MysqlInfo
+ */
 class CrashedTables extends IssueType
 {
     /** @var \Ess\M2ePro\Model\HealthStatus\Task\Result\Factory */
@@ -22,7 +26,7 @@ class CrashedTables extends IssueType
         \Ess\M2ePro\Model\HealthStatus\Task\Result\Factory $resultFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory);
         $this->resultFactory = $resultFactory;
     }
@@ -32,7 +36,7 @@ class CrashedTables extends IssueType
     public function process()
     {
         /** @var \Ess\M2ePro\Helper\Module\Database\Structure $helper */
-        $helper = $this->helperFactory->getObject('Module\Database\Structure');
+        $helper = $this->helperFactory->getObject('Module_Database_Structure');
 
         $crashedTables = [];
         foreach ($helper->getMySqlTables() as $tableName) {

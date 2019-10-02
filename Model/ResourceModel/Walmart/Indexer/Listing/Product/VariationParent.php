@@ -8,29 +8,33 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Indexer\Listing\Product;
 
+/**
+ * Class VariationParent
+ * @package Ess\M2ePro\Model\ResourceModel\Walmart\Indexer\Listing\Product
+ */
 class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\AbstractModel
 {
     //########################################
 
     public function _construct()
     {
-        $this->_init('walmart_indexer_listing_product_variation_parent', 'listing_product_id');
+        $this->_init('m2epro_walmart_indexer_listing_product_variation_parent', 'listing_product_id');
     }
 
     //########################################
 
     public function getTrackedFields()
     {
-        return array(
+        return [
             'online_price',
-        );
+        ];
     }
 
     //########################################
 
     public function clear($listingId = null)
     {
-        $conditions = array();
+        $conditions = [];
         $listingId && $conditions['listing_id = ?'] = (int)$listingId;
 
         $this->getConnection()->delete($this->getMainTable(), $conditions);
@@ -47,21 +51,21 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compo
         $createDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $createDate = $createDate->format('Y-m-d H:i:s');
 
-        $select->columns(array(
+        $select->columns([
             new \Zend_Db_Expr($this->getConnection()->quote($listing->getId())),
             new \Zend_Db_Expr($this->getConnection()->quote($createDate))
-        ));
+        ]);
 
         $query = $this->getConnection()->insertFromSelect(
             $select,
             $this->getMainTable(),
-            array(
+            [
                 'listing_product_id',
                 'min_price',
                 'max_price',
                 'listing_id',
                 'create_date'
-            ),
+            ],
             \Magento\Framework\DB\Adapter\AdapterInterface::INSERT_IGNORE
         );
         $this->getConnection()->query($query);
@@ -74,14 +78,14 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compo
         $listingProductTable = $this->activeRecordFactory
             ->getObject('Listing\Product')->getResource()->getMainTable();
         $walmartListingProductTable = $this->activeRecordFactory
-            ->getObject('Walmart\Listing\Product')->getResource()->getMainTable();
+            ->getObject('Walmart_Listing_Product')->getResource()->getMainTable();
 
         $select = $this->getConnection()->select()
             ->from(
-                array(
+                [
                     'mwlp' => $walmartListingProductTable
-                ),
-                array(
+                ],
+                [
                     'variation_parent_id',
                     new \Zend_Db_Expr(
                         "MIN(mwlp.online_price) as variation_min_price"
@@ -89,19 +93,19 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compo
                     new \Zend_Db_Expr(
                         "MAX(mwlp.online_price) as variation_max_price"
                     ),
-                )
+                ]
             )
             ->joinInner(
-                array(
+                [
                     'mlp' => $listingProductTable
-                ),
+                ],
                 'mwlp.listing_product_id = mlp.id',
-                array()
+                []
             )
-            ->where('mlp.status IN (?)', array(
+            ->where('mlp.status IN (?)', [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
-            ))
+            ])
             ->where('mlp.listing_id = ?', (int)$listing->getId())
             ->where('mwlp.variation_parent_id IS NOT NULL')
             ->group('mwlp.variation_parent_id');

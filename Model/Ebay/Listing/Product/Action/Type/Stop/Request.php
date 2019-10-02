@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Stop;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Stop
+ */
 class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 {
     //########################################
@@ -28,14 +32,17 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
      */
     public function getActionData()
     {
-        return array(
+        return [
             'item_id' => $this->getEbayListingProduct()->getEbayItemIdReal()
-        );
+        ];
     }
 
     //########################################
 
-    protected function initializeVariations() {}
+    protected function initializeVariations()
+    {
+        return null;
+    }
 
     // ---------------------------------------
 

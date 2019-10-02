@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat;
 
 use Ess\M2ePro\Model\Walmart\Template\SellingFormat as WalmartSellingFormat;
 
+/**
+ * Class Source
+ * @package Ess\M2ePro\Model\Walmart\Template\SellingFormat
+ */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
@@ -220,10 +224,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     public function getAttributes()
     {
         if ($this->getWalmartSellingFormatTemplate()->isAttributesModeNone()) {
-            return array();
+            return [];
         }
 
-        $result = array();
+        $result = [];
         $src = $this->getWalmartSellingFormatTemplate()->getAttributesSource();
 
         foreach ($src['template'] as $value) {
@@ -231,8 +235,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            $result[$value['name']] = $this->getHelper('Module\Renderer\Description')->parseTemplate(
-                $value['value'], $this->getMagentoProduct()
+            $result[$value['name']] = $this->getHelper('Module_Renderer_Description')->parseTemplate(
+                $value['value'],
+                $this->getMagentoProduct()
             );
         }
 

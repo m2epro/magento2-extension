@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders;
 
+/**
+ * Class Refund
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders
+ */
 class Refund extends AbstractModel
 {
     //########################################
@@ -70,11 +74,8 @@ class Refund extends AbstractModel
             // ---------------------------------------
 
             try {
-
                 $this->processAccount($account);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Refund" Action for Amazon Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -124,9 +125,9 @@ class Refund extends AbstractModel
             ->incrementAttemptCount(array_keys($relatedChanges));
 
         /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
 
-        $failedChangesIds = array();
+        $failedChangesIds = [];
 
         foreach ($relatedChanges as $change) {
             $changeParams = $change->getParams();
@@ -147,17 +148,18 @@ class Refund extends AbstractModel
                 continue;
             }
 
-            $connectorData = array(
+            $connectorData = [
                 'order_id'        => $change->getOrderId(),
                 'change_id'       => $change->getId(),
                 'amazon_order_id' => $changeParams['order_id'],
                 'currency'        => $changeParams['currency'],
                 'items'           => $changeParams['items'],
-            );
+            ];
 
             $connectorObj = $dispatcherObject->getCustomConnector(
-                'Amazon\Synchronization\Orders\Refund\Requester',
-                array('order' => $connectorData), $account
+                'Amazon_Synchronization_Orders_Refund_Requester',
+                ['order' => $connectorData],
+                $account
             );
             $dispatcherObject->process($connectorObj);
         }
@@ -180,9 +182,9 @@ class Refund extends AbstractModel
         $changesCollection = $this->activeRecordFactory->getObject('Order\Change')->getCollection();
         $changesCollection->addAccountFilter($account->getId());
         $changesCollection->addProcessingAttemptDateFilter(10);
-        $changesCollection->addFieldToFilter('component',\Ess\M2ePro\Helper\Component\Amazon::NICK);
-        $changesCollection->addFieldToFilter('action',\Ess\M2ePro\Model\Order\Change::ACTION_REFUND);
-        $changesCollection->getSelect()->group(array('order_id'));
+        $changesCollection->addFieldToFilter('component', \Ess\M2ePro\Helper\Component\Amazon::NICK);
+        $changesCollection->addFieldToFilter('action', \Ess\M2ePro\Model\Order\Change::ACTION_REFUND);
+        $changesCollection->getSelect()->group(['order_id']);
 
         return $changesCollection->getItems();
     }
@@ -193,8 +195,8 @@ class Refund extends AbstractModel
     {
         $this->activeRecordFactory->getObject('Order\Change')->getResource()
             ->deleteByProcessingAttemptCount(
-               \Ess\M2ePro\Model\Order\Change::MAX_ALLOWED_PROCESSING_ATTEMPTS,
-               \Ess\M2ePro\Helper\Component\Amazon::NICK
+                \Ess\M2ePro\Model\Order\Change::MAX_ALLOWED_PROCESSING_ATTEMPTS,
+                \Ess\M2ePro\Helper\Component\Amazon::NICK
             );
     }
 

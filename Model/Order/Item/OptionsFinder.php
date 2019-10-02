@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Order\Item;
 
+/**
+ * Class OptionsFinder
+ * @package Ess\M2ePro\Model\Order\Item
+ */
 class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
 {
     private $channelOptions = [];
@@ -80,15 +84,14 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
         $this->failedOptions = [];
         $this->optionsData   = ['associated_options'  => [], 'associated_products' => []];
 
-        if (is_null($this->getProductType()) || empty($this->magentoOptions)) {
+        if ($this->getProductType() === null || empty($this->magentoOptions)) {
             return;
         }
 
         if ($this->getHelper('Magento\Product')->isGroupedType($this->getProductType())) {
-
             $associatedProduct = $this->getGroupedAssociatedProduct();
 
-            if (is_null($associatedProduct)) {
+            if ($associatedProduct === null) {
                 return;
             }
 
@@ -130,7 +133,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
      */
     public function hasFailedOptions()
     {
-        return count($this->failedOptions) > 0;
+        return !empty($this->failedOptions);
     }
 
     /**
@@ -160,7 +163,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
      */
     private function getProductType()
     {
-        if (is_null($this->magentoProduct)) {
+        if ($this->magentoProduct === null) {
             throw new \InvalidArgumentException('Magento Product was not set.');
         }
 
@@ -235,7 +238,6 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
         if (empty($this->magentoValue) ||
             !isset($this->magentoValue['value_id']) ||
             !isset($this->magentoValue['product_ids'])) {
-
             $this->failedOptions[] = array_shift($magentoOption['labels']);
             return true;
         }
@@ -305,15 +307,14 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
     {
         $variationName = array_shift($this->channelOptions);
 
-        if ((is_null($variationName) || strlen(trim($variationName)) == 0) &&
+        if (($variationName === null || strlen(trim($variationName)) == 0) &&
             !$this->isNeedToReturnFirstOptionValues()) {
-
             return null;
         }
 
         foreach ($this->magentoOptions as $option) {
             // return product if it's name is equal to variation name
-            if (is_null($variationName) || trim(strtolower($option->getName())) == trim(strtolower($variationName))) {
+            if ($variationName === null || trim(strtolower($option->getName())) == trim(strtolower($variationName))) {
                 return $option;
             }
         }
@@ -326,7 +327,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
      */
     private function isNeedToReturnFirstOptionValues()
     {
-        if (!is_null($this->isNeedToReturnFirstOptionValues)) {
+        if ($this->isNeedToReturnFirstOptionValues !== null) {
             return $this->isNeedToReturnFirstOptionValues;
         }
 

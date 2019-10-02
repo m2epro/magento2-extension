@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Helper\Magento\Store;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Helper\Magento\Store
+ */
 class View extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    private $defaultStore = NULL;
+    private $defaultStore = null;
 
     protected $storeFactory;
     protected $storeManager;
@@ -22,8 +26,7 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->storeFactory = $storeFactory;
         $this->storeManager = $storeManager;
         parent::__construct($helperFactory, $context);
@@ -68,8 +71,8 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getDefault()
     {
-        if (is_null($this->defaultStore)) {
-            $defaultStoreGroup = $this->getHelper('Magento\Store\Group')->getDefault();
+        if ($this->defaultStore === null) {
+            $defaultStoreGroup = $this->getHelper('Magento_Store_Group')->getDefault();
             $defaultStoreId = $defaultStoreGroup->getDefaultStoreId();
 
             $this->defaultStore = $this->storeManager->getStore($defaultStoreId);
@@ -109,7 +112,7 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function addStore($name, $code, $websiteId, $groupId = null)
     {
-        if (!$this->getHelper('Magento\Store\Website')->isExists($websiteId)) {
+        if (!$this->getHelper('Magento_Store_Website')->isExists($websiteId)) {
             $error = $this->getHelper('Module\Translation')->__('Website with id %value% does not exists.', $websiteId);
             throw new \Ess\M2ePro\Model\Exception($error);
         }
@@ -118,15 +121,13 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
             $store = $this->storeFactory->create()->load($code, 'code');
             $error = $this->getHelper('Module\Translation')->__('Store with %code% already exists.', $code);
             throw new \Ess\M2ePro\Model\Exception($error);
-
         } catch (\Exception $e) {
             // M2ePro_TRANSLATIONS
             // Group with id %group_id% doesn't belongs to website with %site_id%.
             if ($groupId) {
-
-                if (!$this->getHelper('Magento\Store\Group')->isChildOfWebsite($groupId, $websiteId)) {
+                if (!$this->getHelper('Magento_Store_Group')->isChildOfWebsite($groupId, $websiteId)) {
                     $error = $this->getHelper('Module\Translation')->__('Group with id %group_id% doesn\'t belong to'.
-                        'website with %site_id%.',$groupId, $websiteId);
+                        'website with %site_id%.', $groupId, $websiteId);
                     throw new \Ess\M2ePro\Model\Exception($error);
                 }
             } else {

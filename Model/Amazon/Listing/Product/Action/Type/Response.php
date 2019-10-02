@@ -8,35 +8,39 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type;
 
+/**
+ * Class Response
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type
+ */
 abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
      * @var array
      */
-    private $params = array();
+    private $params = [];
 
     /**
      * @var \Ess\M2ePro\Model\Listing\Product
      */
-    private $listingProduct = NULL;
+    private $listingProduct = null;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator
      */
-    private $configurator = NULL;
+    private $configurator = null;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData
      */
-    protected $requestData = NULL;
+    protected $requestData = null;
 
     //########################################
 
-    abstract public function processSuccess($params = array());
+    abstract public function processSuccess($params = []);
 
     //########################################
 
-    public function setParams(array $params = array())
+    public function setParams(array $params = [])
     {
         $this->params = $params;
     }
@@ -215,12 +219,11 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
         $data['online_regular_price'] = (float)$this->getRequestData()->getRegularPrice();
 
-        $data['online_regular_sale_price'] = NULL;
-        $data['online_regular_sale_price_start_date'] = NULL;
-        $data['online_regular_sale_price_end_date'] = NULL;
+        $data['online_regular_sale_price'] = null;
+        $data['online_regular_sale_price_start_date'] = null;
+        $data['online_regular_sale_price_end_date'] = null;
 
         if ($this->getRequestData()->hasRegularSalePrice()) {
-
             $salePrice = (float)$this->getRequestData()->getRegularSalePrice();
 
             if ($salePrice > 0) {
@@ -247,7 +250,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             $businessDiscounts = $this->getRequestData()->getBusinessDiscounts();
             $data['online_business_discounts'] = $this->getHelper('Data')->jsonEncode($businessDiscounts['values']);
         } else {
-            $data['online_business_discounts'] = NULL;
+            $data['online_business_discounts'] = null;
         }
 
         return $data;

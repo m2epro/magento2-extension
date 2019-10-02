@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs;
 
+/**
+ * Class AboutModule
+ * @package Ess\M2ePro\Block\Adminhtml\Developers\Tabs
+ */
 class AboutModule extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     //########################################
@@ -16,14 +20,16 @@ class AboutModule extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {
         $form = $this->_formFactory->create();
 
-        $fieldSet = $form->addFieldset('field_module',
+        $fieldSet = $form->addFieldset(
+            'field_module',
             [
                 'legend' => $this->__('Module'),
                 'collapsable' => false
             ]
         );
 
-        $fieldSet->addField('m2e_version',
+        $fieldSet->addField(
+            'm2e_version',
             'note',
             [
                 'label' => $this->__('Version'),
@@ -31,14 +37,16 @@ class AboutModule extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet = $form->addFieldset('field_magento',
+        $fieldSet = $form->addFieldset(
+            'field_magento',
             [
                 'legend' => $this->__('Magento'),
                 'collapsable' => false
             ]
         );
 
-        $fieldSet->addField('magento_edition',
+        $fieldSet->addField(
+            'magento_edition',
             'note',
             [
                 'label' => $this->__('Edition'),
@@ -46,7 +54,8 @@ class AboutModule extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('magento_version',
+        $fieldSet->addField(
+            'magento_version',
             'note',
             [
                 'label' => $this->__('Version'),

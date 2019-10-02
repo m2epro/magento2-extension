@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Auto;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Model\ResourceModel\Listing\Auto
+ */
 class Category extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################

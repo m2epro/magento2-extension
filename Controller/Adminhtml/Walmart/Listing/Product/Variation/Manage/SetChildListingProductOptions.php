@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Mana
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
+/**
+ * Class SetChildListingProductOptions
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage
+ */
 class SetChildListingProductOptions extends Main
 {
     public function execute()
@@ -51,9 +55,9 @@ class SetChildListingProductOptions extends Main
         $parentTypeModel->getProcessor()->process();
 
         /** @var \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper */
-        $vocabularyHelper = $this->getHelper('Component\Walmart\Vocabulary');
+        $vocabularyHelper = $this->getHelper('Component_Walmart_Vocabulary');
 
-        $result = array('success' => true);
+        $result = ['success' => true];
 
         if ($vocabularyHelper->isOptionAutoActionDisabled()) {
             $this->setJsonContent($result);
@@ -64,7 +68,7 @@ class SetChildListingProductOptions extends Main
         $matchedAttributes = $parentTypeModel->getMatchedAttributes();
         $channelOptions = $childTypeModel->getChannelOptions();
 
-        $optionsForAddingToVocabulary = array();
+        $optionsForAddingToVocabulary = [];
 
         foreach ($matchedAttributes as $productAttribute => $channelAttribute) {
             $productOption = $magentoOptions[$productAttribute];
@@ -82,7 +86,7 @@ class SetChildListingProductOptions extends Main
                 continue;
             }
 
-            $optionsForAddingToVocabulary[$channelAttribute] = array($productOption => $channelOption);
+            $optionsForAddingToVocabulary[$channelAttribute] = [$productOption => $channelOption];
         }
 
         if ($vocabularyHelper->isOptionAutoActionNotSet()) {

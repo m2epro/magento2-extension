@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction
+ */
 class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Request
 {
     const LIST_TYPE_EXIST = 'exist';
@@ -20,14 +24,13 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
 
     protected function getActionData()
     {
-        $data = array(
+        $data = [
             'sku'       => $this->validatorsData['sku'],
             'type_mode' => $this->validatorsData['list_type'],
-        );
+        ];
 
         if ($this->validatorsData['list_type'] == self::LIST_TYPE_NEW &&
             $this->getVariationManager()->isRelationMode()) {
-
                 $data = array_merge($data, $this->getRelationData());
         }
 
@@ -61,16 +64,16 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
 
     private function getExistProductIdentifierData()
     {
-        return array(
+        return [
             'product_id' => $this->validatorsData['general_id'],
             'product_id_type' => $this->getHelper('Data')->isISBN($this->validatorsData['general_id'])
                 ? 'ISBN' : 'ASIN',
-        );
+        ];
     }
 
     private function getNewProductIdentifierData()
     {
-        $data = array();
+        $data = [];
 
         $worldwideId = $this->getAmazonListingProduct()->getDescriptionTemplateSource()->getWorldwideId();
 
@@ -95,17 +98,17 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
     private function getRelationData()
     {
         if (!$this->getVariationManager()->isRelationMode()) {
-            return array();
+            return [];
         }
 
         $descriptionTemplate = $this->getAmazonListingProduct()->getAmazonDescriptionTemplate();
 
-        $data = array(
+        $data = [
             'product_data_nick' => $descriptionTemplate->getProductDataNick(),
-            'variation_data'    => array(
+            'variation_data'    => [
                 'theme' => $this->getChannelTheme(),
-            ),
-        );
+            ],
+        ];
 
         if ($this->getVariationManager()->isRelationParentType()) {
             $data['variation_data']['parentage'] = self::PARENTAGE_PARENT;
@@ -123,7 +126,7 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
 
         $virtualChannelAttributes = $typeModel->getParentTypeModel()->getVirtualChannelAttributes();
 
-        $attributes = array();
+        $attributes = [];
         foreach ($typeModel->getProductOptions() as $attribute => $value) {
             if (isset($virtualChannelAttributes[$attribute])) {
                 continue;
@@ -132,11 +135,11 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
             $attributes[$matchedAttributes[$attribute]] = $value;
         }
 
-        $data['variation_data'] = array_merge($data['variation_data'], array(
+        $data['variation_data'] = array_merge($data['variation_data'], [
             'parentage'  => self::PARENTAGE_CHILD,
             'parent_sku' => $parentAmazonListingProduct->getSku(),
             'attributes' => $attributes,
-        ));
+        ]);
 
         return $data;
     }

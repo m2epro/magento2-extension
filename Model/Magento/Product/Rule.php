@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Product;
 
+/**
+ * Class Rule
+ * @package Ess\M2ePro\Model\Magento\Product
+ */
 class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     protected $_form;
@@ -16,9 +20,9 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     protected $_conditions = null;
 
-    protected $_productIds = array();
+    protected $_productIds = [];
 
-    protected $_collectedAttributes = array();
+    protected $_collectedAttributes = [];
 
     //########################################
 
@@ -33,8 +37,8 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = [])
-    {
+        array $data = []
+    ) {
         $this->_form = $form;
         $this->productFactory = $productFactory;
         $this->resourceIterator = $resourceIterator;
@@ -62,7 +66,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function loadFromSerialized($serialized)
     {
         $prefix = $this->getPrefix();
-        if (is_null($prefix)) {
+        if ($prefix === null) {
             throw new \Ess\M2ePro\Model\Exception('Prefix must be specified before.');
         }
 
@@ -72,7 +76,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return;
         }
 
-        $conditions = unserialize($serialized);
+        $conditions = $this->getHelper('Data')->unserialize($serialized);
         $this->_conditions->loadArray($conditions, $prefix);
     }
 
@@ -86,7 +90,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function loadFromPost(array $post)
     {
         $prefix = $this->getPrefix();
-        if (is_null($prefix)) {
+        if ($prefix === null) {
             throw new \Ess\M2ePro\Model\Exception('Prefix must be specified before.');
         }
 
@@ -106,13 +110,13 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function getSerializedFromPost(array $post)
     {
         $prefix = $this->getPrefix();
-        if (is_null($prefix)) {
+        if ($prefix === null) {
             throw new \Ess\M2ePro\Model\Exception('Prefix must be specified before.');
         }
 
         $conditionsArray = $this->_convertFlatToRecursive($post['rule'][$prefix], $prefix);
 
-        return serialize($conditionsArray[$prefix][1]);
+        return $this->getHelper('Data')->serialize($conditionsArray[$prefix][1]);
     }
 
     //########################################
@@ -129,7 +133,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function getStoreId()
     {
-        if (is_null($this->getData('store_id'))) {
+        if ($this->getData('store_id') === null) {
             return 0;
         }
 
@@ -192,15 +196,15 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function getConditions()
     {
         $prefix = $this->getPrefix();
-        if (is_null($prefix)) {
+        if ($prefix === null) {
             throw new \Ess\M2ePro\Model\Exception('Prefix must be specified before.');
         }
 
-        if (!is_null($this->_conditions)) {
+        if ($this->_conditions !== null) {
             return $this->_conditions->setJsFormObject($prefix)->setStoreId($this->getStoreId());
         }
 
-        if (!is_null($this->getConditionsSerialized())) {
+        if ($this->getConditionsSerialized() !== null) {
             $this->loadFromSerialized($this->getConditionsSerialized());
         } else {
             $this->_conditions = $this->getConditionInstance($prefix);
@@ -216,7 +220,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function isEmpty()
     {
-        if (is_null($this->_conditions)) {
+        if ($this->_conditions === null) {
             return true;
         }
 
@@ -293,7 +297,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getConditionClassName()
     {
-        return 'Magento\Product\Rule\Condition\Combine';
+        return 'Magento_Product_Rule_Condition_Combine';
     }
 
     protected function getConditionInstance($prefix)
@@ -305,7 +309,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             ->setId(1)
             ->setData($prefix, []);
 
-        if (!is_null($this->getCustomOptionsFlag())) {
+        if ($this->getCustomOptionsFlag() !== null) {
             $conditionInstance->setCustomOptionsFlag($this->getCustomOptionsFlag());
         }
 
@@ -315,7 +319,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     protected function _convertFlatToRecursive(array $data, $prefix)
     {
         $arr = [];
-        foreach ($data as $id=>$value) {
+        foreach ($data as $id => $value) {
             $path = explode('--', $id);
             $node =& $arr;
             for ($i=0, $l=sizeof($path); $i<$l; $i++) {
@@ -336,7 +340,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     protected function _beforeSave()
     {
-        $serialized = serialize($this->getConditions()->asArray());
+        $serialized = $this->getHelper('Data')->serialize($this->getConditions()->asArray());
         $this->setData('conditions_serialized', $serialized);
 
         return parent::_beforeSave();

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create;
 
+/**
+ * Class General
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create
+ */
 class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     //########################################
@@ -38,10 +42,10 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->removeButton('edit');
         // ---------------------------------------
 
-        $this->addButton('save_and_next', array(
+        $this->addButton('save_and_next', [
             'label'     => $this->__('Next Step'),
             'class'     => 'action-primary forward'
-        ));
+        ]);
         // ---------------------------------------
     }
 
@@ -49,7 +53,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
     protected function _toHtml()
     {
-        $breadcrumb = $this->createBlock('Amazon\Listing\Create\Breadcrumb')
+        $breadcrumb = $this->createBlock('Amazon_Listing_Create_Breadcrumb')
             ->setSelectedStep((int)$this->getRequest()->getParam('step', 1));
 
         $helpBlock = $this->createBlock('HelpBlock')->setData([

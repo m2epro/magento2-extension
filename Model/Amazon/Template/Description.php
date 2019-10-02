@@ -22,17 +22,17 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
-    private $marketplaceModel = NULL;
+    private $marketplaceModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Template\Description\Definition
      */
-    private $descriptionDefinitionModel = NULL;
+    private $descriptionDefinitionModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Template\Description\Source[]
      */
-    private $descriptionSourceModels = array();
+    private $descriptionSourceModels = [];
 
     //########################################
 
@@ -59,10 +59,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
             ->where("main_table.auto_global_adding_description_template_id = {$this->getId()} OR
                      main_table.auto_website_adding_description_template_id = {$this->getId()}");
 
-        return (bool)$this->activeRecordFactory->getObject('Amazon\Listing\Product')->getCollection()
+        return (bool)$this->activeRecordFactory->getObject('Amazon_Listing_Product')->getCollection()
                         ->addFieldToFilter('template_description_id', $this->getId())
                         ->getSize() ||
-               (bool)$this->activeRecordFactory->getObject('Amazon\Listing\Auto\Category\Group')->getCollection()
+               (bool)$this->activeRecordFactory->getObject('Amazon_Listing_Auto_Category_Group')->getCollection()
                         ->addFieldToFilter('adding_description_template_id', $this->getId())
                         ->getSize() ||
                (bool)$collection->getSize();
@@ -77,7 +77,8 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
             ->getCollection()
             ->addFieldToFilter('template_description_id', $this->getId())
             ->addFieldToFilter(
-                'is_general_id_owner', \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES
+                'is_general_id_owner',
+                \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES
             );
 
         if ($collection->getSize() <= 0) {
@@ -111,7 +112,8 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
             ->getCollection()
             ->addFieldToFilter('template_description_id', $this->getId())
             ->addFieldToFilter(
-                'is_general_id_owner', \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES
+                'is_general_id_owner',
+                \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES
             );
 
         $collection->getSelect()
@@ -125,7 +127,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('amazon_template_description');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('amazon_template_description');
         return parent::save();
     }
 
@@ -143,11 +145,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
             $specific->delete();
         }
 
-        $this->marketplaceModel           = NULL;
-        $this->descriptionDefinitionModel = NULL;
-        $this->descriptionSourceModels    = array();
+        $this->marketplaceModel           = null;
+        $this->descriptionDefinitionModel = null;
+        $this->descriptionSourceModels    = [];
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('amazon_template_description');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('amazon_template_description');
 
         return parent::delete();
     }
@@ -159,10 +161,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
      */
     public function getMarketplace()
     {
-        if (is_null($this->marketplaceModel)) {
-
+        if ($this->marketplaceModel === null) {
             $this->marketplaceModel = $this->parentFactory->getCachedObjectLoaded(
-                \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Marketplace', $this->getMarketplaceId()
+                \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                'Marketplace',
+                $this->getMarketplaceId()
             );
         }
 
@@ -190,10 +193,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
      */
     public function getDefinitionTemplate()
     {
-        if (is_null($this->descriptionDefinitionModel)) {
-
+        if ($this->descriptionDefinitionModel === null) {
             $this->descriptionDefinitionModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Amazon\Template\Description\Definition', $this->getId()
+                'Amazon_Template_Description_Definition',
+                $this->getId()
             );
 
             $this->descriptionDefinitionModel->setDescriptionTemplate($this->getParentObject());
@@ -207,10 +210,14 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
      * @param array $filters
      * @return array|\Ess\M2ePro\Model\Amazon\Template\Description\Specific[]
      */
-    public function getSpecifics($asObjects = false, array $filters = array())
+    public function getSpecifics($asObjects = false, array $filters = [])
     {
-        $specifics = $this->getRelatedSimpleItems('Amazon\Template\Description\Specific','template_description_id',
-                                                  $asObjects, $filters);
+        $specifics = $this->getRelatedSimpleItems(
+            'Amazon_Template_Description_Specific',
+            'template_description_id',
+            $asObjects,
+            $filters
+        );
         if ($asObjects) {
             /** @var \Ess\M2ePro\Model\Amazon\Template\Description\Specific $specific */
             foreach ($specifics as $specific) {
@@ -242,7 +249,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
         }
 
         $this->descriptionSourceModels[$productId] = $this->modelFactory->getObject(
-            'Amazon\Template\Description\Source'
+            'Amazon_Template_Description_Source'
         );
         $this->descriptionSourceModels[$productId]->setMagentoProduct($magentoProduct);
         $this->descriptionSourceModels[$productId]->setDescriptionTemplate($this->getParentObject());
@@ -299,10 +306,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
      */
     public function getWorldwideIdSource()
     {
-        return array(
+        return [
             'mode'      => $this->getWorldwideIdMode(),
             'attribute' => $this->getData('worldwide_id_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -310,7 +317,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
      */
     public function getWorldwideIdAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getWorldwideIdSource();
 
         if ($src['mode'] == self::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE) {
@@ -355,7 +362,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
 
         $specifics = $this->getSpecifics(true);
         foreach ($specifics as $specific) {
-            $attributes = array_merge($attributes,$specific->getTrackingAttributes());
+            $attributes = array_merge($attributes, $specific->getTrackingAttributes());
         }
 
         return array_unique($attributes);
@@ -370,7 +377,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
 
         $specifics = $this->getSpecifics(true);
         foreach ($specifics as $specific) {
-            $attributes = array_merge($attributes,$specific->getUsedAttributes());
+            $attributes = array_merge($attributes, $specific->getUsedAttributes());
         }
 
         return array_unique(array_merge(
@@ -389,17 +396,17 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
         $data = parent::getDataSnapshot();
 
         $data['specifics'] = $this->getSpecifics();
-        $data['definition'] = $this->getDefinitionTemplate() ? $this->getDefinitionTemplate()->getData() : array();
+        $data['definition'] = $this->getDefinitionTemplate() ? $this->getDefinitionTemplate()->getData() : [];
 
         foreach ($data['specifics'] as &$specificsData) {
             foreach ($specificsData as &$value) {
-                !is_null($value) && !is_array($value) && $value = (string)$value;
+                $value !== null && !is_array($value) && $value = (string)$value;
             }
         }
         unset($value);
 
         foreach ($data['definition'] as &$value) {
-            !is_null($value) && !is_array($value) && $value = (string)$value;
+            $value !== null && !is_array($value) && $value = (string)$value;
         }
 
         return $data;
@@ -417,7 +424,8 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Product'
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Listing\Product'
         )->getCollection();
         $listingProductCollection->addFieldToFilter('template_description_id', $this->getId());
 
@@ -435,12 +443,12 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'), true);
+        $listingsProducts = $this->getAffectedListingsProducts(true, ['id'], true);
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

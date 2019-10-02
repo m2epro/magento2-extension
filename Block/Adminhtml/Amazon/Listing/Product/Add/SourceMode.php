@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add;
 
+/**
+ * Class SourceMode
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add
+ */
 class SourceMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     const MODE_PRODUCT = 'product';
@@ -37,12 +41,12 @@ class SourceMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContai
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/*/*',array('_current' => true));
-        $this->addButton('next', array(
+        $url = $this->getUrl('*/*/*', ['_current' => true]);
+        $this->addButton('next', [
             'label'     => $this->__('Continue'),
             'onclick'   => 'CommonObj.submitForm(\''.$url.'\');',
             'class'     => 'action-primary forward'
-        ));
+        ]);
         // ---------------------------------------
     }
 
@@ -51,7 +55,9 @@ class SourceMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContai
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
 
         $viewHeaderBlock = $this->createBlock(
-            'Listing\View\Header','', ['data' => ['listing' => $listing]]
+            'Listing_View_Header',
+            '',
+            ['data' => ['listing' => $listing]]
         );
 
         return $viewHeaderBlock->toHtml() . parent::_toHtml();

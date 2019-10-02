@@ -10,13 +10,17 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace;
 
+/**
+ * Class isExistDeletedCategories
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace
+ */
 class isExistDeletedCategories extends Marketplace
 {
     //########################################
 
     public function execute()
     {
-        if ($this->getHelper('Component\Ebay\Category\Ebay')->isExistDeletedCategories()) {
+        if ($this->getHelper('Component_Ebay_Category_Ebay')->isExistDeletedCategories()) {
             $this->setAjaxContent('1');
         } else {
             $this->setAjaxContent('0');

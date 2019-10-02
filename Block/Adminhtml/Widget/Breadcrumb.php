@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Widget;
 
+/**
+ * Class Breadcrumb
+ * @package Ess\M2ePro\Block\Adminhtml\Widget
+ */
 class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     protected $_template = 'widget/breadcrumb.phtml';
 
     protected $containerData = [];
     protected $steps = [];
-    protected $selectedStep = NULL;
+    protected $selectedStep = null;
 
     //########################################
 
@@ -31,7 +35,7 @@ class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     public function getSteps()
     {
-       return $this->steps;
+        return $this->steps;
     }
 
     public function setSteps(array $steps)

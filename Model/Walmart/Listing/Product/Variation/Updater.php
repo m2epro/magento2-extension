@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation;
 
+/**
+ * Class Updater
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation
+ */
 class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 {
-    private $parentListingsProductsForProcessing = array();
+    private $parentListingsProductsForProcessing = [];
 
     //########################################
 
@@ -75,7 +79,6 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         $variationManager->getTypeModel()->clearTypeData();
 
         if ($variationManager->isRelationParentType()) {
-
             $listingProduct->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED);
             $listingProduct->delete();
             $listingProduct->isDeleted(true);
@@ -108,7 +111,6 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         }
 
         if (!$typeModel->isActualProductAttributes()) {
-
             if ($variationManager->isRelationChildType()) {
                 /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child $typeModel */
                 $this->parentListingsProductsForProcessing[$typeModel->getParentListingProduct()->getId()]
@@ -126,7 +128,6 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\PhysicalUnit $typeModel */
 
         if ($typeModel->isVariationProductMatched() && !$typeModel->isActualProductVariation()) {
-
             if ($variationManager->isRelationChildType()) {
                 /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child $typeModel */
                 $this->parentListingsProductsForProcessing[$typeModel->getParentListingProduct()->getId()]

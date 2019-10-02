@@ -25,54 +25,54 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /**
      * @var \Ess\M2ePro\Model\Ebay\Item
      */
-    protected $ebayItemModel = NULL;
+    protected $ebayItemModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Category
      */
-    private $categoryTemplateModel = NULL;
+    private $categoryTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory
      */
-    private $otherCategoryTemplateModel = NULL;
+    private $otherCategoryTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Manager[]
      */
-    private $templateManagers = array();
+    private $templateManagers = [];
 
     // ---------------------------------------
 
     /**
      * @var \Ess\M2ePro\Model\Template\SellingFormat
      */
-    private $sellingFormatTemplateModel = NULL;
+    private $sellingFormatTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Template\Synchronization
      */
-    private $synchronizationTemplateModel = NULL;
+    private $synchronizationTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Template\Description
      */
-    private $descriptionTemplateModel = NULL;
+    private $descriptionTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Payment
      */
-    private $paymentTemplateModel = NULL;
+    private $paymentTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy
      */
-    private $returnTemplateModel = NULL;
+    private $returnTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Shipping
      */
-    private $shippingTemplateModel = NULL;
+    private $shippingTemplateModel = null;
 
     //########################################
 
@@ -90,19 +90,19 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             return false;
         }
 
-        $this->ebayItemModel = NULL;
-        $this->categoryTemplateModel = NULL;
-        $this->otherCategoryTemplateModel = NULL;
-        $this->templateManagers = array();
-        $this->sellingFormatTemplateModel = NULL;
-        $this->synchronizationTemplateModel = NULL;
-        $this->descriptionTemplateModel = NULL;
-        $this->paymentTemplateModel = NULL;
-        $this->returnTemplateModel = NULL;
-        $this->shippingTemplateModel = NULL;
+        $this->ebayItemModel = null;
+        $this->categoryTemplateModel = null;
+        $this->otherCategoryTemplateModel = null;
+        $this->templateManagers = [];
+        $this->sellingFormatTemplateModel = null;
+        $this->synchronizationTemplateModel = null;
+        $this->descriptionTemplateModel = null;
+        $this->paymentTemplateModel = null;
+        $this->returnTemplateModel = null;
+        $this->shippingTemplateModel = null;
 
         if ($this->getEbayAccount()->isPickupStoreEnabled()) {
-            $this->activeRecordFactory->getObject('Ebay\Listing\Product\PickupStore')
+            $this->activeRecordFactory->getObject('Ebay_Listing_Product_PickupStore')
                 ->getResource()->processDeletedProduct($this->getParentObject());
         }
 
@@ -111,7 +111,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     //########################################
 
-    public function afterSaveNewEntity() {}
+    public function afterSaveNewEntity()
+    {
+        return null;
+    }
 
     //########################################
 
@@ -120,9 +123,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getEbayItem()
     {
-        if (is_null($this->ebayItemModel)) {
+        if ($this->ebayItemModel === null) {
             $this->ebayItemModel = $this->activeRecordFactory->getObjectLoaded(
-                'Ebay\Item', $this->getData('ebay_item_id')
+                'Ebay\Item',
+                $this->getData('ebay_item_id')
             );
         }
 
@@ -144,10 +148,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getCategoryTemplate()
     {
-        if (is_null($this->categoryTemplateModel) && $this->isSetCategoryTemplate()) {
-
+        if ($this->categoryTemplateModel === null && $this->isSetCategoryTemplate()) {
             $this->categoryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Ebay\Template\Category', (int)$this->getTemplateCategoryId()
+                'Ebay_Template_Category',
+                (int)$this->getTemplateCategoryId()
             );
         }
 
@@ -169,10 +173,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getOtherCategoryTemplate()
     {
-        if (is_null($this->otherCategoryTemplateModel) && $this->isSetOtherCategoryTemplate()) {
-
+        if ($this->otherCategoryTemplateModel === null && $this->isSetOtherCategoryTemplate()) {
             $this->otherCategoryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Ebay\Template\OtherCategory', (int)$this->getTemplateOtherCategoryId()
+                'Ebay_Template_OtherCategory',
+                (int)$this->getTemplateOtherCategoryId()
             );
         }
 
@@ -260,10 +264,12 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getVariationSpecificsReplacements()
     {
         $specificsReplacements = $this->getParentObject()->getSetting(
-            'additional_data', 'variations_specifics_replacements', array()
+            'additional_data',
+            'variations_specifics_replacements',
+            []
         );
 
-        $replacements = array();
+        $replacements = [];
         foreach ($specificsReplacements as $findIt => $replaceBy) {
             $replacements[trim($findIt)] = trim($replaceBy);
         }
@@ -281,7 +287,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     {
         if (!isset($this->templateManagers[$template])) {
             /** @var \Ess\M2ePro\Model\Ebay\Template\Manager $manager */
-            $manager = $this->modelFactory->getObject('Ebay\Template\Manager')->setOwnerObject($this);
+            $manager = $this->modelFactory->getObject('Ebay_Template_Manager')->setOwnerObject($this);
             $this->templateManagers[$template] = $manager->setTemplate($template);
         }
 
@@ -295,7 +301,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getSellingFormatTemplate()
     {
-        if (is_null($this->sellingFormatTemplateModel)) {
+        if ($this->sellingFormatTemplateModel === null) {
             $template = \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT;
             $this->sellingFormatTemplateModel = $this->getTemplateManager($template)->getResultObject();
         }
@@ -318,7 +324,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getSynchronizationTemplate()
     {
-        if (is_null($this->synchronizationTemplateModel)) {
+        if ($this->synchronizationTemplateModel === null) {
             $template = \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION;
             $this->synchronizationTemplateModel = $this->getTemplateManager($template)->getResultObject();
         }
@@ -341,7 +347,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getDescriptionTemplate()
     {
-        if (is_null($this->descriptionTemplateModel)) {
+        if ($this->descriptionTemplateModel === null) {
             $template = \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION;
             $this->descriptionTemplateModel = $this->getTemplateManager($template)->getResultObject();
         }
@@ -364,7 +370,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getPaymentTemplate()
     {
-        if (is_null($this->paymentTemplateModel)) {
+        if ($this->paymentTemplateModel === null) {
             $template = \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT;
             $this->paymentTemplateModel = $this->getTemplateManager($template)->getResultObject();
         }
@@ -387,7 +393,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getReturnTemplate()
     {
-        if (is_null($this->returnTemplateModel)) {
+        if ($this->returnTemplateModel === null) {
             $template = \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY;
             $this->returnTemplateModel = $this->getTemplateManager($template)->getResultObject();
         }
@@ -410,7 +416,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getShippingTemplate()
     {
-        if (is_null($this->shippingTemplateModel)) {
+        if ($this->shippingTemplateModel === null) {
             $template = \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING;
             $this->shippingTemplateModel = $this->getTemplateManager($template)->getResultObject();
         }
@@ -460,7 +466,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getCategoryTemplateSource()
     {
         if (!$this->isSetCategoryTemplate()) {
-            return NULL;
+            return null;
         }
 
         return $this->getCategoryTemplate()->getSource($this->getMagentoProduct());
@@ -472,7 +478,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getOtherCategoryTemplateSource()
     {
         if (!$this->isSetOtherCategoryTemplate()) {
-            return NULL;
+            return null;
         }
 
         return $this->getOtherCategoryTemplate()->getSource($this->getMagentoProduct());
@@ -510,9 +516,9 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      * @param bool $tryToGetFromStorage
      * @return array
      */
-    public function getVariations($asObjects = false, array $filters = array(), $tryToGetFromStorage = true)
+    public function getVariations($asObjects = false, array $filters = [], $tryToGetFromStorage = true)
     {
-        return $this->getParentObject()->getVariations($asObjects,$filters,$tryToGetFromStorage);
+        return $this->getParentObject()->getVariations($asObjects, $filters, $tryToGetFromStorage);
     }
 
     //########################################
@@ -528,10 +534,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     /**
      * @return \Ess\M2ePro\Model\Ebay\Listing\Product\Description\Renderer
-    **/
+     **/
     public function getDescriptionRenderer()
     {
-        $renderer = $this->modelFactory->getObject('Ebay\Listing\Product\Description\Renderer');
+        $renderer = $this->modelFactory->getObject('Ebay_Listing_Product_Description_Renderer');
         $renderer->setListingProduct($this);
 
         return $renderer;
@@ -569,7 +575,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $uuid .= str_pad($this->getId(), 10, '0', STR_PAD_LEFT);
 
         // max int value is 2147483647 = 0x7FFFFFFF
-        $randomPart = dechex(mt_rand(0x000000, 0x7FFFFFFF));
+        $randomPart = dechex(call_user_func('mt_rand', 0x000000, 0x7FFFFFFF));
         $uuid .= str_pad($randomPart, 16, '0', STR_PAD_LEFT);
 
         return strtoupper($uuid);
@@ -592,7 +598,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function isSetCategoryTemplate()
     {
-        return !is_null($this->getTemplateCategoryId());
+        return $this->getTemplateCategoryId() !== null;
     }
 
     /**
@@ -600,7 +606,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function isSetOtherCategoryTemplate()
     {
-        return !is_null($this->getTemplateOtherCategoryId());
+        return $this->getTemplateOtherCategoryId() !== null;
     }
 
     // ---------------------------------------
@@ -828,17 +834,17 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         }
 
         if (!$this->isSetCategoryTemplate()) {
-            $this->setData(__METHOD__,false);
+            $this->setData(__METHOD__, false);
             return false;
         }
 
-        $isVariationEnabled = $this->getHelper('Component\Ebay\Category\Ebay')
+        $isVariationEnabled = $this->getHelper('Component_Ebay_Category_Ebay')
                                                 ->isVariationEnabled(
                                                     (int)$this->getCategoryTemplateSource()->getMainCategory(),
                                                     $this->getMarketplace()->getId()
                                                 );
 
-        if (is_null($isVariationEnabled)) {
+        if ($isVariationEnabled === null) {
             $isVariationEnabled = true;
         }
 
@@ -848,7 +854,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
                   $this->isListingTypeFixed() &&
                   $this->getMagentoProduct()->isProductWithVariations();
 
-        $this->setData(__METHOD__,$result);
+        $this->setData(__METHOD__, $result);
 
         return $result;
     }
@@ -864,7 +870,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
         $result = $this->isVariationMode() && count($this->getVariations()) > 0;
 
-        $this->setData(__METHOD__,$result);
+        $this->setData(__METHOD__, $result);
 
         return $result;
     }
@@ -898,13 +904,15 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     {
         $src = $this->getEbaySellingFormatTemplate()->getFixedPriceSource();
 
-        $vatPercent = NULL;
+        $vatPercent = null;
         if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
         return $this->getCalculatedPrice(
-            $src, $vatPercent, $this->getEbaySellingFormatTemplate()->getFixedPriceCoefficient()
+            $src,
+            $vatPercent,
+            $this->getEbaySellingFormatTemplate()->getFixedPriceCoefficient()
         );
     }
 
@@ -923,13 +931,15 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
         $src = $this->getEbaySellingFormatTemplate()->getStartPriceSource();
 
-        $vatPercent = NULL;
+        $vatPercent = null;
         if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
         return $this->getCalculatedPrice(
-            $src, $vatPercent, $this->getEbaySellingFormatTemplate()->getStartPriceCoefficient()
+            $src,
+            $vatPercent,
+            $this->getEbaySellingFormatTemplate()->getStartPriceCoefficient()
         );
     }
 
@@ -946,13 +956,15 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
         $src = $this->getEbaySellingFormatTemplate()->getReservePriceSource();
 
-        $vatPercent = NULL;
+        $vatPercent = null;
         if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
         return $this->getCalculatedPrice(
-            $src, $vatPercent, $this->getEbaySellingFormatTemplate()->getReservePriceCoefficient()
+            $src,
+            $vatPercent,
+            $this->getEbaySellingFormatTemplate()->getReservePriceCoefficient()
         );
     }
 
@@ -969,13 +981,15 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
         $src = $this->getEbaySellingFormatTemplate()->getBuyItNowPriceSource();
 
-        $vatPercent = NULL;
+        $vatPercent = null;
         if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
         return $this->getCalculatedPrice(
-            $src, $vatPercent, $this->getEbaySellingFormatTemplate()->getBuyItNowPriceCoefficient()
+            $src,
+            $vatPercent,
+            $this->getEbaySellingFormatTemplate()->getBuyItNowPriceCoefficient()
         );
     }
 
@@ -988,7 +1002,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     {
         $src = $this->getEbaySellingFormatTemplate()->getPriceDiscountStpSource();
 
-        $vatPercent = NULL;
+        $vatPercent = null;
         if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
@@ -1003,7 +1017,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     {
         $src = $this->getEbaySellingFormatTemplate()->getPriceDiscountMapSource();
 
-        $vatPercent = NULL;
+        $vatPercent = null;
         if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
@@ -1013,10 +1027,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     // ---------------------------------------
 
-    private function getCalculatedPrice($src, $vatPercent = NULL, $coefficient = NULL)
+    private function getCalculatedPrice($src, $vatPercent = null, $coefficient = null)
     {
         /** @var $calculator \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculator */
-        $calculator = $this->modelFactory->getObject('Ebay\Listing\Product\PriceCalculator');
+        $calculator = $this->modelFactory->getObject('Ebay_Listing_Product_PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getParentObject());
         $calculator->setVatPercent($vatPercent);
         $calculator->setCoefficient($coefficient);
@@ -1037,7 +1051,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         }
 
         if ($this->isVariationsReady()) {
-
             $qty = 0;
 
             foreach ($this->getVariations(true) as $variation) {
@@ -1049,7 +1062,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         }
 
         /** @var $calculator \Ess\M2ePro\Model\Ebay\Listing\Product\QtyCalculator */
-        $calculator = $this->modelFactory->getObject('Ebay\Listing\Product\QtyCalculator');
+        $calculator = $this->modelFactory->getObject('Ebay_Listing_Product_QtyCalculator');
         $calculator->setProduct($this->getParentObject());
 
         return $calculator->getProductValue();
@@ -1065,7 +1078,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             return (bool)$additionalData['out_of_stock_control'];
         }
 
-        return $returnRealValue ? NULL : false;
+        return $returnRealValue ? null : false;
     }
 
     public function isOutOfStockControlEnabled()
@@ -1174,31 +1187,31 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     //########################################
 
-    public function listAction(array $params = array())
+    public function listAction(array $params = [])
     {
         return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $params);
     }
 
-    public function relistAction(array $params = array())
+    public function relistAction(array $params = [])
     {
         return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_RELIST, $params);
     }
 
-    public function reviseAction(array $params = array())
+    public function reviseAction(array $params = [])
     {
         return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $params);
     }
 
-    public function stopAction(array $params = array())
+    public function stopAction(array $params = [])
     {
         return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_STOP, $params);
     }
 
     // ---------------------------------------
 
-    protected function processDispatcher($action, array $params = array())
+    protected function processDispatcher($action, array $params = [])
     {
-        return $this->modelFactory->getObject('Ebay\Connector\Item\Dispatcher')
+        return $this->modelFactory->getObject('Ebay_Connector_Item_Dispatcher')
             ->process($action, $this->getId(), $params);
     }
 
@@ -1212,24 +1225,24 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     {
         $attributes = $this->getListing()->getTrackingAttributes();
 
-        $trackingAttributesTemplates = $this->modelFactory->getObject('Ebay\Template\Manager')
+        $trackingAttributesTemplates = $this->modelFactory->getObject('Ebay_Template_Manager')
             ->getTrackingAttributesTemplates();
 
         foreach ($trackingAttributesTemplates as $template) {
             $templateManager = $this->getTemplateManager($template);
             $resultObjectTemp = $templateManager->getResultObject();
             if ($resultObjectTemp) {
-                $attributes = array_merge($attributes,$resultObjectTemp->getTrackingAttributes());
+                $attributes = array_merge($attributes, $resultObjectTemp->getTrackingAttributes());
             }
         }
 
         if ($this->isSetCategoryTemplate()) {
-            $attributes = array_merge($attributes,$this->getCategoryTemplate()->getTrackingAttributes());
+            $attributes = array_merge($attributes, $this->getCategoryTemplate()->getTrackingAttributes());
         }
 
         if ($this->getEbayAccount()->isPickupStoreEnabled()) {
             $listingProductPickupStoreCollection = $this->activeRecordFactory
-                ->getObject('Ebay\Listing\Product\PickupStore')
+                ->getObject('Ebay_Listing_Product_PickupStore')
                 ->getCollection()
                 ->addFieldToFilter('listing_product_id', $this->getId());
 
@@ -1245,7 +1258,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function setSynchStatusNeed($newData, $oldData)
     {
-        $templateManager = $this->modelFactory->getObject('Ebay\Template\Manager');
+        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
 
         $newTemplates = $templateManager->getTemplatesFromData($newData);
         $oldTemplates = $templateManager->getTemplatesFromData($oldData);
@@ -1256,24 +1269,23 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         );
 
         foreach ($templateManager->getAllTemplates() as $template) {
-
             $templateManager->setTemplate($template);
 
             $templateManager->getTemplateModel(true)->getResource()->setSynchStatusNeed(
                 $newTemplates[$template]->getDataSnapshot(),
                 $oldTemplates[$template]->getDataSnapshot(),
-                array($listingProductData)
+                [$listingProductData]
             );
         }
-        $this->getResource()->setSynchStatusNeedByCategoryTemplate($newData,$oldData,$listingProductData);
-        $this->getResource()->setSynchStatusNeedByOtherCategoryTemplate($newData,$oldData,$listingProductData);
+        $this->getResource()->setSynchStatusNeedByCategoryTemplate($newData, $oldData, $listingProductData);
+        $this->getResource()->setSynchStatusNeedByOtherCategoryTemplate($newData, $oldData, $listingProductData);
     }
 
     // ---------------------------------------
 
     public function clearParentIndexer()
     {
-        $manager = $this->modelFactory->getObject('Indexer\Listing\Product\VariationParent\Manager', [
+        $manager = $this->modelFactory->getObject('Indexer_Listing_Product_VariationParent_Manager', [
             'listing' => $this->getListing()
         ]);
         $manager->markInvalidated();
@@ -1293,18 +1305,16 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function afterSave()
     {
         if ($this->isObjectCreatingState()) {
-
             $this->clearParentIndexer();
         } else {
 
             /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Indexer\Listing\Product\VariationParent $resource */
             $resource = $this->activeRecordFactory->getObject(
-                'Ebay\Indexer\Listing\Product\VariationParent'
+                'Ebay_Indexer_Listing_Product_VariationParent'
             )->getResource();
 
             foreach ($resource->getTrackedFields() as $fieldName) {
                 if ($this->getData($fieldName) != $this->getOrigData($fieldName)) {
-
                     $this->clearParentIndexer();
                     break;
                 }

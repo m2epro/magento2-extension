@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager;
 
 use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory;
 
+/**
+ * Class PhysicalUnit
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager
+ */
 abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\AbstractModel
 {
     protected $activeRecordFactory;
@@ -68,8 +72,7 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
             ->getVariationsTypeStandard();
 
         foreach ($magentoVariations['variations'] as $magentoVariation) {
-
-            $magentoOptions = array();
+            $magentoOptions = [];
 
             foreach ($magentoVariation as $magentoOption) {
                 $magentoOptions[strtolower($magentoOption['attribute'])] = strtolower($magentoOption['option']);
@@ -98,7 +101,7 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
 
         $this->createStructure($variation);
 
-        $options = array();
+        $options = [];
         foreach ($variation as $option) {
             $options[$option['attribute']] = $option['option'];
         }
@@ -147,7 +150,7 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
     {
         $productOptions = $this->getListingProduct()->getSetting('additional_data', 'variation_product_options', null);
         if (empty($productOptions)) {
-            return array();
+            return [];
         }
 
         return $productOptions;
@@ -191,7 +194,7 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
         /** @var \Ess\M2ePro\Model\Listing\Product\Variation $currentVariation */
         $currentVariation = reset($currentVariations);
 
-        $productOptions = array();
+        $productOptions = [];
         foreach ($currentVariation->getOptions(true) as $currentOption) {
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $currentOption */
             $productOptions[$currentOption->getAttribute()] = $currentOption->getOption();
@@ -207,7 +210,6 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
 
         foreach ($currentVariation->getOptions(true) as $currentOption) {
             foreach ($magentoVariation as $magentoOption) {
-
                 if ($currentOption->getAttribute() != $magentoOption['attribute'] ||
                     $currentOption->getOption() != $magentoOption['option']) {
                     continue;
@@ -228,7 +230,7 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
     private function removeStructure()
     {
         foreach ($this->getListingProduct()->getVariations(true) as $variation) {
-            /* @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
             $variation->delete();
         }
     }
@@ -236,22 +238,21 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
     private function createStructure(array $variation)
     {
         $variationId = $this->walmartFactory
-            ->getObject('Listing\Product\Variation')
-            ->addData(array(
+            ->getObject('Listing_Product_Variation')
+            ->addData([
                 'listing_product_id' => $this->getListingProduct()->getId()
-            ))->save()->getId();
+            ])->save()->getId();
 
         foreach ($variation as $option) {
-
-            $tempData = array(
+            $tempData = [
                 'listing_product_variation_id' => $variationId,
                 'product_id'                   => $option['product_id'],
                 'product_type'                 => $option['product_type'],
                 'attribute'                    => $option['attribute'],
                 'option'                       => $option['option']
-            );
+            ];
 
-            $this->walmartFactory->getObject('Listing\Product\Variation\Option')
+            $this->walmartFactory->getObject('Listing_Product_Variation_Option')
                 ->addData($tempData)->save();
         }
     }
@@ -269,21 +270,21 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
             ->getItems();
 
         foreach ($items as $item) {
-            /* @var $item \Ess\M2ePro\Model\Walmart\Item */
+            /** @var $item \Ess\M2ePro\Model\Walmart\Item */
             $item->delete();
         }
     }
 
     private function createChannelItem(array $options)
     {
-        $data = array(
+        $data = [
             'account_id'                => (int)$this->getListing()->getAccountId(),
             'marketplace_id'            => (int)$this->getListing()->getMarketplaceId(),
             'sku'                       => $this->getWalmartListingProduct()->getSku(),
             'product_id'                => (int)$this->getListingProduct()->getProductId(),
             'store_id'                  => (int)$this->getListing()->getStoreId(),
             'variation_product_options' => $this->getHelper('Data')->jsonEncode($options),
-        );
+        ];
 
         $this->activeRecordFactory->getObject('Walmart\Item')->setData($data)->save();
     }

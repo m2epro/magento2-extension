@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper;
 
+/**
+ * Class Module
+ * @package Ess\M2ePro\Helper
+ */
 class Module extends AbstractHelper
 {
     const IDENTIFIER = 'Ess_M2ePro';
@@ -47,8 +51,7 @@ class Module extends AbstractHelper
         \Magento\Framework\Model\ResourceModel\Db\Context $dbContext,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->moduleConfig = $moduleConfig;
         $this->cacheConfig = $cacheConfig;
@@ -91,7 +94,7 @@ class Module extends AbstractHelper
 
     public function getPublicVersion()
     {
-        return '1.4.0';
+        return '1.4.2';
     }
 
     public function getSetupVersion()
@@ -126,7 +129,7 @@ class Module extends AbstractHelper
 
     public function getRevision()
     {
-        return '2890';
+        return '3104';
     }
 
     //########################################
@@ -190,7 +193,7 @@ class Module extends AbstractHelper
 
     public function isDisabled()
     {
-        return (bool)$this->getConfig()->getGroupValue(NULL, 'is_disabled');
+        return (bool)$this->getConfig()->getGroupValue(null, 'is_disabled');
     }
 
     //########################################
@@ -252,9 +255,9 @@ class Module extends AbstractHelper
 
     public function isStaticContentDeployed()
     {
-        $staticContentValidationResult = $this->getHelper('Data\Cache\Runtime')->getValue(__METHOD__);
+        $staticContentValidationResult = $this->getHelper('Data_Cache_Runtime')->getValue(__METHOD__);
 
-        if (!is_null($staticContentValidationResult)) {
+        if ($staticContentValidationResult !== null) {
             return $staticContentValidationResult;
         }
 
@@ -268,11 +271,10 @@ class Module extends AbstractHelper
             !$magentoHelper->isStaticContentExists($moduleDir.'fonts') ||
             !$magentoHelper->isStaticContentExists($moduleDir.'images') ||
             !$magentoHelper->isStaticContentExists($moduleDir.'js')) {
-
             $result = false;
         }
 
-        $this->getHelper('Data\Cache\Runtime')->setValue(__METHOD__, $result);
+        $this->getHelper('Data_Cache_Runtime')->setValue(__METHOD__, $result);
         return $result;
     }
 
@@ -283,7 +285,7 @@ class Module extends AbstractHelper
         /** @var \Ess\M2ePro\Model\Registry $registryModel */
         $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', '/server/messages/', 'key', false);
 
-        if (is_null($registryModel)) {
+        if ($registryModel === null) {
             return [];
         }
 
@@ -313,7 +315,7 @@ class Module extends AbstractHelper
 
     public function clearCache()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeAllValues();
+        $this->getHelper('Data_Cache_Permanent')->removeAllValues();
     }
 
     //########################################

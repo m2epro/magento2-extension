@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Support;
 
 use Ess\M2ePro\Controller\Adminhtml\Support;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Support
+ */
 class Save extends Support
 {
     //########################################
@@ -20,18 +24,18 @@ class Save extends Support
             return $this->_redirect('*/*/index');
         }
 
-        $keys = array(
+        $keys = [
             'component',
             'contact_mail',
             'contact_name',
             'subject',
             'description'
-        );
+        ];
 
         $components = $this->getHelper('Component')->getEnabledComponents();
         count($components) == 1 && $post['component'] = array_pop($components);
 
-        $data = array();
+        $data = [];
         foreach ($keys as $key) {
             if (!isset($post[$key])) {
                 $this->messageManager->addError($this->__('You should fill in all required fields.'));
@@ -42,12 +46,14 @@ class Save extends Support
 
         $severity = isset($post['severity']) ? $post['severity'] : null;
 
-        $this->getHelper('Module\Support\Form')->send($data['component'],
+        $this->getHelper('Module_Support_Form')->send(
+            $data['component'],
             $data['contact_mail'],
             $data['contact_name'],
             $data['subject'],
             $data['description'],
-            $severity);
+            $severity
+        );
 
         $this->messageManager->addSuccess($this->__('Your message has been successfully sent.'));
 

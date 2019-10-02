@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Setup;
 
 use Ess\M2ePro\Model\AbstractModel;
 
+/**
+ * Class PublicVersionsChecker
+ * @package Ess\M2ePro\Model\Setup
+ */
 class PublicVersionsChecker extends AbstractModel
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory */
@@ -31,7 +35,7 @@ class PublicVersionsChecker extends AbstractModel
 
     public function doCheck()
     {
-        $cache = $this->getHelper('Data\Cache\Permanent');
+        $cache = $this->getHelper('Data_Cache_Permanent');
 
         if ($cache->getValue('files_version_is_checked')) {
             return;
@@ -44,7 +48,6 @@ class PublicVersionsChecker extends AbstractModel
             ->getVersionTo();
 
         if ($currentVersion != $lastVersion) {
-
             $historyObject = $this->activeRecordFactory->getObject('VersionsHistory');
             $historyObject->setData([
                 'version_from' => $lastVersion,

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Other;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Other
+ */
 class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     protected $ebayFactory;
@@ -18,8 +22,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct($context, $data);
     }
@@ -51,22 +54,22 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $accountId = $this->getRequest()->getParam('account');
         $marketplaceId = $this->getRequest()->getParam('marketplace');
 
-        $this->addButton('view_logs', array(
+        $this->addButton('view_logs', [
             'label'   => $this->__('View Log'),
             'onclick' => 'window.open(\''.$this->getUrl('*/ebay_log_listing_other/index', [
                 'ebayAccount' => $accountId,
                 'ebayMarketplace' => $marketplaceId,
                 'listings' => true
             ]) . '\');',
-        ));
+        ]);
 
-        if (!is_null($this->getRequest()->getParam('back'))) {
+        if ($this->getRequest()->getParam('back') !== null) {
             $url = $this->getHelper('Data')->getBackUrl();
-            $this->buttonList->add('back', array(
+            $this->buttonList->add('back', [
                 'label'   => $this->__('Back'),
                 'onclick' => 'CommonObj.backClick(\'' . $url . '\')',
                 'class'   => 'back'
-            ));
+            ]);
         }
         // ---------------------------------------
     }
@@ -98,7 +101,8 @@ HTML
 
         // ---------------------------------------
         $viewHeaderBlock = $this->createBlock(
-            'Listing\Other\View\Header','',
+            'Listing_Other_View_Header',
+            '',
             ['data' => [
                 'account' => $this->ebayFactory->getCachedObjectLoaded('Account', $accountId),
                 'marketplace' => $this->ebayFactory->getCachedObjectLoaded('Marketplace', $marketplaceId)
@@ -118,9 +122,9 @@ HTML
 
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
 
-        $logViewUrl = $this->getUrl('*/ebay_log_listing_other/index', array(
+        $logViewUrl = $this->getUrl('*/ebay_log_listing_other/index', [
             'back'=>$helper->makeBackUrlParam('*/listing_other/index')
-        ));
+        ]);
 
         $someProductsWereNotMappedMessage = 'No matches were found. Please change the Mapping Attributes in <strong>';
         $someProductsWereNotMappedMessage .= 'Configuration > Account > 3rd Party Listings</strong> ';
@@ -183,7 +187,8 @@ HTML
             'failed_products_popup_title' => $this->__('Product(s) failed to move'),
             'successfully_moved' => $this->__('Product(s) was successfully Moved.'),
             'products_were_not_moved' => $this->__(
-                'Products were not Moved. <a target="_blank" href="%url%">View Log</a> for details.', $logViewUrl
+                'Products were not Moved. <a target="_blank" href="%url%">View Log</a> for details.',
+                $logViewUrl
             ),
             'some_products_were_not_moved' => $this->__(
                 'Some of the Products were not Moved. <a target="_blank" href="%url%">View Log</a> for details.',
@@ -249,13 +254,13 @@ HTML
             EbayListingOtherGridObj.afterInitPage();
         });
 JS
-);
+        );
 
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(
-            '\Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid'
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid::class
         ));
 
-        $mapToProductBlock = $this->createBlock('Listing\Other\Mapping');
+        $mapToProductBlock = $this->createBlock('Listing_Other_Mapping');
 
         return  $mapToProductBlock->toHtml() .
                 '<div id="listing_other_progress_bar"></div>' .

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
+/**
+ * Class UpdateShippingStatus
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Order
+ */
 class UpdateShippingStatus extends Order
 {
     public function execute()
@@ -25,7 +29,7 @@ class UpdateShippingStatus extends Order
         /** @var \Ess\M2ePro\Model\Order[] $orders */
         $orders = $this->walmartFactory->getObject('Order')
             ->getCollection()
-            ->addFieldToFilter('id', array('in' => $ids))
+            ->addFieldToFilter('id', ['in' => $ids])
             ->getItems();
 
         $hasFailed = false;
@@ -40,8 +44,7 @@ class UpdateShippingStatus extends Order
                 ->setOrderFilter($order->getMagentoOrderId());
 
             if ($shipmentsCollection->getSize() === 0) {
-
-                $order->getChildObject()->updateShippingStatus(array()) ? $hasSucceeded = true
+                $order->getChildObject()->updateShippingStatus([]) ? $hasSucceeded = true
                     : $hasFailed = true;
                 continue;
             }
@@ -53,7 +56,7 @@ class UpdateShippingStatus extends Order
                 }
 
                 /** @var \Ess\M2ePro\Model\Walmart\Order\Shipment\Handler $handler */
-                $handler = $this->modelFactory->getObject('Order\Shipment\Handler')->factory(
+                $handler = $this->modelFactory->getObject('Order_Shipment_Handler')->factory(
                     $order->getComponentMode()
                 );
 
@@ -65,19 +68,14 @@ class UpdateShippingStatus extends Order
             }
         }
         if (!$hasFailed && $hasSucceeded) {
-
             $this->messageManager->addSuccess(
                 $this->__('Updating Walmart Order(s) Status to Shipped in Progress...')
             );
-
         } elseif ($hasFailed && !$hasSucceeded) {
-
             $this->messageManager->addWarning(
                 $this->__('Walmart Order(s) can not be updated for Shipped Status.')
             );
-
         } elseif ($hasFailed && $hasSucceeded) {
-
             $this->messageManager->addError(
                 $this->__('Some of Walmart Order(s) can not be updated for Shipped Status.')
             );

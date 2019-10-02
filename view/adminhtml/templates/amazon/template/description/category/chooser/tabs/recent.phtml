@@ -1,29 +1,37 @@
 <?php
-    /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs\Recent $this */
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs\Recent $block */
+
 ?>
 
 <div id="chooser_recent">
     <table id="chooser_recent_table">
 
-        <?php if (count($this->getCategories()) <= 0) : ?>
+        <?php if (count($block->getCategories()) <= 0) : ?>
             <tr>
                 <td colspan="2" style="text-align: center;">
-                    <strong><?php echo $this->__('No recently used Categories'); ?></strong>
+                    <strong><?php echo $block->__('No recently used Categories'); ?></strong>
                 </td>
             </tr>
         <?php endif; ?>
 
-        <?php foreach ($this->getCategories() as $category) : ?>
-
-            <?php $nodeId       = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml($category['browsenode_id'])); ?>
-            <?php $categoryPath = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml($category['path'])); ?>
+        <?php foreach ($block->getCategories() as $category) : ?>
+            <?php $nodeId       = $block->getHelper('Data')->escapeJs($block->getHelper('Data')->escapeHtml($category['browsenode_id'])); ?>
+            <?php $categoryPath = $block->getHelper('Data')->escapeJs($block->getHelper('Data')->escapeHtml($category['path'])); ?>
 
             <tr>
                 <td>
                     <?php echo $category['path'] .' ('.$category['browsenode_id'].')'; ?>
                 </td>
                 <td>
-                    <a href="javascript:void(0)" onclick="AmazonTemplateDescriptionCategoryChooserObj.recentClickCategory('<?php echo $nodeId; ?>','<?php echo $categoryPath; ?>');"><?php echo $this->__('Select'); ?></a>
+                    <a href="javascript:void(0)" onclick="AmazonTemplateDescriptionCategoryChooserObj.recentClickCategory('<?php echo $nodeId; ?>','<?php echo $categoryPath; ?>');"><?php echo $block->__('Select'); ?></a>
                 </td>
             </tr>
         <?php endforeach; ?>

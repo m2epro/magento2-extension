@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class GetAFNQtyBySku
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ */
 class GetAFNQtyBySku extends Main
 {
     public function execute()
@@ -27,12 +31,15 @@ class GetAFNQtyBySku extends Main
         }
 
         /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('inventory','get','qtyAfnItems',
-            array(
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
+        $connectorObj = $dispatcherObject->getVirtualConnector(
+            'inventory',
+            'get',
+            'qtyAfnItems',
+            [
                 'items' => $skus,
                 'only_realtime' => true
-            ),
+            ],
             null,
             $accountId
         );

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Custom;
 
 use Ess\M2ePro\Model\Amazon\Listing\Product as AmazonListingProduct;
 
+/**
+ * Class AmazonIsRepricing
+ * @package Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Custom
+ */
 class AmazonIsRepricing extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
     //########################################
@@ -71,16 +75,16 @@ class AmazonIsRepricing extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Ab
     public function getOptions()
     {
         $helper = $this->helperFactory->getObject('Module\Translation');
-        return array(
-            array(
+        return [
+            [
                 'value' => AmazonListingProduct::IS_REPRICING_NO,
                 'label' => $helper->__('No'),
-            ),
-            array(
+            ],
+            [
                 'value' => AmazonListingProduct::IS_REPRICING_YES,
                 'label' => $helper->__('Yes'),
-            ),
-        );
+            ],
+        ];
     }
 
     //########################################

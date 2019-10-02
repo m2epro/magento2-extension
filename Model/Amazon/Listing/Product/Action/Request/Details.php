@@ -8,27 +8,31 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request;
 
+/**
+ * Class Details
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request
+ */
 class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Amazon\Template\ShippingTemplate
      */
-    private $shippingTemplateTemplate = NULL;
+    private $shippingTemplateTemplate = null;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Template\Description
      */
-    private $descriptionTemplate = NULL;
+    private $descriptionTemplate = null;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Template\Description\Definition
      */
-    private $definitionTemplate = NULL;
+    private $definitionTemplate = null;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Template\Description\Definition\Source
      */
-    private $definitionSource = NULL;
+    private $definitionSource = null;
 
     //########################################
 
@@ -37,7 +41,7 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
      */
     public function getRequestData()
     {
-        $data = array();
+        $data = [];
 
         if (!$this->getConfigurator()->isDetailsAllowed()) {
             return $data;
@@ -60,7 +64,6 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
         $isUseDescriptionTemplate = false;
 
         do {
-
             if (!$this->getAmazonListingProduct()->isExistDescriptionTemplate()) {
                 break;
             }
@@ -69,19 +72,16 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
 
             if (($variationManager->isRelationChildType() || $variationManager->isIndividualType()) &&
                 ($this->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
-                 $this->getMagentoProduct()->isBundleType()||
+                 $this->getMagentoProduct()->isBundleType() ||
                  $this->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks())) {
                 break;
             }
 
             $isUseDescriptionTemplate = true;
-
         } while (false);
 
         if (!$isUseDescriptionTemplate) {
-
             if (isset($data['gift_wrap']) || isset($data['gift_message'])) {
-
                 $data['description_data']['title'] = $this->getAmazonListingProduct()
                                                           ->getMagentoProduct()
                                                           ->getName();
@@ -116,7 +116,7 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
      */
     private function getConditionData()
     {
-        $condition = array();
+        $condition = [];
 
         $this->searchNotFoundAttributes();
         $condition['condition'] = $this->getAmazonListingProduct()->getListingSource()->getCondition();
@@ -136,16 +136,16 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
      */
     private function getGiftData()
     {
-        $data = array();
+        $data = [];
         $giftWrap = $this->getAmazonListingProduct()->getListingSource()->getGiftWrap();
 
-        if (!is_null($giftWrap)) {
+        if ($giftWrap !== null) {
             $data['gift_wrap'] = $giftWrap;
         }
 
         $giftMessage = $this->getAmazonListingProduct()->getListingSource()->getGiftMessage();
 
-        if (!is_null($giftMessage)) {
+        if ($giftMessage !== null) {
             $data['gift_message'] = $giftMessage;
         }
 
@@ -161,12 +161,12 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
     {
         $source = $this->getDefinitionSource();
 
-        $data = array(
+        $data = [
             'brand'                    => $source->getBrand(),
 
             'manufacturer'             => $source->getManufacturer(),
             'manufacturer_part_number' => $source->getManufacturerPartNumber(),
-        );
+        ];
 
         $this->searchNotFoundAttributes();
         $data['title'] = $this->getDefinitionSource()->getTitle();
@@ -232,7 +232,7 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
         $data['shipping_weight_unit_of_measure'] = $source->getShippingWeightUnitOfMeasure();
         $this->processNotFoundAttributes('Shipping Weight Units');
 
-        if (is_null($data['package_weight']) || $data['package_weight'] === '' ||
+        if ($data['package_weight'] === null || $data['package_weight'] === '' ||
             $data['package_weight_unit_of_measure'] === ''
         ) {
             unset(
@@ -241,7 +241,7 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
             );
         }
 
-        if (is_null($data['shipping_weight']) || $data['shipping_weight'] === '' ||
+        if ($data['shipping_weight'] === null || $data['shipping_weight'] === '' ||
             $data['shipping_weight_unit_of_measure'] === ''
         ) {
             unset(
@@ -251,9 +251,9 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
         }
 
         if (!$this->getVariationManager()->isRelationParentType()) {
-            return array(
+            return [
                 'description_data' => $data
-            );
+            ];
         }
 
         if (in_array('', $data['item_dimensions_volume']) || $data['item_dimensions_volume_unit_of_measure'] === '') {
@@ -279,9 +279,9 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
             );
         }
 
-        return array(
+        return [
             'description_data' => $data
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -291,12 +291,11 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
      */
     private function getProductData()
     {
-        $data = array();
+        $data = [];
 
         $this->searchNotFoundAttributes();
 
         foreach ($this->getDescriptionTemplate()->getSpecifics(true) as $specific) {
-
             $source = $specific->getSource($this->getAmazonListingProduct()->getActualMagentoProduct());
 
             if (!$specific->isRequired() && !$specific->isModeNone() && !$source->getValue()) {
@@ -304,16 +303,17 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
             }
 
             $data = array_replace_recursive(
-                $data, $this->getHelper('Data')->jsonDecode($source->getPath())
+                $data,
+                $this->getHelper('Data')->jsonDecode($source->getPath())
             );
         }
 
         $this->processNotFoundAttributes('Product Specifics');
 
-        return array(
+        return [
             'product_data'      => $data,
             'product_data_nick' => $this->getDescriptionTemplate()->getProductDataNick(),
-        );
+        ];
     }
 
     /**
@@ -322,14 +322,14 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
     private function getShippingData()
     {
         if (!$this->getAmazonListingProduct()->getAmazonAccount()->isShippingModeTemplate()) {
-            return array();
+            return [];
         }
 
         if (!$this->getAmazonListingProduct()->isExistShippingTemplateTemplate()) {
-            return array();
+            return [];
         }
 
-        $data = array();
+        $data = [];
         $data['shipping_data']['template_name'] = $this->getAmazonListingProduct()
                                                        ->getShippingTemplateSource()->getTemplateName();
 
@@ -344,14 +344,14 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
         if (!$this->getAmazonMarketplace()->isProductTaxCodePolicyAvailable() ||
             !$this->getAmazonAccount()->isVatCalculationServiceEnabled()
         ) {
-            return array();
+            return [];
         }
 
         if (!$this->getAmazonListingProduct()->isExistProductTaxCodeTemplate()) {
-            return array();
+            return [];
         }
 
-        $data = array();
+        $data = [];
 
         $this->searchNotFoundAttributes();
 
@@ -369,7 +369,7 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
      */
     private function getDescriptionTemplate()
     {
-        if (is_null($this->descriptionTemplate)) {
+        if ($this->descriptionTemplate === null) {
             $this->descriptionTemplate = $this->getAmazonListingProduct()->getAmazonDescriptionTemplate();
         }
         return $this->descriptionTemplate;
@@ -382,7 +382,7 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
      */
     private function getDefinitionTemplate()
     {
-        if (is_null($this->definitionTemplate)) {
+        if ($this->definitionTemplate === null) {
             $this->definitionTemplate = $this->getDescriptionTemplate()->getDefinitionTemplate();
         }
         return $this->definitionTemplate;
@@ -393,7 +393,7 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
      */
     private function getDefinitionSource()
     {
-        if (is_null($this->definitionSource)) {
+        if ($this->definitionSource === null) {
             $this->definitionSource = $this->getDefinitionTemplate()
                 ->getSource($this->getAmazonListingProduct()->getActualMagentoProduct());
         }

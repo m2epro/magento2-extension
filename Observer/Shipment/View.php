@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Observer\Shipment;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Observer\Shipment
+ */
 class View extends \Ess\M2ePro\Observer\AbstractModel
 {
     protected $customerFactory;
@@ -21,8 +25,7 @@ class View extends \Ess\M2ePro\Observer\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->customerFactory = $customerFactory;
         $this->registry = $registry;
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
@@ -41,7 +44,9 @@ class View extends \Ess\M2ePro\Observer\AbstractModel
         try {
             /** @var \Ess\M2ePro\Model\Order $order */
             $order = $this->activeRecordFactory->getObjectLoaded(
-                'Order', $shipment->getOrderId(), 'magento_order_id'
+                'Order',
+                $shipment->getOrderId(),
+                'magento_order_id'
             );
         } catch (\Exception $exception) {
             return;
@@ -59,8 +64,8 @@ class View extends \Ess\M2ePro\Observer\AbstractModel
         $customer = $this->customerFactory->create()->load($customerId);
 
         $shipment->getOrder()->setData(
-            'customer_'.\Ess\M2ePro\Model\Ebay\Order\Proxy::USER_ID_ATTRIBUTE_CODE,
-            $customer->getData(\Ess\M2ePro\Model\Ebay\Order\Proxy::USER_ID_ATTRIBUTE_CODE)
+            'customer_'.\Ess\M2ePro\Model\Ebay\Order\ProxyObject::USER_ID_ATTRIBUTE_CODE,
+            $customer->getData(\Ess\M2ePro\Model\Ebay\Order\ProxyObject::USER_ID_ATTRIBUTE_CODE)
         );
     }
 

@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 use Ess\M2ePro\Model\Ebay\Template\Description\Source as DescriptionSource;
 
+/**
+ * Class Preview
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing
+ */
 class Preview extends AbstractBlock
 {
     const NEXT = 0;
@@ -20,8 +24,8 @@ class Preview extends AbstractBlock
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
     private $ebayListingProduct;
 
-    private $variations = NULL;
-    private $images = NULL;
+    private $variations = null;
+    private $images = null;
 
     protected $ebayFactory;
     protected $currency;
@@ -33,8 +37,7 @@ class Preview extends AbstractBlock
         \Magento\Framework\Locale\Currency $currency,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         $this->currency = $currency;
         parent::__construct($context, $data);
@@ -47,7 +50,8 @@ class Preview extends AbstractBlock
         $id = $this->getRequest()->getParam('currentProductId');
 
         $this->ebayListingProduct = $this->ebayFactory->getObjectLoaded(
-            'Listing\Product', $id
+            'Listing\Product',
+            $id
         )->getChildObject();
 
         $this->setTemplate('ebay/listing/preview.phtml');
@@ -72,7 +76,7 @@ class Preview extends AbstractBlock
             EbayListingPreviewItemsObj.initVariations();
         });
 JS
-);
+        );
 
         return parent::_beforeToHtml();
     }
@@ -107,17 +111,18 @@ JS
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $tempEbayListingProduct */
 
         $tempEbayListingProduct = $this->ebayFactory->getObjectLoaded(
-            'Listing\Product', current($parsedProductIds)
+            'Listing\Product',
+            current($parsedProductIds)
         )->getChildObject();
 
-        return array(
+        return [
             'title' => $tempEbayListingProduct->getMagentoProduct()->getName(),
             'id' => $tempEbayListingProduct->getMagentoProduct()->getProductId(),
-            'url' => $this->getUrl('*/ebay_listing/previewItems', array(
+            'url' => $this->getUrl('*/ebay_listing/previewItems', [
                 'currentProductId' => current($parsedProductIds),
                 'productIds' => $productIds,
-            ))
-        );
+            ])
+        ];
     }
 
     //########################################
@@ -156,11 +161,11 @@ JS
 
     public function getPrice(array $variations)
     {
-        $data = array(
+        $data = [
             'price' => null,
             'price_stp' => null,
             'price_map' => null
-        );
+        ];
 
         if ($this->ebayListingProduct->isListingTypeFixed()) {
             $data['price_fixed'] = number_format($this->ebayListingProduct->getFixedPrice(), 2);
@@ -181,7 +186,7 @@ JS
         if (empty($variations)) {
             $productPrice = isset($data['price_fixed']) ? $data['price_fixed'] : $data['price_start'];
         } else {
-            $variationPrices = array();
+            $variationPrices = [];
 
             foreach ($variations['variations'] as $variation) {
                 if ($variation['data']['qty']) {
@@ -190,7 +195,6 @@ JS
             }
 
             if (!empty($variationPrices)) {
-
                 $min = $variationPrices[0]['price'];
                 $productPrice = $min;
                 $data['price_stp'] = $variationPrices[0]['price_stp'];
@@ -230,23 +234,23 @@ JS
 
     public function getVariations()
     {
-        if (!is_null($this->variations)) {
+        if ($this->variations !== null) {
             return $this->variations;
         }
 
         $variations = $this->ebayListingProduct->getVariations(true);
-        $data = array();
+        $data = [];
 
         if ($this->ebayListingProduct->getEbaySellingFormatTemplate()->isIgnoreVariationsEnabled()) {
-            return $this->variations = array();
+            return $this->variations = [];
         }
 
         if (!$this->ebayListingProduct->isListingTypeFixed()) {
-            return $this->variations = array();
+            return $this->variations = [];
         }
 
         if (!$this->ebayListingProduct->getEbayMarketplace()->isMultivariationEnabled()) {
-            return $this->variations = array();
+            return $this->variations = [];
         }
 
         foreach ($variations as $variation) {
@@ -265,12 +269,12 @@ JS
 
             $options = $productVariation->getOptions(true);
 
-            $variationData = array(
+            $variationData = [
                 'price' => number_format($productVariation->getPrice(), 2),
                 'qty' => $variationQty,
                 'price_stp' => null,
                 'price_map' => null
-            );
+            ];
 
             if ($this->ebayListingProduct->isPriceDiscountStp()
                 && $productVariation->getPriceDiscountStp() > $productVariation->getPrice()) {
@@ -280,10 +284,9 @@ JS
                 $variationData['price_map'] = number_format($productVariation->getPriceDiscountMap(), 2);
             }
 
-            $variationSpecifics = array();
+            $variationSpecifics = [];
 
             foreach ($options as $option) {
-
                 $optionTitle = trim($option->getOption());
                 $attributeTitle = trim($option->getAttribute());
 
@@ -291,10 +294,10 @@ JS
                 $data['variation_sets'][$attributeTitle][] = $optionTitle;
             }
 
-            $variationData = array(
+            $variationData = [
                 'data' => $variationData,
                 'specifics' => $variationSpecifics
-            );
+            ];
 
             $data['variations'][] = $variationData;
         }
@@ -315,13 +318,13 @@ JS
         $descriptionTemplate = $this->ebayListingProduct->getEbayDescriptionTemplate();
 
         if (!$descriptionTemplate->isVariationConfigurableImages()) {
-            return array();
+            return [];
         }
 
         $product = $this->ebayListingProduct->getMagentoProduct()->getProduct();
 
         $attributeCodes = $descriptionTemplate->getDecodedVariationConfigurableImages();
-        $attributes = array();
+        $attributes = [];
 
         foreach ($attributeCodes as $attributeCode) {
             /** @var $attribute \Magento\Catalog\Model\ResourceModel\Eav\Attribute */
@@ -336,10 +339,10 @@ JS
         }
 
         if (empty($attributes)) {
-            return array();
+            return [];
         }
 
-        $attributeLabels = array();
+        $attributeLabels = [];
 
         /** @var $productTypeInstance \Magento\ConfigurableProduct\Model\Product\Type\Configurable */
         $productTypeInstance = $this->ebayListingProduct->getMagentoProduct()->getTypeInstance();
@@ -350,9 +353,7 @@ JS
             $configurableAttribute->setStoteId($product->getStoreId());
 
             foreach ($attributes as $attribute) {
-
                 if ((int)$attribute->getAttributeId() == (int)$configurableAttribute->getAttributeId()) {
-
                     $attributeLabels = [];
                     foreach ($attribute->getStoreLabels() as $storeLabel) {
                         $attributeLabels[] = trim($storeLabel);
@@ -372,8 +373,8 @@ JS
 
     private function getImagesDataByAttributeLabels(array $attributeLabels)
     {
-        $images = array();
-        $imagesLinks = array();
+        $images = [];
+        $imagesLinks = [];
         $attributeLabel = false;
 
         foreach ($this->ebayListingProduct->getVariations(true) as $variation) {
@@ -413,7 +414,6 @@ JS
                     ->getVariationImages();
 
                 foreach ($optionImages as $image) {
-
                     if (!$image->getUrl()) {
                         continue;
                     }
@@ -423,7 +423,6 @@ JS
                     }
 
                     if (!isset($images[$image->getHash()])) {
-
                         $imagesLinks[$optionValue][] = $image->getUrl();
                         $images[$image->getHash()] = $image;
                     }
@@ -432,44 +431,42 @@ JS
         }
 
         if (!$attributeLabel || !$imagesLinks) {
-            return array();
+            return [];
         }
 
-        return array(
+        return [
             'specific' => $attributeLabel,
             'images'   => $imagesLinks
-        );
+        ];
     }
 
     public function getImages()
     {
-        if (!is_null($this->images)) {
+        if ($this->images !== null) {
             return $this->images;
         }
 
-        $images = array();
+        $images = [];
 
         if ($this->ebayListingProduct->isVariationsReady()) {
-
-            $attributeLabels = array();
-            $images['variations'] = array();
+            $attributeLabels = [];
+            $images['variations'] = [];
 
             if ($this->ebayListingProduct->getMagentoProduct()->isConfigurableType()) {
                 $attributeLabels = $this->getConfigurableImagesAttributeLabels();
             }
 
             if ($this->ebayListingProduct->getMagentoProduct()->isGroupedType()) {
-                $attributeLabels = array(\Ess\M2ePro\Model\Magento\Product\Variation::GROUPED_PRODUCT_ATTRIBUTE_LABEL);
+                $attributeLabels = [\Ess\M2ePro\Model\Magento\Product\Variation::GROUPED_PRODUCT_ATTRIBUTE_LABEL];
             }
 
-            if (count($attributeLabels) > 0) {
+            if (!empty($attributeLabels)) {
                 $images['variations'] = $this->getImagesDataByAttributeLabels($attributeLabels);
             }
         }
 
-        $links = array();
+        $links = [];
         foreach ($this->ebayListingProduct->getDescriptionTemplateSource()->getGalleryImages() as $image) {
-
             if (!$image->getUrl()) {
                 continue;
             }
@@ -487,12 +484,12 @@ JS
         $finalCategory = '';
         $marketplaceId = $this->ebayListingProduct->getMarketplace()->getId();
 
-        if (is_null($this->ebayListingProduct->getCategoryTemplateSource())) {
+        if ($this->ebayListingProduct->getCategoryTemplateSource() === null) {
             return $finalCategory;
         }
 
         $categoryId = $this->ebayListingProduct->getCategoryTemplateSource()->getMainCategory();
-        $categoryTitle = $this->getHelper('Component\Ebay\Category\Ebay')->getPath($categoryId, $marketplaceId);
+        $categoryTitle = $this->getHelper('Component_Ebay_Category_Ebay')->getPath($categoryId, $marketplaceId);
 
         if (!$categoryTitle) {
             return $categoryTitle;
@@ -505,31 +502,31 @@ JS
 
     public function getOtherCategories()
     {
-        $otherCategoriesFinalTitles = array();
+        $otherCategoriesFinalTitles = [];
 
         $marketplaceId = $this->ebayListingProduct->getMarketplace()->getId();
         $accountId = $this->ebayListingProduct->getEbayAccount()->getId();
 
         $otherCategoryTemplateSource = $this->ebayListingProduct->getOtherCategoryTemplateSource();
 
-        if (is_null($otherCategoryTemplateSource)) {
+        if ($otherCategoryTemplateSource === null) {
             return $otherCategoriesFinalTitles;
         }
 
-        $otherCategoriesIds = array(
+        $otherCategoriesIds = [
             'secondary' => $otherCategoryTemplateSource->getSecondaryCategory(),
             'primary_store' => $otherCategoryTemplateSource->getStoreCategoryMain(),
             'secondary_store' => $otherCategoryTemplateSource->getStoreCategorySecondary()
-        );
+        ];
 
-        $otherCategoriesTitles = array(
-            'secondary' => $this->getHelper('Component\Ebay\Category\Ebay')
+        $otherCategoriesTitles = [
+            'secondary' => $this->getHelper('Component_Ebay_Category_Ebay')
                 ->getPath($otherCategoriesIds['secondary'], $marketplaceId),
-            'primary_store' => $this->getHelper('Component\Ebay\Category\Store')
+            'primary_store' => $this->getHelper('Component_Ebay_Category_Store')
                 ->getPath($otherCategoriesIds['primary_store'], $accountId),
-            'secondary_store' => $this->getHelper('Component\Ebay\Category\Store')
+            'secondary_store' => $this->getHelper('Component_Ebay_Category_Store')
                 ->getPath($otherCategoriesIds['secondary_store'], $accountId)
-        );
+        ];
 
         foreach ($otherCategoriesTitles as $otherCategoryType => $otherCategoryTitle) {
             if ($otherCategoryTitle) {
@@ -544,9 +541,9 @@ JS
 
     public function getSpecifics()
     {
-        $data = array();
+        $data = [];
 
-        if (is_null($this->ebayListingProduct->getCategoryTemplate())) {
+        if ($this->ebayListingProduct->getCategoryTemplate() === null) {
             return $data;
         }
 
@@ -559,7 +556,7 @@ JS
             $tempAttributeValues = $specific->getSource($this->ebayListingProduct->getMagentoProduct())
                 ->getValues();
 
-            $values = array();
+            $values = [];
             foreach ($tempAttributeValues as $tempAttributeValue) {
                 if ($tempAttributeValue == '--') {
                     continue;
@@ -571,10 +568,10 @@ JS
                 continue;
             }
 
-            $data[] = array(
+            $data[] = [
                 'name' => $tempAttributeLabel,
                 'value' => $values
-            );
+            ];
         }
 
         return $data;
@@ -584,7 +581,7 @@ JS
 
     private function getConditionHumanTitle($code)
     {
-        $codes = array(
+        $codes = [
             \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW =>
                 $this->__('New'),
             \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_OTHER =>
@@ -605,7 +602,7 @@ JS
                 $this->__('Acceptable'),
             \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NOT_WORKING =>
                 $this->__('For Parts or Not Working')
-        );
+        ];
 
         if (!isset($codes[$code])) {
             return '';
@@ -642,7 +639,7 @@ JS
 
     private function getShippingLocationHumanTitle(array $locationIds)
     {
-        $locationsTitle = array();
+        $locationsTitle = [];
         $locationsInfo = $this->ebayListingProduct->getEbayMarketplace()->getShippingLocationInfo();
 
         foreach ($locationIds as $locationId) {
@@ -669,11 +666,11 @@ JS
 
     public function getItemLocation()
     {
-        $itemLocation = array(
+        $itemLocation = [
             $this->ebayListingProduct->getShippingTemplateSource()->getPostalCode(),
             $this->ebayListingProduct->getShippingTemplateSource()->getAddress(),
             $this->getCountryHumanTitle($this->ebayListingProduct->getShippingTemplateSource()->getCountry())
-        );
+        ];
         return implode($itemLocation, ', ');
     }
 
@@ -684,7 +681,6 @@ JS
         if ($this->ebayListingProduct->getShippingTemplate()->isLocalShippingFlatEnabled() ||
             $this->ebayListingProduct->getShippingTemplate()->isLocalShippingCalculatedEnabled()
         ) {
-
             $dispatchTimeId = $this->ebayListingProduct->getShippingTemplate()->getDispatchTime();
 
             if ($dispatchTimeId == 0) {
@@ -769,7 +765,7 @@ JS
 
     public function getShippingLocalServices()
     {
-        $services = array();
+        $services = [];
         $storeId = $this->ebayListingProduct->getListing()->getStoreId();
 
         foreach ($this->ebayListingProduct->getShippingTemplate()->getServices(true) as $service) {
@@ -780,12 +776,11 @@ JS
                 continue;
             }
 
-            $tempDataMethod = array(
+            $tempDataMethod = [
                 'service' => $this->getShippingServiceHumanTitle($service->getShippingValue())
-            );
+            ];
 
             if ($this->ebayListingProduct->getShippingTemplate()->isLocalShippingFlatEnabled()) {
-
                 $tempDataMethod['cost'] = $service->getSource($this->ebayListingProduct->getMagentoProduct())
                     ->getCost($storeId);
 
@@ -805,7 +800,7 @@ JS
 
     public function getShippingInternationalServices()
     {
-        $services = array();
+        $services = [];
         $storeId = $this->ebayListingProduct->getListing()->getStoreId();
 
         foreach ($this->ebayListingProduct->getShippingTemplate()->getServices(true) as $service) {
@@ -816,13 +811,12 @@ JS
                 continue;
             }
 
-            $tempDataMethod = array(
+            $tempDataMethod = [
                 'service' => $this->getShippingServiceHumanTitle($service->getShippingValue()),
                 'locations' => implode(', ', $this->getShippingLocationHumanTitle($service->getLocations()))
-            );
+            ];
 
             if ($this->ebayListingProduct->getShippingTemplate()->isInternationalShippingFlatEnabled()) {
-
                 $tempDataMethod['cost'] = $service->getSource($this->ebayListingProduct->getMagentoProduct())
                     ->getCost($storeId);
 
@@ -838,7 +832,7 @@ JS
 
     public function getPayment()
     {
-        $data = array();
+        $data = [];
 
         if ($this->ebayListingProduct->getPaymentTemplate()->isPayPalEnabled()) {
             $data['paypal'] = true;
@@ -847,7 +841,7 @@ JS
         $services = $this->ebayListingProduct->getPaymentTemplate()->getServices(true);
         $paymentMethodsInfo = $this->ebayListingProduct->getMarketplace()->getChildObject()->getPaymentInfo();
 
-        $paymentMethods = array();
+        $paymentMethods = [];
         foreach ($services as $service) {
             /** @var $service \Ess\M2ePro\Model\Ebay\Template\Payment\Service */
 
@@ -865,7 +859,7 @@ JS
 
     public function getShippingExcludedLocations()
     {
-        $locations = array();
+        $locations = [];
 
         foreach ($this->ebayListingProduct->getShippingTemplate()->getExcludedLocations() as $location) {
             $locations[] = $this->getShippingExcludeLocationHumanTitle($location['code']);
@@ -885,16 +879,16 @@ JS
 
         $returnAccepted = $this->ebayListingProduct->getReturnTemplate()->getAccepted();
         if ($returnAccepted === 'ReturnsNotAccepted') {
-            return array();
+            return [];
         }
 
-        $returnPolicyTitles = array(
+        $returnPolicyTitles = [
             'returns_accepted'      => '',
             'returns_within'        => '',
             'refund'                => '',
             'shipping_cost_paid_by' => '',
             'restocking_fee_value'  => ''
-        );
+        ];
 
         foreach ($returnPolicyInfo['returns_accepted'] as $returnAcceptedId) {
             if ($returnAccepted === $returnAcceptedId['ebay_id']) {

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template
+ */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
 
@@ -43,13 +47,13 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 ? 'EbayTemplateDescriptionObj'
                 : 'EbayTemplateEditObj';
 
-            $this->buttonList->add('duplicate', array(
+            $this->buttonList->add('duplicate', [
                 'label'     => $this->__('Duplicate'),
                 'onclick'   => $onclickHandler.'.duplicateClick(
                     \'ebay-template\', \''.$duplicateHeaderText.'\', \''.$nick.'\'
                 )',
                 'class'     => 'add M2ePro_duplicate_button primary'
-            ));
+            ]);
 
             $url = $this->getUrl('*/ebay_template/delete');
             $this->buttonList->add('delete', [
@@ -80,7 +84,6 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         ]);
 
         if ($isSaveAndClose) {
-
             $this->removeButton('back');
 
             $saveButtons = [
@@ -99,7 +102,6 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 ],
             ];
         } else {
-
             $saveAndBackUrl = $this->getUrl('*/ebay_template/save', [
                 'back' => $this->getHelper('Data')->makeBackUrlParam('list')
             ]);

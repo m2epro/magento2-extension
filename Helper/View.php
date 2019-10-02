@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Helper
+ */
 class View extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const GENERAL_BLOCK_PATH = 'General';
@@ -27,8 +31,7 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\ActiveRecord\Factory $modelFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->urlBuilder = $urlBuilder;
         $this->modelFactory = $modelFactory;
@@ -43,7 +46,7 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
      */
     public function getViewHelper($viewNick = null)
     {
-        if (is_null($viewNick)) {
+        if ($viewNick === null) {
             $viewNick = $this->getCurrentView();
         }
 
@@ -65,20 +68,20 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
      */
     public function getControllerHelper($viewNick = null)
     {
-        if (is_null($viewNick)) {
+        if ($viewNick === null) {
             $viewNick = $this->getCurrentView();
         }
 
         switch ($viewNick) {
             case \Ess\M2ePro\Helper\View\Ebay::NICK:
-                return $this->getHelper('View\Ebay\Controller');
+                return $this->getHelper('View_Ebay_Controller');
             case \Ess\M2ePro\Helper\View\Amazon::NICK:
-                return $this->getHelper('View\Amazon\Controller');
+                return $this->getHelper('View_Amazon_Controller');
             case \Ess\M2ePro\Helper\View\Walmart::NICK:
-                return $this->getHelper('View\Walmart\Controller');
+                return $this->getHelper('View_Walmart_Controller');
         }
 
-        return $this->getHelper('View\Amazon\Controller');
+        return $this->getHelper('View_Amazon_Controller');
     }
 
     //########################################
@@ -87,8 +90,8 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $controllerName = $this->_getRequest()->getControllerName();
 
-        if (is_null($controllerName)) {
-            return NULL;
+        if ($controllerName === null) {
+            return null;
         }
 
         if (stripos($controllerName, \Ess\M2ePro\Helper\View\Ebay::NICK) !== false) {
@@ -111,7 +114,7 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
             return \Ess\M2ePro\Helper\View\Configuration::NICK;
         }
 
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------
@@ -143,7 +146,7 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getUrl($row, $controller, $action, array $params = array())
+    public function getUrl($row, $controller, $action, array $params = [])
     {
         $component = strtolower($row->getData('component_mode'));
         return $this->urlBuilder->getUrl("*/{$component}_{$controller}/{$action}", $params);
@@ -162,7 +165,6 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
         unset($url);
 
         foreach ($matches as $url) {
-
             $nestingLinks = 0;
             foreach ($matches as $value) {
                 if (strpos($value, $url) !== false) {

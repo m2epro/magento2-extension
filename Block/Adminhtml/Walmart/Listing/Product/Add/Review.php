@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add;
 
 use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode as SourceModeBlock;
 
+/**
+ * Class Review
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add
+ */
 class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     protected $source;
@@ -40,7 +44,9 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
 
         $viewHeaderBlock = $this->createBlock(
-            'Listing\View\Header','', ['data' => ['listing' => $listing]]
+            'Listing_View_Header',
+            '',
+            ['data' => ['listing' => $listing]]
         );
 
         $this->setChild('view_header', $viewHeaderBlock);
@@ -48,48 +54,48 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/*/viewListing', array(
+        $url = $this->getUrl('*/*/viewListing', [
             '_current' => true,
             'id' => $this->getRequest()->getParam('id')
-        ));
+        ]);
 
         $buttonBlock = $this->createBlock('Magento\Button')
-            ->setData(array(
+            ->setData([
                 'label'   => $this->__('Go To The Listing'),
                 'onclick' => 'setLocation(\''.$url.'\');',
                 'class' => 'action primary'
-            ));
+            ]);
         $this->setChild('review', $buttonBlock);
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/*/viewListingAndList', array(
+        $url = $this->getUrl('*/*/viewListingAndList', [
             '_current' => true,
             'id' => $this->getRequest()->getParam('id')
-        ));
+        ]);
 
         $buttonBlock = $this->createBlock('Magento\Button')
-            ->setData(array(
+            ->setData([
                 'label'   => $this->__('List Added Products Now'),
                 'onclick' => 'setLocation(\''.$url.'\');',
                 'class' => 'action primary'
-            ));
+            ]);
         $this->setChild('list', $buttonBlock);
         // ---------------------------------------
 
         // ---------------------------------------
         if ($this->getSource() === SourceModeBlock::MODE_OTHER) {
-            $url = $this->getUrl('*/walmart_listing_other/view', array(
+            $url = $this->getUrl('*/walmart_listing_other/view', [
                 'account'     => $listing->getAccountId(),
                 'marketplace' => $listing->getMarketplaceId(),
-            ));
+            ]);
 
             $buttonBlock = $this->createBlock('Magento\Button')
-                ->setData(array(
+                ->setData([
                     'label'   => $this->__('Back to 3rd Party Listing'),
                     'onclick' => 'setLocation(\''.$url.'\');',
                     'class' => 'action primary'
-                ));
+                ]);
             $this->setChild('back_to_listing_other', $buttonBlock);
         }
         // ---------------------------------------

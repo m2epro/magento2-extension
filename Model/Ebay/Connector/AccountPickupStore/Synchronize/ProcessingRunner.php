@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize;
 
+/**
+ * Class ProcessingRunner
+ * @package Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize
+ */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {
     //########################################
@@ -18,7 +22,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         $params = $this->getParams();
 
-        $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\State')->getResource()->markAsInProcessing(
+        $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')->getResource()->markAsInProcessing(
             $params['pickup_store_state_ids']
         );
     }
@@ -29,7 +33,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         $params = $this->getParams();
 
-        $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\State')->getResource()->unmarkAsInProcessing(
+        $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')->getResource()->unmarkAsInProcessing(
             $params['pickup_store_state_ids']
         );
     }

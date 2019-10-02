@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
+ */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
 {
     public function execute()
@@ -29,18 +33,18 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
 
         $data = $this->getHelper('Data')->jsonDecode($post['auto_action_data']);
 
-        $listingData = array(
+        $listingData = [
             'auto_mode' => \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE,
             'auto_global_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'auto_global_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
             'auto_website_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'auto_website_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
             'auto_website_deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
-            'auto_global_adding_description_template_id' => NULL,
-            'auto_website_adding_description_template_id' => NULL,
-        );
+            'auto_global_adding_description_template_id' => null,
+            'auto_website_adding_description_template_id' => null,
+        ];
 
-        $groupData = array(
+        $groupData = [
             'id' => null,
             'category' => null,
             'title' => null,
@@ -48,8 +52,8 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
             'adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
             'deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
-            'categories' => array()
-        );
+            'categories' => []
+        ];
 
         // mode global
         // ---------------------------------------
@@ -84,7 +88,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
         if ($data['auto_mode'] == \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY) {
             $listingData['auto_mode'] = \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY;
 
-            $group = $this->amazonFactory->getObject('Listing\Auto\Category\Group');
+            $group = $this->amazonFactory->getObject('Listing_Auto_Category_Group');
 
             if ((int)$data['id'] > 0) {
                 $group->load((int)$data['id']);
@@ -100,17 +104,18 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
 
             if (!empty($data['adding_description_template_id'])) {
                 $group->getChildObject()->setData(
-                    'adding_description_template_id', $data['adding_description_template_id']
+                    'adding_description_template_id',
+                    $data['adding_description_template_id']
                 );
             } else {
-                $group->getChildObject()->setData('adding_description_template_id', NULL);
+                $group->getChildObject()->setData('adding_description_template_id', null);
             }
 
             $group->save();
             $group->clearCategories();
 
             foreach ($data['categories'] as $categoryId) {
-                $category = $this->activeRecordFactory->getObject('Listing\Auto\Category');
+                $category = $this->activeRecordFactory->getObject('Listing_Auto_Category');
                 $category->setData('group_id', $group->getId());
                 $category->setData('category_id', $categoryId);
                 $category->save();

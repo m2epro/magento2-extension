@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Requirements;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
+/**
+ * Class Reader
+ * @package Ess\M2ePro\Model\Requirements
+ */
 class Reader extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Magento\Framework\Component\ComponentRegistrar */
@@ -27,7 +31,7 @@ class Reader extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\Component\ComponentRegistrar $componentRegistrar,
         \Magento\Framework\Filesystem\Directory\ReadFactory $directoryReadFactory,
         array $data = []
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
         $this->componentRegistrar = $componentRegistrar;
@@ -43,41 +47,41 @@ class Reader extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function getMemoryLimitData($dataPart = NULL)
+    public function getMemoryLimitData($dataPart = null)
     {
-        $path = array_filter(array('memory_limit', $dataPart));
+        $path = array_filter(['memory_limit', $dataPart]);
         return $this->getPath($path);
     }
 
-    public function getExecutionTimeData($dataPart = NULL)
+    public function getExecutionTimeData($dataPart = null)
     {
-        $path = array_filter(array('execution_time', $dataPart));
+        $path = array_filter(['execution_time', $dataPart]);
         return $this->getPath($path);
     }
 
-    public function getMagentoVersionData($dataPart = NULL)
+    public function getMagentoVersionData($dataPart = null)
     {
-        $path = array_filter(array('magento_version', $dataPart));
+        $path = array_filter(['magento_version', $dataPart]);
         return $this->getPath($path);
     }
 
     public function gePhpVersionData()
     {
-        return $this->getPath(array('composer', 'php'));
+        return $this->getPath(['composer', 'php']);
     }
 
     // ---------------------------------------
 
-    protected function getPath(array $path, $data = NULL)
+    protected function getPath(array $path, $data = null)
     {
-        is_null($data) && $data = $this->cachedData;
+        $data === null && $data = $this->cachedData;
         $pathPart = array_shift($path);
 
         if (isset($data[$pathPart])) {
             return !empty($path) ? $this->getPath($path, $data[$pathPart]) : $data[$pathPart];
         }
 
-        return NULL;
+        return null;
     }
 
     //########################################

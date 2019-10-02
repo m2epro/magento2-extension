@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\ShippingTemplate;
 
+/**
+ * Class Source
+ * @package Ess\M2ePro\Model\Amazon\Template\ShippingTemplate
+ */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**

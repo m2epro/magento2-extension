@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search;
 
+/**
+ * Class Settings
+ * @package Ess\M2ePro\Model\Amazon\Search
+ */
 class Settings extends \Ess\M2ePro\Model\AbstractModel
 {
     const STEP_GENERAL_ID    = 1;
@@ -18,7 +22,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
     private $step = null;
 
-    private $stepData = array();
+    private $stepData = [];
 
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     private $listingProduct = null;
@@ -101,11 +105,11 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
     private function getAllowedSteps()
     {
-        return array(
+        return [
             self::STEP_GENERAL_ID,
             self::STEP_WORLDWIDE_ID,
             self::STEP_MAGENTO_TITLE
-        );
+        ];
     }
 
     //########################################
@@ -121,7 +125,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
             return true;
         }
 
-        $this->stepData = array();
+        $this->stepData = [];
 
         if (!$this->setNextStep()) {
             $this->setNotFoundSearchStatus();
@@ -134,7 +138,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
             return $this->process();
         }
 
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
         $connectorObj = $dispatcherObject->getCustomConnector(
             'Amazon\Search\Settings\\'.ucfirst($this->getSearchMethod()).'\Requester',
             $this->getConnectorParams(),
@@ -153,7 +157,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
         $result = $this->stepData['result'];
         $params = $this->stepData['params'];
 
-        $params['search_method'] == 'byAsin' && $result = array($result);
+        $params['search_method'] == 'byAsin' && $result = [$result];
 
         if ($this->step == self::STEP_MAGENTO_TITLE) {
             $tempResult = $this->filterReceivedItemsFullTitleMatch($result);
@@ -165,10 +169,10 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
             $type = $this->getIdentifierType($params['query']);
         }
 
-        $searchSettingsData = array(
+        $searchSettingsData = [
             'type'  => $type,
             'value' => $params['query'],
-        );
+        ];
 
         if ($this->canPutResultToSuggestData($result)) {
             $searchSettingsData['data'] = $result;
@@ -197,24 +201,23 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->step == self::STEP_GENERAL_ID && $generalId !== $params['query'] &&
             (!$this->getHelper('Data')->isISBN($generalId) || !$this->getHelper('Data')->isISBN($params['query']))) {
-
             $this->setNotFoundSearchStatus();
             return;
         }
 
-        $generalIdSearchInfo = array(
+        $generalIdSearchInfo = [
             'is_set_automatic' => true,
             'type'  => $searchSettingsData['type'],
             'value' => $searchSettingsData['value'],
-        );
+        ];
 
-        $dataForUpdate = array(
+        $dataForUpdate = [
             'general_id' => $generalId,
             'general_id_search_info' => $this->getHelper('Data')->jsonEncode($generalIdSearchInfo),
             'is_isbn_general_id' => $this->getHelper('Data')->isISBN($generalId),
             'search_settings_status' => null,
             'search_settings_data'   => null,
-        );
+        ];
 
         $this->getListingProduct()->getChildObject()->addData($dataForUpdate)->save();
 
@@ -235,7 +238,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
         $typeModel->setChannelAttributesSets($result['variations']['set'], false);
 
-        $channelVariations = array();
+        $channelVariations = [];
         foreach ($result['variations']['asins'] as $asin => $asinAttributes) {
             $channelVariations[$asin] = $asinAttributes['specifics'];
         }
@@ -254,7 +257,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
     private function validate()
     {
-        if (!is_null($this->step) && !in_array($this->step, $this->getAllowedSteps())) {
+        if ($this->step !== null && !in_array($this->step, $this->getAllowedSteps())) {
             return false;
         }
 
@@ -272,13 +275,13 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
     private function getConnectorParams()
     {
-        $params = array(
+        $params = [
             'step' => $this->step,
             'query' => $this->getQueryParam(),
             'search_method' => $this->getSearchMethod(),
             'listing_product_id' => $this->getListingProduct()->getId(),
             'variation_bad_parent_modify_child_to_simple' => true
-        );
+        ];
 
         if ($this->getVariationManager()->isVariationParent()) {
             $params['variation_bad_parent_modify_child_to_simple'] = false;
@@ -337,7 +340,6 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
         switch ($this->step) {
             case self::STEP_GENERAL_ID:
-
                 $query = $this->getAmazonListingProduct()->getGeneralId();
                 empty($query) && $query = $this->getAmazonListingProduct()->getListingSource()->getSearchGeneralId();
 
@@ -348,7 +350,6 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
                 break;
 
             case self::STEP_WORLDWIDE_ID:
-
                 $query = $this->getAmazonListingProduct()->getListingSource()->getSearchWorldwideId();
 
                 if (!$validationHelper->isEAN($query) && !$validationHelper->isUPC($query)) {
@@ -358,7 +359,6 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
                 break;
 
             case self::STEP_MAGENTO_TITLE:
-
                 $query = null;
 
                 if ($this->getAmazonListingProduct()->getAmazonListing()->isSearchByMagentoTitleModeEnabled()) {
@@ -368,7 +368,6 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
                 break;
 
             default:
-
                 $query = null;
         }
 
@@ -378,7 +377,8 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
     private function getSearchMethod()
     {
         $searchMethods = array_combine(
-            $this->getAllowedSteps(), array('byAsin', 'byIdentifier', 'byQuery')
+            $this->getAllowedSteps(),
+            ['byAsin', 'byIdentifier', 'byQuery']
         );
 
         $searchMethod = $searchMethods[$this->step];
@@ -402,7 +402,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
     private function filterReceivedItemsFullTitleMatch($results)
     {
-        $return = array();
+        $return = [];
 
         $magentoProductTitle = $this->getAmazonListingProduct()->getActualMagentoProduct()->getName();
         $magentoProductTitle = trim(strtolower($magentoProductTitle));
@@ -420,7 +420,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
     private function getAttributeMatcher($result)
     {
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Attribute $attributeMatcher */
-        $attributeMatcher = $this->modelFactory->getObject('Amazon\Listing\Product\Variation\Matcher\Attribute');
+        $attributeMatcher = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Matcher_Attribute');
         $attributeMatcher->setMagentoProduct($this->getListingProduct()->getMagentoProduct());
         $attributeMatcher->setDestinationAttributes(array_keys($result['variations']['set']));
 
@@ -434,7 +434,8 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
         $amazonListingProduct = $this->getListingProduct()->getChildObject();
 
         $amazonListingProduct->setData(
-            'search_settings_status', \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND
+            'search_settings_status',
+            \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND
         );
         $amazonListingProduct->setData('search_settings_data', null);
 

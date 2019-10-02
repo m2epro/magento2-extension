@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Ebay\Connector\Item\ListAction;
 
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Ebay\Connector\Item\ListAction
+ */
 class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 {
     //########################################
@@ -27,10 +31,9 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
         if (!$this->listingProduct->getAccount()->getChildObject()->isModeSandbox() &&
             $this->isEbayApplicationErrorAppeared($responseMessages)) {
-
             $this->markAsPotentialDuplicate();
 
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 'An error occurred while Listing the Item. The Item has been blocked.
                  The next M2E Pro Synchronization will resolve the problem.',
@@ -67,19 +70,20 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
             return;
         }
 
-        $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+        $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
 
         $responseData = $this->getPreparedResponseData();
         if (empty($responseData['request_time']) && !empty($responseData['start_processing_date'])) {
-            $configurator->setParams(array('start_processing_date' => $responseData['start_processing_date']));
+            $configurator->setParams(['start_processing_date' => $responseData['start_processing_date']]);
         }
 
         $this->processAdditionalAction(
-            \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator,
-            array(
+            \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+            $configurator,
+            [
                 'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH,
-                'skip_check_the_same_product_already_listed_ids' => array($this->listingProduct->getId())
-            )
+                'skip_check_the_same_product_already_listed_ids' => [$this->listingProduct->getId()]
+            ]
         );
     }
 

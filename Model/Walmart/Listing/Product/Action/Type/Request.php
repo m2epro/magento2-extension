@@ -8,27 +8,32 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type
+ */
 abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Request
 {
     /**
      * @var array
      */
-    protected $cachedData = array();
+    protected $cachedData = [];
 
     /**
      * @var array
      */
-    private $dataTypes = array(
+    private $dataTypes = [
         'qty',
+        'lagTime',
         'price',
         'promotions',
         'details',
-    );
+    ];
 
     /**
      * @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\AbstractModel[]
      */
-    private $dataBuilders = array();
+    private $dataBuilders = [];
 
     //########################################
 
@@ -65,6 +70,7 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
 
     protected function beforeBuildDataEvent()
     {
+        return null;
     }
 
     abstract protected function getActionData();
@@ -79,7 +85,6 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
     protected function collectDataBuildersWarningMessages()
     {
         foreach ($this->dataTypes as $requestType) {
-
             $messages = $this->getDataBuilder($requestType)->getWarningMessages();
 
             foreach ($messages as $message) {
@@ -96,7 +101,7 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
     public function getQtyData()
     {
         if (!$this->getConfigurator()->isQtyAllowed()) {
-            return array();
+            return [];
         }
 
         $dataBuilder = $this->getDataBuilder('qty');
@@ -106,10 +111,23 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
     /**
      * @return array
      */
+    public function getLagTimeData()
+    {
+        if (!$this->getConfigurator()->isLagTimeAllowed()) {
+            return [];
+        }
+
+        $dataBuilder = $this->getDataBuilder('lagTime');
+        return $dataBuilder->getRequestData();
+    }
+
+    /**
+     * @return array
+     */
     public function getPriceData()
     {
         if (!$this->getConfigurator()->isPriceAllowed()) {
-            return array();
+            return [];
         }
 
         $dataBuilder = $this->getDataBuilder('price');
@@ -122,7 +140,7 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
     public function getPromotionsData()
     {
         if (!$this->getConfigurator()->isPromotionsAllowed()) {
-            return array();
+            return [];
         }
 
         $dataBuilder = $this->getDataBuilder('promotions');
@@ -139,7 +157,7 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
     public function getDetailsData()
     {
         if (!$this->getConfigurator()->isDetailsAllowed()) {
-            return array();
+            return [];
         }
 
         $dataBuilder = $this->getDataBuilder('details');

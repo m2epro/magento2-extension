@@ -12,6 +12,10 @@ use Ess\M2ePro\Model\AbstractModel;
 use Ess\M2ePro\Model\Exception;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 
+/**
+ * Class Mutable
+ * @package Ess\M2ePro\Model\Magento\Config
+ */
 class Mutable extends AbstractModel
 {
     /** @var \Magento\Framework\App\Config\ScopeCodeResolver */
@@ -30,8 +34,8 @@ class Mutable extends AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Framework\App\Config\ReinitableConfigInterface $storeConfig,
-        array $data = [])
-    {
+        array $data = []
+    ) {
         $this->objectManager = $objectManager;
         $this->storeConfig = $storeConfig;
 
@@ -40,15 +44,17 @@ class Mutable extends AbstractModel
 
     //########################################
 
-    public function setValue($path,
-                             $value,
-                             $scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-                             $scopeCode = NULL
-    ){
+    public function setValue(
+        $path,
+        $value,
+        $scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+        $scopeCode = null
+    ) {
         if ($this->isCanBeUsed()) {
-
-            $this->helperFactory->getObject('Data\Cache\Runtime')->setValue(
-                $this->preparePath($path, $scope, $scopeCode), $value, ['app_config_overrides']
+            $this->helperFactory->getObject('Data_Cache_Runtime')->setValue(
+                $this->preparePath($path, $scope, $scopeCode),
+                $value,
+                ['app_config_overrides']
             );
             return $this;
         }
@@ -57,12 +63,13 @@ class Mutable extends AbstractModel
         return $this;
     }
 
-    public function getValue($path = null,
-                             $scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-                             $scopeCode = null
-    ){
+    public function getValue(
+        $path = null,
+        $scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+        $scopeCode = null
+    ) {
         if ($this->isCanBeUsed()) {
-            return $this->helperFactory->getObject('Data\Cache\Runtime')->getValue(
+            return $this->helperFactory->getObject('Data_Cache_Runtime')->getValue(
                 $this->preparePath($path, $scope, $scopeCode)
             );
         }
@@ -70,14 +77,14 @@ class Mutable extends AbstractModel
         return $this->storeConfig->getValue($path, $scope, $scopeCode);
     }
 
-    public function unsetValue($path,
-                               $originalValue,
-                               $scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-                               $scopeCode = NULL
-    ){
+    public function unsetValue(
+        $path,
+        $originalValue,
+        $scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+        $scopeCode = null
+    ) {
         if ($this->isCanBeUsed()) {
-
-            $this->helperFactory->getObject('Data\Cache\Runtime')->removeValue(
+            $this->helperFactory->getObject('Data_Cache_Runtime')->removeValue(
                 $this->preparePath($path, $scope, $scopeCode)
             );
             return $this;
@@ -92,8 +99,7 @@ class Mutable extends AbstractModel
     public function clear()
     {
         if ($this->isCanBeUsed()) {
-
-            $this->helperFactory->getObject('Data\Cache\Runtime')->removeTagValues('app_config_overrides');
+            $this->helperFactory->getObject('Data_Cache_Runtime')->removeTagValues('app_config_overrides');
             return $this;
         }
 
@@ -124,7 +130,7 @@ class Mutable extends AbstractModel
         if ($scope !== 'default') {
             if (is_numeric($scopeCode) || $scopeCode === null) {
                 $scopeCode = $this->getScopeCodeResolver()->resolve($scope, $scopeCode);
-            } else if ($scopeCode instanceof \Magento\Framework\App\ScopeInterface) {
+            } elseif ($scopeCode instanceof \Magento\Framework\App\ScopeInterface) {
                 $scopeCode = $scopeCode->getCode();
             }
             if ($scopeCode) {
@@ -142,7 +148,7 @@ class Mutable extends AbstractModel
 
     private function getScopeCodeResolver()
     {
-        if (is_null($this->scopeCodeResolver)) {
+        if ($this->scopeCodeResolver === null) {
             $this->scopeCodeResolver = $this->objectManager->get(
                 \Magento\Framework\App\Config\ScopeCodeResolver::class
             );

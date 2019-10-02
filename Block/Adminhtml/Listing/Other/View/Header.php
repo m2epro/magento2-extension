@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Other\View;
 
+/**
+ * Class Header
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\Other\View
+ */
 class Header extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     protected $_template = 'listing/other/view/header.phtml';

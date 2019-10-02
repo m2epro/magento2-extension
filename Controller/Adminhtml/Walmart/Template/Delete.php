@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
+/**
+ * Class Delete
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template
+ */
 class Delete extends Template
 {
     //########################################
@@ -31,7 +35,6 @@ class Delete extends Template
 
         $deleted = $locked = 0;
         foreach ($ids as $id) {
-
             $template = $this->getTemplateObject($type, $id);
 
             if ($template->isLocked()) {
@@ -57,9 +60,8 @@ class Delete extends Template
     private function getTemplateObject($type, $id)
     {
         switch ($type) {
-
             case \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_CATEGORY:
-                $model = $this->activeRecordFactory->getObject('Walmart\Template\Category')->load($id);
+                $model = $this->activeRecordFactory->getObject('Walmart_Template_Category')->load($id);
                 break;
 
             case \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_SELLING_FORMAT:

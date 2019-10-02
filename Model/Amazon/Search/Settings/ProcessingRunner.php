@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search\Settings;
 
+/**
+ * Class ProcessingRunner
+ * @package Ess\M2ePro\Model\Amazon\Search\Settings
+ */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-    private $listingProduct = NULL;
+    private $listingProduct = null;
 
     //########################################
 
@@ -24,10 +28,12 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $amazonListingProduct = $this->getListingProduct()->getChildObject();
 
         $amazonListingProduct->setData(
-            'search_settings_status', \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_IN_PROGRESS
+            'search_settings_status',
+            \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_IN_PROGRESS
         );
         $amazonListingProduct->setSettings(
-            'search_settings_data', array('type' => $params['type'], 'value' => $params['value'])
+            'search_settings_data',
+            ['type' => $params['type'], 'value' => $params['value']]
         );
         $amazonListingProduct->save();
     }
@@ -36,26 +42,26 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
     {
         parent::setLocks();
 
-        $this->getListingProduct()->addProcessingLock(NULL, $this->getId());
+        $this->getListingProduct()->addProcessingLock(null, $this->getId());
         $this->getListingProduct()->addProcessingLock('in_action', $this->getId());
         $this->getListingProduct()->addProcessingLock('search_action', $this->getId());
 
-        $this->getListingProduct()->getListing()->addProcessingLock(NULL, $this->getId());
+        $this->getListingProduct()->getListing()->addProcessingLock(null, $this->getId());
     }
 
     protected function unsetLocks()
     {
         parent::unsetLocks();
 
-        $this->getListingProduct()->deleteProcessingLocks(NULL, $this->getId());
-        $this->getListingProduct()->getListing()->deleteProcessingLocks(NULL, $this->getId());
+        $this->getListingProduct()->deleteProcessingLocks(null, $this->getId());
+        $this->getListingProduct()->getListing()->deleteProcessingLocks(null, $this->getId());
     }
 
     //########################################
 
     private function getListingProduct()
     {
-        if (!is_null($this->listingProduct)) {
+        if ($this->listingProduct !== null) {
             return $this->listingProduct;
         }
 
@@ -63,7 +69,8 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         $this->parentFactory->getObjectLoaded(
             \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'Listing\Product', $params['listing_product_id']
+            'Listing\Product',
+            $params['listing_product_id']
         );
 
         return $this->listingProduct;

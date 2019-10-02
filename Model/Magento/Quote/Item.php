@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Quote;
 
+/**
+ * Class Item
+ * @package Ess\M2ePro\Model\Magento\Quote
+ */
 class Item extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $taxHelper;
@@ -21,7 +25,7 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Magento\Quote\Model\Quote */
     protected $quote;
 
-    /** @var \Ess\M2ePro\Model\Order\Item\Proxy */
+    /** @var \Ess\M2ePro\Model\Order\Item\ProxyObject */
     protected $proxyItem;
 
     /** @var \Magento\Catalog\Model\Product */
@@ -38,11 +42,10 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Tax\Model\Calculation $calculation,
         \Magento\GiftMessage\Model\MessageFactory $messageFactory,
         \Magento\Quote\Model\Quote $quote,
-        \Ess\M2ePro\Model\Order\Item\Proxy $proxyItem,
+        \Ess\M2ePro\Model\Order\Item\ProxyObject $proxyItem,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->taxHelper = $taxHelper;
         $this->productFactory = $productFactory;
         $this->calculation = $calculation;
@@ -60,14 +63,14 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getProduct()
     {
-        if (!is_null($this->product)) {
+        if ($this->product !== null) {
             return $this->product;
         }
 
         if ($this->proxyItem->getMagentoProduct()->isGroupedType()) {
             $this->product = $this->getAssociatedGroupedProduct();
 
-            if (is_null($this->product)) {
+            if ($this->product === null) {
                 throw new \Ess\M2ePro\Model\Exception('There are no associated Products found for Grouped Product.');
             }
         } else {
@@ -126,7 +129,7 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
         // Create tax rule according to channel tax rate
         // ---------------------------------------
         /** @var $taxRuleBuilder \Ess\M2ePro\Model\Magento\Tax\Rule\Builder */
-        $taxRuleBuilder = $this->modelFactory->getObject('Magento\Tax\Rule\Builder');
+        $taxRuleBuilder = $this->modelFactory->getObject('Magento_Tax_Rule_Builder');
         $taxRuleBuilder->buildProductTaxRule(
             $itemTaxRate,
             $this->quote->getShippingAddress()->getCountryId(),
@@ -179,11 +182,11 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
 
         if ($magentoProduct->isSimpleType()) {
             $request->setOptions($options);
-        } else if ($magentoProduct->isBundleType()) {
+        } elseif ($magentoProduct->isBundleType()) {
             $request->setBundleOption($options);
-        } else if ($magentoProduct->isConfigurableType()) {
+        } elseif ($magentoProduct->isConfigurableType()) {
             $request->setSuperAttribute($options);
-        } else if ($magentoProduct->isDownloadableType()) {
+        } elseif ($magentoProduct->isDownloadableType()) {
             $request->setLinks($options);
         }
 
@@ -201,14 +204,14 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
 
     public function getGiftMessage()
     {
-        if (!is_null($this->giftMessage)) {
+        if ($this->giftMessage !== null) {
             return $this->giftMessage;
         }
 
         $giftMessageData = $this->proxyItem->getGiftMessage();
 
         if (!is_array($giftMessageData)) {
-            return NULL;
+            return null;
         }
 
         $giftMessageData['customer_id'] = (int)$this->quote->getCustomerId();
@@ -216,7 +219,7 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
         $giftMessage = $this->messageFactory->create()->addData($giftMessageData);
 
         if ($giftMessage->isMessageEmpty()) {
-            return NULL;
+            return null;
         }
 
         $this->giftMessage = $giftMessage->save();
@@ -228,12 +231,12 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
 
     public function getAdditionalData(\Magento\Quote\Model\Quote\Item $quoteItem)
     {
-        $additionalData = $this->proxyItem->getAdditionalData();
+        $additionalData      = $this->proxyItem->getAdditionalData();
+        $existAdditionalData = is_string($quoteItem->getAdditionalData())
+                               ? $this->getHelper('Data')->unserialize($quoteItem->getAdditionalData())
+                               : [];
 
-        $existAdditionalData = $quoteItem->getAdditionalData();
-        $existAdditionalData = is_string($existAdditionalData) ? @unserialize($existAdditionalData) : [];
-
-        return serialize(array_merge((array)$existAdditionalData, $additionalData));
+        return $this->getHelper('Data')->serialize(array_merge($existAdditionalData, $additionalData));
     }
 
     //########################################

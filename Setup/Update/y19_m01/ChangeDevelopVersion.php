@@ -12,6 +12,10 @@ use Ess\M2ePro\Model\Factory as ModelFactory;
 use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
 use Magento\Framework\Module\Setup;
 
+/**
+ * Class ChangeDevelopVersion
+ * @package Ess\M2ePro\Setup\Update\y19_m01
+ */
 class ChangeDevelopVersion extends AbstractFeature
 {
     /** @var \Magento\Framework\Module\ResourceInterface */
@@ -24,7 +28,7 @@ class ChangeDevelopVersion extends AbstractFeature
         ModelFactory $modelFactory,
         Setup $installer,
         \Magento\Framework\ObjectManagerInterface $objectManager
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory, $installer);
         $this->moduleResource = $objectManager->create(\Magento\Framework\Module\ResourceInterface::class);
     }

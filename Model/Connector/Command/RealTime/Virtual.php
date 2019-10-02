@@ -8,17 +8,21 @@
 
 namespace Ess\M2ePro\Model\Connector\Command\RealTime;
 
+/**
+ * Class Virtual
+ * @package Ess\M2ePro\Model\Connector\Command\RealTime
+ */
 class Virtual extends \Ess\M2ePro\Model\Connector\Command\RealTime
 {
     // ########################################
 
     private $command = null;
 
-    private $requestData = array();
+    private $requestData = [];
 
-    private $responseDataKey = NULL;
+    private $responseDataKey = null;
 
-    private $requestTimeOut = NULL;
+    private $requestTimeOut = null;
 
     // ########################################
 
@@ -50,7 +54,7 @@ class Virtual extends \Ess\M2ePro\Model\Connector\Command\RealTime
 
     protected function getCommand()
     {
-        if (is_null($this->command)) {
+        if ($this->command === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Command was not set.');
         }
 
@@ -66,7 +70,7 @@ class Virtual extends \Ess\M2ePro\Model\Connector\Command\RealTime
 
     protected function getConnection()
     {
-        if (is_null($this->requestTimeOut)) {
+        if ($this->requestTimeOut === null) {
             return parent::getConnection();
         }
 
@@ -81,7 +85,7 @@ class Virtual extends \Ess\M2ePro\Model\Connector\Command\RealTime
     protected function prepareResponseData()
     {
         $responseData = $this->getResponse()->getResponseData();
-        if (is_null($this->responseDataKey)) {
+        if ($this->responseDataKey === null) {
             $this->responseData = $responseData;
             return;
         }

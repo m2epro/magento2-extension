@@ -7,6 +7,10 @@
  */
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate;
 
+/**
+ * Class Manual
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate
+ */
 class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -36,22 +40,22 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/*/resetCategoryTemplate', array(
+        $url = $this->getUrl('*/*/resetCategoryTemplate', [
             '_current' => true
-        ));
-        $this->addButton('back', array(
+        ]);
+        $this->addButton('back', [
             'label'     => $this->__('Back'),
             'onclick'   => 'ListingGridHandlerObj.backClick(\'' . $url . '\')',
             'class'     => 'back'
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('save_and_go_to_listing_view', array(
+        $this->addButton('save_and_go_to_listing_view', [
             'label'     => $this->__('Continue'),
             'onclick'   => 'ListingGridHandlerObj.completeCategoriesDataStep()',
             'class'     => 'action-primary forward'
-        ));
+        ]);
         // ---------------------------------------
     }
 
@@ -60,7 +64,9 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
 
         $viewHeaderBlock = $this->createBlock(
-            'Listing\View\Header','', ['data' => ['listing' => $listing]]
+            'Listing_View_Header',
+            '',
+            ['data' => ['listing' => $listing]]
         );
 
         return $viewHeaderBlock->toHtml() . parent::getGridHtml();
@@ -77,12 +83,12 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
 
         // URL
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Listing\Product'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart_Listing_Product'));
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Walmart\Listing\Product\Add', array('_current' => true))
+            $this->getHelper('Data')->getControllerActions('Walmart_Listing_Product_Add', ['_current' => true])
         );
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Walmart\Listing\Product\Template\Category')
+            $this->getHelper('Data')->getControllerActions('Walmart_Listing_Product_Template_Category')
         );
 
         $this->jsUrl->add($this->getUrl('*/walmart_listing_product_template_category/viewGrid', [
@@ -91,7 +97,7 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
 
         $this->js->add(
-<<<JS
+            <<<JS
     selectTemplateCategory = function (el, templateId)
     {
         ListingGridHandlerObj.mapToTemplateCategory(el, templateId);

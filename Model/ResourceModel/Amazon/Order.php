@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon;
 
+/**
+ * Class Order
+ * @package Ess\M2ePro\Model\ResourceModel\Amazon
+ */
 class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
@@ -43,9 +47,9 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
             ->getCollection();
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $collection->addFieldToFilter('order_id', (int)$orderId);
-        $collection->getSelect()->columns(array(
+        $collection->getSelect()->columns([
             'items_total' => new \Zend_Db_Expr('SUM((`price` + `gift_price`)*`qty_purchased`)')
-        ));
+        ]);
         $collection->getSelect()->group('order_id');
 
         return round($collection->getFirstItem()->getData('items_total'), 2);

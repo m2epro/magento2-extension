@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing\Product;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing\Product
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
 {
     //########################################
@@ -20,8 +24,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
         \Magento\Framework\Filter\FilterManager $filterManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         Context $context
-    )
-    {
+    ) {
         $this->filterManager = $filterManager;
 
         parent::__construct($amazonFactory, $context);
@@ -30,16 +33,18 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
     public function execute()
     {
         $listingId = $this->getRequest()->getParam(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD, false
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
+            false
         );
         $listingProductId = $this->getRequest()->getParam(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_PRODUCT_ID_FIELD, false
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_PRODUCT_ID_FIELD,
+            false
         );
 
         if ($listingId) {
             $listing = $this->amazonFactory->getCachedObjectLoaded('Listing', $listingId, null, false);
 
-            if (is_null($listing)) {
+            if ($listing === null) {
                 $this->getMessageManager()->addErrorMessage($this->__('Listing does not exist.'));
                 return $this->_redirect('*/*/index');
             }
@@ -49,10 +54,13 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
             );
         } elseif ($listingProductId) {
             $listingProduct = $this->amazonFactory->getObjectLoaded(
-                'Listing\Product', $listingProductId, null, false
+                'Listing\Product',
+                $listingProductId,
+                null,
+                false
             );
 
-            if (is_null($listingProduct)) {
+            if ($listingProduct === null) {
                 $this->getMessageManager()->addErrorMessage($this->__('Listing product does not exist.'));
                 return $this->_redirect('*/*/index');
             }
@@ -65,7 +73,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
             $this->getResult()->getConfig()->getTitle()->prepend($this->__('Listings Logs & Events'));
         }
 
-        $this->addContent($this->createBlock('Amazon\Log\Listing\Product\View'));
+        $this->addContent($this->createBlock('Amazon_Log_Listing_Product_View'));
 
         return $this->getResult();
     }

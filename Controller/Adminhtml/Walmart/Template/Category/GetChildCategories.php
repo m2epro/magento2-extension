@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
+/**
+ * Class GetChildCategories
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category
+ */
 class GetChildCategories extends Category
 {
     //########################################
@@ -18,7 +22,7 @@ class GetChildCategories extends Category
     {
         $select = $this->resourceConnection->getConnection()->select()
             ->from(
-                $this->getHelper('Module\Database\Structure')
+                $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_walmart_dictionary_category')
             )
             ->where('marketplace_id = ?', $this->getRequest()->getPost('marketplace_id'))
@@ -33,7 +37,6 @@ class GetChildCategories extends Category
 
         $sortIndex = 0;
         while ($row = $queryStmt->fetch()) {
-
             $this->formatCategoryRow($row);
             $this->isItOtherCategory($row) ? $tempCategories[10000] = $row
                 : $tempCategories[$sortIndex++] = $row;

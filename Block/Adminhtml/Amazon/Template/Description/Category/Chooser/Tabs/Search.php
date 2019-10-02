@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs;
 
+/**
+ * Class Search
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs
+ */
 class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     protected $_template = 'amazon/template/description/category/chooser/tabs/search.phtml';

@@ -10,9 +10,13 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation;
 
 use \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
 
+/**
+ * Class Updater
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation
+ */
 class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 {
-    private $parentListingsProductsForProcessing = array();
+    private $parentListingsProductsForProcessing = [];
 
     //########################################
 
@@ -62,7 +66,8 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
             $magentoProduct->isDownloadableTypeWithSeparatedLinks()
         ) {
             $listingProduct->getChildObject()->setData(
-                'is_general_id_owner', \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO
+                'is_general_id_owner',
+                \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO
             );
             $listingProduct->getChildObject()->setData('template_description_id', null);
         }
@@ -87,9 +92,10 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         $variationManager->getTypeModel()->clearTypeData();
 
         if ($variationManager->isRelationParentType()) {
-            $listingProduct->getChildObject()->setData('general_id', NULL);
+            $listingProduct->getChildObject()->setData('general_id', null);
             $listingProduct->getChildObject()->setData(
-                'is_general_id_owner', \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO
+                'is_general_id_owner',
+                \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO
             );
             $listingProduct->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED);
 
@@ -124,7 +130,6 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         }
 
         if (!$typeModel->isActualProductAttributes()) {
-
             if ($variationManager->isRelationChildType()) {
                 $this->parentListingsProductsForProcessing[$typeModel->getParentListingProduct()->getId()]
                     = $typeModel->getParentListingProduct();
@@ -141,7 +146,6 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\PhysicalUnit $typeModel */
 
         if ($typeModel->isVariationProductMatched() && !$typeModel->isActualProductVariation()) {
-
             if ($variationManager->isRelationChildType()) {
                 /** @var ChildRelation $typeModel */
                 $this->parentListingsProductsForProcessing[$typeModel->getParentListingProduct()->getId()]

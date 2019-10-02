@@ -10,9 +10,13 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit
+ */
 class Form extends AbstractForm
 {
-    public $attributes = array();
+    public $attributes = [];
 
     //########################################
 

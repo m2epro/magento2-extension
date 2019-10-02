@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders\Receive;
 
+/**
+ * Class Details
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders\Receive
+ */
 class Details extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\AbstractModel
 {
     //########################################
@@ -75,11 +79,8 @@ class Details extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\AbstractMo
             // ---------------------------------------
 
             try {
-
                 $this->processAccount($account);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Receive Details" Action for Amazon Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -126,9 +127,9 @@ class Details extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\AbstractMo
         $orderCollection = $this->amazonFactory->getObject('Order')->getCollection();
         $orderCollection->addFieldToFilter('account_id', $account->getId());
         $orderCollection->addFieldToFilter('is_afn_channel', 1);
-        $orderCollection->addFieldToFilter('status', array('neq' => \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING));
-        $orderCollection->addFieldToFilter('create_date', array('gt' => $from->format('Y-m-d H:i:s')));
-        $orderCollection->addFieldToFilter('additional_data', array('nlike' => '%fulfillment_details%'));
+        $orderCollection->addFieldToFilter('status', ['neq' => \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING]);
+        $orderCollection->addFieldToFilter('create_date', ['gt' => $from->format('Y-m-d H:i:s')]);
+        $orderCollection->addFieldToFilter('additional_data', ['nlike' => '%fulfillment_details%']);
 
         $amazonOrdersIds = $orderCollection->getColumnValues('amazon_order_id');
         if (empty($amazonOrdersIds)) {
@@ -136,10 +137,11 @@ class Details extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\AbstractMo
         }
 
         /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
         $connectorObj = $dispatcherObject->getCustomConnector(
-            'Amazon\Synchronization\Orders\Receive\Details\Requester',
-            array('items' => $amazonOrdersIds), $account
+            'Amazon_Synchronization_Orders_Receive_Details_Requester',
+            ['items' => $amazonOrdersIds],
+            $account
         );
         $dispatcherObject->process($connectorObj);
     }

@@ -11,20 +11,24 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Account;
 
+/**
+ * Class Store
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs
+ */
 class Store extends AbstractForm
 {
     protected function _prepareForm()
     {
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account')
-            ? $this->getHelper('Data\GlobalData')->getValue('edit_account') : array();
-        $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+            ? $this->getHelper('Data\GlobalData')->getValue('edit_account') : [];
+        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
-        $defaults = array(
+        $defaults = [
             'ebay_store_title' => '',
             'ebay_store_url' => '',
             'ebay_store_subscription_level' => '',
             'ebay_store_description' => ''
-        );
+        ];
 
         $formData = array_merge($defaults, $formData);
 
@@ -36,7 +40,7 @@ class Store extends AbstractForm
 
         $isEdit = !!$this->getRequest()->getParam('id');
 
-        if ($isEdit){
+        if ($isEdit) {
             $categoriesTreeArray = $account->getChildObject()->buildEbayStoreCategoriesTree();
         }
 
@@ -55,8 +59,7 @@ HTML
             ]
         );
 
-        if (!is_null($formData['ebay_store_title']) && $formData['ebay_store_title'] != '') {
-
+        if ($formData['ebay_store_title'] !== null && $formData['ebay_store_title'] != '') {
             $fieldset = $form->addFieldset(
                 'information',
                 [
@@ -134,7 +137,6 @@ HTML
             );
 
             if (isset($categoriesTreeArray) && count($categoriesTreeArray) == 0) {
-
                 $fieldset->addField(
                     'ebay_store_categories_not_found',
                     'label',
@@ -143,9 +145,7 @@ HTML
                         'value' => $this->__('Categories not found.')
                     ]
                 );
-
             } else {
-
                 $hideButton = $this->createBlock('Magento\Button')->addData([
                     'label' => $this->__('Hide'),
                     'class' => 'primary',
@@ -178,7 +178,6 @@ HTML
             }
 
             if (!empty($categoriesTreeArray)) {
-
                 $categoriesTreeArray = $this->getHelper('Data')->jsonEncode($categoriesTreeArray);
 
                 $this->js->add(<<<JS
@@ -191,9 +190,7 @@ require([
 JS
                 );
             }
-
         } else {
-
             $fieldset = $form->addFieldset(
                 'no_subscription',
                 [
@@ -226,7 +223,7 @@ JS
     margin-left: 20% !important;
 }
 CSS
-);
+        );
 
         $this->setForm($form);
 

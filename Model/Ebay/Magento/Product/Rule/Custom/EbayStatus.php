@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom;
 
+/**
+ * Class EbayStatus
+ * @package Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom
+ */
 class EbayStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
     //########################################
@@ -55,36 +59,36 @@ class EbayStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractM
     public function getOptions()
     {
         $helper = $this->helperFactory->getObject('Module\Translation');
-        return array(
-            array(
+        return [
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
                 'label' => $helper->__('Not Listed'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
                 'label' => $helper->__('Listed'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN,
                 'label' => $helper->__('Listed (Hidden)'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD,
                 'label' => $helper->__('Sold'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
                 'label' => $helper->__('Stopped'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED,
                 'label' => $helper->__('Finished'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
                 'label' => $helper->__('Pending'),
-            ),
-        );
+            ],
+        ];
     }
 
     //########################################

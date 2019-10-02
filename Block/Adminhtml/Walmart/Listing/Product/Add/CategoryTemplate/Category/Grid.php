@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\Category;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\Category
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 {
     /** @var \Ess\M2ePro\Model\Listing */
-    protected $listing = NULL;
+    protected $listing = null;
 
     protected $walmartFactory;
     protected $resourceConnection;
@@ -27,8 +31,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->walmartFactory = $walmartFactory;
         $this->resourceConnection = $resourceConnection;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
@@ -67,9 +70,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $collection = $this->categoryCollectionFactory->create();
         $collection->addAttributeToSelect('name');
 
-        $collection->addFieldToFilter(array(
-            array('attribute' => 'entity_id', 'in' => array_keys($this->getData('categories_data')))
-        ));
+        $collection->addFieldToFilter([
+            ['attribute' => 'entity_id', 'in' => array_keys($this->getData('categories_data'))]
+        ]);
 
         $this->setCollection($collection);
 
@@ -80,7 +83,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('magento_category', array(
+        $this->addColumn('magento_category', [
             'header'    => $this->__('Magento Category'),
             'align'     => 'left',
             'width'     => '500px',
@@ -88,10 +91,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
             'index'     => 'name',
             'filter'    => false,
             'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnMagentoCategory')
-        ));
+            'frame_callback' => [$this, 'callbackColumnMagentoCategory']
+        ]);
 
-        $this->addColumn('category_template', array(
+        $this->addColumn('category_template', [
             'header'    => $this->__('Category Policy'),
             'align'     => 'left',
             'width'     => '*',
@@ -99,15 +102,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
             'type'      => 'options',
             'index'     => 'category_template_id',
             'filter_index' => 'category_template_id',
-            'options'   => array(
+            'options'   => [
                 1 => $this->__('Category Policy Selected'),
                 0 => $this->__('Category Policy Not Selected')
-            ),
-            'frame_callback' => array($this, 'callbackColumnCategoryTemplateCallback'),
-            'filter_condition_callback' => array($this, 'callbackColumnCategoryTemplateFilterCallback')
-        ));
+            ],
+            'frame_callback' => [$this, 'callbackColumnCategoryTemplateCallback'],
+            'filter_condition_callback' => [$this, 'callbackColumnCategoryTemplateFilterCallback']
+        ]);
 
-        $actionsColumn = array(
+        $actionsColumn = [
             'header'    => $this->__('Actions'),
             'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
             'no_link' => true,
@@ -116,16 +119,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
             'type'      => 'text',
             'sortable'  => false,
             'filter'    => false,
-            'actions'   => array()
-        );
+            'actions'   => []
+        ];
 
-        $actions = array(
-            array(
+        $actions = [
+            [
                 'caption' => $this->__('Set Category Policy'),
                 'field'   => 'entity_id',
                 'onclick_action' => 'ListingGridHandlerObj.setCategoryTemplateByCategoryRowAction'
-            )
-        );
+            ]
+        ];
 
         $actionsColumn['actions'] = $actions;
 
@@ -142,10 +145,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $this->setMassactionIdFieldOnlyIndexValue(true);
 
         // ---------------------------------------
-        $this->getMassactionBlock()->addItem('setCategoryTemplateByCategory', array(
+        $this->getMassactionBlock()->addItem('setCategoryTemplateByCategory', [
             'label' => $this->__('Set Category Policy'),
             'url'   => ''
-        ));
+        ]);
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -159,7 +162,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $productsIds = implode(',', $categoriesData[$row->getData('entity_id')]);
 
         $categoryTemplatesData = $this->getData('category_templates_data');
-        $categoryTemplatesIds = array();
+        $categoryTemplatesIds = [];
         foreach ($categoriesData[$row->getData('entity_id')] as $productId) {
             if (empty($categoryTemplatesIds[$categoryTemplatesData[$productId]])) {
                 $categoryTemplatesIds[$categoryTemplatesData[$productId]] = 0;
@@ -181,13 +184,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 HTML;
         }
 
-        $templateCategoryEditUrl = $this->getUrl('*/walmart_template_category/edit', array(
+        $templateCategoryEditUrl = $this->getUrl('*/walmart_template_category/edit', [
             'id' => $categoryTemplateId
-        ));
+        ]);
 
         /** @var \Ess\M2ePro\Model\Walmart\Template\Category $categoryTemplate */
         $categoryTemplate = $this->activeRecordFactory->getObjectLoaded(
-            'Walmart\Template\Category', $categoryTemplateId
+            'Walmart_Template_Category',
+            $categoryTemplateId
         );
 
         $title = $this->getHelper('Data')->escapeHtml($categoryTemplate->getData('title'));
@@ -208,14 +212,14 @@ HTML;
             return;
         }
 
-        $filteredProductsCategories = array();
-        $filteredListingProductsIds = array();
+        $filteredProductsCategories = [];
+        $filteredListingProductsIds = [];
 
         $categoriesData = $this->getData('categories_data');
         $categoryTemplatesIds = $this->getData('category_templates_data');
 
         foreach ($categoryTemplatesIds as $listingProductId => $categoryTemplateId) {
-            if ($categoryTemplateId !== NULL) {
+            if ($categoryTemplateId !== null) {
                 $filteredListingProductsIds[] = $listingProductId;
             }
         }
@@ -231,9 +235,9 @@ HTML;
         $filteredProductsCategories = array_unique($filteredProductsCategories);
 
         if ($value) {
-            $collection->addFieldToFilter('entity_id', array('in' => $filteredProductsCategories));
-        } else if (!empty($filteredProductsCategories)) {
-            $collection->addFieldToFilter('entity_id', array('nin' => $filteredProductsCategories));
+            $collection->addFieldToFilter('entity_id', ['in' => $filteredProductsCategories]);
+        } elseif (!empty($filteredProductsCategories)) {
+            $collection->addFieldToFilter('entity_id', ['nin' => $filteredProductsCategories]);
         }
     }
 
@@ -252,7 +256,7 @@ HTML;
             $msg = $this->__('Magento Categories are not specified for Products you are adding.');
 
             $this->js->add(
-<<<JS
+                <<<JS
     require([
         'M2ePro/Plugin/Messages'
     ],function(MessageObj) {
@@ -264,12 +268,11 @@ HTML;
     });
 JS
             );
-
         }
 
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
-<<<JS
+                <<<JS
     ListingGridHandlerObj.afterInitPage();
 JS
             );
@@ -287,10 +290,10 @@ JS
         $listingProductsIds = $this->listing->getSetting('additional_data', 'adding_listing_products_ids');
 
         $listingProductCollection = $this->walmartFactory->getObject('Listing\Product')->getCollection()
-            ->addFieldToFilter('id',array('in' => $listingProductsIds));
+            ->addFieldToFilter('id', ['in' => $listingProductsIds]);
 
-        $productsIds = array();
-        $categoryTemplatesIds = array();
+        $productsIds = [];
+        $categoryTemplatesIds = [];
         foreach ($listingProductCollection->getData() as $item) {
             $productsIds[$item['id']] = $item['product_id'];
             $categoryTemplatesIds[$item['id']] = $item['template_category_id'];
@@ -302,23 +305,22 @@ JS
             $this->listing->getStoreId()
         );
 
-        $categoriesData = array();
+        $categoriesData = [];
 
         foreach ($categoriesIds as $categoryId) {
-
-            /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+            /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
             $collection = $this->magentoProductCollectionFactory->create();
             $collection->setListing($this->listing);
             $collection->setStoreId($this->listing->getStoreId());
-            $collection->addFieldToFilter('entity_id', array('in' => $productsIds));
+            $collection->addFieldToFilter('entity_id', ['in' => $productsIds]);
 
             $collection->joinTable(
-                array(
-                    'ccp' => $this->getHelper('Module\Database\Structure')
+                [
+                    'ccp' => $this->getHelper('Module_Database_Structure')
                         ->getTableNameWithPrefix('catalog_category_product')
-                ),
+                ],
                 'product_id=entity_id',
-                array('category_id' => 'category_id')
+                ['category_id' => 'category_id']
             );
             $collection->addFieldToFilter('category_id', $categoryId);
 
@@ -335,7 +337,9 @@ JS
         $this->setData('category_templates_data', $categoryTemplatesIds);
 
         $this->listing->setSetting(
-            'additional_data', 'adding_new_asin_category_templates_data', $categoryTemplatesIds
+            'additional_data',
+            'adding_new_asin_category_templates_data',
+            $categoryTemplatesIds
         );
         $this->listing->save();
     }

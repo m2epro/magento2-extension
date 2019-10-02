@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit
+ */
 class Form extends AbstractForm
 {
     //########################################
@@ -17,7 +21,7 @@ class Form extends AbstractForm
     protected function _prepareForm()
     {
         $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
-        $formData = !is_null($template)
+        $formData = $template !== null
                     ? array_merge($template->getData(), $template->getChildObject()->getData())
                     : ['title' => ''];
 
@@ -53,8 +57,9 @@ class Form extends AbstractForm
             ]
         );
 
-        $dataBlock = $this->createBlock('Amazon\Template\Synchronization\Edit\Data');
-        $form->addField('container_html',
+        $dataBlock = $this->createBlock('Amazon_Template_Synchronization_Edit_Data');
+        $form->addField(
+            'container_html',
             self::CUSTOM_CONTAINER,
             [
                 'text' => $dataBlock->toHtml()

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Synchronization\Task;
 
 use Ess\M2ePro\Model\Listing\Log;
 
+/**
+ * Class AbstractComponent
+ * @package Ess\M2ePro\Model\Synchronization\Task
+ */
 abstract class AbstractComponent extends \Ess\M2ePro\Model\Synchronization\AbstractTask
 {
     const GENERAL           = 'general';
@@ -49,15 +53,16 @@ abstract class AbstractComponent extends \Ess\M2ePro\Model\Synchronization\Abstr
         }
 
         if (!$this->getParentOperationHistory() || $this->isComponentLauncherTask() || $this->isContainerTask()) {
-
-            $operationHistoryNickSuffix = str_replace('/','_',trim($this->getFullSettingsPath(),'/'));
+            $operationHistoryNickSuffix = str_replace('/', '_', trim($this->getFullSettingsPath(), '/'));
 
             $operationHistoryParentId = $this->getParentOperationHistory() ?
-                $this->getParentOperationHistory()->getObject()->getId() : NULL;
+                $this->getParentOperationHistory()->getObject()->getId() : null;
 
-            $this->getOperationHistory()->start('synchronization_'.$operationHistoryNickSuffix,
+            $this->getOperationHistory()->start(
+                'synchronization_'.$operationHistoryNickSuffix,
                 $operationHistoryParentId,
-                $this->getInitiator());
+                $this->getInitiator()
+            );
 
             $this->getOperationHistory()->makeShutdownFunction();
         }
@@ -161,8 +166,7 @@ abstract class AbstractComponent extends \Ess\M2ePro\Model\Synchronization\Abstr
     {
         $action = Log::ACTION_UNKNOWN;
 
-        switch ($this->getNick())
-        {
+        switch ($this->getNick()) {
             case '/synchronization/list/':
                 $action = Log::ACTION_LIST_PRODUCT_ON_COMPONENT;
                 break;
@@ -189,7 +193,7 @@ abstract class AbstractComponent extends \Ess\M2ePro\Model\Synchronization\Abstr
     {
         $path = '/'.($this->getComponent() ? strtolower($this->getComponent()).'/' : '');
         $path .= $this->getType() ? strtolower($this->getType()).'/' : '';
-        $path .= $this->getNick() ? trim(strtolower($this->getNick()),'/').'/' : '';
+        $path .= $this->getNick() ? trim(strtolower($this->getNick()), '/').'/' : '';
         return $path;
     }
 
@@ -207,7 +211,7 @@ abstract class AbstractComponent extends \Ess\M2ePro\Model\Synchronization\Abstr
     protected function configureLogAfterEnd()
     {
         if ($this->isComponentLauncherTask()) {
-            $this->getLog()->setComponentMode(NULL);
+            $this->getLog()->setComponentMode(null);
         }
 
         parent::configureLogAfterEnd();
@@ -220,7 +224,6 @@ abstract class AbstractComponent extends \Ess\M2ePro\Model\Synchronization\Abstr
         $suffix = $this->getHelper('Module\Translation')->__('Synchronization');
 
         if ($this->isComponentLauncherTask() || $this->isContainerTask()) {
-
             $title = $suffix;
 
             if ($this->isContainerTask()) {
@@ -228,7 +231,6 @@ abstract class AbstractComponent extends \Ess\M2ePro\Model\Synchronization\Abstr
             }
 
             if ($this->isComponentTask() && count($this->getHelper('Component')->getEnabledComponents()) > 1) {
-
                 $componentHelper = $this->getHelper('Component\\'.ucfirst($this->getComponent()));
 
                 $this->getActualLockItem()
@@ -247,7 +249,7 @@ abstract class AbstractComponent extends \Ess\M2ePro\Model\Synchronization\Abstr
         $title = ($this->isComponentLauncherTask() || $this->isContainerTask()) ?
             $this->getTitle().' '.$suffix : $this->getTitle();
 
-        $this->getActualLockItem()->setStatus($this->getHelper('Module\Translation')->__($status,$title));
+        $this->getActualLockItem()->setStatus($this->getHelper('Module\Translation')->__($status, $title));
     }
 
     protected function configureLockItemAfterEnd()
@@ -255,7 +257,6 @@ abstract class AbstractComponent extends \Ess\M2ePro\Model\Synchronization\Abstr
         $suffix = $this->getHelper('Module\Translation')->__('Synchronization');
 
         if ($this->isComponentLauncherTask() || $this->isContainerTask()) {
-
             $title = $suffix;
 
             if ($this->isContainerTask()) {
@@ -263,7 +264,6 @@ abstract class AbstractComponent extends \Ess\M2ePro\Model\Synchronization\Abstr
             }
 
             if ($this->isComponentTask() && count($this->getHelper('Component')->getEnabledComponents()) > 1) {
-
                 $componentHelper = $this->getHelper('Component\\'.ucfirst($this->getComponent()));
 
                 $this->getActualLockItem()
@@ -282,7 +282,7 @@ abstract class AbstractComponent extends \Ess\M2ePro\Model\Synchronization\Abstr
         $title = ($this->isComponentLauncherTask() || $this->isContainerTask()) ?
             $this->getTitle().' '.$suffix : $this->getTitle();
 
-        $this->getActualLockItem()->setStatus($this->getHelper('Module\Translation')->__($status,$title));
+        $this->getActualLockItem()->setStatus($this->getHelper('Module\Translation')->__($status, $title));
     }
 
     //########################################

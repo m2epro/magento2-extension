@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\HealthStatus\Notification\Email;
 
+/**
+ * Class Sender
+ * @package Ess\M2ePro\Model\HealthStatus\Notification\Email
+ */
 class Sender extends \Ess\M2ePro\Model\AbstractModel
 {
     const FROM_NAME  = 'M2E Pro Health Status';
@@ -29,7 +33,7 @@ class Sender extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory, $data);
         $this->inlineTranslation = $inlineTranslation;
         $this->transportBuilder  = $transportBuilder;
@@ -39,8 +43,8 @@ class Sender extends \Ess\M2ePro\Model\AbstractModel
 
     public function send()
     {
-        $settings = $this->modelFactory->getObject('HealthStatus\Notification\Settings');
-        $messageBuilder = $this->modelFactory->getObject('HealthStatus\Notification\MessageBuilder');
+        $settings = $this->modelFactory->getObject('HealthStatus_Notification_Settings');
+        $messageBuilder = $this->modelFactory->getObject('HealthStatus_Notification_MessageBuilder');
 
         $this->inlineTranslation->suspend();
         $transport = $this->transportBuilder

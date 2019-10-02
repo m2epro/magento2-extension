@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
+/**
+ * Class MatchedAttributes
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub
+ */
 class MatchedAttributes extends AbstractModel
 {
     //########################################
@@ -24,7 +28,7 @@ class MatchedAttributes extends AbstractModel
         if (count($productAttributes) != count($matchedAttributes) ||
             array_diff($productAttributes, array_keys($matchedAttributes))
         ) {
-            $this->getProcessor()->getTypeModel()->setMatchedAttributes(array(), false);
+            $this->getProcessor()->getTypeModel()->setMatchedAttributes([], false);
             return;
         }
 
@@ -33,7 +37,7 @@ class MatchedAttributes extends AbstractModel
         if (count($channelAttributes) != count($matchedAttributes) ||
             array_diff($channelAttributes, array_values($matchedAttributes))
         ) {
-            $this->getProcessor()->getTypeModel()->setMatchedAttributes(array(), false);
+            $this->getProcessor()->getTypeModel()->setMatchedAttributes([], false);
             return;
         }
 
@@ -46,7 +50,7 @@ class MatchedAttributes extends AbstractModel
         $channelMatchedAttributes = array_values($matchedAttributes);
 
         if (array_diff($channelMatchedAttributes, $possibleChannelAttributes)) {
-            $this->getProcessor()->getTypeModel()->setMatchedAttributes(array(), false);
+            $this->getProcessor()->getTypeModel()->setMatchedAttributes([], false);
         }
     }
 
@@ -72,13 +76,13 @@ class MatchedAttributes extends AbstractModel
     private function matchAttributes($channelAttributes)
     {
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Matcher\Attribute $attributeMatcher */
-        $attributeMatcher = $this->modelFactory->getObject('Walmart\Listing\Product\Variation\Matcher\Attribute');
+        $attributeMatcher = $this->modelFactory->getObject('Walmart_Listing_Product_Variation_Matcher_Attribute');
         $attributeMatcher->setMagentoProduct($this->getProcessor()->getListingProduct()->getMagentoProduct());
         $attributeMatcher->setDestinationAttributes($channelAttributes);
         $attributeMatcher->canUseDictionary(true);
 
         if (!$attributeMatcher->isAmountEqual() || !$attributeMatcher->isFullyMatched()) {
-            return array();
+            return [];
         }
 
         return $attributeMatcher->getMatchedAttributes();

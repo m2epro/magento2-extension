@@ -12,6 +12,10 @@ use Composer\Semver\Constraint\Constraint;
 use Composer\Semver\Constraint\ConstraintInterface;
 use Composer\Semver\Constraint\MultiConstraint;
 
+/**
+ * Class MagentoVersion
+ * @package Ess\M2ePro\Model\Requirements\Checks
+ */
 class MagentoVersion extends AbstractCheck
 {
     //########################################
@@ -34,15 +38,15 @@ class MagentoVersion extends AbstractCheck
             $this->getVersionParser()->parseConstraints($this->getCompatibilityPattern())
         );
 
-        $minVersion = NULL;
+        $minVersion = null;
         foreach ($constraints as $constraint) {
             $constraintVersion = $this->prepareVersion($constraint);
-            if (is_null($minVersion) || $constraint->versionCompare($constraintVersion, $minVersion, '<')) {
+            if ($minVersion === null || $constraint->versionCompare($constraintVersion, $minVersion, '<')) {
                 $minVersion = $constraintVersion;
             }
         }
 
-        return is_null($minVersion) ? $this->getCompatibilityPattern() : $minVersion;
+        return $minVersion === null ? $this->getCompatibilityPattern() : $minVersion;
     }
 
     public function getReal()
@@ -74,13 +78,12 @@ class MagentoVersion extends AbstractCheck
     private function collectConstraints(ConstraintInterface $constraint)
     {
         if ($constraint instanceof Constraint) {
-            return array($constraint);
+            return [$constraint];
         }
 
-        $constraints = array();
+        $constraints = [];
 
         if ($constraint instanceof MultiConstraint) {
-
             foreach ($constraint->getConstraints() as $constraintChild) {
                 $constraints = array_merge($constraints, $this->collectConstraints($constraintChild));
             }

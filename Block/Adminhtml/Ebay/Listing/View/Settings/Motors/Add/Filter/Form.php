@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     //########################################
@@ -20,7 +24,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'method' => 'post'
         ]]);
 
-        $form->addField('filter_form_add_filter_help_block',
+        $form->addField(
+            'filter_form_add_filter_help_block',
             self::HELP_BLOCK,
             [
                 'content' => $this->__('
@@ -40,7 +45,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('title',
+        $fieldset->addField(
+            'title',
             'text',
             [
                 'name' => 'title',
@@ -51,7 +57,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('note',
+        $fieldset->addField(
+            'note',
             'textarea',
             [
                 'name' => 'note',
@@ -60,7 +67,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField('filter',
+        $fieldset->addField(
+            'filter',
             self::CUSTOM_CONTAINER,
             [
                 'name' => 'title',

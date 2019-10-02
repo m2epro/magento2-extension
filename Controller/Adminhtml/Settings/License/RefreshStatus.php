@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Settings\License;
 
+/**
+ * Class RefreshStatus
+ * @package Ess\M2ePro\Controller\Adminhtml\Settings\License
+ */
 class RefreshStatus extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
     public function execute()
     {
         try {
             $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
-                $this->modelFactory->getObject('Servicing\Task\License')->getPublicNick()
+                $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
             );
         } catch (\Exception $e) {
             $this->messageManager->addError(

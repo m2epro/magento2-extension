@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ShippingOverride;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ShippingOverride
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $marketplaceId;
@@ -72,7 +76,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setNoTemplatesText();
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ShippingOverride\Collection $collection */
-        $collection = $this->activeRecordFactory->getObject('Amazon\Template\ShippingOverride')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Amazon_Template_ShippingOverride')->getCollection();
         $collection->addFieldToFilter('marketplace_id', $this->getMarketplaceId());
 
         $this->setCollection($collection);
@@ -82,7 +86,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('title', array(
+        $this->addColumn('title', [
             'header'       => $this->__('Title'),
             'align'        => 'left',
             'type'         => 'text',
@@ -90,10 +94,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_index' => 'title',
             'escape'       => false,
             'sortable'     => true,
-            'frame_callback' => array($this, 'callbackColumnTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTitle']
+        ]);
 
-        $this->addColumn('action', array(
+        $this->addColumn('action', [
             'header'       => $this->__('Action'),
             'align'        => 'left',
             'type'         => 'number',
@@ -101,21 +105,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'        => 'id',
             'filter'       => false,
             'sortable'     => false,
-            'frame_callback' => array($this, 'callbackColumnAction')
-        ));
+            'frame_callback' => [$this, 'callbackColumnAction']
+        ]);
     }
 
     protected function _prepareLayout()
     {
         $shippingMode = $this->getRequest()->getParam('shipping_mode');
-        $this->setChild('refresh_button',
+        $this->setChild(
+            'refresh_button',
             $this->createBlock('Magento\Button')
-                ->setData(array(
+                ->setData([
                     'id' => 'shipping_override_template_refresh_btn',
                     'label'     => $this->__('Refresh'),
                     'class'     => 'action primary',
                     'onclick'   => "ListingGridHandlerObj.templateShippingHandler.loadGrid('{$shippingMode}')"
-                ))
+                ])
         );
 
         return parent::_prepareLayout();
@@ -139,17 +144,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
-        $templateDescriptionEditUrl = $this->getUrl('*/amazon_template_shippingOverride/edit', array(
+        $templateDescriptionEditUrl = $this->getUrl('*/amazon_template_shippingOverride/edit', [
             'id' => $row->getData('id'),
             'close_on_save' => true
-        ));
+        ]);
 
         $title = $this->getHelper('Data')->escapeHtml($value);
 
         return <<<HTML
 <a target="_blank" href="{$templateDescriptionEditUrl}">{$title}</a>
 HTML;
-
     }
 
     public function callbackColumnAction($value, $row, $column, $isExport)
@@ -163,7 +167,6 @@ HTML;
     {$assignText}
 </a>
 HTML;
-
     }
 
     //########################################
@@ -183,14 +186,14 @@ JS
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/viewGrid', array(
+        return $this->getUrl('*/*/viewGrid', [
             '_current' => true,
             'shipping_mode' => \Ess\M2ePro\Model\Amazon\Account::SHIPPING_MODE_OVERRIDE,
-            '_query' => array(
+            '_query' => [
                 'marketplace_id' => $this->getMarketplaceId()
-            ),
+            ],
             'products_ids' => implode(',', $this->getProductsIds()),
-        ));
+        ]);
     }
 
     public function getRowUrl($row)
@@ -216,10 +219,10 @@ HTML;
 
     protected function getNewTemplateShippingOverrideUrl()
     {
-        return $this->getUrl('*/amazon_template_shippingOverride/new', array(
+        return $this->getUrl('*/amazon_template_shippingOverride/new', [
             'marketplace_id' => $this->getMarketplaceId(),
             'close_on_save'  => true
-        ));
+        ]);
     }
 
     //########################################

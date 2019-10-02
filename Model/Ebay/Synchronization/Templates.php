@@ -10,10 +10,14 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization;
 
 use Ess\M2ePro\Model\Synchronization\Templates\ProductChanges\Manager;
 
+/**
+ * Class Templates
+ * @package Ess\M2ePro\Model\Ebay\Synchronization
+ */
 class Templates extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
 {
     /** @var Manager $productChangesManager */
-    private $productChangesManager = NULL;
+    private $productChangesManager = null;
 
     //########################################
 
@@ -37,7 +41,7 @@ class Templates extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
      */
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------
@@ -65,7 +69,7 @@ class Templates extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
         parent::beforeStart();
 
         $this->productChangesManager = $this->modelFactory->getObject(
-            'Synchronization\Templates\ProductChanges\Manager'
+            'Synchronization_Templates_ProductChanges_Manager'
         );
         $this->productChangesManager->setComponent($this->getComponent());
         $this->productChangesManager->init();

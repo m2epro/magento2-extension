@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\Group;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\Group
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     private $isGridPrepared = false;
@@ -54,28 +58,21 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         // Get collection logs
         // ---------------------------------------
-        $categoriesCollection = $this->activeRecordFactory->getObject('Listing\Auto\Category')->getCollection();
+        $categoriesCollection = $this->activeRecordFactory->getObject('Listing_Auto_Category')->getCollection();
         $categoriesCollection->getSelect()->reset(\Zend_Db_Select::FROM);
         $categoriesCollection->getSelect()->from(
-            array('mlac' => $this->activeRecordFactory->getObject('Listing\Auto\Category')
-                ->getResource()->getMainTable())
+            ['mlac' => $this->activeRecordFactory->getObject('Listing_Auto_Category')
+                ->getResource()->getMainTable()]
         );
         $categoriesCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $categoriesCollection->getSelect()->columns(new \Zend_Db_Expr('GROUP_CONCAT(`category_id`)'));
         $categoriesCollection->getSelect()->where('mlac.group_id = main_table.id');
 
-        $collection = $this->activeRecordFactory->getObject('Listing\Auto\Category\Group')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Listing_Auto_Category_Group')->getCollection();
         $collection->addFieldToFilter('main_table.listing_id', $this->getRequest()->getParam('id'));
         $collection->getSelect()->columns(
-            array('categories' => new \Zend_Db_Expr('('.$categoriesCollection->getSelect().')'))
+            ['categories' => new \Zend_Db_Expr('('.$categoriesCollection->getSelect().')')]
         );
-        // ---------------------------------------
-
-        // we need sort by id also, because create_date may be same for some adjustment entries
-        // ---------------------------------------
-        if ($this->getRequest()->getParam('sort', 'create_date') == 'create_date') {
-            $collection->setOrder('id', $this->getRequest()->getParam('dir', 'DESC'));
-        }
         // ---------------------------------------
 
         // Set collection to grid
@@ -86,44 +83,58 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     //########################################
 
+    protected function _setCollectionOrder($column)
+    {
+        // We need to sort by id to maintain the correct sequence of records
+        $collection = $this->getCollection();
+        if ($collection) {
+            $columnIndex = $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
+            $collection->getSelect()->order($columnIndex . ' ' . strtoupper($column->getDir()))->order('id DESC');
+        }
+
+        return $this;
+    }
+
+    //########################################
+
     protected function _prepareColumns()
     {
-        $this->addColumn('title', array(
+        $this->addColumn('title', [
             'header'    => $this->__('Group'),
             'align'     => 'left',
             'type'      => 'text',
             'escape'    => true,
             'index'     => 'title',
             'filter_index' => 'title'
-        ));
+        ]);
 
-        $this->addColumn('categories', array(
+        $this->addColumn('categories', [
             'header'    => $this->__('Categories'),
             'align'     => 'left',
             'type'      => 'text',
             'sortable'  => false,
             'filter'    => false,
-            'frame_callback' => array($this, 'callbackColumnCategories')
-        ));
+            'frame_callback' => [$this, 'callbackColumnCategories']
+        ]);
 
-        $this->addColumn('action', array(
+        $this->addColumn('action', [
             'header'    => $this->__('Actions'),
             'align'     => 'left',
             'type'      => 'text',
             'sortable'  => false,
             'filter'    => false,
-            'actions'   => array(
-                0 => array(
+            'actions'   => [
+                0 => [
                     'label' => $this->__('Edit Group'),
                     'value' => 'categoryStepOne'
-                ),
-                1 => array(
+                ],
+                1 => [
                     'label' => $this->__('Delete Group'),
                     'value' => 'categoryDeleteGroup'
-                )
-            ),
-            'frame_callback' => array($this, 'callbackColumnActions')
-        ));
+                ]
+            ],
+            'frame_callback' => [$this, 'callbackColumnActions']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -220,7 +231,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/listing_autoAction/getCategoryGroupGrid', array('_current' => true));
+        return $this->getUrl('*/listing_autoAction/getCategoryGroupGrid', ['_current' => true]);
     }
 
     //########################################

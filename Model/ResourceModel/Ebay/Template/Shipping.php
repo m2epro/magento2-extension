@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template;
 
+/**
+ * Class Shipping
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Template
+ */
 class Shipping extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
@@ -21,7 +25,7 @@ class Shipping extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMode
 
     public function setSynchStatusNeed($newData, $oldData, $listingsProducts)
     {
-        $listingsProductsIds = array();
+        $listingsProductsIds = [];
         foreach ($listingsProducts as $listingProduct) {
             $listingsProductsIds[] = (int)$listingProduct['id'];
         }
@@ -30,26 +34,26 @@ class Shipping extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMode
             return;
         }
 
-        if (!$this->isDifferent($newData,$oldData)) {
+        if (!$this->isDifferent($newData, $oldData)) {
             return;
         }
 
-        $templates = array('shippingTemplate');
+        $templates = ['shippingTemplate'];
 
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
 
         $this->getConnection()->update(
             $lpTable,
-            array(
+            [
                 'synch_status' => \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_NEED,
                 'synch_reasons' => new \Zend_Db_Expr(
                     "IF(synch_reasons IS NULL,
-                        '".implode(',',$templates)."',
-                        CONCAT(synch_reasons,'".','.implode(',',$templates)."')
+                        '".implode(',', $templates)."',
+                        CONCAT(synch_reasons,'".','.implode(',', $templates)."')
                     )"
                 )
-            ),
-            array('id IN ('.implode(',', $listingsProductsIds).')')
+            ],
+            ['id IN ('.implode(',', $listingsProductsIds).')']
         );
     }
 
@@ -57,18 +61,18 @@ class Shipping extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMode
 
     public function isDifferent($newData, $oldData)
     {
-        $ignoreFields = array(
+        $ignoreFields = [
             $this->getIdFieldName(),
             'title', 'is_custom_template',
             'create_date', 'update_date'
-        );
+        ];
 
         foreach ($ignoreFields as $ignoreField) {
-            unset($newData[$ignoreField],$oldData[$ignoreField]);
+            unset($newData[$ignoreField], $oldData[$ignoreField]);
         }
 
-        !isset($newData['services']) && $newData['services'] = array();
-        !isset($oldData['services']) && $oldData['services'] = array();
+        !isset($newData['services']) && $newData['services'] = [];
+        !isset($oldData['services']) && $oldData['services'] = [];
 
         foreach ($newData['services'] as $key => $newService) {
             unset($newData['services'][$key]['id'], $newData['services'][$key]['template_shipping_id']);
@@ -77,38 +81,38 @@ class Shipping extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMode
             unset($oldData['services'][$key]['id'], $oldData['services'][$key]['template_shipping_id']);
         }
 
-        !isset($newData['calculated_shipping']) && $newData['calculated_shipping'] = array();
-        !isset($oldData['calculated_shipping']) && $oldData['calculated_shipping'] = array();
+        !isset($newData['calculated_shipping']) && $newData['calculated_shipping'] = [];
+        !isset($oldData['calculated_shipping']) && $oldData['calculated_shipping'] = [];
 
         unset(
             $newData['calculated_shipping']['template_shipping_id'],
             $oldData['calculated_shipping']['template_shipping_id']
         );
 
-        $dataConversions = array(
-            array('field' => 'vat_percent', 'type' => 'float'),
-            array('field' => 'local_shipping_discount_profile_id', 'type' => 'str'),
-            array('field' => 'international_shipping_discount_profile_id', 'type' => 'str'),
-        );
+        $dataConversions = [
+            ['field' => 'vat_percent', 'type' => 'float'],
+            ['field' => 'local_shipping_discount_profile_id', 'type' => 'str'],
+            ['field' => 'international_shipping_discount_profile_id', 'type' => 'str'],
+        ];
 
         foreach ($dataConversions as $data) {
             $type = $data['type'] . 'val';
 
-            array_key_exists($data['field'],$newData) && $newData[$data['field']] = $type($newData[$data['field']]);
-            array_key_exists($data['field'],$oldData) && $oldData[$data['field']] = $type($oldData[$data['field']]);
+            array_key_exists($data['field'], $newData) && $newData[$data['field']] = $type($newData[$data['field']]);
+            array_key_exists($data['field'], $oldData) && $oldData[$data['field']] = $type($oldData[$data['field']]);
         }
 
         ksort($newData);
         ksort($oldData);
         ksort($newData['calculated_shipping']);
         ksort($oldData['calculated_shipping']);
-        array_walk($newData['services'],'ksort');
-        array_walk($oldData['services'],'ksort');
+        array_walk($newData['services'], 'ksort');
+        array_walk($oldData['services'], 'ksort');
 
         $encodedNewData = $this->getHelper('Data')->jsonEncode($newData);
         $encodedOldData = $this->getHelper('Data')->jsonEncode($oldData);
 
-        return md5($encodedNewData) !== md5($encodedOldData);
+        return sha1($encodedNewData) !== sha1($encodedOldData);
     }
 
     //########################################

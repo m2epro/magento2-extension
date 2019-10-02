@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Listing;
 
+/**
+ * Class Product
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Listing
+ */
 class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
@@ -26,9 +30,9 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     {
         $select = $this->getConnection()
                        ->select()
-                       ->from(array('elp' => $this->getMainTable()))
+                       ->from(['elp' => $this->getMainTable()])
                        ->reset(\Zend_Db_Select::COLUMNS)
-                       ->columns(array('template_category_id'))
+                       ->columns(['template_category_id'])
                        ->where('listing_product_id IN (?)', $listingProductIds)
                        ->where('template_category_id IS NOT NULL');
 
@@ -41,9 +45,9 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     {
         $select = $this->getConnection()
                        ->select()
-                       ->from(array('elp' => $this->getMainTable()))
+                       ->from(['elp' => $this->getMainTable()])
                        ->reset(\Zend_Db_Select::COLUMNS)
-                       ->columns(array('template_other_category_id'))
+                       ->columns(['template_other_category_id'])
                        ->where('listing_product_id IN (?)', $listingProductIds)
                        ->where('template_other_category_id IS NOT NULL');
 
@@ -86,67 +90,71 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     public function setSynchStatusNeedByCategoryTemplate($newData, $oldData, $listingProduct)
     {
-        $newTemplateSnapshot = array();
+        $newTemplateSnapshot = [];
 
         try {
             $newTemplateSnapshot = $this->activeRecordFactory
                 ->getCachedObjectLoaded(
-                    'Ebay\Template\Category',
+                    'Ebay_Template_Category',
                     $newData['template_category_id']
                 )->getDataSnapshot();
-        } catch (\Exception $exception) {}
+        } catch (\Exception $exception) {
+        }
 
-        $oldTemplateSnapshot = array();
+        $oldTemplateSnapshot = [];
 
         try {
             $oldTemplateSnapshot = $this->activeRecordFactory
                 ->getCachedObjectLoaded(
-                    'Ebay\Template\Category',
+                    'Ebay_Template_Category',
                     $oldData['template_category_id']
                 )->getDataSnapshot();
-        } catch (\Exception $exception) {}
+        } catch (\Exception $exception) {
+        }
 
         if (!$newTemplateSnapshot && !$oldTemplateSnapshot) {
             return;
         }
 
-        $this->activeRecordFactory->getObject('Ebay\Template\Category')->getResource()->setSynchStatusNeed(
+        $this->activeRecordFactory->getObject('Ebay_Template_Category')->getResource()->setSynchStatusNeed(
             $newTemplateSnapshot,
             $oldTemplateSnapshot,
-            array($listingProduct)
+            [$listingProduct]
         );
     }
 
     public function setSynchStatusNeedByOtherCategoryTemplate($newData, $oldData, $listingProduct)
     {
-        $newTemplateSnapshot = array();
+        $newTemplateSnapshot = [];
 
         try {
             $newTemplateSnapshot = $this->activeRecordFactory
                 ->getCachedObjectLoaded(
-                    'Ebay\Template\OtherCategory',
+                    'Ebay_Template_OtherCategory',
                     $newData['template_other_category_id']
                 )->getDataSnapshot();
-        } catch (\Exception $exception) {}
+        } catch (\Exception $exception) {
+        }
 
-        $oldTemplateSnapshot = array();
+        $oldTemplateSnapshot = [];
 
         try {
             $oldTemplateSnapshot = $this->activeRecordFactory
                 ->getCachedObjectLoaded(
-                    'Ebay\Template\OtherCategory',
+                    'Ebay_Template_OtherCategory',
                     $oldData['template_other_category_id']
                 )->getDataSnapshot();
-        } catch (\Exception $exception) {}
+        } catch (\Exception $exception) {
+        }
 
         if (!$newTemplateSnapshot && !$oldTemplateSnapshot) {
             return;
         }
 
-        $this->activeRecordFactory->getObject('Ebay\Template\OtherCategory')->getResource()->setSynchStatusNeed(
+        $this->activeRecordFactory->getObject('Ebay_Template_OtherCategory')->getResource()->setSynchStatusNeed(
             $newTemplateSnapshot,
             $oldTemplateSnapshot,
-            array($listingProduct)
+            [$listingProduct]
         );
     }
 

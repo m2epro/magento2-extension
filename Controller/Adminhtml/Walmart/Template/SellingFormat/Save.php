@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 use Ess\M2ePro\Helper\Component\Walmart;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat
+ */
 class Save extends Template
 {
     //########################################
@@ -28,11 +32,11 @@ class Save extends Template
 
         // Base prepare
         // ---------------------------------------
-        $data = array();
+        $data = [];
         // ---------------------------------------
 
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'title',
             'marketplace_id',
 
@@ -89,7 +93,7 @@ class Save extends Template
             'shipping_override_rule_mode',
 
             'attributes_mode'
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -100,20 +104,26 @@ class Save extends Template
 
         if ($data['sale_time_start_date_value'] === '') {
             $data['sale_time_start_date_value'] = $this->getHelper('Data')->getCurrentGmtDate(
-                false,'Y-m-d 00:00:00'
+                false,
+                'Y-m-d 00:00:00'
             );
         } else {
             $data['sale_time_start_date_value'] = $this->getHelper('Data')->getDate(
-                $data['sale_time_start_date_value'],false,'Y-m-d 00:00:00'
+                $data['sale_time_start_date_value'],
+                false,
+                'Y-m-d 00:00:00'
             );
         }
         if ($data['sale_time_end_date_value'] === '') {
             $data['sale_time_end_date_value'] = $this->getHelper('Data')->getCurrentGmtDate(
-                false,'Y-m-d 00:00:00'
+                false,
+                'Y-m-d 00:00:00'
             );
         } else {
             $data['sale_time_end_date_value'] = $this->getHelper('Data')->getDate(
-                $data['sale_time_end_date_value'],false,'Y-m-d 00:00:00'
+                $data['sale_time_end_date_value'],
+                false,
+                'Y-m-d 00:00:00'
             );
         }
 
@@ -150,7 +160,7 @@ class Save extends Template
         $this->updatePromotions($post, $model->getId());
 
         $newData = array_merge($model->getDataSnapshot(), $model->getChildObject()->getDataSnapshot());
-        $model->getChildObject()->setSynchStatusNeed($newData,$oldData);
+        $model->getChildObject()->setSynchStatusNeed($newData, $oldData);
 
         if ($this->isAjax()) {
             $this->setJsonContent([
@@ -163,20 +173,20 @@ class Save extends Template
         // ---------------------------------------
 
         $this->messageManager->addSuccess($this->__('Policy was successfully saved'));
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('*/walmart_template/index', array(), array(
-            'edit' => array(
+        return $this->_redirect($this->getHelper('Data')->getBackUrl('*/walmart_template/index', [], [
+            'edit' => [
                 'id' => $id,
                 'wizard' => $this->getRequest()->getParam('wizard'),
                 'close_on_save' => $this->getRequest()->getParam('close_on_save')
-            ),
-        )));
+            ],
+        ]));
     }
 
     // ---------------------------------------
 
     private function updateServices($data, $templateId)
     {
-        $collection = $this->activeRecordFactory->getObject('Walmart\Template\SellingFormat\ShippingOverride')
+        $collection = $this->activeRecordFactory->getObject('Walmart_Template_SellingFormat_ShippingOverride')
                           ->getCollection()
                           ->addFieldToFilter('template_selling_format_id', (int)$templateId);
 
@@ -188,9 +198,9 @@ class Save extends Template
             return;
         }
 
-        $newServices = array();
+        $newServices = [];
         foreach ($data['shipping_override_rule'] as $serviceData) {
-            $newServices[] = array(
+            $newServices[] = [
                 'template_selling_format_id' => $templateId,
                 'method'              => $serviceData['method'],
                 'is_shipping_allowed' => $serviceData['is_shipping_allowed'],
@@ -198,7 +208,7 @@ class Save extends Template
                 'cost_mode'           => !empty($serviceData['cost_mode']) ? $serviceData['cost_mode'] : 0,
                 'cost_value'          => !empty($serviceData['cost_value']) ? $serviceData['cost_value'] : 0,
                 'cost_attribute'      => !empty($serviceData['cost_attribute']) ? $serviceData['cost_attribute'] : ''
-            );
+            ];
         }
 
         if (empty($newServices)) {
@@ -207,7 +217,7 @@ class Save extends Template
 
         $coreRes = $this->resourceConnection;
         $coreRes->getConnection()->insertMultiple(
-            $this->getHelper('Module\Database\Structure')
+            $this->getHelper('Module_Database_Structure')
                  ->getTableNameWithPrefix('m2epro_walmart_template_selling_format_shipping_override'),
             $newServices
         );
@@ -215,7 +225,7 @@ class Save extends Template
 
     private function updatePromotions($data, $templateId)
     {
-        $collection = $this->activeRecordFactory->getObject('Walmart\Template\SellingFormat\Promotion')
+        $collection = $this->activeRecordFactory->getObject('Walmart_Template_SellingFormat_Promotion')
                                                 ->getCollection()
                                                 ->addFieldToFilter('template_selling_format_id', (int)$templateId);
 
@@ -227,30 +237,35 @@ class Save extends Template
             return;
         }
 
-        $newPromotions = array();
+        $newPromotions = [];
         foreach ($data['promotions'] as $promotionData) {
-
             if (!empty($promotionData['from_date']['value'])) {
                 $startDate = $this->getHelper('Data')->getDate(
-                    $promotionData['from_date']['value'],false,'Y-m-d H:i'
+                    $promotionData['from_date']['value'],
+                    false,
+                    'Y-m-d H:i'
                 );
             } else {
                 $startDate = $this->getHelper('Data')->getCurrentGmtDate(
-                    false,'Y-m-d H:i'
+                    false,
+                    'Y-m-d H:i'
                 );
             }
 
             if (!empty($promotionData['to_date']['value'])) {
                 $endDate = $this->getHelper('Data')->getDate(
-                    $promotionData['to_date']['value'],false,'Y-m-d H:i'
+                    $promotionData['to_date']['value'],
+                    false,
+                    'Y-m-d H:i'
                 );
             } else {
                 $endDate = $this->getHelper('Data')->getCurrentGmtDate(
-                    false,'Y-m-d H:i'
+                    false,
+                    'Y-m-d H:i'
                 );
             }
 
-            $newPromotions[] = array(
+            $newPromotions[] = [
                 'template_selling_format_id'   => $templateId,
                 'price_mode'                   => $promotionData['price']['mode'],
                 'price_attribute'              => $promotionData['price']['attribute'],
@@ -265,7 +280,7 @@ class Save extends Template
                 'comparison_price_attribute'   => $promotionData['comparison_price']['attribute'],
                 'comparison_price_coefficient' => $promotionData['comparison_price']['coefficient'],
                 'type'                         => $promotionData['type'],
-            );
+            ];
         }
 
         if (empty($newPromotions)) {
@@ -274,7 +289,7 @@ class Save extends Template
 
         $coreRes = $this->resourceConnection;
         $coreRes->getConnection()->insertMultiple(
-            $this->getHelper('Module\Database\Structure')
+            $this->getHelper('Module_Database_Structure')
                  ->getTableNameWithPrefix('m2epro_walmart_template_selling_format_promotion'),
             $newPromotions
         );
@@ -284,7 +299,7 @@ class Save extends Template
 
     private function getComparedData($data, $keyName, $valueName)
     {
-        $result = array();
+        $result = [];
 
         if (!isset($data[$keyName]) || !isset($data[$valueName])) {
             return $result;
@@ -298,7 +313,7 @@ class Save extends Template
         }
 
         foreach ($keyData as $index => $value) {
-            $result[] = array('name' => $value, 'value' => $valueData[$index]);
+            $result[] = ['name' => $value, 'value' => $valueData[$index]];
         }
 
         return $result;

@@ -37,6 +37,11 @@
     width: 75px;
 }
 
+#magento_block_walmart_template_description_additional a.action-disabled {
+    color: gray;
+    text-decoration: none;
+}
+
 #category_path_span {
     color: initial;
 }

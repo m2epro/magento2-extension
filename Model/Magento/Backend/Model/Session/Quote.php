@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Backend\Model\Session;
 
+/**
+ * Class Quote
+ * @package Ess\M2ePro\Model\Magento\Backend\Model\Session
+ */
 class Quote extends \Magento\Backend\Model\Session\Quote
 {
     public function clearStorage()

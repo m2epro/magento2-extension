@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template;
 
+/**
+ * Class OtherCategory
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Template
+ */
 class OtherCategory extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
@@ -21,7 +25,7 @@ class OtherCategory extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstrac
 
     public function setSynchStatusNeed($newData, $oldData, $listingsProducts)
     {
-        $listingsProductsIds = array();
+        $listingsProductsIds = [];
         foreach ($listingsProducts as $listingProduct) {
             $listingsProductsIds[] = (int)$listingProduct['id'];
         }
@@ -30,26 +34,26 @@ class OtherCategory extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstrac
             return;
         }
 
-        if (!$this->isDifferent($newData,$oldData)) {
+        if (!$this->isDifferent($newData, $oldData)) {
             return;
         }
 
-        $templates = array('otherCategoryTemplate');
+        $templates = ['otherCategoryTemplate'];
 
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
 
         $this->getConnection()->update(
             $lpTable,
-            array(
+            [
                 'synch_status' => \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_NEED,
                 'synch_reasons' => new \Zend_Db_Expr(
                     "IF(synch_reasons IS NULL,
-                        '".implode(',',$templates)."',
-                        CONCAT(synch_reasons,'".','.implode(',',$templates)."')
+                        '".implode(',', $templates)."',
+                        CONCAT(synch_reasons,'".','.implode(',', $templates)."')
                     )"
                 )
-            ),
-            array('id IN ('.implode(',', $listingsProductsIds).')')
+            ],
+            ['id IN ('.implode(',', $listingsProductsIds).')']
         );
     }
 
@@ -57,25 +61,25 @@ class OtherCategory extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstrac
 
     public function isDifferent($newData, $oldData)
     {
-        $ignoreFields = array(
+        $ignoreFields = [
             $this->getIdFieldName(),
             'title', 'create_date', 'update_date'
-        );
+        ];
 
-        $dataConversions = array(
-            array('field' => 'store_category_main_id', 'type' => 'float'),
-            array('field' => 'store_category_secondary_id', 'type' => 'float'),
-        );
+        $dataConversions = [
+            ['field' => 'store_category_main_id', 'type' => 'float'],
+            ['field' => 'store_category_secondary_id', 'type' => 'float'],
+        ];
 
         foreach ($dataConversions as $data) {
             $type = $data['type'] . 'val';
 
-            array_key_exists($data['field'],$newData) && $newData[$data['field']] = $type($newData[$data['field']]);
-            array_key_exists($data['field'],$oldData) && $oldData[$data['field']] = $type($oldData[$data['field']]);
+            array_key_exists($data['field'], $newData) && $newData[$data['field']] = $type($newData[$data['field']]);
+            array_key_exists($data['field'], $oldData) && $oldData[$data['field']] = $type($oldData[$data['field']]);
         }
 
         foreach ($ignoreFields as $ignoreField) {
-            unset($newData[$ignoreField],$oldData[$ignoreField]);
+            unset($newData[$ignoreField], $oldData[$ignoreField]);
         }
 
         ksort($newData);
@@ -84,7 +88,7 @@ class OtherCategory extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstrac
         $encodedNewData = $this->getHelper('Data')->jsonEncode($newData);
         $encodedOldData = $this->getHelper('Data')->jsonEncode($oldData);
 
-        return md5($encodedNewData) !== md5($encodedOldData);
+        return sha1($encodedNewData) !== sha1($encodedOldData);
     }
 
     //########################################

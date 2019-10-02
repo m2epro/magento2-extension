@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization;
 
+/**
+ * Class Orders
+ * @package Ess\M2ePro\Model\Ebay\Synchronization
+ */
 class Orders extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
 {
     //########################################
@@ -25,7 +29,7 @@ class Orders extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
      */
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------
@@ -53,7 +57,7 @@ class Orders extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
         $result = true;
 
         $result = !$this->processTask('Orders\Cancellation') ? false : $result;
-        $result = !$this->processTask('Orders\Reserve\Cancellation') ? false : $result;
+        $result = !$this->processTask('Orders_Reserve_Cancellation') ? false : $result;
         $result = !$this->processTask('Orders\Receive') ? false : $result;
         $result = !$this->processTask('Orders\CreateFailed') ? false : $result;
         $result = !$this->processTask('Orders\Update') ? false : $result;

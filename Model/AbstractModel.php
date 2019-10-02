@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model;
 
 use Magento\Framework\DataObject;
 
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model
+ */
 abstract class AbstractModel extends DataObject
 {
     protected $helperFactory;
@@ -21,8 +25,7 @@ abstract class AbstractModel extends DataObject
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
         $this->modelFactory = $modelFactory;
 
@@ -42,20 +45,19 @@ abstract class AbstractModel extends DataObject
 
         $tags[] = $modelName;
 
-        if (strpos($modelName,'\\') !== false) {
-
+        if (strpos($modelName, '\\') !== false) {
             $allComponents = $this->getHelper('Component')->getComponents();
-            $modelNameComponent = substr($modelName,0,strpos($modelName,'\\'));
+            $modelNameComponent = substr($modelName, 0, strpos($modelName, '\\'));
 
             if (in_array(strtolower($modelNameComponent), array_map('strtolower', $allComponents))) {
-                $modelNameOnlyModel = substr($modelName, strpos($modelName,'\\')+1);
+                $modelNameOnlyModel = substr($modelName, strpos($modelName, '\\')+1);
                 $tags[] = $modelNameComponent;
                 $tags[] = $modelNameOnlyModel;
             }
         }
 
         $tags = array_unique($tags);
-        $tags = array_map('strtolower',$tags);
+        $tags = array_map('strtolower', $tags);
 
         return $tags;
     }

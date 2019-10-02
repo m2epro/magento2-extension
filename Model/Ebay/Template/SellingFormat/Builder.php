@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\SellingFormat;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Ebay\Template\SellingFormat
+ */
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 {
     //########################################
@@ -15,7 +19,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
     public function build(array $data)
     {
         if (empty($data)) {
-            return NULL;
+            return null;
         }
 
         $this->validate($data);
@@ -43,7 +47,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
     {
         $prepared = parent::prepareData($data);
 
-        $defaultData = $this->activeRecordFactory->getObject('Ebay\Template\SellingFormat')->getDefaultSettings();
+        $defaultData = $this->activeRecordFactory->getObject('Ebay_Template_SellingFormat')->getDefaultSettings();
 
         $data = array_merge($defaultData, $data);
 
@@ -134,9 +138,9 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         }
 
         if (isset($data['fixed_price_coefficient'], $data['fixed_price_coefficient_mode'])) {
-
             $prepared['fixed_price_coefficient'] = $this->getFormattedPriceCoefficient(
-                $data['fixed_price_coefficient'], $data['fixed_price_coefficient_mode']
+                $data['fixed_price_coefficient'],
+                $data['fixed_price_coefficient_mode']
             );
         }
 
@@ -151,9 +155,9 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         }
 
         if (isset($data['start_price_coefficient'], $data['start_price_coefficient_mode'])) {
-
             $prepared['start_price_coefficient'] = $this->getFormattedPriceCoefficient(
-                $data['start_price_coefficient'], $data['start_price_coefficient_mode']
+                $data['start_price_coefficient'],
+                $data['start_price_coefficient_mode']
             );
         }
 
@@ -168,9 +172,9 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         }
 
         if (isset($data['reserve_price_coefficient'], $data['reserve_price_coefficient_mode'])) {
-
             $prepared['reserve_price_coefficient'] = $this->getFormattedPriceCoefficient(
-                $data['reserve_price_coefficient'], $data['reserve_price_coefficient_mode']
+                $data['reserve_price_coefficient'],
+                $data['reserve_price_coefficient_mode']
             );
         }
 
@@ -185,9 +189,9 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         }
 
         if (isset($data['buyitnow_price_coefficient'], $data['buyitnow_price_coefficient_mode'])) {
-
             $prepared['buyitnow_price_coefficient'] = $this->getFormattedPriceCoefficient(
-                $data['buyitnow_price_coefficient'], $data['buyitnow_price_coefficient_mode']
+                $data['buyitnow_price_coefficient'],
+                $data['buyitnow_price_coefficient_mode']
             );
         }
 
@@ -257,7 +261,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             $prepared['best_offer_reject_attribute'] = $data['best_offer_reject_attribute'];
         }
 
-        $prepared['charity'] = NULL;
+        $prepared['charity'] = null;
 
         if (!empty($data['charity']) && !empty($data['charity']['marketplace_id'])) {
             $charities = [];

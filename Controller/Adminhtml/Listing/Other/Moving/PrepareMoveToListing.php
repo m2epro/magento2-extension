@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 
+/**
+ * Class PrepareMoveToListing
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving
+ */
 class PrepareMoveToListing extends Listing
 {
     public function execute()
@@ -27,7 +31,7 @@ class PrepareMoveToListing extends Listing
                 ->getObject($componentMode, 'Listing\Other')
                 ->getCollection();
 
-            $listingOtherCollection->addFieldToFilter('main_table.id', array('in' => $selectedProductsPart));
+            $listingOtherCollection->addFieldToFilter('main_table.id', ['in' => $selectedProductsPart]);
             $tempData = $listingOtherCollection
                 ->getSelect()
                 ->query()
@@ -41,16 +45,16 @@ class PrepareMoveToListing extends Listing
             }
 
             $listingOtherCollection->getSelect()->join(
-                array(
-                    'cpe'=>$this->getHelper('Module\Database\Structure')
+                [
+                    'cpe'=>$this->getHelper('Module_Database_Structure')
                         ->getTableNameWithPrefix('catalog_product_entity')
-                ),
+                ],
                 '`main_table`.`product_id` = `cpe`.`entity_id`'
             );
 
             $tempData = $listingOtherCollection
                 ->getSelect()
-                ->group(array('main_table.account_id','main_table.marketplace_id'))
+                ->group(['main_table.account_id','main_table.marketplace_id'])
                 ->query()
                 ->fetchAll();
 
@@ -63,10 +67,10 @@ class PrepareMoveToListing extends Listing
         $marketplaceId = $tempData[0]['marketplace_id'];
         $accountId = $tempData[0]['account_id'];
 
-        $response = array(
+        $response = [
             'accountId' => $accountId,
             'marketplaceId' => $marketplaceId,
-        );
+        ];
 
         $this->setJsonContent($response);
         return $this->getResult();

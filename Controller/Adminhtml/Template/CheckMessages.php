@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Base;
 
+/**
+ * Class CheckMessages
+ * @package Ess\M2ePro\Controller\Adminhtml\Template
+ */
 class CheckMessages extends Base
 {
     //########################################
@@ -17,7 +21,7 @@ class CheckMessages extends Base
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_configuration_templates') ||
-               $this->_authorization->isAllowed('Ess_M2ePro::amazon_configuration_templates')||
+               $this->_authorization->isAllowed('Ess_M2ePro::amazon_configuration_templates') ||
                $this->_authorization->isAllowed('Ess_M2ePro::walmart_configuration_templates');
     }
 
@@ -33,31 +37,38 @@ class CheckMessages extends Base
         // ---------------------------------------
 
         // ---------------------------------------
-        $template = NULL;
-        $templateData = $data ? $data : array();
-        $templateUsedAttributes = array();
+        $template = null;
+        $templateData = $data ? $data : [];
+        $templateUsedAttributes = [];
         // ---------------------------------------
 
         // ---------------------------------------
         switch ($component) {
             case \Ess\M2ePro\Helper\Component\Ebay::NICK:
-                $manager = $this->modelFactory->getObject('Ebay\Template\Manager');
+                $manager = $this->modelFactory->getObject('Ebay_Template_Manager');
                 $manager->setTemplate($nick);
                 $template = $this->activeRecordFactory->getObjectLoaded(
-                    $manager->getTemplateModelName(), $id, NULL, false
+                    $manager->getTemplateModelName(),
+                    $id,
+                    null,
+                    false
                 );
                 break;
             default:
                 if ($nick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT) {
                     $template = $this->parentFactory->getObjectLoaded(
-                        $component, 'Template\SellingFormat', $id, NULL, false
+                        $component,
+                        'Template\SellingFormat',
+                        $id,
+                        null,
+                        false
                     );
                 }
                 break;
         }
         // ---------------------------------------
 
-        if (!is_null($template) && $template->getId()) {
+        if ($template !== null && $template->getId()) {
             $templateData = $template->getData();
             if ($template instanceof \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel) {
                 $templateData = array_merge($templateData, $template->getChildObject()->getData());
@@ -66,7 +77,7 @@ class CheckMessages extends Base
         }
 
         // ---------------------------------------
-        if (is_null($template) && empty($templateData)) {
+        if ($template === null && empty($templateData)) {
             $this->setJsonContent(['messages' => '']);
             return $this->getResult();
         }

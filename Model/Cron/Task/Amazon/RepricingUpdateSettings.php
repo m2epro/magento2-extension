@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon;
 
+/**
+ * Class RepricingUpdateSettings
+ * @package Ess\M2ePro\Model\Cron\Task\Amazon
+ */
 class RepricingUpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'amazon/repricing_update_settings';
@@ -51,11 +55,12 @@ class RepricingUpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     {
         $accountCollection = $this->activeRecordFactory->getObject('Account')->getCollection();
         $accountCollection->getSelect()->joinInner(
-            array(
-                'aar' => $this->getHelper('Module\Database\Structure')
+            [
+                'aar' => $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_amazon_account_repricing')
-            ),
-            'aar.account_id=main_table.id', array()
+            ],
+            'aar.account_id=main_table.id',
+            []
         );
 
         return $accountCollection->getItems();
@@ -64,23 +69,22 @@ class RepricingUpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     private function processAccount(\Ess\M2ePro\Model\Account $acc)
     {
         /** @var \Ess\M2ePro\Model\Amazon\Repricing\Updating $repricingUpdating */
-        $repricingUpdating = $this->modelFactory->getObject('Amazon\Repricing\Updating');
+        $repricingUpdating = $this->modelFactory->getObject('Amazon_Repricing_Updating');
         $repricingUpdating->setAccount($acc);
 
         /** @var \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General $repricingSynchronization */
-        $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\General');
+        $repricingSynchronization = $this->modelFactory->getObject('Amazon_Repricing_Synchronization_General');
         $repricingSynchronization->setAccount($acc);
 
         $iteration = 0;
         while (($products = $this->getProcessRequiredProducts($acc)) && $iteration <= self::MAX_COUNT_OF_ITERATIONS) {
-
             $iteration++;
 
             $updatedSkus = $repricingUpdating->process($products);
             $this->getLockItem()->activate();
 
             /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Repricing $resource */
-            $resource = $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')->getResource();
+            $resource = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')->getResource();
             $resource->resetProcessRequired(array_unique(array_keys($products)));
 
             if (empty($updatedSkus)) {
@@ -98,31 +102,32 @@ class RepricingUpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     private function getProcessRequiredProducts(\Ess\M2ePro\Model\Account $account)
     {
         $listingProductCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Product'
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Listing\Product'
         )->getCollection();
         $listingProductCollection->getSelect()->joinLeft(
-            array('l' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing')),
+            ['l' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_listing')],
             'l.id=main_table.listing_id',
-            array()
+            []
         );
         $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
         $listingProductCollection->addFieldToFilter('is_repricing', 1);
         $listingProductCollection->addFieldToFilter('l.account_id', $account->getId());
         $listingProductCollection->addFieldToFilter(
             'status',
-            array('in' => array(
+            ['in' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
                 \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN
-            ))
+            ]]
         );
 
         $listingProductCollection->getSelect()->joinInner(
-            array(
-                'alpr' => $this->getHelper('Module\Database\Structure')
+            [
+                'alpr' => $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_amazon_listing_product_repricing')
-            ),
+            ],
             'alpr.listing_product_id=main_table.id',
-            array()
+            []
         );
         $listingProductCollection->addFieldToFilter('alpr.is_process_required', true);
 
@@ -131,14 +136,15 @@ class RepricingUpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         /** @var \Ess\M2ePro\Model\Listing\Product[] $listingsProducts */
         $listingsProducts = $listingProductCollection->getItems();
         if (empty($listingsProducts)) {
-            return array();
+            return [];
         }
 
         $listingProductRepricingCollection = $this->activeRecordFactory->getObject(
-            'Amazon\Listing\Product\Repricing'
+            'Amazon_Listing_Product_Repricing'
         )->getCollection();
         $listingProductRepricingCollection->addFieldToFilter(
-            'listing_product_id', array('in' => $listingProductCollection->getColumnValues('id'))
+            'listing_product_id',
+            ['in' => $listingProductCollection->getColumnValues('id')]
         );
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing[] $listingsProductsRepricing */

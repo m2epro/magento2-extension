@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
+ */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 {
     protected $dateTime;
@@ -18,8 +22,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
         \Magento\Framework\Stdlib\DateTime $dateTime,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
-    )
-    {
+    ) {
         $this->dateTime = $dateTime;
         parent::__construct($walmartFactory, $context);
     }
@@ -40,9 +43,9 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
         }
 
         $id = $this->getRequest()->getParam('id');
-        $listing = $this->walmartFactory->getObjectLoaded('Listing', $id, NULL, false);
+        $listing = $this->walmartFactory->getObjectLoaded('Listing', $id, null, false);
 
-        if (is_null($listing) && $id) {
+        if ($listing === null && $id) {
             $this->getMessageManager()->addError($this->__('Listing does not exist.'));
             return $this->_redirect('*/walmart_listing/index');
         }
@@ -51,16 +54,16 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 
         // Base prepare
         // ---------------------------------------
-        $data = array();
+        $data = [];
         // ---------------------------------------
 
         // tab: settings
         // ---------------------------------------
-        $keys = array(
-            'template_category_id',
+        $keys = [
+            'template_description_id',
             'template_selling_format_id',
             'template_synchronization_id',
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
@@ -72,14 +75,14 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
         $listing->getChildObject()->addData($data);
         $listing->save();
 
-        $templateData = array();
+        $templateData = [];
 
         // tab: channel settings
         // ---------------------------------------
-        $keys = array(
+        $keys = [
             'account_id',
             'marketplace_id',
-        );
+        ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $templateData[$key] = $post[$key];
@@ -93,11 +96,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 
         $newData = array_merge($listing->getDataSnapshot(), $listing->getChildObject()->getDataSnapshot());
 
-        $listing->getChildObject()->setSynchStatusNeed($newData,$oldData);
+        $listing->getChildObject()->setSynchStatusNeed($newData, $oldData);
 
         $this->getMessageManager()->addSuccess($this->__('The Listing was successfully saved.'));
 
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('list',array(),array('edit'=>array('id'=>$id))));
+        return $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], ['edit'=>['id'=>$id]]));
     }
 
     //########################################

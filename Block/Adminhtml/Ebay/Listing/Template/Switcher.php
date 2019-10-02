@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template
+ */
 class Switcher extends AbstractBlock
 {
     const MODE_LISTING_PRODUCT = 1;
@@ -17,7 +21,7 @@ class Switcher extends AbstractBlock
 
     protected $_template = 'ebay/listing/template/switcher.phtml';
 
-    private $templates = NULL;
+    private $templates = null;
 
     //########################################
 
@@ -110,7 +114,7 @@ class Switcher extends AbstractBlock
             'ebay_template_mode_' . $this->getTemplateNick()
         );
 
-        if (is_null($templateMode)) {
+        if ($templateMode === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Template Mode is not initialized.');
         }
 
@@ -121,8 +125,8 @@ class Switcher extends AbstractBlock
     {
         $template = $this->getTemplateObject();
 
-        if (is_null($template)) {
-            return NULL;
+        if ($template === null) {
+            return null;
         }
 
         return $template->getId();
@@ -132,11 +136,11 @@ class Switcher extends AbstractBlock
     {
         $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_' . $this->getTemplateNick());
 
-        if (!is_null($template) && !is_null($template->getId())) {
+        if ($template !== null && $template->getId() !== null) {
             return $template;
         }
 
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------
@@ -168,7 +172,7 @@ class Switcher extends AbstractBlock
 
     public function getFormDataBlock()
     {
-        $blockName = NULL;
+        $blockName = null;
 
         switch ($this->getTemplateNick()) {
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT:
@@ -191,19 +195,19 @@ class Switcher extends AbstractBlock
                 break;
         }
 
-        if (is_null($blockName)) {
+        if ($blockName === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
                 sprintf('Form data Block for Template nick "%s" is unknown.', $this->getTemplateNick())
             );
         }
 
-        $parameters = array(
+        $parameters = [
             'is_custom' => $this->isTemplateModeCustom(),
             'custom_title' => $this->getHelper('Data\GlobalData')->getValue('ebay_custom_template_title'),
             'policy_localization' => $this->getData('policy_localization')
-        );
+        ];
 
-        return $this->getLayout()->createBlock($blockName,'',['data' => $parameters]);
+        return $this->getLayout()->createBlock($blockName, '', ['data' => $parameters]);
     }
 
     public function getFormDataBlockHtml($templateDataForce = false)
@@ -242,7 +246,7 @@ HTML;
     {
         $displayUseDefaultOption = $this->getHelper('Data\GlobalData')->getValue('ebay_display_use_default_option');
 
-        if (is_null($displayUseDefaultOption)) {
+        if ($displayUseDefaultOption === null) {
             return true;
         }
 
@@ -253,11 +257,11 @@ HTML;
 
     public function getTemplates()
     {
-        if (!is_null($this->templates)) {
+        if ($this->templates !== null) {
             return $this->templates;
         }
 
-        $manager = $this->modelFactory->getObject('Ebay\Template\Manager')->setTemplate($this->getTemplateNick());
+        $manager = $this->modelFactory->getObject('Ebay_Template_Manager')->setTemplate($this->getTemplateNick());
 
         $collection = $manager->getTemplateModel()
             ->getCollection()
@@ -316,11 +320,11 @@ HTML;
 
         // ---------------------------------------
         $nick = $this->getTemplateNick();
-        $data = array(
+        $data = [
             'class'   => 'action primary save-custom-template-' . $nick,
             'label'   => $this->__('Save as New Policy'),
             'onclick' => 'EbayListingTemplateSwitcherObj.customSaveAsTemplate(\''. $nick .'\');',
-        );
+        ];
         $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
         $this->setChild('save_custom_as_template', $buttonBlock);
         // ---------------------------------------
@@ -350,7 +354,7 @@ HTML;
         }
     });
 JS
-);
+        );
 
         return parent::_toHtml() .
             $this->getFormDataBlockHtml() .

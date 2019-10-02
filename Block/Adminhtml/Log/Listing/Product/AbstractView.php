@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Log\Listing\Product;
 
+/**
+ * Class AbstractView
+ * @package Ess\M2ePro\Block\Adminhtml\Log\Listing\Product
+ */
 abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\AbstractView
 {
     //########################################
@@ -17,10 +21,12 @@ abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
         $staticListingFilter = '';
 
         $listingId = $this->getRequest()->getParam(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD, false
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
+            false
         );
         $listingProductId = $this->getRequest()->getParam(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_PRODUCT_ID_FIELD, false
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_PRODUCT_ID_FIELD,
+            false
         );
 
         /** @var \Ess\M2ePro\Model\Listing $listing */
@@ -33,32 +39,38 @@ abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
         if ($listingProductId) {
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->activeRecordFactory->getObjectLoaded(
-                'Listing\Product', $listingProductId, null, false
+                'Listing\Product',
+                $listingProductId,
+                null,
+                false
             );
 
-            if (!is_null($listingProduct)) {
+            if ($listingProduct !== null) {
                 $listing = $listingProduct->getListing();
                 $listingTitle = $this->filterManager->truncate(
-                    $listing->getTitle(), ['length' => 15]
+                    $listing->getTitle(),
+                    ['length' => 15]
                 );
                 $staticListingFilter = $this->getStaticFilterHtml($this->__('Listing'), $listingTitle);
             }
         }
 
-        if (!is_null($listing)) {
-
+        if ($listing !== null) {
             $accountTitle = $this->filterManager->truncate(
-                $listing->getAccount()->getTitle(), ['length' => 15]
+                $listing->getAccount()->getTitle(),
+                ['length' => 15]
             );
 
             return
                 '<div class="static-switcher-block">'
                 . $staticListingFilter
                 . $this->getStaticFilterHtml(
-                    $this->accountSwitcherBlock->getLabel(), $accountTitle
+                    $this->accountSwitcherBlock->getLabel(),
+                    $accountTitle
                 )
                 . $this->getStaticFilterHtml(
-                    $this->marketplaceSwitcherBlock->getLabel(), $listing->getMarketplace()->getTitle()
+                    $this->marketplaceSwitcherBlock->getLabel(),
+                    $listing->getMarketplace()->getTitle()
                 )
                 . '</div>';
         }

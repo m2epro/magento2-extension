@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template
+ */
 class Edit extends Template
 {
     //########################################
@@ -19,7 +23,7 @@ class Edit extends Template
         $id = $this->getRequest()->getParam('id');
         $type = $this->getRequest()->getParam('type');
 
-        if (is_null($id) || empty($type)) {
+        if ($id === null || empty($type)) {
             $this->messageManager->addError($this->__('You should provide correct parameters.'));
             return $this->_redirect('*/*/index');
         }
@@ -27,7 +31,8 @@ class Edit extends Template
         $type = $this->prepareTemplateType($type);
 
         return $this->_redirect(
-            "*/walmart_template_{$type}/edit", array('id'=>$id)
+            "*/walmart_template_{$type}/edit",
+            ['id'=>$id]
         );
     }
 

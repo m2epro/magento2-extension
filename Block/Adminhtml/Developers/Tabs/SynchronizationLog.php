@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
+/**
+ * Class SynchronizationLog
+ * @package Ess\M2ePro\Block\Adminhtml\Developers\Tabs
+ */
 class SynchronizationLog extends AbstractContainer
 {
     //########################################
@@ -49,7 +53,8 @@ class SynchronizationLog extends AbstractContainer
     protected function _toHtml()
     {
         $helpBlock = $this->createBlock('HelpBlock', '', ['data' => [
-            'content' => $this->__('
+            'content' => $this->__(
+                '
                 <p>This grid displays Synchronization results - Quantity, Price, Details (M2E Pro Listings)<br>
                 Synchronization, Orders updating, Marketplaces’ data Synchronization,
                 3rd Party Listings Synchronization.</p><br>

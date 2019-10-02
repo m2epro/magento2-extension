@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Walmart\Order\CreditMemo;
 
+/**
+ * Class Handler
+ * @package Ess\M2ePro\Model\Walmart\Order\CreditMemo
+ */
 class Handler extends \Ess\M2ePro\Model\AbstractModel
 {
     const HANDLE_RESULT_FAILED    = -1;
     const HANDLE_RESULT_SKIPPED   = 0;
     const HANDLE_RESULT_SUCCEEDED = 1;
 
-    protected $activeRecordFactory = NULL;
+    protected $activeRecordFactory = null;
 
     //########################################
 
@@ -49,13 +53,14 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
 
     private function getItemsToRefund(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Creditmemo $creditmemo)
     {
-        $itemsForCancel = array();
+        $itemsForCancel = [];
 
         foreach ($creditmemo->getAllItems() as $creditmemoItem) {
             /** @var \Magento\Sales\Model\Order\Creditmemo\Item $creditmemoItem */
 
-            $additionalData = $creditmemoItem->getOrderItem()->getAdditionalData();
-            $additionalData = is_string($additionalData) ? @unserialize($additionalData) : array();
+            $additionalData = $this->getHelper('Data')->unserialize(
+                $creditmemoItem->getOrderItem()->getAdditionalData()
+            );
 
             if (!isset($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items']) ||
                 !is_array($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items'])) {
@@ -66,7 +71,6 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
 
             $dataSize = count($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items']);
             for ($i = 0; $i < $dataSize; $i++) {
-
                 $data = $additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items'][$i];
                 if ($qtyAvailable <= 0 || !isset($data['order_item_id'])) {
                     continue;
@@ -79,9 +83,11 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
 
                 /** @var \Ess\M2ePro\Model\Walmart\Order\Item $item */
                 $item = $this->activeRecordFactory->getObjectLoaded(
-                    'Walmart\Order\Item', $orderItemId, 'walmart_order_item_id'
+                    'Walmart_Order_Item',
+                    $orderItemId,
+                    'order_item_id'
                 );
-                if (is_null($item)) {
+                if ($item === null) {
                     continue;
                 }
 
@@ -89,8 +95,8 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
                  * Walmart returns the same Order Item more than one time with single QTY. That data was merged
                  */
                 $mergedOrderItems = $item->getMergedWalmartOrderItemIds();
+                $orderItemId = $item->getWalmartOrderItemId();
                 while ($mergedOrderItemId = array_shift($mergedOrderItems)) {
-
                     if (!isset($data['refunded_qty'][$mergedOrderItemId])) {
                         $orderItemId = $mergedOrderItemId;
                         break;
@@ -115,16 +121,16 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
                 $price = $creditmemoItem->getPriceInclTax();
                 $tax = $creditmemoItem->getTaxAmount();
 
-                $itemsForCancel[] = array(
+                $itemsForCancel[] = [
                     'item_id' => $orderItemId,
                     'qty'     => $itemQty,
-                    'prices'  => array(
+                    'prices'  => [
                         'product' => $price,
-                    ),
-                    'taxes'   => array(
+                    ],
+                    'taxes'   => [
                         'product' => $tax,
-                    ),
-                );
+                    ],
+                ];
 
                 $qtyAvailable -= $itemQty;
                 $data['refunded_qty'][$orderItemId] = $itemQty;
@@ -133,7 +139,9 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
                 $mergedOrderItemId && $i--;
             }
 
-            $creditmemoItem->getOrderItem()->setAdditionalData(serialize($additionalData));
+            $creditmemoItem->getOrderItem()->setAdditionalData(
+                $this->getHelper('Data')->serialize($additionalData)
+            );
             $creditmemoItem->getOrderItem()->save();
         }
 

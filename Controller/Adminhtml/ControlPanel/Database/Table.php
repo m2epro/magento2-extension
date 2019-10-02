@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main;
 
+/**
+ * Class Table
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database
+ */
 abstract class Table extends Main
 {
     private $databaseTableFactory;
@@ -20,8 +24,7 @@ abstract class Table extends Main
     public function __construct(
         Context $context,
         \Ess\M2ePro\Model\ControlPanel\Database\TableModelFactory $databaseTableFactory
-    )
-    {
+    ) {
         $this->databaseTableFactory = $databaseTableFactory;
         parent::__construct($context);
     }
@@ -47,22 +50,23 @@ abstract class Table extends Main
     protected function isMergeModeEnabled($table)
     {
         return (bool)$this->getRequest()->getParam('merge') &&
-               $this->getHelper('Module\Database\Structure')->isTableHorizontal($table);
+               $this->getHelper('Module_Database_Structure')->isTableHorizontal($table);
     }
 
     protected function prepareCellsValuesArray()
     {
-        $cells = $this->getRequest()->getParam('cells', array());
-        is_string($cells) && $cells = array($cells);
+        $cells = $this->getRequest()->getParam('cells', []);
+        is_string($cells) && $cells = [$cells];
 
-        $bindArray = array();
+        $bindArray = [];
         foreach ($cells as $columnName) {
+            $columnValue = $this->getRequest()->getParam('value_'.$columnName);
 
-            if (is_null($columnValue = $this->getRequest()->getParam('value_'.$columnName))) {
+            if ($columnValue === null) {
                 continue;
             }
 
-            strtolower($columnValue) == 'null' && $columnValue = NULL;
+            strtolower($columnValue) == 'null' && $columnValue = null;
             $bindArray[$columnName] = $columnValue;
         }
 

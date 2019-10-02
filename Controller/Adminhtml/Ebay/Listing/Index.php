@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     public function execute()
     {
         if ($this->getRequest()->getQuery('ajax')) {
             $this->setAjaxContent(
-                $this->getLayout()->createBlock('Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid')
+                $this->createBlock('Ebay_Listing_Grid')
             );
             return $this->getResult();
         }

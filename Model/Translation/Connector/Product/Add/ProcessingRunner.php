@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Translation\Connector\Product\Add;
 
+/**
+ * Class ProcessingRunner
+ * @package Ess\M2ePro\Model\Translation\Connector\Product\Add
+ */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {
     const MAX_LIFETIME = 907200;
@@ -16,7 +20,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
     // ##################################
 
     /** @var \Ess\M2ePro\Model\Listing\Product[] $listingsProducts */
-    protected $listingsProducts = array();
+    protected $listingsProducts = [];
 
     protected $ebayFactory;
 
@@ -28,8 +32,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct($parentFactory, $activeRecordFactory, $helperFactory, $modelFactory);
     }
@@ -40,12 +43,12 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
     {
         parent::setLocks();
 
-        $alreadyLockedListings = array();
+        $alreadyLockedListings = [];
         foreach ($this->getListingsProducts() as $listingProduct) {
 
             /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
 
-            $listingProduct->addProcessingLock(NULL, $this->getProcessingObject()->getId());
+            $listingProduct->addProcessingLock(null, $this->getProcessingObject()->getId());
             $listingProduct->addProcessingLock('in_action', $this->getProcessingObject()->getId());
             $listingProduct->addProcessingLock('translation_action', $this->getProcessingObject()->getId());
 
@@ -53,7 +56,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
                 continue;
             }
 
-            $listingProduct->getListing()->addProcessingLock(NULL, $this->getProcessingObject()->getId());
+            $listingProduct->getListing()->addProcessingLock(null, $this->getProcessingObject()->getId());
 
             $alreadyLockedListings[$listingProduct->getListingId()] = true;
         }
@@ -63,12 +66,12 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
     {
         parent::unsetLocks();
 
-        $alreadyUnlockedListings = array();
+        $alreadyUnlockedListings = [];
         foreach ($this->getListingsProducts() as $listingProduct) {
 
             /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
 
-            $listingProduct->deleteProcessingLocks(NULL, $this->getProcessingObject()->getId());
+            $listingProduct->deleteProcessingLocks(null, $this->getProcessingObject()->getId());
             $listingProduct->deleteProcessingLocks('in_action', $this->getProcessingObject()->getId());
             $listingProduct->deleteProcessingLocks('translation_action', $this->getProcessingObject()->getId());
 
@@ -76,7 +79,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
                 continue;
             }
 
-            $listingProduct->getListing()->deleteProcessingLocks(NULL, $this->getProcessingObject()->getId());
+            $listingProduct->getListing()->deleteProcessingLocks(null, $this->getProcessingObject()->getId());
 
             $alreadyUnlockedListings[$listingProduct->getListingId()] = true;
         }
@@ -94,7 +97,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
-        $collection->addFieldToFilter('id', array('in' => $params['listing_product_ids']));
+        $collection->addFieldToFilter('id', ['in' => $params['listing_product_ids']]);
 
         return $this->listingsProducts = $collection->getItems();
     }

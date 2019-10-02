@@ -10,7 +10,12 @@ namespace Ess\M2ePro\Model\ResourceModel\Amazon;
 
 use Ess\M2ePro\Helper\Component\Amazon;
 use Ess\M2ePro\Model\Listing\Product;
+use Magento\Framework\DB\Select;
 
+/**
+ * Class Listing
+ * @package Ess\M2ePro\Model\ResourceModel\Amazon
+ */
 class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
@@ -31,21 +36,21 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
         $lTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
-        $alpTable = $this->activeRecordFactory->getObject('Amazon\Listing\Product')->getResource()->getMainTable();
+        $alpTable = $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable();
 
         $select = $this->getConnection()
             ->select()
             ->from(
-                array('lp' => $lpTable),
+                ['lp' => $lpTable],
                 new \Zend_Db_Expr('SUM(`online_qty`)')
             )
             ->join(
-                array('alp' => $alpTable),
+                ['alp' => $alpTable],
                 'lp.id = alp.listing_product_id',
-                array()
+                []
             )
             ->where("`listing_id` = `{$lTable}`.`id`")
-            ->where("`status` = ?",(int)\Ess\M2ePro\Model\Listing\Product::STATUS_LISTED);
+            ->where("`status` = ?", (int)\Ess\M2ePro\Model\Listing\Product::STATUS_LISTED);
 
         $query = "UPDATE `{$lTable}`
                   SET `items_active_count` =  IFNULL((".$select->__toString()."),0)
@@ -56,59 +61,58 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     private function updateStatisticCountColumns()
     {
-        $listingTable = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing');
-        $listingProductTable = $this->getHelper('Module\Database\Structure')
+        $listingTable = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_listing');
+        $listingProductTable = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_listing_product');
-        $amazonListingProductTable = $this->getHelper('Module\Database\Structure')
+        $amazonListingProductTable = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_amazon_listing_product');
 
-        $statisticsData = array();
+        $statisticsData = [];
         $statusListed = Product::STATUS_LISTED;
 
         $totalCountSelect = $this->getConnection()
             ->select()
             ->from(
-                array('lp' => $listingProductTable),
-                array(
+                ['lp' => $listingProductTable],
+                [
                     'listing_id' => 'listing_id',
                     'count'      => new \Zend_Db_Expr('COUNT(*)')
-                )
+                ]
             )
             ->join(
-                array('alp' => $amazonListingProductTable),
+                ['alp' => $amazonListingProductTable],
                 'lp.id = alp.listing_product_id',
-                array()
+                []
             )
             ->where("`variation_parent_id` IS NULL")
             ->group('listing_id')
             ->query();
 
         while ($row = $totalCountSelect->fetch()) {
-
             if (empty($row['listing_id'])) {
                 continue;
             }
 
-            $statisticsData[$row['listing_id']] = array(
+            $statisticsData[$row['listing_id']] = [
                 'total'    => (int)$row['count'],
                 'active'   => 0,
                 'inactive' => 0
-            );
+            ];
         }
 
         $activeCountSelect = $this->getConnection()
             ->select()
             ->from(
-                array('lp' => $listingProductTable),
-                array(
+                ['lp' => $listingProductTable],
+                [
                     'listing_id' => 'listing_id',
                     'count'      => new \Zend_Db_Expr('COUNT(*)')
-                )
+                ]
             )
             ->join(
-                array('alp' => $amazonListingProductTable),
+                ['alp' => $amazonListingProductTable],
                 'lp.id = alp.listing_product_id',
-                array()
+                []
             )
             ->where("`variation_parent_id` IS NULL")
             ->where("lp.status = {$statusListed} OR
@@ -117,7 +121,6 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
             ->query();
 
         while ($row = $activeCountSelect->fetch()) {
-
             if (empty($row['listing_id'])) {
                 continue;
             }
@@ -131,14 +134,13 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         $existedListings = $this->getConnection()
             ->select()
             ->from(
-                array('l' => $listingTable),
-                array('id' => 'id')
+                ['l' => $listingTable],
+                ['id' => 'id']
             )
             ->where('component_mode = ?', Amazon::NICK)
             ->query();
 
         while ($listingId = $existedListings->fetchColumn()) {
-
             $totalCount    = isset($statisticsData[$listingId]) ? $statisticsData[$listingId]['total'] : 0;
             $activeCount   = isset($statisticsData[$listingId]) ? $statisticsData[$listingId]['active'] : 0;
             $inactiveCount = isset($statisticsData[$listingId]) ? $statisticsData[$listingId]['inactive'] : 0;
@@ -157,16 +159,16 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     public function setSynchStatusNeed($newData, $oldData, $listingProducts)
     {
-        $this->setSynchStatusNeedByListing($newData,$oldData,$listingProducts);
-        $this->setSynchStatusNeedBySellingFormatTemplate($newData,$oldData,$listingProducts);
-        $this->setSynchStatusNeedBySynchronizationTemplate($newData,$oldData,$listingProducts);
+        $this->setSynchStatusNeedByListing($newData, $oldData, $listingProducts);
+        $this->setSynchStatusNeedBySellingFormatTemplate($newData, $oldData, $listingProducts);
+        $this->setSynchStatusNeedBySynchronizationTemplate($newData, $oldData, $listingProducts);
     }
 
     // ---------------------------------------
 
     public function setSynchStatusNeedByListing($newData, $oldData, $listingsProducts)
     {
-        $listingsProductsIds = array();
+        $listingsProductsIds = [];
         foreach ($listingsProducts as $listingProduct) {
             $listingsProductsIds[] = (int)$listingProduct['id'];
         }
@@ -176,44 +178,50 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         }
 
         unset(
-            $newData['template_selling_format_id'], $oldData['template_selling_format_id'],
-            $newData['template_synchronization_id'], $oldData['template_synchronization_id']
+            $newData['template_selling_format_id'],
+            $oldData['template_selling_format_id'],
+            $newData['template_synchronization_id'],
+            $oldData['template_synchronization_id']
         );
 
-        if (!$this->isDifferent($newData,$oldData)) {
+        if (!$this->isDifferent($newData, $oldData)) {
             return;
         }
 
-        $templates = array('listing');
+        $templates = ['listing'];
 
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
 
         $this->getConnection()->update(
             $lpTable,
-            array(
+            [
                 'synch_status' => \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_NEED,
                 'synch_reasons' => new \Zend_Db_Expr(
                     "IF(synch_reasons IS NULL,
-                        '".implode(',',$templates)."',
-                        CONCAT(synch_reasons,'".','.implode(',',$templates)."')
+                        '".implode(',', $templates)."',
+                        CONCAT(synch_reasons,'".','.implode(',', $templates)."')
                     )"
                 )
-            ),
-            array('id IN ('.implode(',', $listingsProductsIds).')')
+            ],
+            ['id IN ('.implode(',', $listingsProductsIds).')']
         );
     }
 
     public function setSynchStatusNeedBySellingFormatTemplate($newData, $oldData, $listingsProducts)
     {
         $newSellingFormatTemplate = $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Template\SellingFormat', $newData['template_selling_format_id']
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Template\SellingFormat',
+            $newData['template_selling_format_id']
         );
 
         $oldSellingFormatTemplate = $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Template\SellingFormat', $oldData['template_selling_format_id']
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Template\SellingFormat',
+            $oldData['template_selling_format_id']
         );
 
-        $this->activeRecordFactory->getObject('Amazon\Template\SellingFormat')->getResource()->setSynchStatusNeed(
+        $this->activeRecordFactory->getObject('Amazon_Template_SellingFormat')->getResource()->setSynchStatusNeed(
             $newSellingFormatTemplate->getDataSnapshot(),
             $oldSellingFormatTemplate->getDataSnapshot(),
             $listingsProducts
@@ -234,7 +242,7 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
             $oldData['template_synchronization_id']
         );
 
-        $this->activeRecordFactory->getObject('Amazon\Template\Synchronization')->getResource()->setSynchStatusNeed(
+        $this->activeRecordFactory->getObject('Amazon_Template_Synchronization')->getResource()->setSynchStatusNeed(
             $newSynchTemplate->getDataSnapshot(),
             $oldSynchTemplate->getDataSnapshot(),
             $listingsProducts
@@ -245,18 +253,33 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     public function isDifferent($newData, $oldData)
     {
-        $ignoreFields = array(
+        $ignoreFields = [
             $this->getIdFieldName(),
             'id', 'title',
             'component_mode',
             'create_date', 'update_date'
-        );
+        ];
 
         foreach ($ignoreFields as $ignoreField) {
-            unset($newData[$ignoreField],$oldData[$ignoreField]);
+            unset($newData[$ignoreField], $oldData[$ignoreField]);
         }
 
-        return (count(array_diff_assoc($newData,$oldData)) > 0);
+        return !empty(array_diff_assoc($newData, $oldData));
+    }
+
+    //########################################
+
+    public function getUsedProductsIds($listingId)
+    {
+        $collection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
+        $collection->addFieldToFilter('listing_id', $listingId);
+
+        $collection->distinct(true);
+
+        $collection->getSelect()->reset(Select::COLUMNS);
+        $collection->getSelect()->columns(['product_id']);
+
+        return $collection->getColumnValues('product_id');
     }
 
     //########################################

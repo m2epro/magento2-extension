@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\M2ePro\Connector;
 
+/**
+ * Class Dispatcher
+ * @package Ess\M2ePro\Model\M2ePro\Connector
+ */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $nameBuilder;
@@ -18,28 +22,27 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->nameBuilder = $nameBuilder;
         parent::__construct($helperFactory, $modelFactory);
     }
 
     //####################################
 
-    public function getConnector($entity, $type, $name, array $params = array())
+    public function getConnector($entity, $type, $name, array $params = [])
     {
         $classParts = ['M2ePro\Connector'];
 
         !empty($entity) && $classParts[] = $entity;
-        !empty($type)   && $classParts[] = $type;
-        !empty($name)   && $classParts[] = $name;
+        !empty($type) && $classParts[] = $type;
+        !empty($name) && $classParts[] = $name;
 
         $className = $this->nameBuilder->buildClassName($classParts);
 
         /** @var \Ess\M2ePro\Model\Connector\Command\AbstractModel $connectorObject */
-        $connectorObject = $this->modelFactory->getObject($className, array(
+        $connectorObject = $this->modelFactory->getObject($className, [
             'params' => $params,
-        ));
+        ]);
         $connectorObject->setProtocol($this->getProtocol());
 
         return $connectorObject;
@@ -53,13 +56,16 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      * @param string|null $responseDataKey
      * @return \Ess\M2ePro\Model\Connector\Command\RealTime\Virtual
      */
-    public function getVirtualConnector($entity, $type, $name,
-                                        array $requestData = array(),
-                                        $responseDataKey = NULL)
-    {
-        $virtualConnector = $this->modelFactory->getObject('Connector\Command\RealTime\Virtual');
+    public function getVirtualConnector(
+        $entity,
+        $type,
+        $name,
+        array $requestData = [],
+        $responseDataKey = null
+    ) {
+        $virtualConnector = $this->modelFactory->getObject('Connector_Command_RealTime_Virtual');
         $virtualConnector->setProtocol($this->getProtocol());
-        $virtualConnector->setCommand(array($entity, $type, $name));
+        $virtualConnector->setCommand([$entity, $type, $name]);
         $virtualConnector->setResponseDataKey($responseDataKey);
 
         $virtualConnector->setRequestData($requestData);

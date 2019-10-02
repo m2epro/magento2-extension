@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Settings;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
 {
     //########################################
@@ -21,14 +25,14 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
 
     public function execute()
     {
-        $activeTab = $this->getRequest()->getParam('active_tab', NULL);
+        $activeTab = $this->getRequest()->getParam('active_tab', null);
 
-        if (is_null($activeTab)) {
+        if ($activeTab === null) {
             $activeTab = \Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs::TAB_ID_MAIN;
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs $tabsBlock */
-        $tabsBlock = $this->createBlock('Walmart\Settings\Tabs', '', ['data' => [
+        $tabsBlock = $this->createBlock('Walmart_Settings_Tabs', '', ['data' => [
             'active_tab' => $activeTab
         ]]);
 

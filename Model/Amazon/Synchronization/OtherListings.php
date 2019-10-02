@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization;
 
+/**
+ * Class OtherListings
+ * @package Ess\M2ePro\Model\Amazon\Synchronization
+ */
 class OtherListings extends AbstractModel
 {
     //########################################
@@ -19,7 +23,7 @@ class OtherListings extends AbstractModel
 
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     protected function getTitle()
@@ -45,7 +49,7 @@ class OtherListings extends AbstractModel
     {
         $result = true;
 
-        $result = !$this->processTask('OtherListings\Update\Blocked') ? false : $result;
+        $result = !$this->processTask('OtherListings_Update_Blocked') ? false : $result;
         $result = !$this->processTask('OtherListings\Update') ? false : $result;
         $result = !$this->processTask('OtherListings\Title') ? false : $result;
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Create;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Create
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
     protected $sessionKey = 'amazon_listing_create';
@@ -27,8 +31,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         // ---------------------------------------
         if ($this->getRequest()->getParam('clear')) {
             $this->clearSession();
-            $this->getRequest()->setParam('clear',null);
-            $this->_redirect('*/*/index',array('_current' => true, 'step' => 1));
+            $this->getRequest()->setParam('clear', null);
+            $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
             return;
         }
         // ---------------------------------------
@@ -52,7 +56,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
                 break;
             default:
                 $this->clearSession();
-                $this->_redirect('*/*/index', array('_current' => true, 'step' => 1));
+                $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
                 break;
         }
 
@@ -65,7 +69,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     protected function stepOne()
     {
         if ($this->getRequest()->isPost()) {
-
             // save data
             $post = $this->getRequest()->getPost();
             // ---------------------------------------
@@ -74,31 +77,30 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $this->setSessionValue('account_id', (int)$post['account_id']);
             $this->setSessionValue('store_id', (int)$post['store_id']);
 
-            $this->_redirect('*/*/index', array('_current' => true, 'step' => 2));
+            $this->_redirect('*/*/index', ['_current' => true, 'step' => 2]);
             return;
         }
 
         $this->setWizardStep('listingGeneral');
 
-        $this->addContent($this->createBlock('Amazon\Listing\Create\General'));
+        $this->addContent($this->createBlock('Amazon_Listing_Create_General'));
     }
 
     // ---------------------------------------
 
     protected function stepTwo()
     {
-        if (is_null($this->getSessionValue('account_id'))) {
+        if ($this->getSessionValue('account_id') === null) {
             $this->clearSession();
-            $this->_redirect('*/*/index', array('_current' => true, 'step' => 1));
+            $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
             return;
         }
 
         if ($this->getRequest()->isPost()) {
-
             $this->setSessionValue('marketplace_id', $this->getMarketplaceId());
 
             $dataKeys = array_keys(
-                $this->createBlock('Amazon\Listing\Create\Selling\Form')->getDefaultFieldsValues()
+                $this->createBlock('Amazon_Listing_Create_Selling_Form')->getDefaultFieldsValues()
             );
 
             $post = $this->getRequest()->getPost();
@@ -106,28 +108,28 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
                 $this->setSessionValue($key, $post[$key]);
             }
 
-            $this->_redirect('*/*/index',array('_current' => true, 'step'=>'3'));
+            $this->_redirect('*/*/index', ['_current' => true, 'step'=>'3']);
             return;
         }
 
         $this->setWizardStep('listingSelling');
 
-        $this->addContent($this->createBlock('Amazon\Listing\Create\Selling'));
+        $this->addContent($this->createBlock('Amazon_Listing_Create_Selling'));
     }
 
     // ---------------------------------------
 
     protected function stepThree()
     {
-        if (is_null($this->getSessionValue('account_id'))) {
+        if ($this->getSessionValue('account_id') === null) {
             $this->clearSession();
-            $this->_redirect('*/*/index', array('_current' => true, 'step' => 1));
+            $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
             return;
         }
 
         if ($this->getRequest()->isPost()) {
             $dataKeys = array_keys(
-                $this->createBlock('Amazon\Listing\Create\Search\Form')->getDefaultFieldsValues()
+                $this->createBlock('Amazon_Listing_Create_Search_Form')->getDefaultFieldsValues()
             );
 
             $post = $this->getRequest()->getPost();
@@ -145,18 +147,19 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             }
 
             $this->_redirect(
-                '*/amazon_listing_product_add/index',  array(
+                '*/amazon_listing_product_add/index',
+                [
                     'id' => $listing->getId(),
                     'new_listing' => 1,
                     'wizard' => $this->getRequest()->getParam('wizard')
-                )
+                ]
             );
             return;
         }
 
         $this->setWizardStep('listingSearch');
 
-        $this->addContent($this->createBlock('Amazon\Listing\Create\Search'));
+        $this->addContent($this->createBlock('Amazon_Listing_Create_Search'));
     }
 
     //########################################
@@ -168,9 +171,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         if ($sessionData['restock_date_value'] === '') {
             $sessionData['restock_date_value'] = $this->getHelper('Data')->getCurrentGmtDate();
         } else {
-
             $timestamp = $this->getHelper('Data')->parseTimestampFromLocalizedFormat(
-                $sessionData['restock_date_value'], \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT
+                $sessionData['restock_date_value'],
+                \IntlDateFormatter::SHORT,
+                \IntlDateFormatter::SHORT
             );
             $sessionData['restock_date_value'] = $this->getHelper('Data')->getDate($timestamp);
         }
@@ -187,7 +191,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         $tempLog->addListingMessage(
             $listing->getId(),
             \Ess\M2ePro\Helper\Data::INITIATOR_USER,
-            NULL,
+            null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_LISTING,
             // M2ePro_TRANSLATIONS
             // Listing was successfully Added
@@ -204,7 +208,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
     protected function getMarketplaceId()
     {
-        $accountObj = $this->amazonFactory->getCachedObjectLoaded('Account',(int)$this->getSessionValue('account_id'));
+        $accountObj = $this->amazonFactory->getCachedObjectLoaded('Account', (int)$this->getSessionValue('account_id'));
         return (int)$accountObj->getChildObject()->getMarketplaceId();
     }
 
@@ -220,26 +224,26 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         return $this;
     }
 
-    protected function getSessionValue($key = NULL)
+    protected function getSessionValue($key = null)
     {
         $sessionData = $this->getHelper('Data\Session')->getValue($this->sessionKey);
 
-        if (is_null($sessionData)) {
-            $sessionData = array();
+        if ($sessionData === null) {
+            $sessionData = [];
         }
 
-        if (is_null($key)) {
+        if ($key === null) {
             return $sessionData;
         }
 
-        return isset($sessionData[$key]) ? $sessionData[$key] : NULL;
+        return isset($sessionData[$key]) ? $sessionData[$key] : null;
     }
 
     // ---------------------------------------
 
     private function clearSession()
     {
-        $this->getHelper('Data\Session')->setValue($this->sessionKey, NULL);
+        $this->getHelper('Data\Session')->setValue($this->sessionKey, null);
     }
 
     //########################################

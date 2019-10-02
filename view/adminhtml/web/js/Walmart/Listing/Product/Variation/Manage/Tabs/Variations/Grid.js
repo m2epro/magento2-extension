@@ -363,7 +363,7 @@ define([
 
         // ---------------------------------------
 
-        showNewChildForm: function (createNewAsin, productId)
+        showNewChildForm: function (productId)
         {
             var self = this;
 
@@ -418,12 +418,7 @@ define([
                     self.validateNewChildAttributeOptions('product');
                     self.validateNewChildAttributeOptions('channel');
 
-                    if (createNewAsin) {
-                        self.createNewAsinBtn();
-                    } else {
-                        self.selectOptionsBtn();
-                    }
-
+                    self.selectOptionsBtn();
                 }
             });
         },

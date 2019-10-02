@@ -10,9 +10,14 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
+use Ess\M2ePro\Helper\Component\Walmart;
 use Ess\M2ePro\Helper\Component\Amazon;
 use Ess\M2ePro\Helper\Component\Ebay;
 
+/**
+ * Class Integration
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module
+ */
 class Integration extends Command
 {
     private $synchConfig;
@@ -49,20 +54,20 @@ class Integration extends Command
     {
         $html = '';
         foreach ($this->getHelper('Component')->getEnabledComponents() as $component) {
-
             $reviseAllStartDate = $this->synchConfig->getGroupValue(
-                "/{$component}/templates/synchronization/revise/total/", 'start_date'
+                "/{$component}/templates/synchronization/revise/total/",
+                'start_date'
             );
 
             $reviseAllEndDate = $this->synchConfig->getGroupValue(
-                "/{$component}/templates/synchronization/revise/total/", 'end_date'
+                "/{$component}/templates/synchronization/revise/total/",
+                'end_date'
             );
 
-            $reviseAllInProcessingState = !is_null(
-                $this->synchConfig->getGroupValue(
-                    "/{$component}/templates/synchronization/revise/total/", 'last_listing_product_id'
-                )
-            );
+            $reviseAllInProcessingState = $this->synchConfig->getGroupValue(
+                "/{$component}/templates/synchronization/revise/total/",
+                'last_listing_product_id'
+            ) !== null;
 
             $runNowUrl = $this->getUrl('*/*/*', ['action' => 'processReviseTotal', 'component' => $component]);
             $resetUrl = $this->getUrl('*/*/*', ['action' => 'resetReviseTotal', 'component' => $component]);
@@ -87,7 +92,6 @@ HTML;
             if ($reviseAllInProcessingState) {
                 $html .= "document.getElementById('{$component}_start_date').style.display = 'inline-block';";
             } else {
-
                 if ($reviseAllEndDate) {
                     $html .= "document.getElementById('{$component}_end_date').style.display = 'inline-block';";
                 }
@@ -113,15 +117,20 @@ HTML;
 
         $this->synchConfig->setGroupValue(
             "/{$component}/templates/synchronization/revise/total/",
-            'start_date', $this->getHelper('Data')->getCurrentGmtDate()
+            'start_date',
+            $this->getHelper('Data')->getCurrentGmtDate()
         );
 
         $this->synchConfig->setGroupValue(
-            "/{$component}/templates/synchronization/revise/total/", 'end_date', null
+            "/{$component}/templates/synchronization/revise/total/",
+            'end_date',
+            null
         );
 
         $this->synchConfig->setGroupValue(
-            "/{$component}/templates/synchronization/revise/total/", 'last_listing_product_id', 0
+            "/{$component}/templates/synchronization/revise/total/",
+            'last_listing_product_id',
+            0
         );
 
         $this->_redirect('*/*/*', ['action' => 'reviseTotal']);
@@ -141,7 +150,9 @@ HTML;
         }
 
         $this->synchConfig->setGroupValue(
-            "/{$component}/templates/synchronization/revise/total/", 'last_listing_product_id', null
+            "/{$component}/templates/synchronization/revise/total/",
+            'last_listing_product_id',
+            null
         );
 
         return $this->_redirect('*/*/*', ['action' => 'reviseTotal']);
@@ -154,24 +165,21 @@ HTML;
     public function getRequestDataAction()
     {
         if ($this->getRequest()->getParam('print')) {
-
             $listingProductId = (int)$this->getRequest()->getParam('listing_product_id');
             $lp               = $this->activeRecordFactory->getObjectLoaded('Listing\Product', $listingProductId);
             $componentMode    = $lp->getComponentMode();
             $requestType      = $this->getRequest()->getParam('request_type');
 
             if ($componentMode == 'ebay') {
-
                 $elp = $lp->getChildObject();
 
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
 
                 $request = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Type\\'.$requestType.'\Request');
                 $request->setListingProduct($lp);
                 $request->setConfigurator($configurator);
 
                 if ($requestType == 'Revise') {
-
                     $outOfStockControlCurrentState  = $elp->getOutOfStockControl();
                     $outOfStockControlTemplateState = $elp->getEbaySellingFormatTemplate()->getOutOfStockControl();
 
@@ -182,33 +190,45 @@ HTML;
                     $outOfStockControlResult = $outOfStockControlCurrentState ||
                         $elp->getEbayAccount()->getOutOfStockControl();
 
-                    $request->setParams(array(
+                    $request->setParams([
                         'out_of_stock_control_current_state' => $outOfStockControlCurrentState,
                         'out_of_stock_control_result'        => $outOfStockControlResult,
-                    ));
+                    ]);
                 }
 
                 return '<pre>' . print_r($request->getRequestData(), true);
             }
 
             if ($componentMode == 'amazon') {
-
-                $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
 
                 $request = $this->modelFactory->getObject(
                     'Amazon\Listing\Product\Action\Type\\'.$requestType.'\Request'
                 );
-                $request->setParams(array());
+                $request->setParams([]);
                 $request->setListingProduct($lp);
                 $request->setConfigurator($configurator);
 
                 if ($requestType == 'ListAction') {
-                    $request->setValidatorsData(array(
+                    $request->setValidatorsData([
                         'sku'        => 'placeholder',
                         'general_id' => 'placeholder',
                         'list_type'  => 'placeholder'
-                    ));
+                    ]);
                 }
+
+                return '<pre>' . print_r($request->getRequestData(), true);
+            }
+
+            if ($componentMode == 'walmart') {
+                $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
+
+                $request = $this->modelFactory->getObject(
+                    'Walmart\Listing\Product\Action\Type\\'.$requestType.'\Request'
+                );
+                $request->setParams([]);
+                $request->setListingProduct($lp);
+                $request->setConfigurator($configurator);
 
                 return '<pre>' . print_r($request->getRequestData(), true);
             }
@@ -256,15 +276,13 @@ HTML;
     public function getInspectorDataAction()
     {
         if ($this->getRequest()->getParam('print')) {
-
             $listingProductId = $this->getRequest()->getParam('listing_product_id');
 
             if ($this->getRequest()->getParam('component_mode') == 'ebay') {
-
                 $lp = $this->parentFactory->getObjectLoaded(Ebay::NICK, 'Listing\Product', $listingProductId);
                 $elp = $lp->getChildObject();
 
-                $insp = $this->modelFactory->getObject('Ebay\Synchronization\Templates\Synchronization\Inspector');
+                $insp = $this->modelFactory->getObject('Ebay_Synchronization_Templates_Synchronization_Inspector');
 
                 $html = '';
 
@@ -274,6 +292,9 @@ HTML;
                 $html .= '<pre>isMeetReviseGeneralRequirements: ' .$insp->isMeetReviseGeneralRequirements($lp). '<br>';
                 $html .= '<pre>isMeetRevisePriceRequirements: ' .$insp->isMeetRevisePriceRequirements($lp). '<br>';
                 $html .= '<pre>isMeetReviseQtyRequirements: ' .$insp->isMeetReviseQtyRequirements($lp). '<br>';
+                $html .= '<pre>isMeetAdvancedListRequirements: ' .$insp->isMeetAdvancedListRequirements($lp). '<br>';
+                $html .= '<pre>isMeetAdvancedRelistRequirements: '.$insp->isMeetAdvancedRelistRequirements($lp).'<br>';
+                $html .= '<pre>isMeetAdvancedStopRequirements: ' .$insp->isMeetAdvancedStopRequirements($lp). '<br>';
 
                 $html .= '<br>';
                 $html .= '<pre>isSetCategoryTemplate: ' .$elp->isSetCategoryTemplate(). '<br>';
@@ -317,10 +338,9 @@ HTML;
             }
 
             if ($this->getRequest()->getParam('component_mode') == 'amazon') {
-
                 $lp = $this->parentFactory->getObjectLoaded(Amazon::NICK, 'Listing\Product', $listingProductId);
 
-                $insp = $this->modelFactory->getObject('Amazon\Synchronization\Templates\Synchronization\Inspector');
+                $insp = $this->modelFactory->getObject('Amazon_Synchronization_Templates_Synchronization_Inspector');
 
                 $html = '';
 
@@ -330,6 +350,30 @@ HTML;
                 $html .= '<pre>isMeetReviseGeneral: ' .$insp->isMeetReviseGeneralRequirements($lp). '<br>';
                 $html .= '<pre>isMeetReviseRegularPrice: '.$insp->isMeetReviseRegularPriceRequirements($lp).'<br>';
                 $html .= '<pre>isMeetReviseBusinessPrice: '.$insp->isMeetReviseBusinessPriceRequirements($lp).'<br>';
+                $html .= '<pre>isMeetReviseQty: ' .$insp->isMeetReviseQtyRequirements($lp). '<br>';
+                $html .= '<pre>isMeetAdvancedListRequirements: ' .$insp->isMeetAdvancedListRequirements($lp). '<br>';
+                $html .= '<pre>isMeetAdvancedRelistRequirements: '.$insp->isMeetAdvancedRelistRequirements($lp).'<br>';
+                $html .= '<pre>isMeetAdvancedStopRequirements: ' .$insp->isMeetAdvancedStopRequirements($lp). '<br>';
+
+                $html .= '<pre>isStatusEnabled: ' .($lp->getMagentoProduct()->isStatusEnabled()). '<br>';
+                $html .= '<pre>isStockAvailability: ' .($lp->getMagentoProduct()->isStockAvailability()). '<br>';
+
+                return $html;
+            }
+
+            if ($this->getRequest()->getParam('component_mode') == 'walmart') {
+                $lp = $this->parentFactory->getObjectLoaded(Walmart::NICK, 'Listing\Product', $listingProductId);
+
+                $insp = $this->modelFactory->getObject('Walmart_Synchronization_Templates_Synchronization_Inspector');
+
+                $html = '';
+
+                $html .= '<pre>isMeetList: ' .$insp->isMeetListRequirements($lp). '<br>';
+                $html .= '<pre>isMeetRelist: ' .$insp->isMeetRelistRequirements($lp). '<br>';
+                $html .= '<pre>isMeetStop: ' .$insp->isMeetStopRequirements($lp). '<br>';
+                $html .= '<pre>isMeetReviseGeneral: ' .$insp->isMeetReviseGeneralRequirements($lp). '<br>';
+                $html .= '<pre>isMeetRevisePrice: '.$insp->isMeetRevisePriceRequirements($lp).'<br>';
+                $html .= '<pre>isMeetRevisePromotions: '.$insp->isMeetRevisePromotionsPriceRequirements($lp).'<br>';
                 $html .= '<pre>isMeetReviseQty: ' .$insp->isMeetReviseQtyRequirements($lp). '<br>';
 
                 $html .= '<pre>isStatusEnabled: ' .($lp->getMagentoProduct()->isStatusEnabled()). '<br>';
@@ -388,7 +432,6 @@ HTML;
             $order = $this->activeRecordFactory->getObjectLoaded('Order', $orderId);
 
             if (!$order->getId()) {
-
                 $this->getMessageManager()->addError('Unable to load order instance.');
                 $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
                 return;
@@ -403,9 +446,9 @@ HTML;
             $proxy = $order->getProxy()->setStore($order->getStore());
 
             /** @var \Ess\M2ePro\Model\Magento\Quote\Builder $magentoQuoteBuilder */
-            $magentoQuoteBuilder = $this->modelFactory->getObject('Magento\Quote\Builder', ['proxyOrder' => $proxy]);
+            $magentoQuoteBuilder = $this->modelFactory->getObject('Magento_Quote_Builder', ['proxyOrder' => $proxy]);
             /** @var  \Ess\M2ePro\Model\Magento\Quote\Manager $magentoQuoteManager */
-            $magentoQuoteManager = $this->modelFactory->getObject('Magento\Quote\Manager');
+            $magentoQuoteManager = $this->modelFactory->getObject('Magento_Quote_Manager');
 
             $quote = $magentoQuoteBuilder->build();
 
@@ -472,13 +515,12 @@ HTML;
     public function searchTroublesWithParallelExecutionAction()
     {
         if (!$this->getRequest()->getParam('print')) {
-
             $formKey = $this->formKey->getFormKey();
             $actionUrl = $this->getUrl('*/*/*', ['action' => 'searchTroublesWithParallelExecution']);
 
             $collection = $this->activeRecordFactory->getObject('OperationHistory')->getCollection();
             $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $collection->getSelect()->columns(array('nick'));
+            $collection->getSelect()->columns(['nick']);
             $collection->getSelect()->order('nick ASC');
             $collection->getSelect()->distinct();
 
@@ -518,19 +560,18 @@ HTML;
         $collection->addFieldToFilter('nick', $searchByNick);
         $collection->getSelect()->order('id ASC');
 
-        $results = array();
-        $prevItem = NULL;
+        $results = [];
+        $prevItem = null;
 
         foreach ($collection->getItems() as $item) {
             /** @var \Ess\M2ePro\Model\OperationHistory $item */
             /** @var \Ess\M2ePro\Model\OperationHistory $prevItem */
 
-            if (is_null($item->getData('end_date'))) {
+            if ($item->getData('end_date') === null) {
                 continue;
             }
 
-            if (is_null($prevItem)) {
-
+            if ($prevItem === null) {
                 $prevItem = $item;
                 continue;
             }
@@ -539,19 +580,18 @@ HTML;
             $currStart = new \DateTime($item->getData('start_date'), new \DateTimeZone('UTC'));
 
             if ($currStart->getTimeStamp() < $prevEnd->getTimeStamp()) {
-
-                $results[$item->getId().'##'.$prevItem->getId()] = array(
-                    'curr' => array(
+                $results[$item->getId().'##'.$prevItem->getId()] = [
+                    'curr' => [
                         'id'    => $item->getId(),
                         'start' => $item->getData('start_date'),
                         'end'   => $item->getData('end_date')
-                    ),
-                    'prev' => array(
+                    ],
+                    'prev' => [
                         'id'    => $prevItem->getId(),
                         'start' => $prevItem->getData('start_date'),
                         'end'   => $prevItem->getData('end_date')
-                    ),
-                );
+                    ],
+                ];
             }
 
             $prevItem = $item;
@@ -576,7 +616,6 @@ HTML;
         $results = array_reverse($results, true);
 
         foreach ($results as $key => $row) {
-
             $currStart = new \DateTime($row['curr']['start'], new \DateTimeZone('UTC'));
             $currEnd   = new \DateTime($row['curr']['end'], new \DateTimeZone('UTC'));
             $currTime = $currEnd->diff($currStart);
@@ -584,11 +623,11 @@ HTML;
 
             $currUrlUp = $this->getUrl(
                 '*/controlPanel_database/showOperationHistoryExecutionTreeUp',
-                array('operation_history_id' => $row['curr']['id'])
+                ['operation_history_id' => $row['curr']['id']]
             );
             $currUrlDown = $this->getUrl(
                 '*/controlPanel_database/showOperationHistoryExecutionTreeDown',
-                array('operation_history_id' => $row['curr']['id'])
+                ['operation_history_id' => $row['curr']['id']]
             );
 
             $prevStart = new \DateTime($row['prev']['start'], new \DateTimeZone('UTC'));
@@ -598,11 +637,11 @@ HTML;
 
             $prevUrlUp = $this->getUrl(
                 '*/controlPanel_database/showOperationHistoryExecutionTreeUp',
-                array('operation_history_id' => $row['prev']['id'])
+                ['operation_history_id' => $row['prev']['id']]
             );
             $prevUrlDown = $this->getUrl(
                 '*/controlPanel_database/showOperationHistoryExecutionTreeDown',
-                array('operation_history_id' => $row['prev']['id'])
+                ['operation_history_id' => $row['prev']['id']]
             );
 
             $delayTime = $currStart->diff($prevStart);

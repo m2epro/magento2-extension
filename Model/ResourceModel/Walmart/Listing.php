@@ -8,6 +8,12 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Walmart;
 
+use Magento\Framework\DB\Select;
+
+/**
+ * Class Listing
+ * @package Ess\M2ePro\Model\ResourceModel\Walmart
+ */
 class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
@@ -31,18 +37,18 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         $listingProductTable = $this->activeRecordFactory
             ->getObject('Listing\Product')->getResource()->getMainTable();
         $walmartListingProductTable = $this->activeRecordFactory
-            ->getObject('Walmart\Listing\Product')->getResource()->getMainTable();
+            ->getObject('Walmart_Listing_Product')->getResource()->getMainTable();
 
         $select = $this->getConnection()
             ->select()
             ->from(
-                array('lp' => $listingProductTable),
+                ['lp' => $listingProductTable],
                 new \Zend_Db_Expr('SUM(`online_qty`)')
             )
             ->join(
-                array('wlp' => $walmartListingProductTable),
+                ['wlp' => $walmartListingProductTable],
                 'lp.id = wlp.listing_product_id',
-                array()
+                []
             )
             ->where("`listing_id` = `{$listingTable}`.`id`")
             ->where("`status` = ?", (int)\Ess\M2ePro\Model\Listing\Product::STATUS_LISTED);
@@ -61,55 +67,54 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         $listingProductTable = $this->activeRecordFactory
             ->getObject('Listing\Product')->getResource()->getMainTable();
         $walmartListingProductTable = $this->activeRecordFactory
-            ->getObject('Walmart\Listing\Product')->getResource()->getMainTable();
+            ->getObject('Walmart_Listing_Product')->getResource()->getMainTable();
 
-        $statisticsData = array();
+        $statisticsData = [];
         $statusListed = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
 
         $totalCountSelect = $this->getConnection()
             ->select()
             ->from(
-                array('lp' => $listingProductTable),
-                array(
+                ['lp' => $listingProductTable],
+                [
                     'listing_id' => 'listing_id',
                     'count'      => new \Zend_Db_Expr('COUNT(*)')
-                )
+                ]
             )
             ->join(
-                array('wlp' => $walmartListingProductTable),
+                ['wlp' => $walmartListingProductTable],
                 'lp.id = wlp.listing_product_id',
-                array()
+                []
             )
             ->where("`variation_parent_id` IS NULL")
             ->group('listing_id')
             ->query();
 
         while ($row = $totalCountSelect->fetch()) {
-
             if (empty($row['listing_id'])) {
                 continue;
             }
 
-            $statisticsData[$row['listing_id']] = array(
+            $statisticsData[$row['listing_id']] = [
                 'total'    => (int)$row['count'],
                 'active'   => 0,
                 'inactive' => 0
-            );
+            ];
         }
 
         $activeCountSelect = $this->getConnection()
             ->select()
             ->from(
-                array('lp' => $listingProductTable),
-                array(
+                ['lp' => $listingProductTable],
+                [
                     'listing_id' => 'listing_id',
                     'count'      => new \Zend_Db_Expr('COUNT(*)')
-                )
+                ]
             )
             ->join(
-                array('wlp' => $walmartListingProductTable),
+                ['wlp' => $walmartListingProductTable],
                 'lp.id = wlp.listing_product_id',
-                array()
+                []
             )
             ->where("`variation_parent_id` IS NULL")
             ->where("lp.status = {$statusListed} OR
@@ -118,7 +123,6 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
             ->query();
 
         while ($row = $activeCountSelect->fetch()) {
-
             if (empty($row['listing_id'])) {
                 continue;
             }
@@ -132,14 +136,13 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         $existedListings = $this->getConnection()
             ->select()
             ->from(
-                array('l' => $listingTable),
-                array('id' => 'id')
+                ['l' => $listingTable],
+                ['id' => 'id']
             )
             ->where('component_mode = ?', \Ess\M2ePro\Helper\Component\Walmart::NICK)
             ->query();
 
         while ($listingId = $existedListings->fetchColumn()) {
-
             $totalCount = isset($statisticsData[$listingId]) ? $statisticsData[$listingId]['total'] : 0;
             $activeCount = isset($statisticsData[$listingId]) ? $statisticsData[$listingId]['active'] : 0;
             $inactiveCount = isset($statisticsData[$listingId]) ? $statisticsData[$listingId]['inactive'] : 0;
@@ -162,8 +165,8 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     public function setSynchStatusNeed($newData, $oldData, $listingProducts)
     {
-        $this->setSynchStatusNeedBySellingFormatTemplate($newData,$oldData,$listingProducts);
-        $this->setSynchStatusNeedByDescriptionTemplate($newData,$oldData,$listingProducts);
+        $this->setSynchStatusNeedBySellingFormatTemplate($newData, $oldData, $listingProducts);
+        $this->setSynchStatusNeedByDescriptionTemplate($newData, $oldData, $listingProducts);
     }
 
     // ---------------------------------------
@@ -171,14 +174,18 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public function setSynchStatusNeedBySellingFormatTemplate($newData, $oldData, $listingsProducts)
     {
         $newSellingFormatTemplate = $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Walmart::NICK, 'Template\SellingFormat', $newData['template_selling_format_id']
+            \Ess\M2ePro\Helper\Component\Walmart::NICK,
+            'Template\SellingFormat',
+            $newData['template_selling_format_id']
         );
 
         $oldSellingFormatTemplate = $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Walmart::NICK, 'Template\SellingFormat', $oldData['template_selling_format_id']
+            \Ess\M2ePro\Helper\Component\Walmart::NICK,
+            'Template\SellingFormat',
+            $oldData['template_selling_format_id']
         );
 
-        $this->activeRecordFactory->getObject('Walmart\Template\SellingFormat')->getResource()->setSynchStatusNeed(
+        $this->activeRecordFactory->getObject('Walmart_Template_SellingFormat')->getResource()->setSynchStatusNeed(
             $newSellingFormatTemplate->getDataSnapshot(),
             $oldSellingFormatTemplate->getDataSnapshot(),
             $listingsProducts
@@ -188,14 +195,18 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public function setSynchStatusNeedByDescriptionTemplate($newData, $oldData, $listingsProducts)
     {
         $newSellingFormatTemplate = $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Walmart::NICK, 'Template\Description', $newData['template_description_id']
+            \Ess\M2ePro\Helper\Component\Walmart::NICK,
+            'Template\Description',
+            $newData['template_description_id']
         );
 
         $oldSellingFormatTemplate = $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Walmart::NICK, 'Template\Description', $oldData['template_description_id']
+            \Ess\M2ePro\Helper\Component\Walmart::NICK,
+            'Template\Description',
+            $oldData['template_description_id']
         );
 
-        $this->activeRecordFactory->getObject('Walmart\Template\Description')->getResource()->setSynchStatusNeed(
+        $this->activeRecordFactory->getObject('Walmart_Template_Description')->getResource()->setSynchStatusNeed(
             $newSellingFormatTemplate->getDataSnapshot(),
             $oldSellingFormatTemplate->getDataSnapshot(),
             $listingsProducts
@@ -206,18 +217,33 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     public function isDifferent($newData, $oldData)
     {
-        $ignoreFields = array(
+        $ignoreFields = [
             $this->getIdFieldName(),
             'id', 'title',
             'component_mode',
             'create_date', 'update_date'
-        );
+        ];
 
         foreach ($ignoreFields as $ignoreField) {
-            unset($newData[$ignoreField],$oldData[$ignoreField]);
+            unset($newData[$ignoreField], $oldData[$ignoreField]);
         }
 
-        return (count(array_diff_assoc($newData,$oldData)) > 0);
+        return !empty(array_diff_assoc($newData, $oldData));
+    }
+
+    //########################################
+
+    public function getUsedProductsIds($listingId)
+    {
+        $collection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
+        $collection->addFieldToFilter('listing_id', $listingId);
+
+        $collection->distinct(true);
+
+        $collection->getSelect()->reset(Select::COLUMNS);
+        $collection->getSelect()->columns(['product_id']);
+
+        return $collection->getColumnValues('product_id');
     }
 
     //########################################

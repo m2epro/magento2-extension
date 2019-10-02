@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Connector\Command\Pending\Requester\Partial;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Connector\Command\Pending\Requester\Partial
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     // ########################################
@@ -25,11 +29,12 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
 
     public function setCompletedRequestPendingPartialFilter()
     {
-        $mpprTable = $this->activeRecordFactory->getObject('Request\Pending\Partial')->getResource()->getMainTable();
+        $mpprTable = $this->activeRecordFactory->getObject('Request_Pending_Partial')->getResource()->getMainTable();
 
         $this->getSelect()->joinLeft(
-            array('mppr' => $mpprTable),
-            'main_table.request_pending_partial_id = mppr.id', array()
+            ['mppr' => $mpprTable],
+            'main_table.request_pending_partial_id = mppr.id',
+            []
         );
 
         $this->addFieldToFilter('mppr.is_completed', 1);
@@ -40,8 +45,9 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         $mpTable = $this->activeRecordFactory->getObject('Processing')->getResource()->getMainTable();
 
         $this->getSelect()->joinLeft(
-            array('mp' => $mpTable),
-            'main_table.processing_id = mp.id', array()
+            ['mp' => $mpTable],
+            'main_table.processing_id = mp.id',
+            []
         );
 
         $this->addFieldToFilter('mp.is_completed', 0);

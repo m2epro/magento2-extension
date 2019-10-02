@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
+/**
+ * Class GetPath
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Category
+ */
 class GetPath extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {
 
@@ -21,12 +25,12 @@ class GetPath extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $mode = $this->getRequest()->getParam('mode');
         $categoryType = $this->getRequest()->getParam('category_type');
 
-        $ebayCategoryTypes = $this->getHelper('Component\Ebay\Category')->getEbayCategoryTypes();
-        $storeCategoryTypes = $this->getHelper('Component\Ebay\Category')->getStoreCategoryTypes();
+        $ebayCategoryTypes = $this->getHelper('Component_Ebay_Category')->getEbayCategoryTypes();
+        $storeCategoryTypes = $this->getHelper('Component_Ebay_Category')->getStoreCategoryTypes();
 
-        if (is_null($value) || is_null($mode)
-            || (in_array($categoryType, $ebayCategoryTypes) && is_null($marketplaceId))
-            || (in_array($categoryType, $storeCategoryTypes) && is_null($accountId))
+        if ($value === null || $mode === null
+            || (in_array($categoryType, $ebayCategoryTypes) && $marketplaceId === null)
+            || (in_array($categoryType, $storeCategoryTypes) && $accountId === null)
         ) {
             $this->getResponse()->setBody('');
             return;
@@ -37,9 +41,9 @@ class GetPath extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         switch ($mode) {
             case \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY:
                 if (in_array($categoryType, $ebayCategoryTypes)) {
-                    $path = $this->getHelper('Component\Ebay\Category\Ebay')->getPath($value, $marketplaceId);
+                    $path = $this->getHelper('Component_Ebay_Category_Ebay')->getPath($value, $marketplaceId);
                 } else {
-                    $path = $this->getHelper('Component\Ebay\Category\Store')->getPath($value, $accountId);
+                    $path = $this->getHelper('Component_Ebay_Category_Store')->getPath($value, $accountId);
                 }
 
                 $path .= ' (' . $value . ')';

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ActiveRecord\Component\Parent;
 
+/**
+ * Class AbstractFactory
+ * @package Ess\M2ePro\Model\ActiveRecord\Component\Parent
+ */
 abstract class AbstractFactory
 {
     protected $parentFactory;
@@ -21,8 +25,7 @@ abstract class AbstractFactory
      */
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
-    )
-    {
+    ) {
         $this->parentFactory = $parentFactory;
     }
 
@@ -50,10 +53,14 @@ abstract class AbstractFactory
      * @return \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel|NULL
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getObjectLoaded($modelName, $value, $field = NULL, $throwException = true)
+    public function getObjectLoaded($modelName, $value, $field = null, $throwException = true)
     {
         return $this->parentFactory->getObjectLoaded(
-            $this->getComponentMode(), $modelName, $value, $field, $throwException
+            $this->getComponentMode(),
+            $modelName,
+            $value,
+            $field,
+            $throwException
         );
     }
 
@@ -64,10 +71,14 @@ abstract class AbstractFactory
      * @param boolean $throwException
      * @return \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
-    public function getCachedObjectLoaded($modelName, $value, $field = NULL, $throwException = true)
+    public function getCachedObjectLoaded($modelName, $value, $field = null, $throwException = true)
     {
         return $this->parentFactory->getCachedObjectLoaded(
-            $this->getComponentMode(), $modelName, $value, $field, $throwException
+            $this->getComponentMode(),
+            $modelName,
+            $value,
+            $field,
+            $throwException
         );
     }
 

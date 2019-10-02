@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction;
 
+/**
+ * Class Validator
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction
+ */
 class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Validator
 {
     protected $isVerifyCall = false;
@@ -24,8 +28,7 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;
         $this->moduleConfig = $moduleConfig;
@@ -37,7 +40,6 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
     public function validate()
     {
         if (!$this->getListingProduct()->isListable()) {
-
             // M2ePro\TRANSLATIONS
             // Item is Listed or not available
             $this->addMessage('Item is Listed or not available');
@@ -46,7 +48,6 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
         }
 
         if ($this->getListingProduct()->isHidden()) {
-
             $this->addMessage(
                 'The List action cannot be executed for this Item as it has a Listed (Hidden) status.
                 You have to stop Item manually first to run the List action for it.'
@@ -64,7 +65,6 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
         }
 
         if ($this->getEbayListingProduct()->isVariationsReady()) {
-
             if (!$this->validateVariationsOptions()) {
                 return false;
             }
@@ -99,7 +99,8 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
         }
 
         $config = $this->moduleConfig->getGroupValue(
-            '/ebay/connector/listing/', 'check_the_same_product_already_listed'
+            '/ebay/connector/listing/',
+            'check_the_same_product_already_listed'
         );
 
         if (empty($config)) {
@@ -111,18 +112,18 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
 
         $listingProductCollection
             ->getSelect()
-            ->join(array('l'=>$listingTable),'`main_table`.`listing_id` = `l`.`id`',array());
+            ->join(['l'=>$listingTable], '`main_table`.`listing_id` = `l`.`id`', []);
 
         $listingProductCollection
-            ->addFieldToFilter('status', array('neq' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED))
-            ->addFieldToFilter('product_id',$this->getListingProduct()->getProductId())
-            ->addFieldToFilter('account_id',$this->getAccount()->getId())
-            ->addFieldToFilter('marketplace_id',$this->getMarketplace()->getId());
+            ->addFieldToFilter('status', ['neq' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED])
+            ->addFieldToFilter('product_id', $this->getListingProduct()->getProductId())
+            ->addFieldToFilter('account_id', $this->getAccount()->getId())
+            ->addFieldToFilter('marketplace_id', $this->getMarketplace()->getId());
 
         if (!empty($params['skip_check_the_same_product_already_listed_ids'])) {
-
             $listingProductCollection->addFieldToFilter(
-                'listing_product_id', array('nin' => $params['skip_check_the_same_product_already_listed_ids'])
+                'listing_product_id',
+                ['nin' => $params['skip_check_the_same_product_already_listed_ids']]
             );
         }
 
@@ -135,10 +136,10 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
         $this->addMessage($this->getHelper('Module\Log')->encodeDescription(
             'There is another Item with the same eBay User ID, '.
             'Product ID and eBay Site presented in "%listing_title%" (%listing_id%) Listing.',
-            array(
+            [
                 '!listing_title' => $theSameListingProduct->getListing()->getTitle(),
                 '!listing_id' => $theSameListingProduct->getListing()->getId()
-            )
+            ]
         ));
 
         return false;

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Synchronization\GlobalTask;
 
 use Ess\M2ePro\Model\Processing\Runner;
 
+/**
+ * Class Processing
+ * @package Ess\M2ePro\Model\Synchronization\GlobalTask
+ */
 class Processing extends AbstractModel
 {
     private $resourceConnection;
@@ -21,8 +25,7 @@ class Processing extends AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         parent::__construct($activeRecordFactory, $helperFactory, $modelFactory);
     }
@@ -36,7 +39,7 @@ class Processing extends AbstractModel
 
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // -----------------------------------
@@ -71,7 +74,6 @@ class Processing extends AbstractModel
         $processingObjects = $processingCollection->getItems();
 
         foreach ($processingObjects as $processingObject) {
-
             $this->getActualLockItem()->activate();
 
             try {
@@ -97,7 +99,6 @@ class Processing extends AbstractModel
         $processingObjects = $processingCollection->getItems();
 
         foreach ($processingObjects as $processingObject) {
-
             $this->getActualLockItem()->activate();
 
             try {
@@ -119,12 +120,14 @@ class Processing extends AbstractModel
     {
         $table = $this->activeRecordFactory->getObject('Processing\Lock')->getResource()->getMainTable();
         $this->resourceConnection->getConnection()->delete(
-            $table, array('`processing_id` = ?' => (int)$processing->getId())
+            $table,
+            ['`processing_id` = ?' => (int)$processing->getId()]
         );
 
         $table = $this->activeRecordFactory->getObject('Processing')->getResource()->getMainTable();
         $this->resourceConnection->getConnection()->delete(
-            $table, array('`id` = ?' => (int)$processing->getId())
+            $table,
+            ['`id` = ?' => (int)$processing->getId()]
         );
     }
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping;
 
+/**
+ * Class ViewPopup
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
+ */
 class ViewPopup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
 {
     public function execute()
@@ -24,16 +28,16 @@ class ViewPopup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\
             $productsIds = explode(',', $productsIds);
         }
 
-        $messages = array();
+        $messages = [];
         $productsIdsLocked = $this->filterLockedProducts($productsIds);
 
         if (count($productsIdsLocked) < count($productsIds)) {
-            $messages[] = array(
+            $messages[] = [
                 'type' => 'warning',
                 'text' => $this->__(
                     'The Shipping Policy was not assigned because the Products have In Action Status.'
                 )
-            );
+            ];
         }
 
         if (empty($productsIdsLocked)) {
@@ -45,8 +49,8 @@ class ViewPopup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\
         }
 
         $blockName = ($shippingMode == \Ess\M2ePro\Model\Amazon\Account::SHIPPING_MODE_OVERRIDE)
-            ? 'Amazon\Listing\Product\Template\ShippingOverride'
-            : 'Amazon\Listing\Product\Template\ShippingTemplate';
+            ? 'Amazon_Listing_Product_Template_ShippingOverride'
+            : 'Amazon_Listing_Product_Template_ShippingTemplate';
 
         $mainBlock = $this->createBlock($blockName);
         if (!empty($messages)) {

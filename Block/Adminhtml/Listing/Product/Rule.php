@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Listing\Product;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Rule
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\Product
+ */
 class Rule extends AbstractForm
 {
     protected $_isShowHideProductsOption = false;
@@ -94,7 +98,7 @@ class Rule extends AbstractForm
             margin: 20px 0;
         }
 CSS
-);
+        );
 
         return parent::_prepareLayout();
     }
@@ -113,7 +117,8 @@ CSS
             ]
         ]);
 
-        $fieldset = $form->addFieldset('listing_product_rules',
+        $fieldset = $form->addFieldset(
+            'listing_product_rules',
             [
                 'legend' => '',
                 'collapsable' => false,
@@ -122,10 +127,11 @@ CSS
         );
 
         $ruleModel = $this->getHelper('Data\GlobalData')->getValue('rule_model');
-        $ruleBlock = $this->createBlock('Magento\Product\Rule')
+        $ruleBlock = $this->createBlock('Magento_Product_Rule')
             ->setData(['rule_model' => $ruleModel]);
 
-        $fieldset->addField('advanced_filter',
+        $fieldset->addField(
+            'advanced_filter',
             self::CUSTOM_CONTAINER,
             [
                 'text' => $ruleBlock->toHtml()

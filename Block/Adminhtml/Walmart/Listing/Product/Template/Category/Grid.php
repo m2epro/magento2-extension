@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Template\Category;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Template\Category
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    protected $productsIds = array();
-    protected $magentoCategoryIds = array();
+    protected $productsIds = [];
+    protected $magentoCategoryIds = [];
     protected $marketplaceId;
 
     protected $mapToTemplateJsFn = 'ListingGridHandlerObj.templateCategoryHandler.mapToTemplateCategory';
@@ -26,8 +30,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -123,7 +126,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setNoTemplatesText();
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Template\Category\Collection $categoryCollection */
-        $categoryCollection = $this->activeRecordFactory->getObject('Walmart\Template\Category')->getCollection();
+        $categoryCollection = $this->activeRecordFactory->getObject('Walmart_Template_Category')->getCollection();
         $categoryCollection->addFieldToFilter('marketplace_id', $this->getMarketplaceId());
 
         $this->setCollection($categoryCollection);
@@ -135,18 +138,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('title', array(
+        $this->addColumn('title', [
             'header'       => $this->__('Title'),
             'align'        => 'left',
             'type'         => 'text',
             'index'        => 'title',
             'filter_index' => 'title',
             'sortable'     => true,
-            'filter_condition_callback' => array($this, 'callbackFilterTitle'),
-            'frame_callback' => array($this, 'callbackColumnTitle')
-        ));
+            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
+            'frame_callback' => [$this, 'callbackColumnTitle']
+        ]);
 
-        $this->addColumn('action', array(
+        $this->addColumn('action', [
             'header'       => $this->__('Action'),
             'align'        => 'left',
             'type'         => 'number',
@@ -154,20 +157,21 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'        => 'id',
             'filter'       => false,
             'sortable'     => false,
-            'frame_callback' => array($this, 'callbackColumnAction')
-        ));
+            'frame_callback' => [$this, 'callbackColumnAction']
+        ]);
     }
 
     protected function _prepareLayout()
     {
-        $this->setChild('refresh_button',
+        $this->setChild(
+            'refresh_button',
             $this->createBlock('Magento\Button')
-                ->setData(array(
+                ->setData([
                     'id' => 'category_template_refresh_btn',
                     'label'     => $this->__('Refresh'),
                     'class'     => 'action primary',
                     'onclick'   => $this->getJsObjectName().'.reload()'
-                ))
+                ])
         );
 
         return parent::_prepareLayout();
@@ -191,13 +195,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
-        $templateCategoryEditUrl = $this->getUrl('*/walmart_template_category/edit', array(
+        $templateCategoryEditUrl = $this->getUrl('*/walmart_template_category/edit', [
             'id' => $row->getData('id'),
             'wizard' => $this->getHelper('Module\Wizard')->isActive(
                 \Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK
             ),
             'close_on_save' => true
-        ));
+        ]);
 
         $title = $this->getHelper('Data')->escapeHtml($row->getData('title'));
 
@@ -211,7 +215,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     <span style="font-weight: bold">{$categoryWord}</span>: <span style="color: #505050">{$categoryPath}</span><br/>
 </div>
 HTML;
-
     }
 
     public function callbackColumnAction($value, $row, $column, $isExport)
@@ -235,7 +238,8 @@ HTML;
         }
 
         $collection->getSelect()->where(
-            'title LIKE ? OR category_path LIKE ? OR browsenode_id LIKE ?', '%'.$value.'%'
+            'title LIKE ? OR category_path LIKE ? OR browsenode_id LIKE ?',
+            '%'.$value.'%'
         );
     }
 
@@ -252,15 +256,15 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/viewGrid', array(
+        return $this->getUrl('*/*/viewGrid', [
             '_current' => true,
-            '_query' => array(
+            '_query' => [
                 'map_to_template_js_fn' => $this->getMapToTemplateJsFn(),
                 'create_new_template_js_fn' => $this->getCreateNewTemplateJsFn()
-            ),
+            ],
             'products_ids' => implode(',', $this->getProductsIds()),
             'magento_categories_ids' => implode(',', $this->getMagentoCategoryIds()),
-        ));
+        ]);
     }
 
     public function getRowUrl($row)
@@ -276,7 +280,9 @@ HTML;
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $productsIds = $this->getProductsIds();
             $listingProduct = $this->parentFactory->getObjectLoaded(
-                \Ess\M2ePro\Helper\View\Walmart::NICK, 'Listing\Product', $productsIds[0]
+                \Ess\M2ePro\Helper\View\Walmart::NICK,
+                'Listing\Product',
+                $productsIds[0]
             );
             $this->marketplaceId = $listingProduct->getListing()->getMarketplaceId();
         }
@@ -305,10 +311,10 @@ HTML;
 
     protected function getNewTemplateCategoryUrl()
     {
-        return $this->getUrl('*/walmart_template_category/new', array(
+        return $this->getUrl('*/walmart_template_category/new', [
             'marketplace_id'        => $this->getMarketplaceId(),
             'close_on_save' => 1
-        ));
+        ]);
     }
 
     //########################################

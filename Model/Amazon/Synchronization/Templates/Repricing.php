@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\Templates;
 
 use Ess\M2ePro\Model\ProductChange;
 
+/**
+ * Class Repricing
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\Templates
+ */
 class Repricing extends AbstractModel
 {
     //########################################
@@ -42,7 +46,7 @@ class Repricing extends AbstractModel
             return false;
         }
 
-        return $this->getHelper('Component\Amazon\Repricing')->isEnabled();
+        return $this->getHelper('Component_Amazon_Repricing')->isEnabled();
     }
 
     //########################################
@@ -54,12 +58,11 @@ class Repricing extends AbstractModel
             return;
         }
 
-        $processRequiredListingsProductsIds      = array();
-        $resetProcessRequiredListingsProductsIds = array();
+        $processRequiredListingsProductsIds      = [];
+        $resetProcessRequiredListingsProductsIds = [];
 
         foreach ($changedListingsProductsRepricing as $listingProductRepricing) {
             try {
-
                 if ($this->isProcessRequired($listingProductRepricing)) {
                     $processRequiredListingsProductsIds[] = $listingProductRepricing->getListingProductId();
                     continue;
@@ -68,19 +71,18 @@ class Repricing extends AbstractModel
                 if ($listingProductRepricing->isProcessRequired()) {
                     $resetProcessRequiredListingsProductsIds[] = $listingProductRepricing->getListingProductId();
                 }
-
             } catch (\Exception $exception) {
                 $this->logError($listingProductRepricing->getListingProduct(), $exception);
             }
         }
 
         if (!empty($processRequiredListingsProductsIds)) {
-            $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')
+            $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')
                 ->getResource()->markAsProcessRequired(array_unique($processRequiredListingsProductsIds));
         }
 
         if (!empty($resetProcessRequiredListingsProductsIds)) {
-            $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')
+            $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')
                 ->getResource()->resetProcessRequired(array_unique($resetProcessRequiredListingsProductsIds));
         }
     }
@@ -93,24 +95,25 @@ class Repricing extends AbstractModel
     private function getChangedListingsProductsRepricing()
     {
         $changedListingsProducts = $this->getProductChangesManager()->getInstances(
-            array(ProductChange::UPDATE_ATTRIBUTE_CODE)
+            [ProductChange::UPDATE_ATTRIBUTE_CODE]
         );
 
         if (empty($changedListingsProducts)) {
-            return array();
+            return [];
         }
 
         $listingProductRepricingCollection = $this->activeRecordFactory->getObject(
-            'Amazon\Listing\Product\Repricing'
+            'Amazon_Listing_Product_Repricing'
         )->getCollection();
         $listingProductRepricingCollection->addFieldToFilter(
-            'listing_product_id', array('in' => array_keys($changedListingsProducts))
+            'listing_product_id',
+            ['in' => array_keys($changedListingsProducts)]
         );
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing[] $listingsProductsRepricing */
         $listingsProductsRepricing = $listingProductRepricingCollection->getItems();
         if (empty($listingsProductsRepricing)) {
-            return array();
+            return [];
         }
 
         foreach ($listingsProductsRepricing as $listingProductRepricing) {

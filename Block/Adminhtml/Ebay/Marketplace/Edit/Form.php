@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Marketplace\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Marketplace\Edit
+ */
 class Form extends AbstractForm
 {
     //########################################
@@ -34,49 +38,49 @@ class Form extends AbstractForm
         );
 
         foreach ($this->groups as $group) {
-
             $fieldset = $form->addFieldset(
                 'marketplaces_group_'.$group['id'],
                 ['legend' => $this->__($group['title'])]
             );
 
-            foreach($group['marketplaces'] as $marketplace) {
+            foreach ($group['marketplaces'] as $marketplace) {
 
-                $afterElementHtml = '
-                <div id="run_single_button_'.$marketplace['instance']->getId().'" class="control-value"';
-                $marketplace['instance']->getStatus() == \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE &&
-                $afterElementHtml .= ' style="display: none;"';
-                $afterElementHtml .= '">';
+                $display = '';
+                if ($marketplace['instance']->getStatus() == \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE) {
+                    $display = 'display: none;';
+                }
+
+                $afterElementHtml = <<<HTML
+<div id="run_single_button_{$marketplace['instance']->getId()}" class="control-value" style="{$display}">
+HTML;
 
                 $afterElementHtml .= $this->getLayout()
-                    ->createBlock('Magento\Backend\Block\Widget\Button')
-                    ->setData(array(
+                    ->createBlock(\Magento\Backend\Block\Widget\Button::class)
+                    ->setData([
                         'label'   => $this->__('Update Now'),
                         'onclick' => 'MarketplaceObj.runSingleSynchronization(this)',
                         'class' => 'run_single_button primary'
-                    ))->toHtml();
+                    ])->toHtml();
 
-                $afterElementHtml .= '</div>
-                <div id="synch_info_container" class="control-value">
-                    <div id="synch_info_wait_'.$marketplace['instance']->getId().'"
-                        class="value" style="display: none; color: gray;">
-                        &nbsp; '.$this->__('Waiting').'
-                    </div>
-                    <div id="synch_info_process_'.$marketplace['instance']->getId().'"
-                        class="value" style="display: none; color: blue;">
-                        &nbsp; '.$this->__('Processing').'
-                    </div>
-                    <div id="synch_info_complete_'.$marketplace['instance']->getId().'"
-                        class="value" style="display: none; color: green;">
-                        &nbsp; '.$this->__('Completed').'
-                    </div>
-                    <div id="marketplace_title_'.$marketplace['instance']->getId().'"
-                        class="value" style="display: none;">
-                    '.$marketplace['instance']->getTitle().'</div>
+                $afterElementHtml .= <<<HTML
                 </div>
-                <div id="changed_'.$marketplace['instance']->getId().'" class="changed control-value"
+                <div id="synch_info_container" class="control-value">
+                    <div id="synch_info_wait_{$marketplace['instance']->getId()}"
+                        class="value" style="display: none; color: gray;">&nbsp; {$this->__('Waiting')}</div>
+
+                    <div id="synch_info_process_{$marketplace['instance']->getId()}"
+                        class="value" style="display: none; color: blue;">&nbsp; {$this->__('Processing')}</div>
+
+                    <div id="synch_info_complete_{$marketplace['instance']->getId()}"
+                        class="value" style="display: none; color: green;">{$this->__('Completed')}</div>
+
+                    <div id="marketplace_title_{$marketplace['instance']->getId()}"
+                        class="value" style="display: none;">{$marketplace['instance']->getTitle()}</div>
+                </div>
+                <div id="changed_{$marketplace['instance']->getId()}" class="changed control-value"
                     style="display: none;">
-                </div>';
+                </div>
+HTML;
 
                 $selectData = [
                     'label' => $this->__($marketplace['instance']->getData('title')),
@@ -109,7 +113,8 @@ class Form extends AbstractForm
                 $selectData['class'] = 'marketplace_status_select';
                 $selectData['note'] = $marketplace['instance']->getUrl();
 
-                $fieldset->addField('status_'.$marketplace['instance']->getId(),
+                $fieldset->addField(
+                    'status_'.$marketplace['instance']->getId(),
                     self::SELECT,
                     $selectData
                 )->addCustomAttribute('marketplace_id', $marketplace['instance']->getId())
@@ -133,28 +138,27 @@ class Form extends AbstractForm
         $tempMarketplaces = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Marketplace')
             ->getCollection()
             ->setOrder('group_title', 'ASC')
-            ->setOrder('sorder','ASC')
-            ->setOrder('title','ASC')
+            ->setOrder('sorder', 'ASC')
+            ->setOrder('title', 'ASC')
             ->getItems();
 
-        $storedStatuses = array();
-        $groups = array();
+        $storedStatuses = [];
+        $groups = [];
         $idGroup = 1;
 
-        $groupOrder = array(
+        $groupOrder = [
             'america' => 'America',
             'europe' => 'Europe',
             'asia_pacific' => 'Asia / Pacific',
             'other' => 'Other'
-        );
+        ];
 
         foreach ($groupOrder as $key => $groupOrderTitle) {
-
-            $groups[$key] = array(
+            $groups[$key] = [
                 'id'           => $idGroup++,
                 'title'        => $groupOrderTitle,
-                'marketplaces' => array()
-            );
+                'marketplaces' => []
+            ];
 
             foreach ($tempMarketplaces as $tempMarketplace) {
                 if ($groupOrderTitle != $tempMarketplace->getGroupTitle()) {
@@ -167,26 +171,26 @@ class Form extends AbstractForm
 
                 $isLockedByPickupStore = false;
 
-                if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
-                    $isLockedByPickupStore = (bool)$this->activeRecordFactory->getObject('Ebay\Account\PickupStore')
+                if ($this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
+                    $isLockedByPickupStore = (bool)$this->activeRecordFactory->getObject('Ebay_Account_PickupStore')
                         ->getCollection()
                         ->addFieldToFilter('marketplace_id', $tempMarketplace->getId())
                         ->getSize();
                 }
 
-                $storedStatuses[] = array(
+                $storedStatuses[] = [
                     'marketplace_id' => $tempMarketplace->getId(),
                     'status'         => $tempMarketplace->getStatus()
-                );
+                ];
 
-                /* @var $tempMarketplace \Ess\M2ePro\Model\Marketplace */
-                $marketplace = array(
+                /** @var $tempMarketplace \Ess\M2ePro\Model\Marketplace */
+                $marketplace = [
                     'instance' => $tempMarketplace,
-                    'params'   => array(
+                    'params'   => [
                         'locked' => $isLocked,
                         'lockedByPickupStore' => $isLockedByPickupStore
-                    )
-                );
+                    ]
+                ];
 
                 $groups[$key]['marketplaces'][] = $marketplace;
             }
@@ -205,9 +209,11 @@ class Form extends AbstractForm
     {
         $this->jsUrl->addUrls([
             'formSubmit' => $this->getUrl('m2epro/ebay_marketplace/save'),
-            'logViewUrl' => $this->getUrl('*/ebay_synchronization_log/index',
-                array('back'=>$this->getHelper('Data')
-                    ->makeBackUrlParam('*/ebay_synchronization/index'))),
+            'logViewUrl' => $this->getUrl(
+                '*/ebay_synchronization_log/index',
+                ['back'=>$this->getHelper('Data')
+                ->makeBackUrlParam('*/ebay_synchronization/index')]
+            ),
 
             'runSynchNow' => $this->getUrl('*/ebay_marketplace/runSynchNow'),
             'synchCheckProcessingNow' => $this->getUrl('*/ebay_synchronization/synchCheckProcessingNow'),

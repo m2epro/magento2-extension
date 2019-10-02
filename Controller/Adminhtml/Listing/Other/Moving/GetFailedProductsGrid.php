@@ -10,11 +10,15 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving;
 
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 
+/**
+ * Class GetFailedProductsGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving
+ */
 class GetFailedProductsGrid extends Listing
 {
     public function execute()
     {
-        $block = $this->createBlock('Listing\Moving\FailedProducts\Grid');
+        $block = $this->createBlock('Listing_Moving_FailedProducts_Grid');
 
         $this->setAjaxContent($block);
         return $this->getResult();

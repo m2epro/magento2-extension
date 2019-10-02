@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
+/**
+ * Class GoToPaypal
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Order
+ */
 class GoToPaypal extends Order
 {
     public function execute()
@@ -22,11 +26,12 @@ class GoToPaypal extends Order
         }
 
         /** @var $transaction \Ess\M2ePro\Model\Ebay\Order\ExternalTransaction */
-        $transaction = $this->activeRecordFactory->getObject('Ebay\Order\ExternalTransaction')->load(
-            $transactionId, 'transaction_id'
+        $transaction = $this->activeRecordFactory->getObject('Ebay_Order_ExternalTransaction')->load(
+            $transactionId,
+            'transaction_id'
         );
 
-        if (is_null($transaction->getId())) {
+        if ($transaction->getId() === null) {
             $this->messageManager->addError($this->__('eBay Order Transaction does not exist.'));
             return $this->_redirect('*/ebay_order/index');
         }

@@ -1,22 +1,38 @@
 <?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
 /** @var \Ess\M2ePro\Block\Adminhtml\Renderer\Description\Gallery $block */
+
 $data = $block->getData();
 ?>
 
 <?php if ($block->isModeGallery()) : ?>
-
     <style>
 
         #m2e-gallery-<?php echo $block->getGalleryId(); ?> {
             display: block;
             text-align: center;
-        <?php if ($data['width'] != '') : echo "width: {$data['width']}px;"; endif; ?>
-        <?php if ($data['height'] != '') : echo "height: {$data['height']}px;"; endif; ?>
+        <?php if ($data['width'] != '') :
+            echo "width: {$data['width']}px;";
+        endif; ?>
+        <?php if ($data['height'] != '') :
+            echo "height: {$data['height']}px;";
+        endif; ?>
         }
 
         #m2e-gallery-<?php echo $block->getGalleryId(); ?> .full-image {
-        <?php if ($data['width'] != '') : echo "width: {$data['width']}px;"; endif; ?>
-        <?php if ($data['height'] != '') : echo "height: {$data['height']}px;"; endif; ?>
+        <?php if ($data['width'] != '') :
+            echo "width: {$data['width']}px;";
+        endif; ?>
+        <?php if ($data['height'] != '') :
+            echo "height: {$data['height']}px;";
+        endif; ?>
             display: none;
         }
 
@@ -81,7 +97,9 @@ $data = $block->getData();
                     <?php $imageIndex == 0 && print ' checked="checked" '; ?>
                        id="image-gallery-<?php echo $block->getGalleryId(); ?>-<?php echo $imageIndex; ?>"
                 />
-                <img class="full-image" src="<?php echo $imageUrl; ?>" <?php if ($data['watermark'] != 0): echo ' m2e_watermark="1"'; endif; ?> />
+                <img class="full-image" src="<?php echo $imageUrl; ?>" <?php if ($data['watermark'] != 0) :
+                    echo ' m2e_watermark="1"';
+                                             endif; ?> />
             <?php endforeach; ?>
 
             <div class="hint">
@@ -104,14 +122,19 @@ $data = $block->getData();
 
     <div style="clear: both;"></div>
 
-<?php else: ?>
-
+<?php else : ?>
     <style>
 
         #m2e-gallery-list-<?php echo $block->getGalleryId(); ?> img {
-        <?php if ($data['width'] != '') : echo "width: {$data['width']}px;"; endif; ?>
-        <?php if ($data['height'] != '') : echo "height: {$data['height']}px;"; endif; ?>
-        <?php if ($data['margin'] != '') : echo "margin-bottom: {$data['margin']}px; margin-right: {$data['margin']}px;"; endif; ?>
+        <?php if ($data['width'] != '') :
+            echo "width: {$data['width']}px;";
+        endif; ?>
+        <?php if ($data['height'] != '') :
+            echo "height: {$data['height']}px;";
+        endif; ?>
+        <?php if ($data['margin'] != '') :
+            echo "margin-bottom: {$data['margin']}px; margin-right: {$data['margin']}px;";
+        endif; ?>
         }
 
     </style>
@@ -119,10 +142,11 @@ $data = $block->getData();
     <div class="m2e-gallery-list" id="m2e-gallery-list-<?php echo $block->getGalleryId(); ?>">
 
         <?php foreach ($block->getGalleryImages() as $imageIndex => $imageUrl) : ?>
+            <img src="<?php echo $imageUrl; ?>" class="m2e-gallery-list" <?php if ($data['watermark'] != 0) :
+                echo ' m2e_watermark="1"';
+                      endif; ?> />
 
-            <img src="<?php echo $imageUrl; ?>" class="m2e-gallery-list" <?php if ($data['watermark'] != 0): echo ' m2e_watermark="1"'; endif; ?> />
-
-            <?php if ($block->isLayoutColumnMode()): ?>
+            <?php if ($block->isLayoutColumnMode()) : ?>
                 <br/>
             <?php endif; ?>
 

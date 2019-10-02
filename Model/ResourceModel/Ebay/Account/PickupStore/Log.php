@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Account\PickupStore;
 
+/**
+ * Class Log
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Account\PickupStore
+ */
 class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
 {
     //########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $ebayFactory;
@@ -25,8 +29,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->resourceConnection = $resourceConnection;
@@ -60,7 +63,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
         // Get collection
         // ---------------------------------------
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->setListingProductModeOn();
         $collection->setStoreId($this->listing->getStoreId());
@@ -85,7 +88,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             '{{table}}.listing_id='.(int)$listingData['id']
         );
         $collection->joinTable(
-            ['elp' => $this->activeRecordFactory->getObject('Ebay\Listing\Product')->getResource()->getMainTable()],
+            ['elp' => $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable()],
             'listing_product_id=lp_id',
             [
                 'listing_product_id'    => 'listing_product_id',
@@ -105,12 +108,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ['ei' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()],
             'id=ebay_item_id',
             ['item_id' => 'item_id'],
-            NULL,
+            null,
             'left'
         );
 
         $collection->getSelect()->join(
-            ['elpps' => $this->activeRecordFactory->getObject('Ebay\Listing\Product\PickupStore')
+            ['elpps' => $this->activeRecordFactory->getObject('Ebay_Listing_Product_PickupStore')
                              ->getResource()->getMainTable()],
             'elp.listing_product_id=elpps.listing_product_id',
             [
@@ -120,7 +123,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
 
         $collection->getSelect()->joinLeft(
-            ['meaps' => $this->activeRecordFactory->getObject('Ebay\Account\PickupStore')
+            ['meaps' => $this->activeRecordFactory->getObject('Ebay_Account_PickupStore')
                              ->getResource()->getMainTable()],
             'elpps.account_pickup_store_id = meaps.id',
             [
@@ -138,7 +141,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
 
         $collection->getSelect()->joinLeft(
-            ['meapss' => $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\State')
+            ['meapss' => $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')
                               ->getResource()->getMainTable()],
             'meapss.account_pickup_store_id = meaps.id AND meapss.sku = elp.online_sku',
             [
@@ -163,14 +166,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     SUM(`meapss`.`is_in_processing`) as `variations_processing`,
                     SUM(`meapss`.`is_added`) as `variations_added`,
                     COUNT(`meapss`.`is_in_processing`) as `count_variations_in_state`
-                FROM `'. $this->activeRecordFactory->getObject('Listing\Product\Variation')
+                FROM `'. $this->activeRecordFactory->getObject('Listing_Product_Variation')
                               ->getResource()->getMainTable() .'` AS `mlpv`
                 INNER JOIN `' .
-                $this->activeRecordFactory->getObject('Ebay\Listing\Product\Variation')
+                $this->activeRecordFactory->getObject('Ebay_Listing_Product_Variation')
                                           ->getResource()->getMainTable().'` AS `melpv`
                     ON (`mlpv`.`id` = `melpv`.`listing_product_variation_id`)
                 INNER JOIN `' .
-                $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\State')
+                $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')
                                           ->getResource()->getMainTable().'` AS meapss
                     ON (meapss.sku = melpv.online_sku)
                 WHERE `melpv`.`status` != ' . \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED . '
@@ -186,7 +189,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
 
         $collection->getSelect()->where(
-            'lp.listing_id = ?',(int)$listingData['id']);
+            'lp.listing_id = ?',
+            (int)$listingData['id']
+        );
         // ---------------------------------------
 
         if ($this->listing) {
@@ -315,7 +320,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $columnId = 'massaction';
         $massactionColumn = $this->getLayout()
-            ->createBlock('Magento\Backend\Block\Widget\Grid\Column')
+            ->createBlock(\Magento\Backend\Block\Widget\Grid\Column::class)
             ->setData(
                 [
                     'index' => $this->getMassactionIdField(),
@@ -354,7 +359,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $htmlWithoutThumbnail = '<a href="' . $url . '" target="_blank">'.$productId.'</a>';
 
         $showProductsThumbnails = (bool)(int)$this->getHelper('Module')->getConfig()
-            ->getGroupValue('/view/','show_products_thumbnails');
+            ->getGroupValue('/view/', 'show_products_thumbnails');
 
         if (!$showProductsThumbnails) {
             return $htmlWithoutThumbnail;
@@ -368,7 +373,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $magentoProduct->setStoreId($storeId);
 
         $thumbnail = $magentoProduct->getThumbnailImage();
-        if (is_null($thumbnail)) {
+        if ($thumbnail === null) {
             return $htmlWithoutThumbnail;
         }
 
@@ -391,7 +396,9 @@ HTML;
 
         $valueHtml = '<span class="product-title-value">' . $title . '</span>';
 
-        if (is_null($sku = $row->getData('sku'))) {
+        $sku = $row->getData('sku');
+
+        if ($row->getData('sku') === null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
                         ->setProductId($row->getData('catalog_product_id'))
                         ->getSku();
@@ -405,7 +412,8 @@ HTML;
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->ebayFactory->getObjectLoaded(
-            'Listing\Product', $row->getData('listing_product_id')
+            'Listing\Product',
+            $row->getData('listing_product_id')
         );
 
         if (!$listingProduct->getChildObject()->isVariationsReady()) {
@@ -450,7 +458,7 @@ HTML;
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -476,14 +484,14 @@ HTML;
         }
 
         $qty = $row->getData('pickup_store_product_qty');
-        if (is_null($qty) || $row->getData('is_added')) {
+        if ($qty === null || $row->getData('is_added')) {
             $qty = $this->__('Adding to Store');
         }
 
         $variationsAdded = $row->getData('variations_added');
         $countVariationsInState = $row->getData('count_variations_in_state');
 
-        if (!is_null($countVariationsInState) && !is_null($variationsAdded) &&
+        if ($countVariationsInState !== null && $variationsAdded !== null &&
             $countVariationsInState == $variationsAdded) {
             $qty = $this->__('Adding to Store');
         }
@@ -507,8 +515,8 @@ HTML;
         $variationsAdded = $row->getData('variations_added');
         $countVariationsInState = $row->getData('count_variations_in_state');
 
-        if (is_null($qty) || $row->getData('is_added') || (!is_null($countVariationsInState) &&
-            !is_null($variationsAdded) && $countVariationsInState == $variationsAdded)) {
+        if ($qty === null || $row->getData('is_added') || ($countVariationsInState !== null &&
+            $variationsAdded !== null && $countVariationsInState == $variationsAdded)) {
             return $this->__('Adding to Store');
         }
 
@@ -570,14 +578,15 @@ HTML;
             </ul>
         </div>
 HTML
-;
+        ;
     }
 
     public function callbackColumnLog($value, $row, $column, $isExport)
     {
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->ebayFactory->getObjectLoaded(
-            'Listing\Product',$row->getData('listing_product_id')
+            'Listing\Product',
+            $row->getData('listing_product_id')
         );
 
         if ($listingProduct->getChildObject()->isVariationsReady()) {
@@ -729,7 +738,7 @@ HTML
         // ---------------------------------------
         $dbSelect = $this->resourceConnection->getConnection()->select()
             ->from(
-                $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\Log')
+                $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_Log')
                                          ->getResource()->getMainTable(),
                 ['id', 'action_id','action','type','description','create_date']
             )
@@ -750,7 +759,7 @@ HTML
 
         // ---------------------------------------
 
-        $summary = $this->createBlock('Listing\Log\Grid\LastActions')->setData([
+        $summary = $this->createBlock('Listing_Log_Grid_LastActions')->setData([
             'entity_id' => (int)$columnId,
             'logs'      => $logs,
             'available_actions' => $this->getAvailableActions(),
@@ -758,7 +767,7 @@ HTML
             'hide_help_handler' => 'EbayListingPickupStoreGridObj.hideItemHelp',
         ]);
 
-        $pickupStoreState = $this->activeRecordFactory->getObjectLoaded('Ebay\Account\PickupStore\State', $stateId);
+        $pickupStoreState = $this->activeRecordFactory->getObjectLoaded('Ebay_Account_PickupStore_State', $stateId);
 
         $this->jsTranslator->addTranslations([
             'Log For SKU '. $stateId => $this->__('Log For SKU (%s%)', $pickupStoreState->getSku())
@@ -789,7 +798,6 @@ HTML
         $allIdsStr  = implode(',', $allIds);
 
         if ($this->getRequest()->isXmlHttpRequest()) {
-
             $this->js->add(
                 <<<JS
                 EbayListingPickupStoreGridObj.afterInitPage();

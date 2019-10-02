@@ -8,16 +8,20 @@
 
 namespace Ess\M2ePro\Model\Connector\Connection;
 
+/**
+ * Class Response
+ * @package Ess\M2ePro\Model\Connector\Connection
+ */
 class Response extends \Ess\M2ePro\Model\AbstractModel
 {
-    private $data = array();
+    private $data = [];
 
     /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messages */
-    private $messages = NULL;
+    private $messages = null;
 
     private $resultType = \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS;
 
-    private $requestTime = NULL;
+    private $requestTime = null;
 
     // ########################################
 
@@ -30,7 +34,6 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
             !isset($response['response']['result']['messages']) ||
             !is_array($response['response']['result']['messages']) ||
             !isset($response['response']['result']['type'])) {
-
             throw new \Ess\M2ePro\Model\Exception\Connection\InvalidResponse('Invalid Response Format.');
         }
 
@@ -40,7 +43,7 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
         $this->initResultType($response['response']['result']['type']);
     }
 
-    public function initFromPreparedResponse(array $data = array(), array $messagesData = array(), $resultType = NULL)
+    public function initFromPreparedResponse(array $data = [], array $messagesData = [], $resultType = null)
     {
         $this->data = $data;
 
@@ -109,7 +112,6 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         foreach ($this->getMessages()->getErrorEntities() as $message) {
-
             if (!$message->isSenderSystem()) {
                 continue;
             }
@@ -126,13 +128,13 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
 
     private function initMessages(array $messagesData)
     {
-        $this->messages = $this->modelFactory->getObject('Connector\Connection\Response\Message\Set');
+        $this->messages = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
         $this->messages->init($messagesData);
     }
 
-    private function initResultType($resultType = NULL)
+    private function initResultType($resultType = null)
     {
-        if (!is_null($resultType)) {
+        if ($resultType !== null) {
             $this->resultType = $resultType;
             return;
         }

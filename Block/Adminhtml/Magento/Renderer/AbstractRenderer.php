@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
+/**
+ * Class AbstractRenderer
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Renderer
+ */
 abstract class AbstractRenderer
 {
     protected $helperFactory;
@@ -16,8 +20,7 @@ abstract class AbstractRenderer
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory
-    )
-    {
+    ) {
         $this->helperFactory = $helperFactory;
     }
 

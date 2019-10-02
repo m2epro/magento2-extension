@@ -13,6 +13,10 @@ use Ess\M2ePro\Helper\Client;
 use Ess\M2ePro\Helper\Magento;
 use Ess\M2ePro\Helper\Module as ModuleHelper;
 
+/**
+ * Class VersionsHistory
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs
+ */
 class VersionsHistory extends AbstractForm
 {
     //########################################
@@ -33,16 +37,16 @@ class VersionsHistory extends AbstractForm
 
     protected function _beforeToHtml()
     {
-        $this->setChild('inspection', $this->getLayout()->createBlock(
-            '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\Installation'
+        $this->setChild('inspection', $this->createBlock(
+            'ControlPanel_Inspection_Installation'
         ));
 
-        $this->setChild('setup_info', $this->getLayout()->createBlock(
-            '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\Installation'
+        $this->setChild('setup_info', $this->createBlock(
+            'ControlPanel_Info_Installation'
         ));
 
-        $this->setChild('public_versions_history', $this->getLayout()->createBlock(
-            '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\PublicVersionsHistory'
+        $this->setChild('public_versions_history', $this->createBlock(
+            'ControlPanel_Info_PublicVersionsHistory'
         ));
 
         return parent::_beforeToHtml();

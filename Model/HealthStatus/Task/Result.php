@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\HealthStatus\Task;
 
+/**
+ * Class Result
+ * @package Ess\M2ePro\Model\HealthStatus\Task
+ */
 class Result extends \Ess\M2ePro\Model\AbstractModel
 {
     const STATE_CRITICAL = 40;
@@ -30,12 +34,16 @@ class Result extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     public function __construct(
-        $taskHash, $taskType, $taskMustBeShownIfSuccess,
-        $tabName, $fieldSetName, $fieldName,
+        $taskHash,
+        $taskType,
+        $taskMustBeShownIfSuccess,
+        $tabName,
+        $fieldSetName,
+        $fieldName,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
         $this->taskHash = $taskHash;

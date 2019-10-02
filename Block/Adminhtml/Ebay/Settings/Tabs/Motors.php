@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs;
 
 use \Ess\M2ePro\Helper\Component\Ebay as EbayHelper;
 
+/**
+ * Class Motors
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs
+ */
 class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
     protected $attributeColFactory;
@@ -26,8 +30,7 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->attributeColFactory = $attributeColFactory;
         $this->ebayFactory = $ebayFactory;
         $this->resourceConnection = $resourceConnection;
@@ -44,12 +47,13 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
 
         $attributes = $magentoAttributeHelper->filterByInputTypes(
-            $magentoAttributeHelper->getAll(), ['textarea'], ['text']
+            $magentoAttributeHelper->getAll(),
+            ['textarea'],
+            ['text']
         );
 
         $preparedAttributes = ['' => '-- ' . $this->__('Select Attribute') . ' --'];
         foreach ($attributes as $attribute) {
-
             $preparedAttributes[] = [
                 'value' => $attribute['code'],
                 'label' => $attribute['label'],
@@ -66,13 +70,13 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 
         $motorsMarketplace = $this->ebayFactory->getObjectLoaded('Marketplace', EbayHelper::MARKETPLACE_MOTORS);
         if ($motorsMarketplace->isStatusEnabled() && $motorsMarketplace->getChildObject()->isEpidEnabled()) {
-
-            $attribute = $configModel->getGroupValue('/ebay/motors/','epids_motor_attribute');
+            $attribute = $configModel->getGroupValue('/ebay/motors/', 'epids_motor_attribute');
             list($ebayDictionaryCount, $customDictionaryCount) = $this->getMotorsDictionaryRecordCount(
                 \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_MOTOR
             );
 
-            $fieldset = $form->addFieldset('motors_epids_motor',
+            $fieldset = $form->addFieldset(
+                'motors_epids_motor',
                 [
                     'legend'      => $this->__('Parts Compatibility [ePIDs Motors]'),
                     'collapsable' => false,
@@ -86,7 +90,8 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
                 ]
             );
 
-            $fieldset->addField('motors_epids_motor_attribute',
+            $fieldset->addField(
+                'motors_epids_motor_attribute',
                 self::SELECT,
                 [
                     'name'    => 'motors_epids_motor_attribute',
@@ -110,7 +115,8 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
             $motorsType = \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_MOTOR;
             $popupTitle = $this->__('Manage Custom Compatibility [ePIDs Motor]');
 
-            $fieldset->addField('motors_epids_motor_database',
+            $fieldset->addField(
+                'motors_epids_motor_database',
                 self::CUSTOM_CONTAINER,
                 [
                     'label' => $this->__('Database'),
@@ -132,13 +138,13 @@ HTML
 
         $ukMarketplace = $this->ebayFactory->getObjectLoaded('Marketplace', EbayHelper::MARKETPLACE_UK);
         if ($ukMarketplace->isStatusEnabled() && $ukMarketplace->getChildObject()->isEpidEnabled()) {
-
-            $attribute = $configModel->getGroupValue('/ebay/motors/','epids_uk_attribute');
+            $attribute = $configModel->getGroupValue('/ebay/motors/', 'epids_uk_attribute');
             list($ebayDictionaryCount, $customDictionaryCount) = $this->getMotorsDictionaryRecordCount(
                 \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_UK
             );
 
-            $fieldset = $form->addFieldset('motors_epids_uk',
+            $fieldset = $form->addFieldset(
+                'motors_epids_uk',
                 [
                     'legend'      => $this->__('Parts Compatibility [ePIDs UK]'),
                     'collapsable' => false,
@@ -156,7 +162,8 @@ HTML
                 ]
             );
 
-            $fieldset->addField('motors_epids_uk_attribute',
+            $fieldset->addField(
+                'motors_epids_uk_attribute',
                 self::SELECT,
                 [
                     'name'    => 'motors_epids_uk_attribute',
@@ -180,7 +187,8 @@ HTML
             $motorsType = \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_UK;
             $popupTitle = $this->__('Manage Custom Compatibility [ePIDs UK]');
 
-            $fieldset->addField('motors_epids_uk_database',
+            $fieldset->addField(
+                'motors_epids_uk_database',
                 self::CUSTOM_CONTAINER,
                 [
                     'label' => $this->__('Database'),
@@ -202,13 +210,13 @@ HTML
 
         $deMarketplace = $this->ebayFactory->getObjectLoaded('Marketplace', EbayHelper::MARKETPLACE_DE);
         if ($deMarketplace->isStatusEnabled() && $deMarketplace->getChildObject()->isEpidEnabled()) {
-
-            $attribute = $configModel->getGroupValue('/ebay/motors/','epids_de_attribute');
+            $attribute = $configModel->getGroupValue('/ebay/motors/', 'epids_de_attribute');
             list($ebayDictionaryCount, $customDictionaryCount) = $this->getMotorsDictionaryRecordCount(
                 \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_DE
             );
 
-            $fieldset = $form->addFieldset('motors_epids_de',
+            $fieldset = $form->addFieldset(
+                'motors_epids_de',
                 [
                     'legend'      => $this->__('Parts Compatibility [ePIDs DE]'),
                     'collapsable' => false,
@@ -226,7 +234,8 @@ HTML
                 ]
             );
 
-            $fieldset->addField('motors_epids_de_attribute',
+            $fieldset->addField(
+                'motors_epids_de_attribute',
                 self::SELECT,
                 [
                     'name'    => 'motors_epids_de_attribute',
@@ -250,7 +259,8 @@ HTML
             $motorsType = \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_DE;
             $popupTitle = $this->__('Manage Custom Compatibility [ePIDs DE]');
 
-            $fieldset->addField('motors_epids_de_database',
+            $fieldset->addField(
+                'motors_epids_de_database',
                 self::CUSTOM_CONTAINER,
                 [
                     'label' => $this->__('Database'),
@@ -271,13 +281,13 @@ HTML
         }
 
         if ($this->getData('ktypes_enabled')) {
-
-            $attribute = $configModel->getGroupValue('/ebay/motors/','ktypes_attribute');
+            $attribute = $configModel->getGroupValue('/ebay/motors/', 'ktypes_attribute');
             list($ebayDictionaryCount, $customDictionaryCount) = $this->getMotorsDictionaryRecordCount(
                 \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE
             );
 
-            $fieldset = $form->addFieldset('motors_ktypes',
+            $fieldset = $form->addFieldset(
+                'motors_ktypes',
                 [
                     'legend'      => $this->__('Parts Compatibility [kTypes]'),
                     'collapsable' => false,
@@ -291,7 +301,8 @@ HTML
                 ]
             );
 
-            $fieldset->addField('motors_ktypes_attribute',
+            $fieldset->addField(
+                'motors_ktypes_attribute',
                 self::SELECT,
                 [
                     'name'    => 'motors_ktypes_attribute',
@@ -314,7 +325,8 @@ HTML
             $motorsType = \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE;
             $popupTitle = $this->__('Manage Custom Compatibility [kTypes]');
 
-            $fieldset->addField('motors_ktypes_database',
+            $fieldset->addField(
+                'motors_ktypes_database',
                 self::CUSTOM_CONTAINER,
                 [
                     'label' => $this->__('Database'),
@@ -350,10 +362,10 @@ HTML
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Ebay\Motors')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay\Motors::class)
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Settings\Motors'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Settings_Motors'));
 
         $this->js->add(<<<JS
     require([
@@ -382,18 +394,18 @@ JS
             ->select()
             ->from(
                 $type == \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE
-                    ? $this->getHelper('Module\Database\Structure')
+                    ? $this->getHelper('Module_Database_Structure')
                         ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_ktype')
-                    : $this->getHelper('Module\Database\Structure')
+                    : $this->getHelper('Module_Database_Structure')
                         ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_epid'),
-                array(
+                [
                     'count' => new \Zend_Db_Expr('COUNT(*)'),
                     'is_custom'
-                )
+                ]
             )
-            ->group(array('is_custom'));
+            ->group(['is_custom']);
 
-        $helper = $this->helperFactory->getObject('Component\Ebay\Motors');
+        $helper = $this->helperFactory->getObject('Component_Ebay_Motors');
         if ($helper->isTypeBasedOnEpids($type)) {
             $selectStmt->where('scope = ?', $helper->getEpidsScopeByType($type));
         }
@@ -405,7 +417,7 @@ JS
             $row['is_custom'] == 1 ? $custom = $row['count'] : $ebay = $row['count'];
         }
 
-        return array((int)$ebay, (int)$custom);
+        return [(int)$ebay, (int)$custom];
     }
 
     //########################################

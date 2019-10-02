@@ -10,12 +10,16 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Order
+ */
 class Grid extends Order
 {
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Order\Grid $grid */
-        $grid = $this->createBlock('Ebay\Order\Grid');
+        $grid = $this->createBlock('Ebay_Order_Grid');
 
         $this->setAjaxContent($grid->toHtml());
         return $this->getResult();

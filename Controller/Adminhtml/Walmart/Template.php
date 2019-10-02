@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
+/**
+ * Class Template
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart
+ */
 abstract class Template extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {
     //########################################

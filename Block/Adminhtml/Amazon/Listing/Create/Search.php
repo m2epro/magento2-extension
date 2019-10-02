@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create;
 
+/**
+ * Class Search
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create
+ */
 class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     //########################################
@@ -38,35 +42,37 @@ class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->removeButton('edit');
         // ---------------------------------------
 
-        // ---------------------------------------
-        $url = $this->getUrl('*/amazon_listing_create/index', array(
-            '_current' => true,
-            'step' => '2'
-        ));
-        $this->addButton('back', array(
-            'label'     => $this->__('Previous Step'),
-            'onclick'   => 'CommonObj.backClick(\'' . $url . '\')',
-            'class'     => 'action-primary back'
-        ));
-        // ---------------------------------------
+        if (!$this->getRequest()->getParam('exclude_control_buttons')) {
+            // ---------------------------------------
+            $url = $this->getUrl('*/amazon_listing_create/index', [
+                '_current' => true,
+                'step' => '2'
+            ]);
+            $this->addButton('back', [
+                'label'     => $this->__('Previous Step'),
+                'onclick'   => 'CommonObj.backClick(\'' . $url . '\')',
+                'class'     => 'action-primary back'
+            ]);
+            // ---------------------------------------
 
-        // ---------------------------------------
-        $url = $this->getUrl('*/amazon_listing_create/index', array(
-            '_current' => true
-        ));
-        $this->addButton('save_and_next', array(
-            'label'     => $this->__('Next Step'),
-            'onclick'   => 'CommonObj.saveClick(\'' . $url . '\')',
-            'class'     => 'action-primary forward'
-        ));
-        // ---------------------------------------
+            // ---------------------------------------
+            $url = $this->getUrl('*/amazon_listing_create/index', [
+                '_current' => true
+            ]);
+            $this->addButton('save_and_next', [
+                'label'     => $this->__('Next Step'),
+                'onclick'   => 'CommonObj.saveClick(\'' . $url . '\')',
+                'class'     => 'action-primary forward'
+            ]);
+            // ---------------------------------------
+        }
     }
 
     //########################################
 
     protected function _toHtml()
     {
-        $breadcrumb = $this->createBlock('Amazon\Listing\Create\Breadcrumb')
+        $breadcrumb = $this->createBlock('Amazon_Listing_Create_Breadcrumb')
             ->setSelectedStep((int)$this->getRequest()->getParam('step', 1));
 
         $helpBlock = $this->createBlock('HelpBlock')->setData([

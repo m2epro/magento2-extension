@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs;
 
+/**
+ * Class Recent
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs
+ */
 class Recent extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     protected $_template = 'walmart/template/category/categories/chooser/tabs/recent.phtml';
-    protected $_selectedCategory = array();
+    protected $_selectedCategory = [];
 
     //########################################
 
@@ -29,7 +33,7 @@ class Recent extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     public function getCategories()
     {
-        return $this->getHelper('Component\Walmart\Category')->getRecent(
+        return $this->getHelper('Component_Walmart_Category')->getRecent(
             $this->getRequest()->getPost('marketplace_id'),
             [
                 'product_data_nick' => $this->getRequest()->getPost('product_data_nick'),

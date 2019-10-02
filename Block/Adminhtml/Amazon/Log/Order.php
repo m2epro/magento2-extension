@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Log;
 
+/**
+ * Class Order
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Log
+ */
 class Order extends \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractContainer
 {
     //########################################
@@ -26,14 +30,14 @@ class Order extends \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractContainer
 
     protected function createAccountSwitcherBlock()
     {
-        return $this->createBlock('Amazon\Account\Switcher')->setData([
+        return $this->createBlock('Amazon_Account_Switcher')->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }
 
     protected function createMarketplaceSwitcherBlock()
     {
-        return $this->createBlock('Amazon\Marketplace\Switcher')->setData([
+        return $this->createBlock('Amazon_Marketplace_Switcher')->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }

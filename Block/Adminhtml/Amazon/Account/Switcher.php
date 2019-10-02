@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Account
+ */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Account\Switcher
 {
     //########################################
@@ -26,7 +30,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Account\Switcher
         $encodedMarketplaces = $this->getHelper('Data')->jsonEncode($marketplaces);
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Marketplace\Switcher $marketplaceSwitcher */
-        $marketplaceSwitcher = $this->createBlock('Amazon\Marketplace\Switcher')->setData([
+        $marketplaceSwitcher = $this->createBlock('Amazon_Marketplace_Switcher')->setData([
             'component_mode' => $this->getData('component_mode')
         ]);
 

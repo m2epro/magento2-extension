@@ -13,6 +13,10 @@ use Ess\M2ePro\Helper\Factory;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ResourceConnection;
 
+/**
+ * Class Tables
+ * @package Ess\M2ePro\Helper\Module\Database
+ */
 class Tables extends AbstractHelper
 {
     const PREFIX = 'm2epro_';
@@ -36,8 +40,8 @@ class Tables extends AbstractHelper
 
     public function getCurrentEntities()
     {
-        $result = array();
-        $currentTables = $this->helperFactory->getObject('Module\Database\Structure')->getMySqlTables();
+        $result = [];
+        $currentTables = $this->helperFactory->getObject('Module_Database_Structure')->getMySqlTables();
 
         foreach ($currentTables as $table) {
             $result[$table] = $this->getFullName($table);
@@ -50,14 +54,14 @@ class Tables extends AbstractHelper
 
     public function getCurrentConfigEntities()
     {
-        $result = array();
+        $result = [];
 
-        $currentConfigTables = array(
+        $currentConfigTables = [
             'primary_config',
             'module_config',
             'cache_config',
             'synchronization_config'
-        );
+        ];
 
         foreach ($currentConfigTables as $table) {
             $result[$table] = $this->getFullName($table);
@@ -75,7 +79,7 @@ class Tables extends AbstractHelper
 
     public function getFullName($tableName)
     {
-        return $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix(self::PREFIX.$tableName);
+        return $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(self::PREFIX.$tableName);
     }
 
     //########################################

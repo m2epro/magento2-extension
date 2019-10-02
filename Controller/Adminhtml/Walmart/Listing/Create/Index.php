@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Create;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Create
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {
     protected $sessionKey = 'walmart_listing_create';
@@ -24,7 +28,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
     public function execute()
     {
         if ($this->getRequest()->isPost()) {
-
             $listing = $this->createListing();
 
             if ($this->isCreationModeListingOnly()) {
@@ -34,14 +37,15 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
             }
 
             return $this->_redirect(
-                '*/walmart_listing_product_add/index',  array(
+                '*/walmart_listing_product_add/index',
+                [
                     'id' => $listing->getId(),
                     'new_listing' => 1
-                )
+                ]
             );
         }
 
-        $content = $this->createBlock('Walmart\Listing\Create');
+        $content = $this->createBlock('Walmart_Listing_Create');
         $this->addContent($content);
 
         $this->setPageHelpLink('x/NQBhAQ');
@@ -60,7 +64,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
         // ---------------------------------------
         /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->walmartFactory->getObjectLoaded(
-            'Account',(int)$post['account_id']
+            'Account',
+            (int)$post['account_id']
         );
         // ---------------------------------------
 
@@ -80,7 +85,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
         $tempLog->addListingMessage(
             $listing->getId(),
             \Ess\M2ePro\Helper\Data::INITIATOR_USER,
-            NULL,
+            null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_LISTING,
             // M2ePro_TRANSLATIONS
             // Listing was successfully Added

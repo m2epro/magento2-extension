@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+/**
+ * Class GetCategoryChooserHtml
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ */
 class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -20,38 +24,38 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
         $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId);
         // ---------------------------------------
 
-        $internalData = array();
+        $internalData = [];
 
         // ---------------------------------------
         $categoryTemplateIds  = $this->activeRecordFactory
-                                    ->getObject('Ebay\Listing\Product')
+                                    ->getObject('Ebay_Listing_Product')
                                     ->getResource()
                                     ->getTemplateCategoryIds($listingProductIds);
         $internalData = array_merge(
             $internalData,
-            $this->getHelper('Component\Ebay\Category\Ebay')->getSameTemplatesData($categoryTemplateIds)
+            $this->getHelper('Component_Ebay_Category_Ebay')->getSameTemplatesData($categoryTemplateIds)
         );
         // ---------------------------------------
         $otherCategoryTemplateIds = $this->activeRecordFactory
-                                        ->getObject('Ebay\Listing\Product')
+                                        ->getObject('Ebay_Listing_Product')
                                         ->getResource()
                                         ->getTemplateOtherCategoryIds($listingProductIds);
 
         $internalData = array_merge(
             $internalData,
-            $this->getHelper('Component\Ebay\Category\Store')->getSameTemplatesData($otherCategoryTemplateIds)
+            $this->getHelper('Component_Ebay_Category_Store')->getSameTemplatesData($otherCategoryTemplateIds)
         );
         // ---------------------------------------
 
-        /* @var $chooserBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser */
-        $chooserBlock = $this->createBlock('Ebay\Listing\Product\Category\Settings\Chooser');
+        /** @var $chooserBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser */
+        $chooserBlock = $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser');
         $chooserBlock->setDivId('chooser_main_container');
         $chooserBlock->setAccountId($listing->getAccountId());
         $chooserBlock->setMarketplaceId($listing->getMarketplaceId());
         $chooserBlock->setInternalData($internalData);
 
         // ---------------------------------------
-        $wrapper = $this->createBlock('Ebay\Listing\View\Settings\Category\Chooser\Wrapper');
+        $wrapper = $this->createBlock('Ebay_Listing_View_Settings_Category_Chooser_Wrapper');
         $wrapper->setChild('chooser', $chooserBlock);
         // ---------------------------------------
 

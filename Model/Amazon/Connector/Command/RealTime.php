@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Command;
 
+/**
+ * Class RealTime
+ * @package Ess\M2ePro\Model\Amazon\Connector\Command
+ */
 abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
 {
     /**
      * @var \Ess\M2ePro\Model\Account|null
      */
-    protected $account = NULL;
+    protected $account = null;
 
     //########################################
 
@@ -29,8 +33,7 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
         \Ess\M2ePro\Model\Factory $modelFactory,
         $account,
         array $params
-    )
-    {
+    ) {
         $this->account = $account;
         parent::__construct($helperFactory, $modelFactory, $params);
     }
@@ -42,7 +45,7 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
         $request = parent::buildRequestInstance();
 
         $requestData = $request->getData();
-        if (!is_null($this->account)) {
+        if ($this->account !== null) {
             $requestData['account'] = $this->account->getChildObject()->getServerHash();
         }
         $request->setData($requestData);

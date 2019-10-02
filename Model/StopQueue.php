@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model;
 
+/**
+ * Class StopQueue
+ * @package Ess\M2ePro\Model
+ */
 class StopQueue extends ActiveRecord\AbstractModel
 {
     //########################################
@@ -70,20 +74,20 @@ class StopQueue extends ActiveRecord\AbstractModel
 
         $itemData = $this->getItemDataByListingProduct($listingProduct);
 
-        if (is_null($itemData)) {
+        if ($itemData === null) {
             return false;
         }
 
         $marketplaceNativeId = $listingProduct->isComponentModeEbay() ?
-                                        $listingProduct->getMarketplace()->getNativeId() : NULL;
+                                        $listingProduct->getMarketplace()->getNativeId() : null;
 
-        $addedData = array(
+        $addedData = [
             'item_data' => $this->getHelper('Data')->jsonEncode($itemData),
             'account_hash' => $listingProduct->getAccount()->getChildObject()->getServerHash(),
             'marketplace_id' => $marketplaceNativeId,
             'component_mode' => $listingProduct->getComponentMode(),
             'is_processed' => 0
-        );
+        ];
 
         $this->activeRecordFactory->getObject('StopQueue')->setData($addedData)->save();
 
@@ -96,10 +100,10 @@ class StopQueue extends ActiveRecord\AbstractModel
         $connectorName .= $listingProduct->isComponentModeEbay() ? 'Item' : 'Product';
         $connectorName .= '\Stop\Requester';
 
-        $connectorParams = array(
+        $connectorParams = [
             'logs_action_id' => 0,
             'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN,
-        );
+        ];
 
         try {
 
@@ -113,11 +117,11 @@ class StopQueue extends ActiveRecord\AbstractModel
 
             $itemData = $connector->getRequestDataPackage();
         } catch (\Exception $exception) {
-            return NULL;
+            return null;
         }
 
         if (!isset($itemData['data'])) {
-            return NULL;
+            return null;
         }
 
         return $itemData['data'];

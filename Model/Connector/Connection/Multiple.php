@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\Connector\Connection;
 use \Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use \Ess\M2ePro\Model\Connector\Connection\Multiple\RequestContainer;
 
+/**
+ * Class Multiple
+ * @package Ess\M2ePro\Model\Connector\Connection
+ */
 class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Connector\Connection\Multiple\RequestContainer[] $request */
@@ -25,15 +29,14 @@ class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
 
     protected function sendRequest()
     {
-        $packages = array();
+        $packages = [];
 
         foreach ($this->getRequestsContainers() as $key => $requestContainer) {
-
-            $packages[$key] = array(
+            $packages[$key] = [
                 'headers' => $this->getHeaders($requestContainer->getRequest()),
                 'data'    => $this->getBody($requestContainer->getRequest()),
                 'timeout' => $requestContainer->getTimeout()
-            );
+            ];
         }
 
         return $this->getHelper('Server\Request')->multiple(
@@ -49,7 +52,7 @@ class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
     protected function processRequestResult(array $result)
     {
         $responseError = false;
-        $successResponses = array();
+        $successResponses = [];
 
         $connectionErrorMessage = 'The Action was not completed because connection with M2E Pro Server was not set.
         There are several possible reasons:  temporary connection problem – please wait and try again later;
@@ -62,11 +65,8 @@ class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
         .'">here</a>';
 
         foreach ($result as $key => $response) {
-
             try {
-
                 if ($response['body'] === false) {
-
                     throw new \Ess\M2ePro\Model\Exception\Connection(
                         $connectionErrorMessage,
                         [
@@ -77,21 +77,17 @@ class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
                     );
                 }
 
-                $responseObj = $this->modelFactory->getObject('Connector\Connection\Response');
+                $responseObj = $this->modelFactory->getObject('Connector_Connection_Response');
                 $responseObj->initFromRawResponse($response['body']);
                 $responseObj->setRequestTime($this->requestTime);
 
                 $this->responses[$key] = $responseObj;
                 $successResponses[] = $responseObj;
-
             } catch (\Ess\M2ePro\Model\Exception\Connection\InvalidResponse $exception) {
-
                 $responseError = true;
                 $this->responses[$key] = $this->createFailedResponse($connectionErrorMessage);
                 $this->getHelper('Module\Logger')->process($response, 'Invalid Response Format', false);
-
             } catch (\Exception $exception) {
-
                 $responseError = true;
                 $this->responses[$key] = $this->createFailedResponse($connectionErrorMessage);
                 $this->getHelper('Module\Exception')->process($exception, false);
@@ -103,13 +99,11 @@ class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
         }
 
         foreach ($successResponses as $response) {
-
             if ($response->getMessages()->hasSystemErrorEntity()) {
-
                 $exception = new \Ess\M2ePro\Model\Exception($this->getHelper('Module\Translation')->__(
                     "Internal Server Error(s) [%error_message%]",
                     $response->getMessages()->getCombinedSystemErrorsString()
-                ), array(), 0, !$response->isServerInMaintenanceMode());
+                ), [], 0, !$response->isServerInMaintenanceMode());
 
                 $this->getHelper('Module\Exception')->process($exception);
             }
@@ -120,15 +114,15 @@ class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
 
     private function createFailedResponse($errorMessage)
     {
-        $messages = array(array(
+        $messages = [[
             Message::CODE_KEY   => 0,
             Message::TEXT_KEY   => $errorMessage,
             Message::TYPE_KEY   => Message::TYPE_ERROR,
             Message::SENDER_KEY => Message::SENDER_SYSTEM
-        ));
+        ]];
 
-        $failedResponse = $this->modelFactory->getObject('Connector\Connection\Response');
-        $failedResponse->initFromPreparedResponse(array(), $messages);
+        $failedResponse = $this->modelFactory->getObject('Connector_Connection_Response');
+        $failedResponse->initFromPreparedResponse([], $messages);
         $failedResponse->setRequestTime($this->requestTime);
 
         return $failedResponse;
@@ -161,7 +155,7 @@ class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
      */
     public function getRequest($key)
     {
-        return isset($this->requestsContainers[$key]) ? $this->requestsContainers[$key]->getRequest() : NULL;
+        return isset($this->requestsContainers[$key]) ? $this->requestsContainers[$key]->getRequest() : null;
     }
 
     // ----------------------------------------
@@ -172,7 +166,7 @@ class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
      */
     public function getResponse($key)
     {
-        return isset($this->responses[$key]) ? $this->responses[$key] : NULL;
+        return isset($this->responses[$key]) ? $this->responses[$key] : null;
     }
 
     /**
@@ -209,21 +203,21 @@ class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
     {
         $command = $request->getCommand();
 
-        return array(
+        return [
             'M2EPRO-API-VERSION: '.self::API_VERSION,
             'M2EPRO-API-COMPONENT: '.$request->getComponent(),
             'M2EPRO-API-COMPONENT-VERSION: '.$request->getComponentVersion(),
             'M2EPRO-API-COMMAND: /'.$command[0] .'/'.$command[1].'/'.$command[2].'/'
-        );
+        ];
     }
 
     public function getBody(\Ess\M2ePro\Model\Connector\Connection\Request $request)
     {
-        return array(
+        return [
             'api_version' => self::API_VERSION,
             'request'     => $this->getHelper('Data')->jsonEncode($request->getInfo()),
             'data'        => $this->getHelper('Data')->jsonEncode($request->getData())
-        );
+        ];
     }
 
     // ########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Stop;
 
+/**
+ * Class Validator
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Stop
+ */
 class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
 {
     //########################################
@@ -33,19 +37,13 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
         }
 
         if ($this->getAmazonListingProduct()->isAfnChannel()) {
-
             if (!empty($params['remove'])) {
-
                 // M2ePro\TRANSLATIONS
                 // Stop Action for FBA Items is impossible as their Quantity is unknown.
                 $this->addMessage('Stop Action for FBA Items is impossible as their Quantity is unknown.');
                 $this->getListingProduct()->delete();
                 $this->getListingProduct()->isDeleted(true);
-
             } else {
-
-                // M2ePro\TRANSLATIONS
-                // Stop Action for FBA Items is impossible as their Quantity is unknown. You can run Revise Action for such Items, but the Quantity value will be ignored.
                 $this->addMessage('Stop Action for FBA Items is impossible as their Quantity is unknown. You can run
                  Revise Action for such Items, but the Quantity value will be ignored.');
             }
@@ -54,13 +52,10 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
         }
 
         if (!$this->getListingProduct()->isListed() || !$this->getListingProduct()->isStoppable()) {
-
             if (empty($params['remove'])) {
-
                 // M2ePro\TRANSLATIONS
                 // Item is not Listed or not available
                 $this->addMessage('Item is not active or not available');
-
             } else {
                 if ($this->getVariationManager()->isRelationChildType() &&
                     $this->getVariationManager()->getTypeModel()->isVariationProductMatched()

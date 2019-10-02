@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart;
 
+/**
+ * Class Listing
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart
+ */
 class Listing extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -19,15 +23,15 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->_controller = 'adminhtml_walmart_listing';
 
         // ---------------------------------------
-        $url = $this->getUrl('*/walmart_listing_create/index', array(
+        $url = $this->getUrl('*/walmart_listing_create/index', [
             'step' => '1',
             'clear' => 'yes'
-        ));
-        $this->addButton('add', array(
+        ]);
+        $this->addButton('add', [
             'label'     => $this->__('Add Listing'),
             'onclick'   => 'setLocation(\'' . $url . '\')',
             'class'     => 'action-primary'
-        ));
+        ]);
         // ---------------------------------------
     }
 
@@ -36,11 +40,10 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     protected function _prepareLayout()
     {
         $content = $this->__(
-            'On this page, you can review M2E Pro Listings that you set up.<br><br>
-
-            In the grid below, click M2E Pro Listing line to manage the Products placed to that Listing.
-            Use the Action menu next to the Listing to manage its Products, Settings or Logs.
-            The Mass Actions allows clearing Logs and or deleting Listings in bulk.'
+            'On this page, you can review M2E Pro Listings that you set up. <br>
+            In the grid below, click M2E Pro Listing line to manage the Products placed to that Listing. <br>
+            Use the Action menu next to the Listing to manage its Products, Settings or Logs. The Mass Actions allows
+            clearing Logs and/or deleting Listings in bulk.'
         );
 
         $this->appendHelpBlock([

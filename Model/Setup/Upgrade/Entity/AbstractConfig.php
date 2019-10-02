@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Setup\Upgrade\Entity;
 
+/**
+ * Class AbstractConfig
+ * @package Ess\M2ePro\Model\Setup\Upgrade\Entity
+ */
 abstract class AbstractConfig
 {
     //########################################

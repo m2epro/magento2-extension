@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\HealthStatus\Task\Server\Status;
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 
+/**
+ * Class SystemLogs
+ * @package Ess\M2ePro\Model\HealthStatus\Task\Server\Status
+ */
 class SystemLogs extends IssueType
 {
     const COUNT_CRITICAL_LEVEL = 1500;
@@ -30,7 +34,7 @@ class SystemLogs extends IssueType
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory);
         $this->resultFactory = $resultFactory;
         $this->activeRecordFactory = $activeRecordFactory;
@@ -47,10 +51,9 @@ class SystemLogs extends IssueType
         $result->setTaskData($exceptionsCount);
 
         if ($exceptionsCount >= self::COUNT_WARNING_LEVEL) {
-
             $result->setTaskResult(TaskResult::STATE_WARNING);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-<<<HTML
+            <<<HTML
 M2E Pro records into the internal System Log all messages about any failure, temporary issues which might
 potentially have a negative impact on running of M2E Pro.
 There were <b>%exceptions%</b> new messages recorded during the last hour.
@@ -63,10 +66,9 @@ HTML
         }
 
         if ($exceptionsCount >= self::COUNT_CRITICAL_LEVEL) {
-
             $result->setTaskResult(TaskResult::STATE_CRITICAL);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-<<<HTML
+            <<<HTML
 M2E Pro records into the internal System Log all messages about any failure, temporary issues which might
 potentially have a negative impact on running of M2E Pro.
 There were <b>%exceptions%</b> new messages recorded during the last hour.

@@ -8,18 +8,22 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked;
 
+/**
+ * Class ItemsRequester
+ * @package Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
+ */
 class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {
     // ########################################
 
     public function getRequestData()
     {
-        return array();
+        return [];
     }
 
     public function getCommand()
     {
-        return array('inventory','get','skusItems');
+        return ['inventory','get','skusItems'];
     }
 
     // ########################################

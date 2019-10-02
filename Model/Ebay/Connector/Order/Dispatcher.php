@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Order;
 
+/**
+ * Class Dispatcher
+ * @package Ess\M2ePro\Model\Ebay\Connector\Order
+ */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
     const ACTION_PAY        = 1;
@@ -22,29 +26,34 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
 
     // ########################################
 
-    public function process($action, $orders, array $params = array())
+    public function process($action, $orders, array $params = [])
     {
         $orders = $this->prepareOrders($orders);
 
         switch ($action) {
             case self::ACTION_PAY:
                 $result = $this->processOrders(
-                    $orders, $action, 'Ebay\Connector\Order\Update\Payment', $params
+                    $orders,
+                    $action,
+                    'Ebay_Connector_Order_Update_Payment',
+                    $params
                 );
                 break;
 
             case self::ACTION_SHIP:
             case self::ACTION_SHIP_TRACK:
                 $result = $this->processOrders(
-                    $orders, $action, 'Ebay\Connector\Order\Update\Shipping', $params
+                    $orders,
+                    $action,
+                    'Ebay_Connector_Order_Update_Shipping',
+                    $params
                 );
                 break;
 
@@ -58,7 +67,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     // ########################################
 
-    protected function processOrders(array $orders, $action, $connectorName, array $params = array())
+    protected function processOrders(array $orders, $action, $connectorName, array $params = [])
     {
         if (count($orders) == 0) {
             return false;
@@ -67,9 +76,9 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         /** @var $orders \Ess\M2ePro\Model\Order[] */
 
         foreach ($orders as $order) {
-
             try {
-                $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+                /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcher */
+                $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
 
                 /** @var \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractModel $connector */
                 $connector = $dispatcher->getCustomConnector($connectorName, $params);
@@ -83,12 +92,12 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                 }
             } catch (\Exception $e) {
                 $order->addErrorLog(
-                    'eBay Order Action was not completed. Reason: %msg%', array('msg' => $e->getMessage())
+                    'eBay Order Action was not completed. Reason: %msg%',
+                    ['msg' => $e->getMessage()]
                 );
 
                 return false;
             }
-
         }
 
         return true;
@@ -98,9 +107,9 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     protected function prepareOrders($orders)
     {
-        !is_array($orders) && $orders = array($orders);
+        !is_array($orders) && $orders = [$orders];
 
-        $preparedOrders = array();
+        $preparedOrders = [];
 
         foreach ($orders as $order) {
             if ($order instanceof \Ess\M2ePro\Model\Order) {

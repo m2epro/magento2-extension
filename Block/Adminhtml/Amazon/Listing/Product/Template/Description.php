@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template;
 
+/**
+ * Class Description
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template
+ */
 class Description extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template
 {
     protected $newAsin = false;
@@ -27,7 +31,8 @@ class Description extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Tem
         if ($this->isNewAsin()) {
             $helpBlock = $this->createBlock('HelpBlock')->setData([
 //                'title' => $this->__('Assign Description Policy for New ASIN/ISBN Creation'),
-                'content' => $this->__('
+                'content' => $this->__(
+                    '
     For New ASIN/ISBN Creation you should select a prepared Description Policy,
     where New ASIN/ISBN Creation feature is obviously <strong>Enabled</strong>.<br/>
     If Description Policy cannot be assigned you will see a reason why it cannot become a base for
@@ -55,8 +60,7 @@ class Description extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Tem
     Option in Actions bulk at the top of the Grid;</li>
     <li>clicking on a Plus Icon in <strong>ASIN/ISBN Column</strong>
     of a Grid and selecting an <strong>Assign Settings for New ASIN/ISBN</strong> Option in an opened pop-up.</li>
-    </ul>'
-                )
+    </ul>')
             ]);
         }
 

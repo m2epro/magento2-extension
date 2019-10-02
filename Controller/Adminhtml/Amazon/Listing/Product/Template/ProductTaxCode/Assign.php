@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Produc
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode;
 
+/**
+ * Class Assign
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode
+ */
 class Assign extends ProductTaxCode
 {
     public function execute()
@@ -26,31 +30,31 @@ class Assign extends ProductTaxCode
             $productsIds = explode(',', $productsIds);
         }
 
-        $messages = array();
+        $messages = [];
         $productsIdsLocked = $this->filterLockedProducts($productsIds);
 
         if (count($productsIdsLocked) < count($productsIds)) {
-            $messages[] = array(
+            $messages[] = [
                 'type' => 'warning',
                 'text' => '<p>' . $this->__(
-                        'Product Tax Code Policy cannot be assigned to some Products
-                         because the Products are in Action'). '</p>'
-            );
+                    'Product Tax Code Policy cannot be assigned to some Products
+                         because the Products are in Action'
+                ). '</p>'
+            ];
         }
 
         if (!empty($productsIdsLocked)) {
-
-            $messages[] = array(
+            $messages[] = [
                 'type' => 'success',
                 'text' => $this->__('Product Tax Code Policy was successfully assigned.')
-            );
+            ];
 
             $this->setProductTaxCodeTemplateForProducts($productsIdsLocked, $templateId);
             $this->runProcessorForParents($productsIdsLocked);
 
             /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode $template */
-            $template = $this->activeRecordFactory->getObjectLoaded('Amazon\Template\ProductTaxCode', $templateId);
-            $template->setSynchStatusNeed($template->getDataSnapshot(),array());
+            $template = $this->activeRecordFactory->getObjectLoaded('Amazon_Template_ProductTaxCode', $templateId);
+            $template->setSynchStatusNeed($template->getDataSnapshot(), []);
         }
 
         $this->setJsonContent([

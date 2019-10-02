@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\OtherCategory;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Ebay\Template\OtherCategory
+ */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $activeRecordFactory;
@@ -18,8 +22,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -28,16 +31,15 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     public function build(array $data)
     {
-        $otherCategoryTemplateData = array();
+        $otherCategoryTemplateData = [];
 
-        $categoryPrefixes = array(
+        $categoryPrefixes = [
             'category_secondary_',
             'store_category_main_',
             'store_category_secondary_'
-        );
+        ];
 
         foreach ($categoryPrefixes as $prefix) {
-
             $otherCategoryTemplateData[$prefix.'mode']       = (int)$data[$prefix.'mode'];
             $otherCategoryTemplateData[$prefix.'id']         = (float)$data[$prefix.'id'];
             $otherCategoryTemplateData[$prefix.'attribute']  = (string)$data[$prefix.'attribute'];
@@ -55,7 +57,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             return $otherCategoryTemplate;
         }
 
-        $categoryTemplate = $this->activeRecordFactory->getObject('Ebay\Template\OtherCategory')
+        $categoryTemplate = $this->activeRecordFactory->getObject('Ebay_Template_OtherCategory')
             ->setData($otherCategoryTemplateData);
         $categoryTemplate->save();
 
@@ -71,10 +73,10 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
      */
     private function getTemplateIfTheSameAlreadyExists(array $templateData)
     {
-        $collection = $this->activeRecordFactory->getObject('Ebay\Template\OtherCategory')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Ebay_Template_OtherCategory')->getCollection();
 
         foreach ($templateData as $field => $fieldValue) {
-            is_null($fieldValue) && $filter = array('null' => true);
+            $fieldValue === null && $filter = ['null' => true];
             $collection->addFieldToFilter($field, $fieldValue);
         }
 

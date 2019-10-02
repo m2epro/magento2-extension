@@ -10,22 +10,26 @@ namespace Ess\M2ePro\Model\Listing\Product;
 
 use Ess\M2ePro\Model\Exception\Logic;
 
+/**
+ * Class QtyCalculator
+ * @package Ess\M2ePro\Model\Listing\Product
+ */
 abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
      * @var null|array
      */
-    protected $source = NULL;
+    protected $source = null;
 
     /**
      * @var null|\Ess\M2ePro\Model\Listing\Product
      */
-    private $product = NULL;
+    private $product = null;
 
     /**
      * @var null|int
      */
-    private $productValueCache = NULL;
+    private $productValueCache = null;
 
     protected $moduleConfig;
 
@@ -35,8 +39,7 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->moduleConfig  = $moduleConfig;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -59,7 +62,7 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function getProduct()
     {
-        if (is_null($this->product)) {
+        if ($this->product === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Initialize all parameters first.');
         }
 
@@ -108,13 +111,13 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
      * @param null|string $key
      * @return array|mixed
      */
-    protected function getSource($key = NULL)
+    protected function getSource($key = null)
     {
-        if (is_null($this->source)) {
+        if ($this->source === null) {
             $this->source = $this->getComponentSellingFormatTemplate()->getQtySource();
         }
 
-        return (!is_null($key) && isset($this->source[$key])) ?
+        return ($key !== null && isset($this->source[$key])) ?
                 $this->source[$key] : $this->source;
     }
 
@@ -138,7 +141,7 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
 
     public function getProductValue()
     {
-        if (!is_null($this->productValueCache)) {
+        if ($this->productValueCache !== null) {
             return $this->productValueCache;
         }
 
@@ -165,7 +168,6 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
     protected function getClearProductValue()
     {
         switch ($this->getSource('mode')) {
-
             case \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_SINGLE:
                 $value = 1;
                 break;
@@ -207,14 +209,11 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
             $this->getMagentoProduct()->isGroupedType() ||
             $this->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()
         ) {
-
             $options = $variation->getOptions(true);
             $value = $this->getOptionBaseValue(reset($options));
-
-        } else if ($this->getMagentoProduct()->isBundleType()) {
-
-            $optionsQtyList = array();
-            $optionsQtyArray = array();
+        } elseif ($this->getMagentoProduct()->isBundleType()) {
+            $optionsQtyList = [];
+            $optionsQtyArray = [];
 
             // grouping qty by product id
             foreach ($variation->getOptions(true) as $option) {
@@ -230,14 +229,15 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
             }
 
             !empty($optionsQtyArray) && $value = min($optionsQtyList);
-
         } else {
-            throw new Logic('Unknown Product type.',
-                array(
+            throw new Logic(
+                'Unknown Product type.',
+                [
                     'listing_product_id' => $this->getProduct()->getId(),
                     'product_id' => $this->getMagentoProduct()->getProductId(),
                     'type'       => $this->getMagentoProduct()->getTypeId()
-                ));
+                ]
+            );
         }
 
         return $value;
@@ -303,7 +303,7 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
             return $value;
         }
 
-        $roundingFunction = (bool)(int)$this->moduleConfig->getGroupValue('/qty/percentage/','rounding_greater')
+        $roundingFunction = (bool)(int)$this->moduleConfig->getGroupValue('/qty/percentage/', 'rounding_greater')
             ? 'ceil' : 'floor';
 
         return (int)$roundingFunction(($value/100) * $percents);

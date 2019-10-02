@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
+/**
+ * Class SetNoteToFilters
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ */
 class SetNoteToFilters extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
@@ -21,13 +25,12 @@ class SetNoteToFilters extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $filtersIds = explode(',', $filtersIds);
         }
 
-        $tableName = $this->activeRecordFactory->getObject('Ebay\Motor\Filter')->getResource()->getMainTable();
+        $tableName = $this->activeRecordFactory->getObject('Ebay_Motor_Filter')->getResource()->getMainTable();
 
         $connection = $this->resourceConnection->getConnection();
-        $connection->update($tableName, array(
+        $connection->update($tableName, [
             'note' => $note
-        ), '`id` IN ('.implode(',', $filtersIds).')'
-        );
+        ], '`id` IN ('.implode(',', $filtersIds).')');
 
         $this->setAjaxContent(0, false);
 

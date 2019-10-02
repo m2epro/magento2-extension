@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class Fulfillment
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product
+ */
 abstract class Fulfillment extends Main
 {
     protected function getSwitchFulfillmentResultMessage($result)
@@ -35,9 +39,9 @@ abstract class Fulfillment extends Main
             $messageText = $this->__('Fulfillment switching is in progress now. Please wait.');
         }
 
-        return array(
+        return [
             'type' => $messageType,
             'text' => $messageText
-        );
+        ];
     }
 }

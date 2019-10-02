@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Product;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Model\Magento\Product
+ */
 class Index extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $indexerFactory;
@@ -19,8 +23,7 @@ class Index extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\Indexer\IndexerInterfaceFactory $indexerFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->indexerFactory = $indexerFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -44,9 +47,9 @@ class Index extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getIndexes()
     {
-        return array(
+        return [
             'cataloginventory_stock'
-        );
+        ];
     }
 
     //########################################

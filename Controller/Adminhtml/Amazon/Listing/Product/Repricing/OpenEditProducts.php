@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing;
 
+/**
+ * Class OpenEditProducts
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing
+ */
 class OpenEditProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
     public function execute()
@@ -21,7 +25,7 @@ class OpenEditProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         }
 
         /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->amazonFactory->getObjectLoaded('Account', $accountId, NULL, false);
+        $account = $this->amazonFactory->getObjectLoaded('Account', $accountId, null, false);
 
         if (!$account->getId()) {
             $this->getMessageManager()->addError($this->__('Account does not exist.'));
@@ -39,7 +43,7 @@ class OpenEditProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         );
 
         /** @var $repricingAction \Ess\M2ePro\Model\Amazon\Repricing\Action\Product */
-        $repricingAction = $this->modelFactory->getObject('Amazon\Repricing\Action\Product');
+        $repricingAction = $this->modelFactory->getObject('Amazon_Repricing_Action_Product');
         $repricingAction->setAccount($account);
         $serverRequestToken = $repricingAction->sendEditProductsActionData($productsIds, $backUrl);
 
@@ -51,8 +55,9 @@ class OpenEditProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         }
 
         return $this->_redirect(
-            $this->getHelper('Component\Amazon\Repricing')->prepareActionUrl(
-                \Ess\M2ePro\Helper\Component\Amazon\Repricing::COMMAND_OFFERS_EDIT, $serverRequestToken
+            $this->getHelper('Component_Amazon_Repricing')->prepareActionUrl(
+                \Ess\M2ePro\Helper\Component\Amazon\Repricing::COMMAND_OFFERS_EDIT,
+                $serverRequestToken
             )
         );
     }

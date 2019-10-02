@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add;
 
+/**
+ * Class SourceMode
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add
+ */
 class SourceMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     const MODE_PRODUCT = 'product';
@@ -42,23 +46,23 @@ class SourceMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContai
         // ---------------------------------------
 
         if (!$this->getRequest()->getParam('listing_creation', false)) {
-            $url = $this->getUrl('*/ebay_listing/view',array(
+            $url = $this->getUrl('*/ebay_listing/view', [
                 'id' => $this->getRequest()->getParam('id')
-            ));
-            $this->addButton('back', array(
+            ]);
+            $this->addButton('back', [
                 'label'     => $this->__('Back'),
                 'onclick'   => 'setLocation(\''.$url.'\')',
                 'class'     => 'back'
-            ));
+            ]);
         }
 
         // ---------------------------------------
-        $url = $this->getUrl('*/*/*',array('_current' => true));
-        $this->addButton('next', array(
+        $url = $this->getUrl('*/*/*', ['_current' => true]);
+        $this->addButton('next', [
             'label'     => $this->__('Continue'),
             'onclick'   => 'CommonObj.submitForm(\''.$url.'\');',
             'class'     => 'action-primary forward'
-        ));
+        ]);
         // ---------------------------------------
     }
 
@@ -67,7 +71,9 @@ class SourceMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContai
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
 
         $viewHeaderBlock = $this->createBlock(
-            'Listing\View\Header','', ['data' => ['listing' => $listing]]
+            'Listing_View_Header',
+            '',
+            ['data' => ['listing' => $listing]]
         );
 
         return $viewHeaderBlock->toHtml() . parent::_toHtml();

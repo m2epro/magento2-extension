@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Config\Cache;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Config\Cache
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     // ########################################

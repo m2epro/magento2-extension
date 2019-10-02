@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist;
 
 use \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Request as ListActionRequest;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist
+ */
 class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Request
 {
     //########################################
@@ -17,9 +21,9 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
     protected function getActionData()
     {
         $data = array_merge(
-            array(
+            [
                 'sku' => $this->getAmazonListingProduct()->getSku()
-            ),
+            ],
             $this->getRequestQty()->getRequestData(),
             $this->getRequestPrice()->getRequestData(),
             $this->getRequestDetails()->getRequestData(),
@@ -28,10 +32,10 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
         );
 
         if ($this->getVariationManager()->isRelationChildType()) {
-            $variationData = array(
+            $variationData = [
                 'parentage'  => ListActionRequest::PARENTAGE_CHILD,
                 'attributes' => $this->getVariationManager()->getTypeModel()->getChannelOptions(),
-            );
+            ];
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $parentAmazonListingProduct */
             $parentAmazonListingProduct = $this->getVariationManager()

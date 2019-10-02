@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Marketplaces;
 
+/**
+ * Class Categories
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\Marketplaces
+ */
 class Categories extends AbstractModel
 {
     //########################################
@@ -50,8 +54,8 @@ class Categories extends AbstractModel
 
     protected function initialize()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues(
-           \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay::CACHE_TAG
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues(
+            \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay::CACHE_TAG
         );
     }
 
@@ -70,8 +74,10 @@ class Categories extends AbstractModel
         for ($i = 0; $i < 100; $i++) {
             $this->getActualLockItem()->setPercents($this->getPercentsStart());
 
-            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'get'.$marketplace->getId(),
-                'Get Categories from eBay, part № ' . $partNumber);
+            $this->getActualOperationHistory()->addTimePoint(
+                __METHOD__.'get'.$marketplace->getId(),
+                'Get Categories from eBay, part № ' . $partNumber
+            );
             $response = $this->receiveFromEbay($marketplace, $partNumber);
             $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$marketplace->getId());
 
@@ -85,8 +91,10 @@ class Categories extends AbstractModel
             $this->getActualLockItem()->setPercents($this->getPercentsStart() + $this->getPercentsInterval()/2);
             $this->getActualLockItem()->activate();
 
-            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'save'.$marketplace->getId(),
-                'Save Categories to DB');
+            $this->getActualOperationHistory()->addTimePoint(
+                __METHOD__.'save'.$marketplace->getId(),
+                'Save Categories to DB'
+            );
             $this->saveCategoriesToDb($marketplace, $response['data']);
             $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'save'.$marketplace->getId());
 
@@ -95,7 +103,7 @@ class Categories extends AbstractModel
 
             $partNumber = $response['next_part'];
 
-            if (is_null($partNumber)) {
+            if ($partNumber === null) {
                 break;
             }
         }
@@ -107,16 +115,21 @@ class Categories extends AbstractModel
 
     protected function receiveFromEbay(\Ess\M2ePro\Model\Marketplace $marketplace, $partNumber)
     {
-        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorObj  = $dispatcherObj->getVirtualConnector('marketplace','get','categories',
-                                                            array('part_number' => $partNumber),
-                                                            NULL,$marketplace->getId());
+        $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        $connectorObj  = $dispatcherObj->getVirtualConnector(
+            'marketplace',
+            'get',
+            'categories',
+            ['part_number' => $partNumber],
+            null,
+            $marketplace->getId()
+        );
 
         $dispatcherObj->process($connectorObj);
         $response = $connectorObj->getResponseData();
 
-        if (is_null($response) || empty($response['data'])) {
-            $response = array();
+        if ($response === null || empty($response['data'])) {
+            $response = [];
         }
 
         $dataCount = isset($response['data']) ? count($response['data']) : 0;
@@ -128,10 +141,10 @@ class Categories extends AbstractModel
     protected function deleteAllCategories(\Ess\M2ePro\Model\Marketplace $marketplace)
     {
         $connWrite = $this->resourceConnection->getConnection();
-        $tableCategories = $this->getHelper('Module\Database\Structure')
+        $tableCategories = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
-        $connWrite->delete($tableCategories,array('marketplace_id = ?' => $marketplace->getId()));
+        $connWrite->delete($tableCategories, ['marketplace_id = ?' => $marketplace->getId()]);
     }
 
     protected function saveCategoriesToDb(\Ess\M2ePro\Model\Marketplace $marketplace, array $categories)
@@ -141,20 +154,19 @@ class Categories extends AbstractModel
         }
 
         $connWrite = $this->resourceConnection->getConnection();
-        $tableCategories = $this->getHelper('Module\Database\Structure')
+        $tableCategories = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
         $iteration            = 0;
         $iterationsForOneStep = 1000;
         $categoriesCount      = count($categories);
         $percentsForOneStep   = ($this->getPercentsInterval()/2) / ($categoriesCount/$iterationsForOneStep);
-        $insertData           = array();
+        $insertData           = [];
 
         for ($i = 0; $i < $categoriesCount; $i++) {
-
             $data = $categories[$i];
 
-            $insertData[] = array(
+            $insertData[] = [
                 'marketplace_id'     => $marketplace->getId(),
                 'category_id'        => $data['category_id'],
                 'parent_category_id' => $data['parent_id'],
@@ -162,13 +174,13 @@ class Categories extends AbstractModel
                 'path'               => $data['path'],
                 'is_leaf'            => $data['is_leaf'],
                 'features'           => (
-                    $data['is_leaf'] ? $this->getHelper('Data')->jsonEncode($data['features']) : NULL
+                    $data['is_leaf'] ? $this->getHelper('Data')->jsonEncode($data['features']) : null
                 )
-            );
+            ];
 
             if (count($insertData) >= 100 || $i >= ($categoriesCount - 1)) {
                 $connWrite->insertMultiple($tableCategories, $insertData);
-                $insertData = array();
+                $insertData = [];
             }
 
             if (++$iteration % $iterationsForOneStep == 0) {
@@ -187,12 +199,14 @@ class Categories extends AbstractModel
 
         $tempString = $this->getHelper('Module\Log')->encodeDescription(
             'The "Categories" Action for Marketplace: "%mrk%" has been successfully completed.',
-            array('mrk' => $marketplace->getTitle())
+            ['mrk' => $marketplace->getTitle()]
         );
 
-        $this->getLog()->addMessage($tempString,
-                                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
-                                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW);
+        $this->getLog()->addMessage(
+            $tempString,
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+        );
     }
 
     //########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description;
 
+/**
+ * Class Unassign
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description
+ */
 class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description
 {
     public function execute()
@@ -26,35 +30,37 @@ class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
 
         $productsIdsTemp = $this->filterProductsForMapOrUnmapDescriptionTemplate($productsIds);
 
-        $messages = array();
+        $messages = [];
 
         if (count($productsIdsTemp) == 0) {
-            $messages[] = array(
+            $messages[] = [
                 'type' => 'warning',
                 'text' => '<p>' . $this->__(
-                        'Description Policy cannot be unassigned from some Products because they are
-                     participating in the new ASIN(s)/ISBN(s) creation.') . '</p>'
-            );
+                    'Description Policy cannot be unassigned from some Products because they are
+                     participating in the new ASIN(s)/ISBN(s) creation.'
+                ) . '</p>'
+            ];
         } else {
             $productsIdsLocked = $this->filterLockedProducts($productsIdsTemp);
 
             if (count($productsIdsLocked) < count($productsIds)) {
-                $messages[] = array(
+                $messages[] = [
                     'type' => 'warning',
                     'text' => '<p>' . $this->__(
-                            'Description Policy cannot be unassigned because the Products are in Action or
-                         in the process of new ASIN(s)/ISBN(s) Creation.'). '</p>'
-                );
+                        'Description Policy cannot be unassigned because the Products are in Action or
+                         in the process of new ASIN(s)/ISBN(s) Creation.'
+                    ). '</p>'
+                ];
             }
         }
 
         if (!empty($productsIdsLocked)) {
-            $messages[] = array(
+            $messages[] = [
                 'type' => 'success',
                 'text' => $this->__('Description Policy was successfully unassigned.')
-            );
+            ];
 
-            $this->setDescriptionTemplateForProducts($productsIdsLocked, NULL);
+            $this->setDescriptionTemplateForProducts($productsIdsLocked, null);
             $this->runProcessorForParents($productsIdsLocked);
         }
 

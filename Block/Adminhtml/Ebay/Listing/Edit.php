@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing
+ */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     private $isEdit = false;
@@ -41,29 +45,30 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
         if ($listing) {
             // ---------------------------------------
-            $url = $this->getUrl('*/ebay_listing/view', array('id' => $listing->getId()));
+            $url = $this->getUrl('*/ebay_listing/view', ['id' => $listing->getId()]);
 
             if ($this->getRequest()->getParam('back')) {
                 $url = $this->getHelper('Data')->getBackUrl();
             }
 
-            $this->addButton('back', array(
+            $this->addButton('back', [
                 'label'     => $this->__('Back'),
                 'onclick'   => 'CommonObj.backClick(\'' . $url . '\')',
                 'class'     => 'back'
-            ));
+            ]);
             // ---------------------------------------
 
             // ---------------------------------------
             $backUrl = $this->getHelper('Data')->makeBackUrlParam(
-                '*/ebay_listing/view', array('id' => $listing->getId())
+                '*/ebay_listing/view',
+                ['id' => $listing->getId()]
             );
             $url = $this->getUrl(
                 '*/ebay_template/saveListing',
-                array(
+                [
                     'id' => $listing->getId(),
                     'back' => $backUrl
-                )
+                ]
             );
             $callback = 'function(params) { CommonObj.postForm(\''.$url.'\', params); }';
             $saveButtonsProps = ['save' => [
@@ -75,11 +80,12 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
             // ---------------------------------------
             $backUrl = $this->getHelper('Data')->makeBackUrlParam('*/ebay_template/editListing');
-            $url = $this->getUrl('*/ebay_template/saveListing',
-                array(
+            $url = $this->getUrl(
+                '*/ebay_template/saveListing',
+                [
                     'id' => $listing->getId(),
                     'back' => $backUrl
-                )
+                ]
             );
 
             $callback = 'function(params) { CommonObj.postForm(\''.$url.'\', params); }';
@@ -108,13 +114,13 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 // ---------------------------------------
                 $url = $this->getUrl(
                     '*/ebay_listing_create/index',
-                    array('_current' => true, 'step' => $prevStep)
+                    ['_current' => true, 'step' => $prevStep]
                 );
-                $this->addButton('back', array(
+                $this->addButton('back', [
                     'label'     => $this->__('Previous Step'),
                     'onclick'   => 'CommonObj.backClick(\'' . $url . '\')',
                     'class'     => 'back primary'
-                ));
+                ]);
                 // ---------------------------------------
             }
 
@@ -124,19 +130,19 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             $sessionData = $this->getHelper('Data\Session')->getValue($sessionKey);
             if ($currentStep == 4 && isset($sessionData['creation_mode']) && $sessionData['creation_mode'] ===
                 \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY) {
-
                 $nextStepBtnText = 'Complete';
             }
             // ---------------------------------------
             $url = $this->getUrl(
-                '*/ebay_listing_create/index', array('_current' => true, 'step' => $currentStep)
+                '*/ebay_listing_create/index',
+                ['_current' => true, 'step' => $currentStep]
             );
             $callback = 'function(params) { CommonObj.postForm(\''.$url.'\', params); }';
-            $this->addButton('save', array(
+            $this->addButton('save', [
                 'label'     => $this->__($nextStepBtnText),
                 'onclick'   => 'EbayListingTemplateSwitcherObj.saveSwitchers(' . $callback . ')',
                 'class'     => 'action-primary forward'
-            ));
+            ]);
             // ---------------------------------------
         }
 
@@ -150,10 +156,10 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         parent::_beforeToHtml();
 
         // ---------------------------------------
-        $data = array(
+        $data = [
             'allowed_tabs' => $this->getAllowedTabs()
-        );
-        $tabs = $this->createBlock('Ebay\Listing\Edit\Tabs');
+        ];
+        $tabs = $this->createBlock('Ebay_Listing_Edit_Tabs');
         $tabs->addData($data);
         $this->setChild('tabs', $tabs);
         // ---------------------------------------
@@ -166,7 +172,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
     public function getAllowedTabs()
     {
         if (!isset($this->_data['allowed_tabs']) || !is_array($this->_data['allowed_tabs'])) {
-            return array();
+            return [];
         }
 
         return $this->_data['allowed_tabs'];
@@ -180,23 +186,14 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $tabs = $this->getChildBlock('tabs');
 
         // ---------------------------------------
-        $html .= $this->createBlock('Ebay\Listing\Template\Switcher\Initialization')->toHtml();
+        $html .= $this->createBlock('Ebay_Listing_Template_Switcher_Initialization')->toHtml();
         // ---------------------------------------
-
-//        // ---------------------------------------
-//        $data = array(
-//            'display_tab_buttons' => false
-//        );
-//        $block = $this->getLayout()->createBlock('M2ePro/adminhtml_widget_floatingToolbarFixer');
-//        $block->addData($data);
-//        $html .= $block->toHtml();
-//        // ---------------------------------------
 
         // ---------------------------------------
         $listing = $this->getHelper('Data\GlobalData')->getValue('ebay_listing');
         $headerHtml = '';
         if ($listing) {
-            $headerBlock =  $this->createBlock('Listing\View\Header','', [
+            $headerBlock =  $this->createBlock('Listing_View_Header', '', [
                 'data' => ['listing' => $listing]
             ]);
             $headerBlock->setListingViewMode(true);

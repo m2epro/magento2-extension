@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\Installation\Registration;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
+/**
+ * Class Content
+ * @package Ess\M2ePro\Block\Adminhtml\Wizard\Installation\Registration
+ */
 abstract class Content extends AbstractForm
 {
     protected $authSession;
@@ -20,8 +24,7 @@ abstract class Content extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->authSession = $authSession;
 
         parent::__construct($context, $registry, $formFactory, $data);
@@ -29,7 +32,9 @@ abstract class Content extends AbstractForm
 
     protected function _prepareLayout()
     {
-        $this->getLayout()->getBlock('wizard.help.block')->setContent($this->__(<<<HTML
+        $this->getLayout()->getBlock('wizard.help.block')->setContent(
+            $this->__(
+                <<<HTML
 M2E Pro requires activation for further work. To activate your installation,
 you should obtain a <strong>License Key</strong>. For more details, please read our
 <a href="%1%" target="_blank">Privacy Policy</a>.<br/><br/>
@@ -39,9 +44,10 @@ License Key will be generated automatically.<br/><br/>
 Having access to your Account on clients.m2epro.com will let you manage your Subscription,
 monitor Trial and Paid Period terms, control License Key(s) data, etc.
 HTML
-            , $this->getHelper('Module\Support')->getWebsiteUrl() . 'privacy'
-            , $this->getHelper('Module\Support')->getClientsPortalUrl()
-        )
+                ,
+                $this->getHelper('Module\Support')->getWebsiteUrl() . 'privacy',
+                $this->getHelper('Module\Support')->getClientsPortalUrl()
+            )
         );
 
         parent::_prepareLayout();

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Edit;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Edit
+ */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs
 {
     //########################################
@@ -27,28 +31,28 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
     protected function _beforeToHtml()
     {
         // ---------------------------------------
-        $block = $this->createBlock('Amazon\Listing\Create\Selling\Form');
+        $block = $this->createBlock('Amazon_Listing_Create_Selling_Form');
         $block->setUseFormContainer(false);
         $this->addTab(
             'selling',
-            array(
+            [
                 'label'   => $this->__('Selling Settings'),
                 'title'   => $this->__('Selling Settings'),
                 'content' => $block->toHtml()
-            )
+            ]
         );
         // ---------------------------------------
 
         // ---------------------------------------
-        $block = $this->createBlock('Amazon\Listing\Create\Search\Form');
+        $block = $this->createBlock('Amazon_Listing_Create_Search_Form');
         $block->setUseFormContainer(false);
         $this->addTab(
             'search',
-            array(
+            [
                 'label'   => $this->__('Search Settings'),
                 'title'   => $this->__('Search Settings'),
                 'content' => $block->toHtml()
-            )
+            ]
         );
         // ---------------------------------------
 

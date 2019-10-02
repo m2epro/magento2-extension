@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Search;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Search
+ */
 class Index extends Main
 {
     //########################################
@@ -27,9 +31,9 @@ class Index extends Main
             $listingType = $this->getRequest()->getParam('listing_type', false);
 
             if ($listingType == \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_LISTING_OTHER) {
-                $gridBlock = 'Walmart\Listing\Search\Other\Grid';
+                $gridBlock = 'Walmart_Listing_Search_Other_Grid';
             } else {
-                $gridBlock = 'Walmart\Listing\Search\Product\Grid';
+                $gridBlock = 'Walmart_Listing_Search_Product_Grid';
             }
 
             $this->setAjaxContent(
@@ -38,7 +42,7 @@ class Index extends Main
             return $this->getResult();
         }
 
-        $this->addContent($this->createBlock('Walmart\Listing\Search'));
+        $this->addContent($this->createBlock('Walmart_Listing_Search'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Search Products'));
 
         return $this->getResult();

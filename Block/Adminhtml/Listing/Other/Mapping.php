@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Other;
 
+/**
+ * Class Mapping
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\Other
+ */
 class Mapping extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     protected $_template = 'listing/other/mapping.phtml';
@@ -26,19 +30,19 @@ class Mapping extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     protected function _beforeToHtml()
     {
         // ---------------------------------------
-        $data = array(
+        $data = [
             'id'    => 'mapping_submit_button',
             'label' => $this->__('Confirm'),
             'class' => 'mapping_submit_button submit'
-        );
+        ];
         $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
-        $this->setChild('mapping_submit_button',$buttonBlock);
+        $this->setChild('mapping_submit_button', $buttonBlock);
         // ---------------------------------------
 
         // ---------------------------------------
         $this->setChild(
             'mapping_grid',
-            $this->createBlock('Listing\Other\Mapping\Grid')
+            $this->createBlock('Listing_Other_Mapping_Grid')
         );
         // ---------------------------------------
 

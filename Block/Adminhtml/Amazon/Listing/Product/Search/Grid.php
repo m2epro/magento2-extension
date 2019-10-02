@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     private $productId;
@@ -33,8 +37,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->customCollectionFactory = $customCollectionFactory;
         $this->resourceConnection = $resourceConnection;
         $this->localeCurrency = $localeCurrency;
@@ -51,11 +54,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $this->productId = $this->getHelper('Data\GlobalData')->getValue('product_id');
         $this->listingProduct = $this->parentFactory->getObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Product', $this->productId
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Listing\Product',
+            $this->productId
         );
 
-        $this->matcherAttributes = $this->modelFactory->getObject('Amazon\Listing\Product\Variation\Matcher\Attribute');
-        $this->matcherOptions = $this->modelFactory->getObject('Amazon\Listing\Product\Variation\Matcher\Option');
+        $this->matcherAttributes = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Matcher_Attribute');
+        $this->matcherOptions = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Matcher_Option');
 
         $this->currency = $this->parentFactory
             ->getCachedObjectLoaded(
@@ -89,7 +94,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collection = $this->customCollectionFactory->create();
 
         foreach ($data['data'] as $index => $item) {
-            $temp = array(
+            $temp = [
                 'id' => $index,
                 'general_id' => $item['general_id'],
                 'brand' => $item['brand'],
@@ -97,15 +102,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'image_url' => $item['image_url'],
                 'price' => isset($item['list_price']['amount']) ? $item['list_price']['amount'] : null,
                 'is_variation_product' => $item['is_variation_product']
-            );
+            ];
 
             if ($temp['is_variation_product']) {
                 if (!$item['bad_parent']) {
-                    $temp += array(
+                    $temp += [
                         'parentage' => $item['parentage'],
                         'variations' => $item['variations'],
                         'bad_parent' => $item['bad_parent']
-                    );
+                    ];
                 } else {
                     $temp['bad_parent'] = $item['bad_parent'];
                 }
@@ -127,7 +132,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('image', array(
+        $this->addColumn('image', [
             'header'       => $this->__('Image'),
             'align'        => 'center',
             'type'         => 'text',
@@ -135,10 +140,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'        => 'image_url',
             'filter'       => false,
             'sortable'     => false,
-            'frame_callback' => array($this, 'callbackColumnImage')
-        ));
+            'frame_callback' => [$this, 'callbackColumnImage']
+        ]);
 
-        $this->addColumn('title', array(
+        $this->addColumn('title', [
             'header'       => $this->__('Title'),
             'align'        => 'left',
             'type'         => 'text',
@@ -148,10 +153,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'escape'       => false,
             'filter'       => false,
             'sortable'     => false,
-            'frame_callback' => array($this, 'callbackColumnTitle'),
-        ));
+            'frame_callback' => [$this, 'callbackColumnTitle'],
+        ]);
 
-        $this->addColumn('price',array(
+        $this->addColumn('price', [
             'header'       => $this->__('Price'),
             'width'        => '60px',
             'align'        => 'right',
@@ -159,10 +164,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter'       => false,
             'sortable'     => false,
             'type'         => 'number',
-            'frame_callback' => array($this, 'callbackColumnPrice')
-        ));
+            'frame_callback' => [$this, 'callbackColumnPrice']
+        ]);
 
-        $this->addColumn('general_id', array(
+        $this->addColumn('general_id', [
             'header'       => $this->__('ASIN / ISBN'),
             'align'        => 'center',
             'type'         => 'text',
@@ -170,19 +175,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'        => 'general_id',
             'filter'       => false,
             'sortable'     => false,
-            'frame_callback' => array($this, 'callbackColumnGeneralId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnGeneralId']
+        ]);
 
-        $this->addColumn('actions', array(
+        $this->addColumn('actions', [
             'header'       => $this->__('Action'),
             'align'        => 'center',
             'type'         => 'text',
             'width'        => '78px',
             'filter'       => false,
             'sortable'     => false,
-            'frame_callback' => array($this, 'callbackColumnActions'),
-        ));
-
+            'frame_callback' => [$this, 'callbackColumnActions'],
+        ]);
     }
 
     //########################################
@@ -205,7 +209,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {$parentAsinText}
 </div>
 HTML;
-
     }
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
@@ -234,7 +237,6 @@ HTML;
         $variations = $row->getData('variations');
 
         if ($this->listingProduct->getChildObject()->getVariationManager()->isRelationParentType()) {
-
             $magentoProductAttributesHtml = '';
             $magentoProductAttributesJs = '';
 
@@ -263,7 +265,6 @@ HTML;
                 $matchedAttributes = $this->matcherAttributes->getMatchedAttributes();
                 $attributeId = 0;
                 foreach ($matchedAttributes as $magentoAttr => $amazonAttr) {
-
                     $magentoProductAttributesHtml .= '<span style="margin-left: 10px;
                                             font-size: 11px;
                                             color: #808080;
@@ -275,7 +276,7 @@ HTML;
                                        $this->getHelper('Data')->escapeHtml($magentoAttr) . '"
                                        id="magento_product_attribute_'.$attributeId.'_'.$id.'">';
                     $magentoProductAttributesHtml .=
-<<<HTML
+                    <<<HTML
 <select
     class="select admin__control-select amazon_product_attribute_{$id}"
     onchange="ListingGridHandlerObj.productSearchHandler.attributesChange(this)"
@@ -284,13 +285,11 @@ HTML;
     id="amazon_product_attribute_{$attributeId}_{$id}">
 HTML;
 
-                    if (!array_key_exists($amazonAttr,$variations['set']))
-                    {
+                    if (!array_key_exists($amazonAttr, $variations['set'])) {
                         $magentoProductAttributesHtml .= '<option class="empty" value=""></option>';
                     }
 
                     foreach ($variations['set'] as $attrKey => $attrData) {
-
                         $selected = '';
                         if ($attrKey == $amazonAttr) {
                             $selected = 'selected';
@@ -313,7 +312,6 @@ JS;
                     $this->getHelper('Data')->jsonEncode($variations).
                     '</div>';
             } else {
-
                 $matchedAttributes = json_encode($this->matcherAttributes->getMatchedAttributes(), JSON_FORCE_OBJECT);
                 $destinationAttributes = $this->getHelper('Data')->jsonEncode($destinationAttributes);
 
@@ -369,7 +367,6 @@ HTML;
     ListingGridHandlerObj.productSearchHandler.renderMatchedAttributesVirtualView({$id});
 </script>
 HTML;
-
                 } else {
                     $value .= <<<HTML
 <script type="application/javascript">
@@ -395,7 +392,7 @@ HTML;
         if ($this->listingProduct->getChildObject()->getVariationManager()->isIndividualType() &&
             $this->listingProduct->getChildObject()->getVariationManager()->getTypeModel()->isVariationProductMatched()
         ) {
-            $channelVariations = array();
+            $channelVariations = [];
             foreach ($variations['asins'] as $asin => $asinAttributes) {
                 $channelVariations[$asin] = $asinAttributes['specifics'];
             }
@@ -421,7 +418,7 @@ HTML;
             $requestedChildAsin = $row->getData('requested_child_id');
         }
 
-        $selectedOptions = array();
+        $selectedOptions = [];
         if ($requestedChildAsin) {
             $selectedOptions = $variations['asins'][$requestedChildAsin]['specifics'];
         }
@@ -442,7 +439,7 @@ HTML;
             $attributeValues .= '<input type="hidden" value="' . $this->getHelper('Data')->escapeHtml($specificName) .
                                 '" class="specifics_name_'.$id.'">';
             $attributeValues .=
-<<<HTML
+            <<<HTML
 <select
     class="select admin__control-select specifics_{$id}"
     onchange="ListingGridHandlerObj.productSearchHandler.specificsChange(this)"
@@ -455,7 +452,6 @@ HTML;
 
             if (!empty($requestedChildAsin)) {
                 foreach ($specific as $option) {
-
                     $selected = '';
                     if ($selectedOptions[$specificName] == $option) {
                         $selected = 'selected';
@@ -511,7 +507,6 @@ HTML;
         if (!$this->listingProduct->getChildObject()->getVariationManager()->isVariationProduct()
             || $this->listingProduct->getChildObject()->getVariationManager()->isIndividualType()) {
             if (!$row->getData('is_variation_product')) {
-
                 return <<<HTML
 <a href="javascript:void(0);" onclick="ListingGridHandlerObj.productSearchHandler.mapToGeneralId(
     {$this->productId}, '{$row->getData('general_id')}');">{$assignText}</a>
@@ -519,7 +514,6 @@ HTML;
             }
 
             if (!$row->getData('bad_parent')) {
-
                 $msg = $this->__(
                     'Please select necessary Options for this Amazon Product to be able to assign ASIN/ISBN.'
                 );
@@ -539,7 +533,6 @@ HTML;
         }
 
         if ($row->getData('is_variation_product') && !$row->getData('bad_parent')) {
-
             $msg = $this->__(
                 'Please map Amazon and Magento Attributes for this Amazon Product to be able to assign ASIN/ISBN.'
             );
@@ -556,7 +549,7 @@ HTML;
                     Be careful, as the number of  Magento Attributes is more than the number of Attributes in Amazon
                     Parent Product. Thus you should select fixed Value for unmatched Magento Variational Attribute.'
                 );
-            } else if ($this->matcherAttributes->isDestinationAmountGreater()) {
+            } elseif ($this->matcherAttributes->isDestinationAmountGreater()) {
                 $msg = $this->__(
                     'Please map Magento and Amazon Attributes for this Amazon Product to be able to assign ASIN/ISBN.
                     Be careful, as the number of Attributes in Amazon Parent Product is more than the number of
@@ -575,7 +568,6 @@ HTML;
 );">{$assignText}</a>
 </div>
 HTML;
-
         }
 
         $msg = $this->__(
@@ -666,7 +658,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/amazon_listing/getSuggestedAsinGrid', array('_current'=>true));
+        return $this->getUrl('*/amazon_listing/getSuggestedAsinGrid', ['_current'=>true]);
     }
 
     public function getRowUrl($row)
@@ -678,7 +670,7 @@ HTML;
 
     private function getChannelVariationsTree($variations)
     {
-        $channelVariations = array();
+        $channelVariations = [];
         foreach ($variations['asins'] as $asin => $asinAttributes) {
             $channelVariations[$asin] = $asinAttributes['specifics'];
         }
@@ -690,11 +682,13 @@ HTML;
         $firstAttribute = key($variations['set']);
 
         return $this->prepareVariations(
-            $firstAttribute, $channelVariations, $variations['set']
+            $firstAttribute,
+            $channelVariations,
+            $variations['set']
         );
     }
 
-    private function prepareVariations($currentAttribute, $variations, $variationsSets,$filters = array())
+    private function prepareVariations($currentAttribute, $variations, $variationsSets, $filters = [])
     {
         $return = false;
 
@@ -704,16 +698,17 @@ HTML;
         $currentAttributePosition = $temp[$currentAttribute];
 
         if ($currentAttributePosition != $lastAttributePosition) {
-
             $temp = array_keys($variationsSets);
             $nextAttribute = $temp[$currentAttributePosition + 1];
 
             foreach ($variationsSets[$currentAttribute] as $option) {
-
                 $filters[$currentAttribute] = $option;
 
                 $result = $this->prepareVariations(
-                    $nextAttribute,$variations,$variationsSets,$filters
+                    $nextAttribute,
+                    $variations,
+                    $variationsSets,
+                    $filters
                 );
 
                 if (!$result) {
@@ -733,15 +728,13 @@ HTML;
         $return = false;
         foreach ($variations as $key => $magentoVariation) {
             foreach ($magentoVariation as $attribute => $option) {
-
                 if ($attribute == $currentAttribute) {
-
                     if (count($variationsSets) != 1) {
                         continue;
                     }
 
                     $values = array_flip($variationsSets[$currentAttribute]);
-                    $return = array($currentAttribute => $values);
+                    $return = [$currentAttribute => $values];
 
                     foreach ($return[$currentAttribute] as &$option) {
                         $option = true;

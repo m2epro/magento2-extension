@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
+/**
+ * Class NewAction
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Description
+ */
 class NewAction extends Template
 {
     public function execute()

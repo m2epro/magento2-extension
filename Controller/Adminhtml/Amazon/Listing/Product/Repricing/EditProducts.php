@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing;
 
+/**
+ * Class EditProducts
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing
+ */
 class EditProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
     public function execute()
@@ -21,7 +25,7 @@ class EditProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         }
 
         /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->amazonFactory->getObjectLoaded('Account', $accountId, NULL, false);
+        $account = $this->amazonFactory->getObjectLoaded('Account', $accountId, null, false);
 
         if (!$account->getId()) {
             $this->getMessageManager()->addError($this->__('Account does not exist.'));
@@ -29,13 +33,12 @@ class EditProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         }
 
         /** @var $repricingAction \Ess\M2ePro\Model\Amazon\Repricing\Action\Product */
-        $repricingAction = $this->modelFactory->getObject('Amazon\Repricing\Action\Product');
+        $repricingAction = $this->modelFactory->getObject('Amazon_Repricing_Action_Product');
         $repricingAction->setAccount($account);
         $response = $repricingAction->getActionResponseData($responseToken);
 
         if (!empty($response['messages'])) {
             foreach ($response['messages'] as $message) {
-
                 if ($message['type'] == 'notice') {
                     $this->getMessageManager()->addNotice($message['text']);
                 }
@@ -58,13 +61,13 @@ class EditProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             return $this->_redirect($this->getUrl('*/amazon_listing/view', ['id' => $listingId]));
         }
 
-        $skus = array();
+        $skus = [];
         foreach ($response['offers'] as $offer) {
             $skus[] = $offer['sku'];
         }
 
         /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General */
-        $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\General');
+        $repricingSynchronization = $this->modelFactory->getObject('Amazon_Repricing_Synchronization_General');
         $repricingSynchronization->setAccount($account);
         $repricingSynchronization->run($skus);
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Connector\Product;
 
+/**
+ * Class Dispatcher
+ * @package Ess\M2ePro\Model\Walmart\Connector\Product
+ */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
     private $logsActionId = null;
@@ -23,8 +27,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->walmartFactory = $walmartFactory;
         parent::__construct($helperFactory, $modelFactory, $data);
@@ -38,15 +41,15 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      * @param array $params
      * @return int
      */
-    public function process($action, $products, array $params = array())
+    public function process($action, $products, array $params = [])
     {
-        $params = array_merge(array(
+        $params = array_merge([
             'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN
-        ), $params);
+        ], $params);
 
         if (empty($params['logs_action_id'])) {
-            $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')
-                                                            ->getResource()->getNextActionId();
+            $this->logsActionId =
+                $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId();
             $params['logs_action_id'] = $this->logsActionId;
         } else {
             $this->logsActionId = $params['logs_action_id'];
@@ -77,12 +80,11 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     protected function processGroupedProducts(
         array $sortedProductsData,
         $action,
-        array $params = array()
+        array $params = []
     ) {
-        $results = array();
+        $results = [];
 
         foreach ($sortedProductsData as $products) {
-
             if (empty($products)) {
                 continue;
             }
@@ -101,11 +103,10 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      * @param array $params
      * @return int
      */
-    protected function processProduct(\Ess\M2ePro\Model\Listing\Product $product, $action, array $params = array())
+    protected function processProduct(\Ess\M2ePro\Model\Listing\Product $product, $action, array $params = [])
     {
         try {
-
-            $dispatcher = $this->modelFactory->getObject('Walmart\Connector\Dispatcher');
+            $dispatcher = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
             $connectorName = 'Walmart\Connector\Product\\' . $this->getActionNick($action) . '\Requester';
 
             /** @var \Ess\M2ePro\Model\Walmart\Connector\Product\Requester $connector */
@@ -115,12 +116,10 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             $dispatcher->process($connector);
 
             return $connector->getStatus();
-
         } catch (\Exception $exception) {
-
             $this->getHelper('Module\Exception')->process($exception);
 
-            $logModel = $this->activeRecordFactory->getObject('Walmart\Listing\Log');
+            $logModel = $this->activeRecordFactory->getObject('Walmart_Listing_Log');
 
             $action = $this->recognizeActionForLogging($action, $params);
             $initiator = $this->recognizeInitiatorForLogging($params);
@@ -150,21 +149,21 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     protected function prepareProducts($products)
     {
         if (!is_array($products)) {
-            $products = array($products);
+            $products = [$products];
         }
 
-        $preparedProducts = array();
-        $parentsForProcessing = array();
+        $preparedProducts = [];
+        $parentsForProcessing = [];
 
         foreach ($products as $listingProduct) {
-
             if (is_numeric($listingProduct)) {
                 if (isset($preparedProducts[(int)$listingProduct])) {
                     continue;
                 }
 
                 $listingProduct = $this->walmartFactory->getObjectLoaded(
-                    'Listing\Product', (int)$listingProduct
+                    'Listing\Product',
+                    (int)$listingProduct
                 );
             }
 
@@ -205,14 +204,14 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $massProcessor = $this->modelFactory->getObject(
-            'Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass'
+            'Walmart_Listing_Product_Variation_Manager_Type_Relation_ParentRelation_Processor_Mass'
         );
         $massProcessor->setListingsProducts($parentsForProcessing);
         $massProcessor->execute();
 
-        $actionConfigurators = array();
+        $actionConfigurators = [];
         foreach ($preparedProducts as $id => $listingProduct) {
-            if (is_null($listingProduct->getActionConfigurator())) {
+            if ($listingProduct->getActionConfigurator() === null) {
                 continue;
             }
 
@@ -221,17 +220,17 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('id', array('in' => array_keys($preparedProducts)));
+        $listingProductCollection->addFieldToFilter('id', ['in' => array_keys($preparedProducts)]);
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $actualListingsProducts */
         $actualListingsProducts = $listingProductCollection->getItems();
 
         if (empty($actualListingsProducts)) {
-            return array();
+            return [];
         }
 
         foreach ($actualListingsProducts as $id => $actualListingProduct) {
-            if (is_null($actionConfigurators[$id])) {
+            if ($actionConfigurators[$id] === null) {
                 continue;
             }
 
@@ -243,7 +242,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     protected function sortProductsByAccount($products)
     {
-        $sortedProducts = array();
+        $sortedProducts = [];
 
         /** @var $product \Ess\M2ePro\Model\Listing\Product */
         foreach ($products as $product) {

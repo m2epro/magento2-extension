@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Log;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid as WidgetAbstractGrid;
 
+/**
+ * Class AbstractGrid
+ * @package Ess\M2ePro\Block\Adminhtml\Log
+ */
 abstract class AbstractGrid extends WidgetAbstractGrid
 {
     const LISTING_ID_FIELD = 'listing_id';
@@ -25,8 +29,7 @@ abstract class AbstractGrid extends WidgetAbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
 
         parent::__construct($context, $backendHelper, $data);
@@ -53,7 +56,7 @@ abstract class AbstractGrid extends WidgetAbstractGrid
             return $this->getRequest()->getParam($this::LISTING_PRODUCT_ID_FIELD);
         }
 
-        return NULL;
+        return null;
     }
 
     protected function getEntityField()
@@ -66,7 +69,7 @@ abstract class AbstractGrid extends WidgetAbstractGrid
             return $this::LISTING_PRODUCT_ID_FIELD;
         }
 
-        return NULL;
+        return null;
     }
 
     //########################################
@@ -93,16 +96,17 @@ abstract class AbstractGrid extends WidgetAbstractGrid
     // ---------------------------------------
 
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-    protected $listingProduct = NULL;
+    protected $listingProduct = null;
 
     /**
      * @return \Ess\M2ePro\Model\Listing\Product|null
      */
     public function getListingProduct()
     {
-        if (is_null($this->listingProduct)) {
+        if ($this->listingProduct === null) {
             $this->listingProduct = $this->activeRecordFactory->getObjectLoaded(
-                'Listing\Product', $this->getListingProductId()
+                'Listing\Product',
+                $this->getListingProductId()
             );
         }
 
@@ -111,39 +115,52 @@ abstract class AbstractGrid extends WidgetAbstractGrid
 
     //########################################
 
+    protected function _setCollectionOrder($column)
+    {
+        // We need to sort by id to maintain the correct sequence of records
+        $collection = $this->getCollection();
+        if ($collection) {
+            $columnIndex = $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
+            $collection->getSelect()->order($columnIndex . ' ' . strtoupper($column->getDir()))->order('id DESC');
+        }
+
+        return $this;
+    }
+
+    //########################################
+
     protected function _getLogTypeList()
     {
-        return array(
+        return [
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE => $this->__('Notice'),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => $this->__('Success'),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => $this->__('Warning'),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => $this->__('Error')
-        );
+        ];
     }
 
     protected function _getLogPriorityList()
     {
-        return array(
+        return [
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH => $this->__('High'),
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM => $this->__('Medium'),
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW => $this->__('Low')
-        );
+        ];
     }
 
     protected function _getLogInitiatorList()
     {
-        return array(
+        return [
             \Ess\M2ePro\Helper\Data::INITIATOR_USER => $this->__('Manual'),
             \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION => $this->__('Automatic')
-        );
+        ];
     }
 
     //########################################
 
     public function callbackColumnType($value, $row, $column, $isExport)
     {
-         switch ($row->getData('type')) {
-
+        switch ($row->getData('type')) {
             case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE:
                 break;
 
@@ -195,9 +212,9 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/grid', array(
+        return $this->getUrl('*/*/grid', [
             '_current' => true,
-        ));
+        ]);
     }
 
     //########################################

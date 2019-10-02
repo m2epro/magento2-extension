@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Connector\Connection;
 
+/**
+ * Class Single
+ * @package Ess\M2ePro\Model\Connector\Connection
+ */
 class Single extends \Ess\M2ePro\Model\Connector\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Connector\Connection\Request $request */
-    private $request = NULL;
+    private $request = null;
 
     /** @var \Ess\M2ePro\Model\Connector\Connection\Response $response */
-    private $response = NULL;
+    private $response = null;
 
     private $timeout = 300;
 
@@ -22,11 +26,11 @@ class Single extends \Ess\M2ePro\Model\Connector\AbstractModel
 
     protected function sendRequest()
     {
-        $package = array(
+        $package = [
             'headers' => $this->getHeaders(),
             'data'    => $this->getBody(),
             'timeout' => $this->getTimeout()
-        );
+        ];
 
         return $this->getHelper('Server\Request')->single(
             $package,
@@ -40,13 +44,10 @@ class Single extends \Ess\M2ePro\Model\Connector\AbstractModel
     protected function processRequestResult(array $result)
     {
         try {
-
-            $this->response = $this->modelFactory->getObject('Connector\Connection\Response');
+            $this->response = $this->modelFactory->getObject('Connector_Connection_Response');
             $this->response->initFromRawResponse($result['body']);
             $this->response->setRequestTime($this->requestTime);
-
         } catch (\Ess\M2ePro\Model\Exception\Connection\InvalidResponse $exception) {
-
             $this->isTryToSwitchEndpointOnError() && $this->helperFactory->getObject('Server')->switchEndpoint();
 
             $this->getHelper('Module\Logger')->process($result, 'Invalid Response Format', false);
@@ -65,11 +66,10 @@ class Single extends \Ess\M2ePro\Model\Connector\AbstractModel
         }
 
         if ($this->getResponse()->getMessages()->hasSystemErrorEntity()) {
-
             throw new \Ess\M2ePro\Model\Exception($this->getHelper('Module\Translation')->__(
                 "Internal Server Error(s) [%error_message%]",
                 $this->getResponse()->getMessages()->getCombinedSystemErrorsString()
-            ), array(), 0, !$this->getResponse()->isServerInMaintenanceMode());
+            ), [], 0, !$this->getResponse()->isServerInMaintenanceMode());
         }
     }
 
@@ -139,21 +139,21 @@ class Single extends \Ess\M2ePro\Model\Connector\AbstractModel
     {
         $command = $this->getRequest()->getCommand();
 
-        return array(
+        return [
             'M2EPRO-API-VERSION: '.self::API_VERSION,
             'M2EPRO-API-COMPONENT: '.$this->getRequest()->getComponent(),
             'M2EPRO-API-COMPONENT-VERSION: '.$this->getRequest()->getComponentVersion(),
             'M2EPRO-API-COMMAND: /'.$command[0] .'/'.$command[1].'/'.$command[2].'/'
-        );
+        ];
     }
 
     public function getBody()
     {
-        return array(
+        return [
             'api_version' => self::API_VERSION,
             'request'     => $this->getHelper('Data')->jsonEncode($this->getRequest()->getInfo()),
             'data'        => $this->getHelper('Data')->jsonEncode($this->getRequest()->getData())
-        );
+        ];
     }
 
     // ########################################

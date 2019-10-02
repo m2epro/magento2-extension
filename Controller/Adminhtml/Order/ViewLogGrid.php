@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
+/**
+ * Class ViewLogGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Order
+ */
 class ViewLogGrid extends Order
 {
     public function execute()
@@ -19,7 +23,7 @@ class ViewLogGrid extends Order
 
         $this->getHelper('Data\GlobalData')->setValue('order', $order);
 
-        $grid = $this->createBlock('Order\View\Log\Grid');
+        $grid = $this->createBlock('Order_View_Log_Grid');
 
         $this->setAjaxContent($grid->toHtml());
         return $this->getResult();

@@ -14,6 +14,10 @@ use Ess\M2ePro\Helper\View\Ebay;
 use Ess\M2ePro\Helper\View\Walmart;
 use Ess\M2ePro\Helper\Module\Maintenance as Maintenance;
 
+/**
+ * Class Config
+ * @package Ess\M2ePro\Plugin\Menu\Magento\Backend\Model\Menu
+ */
 class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     const MENU_STATE_REGISTRY_KEY = '/menu/state/';
@@ -33,8 +37,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
         \Magento\Backend\Model\Menu\Item\Factory $itemFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->pageConfig = $pageConfig;
         $this->itemFactory = $itemFactory;
@@ -57,10 +60,11 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     // ---------------------------------------
 
-    protected function processGetMenu(\Magento\Backend\Model\Menu\Config $interceptor,
-                                      \Closure $callback,
-                                      array $arguments)
-    {
+    protected function processGetMenu(
+        \Magento\Backend\Model\Menu\Config $interceptor,
+        \Closure $callback,
+        array $arguments
+    ) {
         /** @var \Magento\Backend\Model\Menu $menuModel */
         $menuModel = $callback(...$arguments);
 
@@ -72,21 +76,22 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
         // ---------------------------------------
 
-        $maintenanceMenuState = $this->helperFactory->getObject('Data\Cache\Permanent')->getValue(
+        $maintenanceMenuState = $this->helperFactory->getObject('Data_Cache_Permanent')->getValue(
             self::MAINTENANCE_MENU_STATE_CACHE_KEY
         );
 
         if ($this->helperFactory->getObject('Module\Maintenance')->isEnabled()) {
-            if (is_null($maintenanceMenuState)) {
-                $this->helperFactory->getObject('Data\Cache\Permanent')->setValue(
-                    self::MAINTENANCE_MENU_STATE_CACHE_KEY, true
+            if ($maintenanceMenuState === null) {
+                $this->helperFactory->getObject('Data_Cache_Permanent')->setValue(
+                    self::MAINTENANCE_MENU_STATE_CACHE_KEY,
+                    true
                 );
                 $this->helperFactory->getObject('Magento')->clearMenuCache();
             }
             $this->processMaintenance($menuModel);
             return $menuModel;
-        } elseif(!is_null($maintenanceMenuState)) {
-            $this->helperFactory->getObject('Data\Cache\Permanent')->removeValue(
+        } elseif ($maintenanceMenuState !== null) {
+            $this->helperFactory->getObject('Data_Cache_Permanent')->removeValue(
                 self::MAINTENANCE_MENU_STATE_CACHE_KEY
             );
             $this->helperFactory->getObject('Magento')->clearMenuCache();
@@ -99,15 +104,18 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
         /** @var \Ess\M2ePro\Model\Registry $registry */
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::MENU_STATE_REGISTRY_KEY, 'key', false
+            'Registry',
+            self::MENU_STATE_REGISTRY_KEY,
+            'key',
+            false
         );
 
-        if (!is_null($registry)) {
+        if ($registry !== null) {
             $previousMenuState = $registry->getValueFromJson();
         }
 
         if ($previousMenuState != $currentMenuState) {
-            if (is_null($registry)) {
+            if ($registry === null) {
                 $registry = $this->activeRecordFactory->getObject('Registry');
                 $registry->setKey(self::MENU_STATE_REGISTRY_KEY);
             }
@@ -150,15 +158,10 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
     private function processMaintenance(\Magento\Backend\Model\Menu $menuModel)
     {
         if ($menuModel->get(Ebay::MENU_ROOT_NODE_NICK)->isAllowed()) {
-
             $maintenanceMenuItemResource = Ebay::MENU_ROOT_NODE_NICK;
-
         } elseif ($menuModel->get(Amazon::MENU_ROOT_NODE_NICK)->isAllowed()) {
-
             $maintenanceMenuItemResource = Amazon::MENU_ROOT_NODE_NICK;
-
         } else {
-
             $maintenanceMenuItemResource = Walmart::MENU_ROOT_NODE_NICK;
         }
 
@@ -195,13 +198,17 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
         /** @var \Ess\M2ePro\Model\Wizard $activeBlocker */
         $activeBlocker = $this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard($viewNick);
 
-        if (is_null($activeBlocker)) {
+        if ($activeBlocker === null) {
             return;
         }
 
         $menu->getChildren()->exchangeArray([]);
 
         $actionUrl = 'm2epro/wizard_' . $activeBlocker->getNick();
+
+        if ($activeBlocker instanceof \Ess\M2ePro\Model\Wizard\MigrationFromMagento1) {
+            $actionUrl .= '/index/referrer/' . $viewNick;
+        }
 
         $menu->setAction($actionUrl);
     }
@@ -214,15 +221,15 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
             ],
             Ebay::MENU_ROOT_NODE_NICK => [
                 $this->helperFactory->getObject('Component\Ebay')->isEnabled(),
-                is_null($this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Ebay::NICK))
+                $this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Ebay::NICK) === null
             ],
             Amazon::MENU_ROOT_NODE_NICK => [
                 $this->helperFactory->getObject('Component\Amazon')->isEnabled(),
-                is_null($this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Amazon::NICK))
+                $this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Amazon::NICK) === null
             ],
             Walmart::MENU_ROOT_NODE_NICK => [
                 $this->helperFactory->getObject('Component\Walmart')->isEnabled(),
-                is_null($this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Walmart::NICK))
+                $this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Walmart::NICK) === null
             ]
         ];
     }

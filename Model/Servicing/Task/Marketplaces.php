@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task;
 
+/**
+ * Class Marketplaces
+ * @package Ess\M2ePro\Model\Servicing\Task
+ */
 class Marketplaces extends \Ess\M2ePro\Model\Servicing\Task
 {
     private $needToCleanCache = false;
@@ -29,7 +33,7 @@ class Marketplaces extends \Ess\M2ePro\Model\Servicing\Task
      */
     public function getRequestData()
     {
-        return array();
+        return [];
     }
 
     public function processResponseData(array $data)
@@ -43,7 +47,7 @@ class Marketplaces extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         if ($this->needToCleanCache) {
-            $this->getHelper('Data\Cache\Permanent')->removeTagValues('marketplace');
+            $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
         }
     }
 
@@ -53,16 +57,15 @@ class Marketplaces extends \Ess\M2ePro\Model\Servicing\Task
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\Collection $accountCollection */
         $enabledMarketplaces = $this->parentFactory
-            ->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK,'Marketplace')->getCollection()
+            ->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Marketplace')->getCollection()
             ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
 
         $connection = $this->resource->getConnection();
-        $dictionaryTable = $this->getHelper('Module\Database\Structure')
+        $dictionaryTable = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_marketplace');
 
-        /* @var $marketplace \Ess\M2ePro\Model\Marketplace */
+        /** @var $marketplace \Ess\M2ePro\Model\Marketplace */
         foreach ($enabledMarketplaces as $marketplace) {
-
             if (!isset($lastUpdateDates[$marketplace->getNativeId()])) {
                 continue;
             }
@@ -77,7 +80,7 @@ class Marketplaces extends \Ess\M2ePro\Model\Servicing\Task
 
             $clientLastUpdateDate = $connection->fetchOne($select);
 
-            if (is_null($clientLastUpdateDate)) {
+            if ($clientLastUpdateDate === null) {
                 $clientLastUpdateDate = $serverLastUpdateDate;
             }
 
@@ -87,11 +90,11 @@ class Marketplaces extends \Ess\M2ePro\Model\Servicing\Task
 
             $connection->update(
                 $dictionaryTable,
-                array(
+                [
                     'server_details_last_update_date' => $serverLastUpdateDate,
                     'client_details_last_update_date' => $clientLastUpdateDate
-                ),
-                array('marketplace_id = ?' => $marketplace->getId())
+                ],
+                ['marketplace_id = ?' => $marketplace->getId()]
             );
         }
     }
@@ -102,12 +105,11 @@ class Marketplaces extends \Ess\M2ePro\Model\Servicing\Task
             ->getMarketplacesAvailableForApiCreation();
 
         $connection = $this->resource->getConnection();
-        $dictionaryTable = $this->getHelper('Module\Database\Structure')
+        $dictionaryTable = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_amazon_dictionary_marketplace');
 
-        /* @var $marketplace \Ess\M2ePro\Model\Marketplace */
+        /** @var $marketplace \Ess\M2ePro\Model\Marketplace */
         foreach ($enabledMarketplaces as $marketplace) {
-
             if (!isset($lastUpdateDates[$marketplace->getNativeId()])) {
                 continue;
             }
@@ -122,7 +124,7 @@ class Marketplaces extends \Ess\M2ePro\Model\Servicing\Task
 
             $clientLastUpdateDate = $connection->fetchOne($select);
 
-            if (is_null($clientLastUpdateDate)) {
+            if ($clientLastUpdateDate === null) {
                 $clientLastUpdateDate = $serverLastUpdateDate;
             }
 
@@ -132,11 +134,11 @@ class Marketplaces extends \Ess\M2ePro\Model\Servicing\Task
 
             $connection->update(
                 $dictionaryTable,
-                array(
+                [
                     'server_details_last_update_date' => $serverLastUpdateDate,
                     'client_details_last_update_date' => $clientLastUpdateDate
-                ),
-                array('marketplace_id = ?' => $marketplace->getId())
+                ],
+                ['marketplace_id = ?' => $marketplace->getId()]
             );
         }
     }

@@ -10,14 +10,18 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template
+ */
 class Index extends Template
 {
     //########################################
 
     public function execute()
     {
-        $content = $this->getLayout()->createBlock(
-            'Ess\\M2ePro\\Block\\Adminhtml\\Walmart\\Template'
+        $content = $this->createBlock(
+            'Walmart\\Template'
         );
 
         $this->getResultPage()->getConfig()->getTitle()->prepend('Policies');

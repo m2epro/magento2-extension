@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Processing;
 
+/**
+ * Class Action
+ * @package Ess\M2ePro\Model\ResourceModel\Walmart\Processing
+ */
 class Action extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     // ########################################
@@ -23,10 +27,10 @@ class Action extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
     {
         $this->getConnection()->update(
             $this->getMainTable(),
-            array(
+            [
                 'request_pending_single_id' => $requestPendingSingle->getId(),
-            ),
-            array('id IN (?)' => $itemIds)
+            ],
+            ['id IN (?)' => $itemIds]
         );
     }
 

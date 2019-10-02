@@ -10,21 +10,25 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
+/**
+ * Class Description
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template
+ */
 abstract class Description extends Template
 {
     // ---------------------------------------
 
     protected function formatCategoryRow(&$row)
     {
-        $row['product_data_nicks'] = !is_null($row['product_data_nicks'])
-            ? (array)$this->getHelper('Data')->jsonDecode($row['product_data_nicks']) : array();
+        $row['product_data_nicks'] = $row['product_data_nicks'] !== null
+            ? (array)$this->getHelper('Data')->jsonDecode($row['product_data_nicks']) : [];
     }
 
     protected function prepareGridBlock()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Specific\Add\Grid $grid */
         $grid = $this->createBlock(
-            'Amazon\Template\Description\Category\Specific\Add\Grid'
+            'Amazon_Template_Description_Category_Specific_Add_Grid'
         );
 
         $grid->setMarketplaceId($this->getRequest()->getParam('marketplace_id'));

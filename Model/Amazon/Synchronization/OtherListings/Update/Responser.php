@@ -10,14 +10,18 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update;
 
 use \Ess\M2ePro\Model\Amazon\Listing\Other;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update
+ */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsResponser
 {
     protected $resourceConnection;
 
     protected $activeRecordFactory;
 
-    protected $logsActionId = NULL;
-    protected $synchronizationLog = NULL;
+    protected $logsActionId = null;
+    protected $synchronizationLog = null;
 
     // ########################################
 
@@ -28,9 +32,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        array $params = array()
-    )
-    {
+        array $params = []
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($amazonFactory, $response, $helperFactory, $modelFactory, $params);
@@ -43,7 +46,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
         parent::processResponseMessages();
 
         foreach ($this->getResponse()->getMessages()->getEntities() as $message) {
-
             if (!$message->isError() && !$message->isWarning()) {
                 continue;
             }
@@ -92,12 +94,9 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
         $receivedItems = $this->getReceivedOnlyOtherListings();
 
         try {
-
             $this->updateReceivedOtherListings($receivedItems);
             $this->createNotExistedOtherListings($receivedItems);
-
         } catch (\Exception $exception) {
-
             $this->getHelper('Module\Exception')->process($exception);
 
             $this->getSynchronizationLog()->addMessage(
@@ -115,28 +114,27 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
         /** @var $stmtTemp \Zend_Db_Statement_Pdo */
         $stmtTemp = $this->getPdoStatementExistingListings(true);
 
-        $tempLog = $this->activeRecordFactory->getObject('Listing\Other\Log');
+        $tempLog = $this->activeRecordFactory->getObject('Listing_Other_Log');
         $tempLog->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
 
         while ($existingItem = $stmtTemp->fetch()) {
-
             if (!isset($receivedItems[$existingItem['sku']])) {
                 continue;
             }
 
             $receivedItem = $receivedItems[$existingItem['sku']];
 
-            $newData = array(
+            $newData = [
                 'general_id'         => (string)$receivedItem['identifiers']['general_id'],
                 'title'              => (string)$receivedItem['title'],
                 'online_price'       => (float)$receivedItem['price'],
                 'online_qty'         => (int)$receivedItem['qty'],
                 'is_afn_channel'     => (bool)$receivedItem['channel']['is_afn'],
                 'is_isbn_general_id' => (bool)$receivedItem['identifiers']['is_isbn']
-            );
+            ];
 
             if ($newData['is_afn_channel']) {
-                $newData['online_qty'] = NULL;
+                $newData['online_qty'] = null;
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
             } else {
                 if ($newData['online_qty'] > 0) {
@@ -146,7 +144,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                 }
             }
 
-            $existingData = array(
+            $existingData = [
                 'general_id'         => (string)$existingItem['general_id'],
                 'title'              => (string)$existingItem['title'],
                 'online_price'       => (float)$existingItem['online_price'],
@@ -154,9 +152,9 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                 'is_afn_channel'     => (bool)$existingItem['is_afn_channel'],
                 'is_isbn_general_id' => (bool)$existingItem['is_isbn_general_id'],
                 'status'             => (int)$existingItem['status']
-            );
+            ];
 
-            if (is_null($receivedItem['title']) || $receivedItem['title'] == Other::EMPTY_TITLE_PLACEHOLDER) {
+            if ($receivedItem['title'] === null || $receivedItem['title'] == Other::EMPTY_TITLE_PLACEHOLDER) {
                 unset($newData['title'], $existingData['title']);
             }
 
@@ -168,7 +166,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                 continue;
             }
 
-            $tempLogMessages = array();
+            $tempLogMessages = [];
 
             if (isset($newData['online_price'], $existingData['online_price']) &&
                 $newData['online_price'] != $existingData['online_price']) {
@@ -181,7 +179,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                 );
             }
 
-            if (!is_null($newData['online_qty']) && $newData['online_qty'] != $existingData['online_qty']) {
+            if ($newData['online_qty'] !== null && $newData['online_qty'] != $existingData['online_qty']) {
                 // M2ePro\TRANSLATIONS
                 // Item QTY was successfully changed from %from% to %to%.
                 $tempLogMessages[] = $this->getHelper('Module\Translation')->__(
@@ -191,8 +189,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                 );
             }
 
-            if (is_null($newData['online_qty']) && $newData['is_afn_channel'] != $existingData['is_afn_channel']) {
-
+            if ($newData['online_qty'] === null && $newData['is_afn_channel'] != $existingData['is_afn_channel']) {
                 $from = \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Qty::FULFILLMENT_MODE_MFN;
                 $to = \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Qty::FULFILLMENT_MODE_MFN;
 
@@ -237,7 +234,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                     (int)$existingItem['listing_other_id'],
                     \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
                     $this->getLogsActionId(),
-                   \Ess\M2ePro\Model\Listing\Other\Log::ACTION_CHANNEL_CHANGE,
+                    \Ess\M2ePro\Model\Listing\Other\Log::ACTION_CHANNEL_CHANGE,
                     $tempLogMessage,
                     \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
                     \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
@@ -245,7 +242,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
             }
 
             $listingOtherObj = $this->amazonFactory->getObjectLoaded(
-                'Listing\Other',(int)$existingItem['listing_other_id']
+                'Listing\Other',
+                (int)$existingItem['listing_other_id']
             );
 
             $listingOtherObj->addData($newData);
@@ -260,7 +258,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
         $stmtTemp = $this->getPdoStatementExistingListings(false);
 
         while ($existingItem = $stmtTemp->fetch()) {
-
             if (!isset($receivedItems[$existingItem['sku']])) {
                 continue;
             }
@@ -269,25 +266,24 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
         }
 
         /** @var $logModel \Ess\M2ePro\Model\Listing\Other\Log */
-        $logModel = $this->activeRecordFactory->getObject('Listing\Other\Log');
+        $logModel = $this->activeRecordFactory->getObject('Listing_Other_Log');
         $logModel->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
 
         /** @var $mappingModel \Ess\M2ePro\Model\Amazon\Listing\Other\Mapping */
-        $mappingModel = $this->modelFactory->getObject('Amazon\Listing\Other\Mapping');
+        $mappingModel = $this->modelFactory->getObject('Amazon_Listing_Other_Mapping');
 
         /** @var $movingModel \Ess\M2ePro\Model\Amazon\Listing\Other\Moving */
-        $movingModel = $this->modelFactory->getObject('Amazon\Listing\Other\Moving');
+        $movingModel = $this->modelFactory->getObject('Amazon_Listing_Other_Moving');
 
         foreach ($receivedItems as $receivedItem) {
-
             if (isset($receivedItem['founded'])) {
                 continue;
             }
 
-            $newData = array(
+            $newData = [
                 'account_id'     => $this->getAccount()->getId(),
                 'marketplace_id' => $this->getMarketplace()->getId(),
-                'product_id'     => NULL,
+                'product_id'     => null,
 
                 'general_id' => (string)$receivedItem['identifiers']['general_id'],
 
@@ -299,18 +295,17 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
 
                 'is_afn_channel'     => (bool)$receivedItem['channel']['is_afn'],
                 'is_isbn_general_id' => (bool)$receivedItem['identifiers']['is_isbn']
-            );
+            ];
 
-            if (
-                isset($this->params['full_items_data'])
+            if (isset($this->params['full_items_data'])
                 && $this->params['full_items_data']
                 && $newData['title'] == \Ess\M2ePro\Model\Amazon\Listing\Other::EMPTY_TITLE_PLACEHOLDER
             ) {
-                $newData['title'] = NULL;
+                $newData['title'] = null;
             }
 
             if ((bool)$newData['is_afn_channel']) {
-                $newData['online_qty'] = NULL;
+                $newData['online_qty'] = null;
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
             } else {
                 if ((int)$newData['online_qty'] > 0) {
@@ -327,15 +322,17 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
             $listingOtherModel->setData($newData);
             $listingOtherModel->save();
 
-            $logModel->addProductMessage($listingOtherModel->getId(),
-                                         \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-                                         NULL,
-                                         \Ess\M2ePro\Model\Listing\Other\Log::ACTION_ADD_ITEM,
-                                         // M2ePro\TRANSLATIONS
+            $logModel->addProductMessage(
+                $listingOtherModel->getId(),
+                \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+                null,
+                \Ess\M2ePro\Model\Listing\Other\Log::ACTION_ADD_ITEM,
+                // M2ePro\TRANSLATIONS
                                          // Item was successfully Added
                                          'Item was successfully Added',
-                                         \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-                                         \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW);
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+            );
 
             if (!$this->getAccount()->getChildObject()->isOtherListingsMappingEnabled()) {
                 continue;
@@ -345,7 +342,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
             $mappingResult = $mappingModel->autoMapOtherListingProduct($listingOtherModel);
 
             if ($mappingResult) {
-
                 if (!$this->getAccount()->getChildObject()->isOtherListingsMoveToListingsEnabled()) {
                     continue;
                 }
@@ -361,12 +357,12 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
     protected function getReceivedOnlyOtherListings()
     {
         $collection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(array('second_table.sku'));
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(['second_table.sku']);
 
         $listingTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
 
-        $collection->getSelect()->join(array('l' => $listingTable), 'main_table.listing_id = l.id', array());
-        $collection->getSelect()->where('l.account_id = ?',(int)$this->getAccount()->getId());
+        $collection->getSelect()->join(['l' => $listingTable], 'main_table.listing_id = l.id', []);
+        $collection->getSelect()->where('l.account_id = ?', (int)$this->getAccount()->getId());
 
         /** @var $stmtTemp \Zend_Db_Statement_Pdo */
         $stmtTemp = $this->resourceConnection->getConnection()->query($collection->getSelect()->__toString());
@@ -375,7 +371,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
         $receivedItems = $responseData['data'];
 
         while ($existListingProduct = $stmtTemp->fetch()) {
-
             if (empty($existListingProduct['sku'])) {
                 continue;
             }
@@ -391,17 +386,17 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
     protected function getPdoStatementExistingListings($withData = false)
     {
         $collection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
-        $collection->getSelect()->where('`main_table`.`account_id` = ?',(int)$this->params['account_id']);
+        $collection->getSelect()->where('`main_table`.`account_id` = ?', (int)$this->params['account_id']);
 
-        $tempColumns = array('second_table.sku');
+        $tempColumns = ['second_table.sku'];
 
         if ($withData) {
-            $tempColumns = array('main_table.status',
+            $tempColumns = ['main_table.status',
                                  'second_table.sku','second_table.general_id','second_table.title',
                                  'second_table.online_price','second_table.online_qty',
                                  'second_table.is_afn_channel', 'second_table.is_isbn_general_id',
                                  'second_table.listing_other_id',
-                                 'second_table.is_repricing', 'second_table.is_repricing_disabled');
+                                 'second_table.is_repricing', 'second_table.is_repricing_disabled'];
         }
 
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns($tempColumns);
@@ -419,7 +414,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
      */
     protected function getAccount()
     {
-        return $this->getObjectByParam('Account','account_id');
+        return $this->getObjectByParam('Account', 'account_id');
     }
 
     /**
@@ -434,17 +429,17 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
 
     protected function getLogsActionId()
     {
-        if (!is_null($this->logsActionId)) {
+        if ($this->logsActionId !== null) {
             return $this->logsActionId;
         }
 
-        return $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Other\Log')
+        return $this->logsActionId = $this->activeRecordFactory->getObject('Listing_Other_Log')
                                           ->getResource()->getNextActionId();
     }
 
     protected function getSynchronizationLog()
     {
-        if (!is_null($this->synchronizationLog)) {
+        if ($this->synchronizationLog !== null) {
             return $this->synchronizationLog;
         }
 

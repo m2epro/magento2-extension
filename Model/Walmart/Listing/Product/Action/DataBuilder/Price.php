@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder;
 
+/**
+ * Class Price
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder
+ */
 class Price extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\AbstractModel
 {
     //########################################
@@ -17,7 +21,7 @@ class Price extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder
      */
     public function getRequestData()
     {
-        $data = array();
+        $data = [];
 
         if (!isset($this->cachedData['price'])) {
             $this->cachedData['price'] = $this->getWalmartListingProduct()->getPrice();

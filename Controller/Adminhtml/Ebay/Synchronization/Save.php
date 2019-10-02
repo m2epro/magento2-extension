@@ -10,14 +10,19 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Settings;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization
+ */
 class Save extends Settings
 {
     //########################################
 
     public function execute()
     {
-        $this->modelFactory->getObject('Config\Manager\Synchronization')->setGroupValue(
-            '/ebay/templates/', 'mode',
+        $this->modelFactory->getObject('Config_Manager_Synchronization')->setGroupValue(
+            '/ebay/templates/',
+            'mode',
             (int)$this->getRequest()->getParam('templates_mode')
         );
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing;
 
+/**
+ * Class Search
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing
+ */
 class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -72,17 +76,17 @@ HTML
 
     protected function _toHtml()
     {
-        $marketplaceSwitcherBlock = $this->createBlock('Amazon\Marketplace\Switcher')->setData([
+        $marketplaceSwitcherBlock = $this->createBlock('Amazon_Marketplace_Switcher')->setData([
             'component_mode' => \Ess\M2ePro\Helper\View\Amazon::NICK,
             'controller_name' => $this->getRequest()->getControllerName()
         ]);
 
-        $accountSwitcherBlock = $this->createBlock('Amazon\Account\Switcher')->setData([
+        $accountSwitcherBlock = $this->createBlock('Amazon_Account_Switcher')->setData([
             'component_mode' => \Ess\M2ePro\Helper\View\Amazon::NICK,
             'controller_name' => $this->getRequest()->getControllerName()
         ]);
 
-        $listingTypeSwitcherBlock = $this->createBlock('Listing\Search\TypeSwitcher')->setData([
+        $listingTypeSwitcherBlock = $this->createBlock('Listing_Search_TypeSwitcher')->setData([
             'controller_name' => $this->getRequest()->getControllerName()
         ]);
 

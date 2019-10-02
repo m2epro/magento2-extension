@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization;
 
+/**
+ * Class Templates
+ * @package Ess\M2ePro\Model\Walmart\Synchronization
+ */
 class Templates extends AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Synchronization\Templates\ProductChanges\Manager $productChangesManager */
-    private $productChangesManager = NULL;
+    private $productChangesManager = null;
 
     //########################################
 
@@ -29,7 +33,7 @@ class Templates extends AbstractModel
 
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     protected function getTitle()
@@ -56,7 +60,7 @@ class Templates extends AbstractModel
         parent::beforeStart();
 
         $this->productChangesManager = $this->modelFactory->getObject(
-            'Synchronization\Templates\ProductChanges\Manager'
+            'Synchronization_Templates_ProductChanges_Manager'
         );
         $this->productChangesManager->setComponent($this->getComponent());
         $this->productChangesManager->init();

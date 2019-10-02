@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
+/**
+ * Class MarkAsPickedUp
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Order
+ */
 class MarkAsPickedUp extends Order
 {
     public function execute()

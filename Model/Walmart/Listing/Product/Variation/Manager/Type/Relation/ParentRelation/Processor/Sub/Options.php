@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
+/**
+ * Class Options
+ * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub
+ */
 class Options extends AbstractModel
 {
     //########################################
 
     protected function check()
     {
-        if (count($this->getProcessor()->getTypeModel()->getChildListingsProducts()) <= 0) {
+        if (empty($this->getProcessor()->getTypeModel()->getChildListingsProducts())) {
             return;
         }
 
@@ -115,8 +119,7 @@ class Options extends AbstractModel
         $matchedAttributes = $this->getProcessor()->getTypeModel()->getMatchedAttributes();
 
         foreach ($productOptions as $productOption) {
-
-            $channelOption = array();
+            $channelOption = [];
             foreach ($productOption as $attribute => $value) {
                 $channelOption[$matchedAttributes[$attribute]] = $value;
             }

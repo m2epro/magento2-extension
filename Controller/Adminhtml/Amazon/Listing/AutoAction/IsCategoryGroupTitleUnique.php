@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction;
 
+/**
+ * Class IsCategoryGroupTitleUnique
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
+ */
 class IsCategoryGroupTitleUnique extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
 {
     //########################################
@@ -19,20 +23,20 @@ class IsCategoryGroupTitleUnique extends \Ess\M2ePro\Controller\Adminhtml\Amazon
         $title = $this->getRequest()->getParam('title');
 
         if ($title == '') {
-            $this->setJsonContent(array('unique' => false));
+            $this->setJsonContent(['unique' => false]);
             return $this->getResult();
         }
 
-        $collection = $this->activeRecordFactory->getObject('Listing\Auto\Category\Group')
+        $collection = $this->activeRecordFactory->getObject('Listing_Auto_Category_Group')
             ->getCollection()
             ->addFieldToFilter('listing_id', $listingId)
             ->addFieldToFilter('title', $title);
 
         if ($groupId) {
-            $collection->addFieldToFilter('id', array('neq' => $groupId));
+            $collection->addFieldToFilter('id', ['neq' => $groupId]);
         }
 
-        $this->setJsonContent(array('unique' => !(bool)$collection->getSize()));
+        $this->setJsonContent(['unique' => !(bool)$collection->getSize()]);
         return $this->getResult();
     }
 

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel;
 
+/**
+ * Class Order
+ * @package Ess\M2ePro\Model\ResourceModel
+ */
 class Order extends ActiveRecord\Component\Parent\AbstractModel
 {
     //########################################

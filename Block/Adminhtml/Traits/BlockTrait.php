@@ -8,10 +8,17 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Traits;
 
+/**
+ * Trait BlockTrait
+ * @package Ess\M2ePro\Block\Adminhtml\Traits
+ */
 trait BlockTrait
 {
     protected function getBlockClass($block)
     {
+        // fix for Magento2 sniffs that forcing to use ::class
+        $block = str_replace('_', '\\', $block);
+
         return 'Ess\M2ePro\Block\Adminhtml\\' . $block;
     }
 
@@ -23,7 +30,7 @@ trait BlockTrait
      */
     public function createBlock($block, $name = '', array $arguments = [])
     {
-       return $this->getLayout()->createBlock($this->getBlockClass($block), $name, $arguments);
+        return $this->getLayout()->createBlock($this->getBlockClass($block), $name, $arguments);
     }
 
     public function getHelper($helper, array $arguments = [])

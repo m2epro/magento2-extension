@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 use Ess\M2ePro\Model\Walmart\Template\Category\Specific;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category
+ */
 class Save extends Category
 {
     //########################################
@@ -37,14 +41,13 @@ class Save extends Category
             'browsenode_id'
         ];
 
-        $dataForAdd = array();
+        $dataForAdd = [];
         foreach ($keys as $key) {
-
             if ($key === 'encoded_data') {
                 continue;
             }
 
-            if(isset($post[$key])) {
+            if (isset($post[$key])) {
                 $dataForAdd[$key] = $post[$key];
             }
         }
@@ -52,7 +55,7 @@ class Save extends Category
         $dataForAdd['title'] = strip_tags($dataForAdd['title']);
 
         /** @var \Ess\M2ePro\Model\Walmart\Template\Category $categoryTemplate */
-        $categoryTemplate = $this->activeRecordFactory->getObject('Walmart\Template\Category');
+        $categoryTemplate = $this->activeRecordFactory->getObject('Walmart_Template_Category');
         $id && $categoryTemplate->load($id);
 
         $oldData = [];
@@ -77,12 +80,11 @@ class Save extends Category
         $this->sortSpecifics($specifics, $post['product_data_nick'], $post['marketplace_id']);
 
         foreach ($specifics as $xpath => $specificData) {
-
             if (!$this->validateSpecificData($specificData)) {
                 continue;
             }
 
-            $specificInstance = $this->activeRecordFactory->getObject('Walmart\Template\Category\Specific');
+            $specificInstance = $this->activeRecordFactory->getObject('Walmart_Template_Category_Specific');
 
             $type       = isset($specificData['type']) ? $specificData['type'] : '';
             $isRequired = isset($specificData['is_required']) ? $specificData['is_required'] : 0;
@@ -124,12 +126,14 @@ class Save extends Category
 
         $this->messageManager->addSuccess($this->__('Policy was successfully saved'));
         return $this->_redirect($this->getHelper('Data')->getBackUrl(
-            'list', [], ['edit' => [
+            'list',
+            [],
+            ['edit' => [
                 'id' => $id,
                 'wizard' => $this->getRequest()->getParam('wizard'),
                 'close_on_save' => $this->getRequest()->getParam('close_on_save')
-            ]])
-        );
+            ]]
+        ));
     }
 
     // ---------------------------------------
@@ -155,11 +159,11 @@ class Save extends Category
 
     private function sortSpecifics(&$specifics, $productData, $marketplaceId)
     {
-        $table = $this->getHelper('Module\Database\Structure')
+        $table = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_walmart_dictionary_specific');
 
         $dictionarySpecifics = $this->resourceConnection->getConnection()->select()
-            ->from($table,['id', 'xpath'])
+            ->from($table, ['id', 'xpath'])
             ->where('product_data_nick = ?', $productData)
             ->where('marketplace_id = ?', $marketplaceId)
             ->query()->fetchAll();
@@ -172,22 +176,21 @@ class Save extends Category
 
         $this->getHelper('Data\GlobalData')->setValue('dictionary_specifics', $dictionarySpecifics);
 
-        $callback = function ($aXpath, $bXpath) use ($dictionarySpecifics)
-        {
+        $callback = function ($aXpath, $bXpath) use ($dictionarySpecifics) {
 
-            $aXpathParts = explode('/',$aXpath);
+            $aXpathParts = explode('/', $aXpath);
             foreach ($aXpathParts as &$part) {
-                $part = preg_replace('/\-\d+$/','',$part);
+                $part = preg_replace('/\-\d+$/', '', $part);
             }
             unset($part);
-            $aXpath = implode('/',$aXpathParts);
+            $aXpath = implode('/', $aXpathParts);
 
-            $bXpathParts = explode('/',$bXpath);
+            $bXpathParts = explode('/', $bXpath);
             foreach ($bXpathParts as &$part) {
-                $part = preg_replace('/\-\d+$/','',$part);
+                $part = preg_replace('/\-\d+$/', '', $part);
             }
             unset($part);
-            $bXpath = implode('/',$bXpathParts);
+            $bXpath = implode('/', $bXpathParts);
 
             $aIndex = $dictionarySpecifics[$aXpath];
             $bIndex = $dictionarySpecifics[$bXpath];

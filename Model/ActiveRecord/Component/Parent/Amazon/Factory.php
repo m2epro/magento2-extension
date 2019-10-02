@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon;
 
+/**
+ * Class Factory
+ * @package Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon
+ */
 class Factory extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractFactory
 {
     //########################################

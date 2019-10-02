@@ -87,15 +87,15 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @var \Ess\M2ePro\Model\Template\SellingFormat
      */
-    private $sellingFormatTemplateModel = NULL;
+    private $sellingFormatTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Template\Synchronization
      */
-    private $synchronizationTemplateModel = NULL;
+    private $synchronizationTemplateModel = null;
 
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Source[] */
-    private $listingSourceModels = array();
+    private $listingSourceModels = [];
 
     protected $currencyModel;
 
@@ -112,8 +112,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->currencyModel = $currencyModel;
         parent::__construct(
             $parentFactory,
@@ -140,7 +139,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     public function save()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('listing');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('listing');
         return parent::save();
     }
 
@@ -148,11 +147,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     public function delete()
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('listing');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('listing');
 
         $temp = parent::delete();
-        $temp && $this->sellingFormatTemplateModel = NULL;
-        $temp && $this->synchronizationTemplateModel = NULL;
+        $temp && $this->sellingFormatTemplateModel = null;
+        $temp && $this->synchronizationTemplateModel = null;
         return $temp;
     }
 
@@ -170,7 +169,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return $this->listingSourceModels[$productId];
         }
 
-        $this->listingSourceModels[$productId] = $this->modelFactory->getObject('Amazon\Listing\Source');
+        $this->listingSourceModels[$productId] = $this->modelFactory->getObject('Amazon_Listing_Source');
         $this->listingSourceModels[$productId]->setMagentoProduct($magentoProduct);
         $this->listingSourceModels[$productId]->setListing($this->getParentObject());
 
@@ -220,9 +219,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getSellingFormatTemplate()
     {
-        if (is_null($this->sellingFormatTemplateModel)) {
+        if ($this->sellingFormatTemplateModel === null) {
             $this->sellingFormatTemplateModel = $this->parentFactory->getCachedObjectLoaded(
-                $this->getComponentMode(), 'Template\SellingFormat',$this->getData('template_selling_format_id')
+                $this->getComponentMode(),
+                'Template\SellingFormat',
+                $this->getData('template_selling_format_id')
             );
         }
 
@@ -244,9 +245,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getSynchronizationTemplate()
     {
-        if (is_null($this->synchronizationTemplateModel)) {
+        if ($this->synchronizationTemplateModel === null) {
             $this->synchronizationTemplateModel = $this->parentFactory->getCachedObjectLoaded(
-                $this->getComponentMode(), 'Template\Synchronization', $this->getData('template_synchronization_id')
+                $this->getComponentMode(),
+                'Template\Synchronization',
+                $this->getData('template_synchronization_id')
             );
         }
 
@@ -286,9 +289,9 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      * @param array $filters
      * @return array
      */
-    public function getProducts($asObjects = false, array $filters = array())
+    public function getProducts($asObjects = false, array $filters = [])
     {
-        return $this->getParentObject()->getProducts($asObjects,$filters);
+        return $this->getParentObject()->getProducts($asObjects, $filters);
     }
 
     /**
@@ -296,9 +299,9 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      * @param array $filters
      * @return mixed
      */
-    public function getCategories($asObjects = false, array $filters = array())
+    public function getCategories($asObjects = false, array $filters = [])
     {
-        return $this->getParentObject()->getCategories($asObjects,$filters);
+        return $this->getParentObject()->getCategories($asObjects, $filters);
     }
 
     //########################################
@@ -358,10 +361,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getSkuSource()
     {
-        return array(
+        return [
             'mode'      => $this->getSkuMode(),
             'attribute' => $this->getData('sku_custom_attribute')
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -411,10 +414,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getSkuModificationSource()
     {
-        return array(
+        return [
             'mode'  => $this->getSkuModificationMode(),
             'value' => $this->getData('sku_modification_custom_value')
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -466,10 +469,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getGeneralIdSource()
     {
-        return array(
+        return [
             'mode'      => $this->getGeneralIdMode(),
             'attribute' => $this->getData('general_id_custom_attribute')
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -503,10 +506,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getWorldwideIdSource()
     {
-        return array(
+        return [
             'mode'      => $this->getWorldwideIdMode(),
             'attribute' => $this->getData('worldwide_id_custom_attribute')
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -558,11 +561,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getConditionSource()
     {
-        return array(
+        return [
             'mode'      => $this->getConditionMode(),
             'value'     => $this->getData('condition_value'),
             'attribute' => $this->getData('condition_custom_attribute')
-        );
+        ];
     }
 
     public function getConditionValues()
@@ -573,20 +576,20 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return $temp;
         }
 
-        $reflectionClass = new \ReflectionClass (__CLASS__);
+        $reflectionClass = new \ReflectionClass(__CLASS__);
         $tempConstants = $reflectionClass->getConstants();
 
-        $values = array();
+        $values = [];
         foreach ($tempConstants as $key => $value) {
-            $prefixKey = strtolower(substr($key,0,14));
-            if (substr($prefixKey,0,10) != 'condition_' ||
-                in_array($prefixKey,array('condition_mode','condition_note'))) {
+            $prefixKey = strtolower(substr($key, 0, 14));
+            if (substr($prefixKey, 0, 10) != 'condition_' ||
+                in_array($prefixKey, ['condition_mode','condition_note'])) {
                 continue;
             }
             $values[] = $value;
         }
 
-        $this->setData('cache_condition_values',$values);
+        $this->setData('cache_condition_values', $values);
 
         return $values;
     }
@@ -622,10 +625,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getConditionNoteSource()
     {
-        return array(
+        return [
             'mode'      => $this->getConditionNoteMode(),
             'value'     => $this->getData('condition_note_value')
-        );
+        ];
     }
 
     /**
@@ -633,11 +636,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getConditionNoteAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getConditionNoteSource();
 
         if ($src['mode'] == self::CONDITION_NOTE_MODE_CUSTOM_VALUE) {
-            $match = array();
+            $match = [];
             preg_match_all('/#([a-zA-Z_0-9]+?)#/', $src['value'], $match);
             $match && $attributes = $match[1];
         }
@@ -684,10 +687,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getImageMainSource()
     {
-        return array(
+        return [
             'mode'     => $this->getImageMainMode(),
             'attribute' => $this->getData('image_main_attribute')
-        );
+        ];
     }
 
     /**
@@ -695,12 +698,12 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getImageMainAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getImageMainSource();
 
         if ($src['mode'] == self::IMAGE_MAIN_MODE_PRODUCT) {
             $attributes[] = 'image';
-        } else if ($src['mode'] == self::IMAGE_MAIN_MODE_ATTRIBUTE) {
+        } elseif ($src['mode'] == self::IMAGE_MAIN_MODE_ATTRIBUTE) {
             $attributes[] = $src['attribute'];
         }
 
@@ -746,11 +749,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getGalleryImagesSource()
     {
-        return array(
+        return [
             'mode'      => $this->getGalleryImagesMode(),
             'limit'     => $this->getData('gallery_images_limit'),
             'attribute' => $this->getData('gallery_images_attribute')
-        );
+        ];
     }
 
     /**
@@ -758,7 +761,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getGalleryImagesAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getGalleryImagesSource();
 
         if ($src['mode'] == self::GALLERY_IMAGES_MODE_ATTRIBUTE) {
@@ -807,11 +810,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getHandlingTimeSource()
     {
-        return array(
+        return [
             'mode'      => $this->getHandlingTimeMode(),
             'value'     => (int)$this->getData('handling_time_value'),
             'attribute' => $this->getData('handling_time_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -819,7 +822,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getHandlingTimeAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getHandlingTimeSource();
 
         if ($src['mode'] == self::HANDLING_TIME_MODE_CUSTOM_ATTRIBUTE) {
@@ -868,11 +871,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getRestockDateSource()
     {
-        return array(
+        return [
             'mode'      => $this->getRestockDateMode(),
             'value'     => $this->getData('restock_date_value'),
             'attribute' => $this->getData('restock_date_custom_attribute')
-        );
+        ];
     }
 
     /**
@@ -880,7 +883,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getRestockDateAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getRestockDateSource();
 
         if ($src['mode'] == self::RESTOCK_DATE_MODE_CUSTOM_ATTRIBUTE) {
@@ -926,10 +929,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getGiftWrapSource()
     {
-        return array(
+        return [
             'mode' => $this->getGiftWrapMode(),
             'attribute' => $this->getData('gift_wrap_attribute')
-        );
+        ];
     }
 
     /**
@@ -937,7 +940,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getGiftWrapAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getGiftWrapSource();
 
         if ($src['mode'] == self::GIFT_WRAP_MODE_ATTRIBUTE) {
@@ -983,10 +986,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getGiftMessageSource()
     {
-        return array(
+        return [
             'mode' => $this->getGiftMessageMode(),
             'attribute' => $this->getData('gift_message_attribute')
-        );
+        ];
     }
 
     /**
@@ -994,7 +997,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getGiftMessageAttributes()
     {
-        $attributes = array();
+        $attributes = [];
         $src = $this->getGiftMessageSource();
 
         if ($src['mode'] == self::GIFT_MESSAGE_MODE_ATTRIBUTE) {
@@ -1014,11 +1017,12 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      * @return bool|\Ess\M2ePro\Model\Listing\Product
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function addProductFromOther(\Ess\M2ePro\Model\Listing\Other $listingOtherProduct,
-                                        $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
-                                        $checkingMode = false,
-                                        $checkHasProduct = true)
-    {
+    public function addProductFromOther(
+        \Ess\M2ePro\Model\Listing\Other $listingOtherProduct,
+        $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
+        $checkingMode = false,
+        $checkHasProduct = true
+    ) {
         if (!$listingOtherProduct->getProductId()) {
             return false;
         }
@@ -1051,7 +1055,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Other $amazonListingOther */
         $amazonListingOther = $listingOtherProduct->getChildObject();
 
-        $dataForUpdate = array(
+        $dataForUpdate = [
             'general_id'           => $amazonListingOther->getGeneralId(),
             'sku'                  => $amazonListingOther->getSku(),
             'online_regular_price' => $amazonListingOther->getOnlinePrice(),
@@ -1061,20 +1065,20 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             'is_isbn_general_id'   => (int)$amazonListingOther->isIsbnGeneralId(),
             'status'               => $listingOtherProduct->getStatus(),
             'status_changer'       => $listingOtherProduct->getStatusChanger()
-        );
+        ];
 
         $listingProduct->addData($dataForUpdate);
         $amazonListingProduct->addData($dataForUpdate);
         $listingProduct->save();
 
         if ($amazonListingOther->isRepricing()) {
-            $listingProductRepricing = $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing');
-            $listingProductRepricing->setData(array(
+            $listingProductRepricing = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing');
+            $listingProductRepricing->setData([
                 'listing_product_id' => $listingProduct->getId(),
                 'is_online_disabled' => $amazonListingOther->isRepricingDisabled(),
                 'update_date'        => $this->getHelper('Data')->getCurrentGmtDate(),
                 'create_date'        => $this->getHelper('Data')->getCurrentGmtDate(),
-            ));
+            ]);
             $listingProductRepricing->save();
         }
 
@@ -1130,13 +1134,15 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function setSynchStatusNeed($newData, $oldData)
     {
         $listingsProducts = $this->getAffectedListingsProducts(
-            true, array('id', 'synch_status', 'synch_reasons'), true
+            true,
+            ['id', 'synch_status', 'synch_reasons'],
+            true
         );
         if (empty($listingsProducts)) {
             return;
         }
 
-        $this->getResource()->setSynchStatusNeed($newData,$oldData,$listingsProducts);
+        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

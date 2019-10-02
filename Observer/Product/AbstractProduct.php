@@ -8,27 +8,31 @@
 
 namespace Ess\M2ePro\Observer\Product;
 
+/**
+ * Class AbstractProduct
+ * @package Ess\M2ePro\Observer\Product
+ */
 abstract class AbstractProduct extends \Ess\M2ePro\Observer\AbstractModel
 {
     protected $productFactory;
     /**
      * @var null|\Magento\Catalog\Model\Product
      */
-    private $product = NULL;
+    private $product = null;
 
     /**
      * @var null|int
      */
-    private $productId = NULL;
+    private $productId = null;
     /**
      * @var null|int
      */
-    private $storeId = NULL;
+    private $storeId = null;
 
     /**
      * @var null|\Ess\M2ePro\Model\Magento\Product
      */
-    private $magentoProduct = NULL;
+    private $magentoProduct = null;
 
     //########################################
 
@@ -37,8 +41,7 @@ abstract class AbstractProduct extends \Ess\M2ePro\Observer\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->productFactory = $productFactory;
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
     }

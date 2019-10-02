@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Template\Category;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Walmart\Template\Category
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     //########################################

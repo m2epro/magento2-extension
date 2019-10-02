@@ -10,53 +10,69 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 
+/**
+ * Class BeforeToken
+ * @package Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay
+ */
 class BeforeToken extends InstallationEbay
 {
-     public function execute()
-     {
-         $accountMode = $this->getRequest()->getParam('mode');
+    public function execute()
+    {
+        $accountMode = $this->getRequest()->getParam('mode');
 
-         if (is_null($accountMode)) {
-             $this->setJsonContent(array(
-                 'message' => 'Account type have not been specified.'
-             ));
-             return $this->getResult();
-         }
+        if ($accountMode === null) {
+            $this->setJsonContent([
+                'message' => 'Account type have not been specified.'
+            ]);
+            return $this->getResult();
+        }
 
-         try {
+        try {
+            $backUrl = $this->getUrl('*/*/afterToken', ['mode' => $accountMode]);
 
-             $backUrl = $this->getUrl('*/*/afterToken', array('mode' => $accountMode));
+            $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+            $connectorObj = $dispatcherObject->getVirtualConnector(
+                'account',
+                'get',
+                'authUrl',
+                ['back_url' => $backUrl,
+                    'mode' => $accountMode],
+                null,
+                null,
+                null
+            );
 
-             $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-             $connectorObj = $dispatcherObject->getVirtualConnector('account','get','authUrl',
-                 array('back_url' => $backUrl,
-                     'mode' => $accountMode),
-                 NULL,NULL,NULL);
+            $dispatcherObject->process($connectorObj);
+            $response = $connectorObj->getResponseData();
+        } catch (\Exception $exception) {
+            $this->getHelper('Module\Exception')->process($exception);
+            // M2ePro_TRANSLATIONS
+            // The eBay token obtaining is currently unavailable.<br/>Reason: %error_message%
+            $error = 'The eBay token obtaining is currently unavailable.<br/>Reason: %error_message%';
+            $error = $this->__($error, $exception->getMessage());
 
-             $dispatcherObject->process($connectorObj);
-             $response = $connectorObj->getResponseData();
+            $this->setJsonContent([
+                'type'    => 'error',
+                'message' => $error
+            ]);
 
-         } catch (\Exception $exception) {
-             $this->setJsonContent(array(
-                 'url' => null
-             ));
-             return $this->getResult();
-         }
+            return $this->getResult();
+        }
 
-         if (!$response || !isset($response['url'],$response['session_id'])) {
-             $this->setJsonContent(array(
-                 'url' => null
-             ));
-             return $this->getResult();
-         }
+        if (!$response || !isset($response['url'], $response['session_id'])) {
+            $this->setJsonContent([
+                'url' => null
+            ]);
+            return $this->getResult();
+        }
 
-         $this->getHelper('Data\Session')->setValue('token_session_id', $response['session_id']);
+        $this->getHelper('Data\Session')->setValue('token_session_id', $response['session_id']);
 
-         $this->setJsonContent(array(
-             'url' => $response['url']
-         ));
-         return $this->getResult();
+        $this->setJsonContent([
+            'url' => $response['url']
+        ]);
+        return $this->getResult();
 
-         // ---------------------------------------
-     }
+        // ---------------------------------------
+    }
 }

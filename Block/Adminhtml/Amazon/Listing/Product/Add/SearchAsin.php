@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add;
 
+/**
+ * Class SearchAsin
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add
+ */
 class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     /** @var  \Ess\M2ePro\Model\Listing */
@@ -42,33 +46,33 @@ class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/*/removeAddedProducts', array(
+        $url = $this->getUrl('*/*/removeAddedProducts', [
             'id' => $this->listing['id'],
             '_current' => true
-        ));
-        $this->addButton('back', array(
+        ]);
+        $this->addButton('back', [
             'label'     => $this->__('Back'),
             'onclick'   => 'ListingGridHandlerObj.backClick(\'' . $url . '\')',
             'class'     => 'back'
-        ));
+        ]);
 
         // ---------------------------------------
-        $this->addButton('auto_action', array(
+        $this->addButton('auto_action', [
             'label'     => $this->__('Edit Search Settings'),
             'class'     => 'action-primary next',
             'onclick'   => 'ListingGridHandlerObj.editSearchSettings(\'' .
                 $this->__('Listing Search Settings') . '\' ,' .
                 $this->listing['id'] .
             ');'
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('save_and_go_to_listing_view', array(
+        $this->addButton('save_and_go_to_listing_view', [
             'label'     => $this->__('Continue'),
             'onclick'   => 'ListingGridHandlerObj.checkSearchResults('.$this->listing['id'].')',
             'class'     => 'action-primary forward'
-        ));
+        ]);
         // ---------------------------------------
     }
 
@@ -100,10 +104,12 @@ HTML
     public function getGridHtml()
     {
         $viewHeaderBlock = $this->createBlock(
-            'Listing\View\Header','', ['data' => ['listing' => $this->listing]]
+            'Listing_View_Header',
+            '',
+            ['data' => ['listing' => $this->listing]]
         );
 
-        $productSearchBlock = $this->createBlock('Amazon\Listing\Product\Search\Main');
+        $productSearchBlock = $this->createBlock('Amazon_Listing_Product_Search_Main');
 
         return $viewHeaderBlock->toHtml()
                . $productSearchBlock->toHtml()
@@ -188,13 +194,13 @@ HTML
         ]);
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing\Product'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Add', [
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Listing_Product'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Add', [
             'wizard' => $this->getRequest()->getParam('wizard')
         ]));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Search'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Search'));
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Variation\Vocabulary')
+            $this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Variation_Vocabulary')
         );
 
         $this->jsUrl->addUrls([

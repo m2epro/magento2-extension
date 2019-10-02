@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product;
 
+/**
+ * Class Variation
+ * @package Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product
+ */
 class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;

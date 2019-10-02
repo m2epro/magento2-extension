@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore;
 
+/**
+ * Class ProductsStepGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
+ */
 class ProductsStepGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
 {
     //########################################
@@ -15,7 +19,7 @@ class ProductsStepGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Pic
     public function execute()
     {
         $this->initListing();
-        $this->setAjaxContent($this->createBlock('Ebay\Listing\PickupStore\Step\Products\Grid'));
+        $this->setAjaxContent($this->createBlock('Ebay_Listing_PickupStore_Step_Products_Grid'));
         return $this->getResult();
     }
 

@@ -156,40 +156,37 @@ define([
             var self = this,
                 doneCallback = self.specificsDoneButton.bind(self);
 
-            if (!M2ePro.popUp) {
-                var modalDialogMessage = new Element('div', {
-                    id: 'modal_dialog_message_specifics'
-                });
-
-                modalDialogMessage.insert(html);
-                modalDialogMessage.innerHTML.evalScripts();
-
-                M2ePro.popUp = jQuery(modalDialogMessage).modal({
-                    title: modalDialogMessage.down('#specific_popup_title').value,
-                    type: 'slide',
-                    buttons: [{
-                        text: M2ePro.translator.translate('Cancel'),
-                        //class: 'action-primary',
-                        click: function () {
-                            this.closeModal();
-                        }
-                    },{
-                        text: M2ePro.translator.translate('Confirm'),
-                        class: 'action-primary',
-                        id: 'save_popup_button',
-                        click: function () {
-                            doneCallback();
-                            this.closeModal();
-                        }
-                    }]
-                });
-            } else {
-                modalDialogMessage = $('modal_dialog_message_specifics');
-                modalDialogMessage.innerHTML = '';
-
-                modalDialogMessage.insert(html);
-                modalDialogMessage.innerHTML.evalScripts();
+            if (M2ePro.popUp) {
+                jQuery('.modal_specifics').remove();
             }
+
+            var modalDialogMessage = new Element('div', {
+                id: 'modal_dialog_message_specifics'
+            });
+
+            modalDialogMessage.insert(html);
+            modalDialogMessage.innerHTML.evalScripts();
+
+            M2ePro.popUp = jQuery(modalDialogMessage).modal({
+                title: modalDialogMessage.down('#specific_popup_title').value,
+                type: 'slide',
+                modalClass: 'modal_specifics',
+                buttons: [{
+                    text: M2ePro.translator.translate('Cancel'),
+                    //class: 'action-primary',
+                    click: function () {
+                        this.closeModal();
+                    }
+                },{
+                    text: M2ePro.translator.translate('Confirm'),
+                    class: 'action-primary',
+                    id: 'save_popup_button',
+                    click: function () {
+                        doneCallback();
+                        this.closeModal();
+                    }
+                }]
+            });
 
             M2ePro.popUp.modal('openModal');
 

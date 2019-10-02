@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
+/**
+ * Class Attributes
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub
+ */
 class Attributes extends AbstractModel
 {
     //########################################
@@ -27,19 +31,22 @@ class Attributes extends AbstractModel
         }
 
         if (!$this->getProcessor()->isGeneralIdSet()) {
-            $this->getProcessor()->getTypeModel()->setChannelVariations(array(), false);
-            $this->getProcessor()->getTypeModel()->setChannelAttributesSets(array(), false);
+            $this->getProcessor()->getTypeModel()->setChannelVariations([], false);
+            $this->getProcessor()->getTypeModel()->setChannelAttributesSets([], false);
         }
 
         if (count($this->getProcessor()->getTypeModel()->getRealChannelAttributes()) ==
             count($this->getProcessor()->getTypeModel()->getRealProductAttributes())
         ) {
-            $this->getProcessor()->getTypeModel()->setVirtualProductAttributes(array(), false);
-            $this->getProcessor()->getTypeModel()->setVirtualChannelAttributes(array(), false);
+            $this->getProcessor()->getTypeModel()->setVirtualProductAttributes([], false);
+            $this->getProcessor()->getTypeModel()->setVirtualChannelAttributes([], false);
         }
     }
 
-    protected function execute() {}
+    protected function execute()
+    {
+        return null;
+    }
 
     //########################################
 }

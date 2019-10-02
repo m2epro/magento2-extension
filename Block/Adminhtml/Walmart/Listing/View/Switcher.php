@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View;
 
+/**
+ * Class Switcher
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View
+ */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
 {
     const VIEW_MODE_WALMART         = 'walmart';
@@ -24,18 +28,13 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
     public function getTooltip()
     {
         return $this->__(<<<HTML
-On this page, you can review Products that you added to the current M2E Pro Listing.
-Use filter and sort options to quickly find the required Item in the grid below.<br>
-Click <i>Show Advanced Filter</i> to narrow your search results based on the defined conditions,
-e.g. find the Item by specified Magento Attribute value.<br/><br/>
-
     Switch between 3 View Modes to manage the related Item data:
     <ul class="list">
         <li>
             <strong>Walmart</strong> - displays the Products based on their Channel information, i.e.
-            the current Item Price, Quantity, Status, etc. on Walmart.<br>
-            For each individual Item, you can edit the related SKU or Product ID values. The Mass Actions allows
-            managing Walmart Items in bulk, i.e. List, Revise, Relist, Stop the Item, etc.<br>
+            the current Item Price, Quantity, Status, etc. on Walmart. For each individual Item, you can edit
+            the related SKU or Product ID values. The Mass Actions allows managing Walmart Items in bulk,
+            i.e. List, Revise, Relist, Stop the Item, etc. <br>
             In Manage Variation pop-up, Walmart Variant Groups can be configured.
         </li>
         <li>
@@ -47,7 +46,7 @@ e.g. find the Item by specified Magento Attribute value.<br/><br/>
             the current Product Price, Quantity, Stock Availability, Status, etc. in Magento.
         </li>
     </ul>
-    To edit the entire Listing configurations, click Edit Settings.
+    To edit the entire Listing configurations, click <strong>Edit Settings</strong>.
 HTML
         );
     }

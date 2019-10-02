@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Data;
 
+/**
+ * Class GlobalData
+ * @package Ess\M2ePro\Helper\Data
+ */
 class GlobalData extends \Ess\M2ePro\Helper\AbstractHelper
 {
     private $registryModel;
@@ -18,8 +22,7 @@ class GlobalData extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\Registry $registryModel,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->registryModel = $registryModel;
         parent::__construct($helperFactory, $context);
     }
@@ -35,7 +38,7 @@ class GlobalData extends \Ess\M2ePro\Helper\AbstractHelper
     public function setValue($key, $value)
     {
         $globalKey = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$key;
-        $this->registryModel->register($globalKey,$value,!$this->getHelper('Module')->isDevelopmentEnvironment());
+        $this->registryModel->register($globalKey, $value, !$this->getHelper('Module')->isDevelopmentEnvironment());
     }
 
     //########################################

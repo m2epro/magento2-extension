@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action;
 
+/**
+ * Class Configurator
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action
+ */
 class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
 {
     const DATA_TYPE_QTY               = 'qty';
@@ -25,7 +29,7 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
      */
     public function getAllDataTypes()
     {
-        return array(
+        return [
             self::DATA_TYPE_QTY,
             self::DATA_TYPE_REGULAR_PRICE,
             self::DATA_TYPE_BUSINESS_PRICE,
@@ -33,7 +37,7 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
             self::DATA_TYPE_IMAGES,
             self::DATA_TYPE_SHIPPING_OVERRIDE,
             self::DATA_TYPE_SHIPPING_TEMPLATE
-        );
+        ];
     }
 
     //########################################

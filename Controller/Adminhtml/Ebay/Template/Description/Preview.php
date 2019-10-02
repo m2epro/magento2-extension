@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
+/**
+ * Class Preview
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description
+ */
 class Preview extends Description
 {
     private $description = [];
@@ -30,7 +34,7 @@ class Preview extends Description
 
         $productsEntities = $this->getProductsEntities();
 
-        if (is_null($productsEntities['magento_product'])) {
+        if ($productsEntities['magento_product'] === null) {
             $this->messageManager->addError($this->__('Magento Product does not exist.'));
             return $this->getResult();
         }
@@ -47,7 +51,7 @@ class Preview extends Description
                     but this Product has empty description.'
                 )
             );
-        } elseif (is_null($productsEntities['listing_product'])) {
+        } elseif ($productsEntities['listing_product'] === null) {
             $this->messageManager->addWarning(
                 $this->__(
                     'The Product you selected is not presented in any M2E Pro Listing.
@@ -58,7 +62,7 @@ class Preview extends Description
             );
         }
 
-        $previewBlock = $this->createBlock('Ebay\Template\Description\Preview')->setData([
+        $previewBlock = $this->createBlock('Ebay_Template_Description_Preview')->setData([
             'title' => $productsEntities['magento_product']->getProduct()->getData('name'),
             'magento_product_id' => $productsEntities['magento_product']->getProductId(),
             'description' => $description
@@ -72,9 +76,10 @@ class Preview extends Description
 
     //########################################
 
-    private function getDescription(\Ess\M2ePro\Model\Magento\Product $magentoProduct,
-                                    \Ess\M2ePro\Model\Listing\Product $listingProduct = NULL)
-    {
+    private function getDescription(
+        \Ess\M2ePro\Model\Magento\Product $magentoProduct,
+        \Ess\M2ePro\Model\Listing\Product $listingProduct = null
+    ) {
         $descriptionModeProduct = \Ess\M2ePro\Model\Ebay\Template\Description::DESCRIPTION_MODE_PRODUCT;
         $descriptionModeShort   = \Ess\M2ePro\Model\Ebay\Template\Description::DESCRIPTION_MODE_SHORT;
         $descriptionModeCustom  = \Ess\M2ePro\Model\Ebay\Template\Description::DESCRIPTION_MODE_CUSTOM;
@@ -93,13 +98,13 @@ class Preview extends Description
             return $description;
         }
 
-        $renderer = $this->getHelper('Module\Renderer\Description');
+        $renderer = $this->getHelper('Module_Renderer_Description');
         $description = $renderer->parseTemplate($description, $magentoProduct);
 
-        if (!is_null($listingProduct)) {
+        if ($listingProduct !== null) {
 
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Description\Renderer $renderer */
-            $renderer = $this->modelFactory->getObject('Ebay\Listing\Product\Description\Renderer');
+            $renderer = $this->modelFactory->getObject('Ebay_Listing_Product_Description_Renderer');
             $renderer->setRenderMode(\Ess\M2ePro\Model\Ebay\Listing\Product\Description\Renderer::MODE_PREVIEW);
             $renderer->setListingProduct($listingProduct->getChildObject());
             $description = $renderer->parseTemplate($description);
@@ -119,7 +124,6 @@ class Preview extends Description
 
         $count = count($tagsArr[0]);
         for ($i = 0; $i < $count; $i++) {
-
             $dom = new \DOMDocument();
             $dom->loadHTML($tagsArr[0][$i]);
             $tag = $dom->getElementsByTagName('img')->item(0);
@@ -157,7 +161,7 @@ class Preview extends Description
     private function getMagentoProductById($productId, $storeId)
     {
         if (!$this->isMagentoProductExists($productId)) {
-            return NULL;
+            return null;
         }
 
         /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
@@ -175,16 +179,16 @@ class Preview extends Description
             ->addFieldToFilter('product_id', $productId);
 
         $listingProductCollection->getSelect()->joinLeft(
-            array('ml' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()),
+            ['ml' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
             '`ml`.`id` = `main_table`.`listing_id`',
-            array('store_id')
+            ['store_id']
         );
 
         $listingProductCollection->addFieldToFilter('store_id', $storeId);
         $listingProduct = $listingProductCollection->getFirstItem();
 
-        if (is_null($listingProduct->getId())) {
-            return NULL;
+        if ($listingProduct->getId() === null) {
+            return null;
         }
 
         return $listingProduct;

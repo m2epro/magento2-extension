@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Order\View\Log;
 
 use Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Order\View\Log
+ */
 class Grid extends AbstractGrid
 {
     /** @var $order \Ess\M2ePro\Model\Order */
@@ -50,7 +54,7 @@ class Grid extends AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('create_date', array(
+        $this->addColumn('create_date', [
             'header'    => $this->__('Create Date'),
             'align'     => 'left',
             'width'     => '165px',
@@ -59,9 +63,9 @@ class Grid extends AbstractGrid
             'format'    => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'index'     => 'create_date'
-        ));
+        ]);
 
-        $this->addColumn('message', array(
+        $this->addColumn('message', [
             'header'    => $this->__('Message'),
             'align'     => 'left',
             'width'     => '*',
@@ -69,10 +73,10 @@ class Grid extends AbstractGrid
             'sortable'  => false,
             'filter_index' => 'id',
             'index'     => 'description',
-            'frame_callback' => array($this, 'callbackDescription')
-        ));
+            'frame_callback' => [$this, 'callbackDescription']
+        ]);
 
-        $this->addColumn('initiator', array(
+        $this->addColumn('initiator', [
             'header'    => $this->__('Run Mode'),
             'align'     => 'right',
             'width'     => '65px',
@@ -80,10 +84,10 @@ class Grid extends AbstractGrid
             'sortable'  => false,
             'type'      => 'options',
             'options'   => $this->_getLogInitiatorList(),
-            'frame_callback' => array($this, 'callbackColumnInitiator')
-        ));
+            'frame_callback' => [$this, 'callbackColumnInitiator']
+        ]);
 
-        $this->addColumn('type', array(
+        $this->addColumn('type', [
             'header'    => $this->__('Type'),
             'align'     => 'right',
             'width'     => '65px',
@@ -91,8 +95,8 @@ class Grid extends AbstractGrid
             'sortable'  => false,
             'type'      => 'options',
             'options'   => $this->_getLogTypeList(),
-            'frame_callback' => array($this, 'callbackColumnType')
-        ));
+            'frame_callback' => [$this, 'callbackColumnType']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -106,7 +110,7 @@ class Grid extends AbstractGrid
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/order/viewLogGrid', array('_current' => true));
+        return $this->getUrl('*/order/viewLogGrid', ['_current' => true]);
     }
 
     //########################################

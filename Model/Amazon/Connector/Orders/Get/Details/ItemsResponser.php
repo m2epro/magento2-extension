@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details;
 
+/**
+ * Class ItemsResponser
+ * @package Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details
+ */
 abstract class ItemsResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
 {
     // ########################################

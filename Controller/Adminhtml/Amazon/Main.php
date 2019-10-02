@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class Main
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon
+ */
 abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
 {
     protected $amazonFactory;
@@ -19,8 +23,7 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         Context $context
-    )
-    {
+    ) {
         $this->amazonFactory = $amazonFactory;
 
         parent::__construct($context);
@@ -42,7 +45,7 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
 
     protected function initResultPage()
     {
-        if (!is_null($this->resultPage)) {
+        if ($this->resultPage !== null) {
             return;
         }
 

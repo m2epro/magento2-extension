@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Requirements\Checks;
 
+/**
+ * Class AbstractCheck
+ * @package Ess\M2ePro\Model\Requirements\Checks
+ */
 abstract class AbstractCheck extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Requirements\Reader */
@@ -27,7 +31,7 @@ abstract class AbstractCheck extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Requirements\Reader $requirementsReader,
         \Composer\Semver\VersionParser $versionParser,
         array $data = []
-    ){
+    ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
         $this->requirementsReader = $requirementsReader;

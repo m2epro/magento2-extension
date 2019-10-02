@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon;
 
+/**
+ * Class RepricingSynchronizationActualPrice
+ * @package Ess\M2ePro\Model\Cron\Task\Amazon
+ */
 class RepricingSynchronizationActualPrice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'amazon/repricing_synchronization_actual_price';
@@ -36,7 +40,7 @@ class RepricingSynchronizationActualPrice extends \Ess\M2ePro\Model\Cron\Task\Ab
 
         foreach ($permittedAccounts as $permittedAccount) {
             /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\ActualPrice */
-            $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\ActualPrice');
+            $repricingSynchronization = $this->modelFactory->getObject('Amazon_Repricing_Synchronization_ActualPrice');
             $repricingSynchronization->setAccount($permittedAccount);
             $repricingSynchronization->run();
             $this->getLockItem()->activate();
@@ -51,16 +55,17 @@ class RepricingSynchronizationActualPrice extends \Ess\M2ePro\Model\Cron\Task\Ab
     private function getPermittedAccounts()
     {
         $accountCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Account'
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'Account'
         )->getCollection();
 
         $accountCollection->getSelect()->joinInner(
-            array(
-                'aar' => $this->activeRecordFactory->getObject('Amazon\Account\Repricing')
+            [
+                'aar' => $this->activeRecordFactory->getObject('Amazon_Account_Repricing')
                     ->getResource()->getMainTable()
-            ),
+            ],
             'aar.account_id=main_table.id',
-            array()
+            []
         );
 
         return $accountCollection->getItems();

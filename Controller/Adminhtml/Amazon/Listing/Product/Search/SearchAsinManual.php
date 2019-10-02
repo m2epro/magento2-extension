@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class SearchAsinManual
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search
+ */
 class SearchAsinManual extends Main
 {
     public function execute()
@@ -22,38 +26,37 @@ class SearchAsinManual extends Main
         }
 
         /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
-        $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product',$productId);
+        $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
 
         if ($listingProduct->isNotListed() &&
             !$listingProduct->getChildObject()->getData('is_general_id_owner') &&
             !$listingProduct->getChildObject()->getData('general_id')
         ) {
-
             $marketplaceObj = $listingProduct->getListing()->getMarketplace();
 
             /** @var $dispatcher \Ess\M2ePro\Model\Amazon\Search\Dispatcher */
-            $dispatcher = $this->modelFactory->getObject('Amazon\Search\Dispatcher');
-            $result = $dispatcher->runCustom($listingProduct,$query);
+            $dispatcher = $this->modelFactory->getObject('Amazon_Search_Dispatcher');
+            $result = $dispatcher->runCustom($listingProduct, $query);
 
             $message = $this->__('Server is currently unavailable. Please try again later.');
             if ($result === false || $result['data'] === false) {
-                $response = array('result' => 'error','text' => $message);
+                $response = ['result' => 'error','text' => $message];
                 $this->setJsonContent($response);
 
                 return $this->getResult();
             }
 
-            $this->getHelper('Data\GlobalData')->setValue('search_data',$result);
-            $this->getHelper('Data\GlobalData')->setValue('product_id',$productId);
-            $this->getHelper('Data\GlobalData')->setValue('marketplace_id',$marketplaceObj->getId());
+            $this->getHelper('Data\GlobalData')->setValue('search_data', $result);
+            $this->getHelper('Data\GlobalData')->setValue('product_id', $productId);
+            $this->getHelper('Data\GlobalData')->setValue('marketplace_id', $marketplaceObj->getId());
         } else {
-            $this->getHelper('Data\GlobalData')->setValue('search_data',array());
+            $this->getHelper('Data\GlobalData')->setValue('search_data', []);
         }
 
-        $response = array(
+        $response = [
             'result' => 'success',
-            'html'   => $this->createBlock('Amazon\Listing\Product\Search\Grid')->toHtml()
-        );
+            'html'   => $this->createBlock('Amazon_Listing_Product_Search_Grid')->toHtml()
+        ];
 
         $this->setJsonContent($response);
 

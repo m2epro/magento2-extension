@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
+/**
+ * Class UnmapFromAsin
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product
+ */
 class UnmapFromAsin extends Main
 {
     public function execute()
@@ -55,23 +59,23 @@ class UnmapFromAsin extends Main
                 /** @var ParentRelation $parentType */
                 $parentType = $listingProduct->getChildObject()->getVariationManager()->getTypeModel();
 
-                $parentType->setMatchedAttributes(array(), false);
-                $parentType->setChannelAttributesSets(array(), false);
-                $parentType->setChannelVariations(array(), false);
-                $parentType->setVirtualProductAttributes(array(), false);
-                $parentType->setVirtualChannelAttributes(array(), false);
+                $parentType->setMatchedAttributes([], false);
+                $parentType->setChannelAttributesSets([], false);
+                $parentType->setChannelVariations([], false);
+                $parentType->setVirtualProductAttributes([], false);
+                $parentType->setVirtualChannelAttributes([], false);
 
                 $runListingProductProcessor = true;
             }
 
-            $amazonListingProduct->setData('general_id',NULL);
-            $amazonListingProduct->setData('general_id_search_info',NULL);
+            $amazonListingProduct->setData('general_id', null);
+            $amazonListingProduct->setData('general_id_search_info', null);
             $amazonListingProduct->setData(
                 'is_general_id_owner',
                 \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO
             );
-            $amazonListingProduct->setData('search_settings_status',NULL);
-            $amazonListingProduct->setData('search_settings_data',NULL);
+            $amazonListingProduct->setData('search_settings_status', null);
+            $amazonListingProduct->setData('search_settings_data', null);
 
             $amazonListingProduct->save();
 

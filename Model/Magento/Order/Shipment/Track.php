@@ -11,17 +11,21 @@ namespace Ess\M2ePro\Model\Magento\Order\Shipment;
 use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Sales\Model\ResourceModel\Order\Shipment\Track\Collection as TrackCollection;
 
+/**
+ * Class Track
+ * @package Ess\M2ePro\Model\Magento\Order\Shipment
+ */
 class Track extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $shipmentTrackFactory;
     /** @var $shipment \Magento\Sales\Model\Order */
-    protected $magentoOrder = NULL;
+    protected $magentoOrder = null;
 
-    protected $supportedCarriers = array();
+    protected $supportedCarriers = [];
 
-    protected $trackingDetails = array();
+    protected $trackingDetails = [];
 
-    protected $tracks = array();
+    protected $tracks = [];
 
     //########################################
 
@@ -29,8 +33,7 @@ class Track extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Sales\Model\Order\Shipment\TrackFactory $shipmentTrackFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->shipmentTrackFactory = $shipmentTrackFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -91,7 +94,7 @@ class Track extends \Ess\M2ePro\Model\AbstractModel
     {
         $trackingDetails = $this->getFilteredTrackingDetails();
         if (count($trackingDetails) == 0) {
-            return NULL;
+            return null;
         }
 
         // Skip shipment observer
@@ -103,21 +106,14 @@ class Track extends \Ess\M2ePro\Model\AbstractModel
         /** @var $shipment \Magento\Sales\Model\Order\Shipment */
         $shipment = $this->magentoOrder->getShipmentsCollection()->getFirstItem();
 
-        // Sometimes Magento returns an array instead of Collection by a call of $shipment->getTracksCollection()
-        if ($shipment->hasData(ShipmentInterface::TRACKS) &&
-            !($shipment->getData(ShipmentInterface::TRACKS) instanceof TrackCollection)) {
-
-            $shipment->unsetData(ShipmentInterface::TRACKS);
-        }
-
         foreach ($trackingDetails as $trackingDetail) {
             /** @var $track \Magento\Sales\Model\Order\Shipment\Track */
             $track = $this->shipmentTrackFactory->create();
-            $track->setNumber($trackingDetail['number'])
-                  ->setTitle($trackingDetail['title'])
-                  ->setCarrierCode($this->getCarrierCode($trackingDetail['title']));
-            $shipment->addTrack($track)->save();
+            $track->setNumber($trackingDetail['number']);
+            $track->setTitle($trackingDetail['title']);
+            $track->setCarrierCode($this->getCarrierCode($trackingDetail['title']));
 
+            $shipment->addTrack($track)->save();
             $this->tracks[] = $track;
         }
     }
@@ -133,7 +129,6 @@ class Track extends \Ess\M2ePro\Model\AbstractModel
         // Filter exist tracks
         // ---------------------------------------
         foreach ($this->magentoOrder->getTracksCollection() as $track) {
-
             foreach ($this->trackingDetails as $key => $trackingDetail) {
                 if ($track->getData('track_number') == $trackingDetail['number']) {
                     unset($this->trackingDetails[$key]);

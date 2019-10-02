@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Shipping;
 
+/**
+ * Class Service
+ * @package Ess\M2ePro\Model\Ebay\Template\Shipping
+ */
 class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     const SHIPPING_TYPE_LOCAL         = 0;
@@ -21,12 +25,12 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Shipping
      */
-    private $shippingTemplateModel = NULL;
+    private $shippingTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Service\Source[]
      */
-    private $shippingServiceSourceModels = NULL;
+    private $shippingServiceSourceModels = null;
 
     //########################################
 
@@ -41,8 +45,8 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function delete()
     {
         $temp = parent::delete();
-        $temp && $this->shippingTemplateModel = NULL;
-        $temp && $this->shippingServiceSourceModels = array();
+        $temp && $this->shippingTemplateModel = null;
+        $temp && $this->shippingServiceSourceModels = [];
         return $temp;
     }
 
@@ -53,9 +57,10 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getShippingTemplate()
     {
-        if (is_null($this->shippingTemplateModel)) {
+        if ($this->shippingTemplateModel === null) {
             $this->shippingTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Ebay\Template\Shipping', $this->getTemplateShippingId()
+                'Ebay_Template_Shipping',
+                $this->getTemplateShippingId()
             );
         }
 
@@ -85,7 +90,7 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         }
 
         $this->shippingServiceSourceModels[$productId] = $this->modelFactory->getObject(
-            'Ebay\Template\Shipping\Service\Source'
+            'Ebay_Template_Shipping_Service_Source'
         );
         $this->shippingServiceSourceModels[$productId]->setMagentoProduct($magentoProduct);
         $this->shippingServiceSourceModels[$productId]->setShippingServiceTemplate($this);
@@ -212,7 +217,7 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getCostAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         if ($this->isCostModeCustomAttribute()) {
             $attributes[] = $this->getCostValue();
@@ -226,7 +231,7 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getCostAdditionalAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         if ($this->isCostModeCustomAttribute()) {
             $attributes[] = $this->getCostAdditionalValue();
@@ -240,7 +245,7 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getCostSurchargeAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         if ($this->isCostModeCustomAttribute()) {
             $attributes[] = $this->getCostSurchargeValue();

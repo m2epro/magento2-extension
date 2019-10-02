@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode;
 
+/**
+ * Class Product
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode
+ */
 class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     //########################################
@@ -39,20 +43,20 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/*/',array('step' => 1, '_current' => true));
-        $this->addButton('back', array(
+        $url = $this->getUrl('*/*/', ['step' => 1, '_current' => true]);
+        $this->addButton('back', [
             'label'     => $this->__('Back'),
             'class'     => 'back',
             'onclick'   => 'setLocation(\''.$url.'\');'
-        ));
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('next', array(
+        $this->addButton('next', [
             'class' => 'action-primary forward',
             'label' => $this->__('Continue'),
             'onclick' => 'EbayListingProductCategorySettingsModeProductGridObj.nextStep();'
-        ));
+        ]);
         // ---------------------------------------
     }
 
@@ -60,7 +64,7 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     {
         // ---------------------------------------
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_category_settings');
-        $viewHeaderBlock = $this->createBlock('Listing\View\Header','', [
+        $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
             'data' => ['listing' => $listing]
         ]);
         // ---------------------------------------
@@ -85,7 +89,7 @@ HTML;
 
     private function getPopupsHtml()
     {
-        return $this->createBlock('Ebay\Listing\Product\Category\Settings\Mode\Product\WarningPopup')->toHtml();
+        return $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Product_WarningPopup')->toHtml();
     }
 
     //########################################

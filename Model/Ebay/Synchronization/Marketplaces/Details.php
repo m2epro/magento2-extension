@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Marketplaces;
 
+/**
+ * Class Details
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\Marketplaces
+ */
 class Details extends AbstractModel
 {
     //########################################
@@ -57,16 +61,18 @@ class Details extends AbstractModel
 
         $this->getActualOperationHistory()->addText('Starting Marketplace "'.$marketplace->getTitle().'"');
 
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__.'get'.$marketplace->getId(),
-                                                         'Get Details from eBay');
+        $this->getActualOperationHistory()->addTimePoint(
+            __METHOD__.'get'.$marketplace->getId(),
+            'Get Details from eBay'
+        );
         $details = $this->receiveFromEbay($marketplace);
         $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$marketplace->getId());
 
         $this->getActualLockItem()->setPercents($this->getPercentsStart() + $this->getPercentsInterval()/2);
         $this->getActualLockItem()->activate();
 
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__.'save'.$marketplace->getId(),'Save Details to DB');
-        $this->saveDetailsToDb($marketplace,$details);
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__.'save'.$marketplace->getId(), 'Save Details to DB');
+        $this->saveDetailsToDb($marketplace, $details);
         $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'save'.$marketplace->getId());
 
         $this->logSuccessfulOperation($marketplace);
@@ -76,16 +82,22 @@ class Details extends AbstractModel
 
     protected function receiveFromEbay(\Ess\M2ePro\Model\Marketplace $marketplace)
     {
-        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorObj = $dispatcherObj->getVirtualConnector('marketplace','get','info',
-                                                            array('include_details' => 1),'info',
-                                                            $marketplace->getId(),NULL);
+        $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        $connectorObj = $dispatcherObj->getVirtualConnector(
+            'marketplace',
+            'get',
+            'info',
+            ['include_details' => 1],
+            'info',
+            $marketplace->getId(),
+            null
+        );
 
         $dispatcherObj->process($connectorObj);
         $details = $connectorObj->getResponseData();
 
-        if (is_null($details)) {
-            return array();
+        if ($details === null) {
+            return [];
         }
 
         $details['details']['last_update'] = $details['last_update'];
@@ -96,19 +108,19 @@ class Details extends AbstractModel
     {
         $connWrite = $this->resourceConnection->getConnection();
 
-        $tableMarketplaces = $this->getHelper('Module\Database\Structure')
+        $tableMarketplaces = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_marketplace');
-        $tableShipping = $this->getHelper('Module\Database\Structure')
+        $tableShipping = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_shipping');
 
         // Save marketplaces
         // ---------------------------------------
-        $connWrite->delete($tableMarketplaces, array('marketplace_id = ?' => $marketplace->getId()));
+        $connWrite->delete($tableMarketplaces, ['marketplace_id = ?' => $marketplace->getId()]);
 
-        $insertData = array(
+        $insertData = [
             'marketplace_id'                  => $marketplace->getId(),
-            'client_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : NULL,
-            'server_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : NULL,
+            'client_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : null,
+            'server_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : null,
             'dispatch'                        => $this->getHelper('Data')->jsonEncode($details['dispatch']),
             'packages'                        => $this->getHelper('Data')->jsonEncode($details['packages']),
             'return_policy'                   => $this->getHelper('Data')->jsonEncode($details['return_policy']),
@@ -120,7 +132,7 @@ class Details extends AbstractModel
             ),
             'tax_categories'                  => $this->getHelper('Data')->jsonEncode($details['tax_categories']),
             'charities'                       => $this->getHelper('Data')->jsonEncode($details['charities']),
-        );
+        ];
 
         if (isset($details['additional_data'])) {
             $insertData['additional_data'] = $this->getHelper('Data')->jsonEncode($details['additional_data']);
@@ -132,10 +144,10 @@ class Details extends AbstractModel
 
         // Save shipping
         // ---------------------------------------
-        $connWrite->delete($tableShipping, array('marketplace_id = ?' => $marketplace->getId()));
+        $connWrite->delete($tableShipping, ['marketplace_id = ?' => $marketplace->getId()]);
 
         foreach ($details['shipping'] as $data) {
-            $insertData = array(
+            $insertData = [
                 'marketplace_id'   => $marketplace->getId(),
                 'ebay_id'          => $data['ebay_id'],
                 'title'            => $data['title'],
@@ -144,7 +156,7 @@ class Details extends AbstractModel
                 'is_calculated'    => $data['is_calculated'],
                 'is_international' => $data['is_international'],
                 'data'             => $this->getHelper('Data')->jsonEncode($data['data']),
-            );
+            ];
             $connWrite->insert($tableShipping, $insertData);
         }
         // ---------------------------------------
@@ -157,12 +169,14 @@ class Details extends AbstractModel
 
         $tempString = $this->getHelper('Module\Log')->encodeDescription(
             'The "Details" Action for Marketplace: "%mrk%" has been successfully completed.',
-            array('mrk' => $marketplace->getTitle())
+            ['mrk' => $marketplace->getTitle()]
         );
 
-        $this->getLog()->addMessage($tempString,
-                                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
-                                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW);
+        $this->getLog()->addMessage(
+            $tempString,
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+        );
     }
 
     //########################################

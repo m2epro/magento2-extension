@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductTaxCode;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductTaxCode
+ */
 class Save extends Template
 {
     public function execute()
@@ -22,15 +26,15 @@ class Save extends Template
 
         // Base prepare
         // ---------------------------------------
-        $data = array();
+        $data = [];
 
-        $keys = array(
+        $keys = [
             'title',
 
             'product_tax_code_mode',
             'product_tax_code_value',
             'product_tax_code_attribute',
-        );
+        ];
 
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -39,19 +43,19 @@ class Save extends Template
         }
 
         /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode $model */
-        $model = $this->activeRecordFactory->getObjectLoaded('Amazon\Template\ProductTaxCode', $id, NULL, false);
+        $model = $this->activeRecordFactory->getObjectLoaded('Amazon_Template_ProductTaxCode', $id, null, false);
 
-        if (is_null($model)) {
-            $model = $this->activeRecordFactory->getObject('Amazon\Template\ProductTaxCode');
+        if ($model === null) {
+            $model = $this->activeRecordFactory->getObject('Amazon_Template_ProductTaxCode');
         }
 
-        $oldData = (!empty($id)) ? $model->getDataSnapshot() : array();
+        $oldData = (!empty($id)) ? $model->getDataSnapshot() : [];
 
         $model->addData($data)->save();
 
         $newData = $model->getDataSnapshot();
 
-        $model->setSynchStatusNeed($newData,$oldData);
+        $model->setSynchStatusNeed($newData, $oldData);
 
         if ($this->isAjax()) {
             $this->setJsonContent([
@@ -62,8 +66,8 @@ class Save extends Template
 
         $this->getMessageManager()->addSuccess($this->__('Policy was successfully saved'));
 
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('*/amazon_template/index', array(), array(
-            'edit' => array('id' => $model->getId()),
-        )));
+        return $this->_redirect($this->getHelper('Data')->getBackUrl('*/amazon_template/index', [], [
+            'edit' => ['id' => $model->getId()],
+        ]));
     }
 }

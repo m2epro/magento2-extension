@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template;
 
+/**
+ * Class Category
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Template
+ */
 class Category extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
@@ -21,7 +25,7 @@ class Category extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMode
 
     public function setSynchStatusNeed($newData, $oldData, $listingsProducts)
     {
-        $listingsProductsIds = array();
+        $listingsProductsIds = [];
         foreach ($listingsProducts as $listingProduct) {
             $listingsProductsIds[] = (int)$listingProduct['id'];
         }
@@ -30,26 +34,26 @@ class Category extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMode
             return;
         }
 
-        if (!$this->isDifferent($newData,$oldData)) {
+        if (!$this->isDifferent($newData, $oldData)) {
             return;
         }
 
-        $templates = array('categoryTemplate');
+        $templates = ['categoryTemplate'];
 
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
 
         $this->getConnection()->update(
             $lpTable,
-            array(
+            [
                 'synch_status' => \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_NEED,
                 'synch_reasons' => new \Zend_Db_Expr(
                     "IF(synch_reasons IS NULL,
-                        '".implode(',',$templates)."',
-                        CONCAT(synch_reasons,'".','.implode(',',$templates)."')
+                        '".implode(',', $templates)."',
+                        CONCAT(synch_reasons,'".','.implode(',', $templates)."')
                     )"
                 )
-            ),
-            array('id IN ('.implode(',', $listingsProductsIds).')')
+            ],
+            ['id IN ('.implode(',', $listingsProductsIds).')']
         );
     }
 
@@ -57,18 +61,18 @@ class Category extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMode
 
     public function isDifferent($newData, $oldData)
     {
-        $ignoreFields = array(
+        $ignoreFields = [
             $this->getIdFieldName(),
             'title',
             'create_date', 'update_date'
-        );
+        ];
 
         foreach ($ignoreFields as $ignoreField) {
-            unset($newData[$ignoreField],$oldData[$ignoreField]);
+            unset($newData[$ignoreField], $oldData[$ignoreField]);
         }
 
-        !isset($newData['specifics']) && $newData['specifics'] = array();
-        !isset($oldData['specifics']) && $oldData['specifics'] = array();
+        !isset($newData['specifics']) && $newData['specifics'] = [];
+        !isset($oldData['specifics']) && $oldData['specifics'] = [];
 
         foreach ($newData['specifics'] as $key => $newSpecific) {
             unset($newData['specifics'][$key]['id'], $newData['specifics'][$key]['template_category_id']);
@@ -79,13 +83,13 @@ class Category extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMode
 
         ksort($newData);
         ksort($oldData);
-        array_walk($newData['specifics'],'ksort');
-        array_walk($oldData['specifics'],'ksort');
+        array_walk($newData['specifics'], 'ksort');
+        array_walk($oldData['specifics'], 'ksort');
 
         $encodedNewData = $this->getHelper('Data')->jsonEncode($newData);
         $encodedOldData = $this->getHelper('Data')->jsonEncode($oldData);
 
-        return md5($encodedNewData) !== md5($encodedOldData);
+        return sha1($encodedNewData) !== sha1($encodedOldData);
     }
 
     //########################################

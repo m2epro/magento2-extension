@@ -8,21 +8,25 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise;
 
+/**
+ * Class Response
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise
+ */
 class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response
 {
     //########################################
 
-    public function processSuccess(array $response, array $responseParams = array())
+    public function processSuccess(array $response, array $responseParams = [])
     {
         $this->prepareMetadata();
 
-        $data = array(
+        $data = [
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED
-        );
+        ];
 
         if ($this->getConfigurator()->isDefaultMode()) {
             $data['synch_status'] = \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_OK;
-            $data['synch_reasons'] = NULL;
+            $data['synch_reasons'] = null;
         }
 
         $data = $this->appendStatusHiddenValue($data);
@@ -60,13 +64,13 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         }
     }
 
-    public function processAlreadyStopped(array $response, array $responseParams = array())
+    public function processAlreadyStopped(array $response, array $responseParams = [])
     {
         $responseParams['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT;
 
-        $data = array(
+        $data = [
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED
-        );
+        ];
 
         $data = $this->appendStatusChangerValue($data, $responseParams);
         $data = $this->appendStartDateEndDateValues($data, $response);
@@ -75,7 +79,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
             $data['additional_data'] = $this->getListingProduct()->getAdditionalData();
         }
 
-        $data['additional_data']['ebay_item_fees'] = array();
+        $data['additional_data']['ebay_item_fees'] = [];
         $data['additional_data'] = $this->getHelper('Data')->jsonEncode($data['additional_data']);
 
         $this->getListingProduct()->addData($data)->save();
@@ -158,7 +162,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
         // M2ePro\TRANSLATIONS
         // was successfully Revised
-        return ucfirst(trim($sequenceString,',')).' was successfully Revised';
+        return ucfirst(trim($sequenceString, ',')).' was successfully Revised';
     }
 
     //########################################
@@ -168,7 +172,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $metadata = $this->getRequestMetaData();
 
         if ($metadata["is_listing_type_fixed"]) {
-            $data['online_bids'] = NULL;
+            $data['online_bids'] = null;
         }
 
         return $data;
@@ -206,9 +210,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         }
 
         if (isset($response['ebay_item_fees'])) {
-
             foreach ($response['ebay_item_fees'] as $feeCode => $feeData) {
-
                 if ($feeData['fee'] == 0) {
                     continue;
                 }
@@ -228,28 +230,26 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
     private function updateEbayItem()
     {
-        $data = array(
+        $data = [
             'account_id'     => $this->getAccount()->getId(),
             'marketplace_id' => $this->getMarketplace()->getId(),
             'product_id'     => (int)$this->getListingProduct()->getProductId(),
             'store_id'       => (int)$this->getListing()->getStoreId()
-        );
+        ];
 
         if ($this->getRequestData()->isVariationItem() && $this->getRequestData()->getVariations()) {
-
-            $variations = array();
+            $variations = [];
             $requestMetadata = $this->getRequestMetaData();
 
             foreach ($this->getRequestData()->getVariations() as $variation) {
-
                 $channelOptions = $variation['specifics'];
                 $productOptions = $variation['specifics'];
 
                 if (empty($requestMetadata['variations_specifics_replacements'])) {
-                    $variations[] = array(
+                    $variations[] = [
                         'product_options' => $productOptions,
                         'channel_options' => $channelOptions,
-                    );
+                    ];
 
                     continue;
                 }
@@ -263,10 +263,10 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
                     unset($productOptions[$channelValue]);
                 }
 
-                $variations[] = array(
+                $variations[] = [
                     'product_options' => $productOptions,
                     'channel_options' => $channelOptions,
-                );
+                ];
             }
 
             $data['variations'] = $this->getHelper('Data')->jsonEncode($variations);

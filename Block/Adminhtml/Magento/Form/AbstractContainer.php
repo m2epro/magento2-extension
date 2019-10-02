@@ -12,6 +12,10 @@ use Magento\Backend\Block\Widget\Form\Container;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
+/**
+ * Class AbstractContainer
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Form
+ */
 abstract class AbstractContainer extends Container
 {
     use Traits\BlockTrait;
@@ -38,8 +42,7 @@ abstract class AbstractContainer extends Container
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
-    )
-    {
+    ) {
         $this->helperFactory = $context->getHelperFactory();
         $this->modelFactory = $context->getModelFactory();
         $this->activeRecordFactory = $context->getActiveRecordFactory();

@@ -7,6 +7,7 @@
  */
 
 namespace Ess\M2ePro\Model;
+
 use Ess\M2ePro\Model\Magento\Quote\FailDuringEventProcessing;
 
 /**
@@ -39,33 +40,33 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     private $resourceConnection;
 
-    private $account = NULL;
+    private $account = null;
 
-    private $marketplace = NULL;
+    private $marketplace = null;
 
-    private $magentoOrder = NULL;
+    private $magentoOrder = null;
 
-    private $shippingAddress = NULL;
+    private $shippingAddress = null;
 
     /** @var \Ess\M2ePro\Model\ResourceModel\Order\Item\Collection */
-    private $itemsCollection = NULL;
+    private $itemsCollection = null;
 
-    private $proxy = NULL;
+    private $proxy = null;
 
     /** @var \Ess\M2ePro\Model\Order\Reserve */
-    private $reserve = NULL;
+    private $reserve = null;
 
     private $statusUpdateRequired = false;
 
     //########################################
 
     /** @var \Ess\M2ePro\Model\Order\Log */
-    private $logModel = NULL;
+    private $logModel = null;
 
-    private $productHelper = NULL;
+    private $productHelper = null;
 
     /** @var Magento\Quote\Manager|null  */
-    private $quoteManager = NULL;
+    private $quoteManager = null;
 
     // ########################################
 
@@ -83,8 +84,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         \Ess\M2ePro\Model\Magento\Quote\Manager $quoteManager,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = [])
-    {
+        array $data = []
+    ) {
         $this->storeManager = $storeManager;
         $this->orderFactory = $orderFactory;
         $this->resourceConnection = $resourceConnection;
@@ -130,10 +131,10 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             ->addFieldToFilter('order_id', $this->getId())
             ->walk('delete');
 
-        $this->account = NULL;
-        $this->magentoOrder = NULL;
-        $this->itemsCollection = NULL;
-        $this->proxy = NULL;
+        $this->account = null;
+        $this->magentoOrder = null;
+        $this->itemsCollection = null;
+        $this->proxy = null;
 
         return parent::delete();
     }
@@ -219,9 +220,11 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
      */
     public function getAccount()
     {
-        if (is_null($this->account)) {
+        if ($this->account === null) {
             $this->account = $this->parentFactory->getCachedObjectLoaded(
-                $this->getComponentMode(), 'Account', $this->getAccountId()
+                $this->getComponentMode(),
+                'Account',
+                $this->getAccountId()
             );
         }
 
@@ -246,9 +249,11 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
      */
     public function getMarketplace()
     {
-        if (is_null($this->marketplace)) {
+        if ($this->marketplace === null) {
             $this->marketplace = $this->parentFactory->getCachedObjectLoaded(
-                $this->getComponentMode(), 'Marketplace', $this->getMarketplaceId()
+                $this->getComponentMode(),
+                'Marketplace',
+                $this->getMarketplaceId()
             );
         }
 
@@ -272,7 +277,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
      */
     public function getReserve()
     {
-        if (is_null($this->reserve)) {
+        if ($this->reserve === null) {
             $this->reserve = $this->modelFactory->getObject('Order\Reserve', [
                 'order' => $this
             ]);
@@ -302,7 +307,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
      */
     public function getItemsCollection()
     {
-        if (is_null($this->itemsCollection)) {
+        if ($this->itemsCollection === null) {
             $this->itemsCollection = $this->parentFactory->getObject($this->getComponentMode(), 'Order\Item')
                                                          ->getCollection()
                                                          ->addFieldToFilter('order_id', $this->getId());
@@ -347,12 +352,12 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
      */
     public function getChannelItems()
     {
-        $channelItems = array();
+        $channelItems = [];
 
         foreach ($this->getItemsCollection()->getItems() as $item) {
             $channelItem = $item->getChildObject()->getChannelItem();
 
-            if (is_null($channelItem)) {
+            if ($channelItem === null) {
                 continue;
             }
 
@@ -373,7 +378,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     {
         $channelItems = $this->getChannelItems();
 
-        return count($channelItems) > 0;
+        return !empty($channelItems);
     }
 
     /**
@@ -390,7 +395,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     //########################################
 
-    public function addLog($description, $type, array $params = array(), array $links = array())
+    public function addLog($description, $type, array $params = [], array $links = [])
     {
         /** @var $log \Ess\M2ePro\Model\Order\Log */
         $log = $this->getLog();
@@ -402,22 +407,22 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         $log->addMessage($this->getId(), $description, $type);
     }
 
-    public function addSuccessLog($description, array $params = array(), array $links = array())
+    public function addSuccessLog($description, array $params = [], array $links = [])
     {
         $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS, $params, $links);
     }
 
-    public function addNoticeLog($description, array $params = array(), array $links = array())
+    public function addNoticeLog($description, array $params = [], array $links = [])
     {
         $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE, $params, $links);
     }
 
-    public function addWarningLog($description, array $params = array(), array $links = array())
+    public function addWarningLog($description, array $params = [], array $links = [])
     {
         $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING, $params, $links);
     }
 
-    public function addErrorLog($description, array $params = array(), array $links = array())
+    public function addErrorLog($description, array $params = [], array $links = [])
     {
         $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR, $params, $links);
     }
@@ -429,7 +434,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
      */
     public function getShippingAddress()
     {
-        if (is_null($this->shippingAddress)) {
+        if ($this->shippingAddress === null) {
             $this->shippingAddress = $this->getChildObject()->getShippingAddress();
         }
 
@@ -449,15 +454,15 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
      */
     public function getMagentoOrder()
     {
-        if (is_null($this->getMagentoOrderId())) {
-            return NULL;
+        if ($this->getMagentoOrderId() === null) {
+            return null;
         }
 
-        if (is_null($this->magentoOrder)) {
+        if ($this->magentoOrder === null) {
             $this->magentoOrder = $this->orderFactory->create()->load($this->getMagentoOrderId());
         }
 
-        return !is_null($this->magentoOrder->getId()) ? $this->magentoOrder : NULL;
+        return $this->magentoOrder->getId() !== null ? $this->magentoOrder : null;
     }
 
     //########################################
@@ -481,40 +486,14 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         return in_array($magentoShipment->getId(), $additionalData['created_shipments_ids']);
     }
 
-    /**
-     * @param array $data
-     * @return $this
-     */
-    public function setMagentoReservationIds(array $data)
-    {
-        $additionalData = $this->getAdditionalData();
-        $additionalData['magento_reservation_ids'] = $data;
-        $this->setSettings('additional_data', $additionalData)->save();
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getMagentoReservationIds()
-    {
-        $additionalData = $this->getAdditionalData();
-        if (isset($additionalData['magento_reservation_ids'])) {
-            return $additionalData['magento_reservation_ids'];
-        }
-
-        return [];
-    }
-
     //########################################
 
     /**
-     * @return \Ess\M2ePro\Model\Order\Proxy
+     * @return \Ess\M2ePro\Model\Order\ProxyObject
      */
     public function getProxy()
     {
-        if (is_null($this->proxy)) {
+        if ($this->proxy === null) {
             $this->proxy = $this->getChildObject()->getProxy();
         }
 
@@ -532,7 +511,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         $storeId = $this->getStoreId() ? $this->getStoreId() : $this->getChildObject()->getAssociatedStoreId();
         $store = $this->storeManager->getStore($storeId);
 
-        if (is_null($store->getId())) {
+        if ($store->getId() === null) {
             throw new \Ess\M2ePro\Model\Exception('Store does not exist.');
         }
 
@@ -571,7 +550,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     public function isReservable()
     {
-        if (!is_null($this->getMagentoOrderId())) {
+        if ($this->getMagentoOrderId() !== null) {
             return false;
         }
 
@@ -598,7 +577,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     public function canCreateMagentoOrder()
     {
-        if (!is_null($this->getMagentoOrderId())) {
+        if ($this->getMagentoOrderId() !== null) {
             return false;
         }
 
@@ -621,7 +600,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     private function beforeCreateMagentoOrder()
     {
-        if (!is_null($this->getMagentoOrderId())) {
+        if ($this->getMagentoOrderId() !== null) {
             throw new \Ess\M2ePro\Model\Exception('Magento Order is already created.');
         }
 
@@ -640,16 +619,14 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     public function createMagentoOrder()
     {
         try {
-
             // Check if we are wrapped by an another MySql transaction
             // ---------------------------------------
             $connection = $this->resourceConnection->getConnection();
             if ($transactionLevel = $connection->getTransactionLevel()) {
-
                 $this->getHelper('Module\Logger')->process(
-                    array(
+                    [
                         'transaction_level' => $transactionLevel
-                    ),
+                    ],
                     'MySql Transaction Level Problem'
                 );
 
@@ -679,22 +656,21 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             $proxy = $this->getProxy()->setStore($this->getStore());
 
             /** @var \Ess\M2ePro\Model\Magento\Quote\Builder $magentoQuoteBuilder */
-            $magentoQuoteBuilder = $this->modelFactory->getObject('Magento\Quote\Builder', ['proxyOrder' => $proxy]);
+            $magentoQuoteBuilder = $this->modelFactory->getObject('Magento_Quote_Builder', ['proxyOrder' => $proxy]);
             $magentoQuote        = $magentoQuoteBuilder->build();
 
             try {
                 $this->magentoOrder = $this->quoteManager->submit($magentoQuote);
             } catch (FailDuringEventProcessing $e) {
-
                 $this->addWarningLog(
                     'Magento Order was created successfully.
                      However one or more post-processing actions on Magento Order failed.
                      This may lead to some issues in the future.
                      Please check the configuration of the ancillary services of your Magento.
                      For more details, read the original Magento warning: %msg%.',
-                    array(
+                    [
                         'msg' => $e->getMessage()
-                    )
+                    ]
                 );
                 $this->magentoOrder = $e->getOrder();
             }
@@ -712,9 +688,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
             unset($magentoQuoteBuilder);
             // ---------------------------------------
-
         } catch (\Exception $e) {
-
             unset($magentoQuoteBuilder);
 
             /**
@@ -724,13 +698,12 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
              */
             $connection = $this->resourceConnection->getConnection();
             if ($transactionLevel = $connection->getTransactionLevel()) {
-
                 $this->getHelper('Module\Logger')->process(
-                    array(
+                    [
                         'transaction_level' => $transactionLevel,
                         'error'             => $e->getMessage(),
                         'trace'             => $e->getTraceAsString()
-                    ),
+                    ],
                     'MySql Transaction Level Problem'
                 );
 
@@ -739,7 +712,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
                 }
             }
 
-            $this->_eventManager->dispatch('ess_order_place_failure', array('order' => $this));
+            $this->_eventManager->dispatch('ess_order_place_failure', ['order' => $this]);
 
             $this->addData([
                 'magento_order_creation_failure'             => self::MAGENTO_ORDER_CREATION_FAILED_YES,
@@ -748,7 +721,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             ]);
             $this->save();
 
-            $this->addErrorLog('Magento Order was not created. Reason: %msg%', array('msg' => $e->getMessage()));
+            $this->addErrorLog('Magento Order was not created. Reason: %msg%', ['msg' => $e->getMessage()]);
             $this->helperFactory->getObject('Module\Exception')->process($e, false);
 
             // ---------------------------------------
@@ -766,17 +739,17 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         // add history comments
         // ---------------------------------------
         /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
-        $magentoOrderUpdater = $this->modelFactory->getObject('Magento\Order\Updater');
+        $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
         $magentoOrderUpdater->setMagentoOrder($this->getMagentoOrder());
         $magentoOrderUpdater->updateComments($this->getProxy()->getComments());
         $magentoOrderUpdater->finishUpdate();
         // ---------------------------------------
 
-        $this->_eventManager->dispatch('ess_order_place_success', array('order' => $this));
+        $this->_eventManager->dispatch('ess_order_place_success', ['order' => $this]);
 
-        $this->addSuccessLog('Magento Order #%order_id% was created.', array(
+        $this->addSuccessLog('Magento Order #%order_id% was created.', [
             '!order_id' => $this->getMagentoOrder()->getRealOrderId()
-        ));
+        ]);
 
         if (method_exists($this->getChildObject(), 'afterCreateMagentoOrder')) {
             $this->getChildObject()->afterCreateMagentoOrder();
@@ -785,12 +758,12 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     public function updateMagentoOrderStatus()
     {
-        if (is_null($this->getMagentoOrder())) {
+        if ($this->getMagentoOrder() === null) {
             return;
         }
 
         /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
-        $magentoOrderUpdater = $this->modelFactory->getObject('Magento\Order\Updater');
+        $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
         $magentoOrderUpdater->setMagentoOrder($this->getMagentoOrder());
         $magentoOrderUpdater->updateStatus($this->getChildObject()->getStatusForMagentoOrder());
         $magentoOrderUpdater->finishUpdate();
@@ -805,7 +778,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     {
         $magentoOrder = $this->getMagentoOrder();
 
-        if (is_null($magentoOrder) || $magentoOrder->isCanceled()) {
+        if ($magentoOrder === null || $magentoOrder->isCanceled()) {
             return false;
         }
 
@@ -820,19 +793,19 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
         try {
             /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
-            $magentoOrderUpdater = $this->modelFactory->getObject('Magento\Order\Updater');
+            $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
             $magentoOrderUpdater->setMagentoOrder($this->getMagentoOrder());
             $magentoOrderUpdater->cancel();
 
-            $this->addSuccessLog('Magento Order #%order_id% was canceled.', array(
+            $this->addSuccessLog('Magento Order #%order_id% was canceled.', [
                 '!order_id' => $this->getMagentoOrder()->getRealOrderId()
-            ));
+            ]);
         } catch (\Exception $e) {
             $this->helperFactory->getObject('Module\Exception')->process($e, false);
-            $this->addErrorLog('Magento Order #%order_id% was not canceled. Reason: %msg%', array(
+            $this->addErrorLog('Magento Order #%order_id% was not canceled. Reason: %msg%', [
                 '!order_id' => $this->getMagentoOrder()->getRealOrderId(),
                 'msg' => $e->getMessage()
-            ));
+            ]);
             throw $e;
         }
     }
@@ -847,13 +820,13 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             $invoice = $this->getChildObject()->createInvoice();
         } catch (\Exception $e) {
             $this->helperFactory->getObject('Module\Exception')->process($e, false);
-            $this->addErrorLog('Invoice was not created. Reason: %msg%', array('msg' => $e->getMessage()));
+            $this->addErrorLog('Invoice was not created. Reason: %msg%', ['msg' => $e->getMessage()]);
         }
 
-        if (!is_null($invoice)) {
-            $this->addSuccessLog('Invoice #%invoice_id% was created.', array(
+        if ($invoice !== null) {
+            $this->addSuccessLog('Invoice #%invoice_id% was created.', [
                 '!invoice_id' => $invoice->getIncrementId()
-            ));
+            ]);
         }
 
         return $invoice;
@@ -863,22 +836,26 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     public function createShipments()
     {
-        $shipments = null;
+        $shipments = [];
 
         try {
             $shipments = $this->getChildObject()->createShipments();
         } catch (\Exception $e) {
             $this->helperFactory->getObject('Module\Exception')->process($e, false);
-            $this->addErrorLog('Shipment was not created. Reason: %msg%', array('msg' => $e->getMessage()));
+            $this->addErrorLog('Shipment was not created. Reason: %msg%', ['msg' => $e->getMessage()]);
         }
 
-        if (!is_null($shipments)) {
+        if ($shipments !== null) {
             foreach ($shipments as $shipment) {
-                $this->addSuccessLog('Shipment #%shipment_id% was created.', array(
+                $this->addSuccessLog('Shipment #%shipment_id% was created.', [
                     '!shipment_id' => $shipment->getIncrementId()
-                ));
+                ]);
 
                 $this->addCreatedMagentoShipment($shipment);
+            }
+
+            if (empty($shipments)) {
+                $this->addWarningLog('Shipment was not created.');
             }
         }
 

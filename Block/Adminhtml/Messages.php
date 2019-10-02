@@ -8,12 +8,17 @@
 
 namespace Ess\M2ePro\Block\Adminhtml;
 
+/**
+ * Class Messages
+ * @package Ess\M2ePro\Block\Adminhtml
+ */
 class Messages extends \Magento\Framework\View\Element\Messages
 {
     protected function _beforeToHtml()
     {
         $messages = $this->messageManager->getMessages(
-            true, \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP
+            true,
+            \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP
         );
 
         if ($messages->getCount() < 2) {

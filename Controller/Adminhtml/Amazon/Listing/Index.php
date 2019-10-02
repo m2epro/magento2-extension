@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 {
     //########################################
@@ -23,7 +27,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
     {
         if ($this->getRequest()->getQuery('ajax')) {
             $this->setAjaxContent(
-                $this->createBlock('Amazon\Listing\Grid')
+                $this->createBlock('Amazon_Listing_Grid')
             );
             return $this->getResult();
         }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Observer\Ebay;
 
+/**
+ * Class Order
+ * @package Ess\M2ePro\Observer\Ebay
+ */
 class Order extends \Ess\M2ePro\Observer\AbstractModel
 {
     protected $ebayFactory;
@@ -19,8 +23,7 @@ class Order extends \Ess\M2ePro\Observer\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
     }
@@ -89,11 +92,15 @@ class Order extends \Ess\M2ePro\Observer\AbstractModel
 
     private function sendNotification($account, $orderId, $type)
     {
-        $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+        $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connector = $dispatcher->getVirtualConnector(
-            'store', 'update', 'order',
-            array('order_id' => $orderId, 'type' => $type),
-            NULL, NULL, $account
+            'store',
+            'update',
+            'order',
+            ['order_id' => $orderId, 'type' => $type],
+            null,
+            null,
+            $account
         );
 
         try {

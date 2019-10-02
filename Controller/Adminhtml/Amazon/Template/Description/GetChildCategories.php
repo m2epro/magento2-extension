@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
+/**
+ * Class GetChildCategories
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description
+ */
 class GetChildCategories extends Description
 {
     //########################################
@@ -18,7 +22,7 @@ class GetChildCategories extends Description
     {
         $select = $this->resourceConnection->getConnection()->select()
             ->from(
-                $this->getHelper('Module\Database\Structure')
+                $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_amazon_dictionary_category')
             )
             ->where('marketplace_id = ?', $this->getRequest()->getPost('marketplace_id'))
@@ -33,7 +37,6 @@ class GetChildCategories extends Description
 
         $sortIndex = 0;
         while ($row = $queryStmt->fetch()) {
-
             $this->formatCategoryRow($row);
             $this->isItOtherCategory($row) ? $tempCategories[10000] = $row
                 : $tempCategories[$sortIndex++] = $row;

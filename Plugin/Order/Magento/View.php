@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Plugin\Order\Magento;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Plugin\Order\Magento
+ */
 class View extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     protected $activeRecordFactory;
@@ -18,17 +22,18 @@ class View extends \Ess\M2ePro\Plugin\AbstractPlugin
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
 
     //########################################
 
-    public function aroundSetLayout(\Magento\Framework\View\Element\AbstractBlock $interceptor,
-                                    \Closure $callback, ...$arguments)
-    {
+    public function aroundSetLayout(
+        \Magento\Framework\View\Element\AbstractBlock $interceptor,
+        \Closure $callback,
+        ...$arguments
+    ) {
         if (!($interceptor instanceof \Magento\Sales\Block\Adminhtml\Order\View)) {
             return $callback(...$arguments);
         }
@@ -46,7 +51,7 @@ class View extends \Ess\M2ePro\Plugin\AbstractPlugin
 
             $buttonUrl = $interceptor->getUrl(
                 'm2epro/'.strtolower($order->getComponentMode()).'_order/view',
-                array('id' => $order->getId())
+                ['id' => $order->getId()]
             );
 
             $componentTitles = $this->getHelper('Component')->getComponentsTitles();
@@ -54,11 +59,12 @@ class View extends \Ess\M2ePro\Plugin\AbstractPlugin
 
             $interceptor->addButton(
                 'go_to_m2epro_order',
-                array(
+                [
                     'label' => $this->getHelper('Module\Translation')->__('Show %component% Order', $title),
                     'onclick' => 'setLocation(\''.$buttonUrl.'\')',
-                ),
-                0, -1
+                ],
+                0,
+                -1
             );
         }
 
@@ -75,25 +81,27 @@ class View extends \Ess\M2ePro\Plugin\AbstractPlugin
     {
         $magentoOrderId = $interceptor->getRequest()->getParam('order_id');
         if (empty($magentoOrderId)) {
-            return NULL;
+            return null;
         }
 
         try {
             /** @var \Ess\M2ePro\Model\Order $order */
             $order = $this->activeRecordFactory->getObjectLoaded(
-                'Order', (int)$magentoOrderId, 'magento_order_id'
+                'Order',
+                (int)$magentoOrderId,
+                'magento_order_id'
             );
 
-            if (is_null($order) || !$order->getId()) {
-                return NULL;
+            if ($order === null || !$order->getId()) {
+                return null;
             }
 
             if (!$this->getHelper('Component\\'.ucfirst($order->getComponentMode()))->isEnabled()) {
-                return NULL;
+                return null;
             }
 
         } catch (\Exception $exception) {
-            return NULL;
+            return null;
         }
 
         return $order;

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
 
 use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
+/**
+ * Class StepTwoGetSuggestedCategory
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
+ */
 class StepTwoGetSuggestedCategory extends Settings
 {
 
@@ -38,7 +42,7 @@ class StepTwoGetSuggestedCategory extends Settings
 
         $sessionData = $this->getHelper('Data\Session')->getValue($this->sessionKey);
 
-        $result = array('failed' => 0, 'succeeded' => 0);
+        $result = ['failed' => 0, 'succeeded' => 0];
 
         // ---------------------------------------
         foreach ($collection->getItems() as $product) {
@@ -53,14 +57,17 @@ class StepTwoGetSuggestedCategory extends Settings
             }
 
             try {
-
-                $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-                $connectorObj = $dispatcherObject->getConnector('category','get','suggested',
-                    array('query' => $query), $marketplaceId);
+                $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+                $connectorObj = $dispatcherObject->getConnector(
+                    'category',
+                    'get',
+                    'suggested',
+                    ['query' => $query],
+                    $marketplaceId
+                );
 
                 $dispatcherObject->process($connectorObj);
                 $suggestions = $connectorObj->getResponseData();
-
             } catch (\Exception $e) {
                 $result['failed']++;
                 continue;
@@ -81,7 +88,7 @@ class StepTwoGetSuggestedCategory extends Settings
 
             $suggestedCategory = reset($suggestions);
 
-            $categoryExists = $this->getHelper('Component\Ebay\Category\Ebay')
+            $categoryExists = $this->getHelper('Component_Ebay_Category_Ebay')
                 ->exists(
                     $suggestedCategory['category_id'],
                     $marketplaceId

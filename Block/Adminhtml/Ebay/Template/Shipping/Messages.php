@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping;
 
+/**
+ * Class Messages
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping
+ */
 class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 {
     const TYPE_CURRENCY_CONVERSION = 'currency_conversion';
@@ -16,10 +20,12 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 
     public function getMessages()
     {
-        $messages = array();
+        $messages = [];
 
         // ---------------------------------------
-        if (!is_null($message = $this->getCurrencyConversionMessage())) {
+        $message = $this->getCurrencyConversionMessage();
+
+        if ($message !== null) {
             $messages[self::TYPE_CURRENCY_CONVERSION] = $message;
         }
         // ---------------------------------------
@@ -33,16 +39,16 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 
     public function getCurrencyConversionMessage($marketplaceCurrency = null)
     {
-        if (is_null($this->getMarketplace())) {
-            return NULL;
+        if ($this->getMarketplace() === null) {
+            return null;
         }
 
-        if (is_null($marketplaceCurrency)) {
+        if ($marketplaceCurrency === null) {
             $marketplaceCurrency = $this->getMarketplace()->getChildObject()->getCurrency();
         }
 
         if (!$this->canDisplayCurrencyConversionMessage($marketplaceCurrency)) {
-            return NULL;
+            return null;
         }
 
         $storePath = $this->helperFactory->getObject('Magento\Store')->getStorePath($this->getStore()->getId());
@@ -51,17 +57,15 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
         if (!$allowed) {
             $currencySetupUrl = $this->getUrl(
                 'admin/system_config/edit',
-                array(
+                [
                     'section' => 'currency',
                     'website' => $this->getStore()->getId() != \Magento\Store\Model\Store::DEFAULT_STORE_ID
                                     ? $this->getStore()->getWebsite()->getId() : null,
                     'store'   => $this->getStore()->getId() != \Magento\Store\Model\Store::DEFAULT_STORE_ID
                                     ? $this->getStore()->getId() : null
-                )
+                ]
             );
 
-// M2ePro_TRANSLATIONS
-// Currency "%currency_code%" is not allowed in <a href="%url%" target="_blank">Currency Setup</a> for Store View "%store_path%" of your Magento. Currency conversion will not be performed.
             return
                 $this->__(
                     'Currency "%currency_code%" is not allowed in <a href="%url%" target="_blank">Currency Setup</a> '
@@ -80,8 +84,6 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
                 4
             );
 
-// M2ePro_TRANSLATIONS
-// There is no rate for "%currency_from%-%currency_to%" in <a href="%url%" target="_blank">Manage Currency Rates</a> of your Magento. Currency conversion will not be performed.
         if ($rate == 0) {
             return
                 $this->__(
@@ -94,14 +96,11 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
                 );
         }
 
-// M2ePro_TRANSLATIONS
-// There is a rate %value% for "%currency_from%-%currency_to%" in <a href="%url%" target="_blank">Manage Currency Rates</a> of your Magento. Currency conversion will be performed automatically.
         $message =
             $this->__(
                 'There is a rate %value% for "%currency_from%-%currency_to%" in'
                 . ' <a href="%url%" target="_blank">Manage Currency Rates</a> of your Magento.'
-                . ' Currency conversion will be performed automatically.'
-                ,
+                . ' Currency conversion will be performed automatically.',
                 $rate,
                 $this->getStore()->getBaseCurrencyCode(),
                 $marketplaceCurrency,
@@ -115,7 +114,7 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 
     protected function canDisplayCurrencyConversionMessage($marketplaceCurrency)
     {
-        if (is_null($this->getStore())) {
+        if ($this->getStore() === null) {
             return false;
         }
 
@@ -123,20 +122,17 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
             return false;
         }
 
-        $template = $this->activeRecordFactory->getObject('Ebay\Template\Shipping');
+        $template = $this->activeRecordFactory->getObject('Ebay_Template_Shipping');
         $template->addData($this->getTemplateData());
 
         $attributes = [];
 
         if ($template->getId()) {
-
             foreach ($template->getServices(true) as $service) {
                 /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Service $service */
                 $attributes = array_merge($attributes, $service->getUsedAttributes());
             }
-
         } else {
-
             $shippingCostAttributes = $template->getData('shipping_cost_attribute');
             if (!empty($shippingCostAttributes)) {
                 $attributes = array_merge($attributes, $shippingCostAttributes);
@@ -153,16 +149,17 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
             }
         }
 
-        $preparedAttributes = array();
+        $preparedAttributes = [];
         foreach (array_filter($attributes) as $attribute) {
             $preparedAttributes[] = ['code' => $attribute];
         }
 
         $attributes = $this->helperFactory->getObject('Magento\Attribute')->filterByInputTypes(
-            $preparedAttributes, ['price']
+            $preparedAttributes,
+            ['price']
         );
 
-        if (count($attributes)) {
+        if (!empty($attributes)) {
             return true;
         }
 

@@ -1,4 +1,12 @@
 <?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
 /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\Review $block */
 
 $block->css->add("
@@ -12,7 +20,7 @@ $block->css->add("
 ");
 ?>
 
-<?php echo $this->getChildHtml('view_header'); ?>
+<?php echo $block->getChildHtml('view_header'); ?>
 
 <div class="block_notices_module" title="" subtitle="" collapseable="no" hideblock="no" always_show="yes">
 
@@ -31,8 +39,8 @@ $block->css->add("
             <br/><br/>
             <div>%1% &nbsp; or &nbsp; %2%</div>
             ',
-            $this->getChildHtml('review'),
-            $this->getChildHtml('list')
+            $block->getChildHtml('review'),
+            $block->getChildHtml('list')
         );
 
         echo $block->createBlock('HelpBlock')->addData([
@@ -42,5 +50,5 @@ $block->css->add("
             'content' => $helpBlockContent
         ])->toHtml();
 
-    ?>
+        ?>
 </div>

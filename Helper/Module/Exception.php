@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Module;
 
+/**
+ * Class Exception
+ * @package Ess\M2ePro\Helper\Module
+ */
 class Exception extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const FILTER_TYPE_TYPE    = 1;
@@ -30,8 +34,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
         \Magento\Store\Model\StoreManagerInterface $storeManager
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->modelFactory = $modelFactory;
         $this->moduleConfig = $moduleConfig;
@@ -47,20 +50,19 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
         /**@var \Exception $throwable */
 
         try {
-
             $type = get_class($throwable);
 
             $info = $this->getExceptionInfo($throwable, $type);
             $info .= $this->getExceptionStackTraceInfo($throwable);
             $info .= $this->getCurrentUserActionInfo();
             $info .= $this->getAdditionalActionInfo();
-            $info .= $this->getHelper('Module\Support\Form')->getSummaryInfo();
+            $info .= $this->getHelper('Module_Support_Form')->getSummaryInfo();
 
             $this->log($info, $type);
 
             if (!$sendToServer ||
                 ($throwable instanceof \Ess\M2ePro\Model\Exception && !$throwable->isSendToServer()) ||
-                !(bool)(int)$this->moduleConfig->getGroupValue('/debug/exceptions/','send_to_server') ||
+                !(bool)(int)$this->moduleConfig->getGroupValue('/debug/exceptions/', 'send_to_server') ||
                 $this->isExceptionFiltered($info, $throwable->getMessage(), $type)) {
                 return;
             }
@@ -74,25 +76,24 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
             $this->send($info, $throwable->getMessage(), $type);
 
             $this->getHelper('Data\GlobalData')->unsetValue('send_exception_to_server');
-
-        } catch (\Exception $exceptionTemp) {}
+        } catch (\Exception $exceptionTemp) {
+        }
     }
 
     public function processFatal($error, $traceInfo)
     {
         try {
-
             $type = 'Fatal Error';
 
             $info = $this->getFatalInfo($error, $type);
             $info .= $traceInfo;
             $info .= $this->getCurrentUserActionInfo();
             $info .= $this->getAdditionalActionInfo();
-            $info .= $this->getHelper('Module\Support\Form')->getSummaryInfo();
+            $info .= $this->getHelper('Module_Support_Form')->getSummaryInfo();
 
             $this->log($info, $type);
 
-            if (!(bool)(int)$this->moduleConfig->getGroupValue('/debug/fatal_error/','send_to_server') ||
+            if (!(bool)(int)$this->moduleConfig->getGroupValue('/debug/fatal_error/', 'send_to_server') ||
                 $this->isExceptionFiltered($info, $error['message'], $type)) {
                 return;
             }
@@ -106,8 +107,8 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
             $this->send($info, $error['message'], $type);
 
             $this->getHelper('Data\GlobalData')->unsetValue('send_exception_to_server');
-
-        } catch (\Exception $exceptionTemp) {}
+        } catch (\Exception $exceptionTemp) {
+        }
     }
 
     // ---------------------------------------
@@ -123,19 +124,19 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
         $this->getHelper('Data\GlobalData')->setValue('set_fatal_error_handler', true);
 
         $exceptionHelper = $this->getHelper('Module\Exception');
-        $shutdownFunction = function() use($exceptionHelper) {
+        $shutdownFunction = function () use ($exceptionHelper) {
             $error = error_get_last();
 
-            if (is_null($error)) {
+            if ($error === null) {
                 return;
             }
 
-            $fatalErrors = array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR);
+            $fatalErrors = [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR];
 
             if (in_array((int)$error['type'], $fatalErrors)) {
                 $trace = debug_backtrace(false);
                 $traceInfo = $exceptionHelper->getFatalStackTraceInfo($trace);
-                $exceptionHelper->processFatal($error,$traceInfo);
+                $exceptionHelper->processFatal($error, $traceInfo);
             }
         };
 
@@ -158,12 +159,13 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
         $log->setDescription($message);
 
         $trace = debug_backtrace();
-        $file = isset($trace[1]['file']) ? $trace[1]['file'] : 'not set';;
+        $file = isset($trace[1]['file']) ? $trace[1]['file'] : 'not set';
+        ;
         $line = isset($trace[1]['line']) ? $trace[1]['line'] : 'not set';
 
-        $additionalData = array(
+        $additionalData = [
             'called-from' => $file .' : '. $line
-        );
+        ];
         $log->setData('additional_data', print_r($additionalData, true));
 
         $log->save();
@@ -226,7 +228,7 @@ FATAL;
     public function getFatalStackTraceInfo($stackTrace)
     {
         if (!is_array($stackTrace)) {
-            $stackTrace = array();
+            $stackTrace = [];
         }
 
         $stackTrace = array_reverse($stackTrace);
@@ -237,7 +239,7 @@ FATAL;
                 $info .= "#{$key} {$trace['file']}({$trace['line']}):";
                 $info .= " {$trace['class']}{$trace['type']}{$trace['function']}(";
 
-                if (count($trace['args'])) {
+                if (!empty($trace['args'])) {
                     foreach ($trace['args'] as $key => $arg) {
                         $key != 0 && $info .= ',';
 
@@ -302,40 +304,44 @@ ACTION;
     private function send($info, $message, $type)
     {
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('exception','add','entity',
-                                                               array('info'    => $info,
+        $connectorObj = $dispatcherObject->getVirtualConnector(
+            'exception',
+            'add',
+            'entity',
+            ['info'    => $info,
                                                                      'message' => $message,
-                                                                     'type'    => $type));
+            'type'    => $type]
+        );
 
         $dispatcherObject->process($connectorObj);
     }
 
     private function isExceptionFiltered($info, $message, $type)
     {
-        if (!(bool)(int)$this->moduleConfig->getGroupValue('/debug/exceptions/','filters_mode')) {
+        if (!(bool)(int)$this->moduleConfig->getGroupValue('/debug/exceptions/', 'filters_mode')) {
             return false;
         }
 
         $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', '/exceptions_filters/', 'key', false
+            'Registry',
+            '/exceptions_filters/',
+            'key',
+            false
         );
 
         $exceptionFilters = [];
-        if (!is_null($registry)) {
+        if ($registry !== null) {
             $exceptionFilters = $registry->getValueFromJson();
         }
 
         foreach ($exceptionFilters as $exceptionFilter) {
-
             try {
-
                 $searchSubject = '';
-                $exceptionFilter['type'] == self::FILTER_TYPE_TYPE    && $searchSubject = $type;
+                $exceptionFilter['type'] == self::FILTER_TYPE_TYPE && $searchSubject = $type;
                 $exceptionFilter['type'] == self::FILTER_TYPE_MESSAGE && $searchSubject = $message;
-                $exceptionFilter['type'] == self::FILTER_TYPE_INFO    && $searchSubject = $info;
+                $exceptionFilter['type'] == self::FILTER_TYPE_INFO && $searchSubject = $info;
 
                 $tempResult = preg_match($exceptionFilter['preg_match'], $searchSubject);
-
             } catch (\Exception $exception) {
                 return false;
             }

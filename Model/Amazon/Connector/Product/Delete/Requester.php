@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Product\Delete;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Amazon\Connector\Product\Delete
+ */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 {
     // ########################################
 
     public function getCommand()
     {
-        return array('product','delete','entities');
+        return ['product','delete','entities'];
     }
 
     // ########################################
@@ -62,7 +66,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         $validationResult = $validator->validate();
 
         if (!$validationResult && $this->listingProduct->isDeleted()) {
-            if (!is_null($parentListingProduct)) {
+            if ($parentListingProduct !== null) {
                 $parentListingProduct->load($parentListingProduct->getId());
 
                 /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonParentListingProduct */
@@ -74,8 +78,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         }
 
         foreach ($validator->getMessages() as $messageData) {
-
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData($messageData['text'], $messageData['type']);
 
             $this->getLogger()->logListingProductMessage(
@@ -121,14 +124,13 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         }
 
         if (!empty($this->params['remove'])) {
-
-            $this->listingProduct->addData(array(
+            $this->listingProduct->addData([
                 'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
-            ));
-            $amazonListingProduct->addData(array(
+            ]);
+            $amazonListingProduct->addData([
                 'general_id'          => null,
                 'is_general_id_owner' => \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO,
-            ));
+            ]);
             $this->listingProduct->save();
 
             $amazonListingProduct->getVariationManager()->switchModeToAnother();
@@ -140,14 +142,14 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
             return true;
         }
 
-        $childListingsProductsIds = array();
+        $childListingsProductsIds = [];
         foreach ($filteredByStatusNotLockedChildListingProducts as $listingProduct) {
             $childListingsProductsIds[] = $listingProduct->getId();
         }
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('id', array('in' => $childListingsProductsIds));
+        $listingProductCollection->addFieldToFilter('id', ['in' => $childListingsProductsIds]);
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $processChildListingsProducts */
         $processChildListingsProducts = $listingProductCollection->getItems();
@@ -155,11 +157,13 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
             return true;
         }
 
-        $dispatcherParams = array_merge($this->params, array('is_parent_action' => true));
+        $dispatcherParams = array_merge($this->params, ['is_parent_action' => true]);
 
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Product\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Product_Dispatcher');
         $processStatus = $dispatcherObject->process(
-            $this->getActionType(), $processChildListingsProducts, $dispatcherParams
+            $this->getActionType(),
+            $processChildListingsProducts,
+            $dispatcherParams
         );
 
         if ($processStatus == \Ess\M2ePro\Helper\Data::STATUS_ERROR) {
@@ -177,7 +181,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
      */
     protected function filterChildListingProductsByStatus(array $listingProducts)
     {
-        $resultListingProducts = array();
+        $resultListingProducts = [];
 
         foreach ($listingProducts as $id => $childListingProduct) {
             if ($childListingProduct->isBlocked() && empty($this->params['remove'])) {
@@ -213,7 +217,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
         // M2ePro\TRANSLATIONS
         // Another Action is being processed. Try again when the Action is completed.
-        $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
             'Delete and Remove action is not supported if Child Products are in Action.',
             \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR

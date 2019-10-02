@@ -8,11 +8,15 @@
 
 namespace Ess\M2ePro\Helper\Data\Cache;
 
+/**
+ * Class Runtime
+ * @package Ess\M2ePro\Helper\Data\Cache
+ */
 class Runtime extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
 {
     //########################################
 
-    private $cacheStorage = array();
+    private $cacheStorage = [];
 
     //########################################
 
@@ -21,12 +25,12 @@ class Runtime extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
         return isset($this->cacheStorage[$key]['data']) ? $this->cacheStorage[$key]['data'] : null;
     }
 
-    public function setValue($key, $value, array $tags = array(), $lifetime = null)
+    public function setValue($key, $value, array $tags = [], $lifetime = null)
     {
-        $this->cacheStorage[$key] = array(
+        $this->cacheStorage[$key] = [
             'data' => $value,
             'tags' => $tags,
-        );
+        ];
 
         return $value;
     }
@@ -64,7 +68,7 @@ class Runtime extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
             return false;
         }
 
-        $this->cacheStorage = array();
+        $this->cacheStorage = [];
         return true;
     }
 

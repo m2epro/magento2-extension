@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General;
 
+/**
+ * Class Feedbacks
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\General
+ */
 class Feedbacks extends AbstractModel
 {
     //########################################
@@ -17,7 +21,7 @@ class Feedbacks extends AbstractModel
      */
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------

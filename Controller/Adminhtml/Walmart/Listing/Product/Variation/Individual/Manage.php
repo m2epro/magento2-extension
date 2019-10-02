@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Indi
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
+/**
+ * Class Manage
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Individual
+ */
 class Manage extends Main
 {
     //########################################
@@ -30,29 +34,23 @@ class Manage extends Main
             return $this->getResult();
         }
 
-        /* @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+        /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
         $listingProduct = $this->walmartFactory->getObjectLoaded('Listing\Product', $listingProductId);
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager $variationManager */
         $variationManager = $listingProduct->getChildObject()->getVariationManager();
 
-        if ($listingProduct->isComponentModeWalmart()) {
-            $isVariationProductMatched = (
-                $variationManager->isIndividualType() &&
-                $variationManager->getTypeModel()->isVariationProductMatched()
-            );
-        } else {
-            $isVariationProductMatched = $variationManager->isVariationProductMatched();
-        }
+        $isVariationProductMatched = (
+            $variationManager->isIndividualType() &&
+            $variationManager->getTypeModel()->isVariationProductMatched()
+        );
 
         if ($isVariationProductMatched) {
             $listingProduct = $this->duplicateListingProduct($listingProduct);
         } else {
-
-            $listingProduct->setData('search_settings_status', NULL);
-            $listingProduct->setData('search_settings_data', NULL);
+            $listingProduct->setData('search_settings_status', null);
+            $listingProduct->setData('search_settings_data', null);
             $listingProduct->save();
-
         }
 
         $magentoVariations = $listingProduct->getMagentoProduct()->getVariationInstance()->getVariationsTypeStandard();
@@ -60,7 +58,6 @@ class Manage extends Main
 
         $isFirst = true;
         foreach ($variationsData as $variationData) {
-
             !$isFirst && $listingProduct = $this->duplicateListingProduct($listingProduct);
             $isFirst = false;
 
@@ -86,17 +83,14 @@ class Manage extends Main
                 return $this->getResult();
             }
 
-            if ($listingProduct->isComponentModeWalmart()) {
-                /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager $listingProductManager */
-                $listingProductManager = $listingProduct->getChildObject()->getVariationManager();
+            /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager $listingProductManager */
+            $listingProductManager = $listingProduct->getChildObject()->getVariationManager();
 
-                if ($listingProductManager->isRelationParentType() && $listingProductManager->modeCanBeSwitched()) {
-                    $listingProductManager->switchModeToAnother();
-                }
-                $individualModel = $listingProductManager->getTypeModel();
-            } else {
-                $individualModel = $listingProduct->getChildObject()->getVariationManager();
+            if ($listingProductManager->isRelationParentType() && $listingProductManager->modeCanBeSwitched()) {
+                $listingProductManager->switchModeToAnother();
             }
+
+            $individualModel = $listingProductManager->getTypeModel();
             $individualModel->setProductVariation(reset($tempMagentoVariations));
         }
 
@@ -113,20 +107,27 @@ class Manage extends Main
     private function duplicateListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
         $duplicatedListingProduct = $listingProduct->getListing()->addProduct(
-            $listingProduct->getProductId(), \Ess\M2ePro\Helper\Data::INITIATOR_USER, false,false
+            $listingProduct->getProductId(),
+            \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+            false,
+            false
         );
+
+        $duplicatedListingProduct->setData(
+            'template_category_id',
+            $listingProduct->getChildObject()->getTemplateCategoryId()
+        );
+        $duplicatedListingProduct->save();
 
         $variationManager = $listingProduct->getChildObject()->getVariationManager();
         if (!$variationManager->isVariationProduct()) {
             return $duplicatedListingProduct;
         }
 
-        if ($listingProduct->isComponentModeWalmart()) {
-            $duplicatedListingProductManager = $duplicatedListingProduct->getChildObject()->getVariationManager();
+        $duplicatedListingProductManager = $duplicatedListingProduct->getChildObject()->getVariationManager();
 
-            if ($variationManager->isIndividualType() && $duplicatedListingProductManager->modeCanBeSwitched()) {
-                $duplicatedListingProductManager->switchModeToAnother();
-            }
+        if ($variationManager->isIndividualType() && $duplicatedListingProductManager->modeCanBeSwitched()) {
+            $duplicatedListingProductManager->switchModeToAnother();
         }
 
         return $duplicatedListingProduct;

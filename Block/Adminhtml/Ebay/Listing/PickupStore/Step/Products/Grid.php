@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Products;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Products
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $localeCurrency;
@@ -25,8 +29,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->localeCurrency = $localeCurrency;
         $this->ebayFactory = $ebayFactory;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
@@ -71,7 +74,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
         // Get collection
         // ---------------------------------------
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->setListingProductModeOn();
         $collection->setStoreId($this->listing->getStoreId());
@@ -95,7 +98,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             '{{table}}.listing_id='.(int)$this->listing->getData('id')
         );
         $collection->joinTable(
-            ['elp' => $this->activeRecordFactory->getObject('Ebay\Listing\Product')->getResource()->getMainTable()],
+            ['elp' => $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable()],
             'listing_product_id=id',
             [
                 'listing_product_id'    => 'listing_product_id',
@@ -129,7 +132,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ['ei' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()],
             'id=ebay_item_id',
             ['item_id' => 'item_id'],
-            NULL,
+            null,
             'left'
         );
         $collection->getSelect()->joinLeft(
@@ -138,10 +141,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     `mlpv`.`listing_product_id`,
                     MIN(`melpv`.`online_price`) as variation_min_price,
                     MAX(`melpv`.`online_price`) as variation_max_price
-                FROM `'. $this->activeRecordFactory->getObject('Listing\Product\Variation')
+                FROM `'. $this->activeRecordFactory->getObject('Listing_Product_Variation')
                               ->getResource()->getMainTable() .'` AS `mlpv`
                 INNER JOIN `' .
-                $this->activeRecordFactory->getObject('Ebay\Listing\Product\Variation')->getResource()->getMainTable() .
+                $this->activeRecordFactory->getObject('Ebay_Listing_Product_Variation')->getResource()->getMainTable() .
                 '` AS `melpv`
                     ON (`mlpv`.`id` = `melpv`.`listing_product_variation_id`)
                 WHERE `melpv`.`status` != ' . \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED . '
@@ -180,10 +183,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // Set fake action
         // ---------------------------------------
         if ($this->getMassactionBlock()->getCount() == 0) {
-            $this->getMassactionBlock()->addItem('fake', array(
+            $this->getMassactionBlock()->addItem('fake', [
                 'label' => '&nbsp;&nbsp;&nbsp;&nbsp;',
                 'url'   => '#',
-            ));
+            ]);
             // Header of grid with massactions is rendering in other way, than with no massaction
             // so it causes broken layout when the actions are absent
             $this->css->add(<<<CSS
@@ -301,7 +304,7 @@ CSS
         $htmlWithoutThumbnail = '<a href="' . $url . '" target="_blank">'.$productId.'</a>';
 
         $showProductsThumbnails = (bool)(int)$this->getHelper('Module')->getConfig()
-            ->getGroupValue('/view/','show_products_thumbnails');
+            ->getGroupValue('/view/', 'show_products_thumbnails');
 
         if (!$showProductsThumbnails) {
             return $htmlWithoutThumbnail;
@@ -315,7 +318,7 @@ CSS
         $magentoProduct->setStoreId($storeId);
 
         $thumbnail = $magentoProduct->getThumbnailImage();
-        if (is_null($thumbnail)) {
+        if ($thumbnail === null) {
             return $htmlWithoutThumbnail;
         }
 
@@ -335,7 +338,7 @@ HTML;
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -362,7 +365,9 @@ HTML;
         $title = $this->getHelper('Data')->escapeHtml($title);
         $valueHtml = '<span class="product-title-value">' . $title . '</span>';
 
-        if (is_null($sku = $row->getData('sku'))) {
+        $sku = $row->getData('sku');
+
+        if ($row->getData('sku') === null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
                                       ->setProductId($row->getData('entity_id'))->getSku();
         }
@@ -375,7 +380,7 @@ HTML;
             $this->getHelper('Data')->escapeHtml($sku);
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-        $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product',$row->getData('listing_product_id'));
+        $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $row->getData('listing_product_id'));
 
         if (!$listingProduct->getChildObject()->isVariationsReady()) {
             return $valueHtml;
@@ -396,7 +401,7 @@ HTML;
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
-        if (is_null($value) || $value === '') {
+        if ($value === null || $value === '') {
             return $this->__('N/A');
         }
 
@@ -422,7 +427,7 @@ HTML;
         $onlineStartPrice = $row->getData('online_start_price');
         $onlineCurrentPrice = $row->getData('online_current_price');
 
-        if (is_null($onlineMinPrice) || $onlineMinPrice === '') {
+        if ($onlineMinPrice === null || $onlineMinPrice === '') {
             return $this->__('N/A');
         }
 
@@ -433,7 +438,6 @@ HTML;
         $currency = $this->listing->getMarketplace()->getChildObject()->getCurrency();
 
         if (!empty($onlineStartPrice)) {
-
             $onlineReservePrice = $row->getData('online_reserve_price');
             $onlineBuyItNowPrice = $row->getData('online_buyitnow_price');
 
@@ -480,11 +484,9 @@ HTML;
                 $resultHtml = '<span style="color: grey; text-decoration: line-through;">'.$onlineStartStr.'</span>';
                 $resultHtml .= '<br/>'.$intervalHtml.'&nbsp;'.
                     '<span class="product-price-value">'.$onlineCurrentStr.'</span>';
-
             } else {
                 $resultHtml = $intervalHtml.'&nbsp;'.'<span class="product-price-value">'.$onlineStartStr.'</span>';
             }
-
         } else {
             $onlineMinPriceStr = $this->convertAndFormatPriceCurrency($onlineMinPrice, $currency);
             $onlineMaxPriceStr = $this->convertAndFormatPriceCurrency($onlineMaxPrice, $currency);
@@ -501,7 +503,6 @@ HTML;
         $html = '';
 
         switch ((int)$row->getData('ebay_status')) {
-
             case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
                 $html = '<span style="color: gray;">' . $value . '</span>';
                 break;

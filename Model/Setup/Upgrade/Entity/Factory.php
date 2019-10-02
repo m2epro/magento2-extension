@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Setup\Upgrade\Entity;
 
+/**
+ * Class Factory
+ * @package Ess\M2ePro\Model\Setup\Upgrade\Entity
+ */
 class Factory
 {
     private $objectManager;
@@ -32,16 +36,12 @@ class Factory
     public function getFeatureObject($featureName, $fromVersion = null, $toVersion = null)
     {
         if (strpos($featureName, '/') !== false && strpos($featureName, '@') === 0) {
-
             $featureName = explode('/', substr($featureName, 1));
             $className = '\Ess\M2ePro\Setup\Update\\' . $featureName[0] . '\\' . $featureName[1];
-
-        } elseif (!is_null($fromVersion) && !is_null($toVersion)) {
-
+        } elseif ($fromVersion !== null && $toVersion !== null) {
             $fromVersion = $this->prepareVersion($fromVersion);
             $toVersion   = $this->prepareVersion($toVersion);
             $className = '\Ess\M2ePro\Setup\Upgrade\v'.$fromVersion.'__v'.$toVersion.'\\'.$featureName;
-
         } else {
             $className = '\Ess\M2ePro\Setup\Update\\' . $featureName;
         }

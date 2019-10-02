@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore;
 
+/**
+ * Class NewAction
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore
+ */
 class NewAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {
     //########################################

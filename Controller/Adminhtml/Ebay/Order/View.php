@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Order
+ */
 class View extends Order
 {
     public function execute()
@@ -19,7 +23,7 @@ class View extends Order
 
         $this->getHelper('Data\GlobalData')->setValue('order', $order);
 
-        $this->addContent($this->createBlock('Ebay\Order\View'));
+        $this->addContent($this->createBlock('Ebay_Order_View'));
 
         $this->init();
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('View Order Details'));

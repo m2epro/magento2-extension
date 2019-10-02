@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
+/**
+ * Class SaveRecentProductDataNick
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description
+ */
 class SaveRecentProductDataNick extends Description
 {
     //########################################
@@ -24,7 +28,7 @@ class SaveRecentProductDataNick extends Description
             return $this->getResult();
         }
 
-        $this->getHelper('Component\Amazon\ProductData')->addRecent($marketplaceId, $productDataNick);
+        $this->getHelper('Component_Amazon_ProductData')->addRecent($marketplaceId, $productDataNick);
         $this->setJsonContent(['result' => true]);
         return $this->getResult();
     }

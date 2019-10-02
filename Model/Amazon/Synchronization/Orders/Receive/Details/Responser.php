@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders\Receive\Details;
 
+/**
+ * Class Responser
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders\Receive\Details
+ */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details\ItemsResponser
 {
     /** @var \Ess\M2ePro\Model\Synchronization\Log */
-    protected $synchronizationLog = NULL;
+    protected $synchronizationLog = null;
 
     protected $activeRecordFactory;
 
@@ -24,8 +28,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details\It
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params = []
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
 
         parent::__construct($amazonFactory, $response, $helperFactory, $modelFactory, $params);
@@ -33,12 +36,11 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details\It
 
     //########################################
 
-    protected function processResponseMessages(array $messages = array())
+    protected function processResponseMessages(array $messages = [])
     {
         parent::processResponseMessages();
 
         foreach ($this->getResponse()->getMessages()->getEntities() as $message) {
-
             if (!$message->isError() && !$message->isWarning()) {
                 continue;
             }
@@ -86,7 +88,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details\It
     {
         $responseData = $this->getPreparedResponseData();
 
-        $amazonOrdersIds = array();
+        $amazonOrdersIds = [];
         foreach ($responseData['data'] as $details) {
             $amazonOrdersIds[] = $details['amazon_order_id'];
         }
@@ -97,12 +99,12 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details\It
         }
 
         $ordersCollection = $this->amazonFactory->getObject('Order')->getCollection();
-        $ordersCollection->addFieldToFilter('amazon_order_id', array('in' => $amazonOrdersIds));
+        $ordersCollection->addFieldToFilter('amazon_order_id', ['in' => $amazonOrdersIds]);
 
         foreach ($responseData['data'] as $details) {
             /** @var \Ess\M2ePro\Model\Order $order */
             $order = $ordersCollection->getItemByColumnValue('amazon_order_id', $details['amazon_order_id']);
-            if (is_null($order)) {
+            if ($order === null) {
                 continue;
             }
 
@@ -121,12 +123,12 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details\It
      */
     protected function getAccount()
     {
-        return $this->getObjectByParam('Account','account_id');
+        return $this->getObjectByParam('Account', 'account_id');
     }
 
     protected function getSynchronizationLog()
     {
-        if (!is_null($this->synchronizationLog)) {
+        if ($this->synchronizationLog !== null) {
             return $this->synchronizationLog;
         }
 

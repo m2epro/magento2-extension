@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit\Form;
 
+/**
+ * Class DiscountTable
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit\Form
+ */
 class DiscountTable extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     protected $_template = 'amazon/template/selling_format/discount_table.phtml';

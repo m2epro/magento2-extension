@@ -39,7 +39,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
 
     public function save($reloadOnCreate = false)
     {
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('marketplace');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
         return parent::save($reloadOnCreate);
     }
 
@@ -63,7 +63,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
 
         $this->deleteChildInstance();
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('marketplace');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
         return parent::delete();
     }
 
@@ -75,9 +75,9 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getOtherListings($asObjects = false, array $filters = array())
+    public function getOtherListings($asObjects = false, array $filters = [])
     {
-        $otherListings = $this->getRelatedComponentItems('Listing\Other','marketplace_id',$asObjects,$filters);
+        $otherListings = $this->getRelatedComponentItems('Listing\Other', 'marketplace_id', $asObjects, $filters);
 
         if ($asObjects) {
             foreach ($otherListings as $otherListing) {
@@ -95,9 +95,9 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getOrders($asObjects = false, array $filters = array())
+    public function getOrders($asObjects = false, array $filters = [])
     {
-        $orders = $this->getRelatedComponentItems('Order','marketplace_id',$asObjects,$filters);
+        $orders = $this->getRelatedComponentItems('Order', 'marketplace_id', $asObjects, $filters);
 
         if ($asObjects) {
             foreach ($orders as $order) {
@@ -113,7 +113,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
 
     public function getIdByCode($code)
     {
-        return $this->load($code,'code')->getId();
+        return $this->load($code, 'code')->getId();
     }
 
     /**

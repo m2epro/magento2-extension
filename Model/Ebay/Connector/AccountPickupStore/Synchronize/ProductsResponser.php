@@ -8,16 +8,19 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize;
 
-class ProductsResponser
-    extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Responser
+/**
+ * Class ProductsResponser
+ * @package Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize
+ */
+class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Responser
 {
     protected $activeRecordFactory;
 
     /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore\State[] $pickupStoreStateItems */
-    private $pickupStoreStateItems = array();
+    private $pickupStoreStateItems = [];
 
     /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log $log */
-    private $log = NULL;
+    private $log = null;
 
     //########################################
 
@@ -27,13 +30,12 @@ class ProductsResponser
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        array $params = array()
-    )
-    {
+        array $params = []
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($ebayFactory, $response, $helperFactory, $modelFactory, $params);
 
-        $collection = $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\State')->getCollection();
+        $collection = $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')->getCollection();
         $collection->addFieldToFilter('id', array_keys($this->params['pickup_store_state_items']));
 
         $this->pickupStoreStateItems = $collection->getItems();
@@ -45,9 +47,10 @@ class ProductsResponser
     {
         parent::failDetected($messageText);
 
-        $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
-            $messageText,\Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
+            $messageText,
+            \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
         );
 
         foreach ($this->pickupStoreStateItems as $stateItem) {
@@ -77,7 +80,7 @@ class ProductsResponser
             $isSuccess = true;
 
             if (!empty($responseMessages[$stateItem->getSku()])) {
-                $messages = $this->modelFactory->getObject('Connector\Connection\Response\Message\Set');
+                $messages = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
                 $messages->init($responseMessages[$stateItem->getSku()]);
 
                 $isSuccess = $this->processMessages($stateItem, $messages);
@@ -108,9 +111,10 @@ class ProductsResponser
 
     //########################################
 
-    private function processMessages(\Ess\M2ePro\Model\Ebay\Account\PickupStore\State $stateItem,
-                                     \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messages)
-    {
+    private function processMessages(
+        \Ess\M2ePro\Model\Ebay\Account\PickupStore\State $stateItem,
+        \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messages
+    ) {
         foreach ($messages->getEntities() as $message) {
             $this->logMessage($stateItem, $message);
         }
@@ -125,11 +129,11 @@ class ProductsResponser
         $this->logMessage($stateItem, $this->getSuccessMessage($stateItemData));
 
         if (!$stateItem->getIsDeleted()) {
-            $stateItem->addData(array(
+            $stateItem->addData([
                 'online_qty' => $stateItemData['target_qty'],
                 'is_added'   => 0,
                 'is_deleted' => 0,
-            ));
+            ]);
             $stateItem->save();
         } else {
             $stateItem->delete();
@@ -143,13 +147,13 @@ class ProductsResponser
      */
     private function getSuccessMessage(array $stateItemData)
     {
-        $encodedDescription = NULL;
+        $encodedDescription = null;
 
         switch ($this->getLogsAction($stateItemData)) {
             case \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_ADD_PRODUCT:
                 $encodedDescription = $this->getHelper('Module\Log')->encodeDescription(
                     'The Product with %qty% quantity was successfully added to the Store.',
-                    array('!qty' => $stateItemData['target_qty'])
+                    ['!qty' => $stateItemData['target_qty']]
                 );
                 break;
 
@@ -173,12 +177,12 @@ class ProductsResponser
                 $encodedDescription = $this->getHelper('Module\Log')->encodeDescription(
                     'The Product quantity was successfully changed from %stock_from%[%qty_from%]
                     to %stock_to%[%qty_to%] for the Store.',
-                    array(
+                    [
                         '!qty_from'   => $stateItemData['online_qty'],
                         '!qty_to'     => $stateItemData['target_qty'],
                         '!stock_from' => $stockFrom,
                         '!stock_to'   => $stockTo,
-                    )
+                    ]
                 );
                 break;
 
@@ -186,9 +190,10 @@ class ProductsResponser
                 throw new \Ess\M2ePro\Model\Exception\Logic('Unknown logs action type');
         }
 
-        $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
-            $encodedDescription,\Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
+            $encodedDescription,
+            \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
         );
 
         return $message;
@@ -196,9 +201,10 @@ class ProductsResponser
 
     //########################################
 
-    private function logMessage(\Ess\M2ePro\Model\Ebay\Account\PickupStore\State $stateItem,
-                                \Ess\M2ePro\Model\Connector\Connection\Response\Message $message)
-    {
+    private function logMessage(
+        \Ess\M2ePro\Model\Ebay\Account\PickupStore\State $stateItem,
+        \Ess\M2ePro\Model\Connector\Connection\Response\Message $message
+    ) {
         $this->getLog()->addMessage(
             $stateItem->getId(),
             $this->params['logs_action_id'],
@@ -262,11 +268,11 @@ class ProductsResponser
 
     private function getLog()
     {
-        if (!is_null($this->log)) {
+        if ($this->log !== null) {
             return $this->log;
         }
 
-        return $this->log = $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\Log');
+        return $this->log = $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_Log');
     }
 
     //########################################

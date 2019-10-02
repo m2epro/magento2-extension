@@ -8,9 +8,14 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Template;
 
+/**
+ * Class SellingFormat
+ * @package Ess\M2ePro\Model\ResourceModel\Walmart\Template
+ */
 class SellingFormat extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     const SYNCH_REASON_QTY        = 'sellingFormatTemplateQty';
+    const SYNCH_REASON_LAG_TIME   = 'sellingFormatTemplateLagTime';
     const SYNCH_REASON_PRICE      = 'sellingFormatTemplatePrice';
     const SYNCH_REASON_PROMOTIONS = 'sellingFormatTemplatePromotions';
     const SYNCH_REASON_DETAILS    = 'sellingFormatTemplateDetails';
@@ -33,15 +38,19 @@ class SellingFormat extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compone
             return;
         }
 
-        $listingsProductsIds = array();
+        $listingsProductsIds = [];
         foreach ($listingsProducts as $listingProduct) {
             $listingsProductsIds[] = $listingProduct['id'];
         }
 
-        $synchReasons = array();
+        $synchReasons = [];
 
         if ($this->isDifferentQty($newData, $oldData)) {
             $synchReasons[] = self::SYNCH_REASON_QTY;
+        }
+
+        if ($this->isDifferentLagTime($newData, $oldData)) {
+            $synchReasons[] = self::SYNCH_REASON_LAG_TIME;
         }
 
         if ($this->isDifferentPrice($newData, $oldData)) {
@@ -64,16 +73,16 @@ class SellingFormat extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compone
 
         $this->getConnection()->update(
             $lpTable,
-            array(
+            [
                 'synch_status' => \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_NEED,
                 'synch_reasons' => new \Zend_Db_Expr(
                     "IF(synch_reasons IS NULL,
-                        '".implode(',',$synchReasons)."',
-                        CONCAT(synch_reasons,'".','.implode(',',$synchReasons)."')
+                        '".implode(',', $synchReasons)."',
+                        CONCAT(synch_reasons,'".','.implode(',', $synchReasons)."')
                     )"
                 )
-            ),
-            array('id IN ('.implode(',', $listingsProductsIds).')')
+            ],
+            ['id IN ('.implode(',', $listingsProductsIds).')']
         );
     }
 
@@ -83,7 +92,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compone
     {
         list($newData, $oldData) = $this->removeIgnoredFields($newData, $oldData);
 
-        $keys = array(
+        $keys = [
             'qty_mode',
             'qty_custom_value',
             'qty_custom_attribute',
@@ -91,10 +100,20 @@ class SellingFormat extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compone
             'qty_modification_mode',
             'qty_min_posted_value',
             'qty_max_posted_value',
+        ];
+
+        return $this->isSettingsDifferent($keys, $newData, $oldData);
+    }
+
+    public function isDifferentLagTime($newData, $oldData)
+    {
+        list($newData, $oldData) = $this->removeIgnoredFields($newData, $oldData);
+
+        $keys = [
             'lag_time_mode',
             'lag_time_value',
             'lag_time_custom_attribute',
-        );
+        ];
 
         return $this->isSettingsDifferent($keys, $newData, $oldData);
     }
@@ -103,13 +122,13 @@ class SellingFormat extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compone
     {
         list($newData, $oldData) = $this->removeIgnoredFields($newData, $oldData);
 
-        $keys = array(
+        $keys = [
             'price_mode',
             'price_coefficient',
             'price_custom_attribute',
             'price_variation_mode',
             'price_vat_percent',
-        );
+        ];
 
         return $this->isSettingsDifferent($keys, $newData, $oldData);
     }
@@ -118,9 +137,9 @@ class SellingFormat extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compone
     {
         list($newData, $oldData) = $this->removeIgnoredFields($newData, $oldData);
 
-        $keys = array(
+        $keys = [
             'promotions'
-        );
+        ];
 
         return $this->isSettingsDifferent($keys, $newData, $oldData);
     }
@@ -129,7 +148,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compone
     {
         list($newData, $oldData) = $this->removeIgnoredFields($newData, $oldData);
 
-        $keys = array(
+        $keys = [
             'map_price_mode',
             'map_price_custom_attribute',
             'sale_time_start_date_mode',
@@ -154,7 +173,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compone
             'shipping_overrides',
             'attributes_mode',
             'attributes',
-        );
+        ];
 
         return $this->isSettingsDifferent($keys, $newData, $oldData);
     }
@@ -163,14 +182,14 @@ class SellingFormat extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compone
 
     private function removeIgnoredFields($newData, $oldData)
     {
-        $ignoreFields = array(
+        $ignoreFields = [
             $this->getIdFieldName(),
             'id', 'title', 'component_mode',
             'create_date', 'update_date',
-        );
+        ];
 
         foreach ($ignoreFields as $ignoreField) {
-            unset($newData[$ignoreField],$oldData[$ignoreField]);
+            unset($newData[$ignoreField], $oldData[$ignoreField]);
         }
 
         return [$newData, $oldData];

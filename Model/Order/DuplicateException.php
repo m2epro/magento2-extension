@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Order;
 
+/**
+ * Class DuplicateException
+ * @package Ess\M2ePro\Model\Order
+ */
 class DuplicateException extends \Exception
 {
     //########################################

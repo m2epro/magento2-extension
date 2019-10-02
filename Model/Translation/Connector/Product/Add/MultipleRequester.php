@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Translation\Connector\Product\Add;
 
+/**
+ * Class MultipleRequester
+ * @package Ess\M2ePro\Model\Translation\Connector\Product\Add
+ */
 class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\Pending\Requester
 {
     // ########################################
@@ -15,15 +19,15 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
     /**
      * @var \Ess\M2ePro\Model\Marketplace|null
      */
-    protected $marketplace = NULL;
+    protected $marketplace = null;
 
-    protected $logsActionId = NULL;
-    protected $neededRemoveLocks = array();
+    protected $logsActionId = null;
+    protected $neededRemoveLocks = [];
 
     protected $status = \Ess\M2ePro\Helper\Data::STATUS_SUCCESS;
 
-    protected $listingsProducts = array();
-    protected $listingProductRequestsData = array();
+    protected $listingsProducts = [];
+    protected $listingProductRequestsData = [];
 
     const MAX_LIFE_TIME_INTERVAL = 864000; // 10 days
 
@@ -37,11 +41,10 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Account $account,
         array $params
-    )
-    {
-        $defaultParams = array(
+    ) {
+        $defaultParams = [
             'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN
-        );
+        ];
         $params = array_merge($defaultParams, $params);
 
         if (isset($params['logs_action_id'])) {
@@ -59,30 +62,30 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
 
     public function setListingsProducts(array $listingsProducts)
     {
-        if (count($listingsProducts) == 0) {
+        if (empty($listingsProducts)) {
             throw new \Ess\M2ePro\Model\Exception('Product Connector has received empty array');
         }
 
-        foreach($listingsProducts as $listingProduct) {
+        foreach ($listingsProducts as $listingProduct) {
             if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
                 throw new \Ess\M2ePro\Model\Exception('Product Connector has received invalid Product data type');
             }
         }
 
-        $translationData    = $listingsProducts[0]->getSetting('additional_data',array('translation_service'),array());
+        $translationData    = $listingsProducts[0]->getSetting('additional_data', ['translation_service'], []);
         $tempSourceLanguage = $translationData['from']['language'];
         $tempTargetLanguage = $translationData['to']['language'];
         $tempService      = $listingsProducts[0]->getTranslationService();
 
         $tempListing = $listingsProducts[0]->getListing();
-        foreach($listingsProducts as $listingProduct) {
+        foreach ($listingsProducts as $listingProduct) {
             if ($tempListing->getId() != $listingProduct->getListing()->getId()) {
                 throw new \Ess\M2ePro\Model\Exception(
                     'Product Connector has received Products from different Listings'
                 );
             }
 
-            $translationData = $listingProduct->getSetting('additional_data',array('translation_service'),array());
+            $translationData = $listingProduct->getSetting('additional_data', ['translation_service'], []);
 
             if ($tempSourceLanguage != $translationData['from']['language']) {
                 throw new \Ess\M2ePro\Model\Exception('Product Connector has received Products from different
@@ -120,7 +123,7 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
 
     public function getCommand()
     {
-        return array('product','add','entities');
+        return ['product','add','entities'];
     }
 
     // ########################################
@@ -132,10 +135,10 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
 
     protected function setStatus($status)
     {
-        if (!in_array($status,array(
+        if (!in_array($status, [
             \Ess\M2ePro\Helper\Data::STATUS_ERROR,
             \Ess\M2ePro\Helper\Data::STATUS_WARNING,
-            \Ess\M2ePro\Helper\Data::STATUS_SUCCESS))) {
+            \Ess\M2ePro\Helper\Data::STATUS_SUCCESS])) {
             return;
         }
 
@@ -164,27 +167,27 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
 
     protected function getRequestData()
     {
-         $requestData = array(
+        $requestData = [
             'service'      => $this->params['service'],
             'source_language' => $this->params['source_language'],
             'target_language' => $this->params['target_language'],
-            'products' => array()
-        );
+            'products' => []
+        ];
 
         foreach ($this->listingsProducts as $listingProduct) {
 
             /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
 
-            $tempData = $listingProduct->getSetting('additional_data', array('translation_service', 'from'), array());
+            $tempData = $listingProduct->getSetting('additional_data', ['translation_service', 'from'], []);
 
-            $listingProductRequestData = array(
+            $listingProductRequestData = [
                 'title'          => $tempData['description']['title'],
                 'subtitle'       => $tempData['description']['subtitle'],
                 'description'    => $tempData['description']['description'],
                 'sku'            => $tempData['sku'],
                 'item_specifics' => $tempData['item_specifics'],
                 'category'       => $tempData['category']
-            );
+            ];
 
             $this->listingProductRequestsData[$listingProduct->getId()] = $listingProductRequestData;
             $requestData['products'][] = $listingProductRequestData;
@@ -199,7 +202,7 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
     {
         $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_SUCCESS);
 
-        if (count($this->listingsProducts) <= 0) {
+        if (empty($this->listingsProducts)) {
             return;
         }
 
@@ -211,7 +214,7 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
         $responseData = $this->getResponse()->getResponseData();
 
         (isset($responseData['data']['messages'])) && $tempMessages = $responseData['data']['messages'];
-        if (isset($tempMessages) && is_array($tempMessages) && count($tempMessages) > 0) {
+        if (isset($tempMessages) && is_array($tempMessages) && !empty($tempMessages)) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_ERROR);
         }
 
@@ -222,38 +225,38 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
 
     protected function getProcessingParams()
     {
-        $listingProductIds = array();
+        $listingProductIds = [];
         foreach ($this->listingsProducts as $listingProduct) {
             $listingProductIds[] = $listingProduct->getId();
         }
 
         return array_merge(
             parent::getProcessingParams(),
-            array(
+            [
                 'listing_product_ids' => array_unique($listingProductIds),
-            )
+            ]
         );
     }
 
     protected function getResponserParams()
     {
-        $tempProductsData = array();
+        $tempProductsData = [];
 
         foreach ($this->listingsProducts as $listingProduct) {
             $tempProductsData[$listingProduct->getId()] =
                 isset($this->listingProductRequestsData[$listingProduct->getId()])
                     ? $this->listingProductRequestsData[$listingProduct->getId()]
-                    : array();
+                    : [];
         }
 
-        return array(
+        return [
             'account_id'     => $this->account->getId(),
             'marketplace_id' => $this->marketplace->getId(),
             'logs_action_id' => $this->logsActionId,
             'status_changer' => $this->params['status_changer'],
             'params'         => $this->params,
             'products'       => $tempProductsData
-        );
+        ];
     }
 
     // ########################################
@@ -264,7 +267,7 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
 
             /** @var $product \Ess\M2ePro\Model\Listing\Product */
 
-            $lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+            $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
             $lockItem->setNick(\Ess\M2ePro\Helper\Component\Ebay::NICK.'_listing_product_'.$product->getId());
 
             if (!$lockItem->isExist()) {
@@ -282,20 +285,22 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
         foreach ($this->neededRemoveLocks as $lockItem) {
             $lockItem->isExist() && $lockItem->remove();
         }
-        $this->neededRemoveLocks = array();
+        $this->neededRemoveLocks = [];
     }
 
     // ########################################
 
-    protected function addListingsProductsLogsMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct,
-                                                      $text, $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-                                                      $priority = \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM)
-    {
+    protected function addListingsProductsLogsMessage(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        $text,
+        $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+        $priority = \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+    ) {
         $action =\Ess\M2ePro\Model\Listing\Log::ACTION_TRANSLATE_PRODUCT;
 
         if ($this->params['status_changer'] == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN) {
             $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
-        } else if ($this->params['status_changer'] == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER) {
+        } elseif ($this->params['status_changer'] == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER) {
             $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_USER;
         } else {
             $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION;
@@ -320,12 +325,17 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
         $logModel = $this->activeRecordFactory->getObject('Listing\Log');
         $logModel->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
 
-        $logModel->addProductMessage($listingProduct->getListingId() ,
-                                     $listingProduct->getProductId() ,
-                                     $listingProduct->getId() ,
-                                     $initiator ,
-                                     $this->logsActionId ,
-                                     $action , $text, $type , $priority);
+        $logModel->addProductMessage(
+            $listingProduct->getListingId(),
+            $listingProduct->getProductId(),
+            $listingProduct->getId(),
+            $initiator,
+            $this->logsActionId,
+            $action,
+            $text,
+            $type,
+            $priority
+        );
     }
 
     // ########################################
@@ -336,14 +346,14 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
 
             /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
 
-            if ($listingProduct->isSetProcessingLock(NULL) ||
+            if ($listingProduct->isSetProcessingLock(null) ||
                 $listingProduct->isSetProcessingLock('in_action') ||
                 $listingProduct->isSetProcessingLock('translation_action')) {
-
                 // M2ePro\TRANSLATIONS
                 // Another Action is being processed. Try again when the Action is completed.
                 $this->addListingsProductsLogsMessage(
-                    $listingProduct, 'Another Action is being processed. Try again when the Action is completed.',
+                    $listingProduct,
+                    'Another Action is being processed. Try again when the Action is completed.',
                     \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
                     \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                 );
@@ -363,19 +373,21 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
             /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
 
             if (!$listingProduct->getChildObject()->isTranslatable()) {
-
                 // M2ePro\TRANSLATIONS
                 // 'Product is Translated or being Translated'
-                $this->addListingsProductsLogsMessage($listingProduct, 'Product is Translated or being Translated',
-                                                      \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                                                      \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM);
+                $this->addListingsProductsLogsMessage(
+                    $listingProduct,
+                    'Product is Translated or being Translated',
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+                );
                 unset($listingProducts[$key]);
                 continue;
             }
 
             $listingProduct->getChildObject()->setData(
                 'translation_status',
-               \Ess\M2ePro\Model\Ebay\Listing\Product::TRANSLATION_STATUS_IN_PROGRESS
+                \Ess\M2ePro\Model\Ebay\Listing\Product::TRANSLATION_STATUS_IN_PROGRESS
             )->save();
         }
 

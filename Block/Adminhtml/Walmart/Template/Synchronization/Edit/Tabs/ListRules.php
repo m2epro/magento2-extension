@@ -11,15 +11,19 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Walmart\Template\Synchronization;
 
+/**
+ * Class ListRules
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs
+ */
 class ListRules extends AbstractForm
 {
     protected function _prepareForm()
     {
         $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
-        $formData = !is_null($template)
+        $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $defaults = array(
+        $defaults = [
             'list_mode'           => Synchronization::LIST_MODE_YES,
             'list_status_enabled' => Synchronization::LIST_STATUS_ENABLED_YES,
             'list_is_in_stock'    => Synchronization::LIST_IS_IN_STOCK_YES,
@@ -30,8 +34,11 @@ class ListRules extends AbstractForm
 
             'list_qty_calculated'           => Synchronization::LIST_QTY_NONE,
             'list_qty_calculated_value'     => '1',
-            'list_qty_calculated_value_max' => '10'
-        );
+            'list_qty_calculated_value_max' => '10',
+
+            'list_advanced_rules_mode'    => Synchronization::ADVANCED_RULES_MODE_NONE,
+            'list_advanced_rules_filters' => null
+        ];
         $formData = array_merge($defaults, $formData);
 
         $form = $this->_formFactory->create();
@@ -46,23 +53,18 @@ class ListRules extends AbstractForm
                     automatically transfers your Magento data to the Channel. You may configure the List,
                     Revise, Relist and Stop Rules.</p><br/>
 
-                    <p>Enable the List Action and define the List Conditions based on which M2E Pro will
-                    automatically list the Not Listed Items on Walmart. If the initial list fails, the Module
-                    will reattempt the Item listing after the Product Status, Stock Availability or
-                    Quantity are changed.</p><br>
-
-                    <p><strong>Note:</strong> Inventory Synchronization must be enabled under
-                    Walmart > Configuration > Settings > Synchronization tab. Otherwise,
-                    Synchronization Policy Rules will not take effect.</p><br>
-
                     <p><strong>Note:</strong> Synchronization Policy is required when you
                     create a new offer on Walmart.</p><br>
 
-                    <p>The detailed information can be found
-                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>
+                    <p>Enable the List Action and define the List Conditions based on which M2E Pro will
+                    automatically list the Not Listed Items on Walmart. If the initial list fails,
+                    the Module will reattempt the Item listing after the Product Status, Stock Availability
+                    or Quantity are changed.</p><br>
+
+                    <p><strong>Note:</strong> M2E Pro Listing Synchronization must be enabled under
+                    <i>Walmart Integration > Configuration > Settings > Synchronization</i>. Otherwise,
+                    Synchronization Rules will not take effect.</p><br>
 HTML
-                ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/UABhAQ')
                 )
             ]
         );
@@ -75,7 +77,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('list_mode',
+        $fieldset->addField(
+            'list_mode',
             self::SELECT,
             [
                 'name' => 'list_mode',
@@ -86,8 +89,7 @@ HTML
                     Synchronization::LIST_MODE_YES => $this->__('Enabled'),
                 ],
                 'tooltip' => $this->__(
-                    'Enables / disables automatic Listing of <i>Not Listed</i> Items,
-                    when they meet the List Conditions.'
+                    'Enable to automatically list the Not Listed Item(s) when the List Conditions are met.'
                 )
             ]
         );
@@ -100,7 +102,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('list_status_enabled',
+        $fieldset->addField(
+            'list_status_enabled',
             self::SELECT,
             [
                 'name' => 'list_status_enabled',
@@ -111,14 +114,13 @@ HTML
                     Synchronization::LIST_STATUS_ENABLED_YES => $this->__('Enabled'),
                 ],
                 'tooltip' => $this->__(
-                    '<p><strong>Enabled:</strong> List Items on Walmart automatically if they have status
-                    Enabled in Magento Product. (Recommended)</p>
-                    <p><strong>Any:</strong> List Items with any Magento Product status on Walmart automatically.</p>'
+                    'Magento Product Status at which the Item(s) have to be listed.'
                 )
             ]
         );
 
-        $fieldset->addField('list_is_in_stock',
+        $fieldset->addField(
+            'list_is_in_stock',
             self::SELECT,
             [
                 'name' => 'list_is_in_stock',
@@ -129,14 +131,13 @@ HTML
                     Synchronization::LIST_IS_IN_STOCK_YES => $this->__('In Stock'),
                 ],
                 'tooltip' => $this->__(
-                    '<p><strong>In Stock:</strong> List Items automatically if Products are
-                    in Stock. (Recommended.)</p>
-                    <p><strong>Any:</strong> List Items automatically, regardless of Stock availability.</p>'
+                    'Magento Stock Availability at which the Item(s) have to be listed'
                 )
             ]
         );
 
-        $fieldset->addField('list_qty_magento',
+        $fieldset->addField(
+            'list_qty_magento',
             self::SELECT,
             [
                 'name' => 'list_qty_magento',
@@ -148,11 +149,7 @@ HTML
                     Synchronization::LIST_QTY_BETWEEN => $this->__('Between'),
                 ],
                 'tooltip' => $this->__(
-                    '<p><strong>Any:</strong> List Items automatically with any Quantity available.</p>
-                    <p><strong>More or Equal:</strong> List Items automatically if the Quantity available in
-                    Magento is at least equal to the number you set. (Recommended)</p>
-                    <p><strong>Between:</strong> List Items automatically if the Quantity available in
-                    Magento is between the minimum and maximum numbers you set.</p>'
+                    'Magento Product Quantity at which the Item(s) have to be listed.'
                 )
             ]
         )->addCustomAttribute('qty_type', 'magento');
@@ -183,7 +180,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('list_qty_calculated',
+        $fieldset->addField(
+            'list_qty_calculated',
             self::SELECT,
             [
                 'name' => 'list_qty_calculated',
@@ -195,12 +193,10 @@ HTML
                     Synchronization::LIST_QTY_BETWEEN => $this->__('Between'),
                 ],
                 'tooltip' => $this->__(
-                    '<p><strong>Any:</strong> List Items automatically with any Quantity available.</p>
-                    <p><strong>More or Equal:</strong> List Items automatically if the calculated Quantity is at
-                    least equal to the number you set, according to the Selling Policy.
-                    (Recommended)</p>
-                    <p><strong>Between:</strong> List Items automatically if the Quantity is between the minimum
-                    and maximum numbers you set, according to the Selling Policy.</p>'
+                    '<p>Item Quantity calculated based on the Selling Policy settings at which
+                    the Item(s) have to be listed.</p>
+                    <p><strong>Note:</strong> This option will be ignored for
+                    Magento Variational Product listed as Walmart Variant Group</p>'
                 )
             ]
         )->addCustomAttribute('qty_type', 'calculated');
@@ -231,18 +227,82 @@ HTML
             ]
         );
 
-        $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Walmart\Template\Synchronization')
+        $fieldset = $form->addFieldset(
+            'magento_block_walmart_template_synchronization_list_advanced_filters',
+            [
+                'legend' => $this->__('Advanced Conditions'),
+                'collapsable' => false,
+                'tooltip' => $this->__(
+                    '<p>Define Magento Attribute value(s) based on which a product must be listed on the Channel.<br>
+                    Once both List Conditions and Advanced Conditions are met, the product will be listed.</p>'
+                )
+            ]
         );
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Walmart'));
+
+        $fieldset->addField(
+            'list_advanced_rules_filters_warning',
+            self::MESSAGES,
+            [
+                'messages' => [[
+                    'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
+                    'content' => $this->__(
+                        'Please be very thoughtful before enabling this option as this functionality can have
+                        a negative impact on the Performance of your system.<br> It can decrease the speed of running
+                        in case you have a lot of Products with the high number of changes made to them.'
+                    )
+                ]]
+            ]
+        );
+
+        $fieldset->addField(
+            'list_advanced_rules_mode',
+            self::SELECT,
+            [
+                'name' => 'list_advanced_rules_mode',
+                'label' => $this->__('Mode'),
+                'value' => $formData['list_advanced_rules_mode'],
+                'values' => [
+                    Synchronization::ADVANCED_RULES_MODE_NONE => $this->__('Disabled'),
+                    Synchronization::ADVANCED_RULES_MODE_YES  => $this->__('Enabled'),
+                ],
+            ]
+        );
+
+        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
+            ['prefix' => Synchronization::LIST_ADVANCED_RULES_PREFIX]
+        );
+
+        if (!empty($formData['list_advanced_rules_filters'])) {
+            $ruleModel->loadFromSerialized($formData['list_advanced_rules_filters']);
+        }
+
+        $ruleBlock = $this->createBlock('Magento_Product_Rule')->setData(['rule_model' => $ruleModel]);
+
+        $fieldset->addField(
+            'advanced_filter',
+            self::CUSTOM_CONTAINER,
+            [
+                'container_id' => 'list_advanced_rules_filters_container',
+                'label'        => $this->__('Conditions'),
+                'text'         => $ruleBlock->toHtml(),
+            ]
+        );
+
+        $this->jsPhp->addConstants(
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\Synchronization::class)
+        );
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class));
 
         $this->jsUrl->addUrls([
             'formSubmit'    => $this->getUrl(
-                '*/walmart_template_synchronization/save', array('_current' => true)
+                '*/walmart_template_synchronization/save',
+                ['_current' => true]
             ),
             'formSubmitNew' => $this->getUrl('m2epro/walmart_template_synchronization/save'),
             'deleteAction'  => $this->getUrl(
-                '*/walmart_template_synchronization/delete', array('_current' => true)
+                '*/walmart_template_synchronization/delete',
+                ['_current' => true]
             )
         ]);
 

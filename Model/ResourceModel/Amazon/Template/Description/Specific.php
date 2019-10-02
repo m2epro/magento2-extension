@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Template\Description;
 
+/**
+ * Class Specific
+ * @package Ess\M2ePro\Model\ResourceModel\Amazon\Template\Description
+ */
 class Specific extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################

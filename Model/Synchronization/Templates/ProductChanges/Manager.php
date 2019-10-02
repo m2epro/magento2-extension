@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Synchronization\Templates\ProductChanges;
 
+/**
+ * Class Manager
+ * @package Ess\M2ePro\Model\Synchronization\Templates\ProductChanges
+ */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {
     private $parentFactory;
     private $activeRecordFactory;
 
-    private $component = NULL;
-    private $cache = array();
+    private $component = null;
+    private $cache = [];
 
     //########################################
 
@@ -23,8 +27,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->parentFactory = $parentFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -47,17 +50,17 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function init()
     {
         if (!isset($this->cache['listings_products'])) {
-            $this->cache['listings_products'] = array();
+            $this->cache['listings_products'] = [];
         }
 
         if (!isset($this->cache['listings_products_by_params'])) {
-            $this->cache['listings_products_by_params'] = array();
+            $this->cache['listings_products_by_params'] = [];
         }
     }
 
     public function clearCache()
     {
-        $this->cache = array();
+        $this->cache = [];
     }
 
     //########################################
@@ -69,9 +72,11 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getInstances(array $attributes, $withStoreFilter = false)
     {
-        return $this->getListingProducts($attributes,
+        return $this->getListingProducts(
+            $attributes,
             $withStoreFilter,
-            'getChangedItems');
+            'getChangedItems'
+        );
     }
 
     /**
@@ -81,9 +86,11 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getInstancesByListingProduct(array $attributes, $withStoreFilter = false)
     {
-        return $this->getListingProducts($attributes,
+        return $this->getListingProducts(
+            $attributes,
             $withStoreFilter,
-            'getChangedItemsByListingProduct');
+            'getChangedItemsByListingProduct'
+        );
     }
 
     /**
@@ -93,9 +100,11 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getInstancesByVariationOption(array $attributes, $withStoreFilter = false)
     {
-        return $this->getListingProducts($attributes,
+        return $this->getListingProducts(
+            $attributes,
             $withStoreFilter,
-            'getChangedItemsByVariationOption');
+            'getChangedItemsByVariationOption'
+        );
     }
 
     //########################################
@@ -103,16 +112,16 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     private function getListingProducts(array $attributes, $withStoreFilter, $fetchFunction)
     {
         $args = func_get_args();
-        $cacheKey = md5($this->getHelper('Data')->jsonEncode($args));
+        $cacheKey = sha1($this->getHelper('Data')->jsonEncode($args));
 
         if (isset($this->cache['listings_products_by_params'][$cacheKey])) {
             return $this->cache['listings_products_by_params'][$cacheKey];
         }
 
-        $this->cache['listings_products_by_params'][$cacheKey] = array();
+        $this->cache['listings_products_by_params'][$cacheKey] = [];
 
-        $listingProductsIds = array();
-        $resultListingProducts = array();
+        $listingProductsIds = [];
+        $resultListingProducts = [];
 
         $changedListingsProducts =
             $this->activeRecordFactory->getObject(ucfirst($this->getComponent()).'\Listing\Product')->getResource()
@@ -122,7 +131,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
                 );
 
         foreach ($changedListingsProducts as $key => $listingProductData) {
-
             $lpId = $listingProductData['id'];
 
             if (!isset($this->cache['listings_products'][$lpId])) {
@@ -145,11 +153,10 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
         $listingProducts = $this->parentFactory->getObject(strtolower($this->getComponent()), 'Listing\Product')
             ->getCollection()
-            ->addFieldToFilter('listing_product_id',array('in' => $listingProductsIds))
+            ->addFieldToFilter('listing_product_id', ['in' => $listingProductsIds])
             ->getItems();
 
         foreach ($listingProductsIds as $key => $lpId) {
-
             if (!isset($listingProducts[$lpId])) {
                 continue;
             }

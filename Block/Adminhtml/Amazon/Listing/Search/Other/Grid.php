@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\Other;
 
 use \Ess\M2ePro\Model\Amazon\Listing\Product;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\Other
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGrid
 {
     //########################################
@@ -46,12 +50,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
         $collection->getSelect()->distinct();
 
         $collection->getSelect()->joinLeft(
-            array(
-                'cpe' => $this->getHelper('Module\Database\Structure')
+            [
+                'cpe' => $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('catalog_product_entity')
-            ),
+            ],
             '(cpe.entity_id = `main_table`.product_id)',
-            array('sku' => 'sku')
+            ['sku' => 'sku']
         );
 
         $afnStateAllNo  = Product::VARIATION_PARENT_IS_AFN_STATE_ALL_NO;
@@ -61,7 +65,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
 
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $collection->getSelect()->columns(
-            array(
+            [
                 'sku'                          => 'cpe.sku',
                 'name'                         => 'second_table.title',
                 'listing_title'                => new \Zend_Db_Expr('NULL'),
@@ -103,7 +107,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
                     {$repricingStateAllYes},
                     {$repricingStateAllNo}
                 )"),
-            )
+            ]
         );
 
         $accountId     = (int)$this->getRequest()->getParam('amazonAccount', false);
@@ -128,7 +132,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
     {
         $title = $row->getData('name');
 
-        if (is_null($title) || $title === '') {
+        if ($title === null || $title === '') {
             $value = '<i style="color:gray;">' . $this->__('receiving') . '...</i>';
         } else {
             $value = $this->getHelper('Data')->escapeHtml($title);
@@ -146,7 +150,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
 
         $sku = $row->getData('sku');
         if (!empty($sku)) {
-
             $sku = $this->getHelper('Data')->escapeHtml($sku);
             $skuWord = $this->__('SKU');
 
@@ -169,13 +172,13 @@ HTML;
         $altTitle = $this->getHelper('Data')->escapeHtml($this->__('Go to Listing'));
         $iconSrc  = $this->getViewFileUrl('Ess_M2ePro::images/goto_listing.png');
 
-        $manageUrl = $this->getUrl('*/amazon_listing_other/view/', array(
+        $manageUrl = $this->getUrl('*/amazon_listing_other/view/', [
             'account'     => $row->getData('account_id'),
             'marketplace' => $row->getData('marketplace_id'),
             'filter'      => base64_encode(
                 'title=' . $row->getData('online_sku')
             )
-        ));
+        ]);
 
         $html = <<<HTML
 <div style="float:right; margin:5px 15px 0 0;">
@@ -232,7 +235,6 @@ HTML;
         $condition = '';
 
         if (isset($value['from']) || isset($value['to'])) {
-
             if (isset($value['from']) && $value['from'] != '') {
                 $condition = 'second_table.online_price >= \'' . (float)$value['from'] . '\'';
             }
@@ -245,7 +247,7 @@ HTML;
             }
         }
 
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
             isset($value['is_repricing']) && $value['is_repricing'] !== '') {
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';

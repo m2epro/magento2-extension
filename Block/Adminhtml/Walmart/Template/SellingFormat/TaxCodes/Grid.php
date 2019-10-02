@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\TaxCodes;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\TaxCodes
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     private $customCollectionFactory;
@@ -67,9 +71,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $select = $connRead->select()
             ->from(
-                $this->getHelper('Module\Database\Structure')
+                $this->getHelper('Module_Database_Structure')
                     ->getTableNameWithPrefix('m2epro_walmart_dictionary_marketplace'),
-                array('tax_codes')
+                ['tax_codes']
             )
             ->where('marketplace_id = ?', $this->marketplaceId);
 
@@ -89,36 +93,36 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('tax_code', array(
+        $this->addColumn('tax_code', [
             'header'         => $this->__('Tax Code'),
             'align'          => 'left',
             'type'           => 'text',
             'index'          => 'tax_code',
             'width'          => '10px',
-            'filter_condition_callback' => array($this, 'callbackFilterTaxCodes'),
+            'filter_condition_callback' => [$this, 'callbackFilterTaxCodes'],
             'sortable'       => false
-        ));
+        ]);
 
-        $this->addColumn('description', array(
+        $this->addColumn('description', [
             'header'         => $this->__('Description'),
             'align'          => 'left',
             'type'           => 'text',
             'index'          => 'description',
             'width'          => '645px',
-            'filter_condition_callback'         => array($this, 'callbackFilterDescription'),
+            'filter_condition_callback'         => [$this, 'callbackFilterDescription'],
             'sortable'       => false
-        ));
+        ]);
 
         if (!$this->noSelection) {
-            $this->addColumn('action', array(
+            $this->addColumn('action', [
                 'header'         => $this->__('Action'),
                 'align'          => 'left',
                 'type'           => 'text',
                 'width'          => '115px',
                 'filter'         => false,
                 'sortable'       => false,
-                'frame_callback' => array($this, 'callbackColumnAction'),
-            ));
+                'frame_callback' => [$this, 'callbackColumnAction'],
+            ]);
         }
 
         return parent::_prepareColumns();
@@ -148,7 +152,9 @@ HTML;
         }
 
         $this->getCollection()->addFilter(
-            'tax_code', $value, \Ess\M2ePro\Model\ResourceModel\Collection\Custom::CONDITION_LIKE
+            'tax_code',
+            $value,
+            \Ess\M2ePro\Model\ResourceModel\Collection\Custom::CONDITION_LIKE
         );
     }
 
@@ -160,7 +166,9 @@ HTML;
         }
 
         $this->getCollection()->addFilter(
-            'description', $value, \Ess\M2ePro\Model\ResourceModel\Collection\Custom::CONDITION_LIKE
+            'description',
+            $value,
+            \Ess\M2ePro\Model\ResourceModel\Collection\Custom::CONDITION_LIKE
         );
     }
 
@@ -173,7 +181,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/getTaxCodesGrid', array('_current' => true));
+        return $this->getUrl('*/*/getTaxCodesGrid', ['_current' => true]);
     }
 
     //########################################

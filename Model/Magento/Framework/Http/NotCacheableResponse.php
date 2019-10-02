@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Model\Magento\Framework\Http;
 
-class NotCacheableResponse
-    extends \Magento\Framework\HTTP\PhpEnvironment\Response
-    implements \Magento\Framework\App\PageCache\NotCacheableInterface
+use Magento\Framework\App\PageCache\NotCacheableInterface;
+
+/**
+ * Class NotCacheableResponse
+ * @package Ess\M2ePro\Model\Magento\Framework\Http
+ */
+class NotCacheableResponse extends \Magento\Framework\HTTP\PhpEnvironment\Response implements NotCacheableInterface
 {
     //########################################
 

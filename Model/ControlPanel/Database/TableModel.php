@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\ControlPanel\Database;
 use Ess\M2ePro\Model\Exception;
 use \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel as ParentAbstractModel;
 
+/**
+ * Class TableModel
+ * @package Ess\M2ePro\Model\ControlPanel\Database
+ */
 class TableModel extends \Magento\Framework\DataObject
 {
     //########################################
@@ -35,8 +39,7 @@ class TableModel extends \Magento\Framework\DataObject
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         array $data = []
-    )
-    {
+    ) {
         $this->modelFactory = $modelFactory;
         $this->parentFactory = $parentFactory;
         $this->activeRecordFactory = $activeRecordFactory;
@@ -55,7 +58,7 @@ class TableModel extends \Magento\Framework\DataObject
 
     private function init()
     {
-        $helper = $this->helperFactory->getObject('Module\Database\Structure');
+        $helper = $this->helperFactory->getObject('Module_Database_Structure');
         $this->modelName = $helper->getTableModel($this->tableName);
 
         if (!$this->modelName) {
@@ -67,14 +70,12 @@ class TableModel extends \Magento\Framework\DataObject
         }
 
         if (!$helper->isTableHorizontal($this->tableName)) {
-
             $this->isMergeModeEnabled = false;
             $this->mergeModeComponent = null;
             return;
         }
 
         if ($helper->isTableHorizontalChild($this->tableName)) {
-
             preg_match('/(Ebay|Amazon|Walmart)/i', $this->modelName, $matches);
             $this->mergeModeComponent = isset($matches[1]) ? strtolower($matches[1]) : null;
             $this->modelName = str_replace($matches[1].'\\', '', $this->modelName);
@@ -90,7 +91,7 @@ class TableModel extends \Magento\Framework\DataObject
     public function getColumns()
     {
         $prefix = $this->helperFactory->getObject('Magento')->getDatabaseTablesPrefix();
-        $helper = $this->helperFactory->getObject('Module\Database\Structure');
+        $helper = $this->helperFactory->getObject('Module_Database_Structure');
 
         $tableName = $this->activeRecordFactory->getObject($this->modelName)
                                                ->getResource()->getMainTable();
@@ -106,7 +107,6 @@ class TableModel extends \Magento\Framework\DataObject
         });
 
         if ($this->isMergeModeEnabled) {
-
             $mergeTableName = $this->activeRecordFactory->getObject($this->getMergeModelName())
                                                         ->getResource()->getMainTable();
             $mergeTableName = str_replace($prefix, '', $mergeTableName);
@@ -139,7 +139,7 @@ class TableModel extends \Magento\Framework\DataObject
 
     public function createEntry(array $data)
     {
-        $helper = $this->helperFactory->getObject('Module\Database\Structure');
+        $helper = $this->helperFactory->getObject('Module_Database_Structure');
         $modelInstance = $this->getModel();
 
         $idFieldName = $modelInstance->getIdFieldName();
@@ -159,10 +159,9 @@ class TableModel extends \Magento\Framework\DataObject
     {
         $modelInstance = $this->getModel();
         $collection = $modelInstance->getCollection();
-        $collection->addFieldToFilter($modelInstance->getIdFieldName(), array('in' => $ids));
+        $collection->addFieldToFilter($modelInstance->getIdFieldName(), ['in' => $ids]);
 
         foreach ($collection as $item) {
-
             $item->getResource()->delete($item);
 
             if ($this->getIsMergeModeEnabled() && $item instanceof ParentAbstractModel) {
@@ -171,13 +170,13 @@ class TableModel extends \Magento\Framework\DataObject
         }
     }
 
-    public function updateEntries(array $ids,  array $data)
+    public function updateEntries(array $ids, array $data)
     {
-        $helper = $this->helperFactory->getObject('Module\Database\Structure');
+        $helper = $this->helperFactory->getObject('Module_Database_Structure');
         $modelInstance = $this->getModel();
 
         $collection = $modelInstance->getCollection();
-        $collection->addFieldToFilter($modelInstance->getIdFieldName(), array('in' => $ids));
+        $collection->addFieldToFilter($modelInstance->getIdFieldName(), ['in' => $ids]);
 
         $idFieldName = $modelInstance->getIdFieldName();
         $isIdAutoIncrement = $helper->isIdColumnAutoIncrement($this->tableName);
@@ -186,7 +185,6 @@ class TableModel extends \Magento\Framework\DataObject
         }
 
         if ($this->getIsMergeModeEnabled() && $modelInstance instanceof ParentAbstractModel) {
-
             $childObject = $this->activeRecordFactory->getObject($this->getMergeModelName());
             $childIdFieldName = $childObject->getIdFieldName();
             unset($data[$childIdFieldName]);
@@ -200,12 +198,10 @@ class TableModel extends \Magento\Framework\DataObject
             /** @var \Ess\M2ePro\Model\ActiveRecord\AbstractModel $item */
 
             foreach ($data as $field => $value) {
-
                 if ($field == $idFieldName && !$isIdAutoIncrement) {
-
                     $this->resourceConnection->getConnection()->update(
-                        $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($this->tableName),
-                        array($idFieldName => $value),
+                        $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($this->tableName),
+                        [$idFieldName => $value],
                         "`{$idFieldName}` = {$item->getId()}"
                     );
                 }

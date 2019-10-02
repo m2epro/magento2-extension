@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Edit;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Edit
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     public $templateModel = null;
@@ -60,25 +64,22 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'walmart_category_general_help',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(<<<HTML
+                'content' => $this->__(
+                    <<<HTML
                 <p>In Category Policy, select Walmart Category/Subcategory for your
                 offer and complete the Item Specifics.</p><br>
                 <p><strong>Note:</strong> Item Specifics vary by Category/Subcategory.
-                Choose correctly to complete the relevant Specifics for your Item.</p><br>
-                <p>To start configuring Item Specifics, press Add Specifics.
-                You can use search and filter tools to narrow your search results. Item Specifics have a
-                nested structure so the same Specific can be used in different groups.</p><br>
-                <p>Insert a custom value or select the relevant Magento Attribute.
+                Choose correctly to complete the relevant Specifics for your Item</p><br>
+                <p>To start configuring Item Specifics, press Add Specifics. You can use search and filter tools
+                to narrow your search results. Item Specifics have a nested structure so the same Specific
+                can be used in different groups. Insert a custom value or select the relevant Magento Attribute.
                 Duplicate Item Specific if you need to provide several values for that Specific.
                 You can delete the records that no longer needed.</p><br>
-                <p><strong>Note:</strong> Category Policy is created per marketplace that cannot be
-                changed after the Policy is assigned to the Listing Products.</p><br>
+                <p><strong>Note:</strong> Category Policy is created per marketplace that cannot be changed
+                after the Policy is assigned to the Listing Products.</p><br>
                 <p><strong>Note:</strong> Category Policy is required when you create a new offer on Walmart.</p><br>
-                <p>The detailed information can be found <a href="%url%" target="_blank">here</a></p>
 
 HTML
-                    ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/RQBhAQ')
                 ),
                 'class' => 'marketplace-required-field marketplace-required-field-id-not-null'
             ]
@@ -88,7 +89,8 @@ HTML
             'legend' => $this->__('General'), 'collapsable' => false
         ]);
 
-        $fieldSet->addField('title',
+        $fieldSet->addField(
+            'title',
             'text',
             [
                 'name' => 'title',
@@ -113,7 +115,9 @@ HTML
             ];
         }
 
-        $fieldSet->addField('marketplace_id', self::SELECT,
+        $fieldSet->addField(
+            'marketplace_id',
+            self::SELECT,
             array_merge(
                 [
                     'name'     => 'marketplace_id',
@@ -122,16 +126,19 @@ HTML
                     'values'   => $this->getMarketplaceDataOptions(),
                     'value'    => $this->formData['marketplace_id'],
                     'required' => true,
-                ], $additionalData
+                ],
+                $additionalData
             )
         );
 
-        $fieldSet->addField('template_category_path_container',
+        $fieldSet->addField(
+            'template_category_path_container',
             self::CUSTOM_CONTAINER,
             [
                 'container_id' => 'category_path_container',
                 'label' => $this->__('Category'),
                 'title' => $this->__('Category'),
+                'required' => true,
                 'text' => $this->getCategoryHtml()
             ]
         );
@@ -142,7 +149,8 @@ HTML
             'legend' => $this->__('Specifics'), 'collapsable' => false
         ]);
 
-        $fieldSet->addField('template_category_specifics_container',
+        $fieldSet->addField(
+            'template_category_specifics_container',
             self::CUSTOM_CONTAINER,
             [
                 'text' => $this->getSpecificsHtml()
@@ -158,14 +166,14 @@ HTML
     public function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Walmart\Template\Category')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\Category::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Walmart')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class)
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Template\Category'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart_Template_Category'));
         $this->jsUrl->addUrls([
             'formSubmit'    => $this->getUrl(
                 '*/walmart_template_category/save',
@@ -180,17 +188,6 @@ HTML
             'walmart_marketplace/index' => $this->getUrl('*/walmart_marketplace/index'),
             'm2epro_skin_url' => $this->getViewFileUrl('Ess_M2ePro')
         ]);
-
-        $text = 'If you select this Item Specific as Walmart Variant Attribute in';
-        $text .= ' the Manage Variation pop-up, its current value will be automatically overwritten ';
-        $text .= 'with the related Attribute values of Magento Child Products. ';
-        $text .= 'Below you can see the Walmart Variant Attribute(s) that will be ';
-        $text .= 'used instead of this Item Specific:';
-
-        $text2 = 'The Value of this Specific can be necessary due to technical reasons, ';
-        $text2 .= 'so there is no ability to Edit the Attribute parentage and also it has no semantic ';
-        $text2 .= 'load. In case this Description Policy uses for creation of new Walmart Parent-Child Product, ';
-        $text2 .= 'this Value will be overwritten and the Value you selected will not be/cannot be used.';
 
         $this->jsTranslator->addTranslations([
             'Add Category Policy' => $this->__('Add Category Policy'),
@@ -241,8 +238,19 @@ HTML
             'Duplicate specific' => $this->__('Duplicate specific'),
             'Delete specific'    => $this->__('Delete specific'),
             'Add Specific into current container' => $this->__('Add Specific into current container'),
-            'Value of this Specific can be automatically overwritten by M2E Pro.' => $this->__($text),
-            'Walmart Parentage Specific will be overridden notice.' => $this->__($text2)
+
+            'Value of this Specific can be automatically overwritten by M2E Pro.' => $this->__(
+                'If you select this Item Specific as Walmart Variant Attribute in the Manage Variation pop-up,
+                its current value will be automatically overwritten with the related Attribute values of Magento Child
+                Products. Below you can see the Walmart Variant Attribute(s)
+                that will be used instead of this Item Specific:'
+            ),
+            'Walmart Parentage Specific will be overridden notice.' => $this->__(
+                'The Value of this Specific can be necessary due to technical reasons, so there is no ability to
+                Edit the Attribute parentage and also it has no semantic load. In case this Description Policy uses for
+                creation of new Walmart Parent-Child Product, this Value will be overwritten and the Value you selected
+                will not be/cannot be used.'
+            )
         ]);
 
         $formData = $this->getHelper('Data')->jsonEncode($this->formData);
@@ -378,8 +386,8 @@ JS
         $html = '<span style="font-style: italic; color: grey;">'.$this->__('Not Selected').'</span>';
         if (!empty($this->formData['category_path']) && !empty($this->formData['browsenode_id'])) {
             $html = '<span>'.$this->escapeHtml(
-                    "{$this->formData['category_path']} ({$this->formData['browsenode_id']})"
-                ).'</span>';
+                "{$this->formData['category_path']} ({$this->formData['browsenode_id']})"
+            ).'</span>';
         }
 
         $html = '<span id="category_path_span">' . $html . '</span>';
@@ -422,24 +430,25 @@ mostly suits to that you used earlier. Also you need to set Specifics Values on 
 HTML;
 
         return $html . <<<HTML
-        <input type="hidden"
-               name="category_path"
-               id="category_path"
-               value="{$this->getHelper('Data')->escapeHtml($this->formData['category_path'])}" />
-        <input type="hidden"
-               name="browsenode_id"
-               id="browsenode_id"
-               value="{$this->formData['browsenode_id']}" />
-        <input type="hidden"
-               name="product_data_nick"
-               id="product_data_nick"
-               value="{$this->formData['product_data_nick']}"
-               class="required-entry"/>
-
+        <span>
+            <input type="hidden"
+                   name="category_path"
+                   id="category_path"
+                   value="{$this->getHelper('Data')->escapeHtml($this->formData['category_path'])}" />
+            <input type="hidden"
+                   name="browsenode_id"
+                   id="browsenode_id"
+                   value="{$this->formData['browsenode_id']}" />
+            <input type="text"
+                   style="display: none;"
+                   name="product_data_nick"
+                   id="product_data_nick"
+                   value="{$this->formData['product_data_nick']}"
+                   class="required-entry"/>
+        </span>
        {$tooltip}
        <a id="edit_category_link" href="#" style="margin-left: 5px;">{$this->__('Edit')}</a>
 HTML;
-
     }
 
     public function getMarketplaceWarningMessageHtml()
@@ -520,7 +529,6 @@ HTML;
     </div>
     <!-- ########################################################## -->
 HTML;
-
     }
 
     //########################################

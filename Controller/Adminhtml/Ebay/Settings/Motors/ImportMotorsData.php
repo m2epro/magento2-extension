@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors;
 
+/**
+ * Class ImportMotorsData
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors
+ */
 class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 {
     protected $fileCsv;
@@ -20,8 +24,7 @@ class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
-    )
-    {
+    ) {
         $this->fileCsv = $fileCsv;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
 
@@ -58,10 +61,9 @@ class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
         $existedItems = $this->getExistedMotorsItems();
 
         $connWrite = $this->resourceConnection->getConnection();
-        $tableName = $this->getHelper('Component\Ebay\Motors')->getDictionaryTable($motorsType);
+        $tableName = $this->getHelper('Component_Ebay_Motors')->getDictionaryTable($motorsType);
 
         foreach ($csvData as $csvRow) {
-
             if (!$insertsData = $this->getPreparedInsertData($csvRow, $existedItems)) {
                 continue;
             }
@@ -76,13 +78,14 @@ class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 
     private function getExistedMotorsItems()
     {
-        $helper = $this->getHelper('Component\Ebay\Motors');
+        $helper = $this->getHelper('Component_Ebay_Motors');
         $motorsType = $this->getRequest()->getParam('motors_type');
 
         $selectStmt = $this->resourceConnection->getConnection('core/read')
             ->select()
             ->from(
-                $helper->getDictionaryTable($motorsType), array($helper->getIdentifierKey($motorsType))
+                $helper->getDictionaryTable($motorsType),
+                [$helper->getIdentifierKey($motorsType)]
             );
 
         if ($helper->isTypeBasedOnEpids($motorsType)) {
@@ -101,17 +104,16 @@ class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 
     private function getPreparedInsertData($csvRow, $existedItems)
     {
-        $helper = $this->getHelper('Component\Ebay\Motors');
+        $helper = $this->getHelper('Component_Ebay_Motors');
         $motorsType = $this->getRequest()->getParam('motors_type');
 
-        $idCol = $this->getHelper('Component\Ebay\Motors')->getIdentifierKey($motorsType);
+        $idCol = $this->getHelper('Component_Ebay_Motors')->getIdentifierKey($motorsType);
 
         if (!isset($csvRow[$idCol]) || in_array($csvRow[$idCol], $existedItems)) {
             return false;
         }
 
         if ($motorsType == \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE) {
-
             if (strlen($csvRow['ktype']) > 10) {
                 return false;
             }
@@ -136,7 +138,6 @@ class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 
         $requiredColumns = ['epid','product_type','make','model','year'];
         foreach ($requiredColumns as $columnName) {
-
             if (!isset($csvRow[$columnName])) {
                 return false;
             }

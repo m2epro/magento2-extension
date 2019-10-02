@@ -8,11 +8,15 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
+/**
+ * Class ActionAbstract
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ */
 abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
     //########################################
 
-    protected function processConnector($action, array $params = array())
+    protected function processConnector($action, array $params = [])
     {
         if (!$listingsProductsIds = $this->getRequest()->getParam('selected_products')) {
             return 'You should select Products';
@@ -22,15 +26,15 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Ma
 
         $listingsProductsIds = explode(',', $listingsProductsIds);
 
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Product\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Product_Dispatcher');
         $result = (int)$dispatcherObject->process($action, $listingsProductsIds, $params);
         $actionId = (int)$dispatcherObject->getLogsActionId();
 
         $listingProductObject = $this->amazonFactory
-            ->getObjectLoaded('Listing\Product', $listingsProductsIds[0], NULL, false);
+            ->getObjectLoaded('Listing\Product', $listingsProductsIds[0], null, false);
 
         $isProcessingItems = false;
-        if (!is_null($listingProductObject)) {
+        if ($listingProductObject !== null) {
             $isProcessingItems = (bool)$listingProductObject->getListing()
                 ->isSetProcessingLock('products_in_action');
         }

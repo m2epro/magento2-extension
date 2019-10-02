@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\OtherListings;
 
 use Ess\M2ePro\Model\Processing\Runner;
 
+/**
+ * Class Update
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\OtherListings
+ */
 class Update extends AbstractModel
 {
     const LOCK_ITEM_PREFIX = 'synchronization_ebay_other_listings_update';
@@ -62,8 +66,10 @@ class Update extends AbstractModel
     protected function performActions()
     {
         $accountsCollection = $this->ebayFactory->getObject('Account')->getCollection();
-        $accountsCollection->addFieldToFilter('other_listings_synchronization',
-           \Ess\M2ePro\Model\Ebay\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES);
+        $accountsCollection->addFieldToFilter(
+            'other_listings_synchronization',
+            \Ess\M2ePro\Model\Ebay\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES
+        );
 
         $accounts = $accountsCollection->getItems();
 
@@ -88,18 +94,14 @@ class Update extends AbstractModel
             );
 
             if (!$this->isLockedAccount($account)) {
-
                 $this->getActualOperationHistory()->addTimePoint(
                     __METHOD__.'process'.$account->getId(),
                     'Process Account '.$account->getTitle()
                 );
 
                 try {
-
                     $this->executeUpdateInventoryDataAccount($account);
-
                 } catch (\Exception $exception) {
-
                     $message = $this->getHelper('Module\Translation')->__(
                         'The "Update 3rd Party Listings" Action for eBay Account "%account%" was completed with error.',
                         $account->getTitle()
@@ -133,7 +135,6 @@ class Update extends AbstractModel
         $sinceTime = $account->getChildObject()->getData('other_listings_last_synchronization');
 
         if (empty($sinceTime)) {
-
             $marketplaceCollection = $this->ebayFactory->getObject('Marketplace')->getCollection();
             $marketplaceCollection->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
             $marketplace = $marketplaceCollection->getFirstItem();
@@ -144,10 +145,12 @@ class Update extends AbstractModel
                 $marketplace = $marketplace->getId();
             }
 
-            $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+            $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getCustomConnector(
-                'Ebay\Synchronization\OtherListings\Update\Requester',
-                array(), $marketplace, $account->getId()
+                'Ebay_Synchronization_OtherListings_Update_Requester',
+                [],
+                $marketplace,
+                $account->getId()
             );
             $dispatcherObject->process($connectorObj);
             return;
@@ -157,7 +160,7 @@ class Update extends AbstractModel
         $changes = $this->getChangesByAccount($account, $sinceTime);
 
         /** @var $updatingModel \Ess\M2ePro\Model\Ebay\Listing\Other\Updating */
-        $updatingModel = $this->modelFactory->getObject('Ebay\Listing\Other\Updating');
+        $updatingModel = $this->modelFactory->getObject('Ebay_Listing_Other_Updating');
         $updatingModel->initialize($account);
         $updatingModel->processResponseData($changes);
     }
@@ -169,7 +172,7 @@ class Update extends AbstractModel
         $nextSinceTime = new \DateTime($sinceTime, new \DateTimeZone('UTC'));
 
         $operationHistory = $this->getActualOperationHistory()->getParentObject('synchronization');
-        if (!is_null($operationHistory)) {
+        if ($operationHistory !== null) {
             $toTime = new \DateTime($operationHistory->getData('start_date'), new \DateTimeZone('UTC'));
         } else {
             $toTime = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -184,7 +187,7 @@ class Update extends AbstractModel
 
         $response = $this->receiveChangesFromEbay(
             $account,
-            array('since_time'=>$nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime->format('Y-m-d H:i:s'))
+            ['since_time'=>$nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime->format('Y-m-d H:i:s')]
         );
 
         if ($response) {
@@ -197,10 +200,9 @@ class Update extends AbstractModel
         $nextSinceTime->modify('-1 day');
 
         if ((int)$previousSinceTime->format('U') < (int)$nextSinceTime->format('U')) {
-
             $response = $this->receiveChangesFromEbay(
                 $account,
-                array('since_time'=>$nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime->format('Y-m-d H:i:s'))
+                ['since_time'=>$nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime->format('Y-m-d H:i:s')]
             );
 
             if ($response) {
@@ -214,10 +216,9 @@ class Update extends AbstractModel
         $nextSinceTime->modify('-2 hours');
 
         if ((int)$previousSinceTime->format('U') < (int)$nextSinceTime->format('U')) {
-
             $response = $this->receiveChangesFromEbay(
                 $account,
-                array('since_time'=>$nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime->format('Y-m-d H:i:s'))
+                ['since_time'=>$nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime->format('Y-m-d H:i:s')]
             );
 
             if ($response) {
@@ -225,15 +226,21 @@ class Update extends AbstractModel
             }
         }
 
-        return array();
+        return [];
     }
 
-    private function receiveChangesFromEbay(\Ess\M2ePro\Model\Account $account, array $paramsConnector = array())
+    private function receiveChangesFromEbay(\Ess\M2ePro\Model\Account $account, array $paramsConnector = [])
     {
-        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorObj = $dispatcherObj->getVirtualConnector('item','get','changes',
-                                                            $paramsConnector,NULL,
-                                                            NULL,$account->getId());
+        $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        $connectorObj = $dispatcherObj->getVirtualConnector(
+            'item',
+            'get',
+            'changes',
+            $paramsConnector,
+            null,
+            null,
+            $account->getId()
+        );
 
         $dispatcherObj->process($connectorObj);
         $responseData = $connectorObj->getResponseData();
@@ -241,7 +248,7 @@ class Update extends AbstractModel
         $this->processResponseMessages($connectorObj->getResponseMessages());
 
         if (!isset($responseData['items']) || !isset($responseData['to_time'])) {
-            return NULL;
+            return null;
         }
 
         return $responseData;
@@ -250,11 +257,10 @@ class Update extends AbstractModel
     private function processResponseMessages(array $messages)
     {
         /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messagesSet */
-        $messagesSet = $this->modelFactory->getObject('Connector\Connection\Response\Message\Set');
+        $messagesSet = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
         $messagesSet->init($messages);
 
         foreach ($messagesSet->getEntities() as $message) {
-
             if (!$message->isError() && !$message->isWarning()) {
                 continue;
             }
@@ -288,7 +294,7 @@ class Update extends AbstractModel
     private function isLockedAccount(\Ess\M2ePro\Model\Account $account)
     {
         /** @var $lockItem \Ess\M2ePro\Model\Lock\Item\Manager */
-        $lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+        $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
         $lockItem->setNick(self::LOCK_ITEM_PREFIX.'_'.$account->getId());
         $lockItem->setMaxInactiveTime(Runner::MAX_LIFETIME);
 

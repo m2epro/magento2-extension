@@ -11,15 +11,19 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Template\Synchronization;
 
+/**
+ * Class RelistRules
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs
+ */
 class RelistRules extends AbstractForm
 {
     protected function _prepareForm()
     {
         $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
-        $formData = !is_null($template)
+        $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $defaults = array(
+        $defaults = [
             'relist_mode' => Synchronization::RELIST_MODE_YES,
             'relist_filter_user_lock' => Synchronization::RELIST_FILTER_USER_LOCK_YES,
             'relist_send_data' => Synchronization::RELIST_SEND_DATA_NONE,
@@ -36,7 +40,7 @@ class RelistRules extends AbstractForm
 
             'relist_advanced_rules_mode'    => Synchronization::ADVANCED_RULES_MODE_NONE,
             'relist_advanced_rules_filters' => null
-        );
+        ];
         $formData = array_merge($defaults, $formData);
 
         $isEdit = !!$this->getRequest()->getParam('id');
@@ -58,8 +62,8 @@ class RelistRules extends AbstractForm
                     <p>More detailed information about how to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
-                ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/SQItAQ')
+                    ,
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/SQItAQ')
                 )
             ]
         );
@@ -72,7 +76,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_mode',
+        $fieldset->addField(
+            'relist_mode',
             self::SELECT,
             [
                 'name' => 'relist_mode',
@@ -88,7 +93,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_filter_user_lock',
+        $fieldset->addField(
+            'relist_filter_user_lock',
             self::SELECT,
             [
                 'container_id' => 'relist_filter_user_lock_tr_container',
@@ -105,7 +111,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_send_data',
+        $fieldset->addField(
+            'relist_send_data',
             self::SELECT,
             [
                 'container_id' => 'relist_send_data_tr_container',
@@ -133,7 +140,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_status_enabled',
+        $fieldset->addField(
+            'relist_status_enabled',
             self::SELECT,
             [
                 'name' => 'relist_status_enabled',
@@ -152,7 +160,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_is_in_stock',
+        $fieldset->addField(
+            'relist_is_in_stock',
             self::SELECT,
             [
                 'name' => 'relist_is_in_stock',
@@ -171,7 +180,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_qty_magento',
+        $fieldset->addField(
+            'relist_qty_magento',
             self::SELECT,
             [
                 'name' => 'relist_qty_magento',
@@ -219,7 +229,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_qty_calculated',
+        $fieldset->addField(
+            'relist_qty_calculated',
             self::SELECT,
             [
                 'name' => 'relist_qty_calculated',
@@ -268,20 +279,20 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset('magento_block_amazon_template_synchronization_relist_advanced_filters',
+        $fieldset = $form->addFieldset(
+            'magento_block_amazon_template_synchronization_relist_advanced_filters',
             [
                 'legend' => $this->__('Advanced Conditions'),
                 'collapsable' => false,
                 'tooltip' => $this->__(
-                    '<p>You can provide flexible Advanced Conditions to manage when the Relist action should
-                    be run basing on the Attributes’ values of the Magento Product.<br> So, when all the Conditions
-                    (both general List Conditions and Advanced Conditions) are met,
-                    the Product will be relisted on Channel.</p>'
+                    '<p>Define Magento Attribute value(s) based on which a product must be relisted on the Channel.<br>
+                    Once both Relist Conditions and Advanced Conditions are met, the product will be relisted.</p>'
                 )
             ]
         );
 
-        $fieldset->addField('relist_advanced_rules_filters_warning',
+        $fieldset->addField(
+            'relist_advanced_rules_filters_warning',
             self::MESSAGES,
             [
                 'messages' => [[
@@ -295,7 +306,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_advanced_rules_mode',
+        $fieldset->addField(
+            'relist_advanced_rules_mode',
             self::SELECT,
             [
                 'name' => 'relist_advanced_rules_mode',
@@ -308,7 +320,7 @@ HTML
             ]
         );
 
-        $ruleModel = $this->activeRecordFactory->getObject('Magento\Product\Rule')->setData(
+        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
             ['prefix' => Synchronization::RELIST_ADVANCED_RULES_PREFIX]
         );
 
@@ -316,9 +328,10 @@ HTML
             $ruleModel->loadFromSerialized($formData['relist_advanced_rules_filters']);
         }
 
-        $ruleBlock = $this->createBlock('Magento\Product\Rule')->setData(['rule_model' => $ruleModel]);
+        $ruleBlock = $this->createBlock('Magento_Product_Rule')->setData(['rule_model' => $ruleModel]);
 
-        $fieldset->addField('advanced_filter',
+        $fieldset->addField(
+            'advanced_filter',
             self::CUSTOM_CONTAINER,
             [
                 'container_id' => 'relist_advanced_rules_filters_container',

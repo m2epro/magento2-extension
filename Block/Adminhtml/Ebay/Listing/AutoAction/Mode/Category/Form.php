@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Category;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Category
+ */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\Form
 {
     //########################################
@@ -42,7 +46,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Listing::class)
         );
 
         $this->js->add(<<<JS
@@ -59,7 +63,7 @@ JS
 
     protected function _toHtml()
     {
-        $breadcrumb = $this->createBlock('Ebay\Listing\AutoAction\Mode\Breadcrumb', '', ['data' => [
+        $breadcrumb = $this->createBlock('Ebay_Listing_AutoAction_Mode_Breadcrumb', '', ['data' => [
             'id_prefix' => 'category'
         ]]);
         $breadcrumb->setSelectedStep(1);

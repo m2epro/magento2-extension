@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization;
 
+/**
+ * Class Marketplaces
+ * @package Ess\M2ePro\Model\Walmart\Synchronization
+ */
 class Marketplaces extends AbstractModel
 {
     //########################################
@@ -19,7 +23,7 @@ class Marketplaces extends AbstractModel
 
     protected function getNick()
     {
-        return NULL;
+        return null;
     }
 
     // ---------------------------------------
@@ -87,7 +91,7 @@ class Marketplaces extends AbstractModel
         $result = !$this->processTask('Marketplaces\Categories') ? false : $result;
         $result = !$this->processTask('Marketplaces\Specifics') ? false : $result;
 
-        $this->getHelper('Data\Cache\Permanent')->removeTagValues('marketplace');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
 
         return $result;
     }

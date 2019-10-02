@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+/**
+ * Class Delete
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ */
 class Delete extends Listing
 {
     public function execute()
@@ -24,7 +28,7 @@ class Delete extends Listing
 
         $deleted = $locked = 0;
         foreach ($ids as $id) {
-            $listing = $this->ebayFactory->getCachedObjectLoaded('Listing',$id);
+            $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $id);
             if ($listing->isLocked()) {
                 $locked++;
             } else {
@@ -37,7 +41,8 @@ class Delete extends Listing
         $deleted && $this->getMessageManager()->addSuccess($tempString);
 
         $tempString = $this->__(
-            '%amount% Listing(s) cannot be deleted because they have Items with Status "In Progress".', $locked
+            '%amount% Listing(s) cannot be deleted because they have Items with Status "In Progress".',
+            $locked
         );
         $locked && $this->getMessageManager()->addError($tempString);
 

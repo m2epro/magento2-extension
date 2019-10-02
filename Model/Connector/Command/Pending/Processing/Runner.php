@@ -8,19 +8,23 @@
 
 namespace Ess\M2ePro\Model\Connector\Command\Pending\Processing;
 
+/**
+ * Class Runner
+ * @package Ess\M2ePro\Model\Connector\Command\Pending\Processing
+ */
 abstract class Runner extends \Ess\M2ePro\Model\Processing\Runner
 {
     const PENDING_REQUEST_MAX_LIFE_TIME = 43200;
 
-    private $responserModelName = NULL;
+    private $responserModelName = null;
 
-    private $responserParams = array();
+    private $responserParams = [];
 
     /** @var \Ess\M2ePro\Model\Connector\Command\Pending\Responser $responser */
-    protected $responser = NULL;
+    protected $responser = null;
 
     /** @var \Ess\M2ePro\Model\Connector\Connection\Response $response */
-    protected $response = NULL;
+    protected $response = null;
 
     // ##################################
 
@@ -89,25 +93,26 @@ abstract class Runner extends \Ess\M2ePro\Model\Processing\Runner
 
     protected function getResponser($returnNewObject = false)
     {
-        if (!is_null($this->responser) && !$returnNewObject) {
+        if ($this->responser !== null && !$returnNewObject) {
             return $this->responser;
         }
 
-        return $this->responser = $this->modelFactory->getObject($this->getResponserModelName(), array(
+        return $this->responser = $this->modelFactory->getObject($this->getResponserModelName(), [
             'params' => $this->getResponserParams(),
             'response' => $this->getResponse()
-        ));
+        ]);
     }
 
     protected function getResponse()
     {
-        if (!is_null($this->response)) {
+        if ($this->response !== null) {
             return $this->response;
         }
 
-        $this->response = $this->modelFactory->getObject('Connector\Connection\Response');
+        $this->response = $this->modelFactory->getObject('Connector_Connection_Response');
         $this->response->initFromPreparedResponse(
-            $this->getProcessingObject()->getResultData(), $this->getProcessingObject()->getResultMessages()
+            $this->getProcessingObject()->getResultData(),
+            $this->getProcessingObject()->getResultMessages()
         );
 
         $params = $this->getParams();

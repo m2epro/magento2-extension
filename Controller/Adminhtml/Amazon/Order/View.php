@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Order
+ */
 class View extends Order
 {
     public function execute()
@@ -23,7 +27,7 @@ class View extends Order
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('View Order Details'));
 
-        $this->addContent($this->createBlock('Amazon\Order\View'));
+        $this->addContent($this->createBlock('Amazon_Order_View'));
 
         return $this->getResult();
     }

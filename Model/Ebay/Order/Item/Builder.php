@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Ebay\Order\Item;
 
 use Ess\M2ePro\Model\AbstractModel;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Ebay\Order\Item
+ */
 class Builder extends AbstractModel
 {
     private $ebayFactory;
@@ -21,8 +25,7 @@ class Builder extends AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->ebayFactory = $ebayFactory;
         parent::__construct($helperFactory, $modelFactory, $data);
     }

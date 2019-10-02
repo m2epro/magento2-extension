@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ToolsGeneral;
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 use Ess\M2ePro\Helper\View\ControlPanel\Command;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ToolsGeneral
+ */
 class Tabs extends AbstractTabs
 {
     //########################################
@@ -36,8 +40,8 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('General'),
                 'title' => __('General'),
-                'content' => $this->getLayout()->createBlock(
-                    '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group',
+                'content' => $this->createBlock(
+                    'ControlPanel_Tabs_Command_Group',
                     '',
                     [
                         'data' => [
@@ -53,8 +57,8 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Install'),
                 'title' => __('Install'),
-                'content' => $this->getLayout()->createBlock(
-                    '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group',
+                'content' => $this->createBlock(
+                    'ControlPanel_Tabs_Command_Group',
                     '',
                     [
                         'data' => [
@@ -70,8 +74,8 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Magento'),
                 'title' => __('Magento'),
-                'content' => $this->getLayout()->createBlock(
-                    '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group',
+                'content' => $this->createBlock(
+                    'ControlPanel_Tabs_Command_Group',
                     '',
                     [
                         'data' => [
@@ -87,8 +91,8 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Additional'),
                 'title' => __('Additional'),
-                'content' => $this->getLayout()->createBlock(
-                    '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group',
+                'content' => $this->createBlock(
+                    'ControlPanel_Tabs_Command_Group',
                     '',
                     [
                         'data' => [

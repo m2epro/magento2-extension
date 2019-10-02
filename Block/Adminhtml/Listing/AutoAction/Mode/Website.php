@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode;
 
+/**
+ * Class Website
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode
+ */
 class Website extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     public $formData = [];
@@ -34,7 +38,9 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {
         $form = $this->_formFactory->create();
 
-        $form->addField('auto_mode', 'hidden',
+        $form->addField(
+            'auto_mode',
+            'hidden',
             [
                 'name' => 'auto_mode',
                 'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE
@@ -43,7 +49,8 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $fieldSet = $form->addFieldset('auto_website_fieldset_container', []);
 
-        $fieldSet->addField('auto_website_adding_mode',
+        $fieldSet->addField(
+            'auto_website_adding_mode',
             self::SELECT,
             [
                 'name' => 'auto_website_adding_mode',
@@ -61,7 +68,8 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('auto_website_adding_add_not_visible',
+        $fieldSet->addField(
+            'auto_website_adding_add_not_visible',
             self::SELECT,
             [
                 'name' => 'auto_website_adding_add_not_visible',
@@ -87,7 +95,8 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('auto_website_deleting_mode',
+        $fieldSet->addField(
+            'auto_website_deleting_mode',
             self::SELECT,
             [
                 'name' => 'auto_website_deleting_mode',
@@ -129,11 +138,11 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     public function getDefault()
     {
-        return array(
+        return [
             'auto_website_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'auto_website_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
             'auto_website_deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
-        );
+        ];
     }
 
     //########################################
@@ -144,7 +153,7 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
      */
     public function getListing()
     {
-        if (is_null($this->listing)) {
+        if ($this->listing === null) {
             $listingId = $this->getRequest()->getParam('id');
             $this->listing = $this->activeRecordFactory->getCachedObjectLoaded('Listing', $listingId);
         }
@@ -157,7 +166,7 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
 
         $hasFormData = $this->hasFormData() ? 'true' : 'false';

@@ -10,14 +10,18 @@ namespace Ess\M2ePro\Controller\Adminhtml\HealthStatus;
 
 use Ess\M2ePro\Controller\Adminhtml\HealthStatus;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\HealthStatus
+ */
 class Index extends HealthStatus
 {
     //########################################
 
     public function execute()
     {
-        $activeTab = $this->getRequest()->getParam('active_tab', NULL);
-        is_null($activeTab) && $activeTab = \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs::TAB_ID_DASHBOARD;
+        $activeTab = $this->getRequest()->getParam('active_tab', null);
+        $activeTab === null && $activeTab = \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs::TAB_ID_DASHBOARD;
 
         /** @var \Ess\M2ePro\Model\HealthStatus\Manager $healthManager */
         $healthManager = $this->modelFactory->getObject('HealthStatus\Manager');

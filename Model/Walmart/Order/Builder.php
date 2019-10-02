@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Order;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Walmart\Order
+ */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
     const INSTRUCTION_INITIATOR = 'order_builder';
@@ -34,9 +38,9 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     private $status = self::STATUS_NOT_MODIFIED;
 
-    private $items = array();
+    private $items = [];
 
-    private $updates = array();
+    private $updates = [];
 
     protected $walmartFactory;
     protected $activeRecordFactory;
@@ -55,12 +59,12 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $this->activeRecordFactory = $activeRecordFactory;
         $this->walmartFactory = $walmartFactory;
 
-        $this->helper = $this->modelFactory->getObject('Walmart\Order\Helper');
+        $this->helper = $this->modelFactory->getObject('Walmart_Order_Helper');
     }
 
     //########################################
 
-    public function initialize(\Ess\M2ePro\Model\Account $account, array $data = array())
+    public function initialize(\Ess\M2ePro\Model\Account $account, array $data = [])
     {
         $this->account = $account;
 
@@ -70,7 +74,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    private function initializeData(array $data = array())
+    private function initializeData(array $data = [])
     {
         // Init general data
         // ---------------------------------------
@@ -78,7 +82,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $this->setData('walmart_order_id', $data['walmart_order_id']);
         $this->setData('marketplace_id', $this->account->getChildObject()->getMarketplaceId());
 
-        $itemsStatuses = array();
+        $itemsStatuses = [];
         foreach ($data['items'] as $item) {
             $itemsStatuses[$item['walmart_order_item_id']] = $item['status'];
         }
@@ -162,7 +166,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $this->order = reset($existOrders);
         $this->status = self::STATUS_UPDATED;
 
-        if (is_null($this->order->getMagentoOrderId())) {
+        if ($this->order->getMagentoOrderId() === null) {
             $this->order->setStatusUpdateRequired(true);
         }
         // ---------------------------------------
@@ -203,7 +207,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             $itemData['order_id'] = $this->order->getId();
 
             /** @var $itemBuilder \Ess\M2ePro\Model\Walmart\Order\Item\Builder */
-            $itemBuilder = $this->modelFactory->getObject('Walmart\Order\Item\Builder');
+            $itemBuilder = $this->modelFactory->getObject('Walmart_Order_Item_Builder');
             $itemBuilder->initialize($itemData);
 
             $item = $itemBuilder->process();
@@ -286,7 +290,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     private function processMagentoOrderUpdates()
     {
-        if (!$this->hasUpdates() || is_null($this->order->getMagentoOrder())) {
+        if (!$this->hasUpdates() || $this->order->getMagentoOrder() === null) {
             return;
         }
 
@@ -296,7 +300,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         }
 
         /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
-        $magentoOrderUpdater = $this->modelFactory->getObject('Magento\Order\Updater');
+        $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
         $magentoOrderUpdater->setMagentoOrder($this->order->getMagentoOrder());
 
         if ($this->hasUpdate(self::UPDATE_STATUS)) {
@@ -319,7 +323,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        $magentoOrderComments = array();
+        $magentoOrderComments = [];
         $magentoOrderComments[] = '<b>Attention!</b> Order was canceled on Walmart.';
 
         try {
@@ -329,7 +333,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         }
 
         /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
-        $magentoOrderUpdater = $this->modelFactory->getObject('Magento\Order\Updater');
+        $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
         $magentoOrderUpdater->setMagentoOrder($this->order->getMagentoOrder());
         $magentoOrderUpdater->updateComments($magentoOrderComments);
         $magentoOrderUpdater->finishUpdate();
@@ -344,16 +348,16 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
         $logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId();
 
-        $parentsForProcessing = array();
-        $listingsProductsIdsForNeedSynchRulesCheck = array();
+        $parentsForProcessing = [];
+        $listingsProductsIdsForNeedSynchRulesCheck = [];
 
         foreach ($this->items as $orderItem) {
             /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
             $listingProductCollection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
             $listingProductCollection->getSelect()->join(
-                array('l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()),
+                ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
                 'main_table.listing_id=l.id',
-                array('account_id')
+                ['account_id']
             );
             $listingProductCollection->addFieldToFilter('sku', $orderItem['sku']);
             $listingProductCollection->addFieldToFilter('l.account_id', $this->account->getId());
@@ -365,7 +369,6 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             }
 
             foreach ($listingsProducts as $listingProduct) {
-
                 if (!$listingProduct->isListed() && !$listingProduct->isStopped()) {
                     continue;
                 }
@@ -376,7 +379,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                 $currentOnlineQty = $walmartListingProduct->getOnlineQty();
 
                 // if product was linked by sku during list action
-                if ($listingProduct->isStopped() && is_null($currentOnlineQty)) {
+                if ($listingProduct->isStopped() && $currentOnlineQty === null) {
                     continue;
                 }
 
@@ -388,7 +391,8 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                 }
 
                 $this->activeRecordFactory->getObject('ProductChange')->addUpdateAction(
-                    $listingProduct->getProductId(),\Ess\M2ePro\Model\ProductChange::INITIATOR_SYNCHRONIZATION
+                    $listingProduct->getProductId(),
+                    \Ess\M2ePro\Model\ProductChange::INITIATOR_SYNCHRONIZATION
                 );
 
                 if ($listingProduct->isSetProcessingLock('in_action')) {
@@ -425,12 +429,13 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
                 $walmartListingProduct->setData('online_qty', 0);
 
-                $tempLogMessages = array(
+                $tempLogMessages = [
                     $this->getHelper('Module\Translation')->__(
                         'Item QTY was successfully changed from %from% to %to% .',
-                        $currentOnlineQty, 0
+                        $currentOnlineQty,
+                        0
                     )
-                );
+                ];
 
                 if (!$listingProduct->isStopped()) {
                     $statusChangedFrom = $this->getHelper('Component\Walmart')
@@ -449,7 +454,8 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                     }
 
                     $listingProduct->setData(
-                        'status_changer', \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT
+                        'status_changer',
+                        \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT
                     );
                     $listingProduct->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED);
                 }
@@ -475,7 +481,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
         if (!empty($parentsForProcessing)) {
             $massProcessor = $this->modelFactory->getObject(
-                'Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass'
+                'Walmart_Listing_Product_Variation_Manager_Type_Relation_ParentRelation_Processor_Mass'
             );
             $massProcessor->setListingsProducts($parentsForProcessing);
             $massProcessor->execute();
@@ -492,10 +498,10 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     private function processOtherListingsUpdates()
     {
-        $logger = $this->activeRecordFactory->getObject('Listing\Other\Log');
+        $logger = $this->activeRecordFactory->getObject('Listing_Other_Log');
         $logger->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK);
 
-        $logsActionId = $this->activeRecordFactory->getObject('Listing\Other\Log')->getResource()->getNextActionId();
+        $logsActionId = $this->activeRecordFactory->getObject('Listing_Other_Log')->getResource()->getNextActionId();
 
         foreach ($this->items as $orderItem) {
             /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingOtherCollection */
@@ -510,7 +516,6 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             }
 
             foreach ($otherListings as $otherListing) {
-
                 if (!$otherListing->isListed() && !$otherListing->isStopped()) {
                     continue;
                 }
@@ -548,15 +553,16 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
                 $walmartOtherListing->setData('online_qty', 0);
 
-                $tempLogMessages = array();
+                $tempLogMessages = [];
 
                 if ($currentOnlineQty > 0) {
-                    $tempLogMessages = array(
+                    $tempLogMessages = [
                         $this->getHelper('Module\Translation')->__(
                             'Item qty was successfully changed from %from% to %to% .',
-                            $currentOnlineQty, 0
+                            $currentOnlineQty,
+                            0
                         )
-                    );
+                    ];
                 }
 
                 if (!$otherListing->isStopped()) {
@@ -570,12 +576,14 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                         // Item Status was successfully changed from "%from%" to "%to%" .
                         $tempLogMessages[] = $this->getHelper('Module\Translation')->__(
                             'Item Status was successfully changed from "%from%" to "%to%" .',
-                            $statusChangedFrom, $statusChangedTo
+                            $statusChangedFrom,
+                            $statusChangedTo
                         );
                     }
 
                     $otherListing->setData(
-                        'status_changer', \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT
+                        'status_changer',
+                        \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT
                     );
                     $otherListing->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED);
                 }

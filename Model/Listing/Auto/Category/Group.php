@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Listing\Auto\Category;
 
+/**
+ * Class Group
+ * @package Ess\M2ePro\Model\Listing\Auto\Category
+ */
 class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
     //########################################
@@ -115,9 +119,9 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
      * @return array|\Ess\M2ePro\Model\ActiveRecord\AbstractModel[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getCategories($asObjects = false, array $filters = array())
+    public function getCategories($asObjects = false, array $filters = [])
     {
-        return $this->getRelatedSimpleItems('Listing\Auto\Category','group_id', $asObjects, $filters);
+        return $this->getRelatedSimpleItems('Listing_Auto_Category', 'group_id', $asObjects, $filters);
     }
 
     public function clearCategories()
@@ -136,7 +140,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
             return false;
         }
 
-        $items = $this->getRelatedSimpleItems('Listing\Auto\Category', 'group_id', true);
+        $items = $this->getRelatedSimpleItems('Listing_Auto_Category', 'group_id', true);
         foreach ($items as $item) {
             $item->delete();
         }

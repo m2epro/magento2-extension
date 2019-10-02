@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Log\Grid;
 
+/**
+ * Class LastActions
+ * @package Ess\M2ePro\Block\Adminhtml\Listing\Log\Grid
+ */
 class LastActions extends \Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions
 {
     //########################################

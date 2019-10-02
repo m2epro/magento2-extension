@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Column\Renderer;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid as ListingGrid;
 
+/**
+ * Class Action
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Column\Renderer
+ */
 class Action extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action
 {
     protected $ebayFactory;
@@ -28,7 +32,7 @@ class Action extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Ac
         $jsonEncoder,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         array $data = []
-    ){
+    ) {
         parent::__construct($css, $jsPhp, $js, $jsTranslatorRenderer, $jsUrlRenderer, $context, $jsonEncoder, $data);
         $this->ebayFactory = $ebayFactory;
     }
@@ -41,8 +45,7 @@ class Action extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Ac
 
         if (!$marketplace->getChildObject()->isMultiMotorsEnabled() &&
             isset($action['action_id']) &&
-            $action['action_id'] == ListingGrid::MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY)
-        {
+            $action['action_id'] == ListingGrid::MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY) {
             return '';
         }
 

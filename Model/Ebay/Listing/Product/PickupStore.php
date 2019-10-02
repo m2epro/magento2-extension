@@ -8,10 +8,14 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product;
 
+/**
+ * Class PickupStore
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product
+ */
 class PickupStore extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore */
-    protected $accountPickupStore = NULL;
+    protected $accountPickupStore = null;
 
     //########################################
 
@@ -29,16 +33,17 @@ class PickupStore extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getAccountPickupStore()
     {
-        if (is_null($this->getId())) {
+        if ($this->getId() === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Method require loaded instance first');
         }
 
-        if (!is_null($this->accountPickupStore)) {
+        if ($this->accountPickupStore !== null) {
             return $this->accountPickupStore;
         }
 
         return $this->accountPickupStore = $this->activeRecordFactory->getObjectLoaded(
-            'Ebay\Account\PickupStore', $this->getAccountPickupStoreId()
+            'Ebay_Account_PickupStore',
+            $this->getAccountPickupStoreId()
         );
     }
 

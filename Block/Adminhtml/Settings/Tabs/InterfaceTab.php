@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs;
 
+/**
+ * Class InterfaceTab
+ * @package Ess\M2ePro\Block\Adminhtml\Settings\Tabs
+ */
 class InterfaceTab extends AbstractTab
 {
     //########################################
@@ -27,23 +31,22 @@ class InterfaceTab extends AbstractTab
             [
                 'content' => $this->__(
                     <<<HTML
-                    <p>Set M2E Pro interface preferences, then click <strong>Save Config</strong>.
-                    More detailed information on
-                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>
+                    <p>In this section, you can set up M2E Pro interface preferences.
+                    Click <strong>Save</strong> after the changes are made.</p>
 HTML
-                    ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/ZQBhAQ')
                 )
             ]
         );
 
-        $fieldset = $form->addFieldset('configuration_settings_interface',
+        $fieldset = $form->addFieldset(
+            'configuration_settings_interface',
             [
                 'legend' => '', 'collapsable' => false,
             ]
         );
 
-        $fieldset->addField('products_show_thumbnails',
+        $fieldset->addField(
+            'products_show_thumbnails',
             self::SELECT,
             [
                 'name' => 'products_show_thumbnails',
@@ -53,7 +56,8 @@ HTML
                     1 => $this->__('Show')
                 ],
                 'value' => (bool)(int)$this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/view/','show_products_thumbnails'
+                    '/view/',
+                    'show_products_thumbnails'
                 ),
                 'tooltip' => $this->__(
                     'Choose whether you want to see Thumbnail Images for Products on the
@@ -62,7 +66,8 @@ HTML
             ]
         );
 
-        $fieldset->addField('block_notices_show',
+        $fieldset->addField(
+            'block_notices_show',
             self::SELECT,
             [
                 'name' => 'block_notices_show',
@@ -72,7 +77,8 @@ HTML
                     1 => $this->__('Show')
                 ],
                 'value' => (bool)(int)$this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/view/', 'show_block_notices'
+                    '/view/',
+                    'show_block_notices'
                 ),
                 'tooltip' => $this->__(
                     '<p>Choose whether you want the help information to be available at the top of
@@ -83,11 +89,11 @@ HTML
             ]
         );
 
-        $data = array(
+        $data = [
             'id' => 'restore_block_notices',
             'label'   => $this->__('Restore All Helps & Remembered Choices'),
             'class' => 'primary'
-        );
+        ];
         $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
 
         $fieldset->addField(
@@ -119,7 +125,8 @@ HTML
         );
 
         $this->jsTranslator->add(
-            'Help Blocks have been successfully restored.', $this->__('Help Blocks have been successfully restored.')
+            'Help Blocks have been successfully restored.',
+            $this->__('Help Blocks have been successfully restored.')
         );
 
         $this->js->addRequireJs([
@@ -138,7 +145,7 @@ HTML
             SettingsObj.restoreAllHelpsAndRememberedChoices();
         });
 JS
-);
+        );
 
         return parent::_beforeToHtml();
     }

@@ -27,6 +27,10 @@ namespace Ess\M2ePro\PublicServices\Product;
 
 use Magento\Framework\Event\Observer;
 
+/**
+ * Class ObjectChange
+ * @package Ess\M2ePro\PublicServices\Product
+ */
 class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
 {
     const VERSION = '1.0.1';
@@ -42,6 +46,8 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
     protected $productObservers   = [];
     protected $stockItemObservers = [];
 
+    protected $sqlChange;
+
     //########################################
 
     public function __construct(
@@ -53,10 +59,12 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Observer\StockItem\Save\AfterFactory $observerStockItemSaveAfterFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        SqlChange $sqlChange,
         array $data = []
     ) {
-        $this->productFactory       = $productFactory;
-        $this->stockRegistry        = $stockRegistry;
+        $this->productFactory = $productFactory;
+        $this->stockRegistry  = $stockRegistry;
+        $this->sqlChange      = $sqlChange;
 
         $this->observerProductSaveBeforeFactory   = $observerProductSaveBeforeFactory;
         $this->observerProductSaveAfterFactory    = $observerProductSaveAfterFactory;
@@ -70,6 +78,10 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
 
     public function applyChanges()
     {
+        if ($this->helperFactory->getObject('Magento')->isMSISupportingVersion()) {
+            return $this->sqlChange->applyChanges();
+        }
+
         foreach ($this->productObservers as $productObserver) {
             $this->observerProductSaveAfterFactory->create()->execute($productObserver);
         }
@@ -101,12 +113,16 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
      */
     public function observeProduct($product, $storeId = 0)
     {
+        if ($this->helperFactory->getObject('Magento')->isMSISupportingVersion()) {
+            $productId = $product instanceof \Magento\Catalog\Model\Product ? $product->getId() : (int)$product;
+            return $this->sqlChange->markProductChanged($productId);
+        }
+
         if ($this->isProductObserved($product, $storeId)) {
             return $this;
         }
 
         if (!($product instanceof \Magento\Catalog\Model\Product)) {
-
             $model = $this->productFactory->create()->setStoreId($storeId);
             $model->load($product);
             $product = $model;
@@ -137,7 +153,6 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
 
         if (array_key_exists($key, $this->productObservers) ||
             array_key_exists($key, $this->stockItemObservers)) {
-
             return true;
         }
 

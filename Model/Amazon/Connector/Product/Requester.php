@@ -8,36 +8,40 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Product;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Amazon\Connector\Product
+ */
 abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {
     /**
      * @var \Ess\M2ePro\Model\Listing\Product
      */
-    protected $listingProduct = NULL;
+    protected $listingProduct = null;
 
     // ---------------------------------------
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Logger
      */
-    protected $logger = NULL;
+    protected $logger = null;
 
     // ---------------------------------------
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
      */
-    protected $validatorObject = NULL;
+    protected $validatorObject = null;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Request
      */
-    protected $requestObject = NULL;
+    protected $requestObject = null;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData
      */
-    protected $requestDataObject = NULL;
+    protected $requestDataObject = null;
 
     protected $activeRecordFactory;
     protected $amazonFactory;
@@ -61,8 +65,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Account $account = null,
         array $params = []
-    )
-    {
+    ) {
         if (!isset($params['logs_action_id']) || !isset($params['status_changer'])) {
             throw new \Ess\M2ePro\Model\Exception('Product Connector has not received some params');
         }
@@ -76,10 +79,10 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
 
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
-        if (!is_null($listingProduct->getActionConfigurator())) {
+        if ($listingProduct->getActionConfigurator() !== null) {
             $actionConfigurator = $listingProduct->getActionConfigurator();
         } else {
-            $actionConfigurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
+            $actionConfigurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
         }
 
         $this->listingProduct = $listingProduct->load($listingProduct->getId());
@@ -98,7 +101,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Amazon\Connector\Product\ProcessingRunner';
+        return 'Amazon_Connector_Product_ProcessingRunner';
     }
 
     protected function getProcessingParams()
@@ -112,13 +115,13 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
 
         return array_merge(
             parent::getProcessingParams(),
-            array(
+            [
                 'request_data'       => $this->getRequestData(),
                 'listing_product_id' => $this->listingProduct->getId(),
                 'lock_identifier'    => $this->getLockIdentifier(),
                 'action_type'        => $this->getActionType(),
                 'start_date'         => $startDate,
-            )
+            ]
         );
     }
 
@@ -165,7 +168,6 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
 
             $this->eventBeforeExecuting();
             $this->getProcessingRunner()->start();
-
         } catch (\Exception $exception) {
             $this->unlockListingProduct();
             throw $exception;
@@ -190,8 +192,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
         $validationResult = $validator->validate();
 
         foreach ($validator->getMessages() as $messageData) {
-
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData($messageData['text'], $messageData['type']);
 
             $this->getLogger()->logListingProductMessage(
@@ -231,11 +232,13 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
             return false;
         }
 
-        $dispatcherParams = array_merge($this->params, array('is_parent_action' => true));
+        $dispatcherParams = array_merge($this->params, ['is_parent_action' => true]);
 
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Product\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Product_Dispatcher');
         $processStatus = $dispatcherObject->process(
-            $this->getActionType(), $childListingsProducts, $dispatcherParams
+            $this->getActionType(),
+            $childListingsProducts,
+            $dispatcherParams
         );
 
         if ($processStatus == \Ess\M2ePro\Helper\Data::STATUS_ERROR) {
@@ -257,9 +260,9 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
      */
     protected function filterLockedChildListingProducts(array $listingProducts)
     {
-        $lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+        $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
 
-        $resultListingProducts = array();
+        $resultListingProducts = [];
         foreach ($listingProducts as $listingProduct) {
             $lockItem->setNick(
                 \Ess\M2ePro\Helper\Component\Amazon::NICK.'_listing_product_'.$listingProduct->getId()
@@ -279,16 +282,15 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
 
     protected function isListingProductLocked()
     {
-        $lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+        $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
         $lockItem->setNick(
             \Ess\M2ePro\Helper\Component\Amazon::NICK.'_listing_product_'.$this->listingProduct->getId()
         );
 
         if ($this->listingProduct->isSetProcessingLock('in_action') || $lockItem->isExist()) {
-
             // M2ePro_TRANSLATIONS
             // Another Action is being processed. Try again when the Action is completed.
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 'Another Action is being processed. Try again when the Action is completed.',
                 \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
@@ -310,7 +312,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
 
     protected function lockListingProduct()
     {
-        $lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+        $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
         $lockItem->setNick(
             \Ess\M2ePro\Helper\Component\Amazon::NICK.'_listing_product_'.$this->listingProduct->getId()
         );
@@ -321,7 +323,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
 
     protected function unlockListingProduct()
     {
-        $lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+        $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
         $lockItem->setNick(
             \Ess\M2ePro\Helper\Component\Amazon::NICK.'_listing_product_'.$this->listingProduct->getId()
         );
@@ -337,8 +339,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
         $requestDataRaw = $requestObject->getRequestData();
 
         foreach ($requestObject->getWarningMessages() as $messageText) {
-
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 $messageText,
                 \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING
@@ -353,18 +354,18 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
 
         $this->buildRequestDataObject($requestDataRaw);
 
-        return array_merge($requestDataRaw, array('id' => $this->listingProduct->getId()));
+        return array_merge($requestDataRaw, ['id' => $this->listingProduct->getId()]);
     }
 
     protected function getResponserParams()
     {
-        $product = array(
+        $product = [
             'request'      => $this->getRequestDataObject()->getData(),
             'configurator' => $this->listingProduct->getActionConfigurator()->getSerializedData(),
             'id'           => $this->listingProduct->getId(),
-        );
+        ];
 
-        return array(
+        return [
             'account_id'      => $this->account->getId(),
             'action_type'     => $this->getActionType(),
             'lock_identifier' => $this->getLockIdentifier(),
@@ -373,7 +374,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
             'status_changer'  => $this->params['status_changer'],
             'params'          => $this->params,
             'product'         => $product,
-        );
+        ];
     }
 
     // ########################################
@@ -383,10 +384,10 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
      */
     protected function getLogger()
     {
-        if (is_null($this->logger)) {
+        if ($this->logger === null) {
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Logger $logger */
-            $logger = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Logger');
+            $logger = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Logger');
 
             $logger->setActionId((int)$this->params['logs_action_id']);
             $logger->setAction($this->getLogsAction());
@@ -418,7 +419,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
      */
     protected function getValidatorObject()
     {
-        if (is_null($this->validatorObject)) {
+        if ($this->validatorObject === null) {
 
             /** @var $validator \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator */
             $validator = $this->modelFactory->getObject(
@@ -440,9 +441,8 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
      */
     protected function getRequestObject()
     {
-        if (is_null($this->requestObject)) {
-
-            /* @var $request \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Request */
+        if ($this->requestObject === null) {
+            /** @var $request \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Request */
             $request = $this->modelFactory->getObject(
                 'Amazon\Listing\Product\Action\Type\\'.$this->getOrmActionType().'\Request'
             );
@@ -474,10 +474,10 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
      */
     protected function buildRequestDataObject(array $data)
     {
-        if (is_null($this->requestDataObject)) {
+        if ($this->requestDataObject === null) {
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData $requestData */
-            $requestData = $this->modelFactory->getObject('Amazon\Listing\Product\Action\RequestData');
+            $requestData = $this->modelFactory->getObject('Amazon_Listing_Product_Action_RequestData');
 
             $requestData->setData($data);
             $requestData->setListingProduct($this->listingProduct);

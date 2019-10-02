@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Data;
 
+/**
+ * Class Session
+ * @package Ess\M2ePro\Helper\Data
+ */
 class Session extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $session;
@@ -18,8 +22,7 @@ class Session extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\Session\SessionManager $session,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->session = $session;
         parent::__construct($helperFactory, $context);
     }
@@ -29,7 +32,8 @@ class Session extends \Ess\M2ePro\Helper\AbstractHelper
     public function getValue($key, $clear = false)
     {
         return $this->session->getData(
-            \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$key, $clear
+            \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$key,
+            $clear
         );
     }
 
@@ -42,7 +46,7 @@ class Session extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getAllValues()
     {
-        $return = array();
+        $return = [];
         $session = $this->session->getData();
 
         $identifierLength = strlen(\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER);

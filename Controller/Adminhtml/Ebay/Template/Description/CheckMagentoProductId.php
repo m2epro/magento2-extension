@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
+/**
+ * Class CheckMagentoProductId
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description
+ */
 class CheckMagentoProductId extends Description
 {
     public function execute()

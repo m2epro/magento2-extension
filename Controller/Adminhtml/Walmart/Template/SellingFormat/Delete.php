@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
+/**
+ * Class Delete
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat
+ */
 class Delete extends Template
 {
     //########################################
@@ -32,7 +36,6 @@ class Delete extends Template
                 $template->delete();
                 $deleted++;
             }
-
         }
 
         $tempString = $this->__('%amount% record(s) were successfully deleted.', $deleted);

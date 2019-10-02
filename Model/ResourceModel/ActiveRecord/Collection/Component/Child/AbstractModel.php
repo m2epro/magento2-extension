@@ -8,8 +8,11 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Child;
 
-abstract class AbstractModel
-    extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\AbstractModel
+/**
+ * Class AbstractModel
+ * @package Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Child
+ */
+abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\AbstractModel
 {
     //########################################
 

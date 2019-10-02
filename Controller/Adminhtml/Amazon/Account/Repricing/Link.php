@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account\Repricing;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
+/**
+ * Class Link
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Account\Repricing
+ */
 class Link extends Account
 {
     public function execute()
@@ -19,18 +23,17 @@ class Link extends Account
         $email = $this->getRequest()->getParam('email');
 
         $status = $this->getRequest()->getParam('status');
-        $messages = $this->getRequest()->getParam('messages', array());
+        $messages = $this->getRequest()->getParam('messages', []);
 
         /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->amazonFactory->getObjectLoaded('Account', $accountId, NULL, false);
+        $account = $this->amazonFactory->getObjectLoaded('Account', $accountId, null, false);
 
-        if ($accountId && is_null($account)) {
+        if ($accountId && $account === null) {
             $this->getMessageManager()->addError($this->__('Account does not exist.'));
             return $this->_redirect('*/amazon_account/index');
         }
 
         foreach ($messages as $message) {
-
             if ($message['type'] == 'notice') {
                 $this->getMessageManager()->addNotice($message['text']);
             }
@@ -45,25 +48,24 @@ class Link extends Account
         }
 
         if ($status == '1') {
+            $accountRepricingModel = $this->activeRecordFactory->getObject('Amazon_Account_Repricing');
 
-            $accountRepricingModel = $this->activeRecordFactory->getObject('Amazon\Account\Repricing');
-
-            $accountRepricingModel->setData(array(
+            $accountRepricingModel->setData([
                 'account_id' => $accountId,
                 'email' => $email,
                 'token' => $token
-            ));
+            ]);
 
             $accountRepricingModel->save();
 
             /** @var $repricing \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General */
-            $repricing = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\General');
+            $repricing = $this->modelFactory->getObject('Amazon_Repricing_Synchronization_General');
             $repricing->setAccount($account);
             $repricing->run();
         }
 
-        return $this->_redirect($this->getUrl('*/amazon_account/edit', array(
+        return $this->_redirect($this->getUrl('*/amazon_account/edit', [
                 'id' => $accountId
-            )).'#repricing');
+            ]).'#repricing');
     }
 }

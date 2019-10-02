@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Order\ShippingAddress;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
+/**
+ * Class Save
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Order\ShippingAddress
+ */
 class Save extends Order
 {
     public function execute()
@@ -26,11 +30,11 @@ class Save extends Order
         $id = $this->getRequest()->getParam('id', false);
         $order = $this->walmartFactory->getObjectLoaded('Order', (int)$id);
 
-        $data = array();
-        $keys = array(
+        $data = [];
+        $keys = [
             'buyer_name',
             'buyer_email'
-        );
+        ];
 
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -41,8 +45,8 @@ class Save extends Order
         $order->getChildObject()->setData('buyer_name', $data['buyer_name']);
         $order->getChildObject()->setData('buyer_email', $data['buyer_email']);
 
-        $data = array();
-        $keys = array(
+        $data = [];
+        $keys = [
             'county',
             'country_code',
             'state',
@@ -51,7 +55,7 @@ class Save extends Order
             'recipient_name',
             'phone',
             'street'
-        );
+        ];
 
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -66,7 +70,7 @@ class Save extends Order
         $oldShippingAddress = $order->getChildObject()->getSettings('shipping_address');
         if (empty($data['recipient_name'])) {
             $data['recipient_name'] = !empty($oldShippingAddress['recipient_name'])
-                ? $oldShippingAddress['recipient_name'] : NULL;
+                ? $oldShippingAddress['recipient_name'] : null;
         }
 
         $order->getChildObject()->setSettings('shipping_address', $data);
@@ -76,7 +80,7 @@ class Save extends Order
 
         $this->setJsonContent([
             'success' => true,
-            'html' => $this->createBlock('Walmart\Order\Edit\ShippingAddress')->toHtml()
+            'html' => $this->createBlock('Walmart_Order_Edit_ShippingAddress')->toHtml()
         ]);
 
         return $this->getResult();

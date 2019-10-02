@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher;
 
+/**
+ * Class Initialization
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher
+ */
 class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     //########################################
@@ -25,10 +29,6 @@ class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     protected function _beforeToHtml()
     {
         parent::_beforeToHtml();
-
-        // ---------------------------------------
-//        $this->setChild('confirm', $this->getLayout()->createBlock('M2ePro/adminhtml_widget_dialog_confirm'));
-        // ---------------------------------------
     }
 
     //########################################
@@ -36,7 +36,7 @@ class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     protected function _toHtml()
     {
         // ---------------------------------------
-        $urls = array();
+        $urls = [];
 
         // initiate account param
         // ---------------------------------------
@@ -77,20 +77,22 @@ class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
         $path = 'ebay_template/edit';
         $urls[$path] = $this->getUrl(
-            '*/ebay_template/edit', array('wizard' => (bool)$this->getRequest()->getParam('wizard', false))
+            '*/ebay_template/edit',
+            ['wizard' => (bool)$this->getRequest()->getParam('wizard', false)]
         );
         //------------------------------
 
         $this->jsUrl->addUrls($urls);
         $this->jsUrl->add(
             $this->getUrl(
-                '*/template/checkMessages', array('component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK)
+                '*/template/checkMessages',
+                ['component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK]
             ),
             'templateCheckMessages'
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Template\Manager')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Manager::class)
         );
 
         $this->jsTranslator->addTranslations([
@@ -119,7 +121,7 @@ class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     });
 JS
-    );
+        );
 
         return parent::_toHtml();
     }

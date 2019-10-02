@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
+/**
+ * Class GetSessionProductsIds
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+ */
 class GetSessionProductsIds extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
     //########################################
@@ -15,7 +19,7 @@ class GetSessionProductsIds extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Lis
     public function execute()
     {
         $tempSession = $this->getSessionValue('source_categories');
-        $selectedProductsIds = !isset($tempSession['products_ids']) ? array() : $tempSession['products_ids'];
+        $selectedProductsIds = !isset($tempSession['products_ids']) ? [] : $tempSession['products_ids'];
 
         $this->setJsonContent([
             'ids' => $selectedProductsIds

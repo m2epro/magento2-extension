@@ -10,12 +10,16 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
+/**
+ * Class DuplicateProducts
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ */
 class DuplicateProducts extends Main
 {
     public function execute()
     {
         $listingProductsIds = $this->getRequest()->getParam('ids');
-        $listingProductsIds = explode(',',$listingProductsIds);
+        $listingProductsIds = explode(',', $listingProductsIds);
         $listingProductsIds = array_filter($listingProductsIds);
 
         if (empty($listingProductsIds)) {
@@ -28,12 +32,14 @@ class DuplicateProducts extends Main
         }
 
         foreach ($listingProductsIds as $listingProductId) {
-
-            /* @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+            /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
             $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $listingProductId);
 
             $duplicatedListingProduct = $listingProduct->getListing()->addProduct(
-                $listingProduct->getProductId(), \Ess\M2ePro\Helper\Data::INITIATOR_USER, false, false
+                $listingProduct->getProductId(),
+                \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+                false,
+                false
             );
 
             $variationManager = $listingProduct->getChildObject()->getVariationManager();

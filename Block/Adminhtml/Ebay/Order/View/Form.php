@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Order\View;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
+/**
+ * Class Form
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Order\View
+ */
 class Form extends AbstractContainer
 {
     protected $_template = 'ebay/order.phtml';
@@ -18,11 +22,11 @@ class Form extends AbstractContainer
 
     protected $taxCalculator;
 
-    public $shippingAddress = array();
+    public $shippingAddress = [];
 
-    public $ebayWarehouseAddress = array();
+    public $ebayWarehouseAddress = [];
 
-    public $globalShippingServiceDetails = array();
+    public $globalShippingServiceDetails = [];
 
     public $realMagentoOrderId = null;
 
@@ -36,8 +40,7 @@ class Form extends AbstractContainer
         \Magento\Store\Model\StoreManager $storeManager,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
-    )
-    {
+    ) {
         $this->taxCalculator = $taxCalculator;
         $this->storeManager = $storeManager;
 
@@ -62,30 +65,30 @@ class Form extends AbstractContainer
     {
         // Magento order data
         // ---------------------------------------
-        $this->realMagentoOrderId = NULL;
+        $this->realMagentoOrderId = null;
 
         $magentoOrder = $this->order->getMagentoOrder();
-        if (!is_null($magentoOrder)) {
+        if ($magentoOrder !== null) {
             $this->realMagentoOrderId = $magentoOrder->getRealOrderId();
         }
         // ---------------------------------------
 
-        $data = array(
+        $data = [
             'class' => 'primary',
             'label'   => $this->__('Edit'),
             'onclick' => "OrderEditItemObj.openEditShippingAddressPopup({$this->order->getId()});",
-        );
+        ];
         $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
         $this->setChild('edit_shipping_info', $buttonBlock);
 
         // ---------------------------------------
-        if (!is_null($magentoOrder) && $magentoOrder->hasShipments()) {
-            $url = $this->getUrl('*/order/resubmitShippingInfo', array('id' => $this->order->getId()));
-            $data = array(
+        if ($magentoOrder !== null && $magentoOrder->hasShipments()) {
+            $url = $this->getUrl('*/order/resubmitShippingInfo', ['id' => $this->order->getId()]);
+            $data = [
                 'class'   => 'primary',
                 'label'   => $this->__('Resend Shipping Information'),
                 'onclick' => 'setLocation(\''.$url.'\');',
-            );
+            ];
             $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
             $this->setChild('resubmit_shipping_info', $buttonBlock);
         }
@@ -109,26 +112,29 @@ class Form extends AbstractContainer
         }
         // ---------------------------------------
 
-        $this->setChild('shipping_address', $this->createBlock('Ebay\Order\Edit\ShippingAddress'));
-        $this->setChild('item', $this->createBlock('Ebay\Order\View\Item'));
-        $this->setChild('item_edit', $this->createBlock('Order\Item\Edit'));
-        $this->setChild('log', $this->createBlock('Order\View\Log\Grid'));
-        $this->setChild('external_transaction', $this->createBlock('Ebay\Order\View\ExternalTransaction'));
+        $this->setChild('shipping_address', $this->createBlock('Ebay_Order_Edit_ShippingAddress'));
+        $this->setChild('item', $this->createBlock('Ebay_Order_View_Item'));
+        $this->setChild('item_edit', $this->createBlock('Order_Item_Edit'));
+        $this->setChild('log', $this->createBlock('Order_View_Log_Grid'));
+        $this->setChild('external_transaction', $this->createBlock('Ebay_Order_View_ExternalTransaction'));
 
         $this->jsUrl->addUrls([
             'order/getDebugInformation' => $this->getUrl(
-                '*/order/getDebugInformation/', array('id' => $this->getRequest()->getParam('id'))
+                '*/order/getDebugInformation/',
+                ['id' => $this->getRequest()->getParam('id')]
             ),
             'getEditShippingAddressForm' => $this->getUrl(
-                '*/ebay_order_shippingAddress/edit', array('id' => $this->getRequest()->getParam('id'))
+                '*/ebay_order_shippingAddress/edit',
+                ['id' => $this->getRequest()->getParam('id')]
             ),
             'saveShippingAddress' => $this->getUrl(
-                '*/ebay_order_shippingAddress/save', array('id' => $this->getRequest()->getParam('id'))
+                '*/ebay_order_shippingAddress/save',
+                ['id' => $this->getRequest()->getParam('id')]
             ),
         ]);
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Controller\Adminhtml\Order\EditItem')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Controller\Adminhtml\Order\EditItem::class)
         );
 
         return parent::_beforeToHtml();
@@ -138,7 +144,7 @@ class Form extends AbstractContainer
 
     private function getStore()
     {
-        if (is_null($this->order->getData('store_id'))) {
+        if ($this->order->getData('store_id') === null) {
             return null;
         }
 
@@ -155,7 +161,7 @@ class Form extends AbstractContainer
     {
         $store = $this->getStore();
 
-        if (is_null($store)) {
+        if ($store === null) {
             return true;
         }
 
@@ -169,7 +175,7 @@ class Form extends AbstractContainer
     {
         $store = $this->getStore();
 
-        if (is_null($store)) {
+        if ($store === null) {
             return true;
         }
 
@@ -194,7 +200,10 @@ class Form extends AbstractContainer
         }
 
         $shippingPrice -= $this->taxCalculator->calcTaxAmount(
-            $shippingPrice, $this->order->getChildObject()->getTaxRate(), true, false
+            $shippingPrice,
+            $this->order->getChildObject()->getTaxRate(),
+            true,
+            false
         );
 
         return $shippingPrice;
@@ -209,7 +218,10 @@ class Form extends AbstractContainer
 
         $shippingPrice = $this->order->getChildObject()->getShippingPrice();
         $shippingTaxAmount = $this->taxCalculator->calcTaxAmount(
-            $shippingPrice, $this->order->getChildObject()->getTaxRate(), true, false
+            $shippingPrice,
+            $this->order->getChildObject()->getTaxRate(),
+            true,
+            false
         );
 
         return $taxAmount + $shippingTaxAmount;

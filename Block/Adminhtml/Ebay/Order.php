@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
+/**
+ * Class Order
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay
+ */
 class Order extends AbstractContainer
 {
     //########################################
@@ -63,7 +67,7 @@ HTML
 
         // ---------------------------------------
 
-        $this->setPageActionsBlock('Ebay\Order\PageActions');
+        $this->setPageActionsBlock('Ebay_Order_PageActions');
 
         return parent::_prepareLayout();
     }
@@ -71,7 +75,7 @@ HTML
     public function getGridHtml()
     {
         // ---------------------------------------
-        $editItemBlock = $this->createBlock('Order\Item\Edit');
+        $editItemBlock = $this->createBlock('Order_Item_Edit');
         // ---------------------------------------
 
         return
@@ -82,7 +86,7 @@ HTML
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Controller\Adminhtml\Order\EditItem')
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Controller\Adminhtml\Order\EditItem::class)
         );
 
         return parent::_beforeToHtml();

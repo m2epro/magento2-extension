@@ -8,47 +8,52 @@
 
 namespace Ess\M2ePro\Helper\Server;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Helper\Server
+ */
 class Request extends \Ess\M2ePro\Helper\AbstractHelper
 {
     //########################################
 
-    public function single(array $package,
-                           $serverBaseUrl = null,
-                           $serverHostName = null,
-                           $tryToResendOnError = true,
-                           $tryToSwitchEndpointOnError = true)
-    {
-        !$serverBaseUrl  && $serverBaseUrl  = $this->getServerHelper()->getEndpoint();
+    public function single(
+        array $package,
+        $serverBaseUrl = null,
+        $serverHostName = null,
+        $tryToResendOnError = true,
+        $tryToSwitchEndpointOnError = true
+    ) {
+        !$serverBaseUrl && $serverBaseUrl  = $this->getServerHelper()->getEndpoint();
         !$serverHostName && $serverHostName = $this->getServerHelper()->getCurrentHostName();
 
         $curlObject = $this->buildCurlObject($package, $serverBaseUrl, $serverHostName);
         $responseBody = curl_exec($curlObject);
 
-        $response = array(
+        $response = [
             'body'               => $responseBody,
             'curl_error_number'  => curl_errno($curlObject),
             'curl_error_message' => curl_error($curlObject),
             'curl_info'          => curl_getinfo($curlObject)
-        );
+        ];
 
         curl_close($curlObject);
 
         if ($response['body'] === false) {
-
             $switchingResult = false;
             $tryToSwitchEndpointOnError && $switchingResult = $this->getServerHelper()->switchEndpoint();
 
-            $this->helperFactory->getObject('Module\Logger')->process(array(
+            $this->helperFactory->getObject('Module\Logger')->process([
                 'curl_error_number' => $response['curl_error_number'],
                 'curl_error_message' => $response['curl_error_message'],
                 'curl_info' => $response['curl_info']
-            ), 'Curl Empty Response', false);
+            ], 'Curl Empty Response', false);
 
-            if ($this->canRepeatRequest($response['curl_error_number'],
-                                        $tryToResendOnError,
-                                        $tryToSwitchEndpointOnError,
-                                        $switchingResult)) {
-
+            if ($this->canRepeatRequest(
+                $response['curl_error_number'],
+                $tryToResendOnError,
+                $tryToSwitchEndpointOnError,
+                $switchingResult
+            )) {
                 return $this->single(
                     $package,
                     $tryToSwitchEndpointOnError ? $this->getServerHelper()->getEndpoint() : $serverBaseUrl,
@@ -70,78 +75,72 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
 
             throw new \Ess\M2ePro\Model\Exception\Connection(
                 $errorMsg,
-                array(
+                [
                     'curl_error_number'  => $response['curl_error_number'],
                     'curl_error_message' => $response['curl_error_message'],
                     'curl_info'          => $response['curl_info']
-                )
+                ]
             );
         }
 
         return $response;
     }
 
-    public function multiple(array $packages,
-                            $serverBaseUrl = null,
-                            $serverHostName = null,
-                            $tryToResendOnError = true,
-                            $tryToSwitchEndpointOnError = true,
-                            $asynchronous = false)
-    {
+    public function multiple(
+        array $packages,
+        $serverBaseUrl = null,
+        $serverHostName = null,
+        $tryToResendOnError = true,
+        $tryToSwitchEndpointOnError = true,
+        $asynchronous = false
+    ) {
         if (empty($packages)) {
             throw new \Ess\M2ePro\Model\Exception\Logic("Packages is empty.");
         }
 
-        !$serverBaseUrl  && $serverBaseUrl  = $this->getServerHelper()->getEndpoint();
+        !$serverBaseUrl && $serverBaseUrl  = $this->getServerHelper()->getEndpoint();
         !$serverHostName && $serverHostName = $this->getServerHelper()->getCurrentHostName();
 
-        $responses = array();
+        $responses = [];
 
         if (count($packages) == 1 || !$asynchronous) {
-
             foreach ($packages as $key => $package) {
-
                 $curlObject = $this->buildCurlObject($package, $serverBaseUrl, $serverHostName);
                 $responseBody = curl_exec($curlObject);
 
-                $responses[$key] = array(
+                $responses[$key] = [
                     'body'               => $responseBody,
                     'curl_error_number'  => curl_errno($curlObject),
                     'curl_error_message' => curl_error($curlObject),
                     'curl_info'          => curl_getinfo($curlObject)
-                );
+                ];
 
                 curl_close($curlObject);
             }
-
         } else {
-
-            $curlObjectsPool = array();
+            $curlObjectsPool = [];
             $multiCurlObject = curl_multi_init();
 
             foreach ($packages as $key => $package) {
-
                 $curlObjectsPool[$key] = $this->buildCurlObject($package, $serverBaseUrl, $serverHostName);
                 curl_multi_add_handle($multiCurlObject, $curlObjectsPool[$key]);
             }
 
             do {
-
                 curl_multi_exec($multiCurlObject, $stillRunning);
 
                 if ($stillRunning) {
                     curl_multi_select($multiCurlObject, 1); //sleep in sec.
                 }
-
             } while ($stillRunning > 0);
 
             foreach ($curlObjectsPool as $key => $curlObject) {
-                $responses[$key] = array(
+                $responses[$key] = [
                     'body'               => curl_multi_getcontent($curlObject),
                     'curl_error_number'  => curl_errno($curlObject),
                     'curl_error_message' => curl_error($curlObject),
                     'curl_info'          => curl_getinfo($curlObject)
-                );
+                ];
 
                 curl_multi_remove_handle($multiCurlObject, $curlObject);
                 curl_close($curlObject);
@@ -155,31 +154,29 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
 
         foreach ($responses as $key => $response) {
             if ($response['body'] === false) {
-
                 $isResponseFailed = true;
                 $tryToSwitchEndpointOnError && $switchingResult = $this->getServerHelper()->switchEndpoint();
 
-                $this->helperFactory->getObject('Module\Logger')->process(array(
+                $this->helperFactory->getObject('Module\Logger')->process([
                     'curl_error_number' => $response['curl_error_number'],
                     'curl_error_message' => $response['curl_error_message'],
                     'curl_info' => $response['curl_info']
-                ), 'Curl Empty Response', false);
+                ], 'Curl Empty Response', false);
                 break;
             }
         }
 
         if ($tryToResendOnError && $isResponseFailed) {
-
-            $failedRequests = array();
+            $failedRequests = [];
 
             foreach ($responses as $key => $response) {
                 if ($response['body'] === false) {
-
-                    if ($this->canRepeatRequest($response['curl_error_number'],
-                                                $tryToResendOnError,
-                                                $tryToSwitchEndpointOnError,
-                                                $switchingResult)) {
-
+                    if ($this->canRepeatRequest(
+                        $response['curl_error_number'],
+                        $tryToResendOnError,
+                        $tryToSwitchEndpointOnError,
+                        $switchingResult
+                    )) {
                         $failedRequests[$key] = $packages[$key];
                     }
                 }
@@ -204,13 +201,14 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
 
     // ----------------------------------------
 
-    private function buildCurlObject($package,
-                                     $serverBaseUrl,
-                                     $serverHostName)
-    {
+    private function buildCurlObject(
+        $package,
+        $serverBaseUrl,
+        $serverHostName
+    ) {
         $curlObject = curl_init();
 
-        $preparedHeaders = array();
+        $preparedHeaders = [];
         $serverHostName && $preparedHeaders['Host'] = $serverHostName;
 
         if (!empty($package['headers'])) {
@@ -219,7 +217,7 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
             }
         }
 
-        $postData = array();
+        $postData = [];
         if (!empty($package['data'])) {
             $postData = $package['data'];
         }
@@ -229,8 +227,9 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
             $timeout = (int) $package['timeout'];
         }
 
-        curl_setopt_array($curlObject,
-            array(
+        curl_setopt_array(
+            $curlObject,
+            [
                 // set the server we are using
                 CURLOPT_URL => $serverBaseUrl,
 
@@ -246,23 +245,24 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
 
                 // set the data body of the request
                 CURLOPT_POST => true,
-                CURLOPT_POSTFIELDS => http_build_query($postData,'','&'),
+                CURLOPT_POSTFIELDS => http_build_query($postData, '', '&'),
 
                 // set it to return the transfer as a string from curl_exec
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_CONNECTTIMEOUT => 15,
                 CURLOPT_TIMEOUT => $timeout
-            )
+            ]
         );
 
         return $curlObject;
     }
 
-    private function canRepeatRequest($curlErrorNumber,
-                                      $tryToResendOnError,
-                                      $tryToSwitchEndpointOnError,
-                                      $switchingResult)
-    {
+    private function canRepeatRequest(
+        $curlErrorNumber,
+        $tryToResendOnError,
+        $tryToSwitchEndpointOnError,
+        $switchingResult
+    ) {
         return $curlErrorNumber !== CURLE_OPERATION_TIMEOUTED && $tryToResendOnError &&
                (!$tryToSwitchEndpointOnError || ($tryToSwitchEndpointOnError && $switchingResult));
     }

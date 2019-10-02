@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser
+ */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     protected $_template = 'walmart/template/category/categories/chooser/edit.phtml';
@@ -44,7 +48,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs $tabsBlock */
         $tabsBlock = $this->createBlock(
-            'Walmart\\Template\\Category\\Categories\\Chooser\\Tabs'
+            'Walmart_Template_Category_Categories_Chooser_Tabs'
         );
 
         return parent::_toHtml() .

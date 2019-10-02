@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
+/**
+ * Class Delete
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template
+ */
 class Delete extends Template
 {
     //########################################
@@ -31,7 +35,6 @@ class Delete extends Template
 
         $deleted = $locked = 0;
         foreach ($ids as $id) {
-
             $template = $this->getTemplateObject($type, $id);
 
             if ($template->isLocked()) {
@@ -57,17 +60,16 @@ class Delete extends Template
     private function getTemplateObject($type, $id)
     {
         switch ($type) {
-
             case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING_OVERRIDE:
-                $model = $this->activeRecordFactory->getObject('Amazon\Template\ShippingOverride')->load($id);
+                $model = $this->activeRecordFactory->getObject('Amazon_Template_ShippingOverride')->load($id);
                 break;
 
             case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING_TEMPLATE:
-                $model = $this->activeRecordFactory->getObject('Amazon\Template\ShippingTemplate')->load($id);
+                $model = $this->activeRecordFactory->getObject('Amazon_Template_ShippingTemplate')->load($id);
                 break;
 
             case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_PRODUCT_TAX_CODE:
-                $model = $this->activeRecordFactory->getObject('Amazon\Template\ProductTaxCode')->load($id);
+                $model = $this->activeRecordFactory->getObject('Amazon_Template_ProductTaxCode')->load($id);
                 break;
 
             case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SELLING_FORMAT:

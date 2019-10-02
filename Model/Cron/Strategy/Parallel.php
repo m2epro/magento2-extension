@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Cron\Strategy;
 
 use Ess\M2ePro\Model\Exception;
 
+/**
+ * Class Parallel
+ * @package Ess\M2ePro\Model\Cron\Strategy
+ */
 class Parallel extends AbstractModel
 {
     const GENERAL_LOCK_ITEM_PREFIX = 'cron_strategy_parallel_';
@@ -19,12 +23,12 @@ class Parallel extends AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Lock\Item\Manager
      */
-    private $generalLockItem = NULL;
+    private $generalLockItem = null;
 
     /**
      * @var \Ess\M2ePro\Model\Lock\Item\Manager
      */
-    private $fastTasksLockItem = NULL;
+    private $fastTasksLockItem = null;
 
     //########################################
 
@@ -40,7 +44,7 @@ class Parallel extends AbstractModel
         $result = true;
 
         /** @var \Ess\M2ePro\Model\Lock\Transactional\Manager $transactionalManager */
-        $transactionalManager = $this->modelFactory->getObject('Lock\Transactional\Manager');
+        $transactionalManager = $this->modelFactory->getObject('Lock_Transactional_Manager');
         $transactionalManager->setNick(self::INITIALIZATION_TRANSACTIONAL_LOCK_NICK);
 
         $transactionalManager->lock();
@@ -80,30 +84,26 @@ class Parallel extends AbstractModel
         $result = true;
 
         foreach ($this->getAllowedFastTasks() as $taskNick) {
-
             try {
-
                 $taskObject = $this->getTaskObject($taskNick);
                 $taskObject->setParentLockItem($this->getFastTasksLockItem());
 
                 $tempResult = $taskObject->process();
 
-                if (!is_null($tempResult) && !$tempResult) {
+                if ($tempResult !== null && !$tempResult) {
                     $result = false;
                 }
 
                 $this->getFastTasksLockItem()->activate();
-
             } catch (\Exception $exception) {
-
                 $result = false;
 
-                $this->getOperationHistory()->addContentData('exception', array(
+                $this->getOperationHistory()->addContentData('exception', [
                     'message' => $exception->getMessage(),
                     'file'    => $exception->getFile(),
                     'line'    => $exception->getLine(),
                     'trace'   => $exception->getTraceAsString(),
-                ));
+                ]);
 
                 $this->getHelper('Module\Exception')->process($exception);
             }
@@ -119,8 +119,7 @@ class Parallel extends AbstractModel
         $result = true;
 
         for ($i = 0; $i < count($this->getAllowedSlowTasks()); $i++) {
-
-            $transactionalManager = $this->modelFactory->getObject('Lock\Transactional\Manager');
+            $transactionalManager = $this->modelFactory->getObject('Lock_Transactional_Manager');
             $transactionalManager->setNick(self::GENERAL_LOCK_ITEM_PREFIX.'slow_task_switch');
 
             $transactionalManager->lock();
@@ -140,15 +139,14 @@ class Parallel extends AbstractModel
             try {
                 $result = $taskObject->process();
             } catch (\Exception $exception) {
-
                 $result = false;
 
-                $this->getOperationHistory()->addContentData('exception', array(
+                $this->getOperationHistory()->addContentData('exception', [
                     'message' => $exception->getMessage(),
                     'file'    => $exception->getFile(),
                     'line'    => $exception->getLine(),
                     'trace'   => $exception->getTraceAsString(),
-                ));
+                ]);
 
                 $this->getHelper('Module\Exception')->process($exception);
             }
@@ -163,7 +161,7 @@ class Parallel extends AbstractModel
 
     private function getAllowedFastTasks()
     {
-        return array_intersect($this->getAllowedTasks(), array(
+        return array_intersect($this->getAllowedTasks(), [
             \Ess\M2ePro\Model\Cron\Task\IssuesResolver::NICK,
             \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingInspectProducts::NICK,
             \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingUpdateSettings::NICK,
@@ -181,14 +179,14 @@ class Parallel extends AbstractModel
             \Ess\M2ePro\Model\Cron\Task\Ebay\UpdateAccountsPreferences::NICK,
             \Ess\M2ePro\Model\Cron\Task\Synchronization::NICK,
             \Ess\M2ePro\Model\Cron\Task\ArchiveOrdersEntities::NICK
-        ));
+        ]);
     }
 
     private function getAllowedSlowTasks()
     {
-        return array_intersect($this->getAllowedTasks(), array(
+        return array_intersect($this->getAllowedTasks(), [
             \Ess\M2ePro\Model\Cron\Task\Ebay\Actions::NICK
-        ));
+        ]);
     }
 
     // ---------------------------------------
@@ -204,7 +202,6 @@ class Parallel extends AbstractModel
         if (empty($lastExecutedTask)
             || $lastExecutedTaskIndex === false
             || end($allowedSlowTasks) == $lastExecutedTask) {
-
             return reset($allowedSlowTasks);
         }
 
@@ -217,12 +214,12 @@ class Parallel extends AbstractModel
      */
     private function getGeneralLockItem()
     {
-        if (!is_null($this->generalLockItem)) {
+        if ($this->generalLockItem !== null) {
             return $this->generalLockItem;
         }
 
         for ($index = 1; $index <= self::MAX_PARALLEL_EXECUTED_CRONS_COUNT; $index++) {
-            $lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+            $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
             $lockItem->setNick(self::GENERAL_LOCK_ITEM_PREFIX.$index);
 
             if (!$lockItem->isExist()) {
@@ -238,11 +235,11 @@ class Parallel extends AbstractModel
      */
     private function getFastTasksLockItem()
     {
-        if (!is_null($this->fastTasksLockItem)) {
+        if ($this->fastTasksLockItem !== null) {
             return $this->fastTasksLockItem;
         }
 
-        $this->fastTasksLockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+        $this->fastTasksLockItem = $this->modelFactory->getObject('Lock_Item_Manager');
         $this->fastTasksLockItem->setNick('cron_strategy_parallel_fast_tasks');
 
         return $this->fastTasksLockItem;
@@ -253,7 +250,7 @@ class Parallel extends AbstractModel
      */
     private function isSerialStrategyInProgress()
     {
-        $serialLockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+        $serialLockItem = $this->modelFactory->getObject('Lock_Item_Manager');
         $serialLockItem->setNick(Serial::LOCK_ITEM_NICK);
 
         return $serialLockItem->isExist();

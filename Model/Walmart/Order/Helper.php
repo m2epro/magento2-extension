@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Walmart\Order;
 
 use Ess\M2ePro\Model\Walmart\Order\Item as OrderItem;
 
+/**
+ * Class Helper
+ * @package Ess\M2ePro\Model\Walmart\Order
+ */
 class Helper extends \Ess\M2ePro\Model\AbstractModel
 {
     //########################################
@@ -39,7 +43,6 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
         $resultStatus = null;
 
         switch (array_shift($itemsStatuses)) {
-
             case \Ess\M2ePro\Model\Walmart\Order\Item::STATUS_CREATED:
                 $resultStatus = \Ess\M2ePro\Model\Walmart\Order::STATUS_CREATED;
                 break;

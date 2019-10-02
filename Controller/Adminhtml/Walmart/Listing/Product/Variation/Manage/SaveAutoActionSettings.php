@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Mana
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
+/**
+ * Class SaveAutoActionSettings
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage
+ */
 class SaveAutoActionSettings extends Main
 {
     public function execute()
@@ -17,14 +21,14 @@ class SaveAutoActionSettings extends Main
         $attributeAutoAction = $this->getRequest()->getParam('attribute_auto_action');
         $optionAutoAction = $this->getRequest()->getParam('option_auto_action');
 
-        if (is_null($attributeAutoAction) || is_null($optionAutoAction)) {
+        if ($attributeAutoAction === null || $optionAutoAction === null) {
             $this->setAjaxContent('You should provide correct parameters.', false);
             return $this->getResult();
         }
 
-        $vocabularyHelper = $this->getHelper('Component\Walmart\Vocabulary');
+        $vocabularyHelper = $this->getHelper('Component_Walmart_Vocabulary');
 
-        switch($attributeAutoAction) {
+        switch ($attributeAutoAction) {
             case \Ess\M2ePro\Helper\Component\Walmart\Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET:
                 $vocabularyHelper->unsetAttributeAutoAction();
                 break;
@@ -36,7 +40,7 @@ class SaveAutoActionSettings extends Main
                 break;
         }
 
-        switch($optionAutoAction) {
+        switch ($optionAutoAction) {
             case \Ess\M2ePro\Helper\Component\Walmart\Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET:
                 $vocabularyHelper->unsetOptionAutoAction();
                 break;

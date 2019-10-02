@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other;
 
+/**
+ * Class View
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other
+ */
 class View extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other
 {
     public function execute()
@@ -22,8 +26,9 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other
         }
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('3rd Party Listings'));
+        $this->setPageHelpLink('x/UgBhAQ');
 
-        $this->addContent($this->createBlock('Walmart\Listing\Other\View'));
+        $this->addContent($this->createBlock('Walmart_Listing_Other_View'));
 
         return $this->getResult();
     }

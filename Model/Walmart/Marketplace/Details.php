@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Walmart\Marketplace;
 
+/**
+ * Class Details
+ * @package Ess\M2ePro\Model\Walmart\Marketplace
+ */
 class Details extends \Ess\M2ePro\Model\AbstractModel
 {
     private $resourceConnection;
 
     private $marketplaceId = null;
 
-    private $productData = array();
+    private $productData = [];
 
     //########################################
 
@@ -22,8 +26,8 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        array $data = [])
-    {
+        array $data = []
+    ) {
         $this->resourceConnection = $resourceConnection;
         parent::__construct($helperFactory, $modelFactory, $data);
     }
@@ -64,7 +68,7 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
     public function getVariationAttributes($productDataNick)
     {
         if (!isset($this->productData[$productDataNick])) {
-            return array();
+            return [];
         }
 
         return (array)$this->productData[$productDataNick]['variation_attributes'];
@@ -74,12 +78,12 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
 
     private function load()
     {
-        if (is_null($this->marketplaceId)) {
+        if ($this->marketplaceId === null) {
             throw new \Ess\M2ePro\Model\Exception('Marketplace was not set.');
         }
 
         $connRead = $this->resourceConnection->getConnection();
-        $table = $this->getHelper('Module\Database\Structure')
+        $table = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_walmart_dictionary_marketplace');
 
         $data = $connRead->select()

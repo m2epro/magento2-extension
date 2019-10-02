@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
+/**
+ * Class Edit
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account
+ */
 class Edit extends AbstractContainer
 {
     protected function _construct()
@@ -27,39 +31,37 @@ class Edit extends AbstractContainer
         $this->removeButton('save');
         $this->removeButton('edit');
 
-        if ((bool)$this->getRequest()->getParam('close_on_save',false)) {
-
+        if ((bool)$this->getRequest()->getParam('close_on_save', false)) {
             if ($this->getRequest()->getParam('id')) {
-                $this->addButton('save', array(
+                $this->addButton('save', [
                     'label'     => $this->__('Save And Close'),
                     'onclick'   => 'EbayAccountObj.saveAndClose()',
                     'class'     => 'primary'
-                ));
+                ]);
             } else {
-                $this->addButton('save_and_continue', array(
+                $this->addButton('save_and_continue', [
                     'label'     => $this->__('Save And Continue Edit'),
                     'onclick'   => 'EbayAccountObj.saveAndEditClick(\'\',\'ebayAccountEditTabs\')',
                     'class'     => 'primary'
-                ));
+                ]);
             }
             return;
         }
 
-        $this->addButton('back', array(
+        $this->addButton('back', [
             'label'     => $this->__('Back'),
-            'onclick'   => 'EbayAccountObj.backClick(\'' . $this->getHelper('Data')->getBackUrl('list').'\')',
+            'onclick'   => 'EbayAccountObj.backClick(\'' . $this->getUrl('*/ebay_account/index').'\')',
             'class'     => 'back'
-        ));
+        ]);
 
         $saveButtonsProps = [];
         if ($this->getHelper('Data\GlobalData')->getValue('edit_account') &&
             $this->getHelper('Data\GlobalData')->getValue('edit_account')->getId()) {
-
-            $this->addButton('delete', array(
+            $this->addButton('delete', [
                 'label'     => $this->__('Delete'),
                 'onclick'   => 'EbayAccountObj.deleteClick()',
                 'class'     => 'delete M2ePro_delete_button primary'
-            ));
+            ]);
 
             $saveButtonsProps['save'] = [
                 'label'     => $this->__('Save And Back'),

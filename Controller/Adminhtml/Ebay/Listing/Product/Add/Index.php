@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {
     public function execute()
@@ -18,8 +22,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 
         if ((bool)$this->getRequest()->getParam('clear', false)) {
             $this->clear();
-            $this->getRequest()->setParam('clear',null);
-            return $this->_redirect('*/*/',array('_current' => true, 'step' => 1));
+            $this->getRequest()->setParam('clear', null);
+            return $this->_redirect('*/*/', ['_current' => true, 'step' => 1]);
         }
 
         $listing = $this->getListing();
@@ -33,7 +37,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
                 return $this->stepOne();
         }
 
-        return $this->_redirect('*/*/index', array('_current' => true,'step' => 1));
+        return $this->_redirect('*/*/index', ['_current' => true,'step' => 1]);
     }
 
     //########################################
@@ -48,7 +52,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
                 return $this->stepOneSourceCategories();
         }
 
-        return $this->_redirect('*/*/sourceMode', array('_current' => true));
+        return $this->_redirect('*/*/sourceMode', ['_current' => true]);
     }
 
     private function stepOneSourceProducts()
@@ -58,16 +62,16 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         $ids = $listing->getChildObject()->getAddedListingProductsIds();
 
         if (!empty($ids)) {
-
             if ($this->getRequest()->isXmlHttpRequest()) {
-               $this->setJsonContent(array(
+                $this->setJsonContent([
                     'ajaxExpired' => 1,
-                    'ajaxRedirect' => $this->getUrl('*/*/index', array('_current' => true,'step' => 1))
-                ));
+                    'ajaxRedirect' => $this->getUrl('*/*/index', ['_current' => true,'step' => 1])
+                ]);
                 return $this->getResult();
             } else {
                 return $this->_redirect(
-                    '*/ebay_listing_product_category_settings/',array('_current' => true,'step' => 1)
+                    '*/ebay_listing_product_category_settings/',
+                    ['_current' => true,'step' => 1]
                 );
             }
         }
@@ -91,7 +95,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->setAjaxContent(
-                $this->createBlock('Ebay\Listing\Product\Add\Product\Grid')->toHtml()
+                $this->createBlock('Ebay_Listing_Product_Add_Product_Grid')->toHtml()
             );
             return $this->getResult();
         }
@@ -99,7 +103,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         $this->setPageHelpLink('x/jgItAQ');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Select Magento Products'));
-        $this->addContent($this->createBlock('Ebay\Listing\Product\Add'));
+        $this->addContent($this->createBlock('Ebay_Listing_Product_Add'));
 
         return $this->getResult();
     }
@@ -126,16 +130,15 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         // ---------------------------------------
 
         $tempSession = $this->getSessionValue('source_categories');
-        $selectedProductsIds = !isset($tempSession['products_ids']) ? array() : $tempSession['products_ids'];
+        $selectedProductsIds = !isset($tempSession['products_ids']) ? [] : $tempSession['products_ids'];
 
         if ($this->getRequest()->isXmlHttpRequest()) {
-
             if ($this->getRequest()->getParam('current_category_id')) {
                 $this->setSessionValue('current_category_id', $this->getRequest()->getParam('current_category_id'));
             }
 
-            /* @var $grid \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Grid */
-            $grid = $this->createBlock('Ebay\Listing\Product\Add\Category\Grid');
+            /** @var $grid \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Grid */
+            $grid = $this->createBlock('Ebay_Listing_Product_Add_Category_Grid');
 
             $grid->setSelectedIds($selectedProductsIds);
             $grid->setCurrentCategoryId($this->getSessionValue('current_category_id'));
@@ -149,13 +152,13 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Select Magento Products'));
 
-        $gridContainer = $this->createBlock('Ebay\Listing\Product\Add');
+        $gridContainer = $this->createBlock('Ebay_Listing_Product_Add');
         $this->addContent($gridContainer);
 
-        /* @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree */
-        $treeBlock = $this->createBlock('Ebay\Listing\Product\Add\Category\Tree');
+        /** @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree */
+        $treeBlock = $this->createBlock('Ebay_Listing_Product_Add_Category_Tree');
 
-        if (is_null($this->getSessionValue('current_category_id'))) {
+        if ($this->getSessionValue('current_category_id') === null) {
             $currentNode = $treeBlock->getRoot()->getChildren()->getIterator()->current();
             if (!$currentNode) {
                 throw new \Ess\M2ePro\Model\Exception('No Categories found');
@@ -181,7 +184,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         $id = $this->getRequest()->getParam('id');
 
         $prefix = 'ebay_hide_products_others_listings_';
-        $prefix .= is_null($id) ? 'add' : $id;
+        $prefix .= $id === null ? 'add' : $id;
         $prefix .= '_listing_product';
 
         return $prefix;
@@ -192,13 +195,14 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         $this->getHelper('Data\Session')->getValue($this->sessionKey, true);
 
         $categorySettingsSessionKey = 'ebay_listing_product_category_settings';
-        $this->getHelper('Data\Session')->getValue($categorySettingsSessionKey,true);
+        $this->getHelper('Data\Session')->getValue($categorySettingsSessionKey, true);
 
         $listingId = $this->getRequest()->getParam('id');
-        $listing = $this->ebayFactory->getCachedObjectLoaded('Listing',$listingId);
+        $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId);
 
         $listing->getChildObject()->setData(
-            'product_add_ids', $this->getHelper('Data')->jsonEncode(array())
+            'product_add_ids',
+            $this->getHelper('Data')->jsonEncode([])
         )->save();
     }
 
@@ -212,7 +216,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         $prefix .= isset($listingData['id']) ? '_'.$listingData['id'] : '';
         $this->getHelper('Data\GlobalData')->setValue('rule_prefix', $prefix);
 
-        $ruleModel = $this->activeRecordFactory->getObject('Magento\Product\Rule')->setData(
+        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
             [
                 'prefix' => $prefix,
                 'store_id' => $storeId,
@@ -222,9 +226,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         $ruleParam = $this->getRequest()->getPost('rule');
         if (!empty($ruleParam)) {
             $this->getHelper('Data\Session')->setValue(
-                $prefix, $ruleModel->getSerializedFromPost($this->getRequest()->getPostValue())
+                $prefix,
+                $ruleModel->getSerializedFromPost($this->getRequest()->getPostValue())
             );
-        } elseif (!is_null($ruleParam)) {
+        } elseif ($ruleParam !== null) {
             $this->getHelper('Data\Session')->setValue($prefix, []);
         }
 

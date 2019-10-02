@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Order;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
+/**
+ * Class NotCreatedFilter
+ * @package Ess\M2ePro\Block\Adminhtml\Order
+ */
 class NotCreatedFilter extends AbstractContainer
 {
     protected $_template = 'order/not_created_filter.phtml';
@@ -22,14 +26,14 @@ class NotCreatedFilter extends AbstractContainer
     public function getFilterUrl()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $params = array();
+            $params = [];
         } else {
             $params = $this->getRequest()->getParams();
         }
 
         $tabId = null;
 
-        if (!is_null($tabId)) {
+        if ($tabId !== null) {
             $params['tab'] = $tabId;
         }
 

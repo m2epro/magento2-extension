@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product;
 
+/**
+ * Class Template
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product
+ */
 abstract class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
-    protected $messages = array();
+    protected $messages = [];
 
     //########################################
 
@@ -35,12 +39,11 @@ abstract class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractCont
     public function getWarnings()
     {
         /** @var \Magento\Framework\View\Element\Messages $messages */
-        $messages = $this->getLayout()->createBlock('\Magento\Framework\View\Element\Messages');
+        $messages = $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class);
 
         foreach ($this->getMessages() as $message) {
             $addMethod = 'add'.ucfirst($message['type']);
             $messages->$addMethod($message['text']);
-
         }
         return $messages->toHtml();
     }

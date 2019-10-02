@@ -8,27 +8,31 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action
+ */
 abstract class Request extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
      * @var array
      */
-    private $params = array();
+    private $params = [];
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator
      */
-    private $configurator = NULL;
+    private $configurator = null;
 
     /**
      * @var \Ess\M2ePro\Model\Listing\Product
      */
-    private $listingProduct = NULL;
+    private $listingProduct = null;
 
     /**
      * @var array
      */
-    private $warningMessages = array();
+    private $warningMessages = [];
 
     //########################################
 
@@ -39,7 +43,7 @@ abstract class Request extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param array $params
      */
-    public function setParams(array $params = array())
+    public function setParams(array $params = [])
     {
         $this->params = $params;
     }
@@ -174,7 +178,7 @@ abstract class Request extends \Ess\M2ePro\Model\AbstractModel
 
     protected function addWarningMessage($message)
     {
-        $this->warningMessages[md5($message)] = $message;
+        $this->warningMessages[sha1($message)] = $message;
     }
 
     /**

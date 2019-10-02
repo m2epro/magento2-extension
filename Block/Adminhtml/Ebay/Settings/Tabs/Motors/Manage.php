@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Motors;
 
+/**
+ * Class Manage
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Motors
+ */
 class Manage extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     //########################################
@@ -23,7 +27,8 @@ class Manage extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         ]);
 
-        $form->addField('motors_type',
+        $form->addField(
+            'motors_type',
             'hidden',
             [
                 'id' => 'motors_type',
@@ -40,7 +45,8 @@ class Manage extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'style' => 'margin-left: 15px;'
         ]);
 
-        $fieldset->addField('database',
+        $fieldset->addField(
+            'database',
             self::CUSTOM_CONTAINER,
             [
                 'label' => $this->__('Database'),
@@ -58,7 +64,8 @@ HTML
             'style' => 'margin-left: 15px;'
         ]);
 
-        $fieldset->addField('motors_custom_file',
+        $fieldset->addField(
+            'motors_custom_file',
             'file',
             [
                 'label' => $this->__('File for import'),

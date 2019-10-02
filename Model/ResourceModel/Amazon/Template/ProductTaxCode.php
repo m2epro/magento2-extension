@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Template;
 
+/**
+ * Class ProductTaxCode
+ * @package Ess\M2ePro\Model\ResourceModel\Amazon\Template
+ */
 class ProductTaxCode extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
@@ -21,7 +25,7 @@ class ProductTaxCode extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstra
 
     public function setSynchStatusNeed($newData, $oldData, $listingsProducts)
     {
-        $listingsProductsIds = array();
+        $listingsProductsIds = [];
         foreach ($listingsProducts as $listingProduct) {
             $listingsProductsIds[] = (int)$listingProduct['id'];
         }
@@ -30,26 +34,26 @@ class ProductTaxCode extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstra
             return;
         }
 
-        if (!$this->isDifferent($newData,$oldData)) {
+        if (!$this->isDifferent($newData, $oldData)) {
             return;
         }
 
-        $templates = array('productTaxCodeTemplate');
+        $templates = ['productTaxCodeTemplate'];
 
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
 
         $this->getConnection()->update(
             $lpTable,
-            array(
+            [
                 'synch_status'  => \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_NEED,
                 'synch_reasons' => new \Zend_Db_Expr(
                     "IF(synch_reasons IS NULL,
-                        '".implode(',',$templates)."',
-                        CONCAT(synch_reasons,'".','.implode(',',$templates)."')
+                        '".implode(',', $templates)."',
+                        CONCAT(synch_reasons,'".','.implode(',', $templates)."')
                     )"
                 )
-            ),
-            array('id IN ('.implode(',', $listingsProductsIds).')')
+            ],
+            ['id IN ('.implode(',', $listingsProductsIds).')']
         );
     }
 
@@ -57,21 +61,21 @@ class ProductTaxCode extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstra
 
     public function isDifferent($newData, $oldData)
     {
-        $ignoreFields = array(
+        $ignoreFields = [
             $this->getIdFieldName(),
             'title',
             'create_date', 'update_date'
-        );
+        ];
 
         foreach ($ignoreFields as $ignoreField) {
-            unset($newData[$ignoreField],$oldData[$ignoreField]);
+            unset($newData[$ignoreField], $oldData[$ignoreField]);
         }
 
         ksort($newData);
         ksort($oldData);
 
         $helper = $this->getHelper('Data');
-        return md5($helper->jsonEncode($newData)) !== md5($helper->jsonEncode($oldData));
+        return sha1($helper->jsonEncode($newData)) !== sha1($helper->jsonEncode($oldData));
     }
 
     //########################################

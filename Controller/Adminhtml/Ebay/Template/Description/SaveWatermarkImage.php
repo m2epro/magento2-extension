@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
+/**
+ * Class SaveWatermarkImage
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description
+ */
 class SaveWatermarkImage extends Description
 {
     protected $driverPool;
@@ -23,8 +27,7 @@ class SaveWatermarkImage extends Description
         \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
-    )
-    {
+    ) {
         $this->driverPool = $driverPool;
         parent::__construct($phpEnvironmentRequest, $productModel, $templateManager, $ebayFactory, $context);
     }
@@ -37,7 +40,7 @@ class SaveWatermarkImage extends Description
 
         $watermarkImageFile = $this->phpEnvironmentRequest->getFiles('watermark_image');
 
-        if (is_null($templateData['id']) || empty($watermarkImageFile['tmp_name'])) {
+        if ($templateData['id'] === null || empty($watermarkImageFile['tmp_name'])) {
             $this->setJsonContent([
                 'result' => false
             ]);
@@ -59,7 +62,7 @@ class SaveWatermarkImage extends Description
         /** @var \Ess\M2ePro\Model\Template\Description $template */
         $template = $this->ebayFactory->getObjectLoaded('Template\Description', $templateData['id'], null, false);
 
-        if (is_null($template->getId())) {
+        if ($template->getId() === null) {
             $this->setJsonContent([
                 'result' => false
             ]);
@@ -68,9 +71,9 @@ class SaveWatermarkImage extends Description
 
         $template->getChildObject()->updateWatermarkHashes();
 
-        $data = array(
+        $data = [
             'watermark_image' => file_get_contents($watermarkImageFile['tmp_name'])
-        );
+        ];
 
         $template->getChildObject()->addData($data);
         $template->save();

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders\Reserve;
 
+/**
+ * Class Cancellation
+ * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders\Reserve
+ */
 class Cancellation extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\AbstractModel
 {
     //########################################
@@ -66,11 +70,8 @@ class Cancellation extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\Abstr
             // ---------------------------------------
 
             try {
-
                 $this->processAccount($account);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Reserve Cancellation" Action for Amazon Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -123,17 +124,18 @@ class Cancellation extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\Abstr
         $collection = $this->amazonFactory->getObject('Order')
             ->getCollection()
             ->addFieldToFilter('account_id', $account->getId())
-            ->addFieldToFilter('reservation_state',\Ess\M2ePro\Model\Order\Reserve::STATE_PLACED);
+            ->addFieldToFilter('reservation_state', \Ess\M2ePro\Model\Order\Reserve::STATE_PLACED);
 
         $reservationDays = (int)$account->getChildObject()->getQtyReservationDays();
 
         $minReservationStartDate = new \DateTime(
-            $this->getHelper('Data')->getCurrentGmtDate(), new \DateTimeZone('UTC')
+            $this->getHelper('Data')->getCurrentGmtDate(),
+            new \DateTimeZone('UTC')
         );
         $minReservationStartDate->modify('- ' . $reservationDays . ' days');
         $minReservationStartDate = $minReservationStartDate->format('Y-m-d H:i');
 
-        $collection->addFieldToFilter('reservation_start_date', array('lteq' => $minReservationStartDate));
+        $collection->addFieldToFilter('reservation_start_date', ['lteq' => $minReservationStartDate]);
 
         return $collection->getItems();
     }

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Connector\Command\Pending\Requester\Single;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Connector\Command\Pending\Requester\Single
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     // ########################################
@@ -25,11 +29,12 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
 
     public function setCompletedRequestPendingSingleFilter()
     {
-        $mpsrTable = $this->activeRecordFactory->getObject('Request\Pending\Single')->getResource()->getMainTable();
+        $mpsrTable = $this->activeRecordFactory->getObject('Request_Pending_Single')->getResource()->getMainTable();
 
         $this->getSelect()->joinLeft(
-            array('mpsr' => $mpsrTable),
-            'main_table.request_pending_single_id = mpsr.id', array()
+            ['mpsr' => $mpsrTable],
+            'main_table.request_pending_single_id = mpsr.id',
+            []
         );
 
         $this->addFieldToFilter('mpsr.is_completed', 1);
@@ -40,8 +45,9 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         $mpTable = $this->activeRecordFactory->getObject('Processing')->getResource()->getMainTable();
 
         $this->getSelect()->joinLeft(
-            array('mp' => $mpTable),
-            'main_table.processing_id = mp.id', array()
+            ['mp' => $mpTable],
+            'main_table.processing_id = mp.id',
+            []
         );
 
         $this->addFieldToFilter('mp.is_completed', 0);

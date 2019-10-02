@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Custom;
 
+/**
+ * Class AmazonStatus
+ * @package Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Custom
+ */
 class AmazonStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
     //########################################
@@ -66,28 +70,28 @@ class AmazonStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abstrac
     public function getOptions()
     {
         $helper = $this->helperFactory->getObject('Module\Translation');
-        return array(
-            array(
+        return [
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN,
                 'label' => $helper->__('Unknown'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
                 'label' => $helper->__('Not Listed'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
                 'label' => $helper->__('Active'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
                 'label' => $helper->__('Inactive'),
-            ),
-            array(
+            ],
+            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
                 'label' => $helper->__('Inactive (Blocked)'),
-            ),
-        );
+            ],
+        ];
     }
 
     //########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Magento;
 
+/**
+ * Class AttributeSet
+ * @package Ess\M2ePro\Helper\Magento
+ */
 class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
 {
     protected $productFactory;
@@ -29,8 +33,7 @@ class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->productFactory = $productFactory;
         $this->productResource = $productResource;
         $this->productColFactory = $productColFactory;
@@ -61,11 +64,11 @@ class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
     {
         $productIds = $this->_getIdsFromInput($products, 'product_id');
         if (empty($productIds)) {
-            return array();
+            return [];
         }
 
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_entity');
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('catalog_product_entity');
 
         $dbSelect = $connection->select()
             ->from($tableName, 'attribute_set_id')
@@ -76,7 +79,11 @@ class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
         $result->setFetchMode(\Zend_Db::FETCH_NUM);
         $fetchArray = $result->fetchAll();
 
-        return $this->_convertFetchNumArrayToReturnType($fetchArray, $returnType, '\Eav\Model\Entity\Attribute\Set');
+        return $this->_convertFetchNumArrayToReturnType(
+            $fetchArray,
+            $returnType,
+            \Eav\Model\Entity\Attribute\Set::class
+        );
     }
 
     // ---------------------------------------
@@ -85,17 +92,17 @@ class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
     {
         $attributeId = $this->_getIdFromInput($attribute);
         if ($attributeId === false) {
-            return array();
+            return [];
         }
 
-        return $this->_getContainsAttributeIds(array($attribute), $returnType);
+        return $this->_getContainsAttributeIds([$attribute], $returnType);
     }
 
     public function getFullyContainsAttributes(array $attributes, $returnType = self::RETURN_TYPE_ARRAYS)
     {
         $attributeIds = $this->_getIdsFromInput($attributes, 'attribute_id');
         if (empty($attributeIds)) {
-            return array();
+            return [];
         }
 
         return $this->_getContainsAttributeIds($attributeIds, $returnType, true);
@@ -105,7 +112,7 @@ class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
     {
         $attributeIds = $this->_getIdsFromInput($attributes, 'attribute_id');
         if (empty($attributeIds)) {
-            return array();
+            return [];
         }
 
         return $this->_getContainsAttributeIds($attributes, $returnType);
@@ -117,21 +124,21 @@ class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
     {
         $attributeSetId = $this->_getIdFromInput($attributeSet);
         if ($attributeSetId === false) {
-            return array();
+            return [];
         }
 
-        return $this->getProductsByAttributeSets(array($attributeSetId), $returnType);
+        return $this->getProductsByAttributeSets([$attributeSetId], $returnType);
     }
 
     public function getProductsByAttributeSets(array $attributeSets, $returnType = self::RETURN_TYPE_IDS)
     {
         $attributeSetIds = $this->_getIdsFromInput($attributeSets, 'attribute_set_id');
         if (empty($attributeSets)) {
-            return array();
+            return [];
         }
 
         $productsCollection = $this->productColFactory->create();
-        $productsCollection->addFieldToFilter('attribute_set_id', array('in' => $attributeSetIds));
+        $productsCollection->addFieldToFilter('attribute_set_id', ['in' => $attributeSetIds]);
 
         return $this->_convertCollectionToReturnType($productsCollection, $returnType);
     }
@@ -148,7 +155,7 @@ class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
         $set = $this->entityAttributeSetFactory->create()->load($setId);
 
         if (!$set->getId()) {
-            return NULL;
+            return null;
         }
 
         return $set->getData('attribute_set_name');
@@ -157,23 +164,24 @@ class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
     public function getNames(array $setIds)
     {
         $collection = $this->entityAttributeSetColFactory->create();
-        $collection->addFieldToFilter('attribute_set_id', array('in' => $setIds));
+        $collection->addFieldToFilter('attribute_set_id', ['in' => $setIds]);
 
         return $collection->getColumnValues('attribute_set_name');
     }
 
     //########################################
 
-    protected function _getContainsAttributeIds(array $attributeIds,
-                                                             $returnType = self::RETURN_TYPE_ARRAYS,
-                                                             $isFully = false)
-    {
+    protected function _getContainsAttributeIds(
+        array $attributeIds,
+        $returnType = self::RETURN_TYPE_ARRAYS,
+        $isFully = false
+    ) {
         if (empty($attributeIds)) {
-            return array();
+            return [];
         }
 
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('eav_entity_attribute');
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('eav_entity_attribute');
 
         $dbSelect = $connection->select()
             ->from($tableName, 'attribute_set_id')
@@ -189,7 +197,11 @@ class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
         $result->setFetchMode(\Zend_Db::FETCH_NUM);
         $fetchArray = $result->fetchAll();
 
-        return $this->_convertFetchNumArrayToReturnType($fetchArray, $returnType, '\Eav\Model\Entity\Attribute\Set');
+        return $this->_convertFetchNumArrayToReturnType(
+            $fetchArray,
+            $returnType,
+            \Eav\Model\Entity\Attribute\Set::class
+        );
     }
 
     //########################################

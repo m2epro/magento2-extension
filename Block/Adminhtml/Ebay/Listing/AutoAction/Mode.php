@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction;
 
+/**
+ * Class Mode
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction
+ */
 class Mode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode
 {
     //########################################

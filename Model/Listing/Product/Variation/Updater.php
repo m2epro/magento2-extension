@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Listing\Product\Variation;
 
+/**
+ * Class Updater
+ * @package Ess\M2ePro\Model\Listing\Product\Variation
+ */
 abstract class Updater extends \Ess\M2ePro\Model\AbstractModel
 {
     //########################################
@@ -16,9 +20,15 @@ abstract class Updater extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function beforeMassProcessEvent() {}
+    public function beforeMassProcessEvent()
+    {
+        return null;
+    }
 
-    public function afterMassProcessEvent() {}
+    public function afterMassProcessEvent()
+    {
+        return null;
+    }
 
     //########################################
 }

@@ -11,6 +11,10 @@
  */
 namespace Ess\M2ePro\Model\Ebay\Listing;
 
+/**
+ * Class Other
+ * @package Ess\M2ePro\Model\Ebay\Listing
+ */
 class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
     //########################################
@@ -34,8 +38,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         $this->emailFilter = $emailFilter;
         parent::__construct(
             $parentFactory,
@@ -167,7 +170,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     {
         $existedRelation = $this->getResource()->getConnection()
             ->select()
-            ->from(array('ei' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()))
+            ->from(['ei' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()])
             ->where('`account_id` = ?', $this->getAccount()->getId())
             ->where('`marketplace_id` = ?', $this->getMarketplace()->getId())
             ->where('`item_id` = ?', $this->getItemId())
@@ -180,13 +183,13 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             return;
         }
 
-        $dataForAdd = array(
+        $dataForAdd = [
             'account_id'     => $this->getAccount()->getId(),
             'marketplace_id' => $this->getMarketplace()->getId(),
             'item_id'        => $this->getItemId(),
             'product_id'     => $this->getParentObject()->getProductId(),
             'store_id'       => $this->getRelatedStoreId()
-        );
+        ];
 
         $this->activeRecordFactory->getObject('Ebay\Item')->setData($dataForAdd)->save();
     }
@@ -195,12 +198,17 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     {
         $existedRelation = $this->getResource()->getConnection()
             ->select()
-            ->from(array('ei' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()),
-                array())
-            ->join(array(
-                'elp' => $this->activeRecordFactory->getObject('Ebay\Listing\Product')->getResource()->getMainTable()
-            ),
-            '(`elp`.`ebay_item_id` = `ei`.`id`)', array('elp.listing_product_id'))
+            ->from(
+                ['ei' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()],
+                []
+            )
+            ->join(
+                [
+                'elp' => $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable()
+                ],
+                '(`elp`.`ebay_item_id` = `ei`.`id`)',
+                ['elp.listing_product_id']
+            )
             ->where('`ei`.`item_id` = ?', $this->getItemId())
             ->where('`ei`.`account_id` = ?', $this->getAccount()->getId())
             ->query()
@@ -213,11 +221,11 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $this->getResource()->getConnection()
             ->delete(
                 $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable(),
-                array(
+                [
                     '`item_id` = ?' => $this->getItemId(),
                     '`product_id` = ?' => $this->getParentObject()->getProductId(),
                     '`account_id` = ?' => $this->getAccount()->getId()
-                )
+                ]
             );
     }
 

@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Other\View\Separated;
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\View\Separated\AbstractGrid;
 use Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Other\GridTrait;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Other\View\Separated
+ */
 class Grid extends AbstractGrid
 {
     //########################################

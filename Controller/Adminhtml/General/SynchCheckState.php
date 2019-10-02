@@ -10,13 +10,17 @@ namespace Ess\M2ePro\Controller\Adminhtml\General;
 
 use Ess\M2ePro\Controller\Adminhtml\General;
 
+/**
+ * Class SynchCheckState
+ * @package Ess\M2ePro\Controller\Adminhtml\General
+ */
 class SynchCheckState extends General
 {
     //########################################
 
     public function execute()
     {
-        $lockItem = $this->modelFactory->getObject('Synchronization\Lock\Item\Manager');
+        $lockItem = $this->modelFactory->getObject('Synchronization_Lock_Item_Manager');
 
         if ($lockItem->isExist()) {
             $this->setAjaxContent('executing', false);

@@ -1,6 +1,16 @@
 <?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
 /** @var $block \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search\Menu */
+
 ?>
+
 <div id="productSearchMenu_pop_up_content">
     <div class="hor-scroll" style="padding-top: 15px; margin-bottom: 0">
 
@@ -13,7 +23,6 @@
             </div>
             <div>
                 <?php if (!$block->isIndividualFromBundleOrSimpleOrDownloadable()) { ?>
-
                     <a style="font-size:140%" href="javascript:void(0);" onclick="ListingGridHandlerObj.productSearchHandler.showSearchGeneralIdAutoPrompt();">
                         <?php echo $block->__('Assign ASIN/ISBN Automatically'); ?>
                     </a>
@@ -30,7 +39,6 @@
             <div>
                 <?php if (!$block->isIndividualFromBundleOrSimpleOrDownloadable() &&
                           !$block->isParentFromBundleOrSimpleOrDownloadable()) { ?>
-
                     <a style="font-size:140%" href="javascript:void(0);" onclick="ListingGridHandlerObj.productSearchHandler.addNewGeneralId();">
                         <?php echo $block->__('Assign Settings for New ASIN/ISBN'); ?>
                     </a>

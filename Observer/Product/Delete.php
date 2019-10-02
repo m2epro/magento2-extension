@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Observer\Product;
 
+/**
+ * Class Delete
+ * @package Ess\M2ePro\Observer\Product
+ */
 class Delete extends AbstractProduct
 {
     //########################################

@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
+/**
+ * Class JsPhpRenderer
+ * @package Ess\M2ePro\Block\Adminhtml\Magento\Renderer
+ */
 class JsPhpRenderer extends AbstractRenderer
 {
     protected $jsPhp = [];
@@ -28,5 +32,4 @@ class JsPhpRenderer extends AbstractRenderer
 
         return "M2ePro.php.add({$constants});";
     }
-
 }

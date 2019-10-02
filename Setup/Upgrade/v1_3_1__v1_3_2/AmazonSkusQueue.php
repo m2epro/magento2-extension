@@ -72,7 +72,7 @@ class AmazonSkusQueue extends AbstractFeature
                 continue;
             }
 
-            $skus = @json_decode($lockItemData['data'], true);
+            $skus = json_decode($lockItemData['data'], true);
             if (empty($skus)) {
                 continue;
             }

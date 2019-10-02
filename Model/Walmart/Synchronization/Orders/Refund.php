@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Synchronization\Orders;
 
+/**
+ * Class Refund
+ * @package Ess\M2ePro\Model\Walmart\Synchronization\Orders
+ */
 class Refund extends AbstractModel
 {
     const MAX_ORDERS_CHANGES_COUNT = 50;
@@ -70,11 +74,8 @@ class Refund extends AbstractModel
             // ---------------------------------------
 
             try {
-
                 $this->processAccount($account);
-
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Refund" Action for Walmart Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -124,7 +125,7 @@ class Refund extends AbstractModel
             /** @var \Ess\M2ePro\Model\Order $order */
             $order = $this->walmartFactory->getObjectLoaded('Order', $orderChange->getOrderId());
 
-            $actionHandler = $this->modelFactory->getObject('Walmart\Order\Action\Handler\Refund');
+            $actionHandler = $this->modelFactory->getObject('Walmart_Order_Action_Handler_Refund');
             $actionHandler->setOrder($order);
             $actionHandler->setParams($orderChange->getParams());
 
@@ -147,10 +148,10 @@ class Refund extends AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\Order\Change\Collection $changesCollection */
         $changesCollection = $this->activeRecordFactory->getObject('Order\Change')->getCollection();
         $changesCollection->addAccountFilter($account->getId());
-        $changesCollection->addFieldToFilter('component',\Ess\M2ePro\Helper\Component\Walmart::NICK);
-        $changesCollection->addFieldToFilter('action',\Ess\M2ePro\Model\Order\Change::ACTION_REFUND);
+        $changesCollection->addFieldToFilter('component', \Ess\M2ePro\Helper\Component\Walmart::NICK);
+        $changesCollection->addFieldToFilter('action', \Ess\M2ePro\Model\Order\Change::ACTION_REFUND);
         $changesCollection->getSelect()->limit(self::MAX_ORDERS_CHANGES_COUNT);
-        $changesCollection->getSelect()->group(array('order_id'));
+        $changesCollection->getSelect()->group(['order_id']);
 
         return $changesCollection->getItems();
     }

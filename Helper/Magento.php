@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper;
 
+/**
+ * Class Magento
+ * @package Ess\M2ePro\Helper
+ */
 class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const CLOUD_COMPOSER_KEY        = 'magento/magento-cloud-metapackage';
@@ -64,8 +68,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Composer\ComposerInformation $composerInformation,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->deploymentVersionStorageFile = $deploymentVersionStorageFile;
         $this->filesystem                   = $filesystem;
         $this->themeResolver                = $themeResolver;
@@ -99,7 +102,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
     public function getVersion($asArray = false)
     {
         $versionString = $this->productMetadata->getVersion();
-        return $asArray ? explode('.',$versionString) : $versionString;
+        return $asArray ? explode('.', $versionString) : $versionString;
     }
 
     /**
@@ -107,8 +110,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
      */
     public function isMSISupportingVersion()
     {
-        return version_compare($this->getVersion(), '2.3.0', '>=') &&
-               !is_null($this->moduleList->getOne(self::MAGENTO_INVENTORY_MODULE_NICK));
+        return $this->moduleList->getOne(self::MAGENTO_INVENTORY_MODULE_NICK) !== null;
     }
 
     public function getRevision()
@@ -143,8 +145,8 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
     public function getLocation()
     {
         return $this->isApplicationCloud() ?
-            self::APPLICATION_CLOUD_NICK :
-            self::APPLICATION_PERSONAL_NICK;
+                self::APPLICATION_CLOUD_NICK :
+                self::APPLICATION_PERSONAL_NICK;
     }
 
     /**
@@ -169,7 +171,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
     private function hasServerCloudSign()
     {
         if ($this->_request instanceof \Magento\Framework\App\Request\Http) {
-            return !is_null($this->_request->getServer(self::CLOUD_SERVER_KEY));
+            return $this->_request->getServer(self::CLOUD_SERVER_KEY) !== null;
         }
 
         return false;
@@ -211,18 +213,18 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getAreas()
     {
-        return array(
+        return [
             \Magento\Framework\App\Area::AREA_GLOBAL,
             \Magento\Framework\App\Area::AREA_ADMIN,
             \Magento\Framework\App\Area::AREA_FRONTEND,
             \Magento\Framework\App\Area::AREA_ADMINHTML,
             \Magento\Framework\App\Area::AREA_CRONTAB,
-        );
+        ];
     }
 
     public function getBaseUrl()
     {
-        return str_replace('index.php/','',$this->_urlBuilder->getBaseUrl());
+        return str_replace('index.php/', '', $this->_urlBuilder->getBaseUrl());
     }
 
     public function getLocale()
@@ -232,7 +234,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getLocaleCode()
     {
-        $localeComponents = explode('_' , $this->getLocale());
+        $localeComponents = explode('_', $this->getLocale());
         return strtolower(array_shift($localeComponents));
     }
 
@@ -276,15 +278,16 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 
     // ---------------------------------------
 
-    public function addGlobalNotification($title,
-                                          $description,
-                                          $type = \Magento\Framework\Notification\MessageInterface::SEVERITY_CRITICAL,
-                                          $url = NULL)
-    {
+    public function addGlobalNotification(
+        $title,
+        $description,
+        $type = \Magento\Framework\Notification\MessageInterface::SEVERITY_CRITICAL,
+        $url = null
+    ) {
         $dataForAdd = [
-            'title' => !is_null($title) ? $title : $this->getHelper('Module\Translation')->__('M2E Pro Notification'),
+            'title' => $title !== null ? $title : $this->getHelper('Module\Translation')->__('M2E Pro Notification'),
             'description' => $description,
-            'url' => !is_null($url) ? $url : 'http://m2epro.com/?' . sha1(!is_null($title) ? $title : $description),
+            'url' => $url !== null ? $url : 'http://m2epro.com/?' . sha1($title !== null ? $title : $description),
             'severity' => $type,
             'date_added' => date('Y-m-d H:i:s')
         ];
@@ -303,7 +306,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         $basePath = $this->getThemePath() . DIRECTORY_SEPARATOR
                     . $this->getLocale() . DIRECTORY_SEPARATOR;
 
-        if (!is_null($path)) {
+        if ($path !== null) {
             $basePath .= $path;
         }
 
@@ -341,7 +344,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getRegionsByCountryCode($countryCode)
     {
-        $result = array();
+        $result = [];
 
         try {
             $country = $this->countryFactory->create()->loadByCode($countryCode);
@@ -353,33 +356,33 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
             return $result;
         }
 
-        $result = array();
+        $result = [];
         foreach ($country->getRegions() as $region) {
             /** @var \Magento\Directory\Model\Region $region */
-            $result[] = $region->toArray(array('region_id', 'code', 'name'));
+            $result[] = $region->toArray(['region_id', 'code', 'name']);
         }
 
         if (empty($result) && $countryCode == 'AU') {
-            $result = array(
-                array('region_id' => '','code' => 'NSW','name' => 'New South Wales'),
-                array('region_id' => '','code' => 'QLD','name' => 'Queensland'),
-                array('region_id' => '','code' => 'SA','name' => 'South Australia'),
-                array('region_id' => '','code' => 'TAS','name' => 'Tasmania'),
-                array('region_id' => '','code' => 'VIC','name' => 'Victoria'),
-                array('region_id' => '','code' => 'WA','name' => 'Western Australia'),
-            );
-        } else if (empty($result) && $countryCode == 'GB') {
-            $result = array(
-                array('region_id' => '','code' => 'UKH','name' => 'East of England'),
-                array('region_id' => '','code' => 'UKF','name' => 'East Midlands'),
-                array('region_id' => '','code' => 'UKI','name' => 'London'),
-                array('region_id' => '','code' => 'UKC','name' => 'North East'),
-                array('region_id' => '','code' => 'UKD','name' => 'North West'),
-                array('region_id' => '','code' => 'UKJ','name' => 'South East'),
-                array('region_id' => '','code' => 'UKK','name' => 'South West'),
-                array('region_id' => '','code' => 'UKG','name' => 'West Midlands'),
-                array('region_id' => '','code' => 'UKE','name' => 'Yorkshire and the Humber'),
-            );
+            $result = [
+                ['region_id' => '','code' => 'NSW','name' => 'New South Wales'],
+                ['region_id' => '','code' => 'QLD','name' => 'Queensland'],
+                ['region_id' => '','code' => 'SA','name' => 'South Australia'],
+                ['region_id' => '','code' => 'TAS','name' => 'Tasmania'],
+                ['region_id' => '','code' => 'VIC','name' => 'Victoria'],
+                ['region_id' => '','code' => 'WA','name' => 'Western Australia'],
+            ];
+        } elseif (empty($result) && $countryCode == 'GB') {
+            $result = [
+                ['region_id' => '','code' => 'UKH','name' => 'East of England'],
+                ['region_id' => '','code' => 'UKF','name' => 'East Midlands'],
+                ['region_id' => '','code' => 'UKI','name' => 'London'],
+                ['region_id' => '','code' => 'UKC','name' => 'North East'],
+                ['region_id' => '','code' => 'UKD','name' => 'North West'],
+                ['region_id' => '','code' => 'UKJ','name' => 'South East'],
+                ['region_id' => '','code' => 'UKK','name' => 'South West'],
+                ['region_id' => '','code' => 'UKG','name' => 'West Midlands'],
+                ['region_id' => '','code' => 'UKE','name' => 'Yorkshire and the Humber'],
+            ];
         }
 
         return $result;
@@ -411,6 +414,13 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
+    public function isInstalled()
+    {
+        return $this->deploymentConfig->isAvailable();
+    }
+
+    //########################################
+
     public function getModules()
     {
         return array_keys((array)$this->deploymentConfig->get('modules'));
@@ -426,7 +436,6 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 
         $result = [];
         foreach ($conflictedModules as $expression => $description) {
-
             foreach ($modules as $module => $data) {
                 if (preg_match($expression, $module)) {
                     $result[$module] = array_merge($data, ['description' => $description]);
@@ -442,19 +451,17 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         $eventObservers = [];
 
         /** @var \Magento\Framework\Config\ScopeInterface $scope */
-        $scope = $this->objectManager->get('\Magento\Framework\Config\ScopeInterface');
+        $scope = $this->objectManager->get(\Magento\Framework\Config\ScopeInterface::class);
 
         foreach ($this->getAreas() as $area) {
-
             $scope->setCurrentScope($area);
 
-            $eventsData = $this->objectManager->create('Magento\Framework\Event\Config\Data', [
+            $eventsData = $this->objectManager->create(\Magento\Framework\Event\Config\Data::class, [
                 'configScope' => $scope
             ]);
 
             foreach ($eventsData->get(null) as $eventName => $eventData) {
                 foreach ($eventData as $observerName => $observerData) {
-
                     $observerName = '#class#::#method#';
 
                     if (!empty($observerData['instance'])) {
@@ -476,7 +483,8 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
     public function getNextMagentoOrderId()
     {
         $sequence = $this->sequenceManager->getSequence(
-            \Magento\Sales\Model\Order::ENTITY, $this->getHelper('Magento\Store')->getDefaultStoreId()
+            \Magento\Sales\Model\Order::ENTITY,
+            $this->getHelper('Magento\Store')->getDefaultStoreId()
         );
 
         return $sequence->getNextValue();

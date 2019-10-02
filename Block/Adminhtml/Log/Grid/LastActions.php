@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Log\Grid;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 use Ess\M2ePro\Model\Log\AbstractModel as LogModel;
 
+/**
+ * Class LastActions
+ * @package Ess\M2ePro\Block\Adminhtml\Log\Grid
+ */
 abstract class LastActions extends AbstractBlock
 {
     const VIEW_LOG_LINK_SHOW = 0;
@@ -20,8 +24,8 @@ abstract class LastActions extends AbstractBlock
     const PRODUCTS_LIMIT = 100;
 
     protected $_template = 'log/last_actions.phtml';
-    protected $tip = NULL;
-    protected $iconSrc = NULL;
+    protected $tip = null;
+    protected $iconSrc = null;
     protected $rows = [];
 
     public static $actionsSortOrder = [
@@ -161,7 +165,7 @@ abstract class LastActions extends AbstractBlock
         $sortOrder = self::$actionsSortOrder;
 
         foreach ($actions as &$actionLogs) {
-            usort($actionLogs['items'], function($a, $b) use ($sortOrder) {
+            usort($actionLogs['items'], function ($a, $b) use ($sortOrder) {
                 return $sortOrder[$a['type']] > $sortOrder[$b['type']];
             });
         }
@@ -169,7 +173,7 @@ abstract class LastActions extends AbstractBlock
 
     protected function sortActions(array &$actions)
     {
-        usort($actions, function($a, $b) {
+        usort($actions, function ($a, $b) {
             return strtotime($a['date']) < strtotime($b['date']);
         });
     }
@@ -288,7 +292,8 @@ abstract class LastActions extends AbstractBlock
         $this->rows = $rows;
         // ---------------------------------------
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Log\AbstractModel'));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class));
 
         // ---------------------------------------
 

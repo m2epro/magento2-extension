@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization;
 
+/**
+ * Class Revise
+ * @package Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization
+ */
 class Revise extends AbstractModel
 {
     //########################################
@@ -60,7 +64,7 @@ class Revise extends AbstractModel
         $this->executeSpecificsChanged();
         $this->executeShippingServicesChanged();
 
-        if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
+        if ($this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
             $this->executePickupStoreQtyChanged();
         }
 
@@ -72,19 +76,18 @@ class Revise extends AbstractModel
 
     private function executeQtyChanged()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update Quantity');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Update Quantity');
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstances(
-            array(\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE)
+            [\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE]
         );
 
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
-
                 $isExistInRunner = $this->getRunner()->isExistProductWithAction(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                 );
 
                 if ($isExistInRunner) {
@@ -92,13 +95,15 @@ class Revise extends AbstractModel
                 }
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
                 $configurator->reset();
                 $configurator->allowQty();
                 $configurator->allowVariations();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -110,10 +115,11 @@ class Revise extends AbstractModel
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -124,19 +130,18 @@ class Revise extends AbstractModel
 
     private function executePriceChanged()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update Price');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Update Price');
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstances(
-            array(\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE)
+            [\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE]
         );
 
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
-
                 $isExistInRunner = $this->getRunner()->isExistProductWithAction(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                 );
 
                 if ($isExistInRunner) {
@@ -144,13 +149,15 @@ class Revise extends AbstractModel
                 }
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
                 $configurator->reset();
                 $configurator->allowPrice();
                 $configurator->allowVariations();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -162,10 +169,11 @@ class Revise extends AbstractModel
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -178,9 +186,9 @@ class Revise extends AbstractModel
 
     private function executeTitleChanged()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update Title');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Update Title');
 
-        $attributesForProductChange = array();
+        $attributesForProductChange = [];
 
         $descriptionTemplateCollection = $this->ebayFactory->getObject('Template\Description')->getCollection();
 
@@ -192,21 +200,22 @@ class Revise extends AbstractModel
             $ebayDescriptionTemplate = $descriptionTemplate->getChildObject();
 
             $attributesForProductChange = array_merge(
-                $attributesForProductChange, $ebayDescriptionTemplate->getTitleAttributes()
+                $attributesForProductChange,
+                $ebayDescriptionTemplate->getTitleAttributes()
             );
         }
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstancesByListingProduct(
-            array_unique($attributesForProductChange), true
+            array_unique($attributesForProductChange),
+            true
         );
 
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
-
                 $isExistInRunner = $this->getRunner()->isExistProductWithAction(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                 );
 
                 if ($isExistInRunner) {
@@ -223,12 +232,14 @@ class Revise extends AbstractModel
                 }
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
                 $configurator->reset();
                 $configurator->allowTitle();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -240,10 +251,11 @@ class Revise extends AbstractModel
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -252,9 +264,9 @@ class Revise extends AbstractModel
 
     private function executeSubTitleChanged()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update Subtitle');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Update Subtitle');
 
-        $attributesForProductChange = array();
+        $attributesForProductChange = [];
 
         $descriptionTemplateCollection = $this->ebayFactory->getObject('Template\Description')->getCollection();
 
@@ -266,21 +278,22 @@ class Revise extends AbstractModel
             $ebayDescriptionTemplate = $descriptionTemplate->getChildObject();
 
             $attributesForProductChange = array_merge(
-                $attributesForProductChange, $ebayDescriptionTemplate->getSubTitleAttributes()
+                $attributesForProductChange,
+                $ebayDescriptionTemplate->getSubTitleAttributes()
             );
         }
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstancesByListingProduct(
-            array_unique($attributesForProductChange), true
+            array_unique($attributesForProductChange),
+            true
         );
 
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
-
                 $isExistInRunner = $this->getRunner()->isExistProductWithAction(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                 );
 
                 if ($isExistInRunner) {
@@ -297,12 +310,14 @@ class Revise extends AbstractModel
                 }
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
                 $configurator->reset();
                 $configurator->allowSubtitle();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -314,10 +329,11 @@ class Revise extends AbstractModel
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -328,9 +344,9 @@ class Revise extends AbstractModel
 
     private function executeDescriptionChanged()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update Description');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Update Description');
 
-        $attributesForProductChange = array();
+        $attributesForProductChange = [];
 
         $descriptionTemplateCollection = $this->ebayFactory->getObject('Template\Description')->getCollection();
 
@@ -342,21 +358,22 @@ class Revise extends AbstractModel
             $ebayDescriptionTemplate = $descriptionTemplate->getChildObject();
 
             $attributesForProductChange = array_merge(
-                $attributesForProductChange, $ebayDescriptionTemplate->getDescriptionAttributes()
+                $attributesForProductChange,
+                $ebayDescriptionTemplate->getDescriptionAttributes()
             );
         }
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstancesByListingProduct(
-            array_unique($attributesForProductChange), true
+            array_unique($attributesForProductChange),
+            true
         );
 
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
-
                 $isExistInRunner = $this->getRunner()->isExistProductWithAction(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                 );
 
                 if ($isExistInRunner) {
@@ -373,12 +390,14 @@ class Revise extends AbstractModel
                 }
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
                 $configurator->reset();
                 $configurator->allowDescription();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -390,10 +409,11 @@ class Revise extends AbstractModel
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -404,9 +424,9 @@ class Revise extends AbstractModel
 
     private function executeImagesChanged()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update images');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Update images');
 
-        $attributesForProductChange = array();
+        $attributesForProductChange = [];
 
         $descriptionTemplateCollection = $this->ebayFactory->getObject('Template\Description')->getCollection();
 
@@ -428,15 +448,15 @@ class Revise extends AbstractModel
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstancesByListingProduct(
-            $attributesForProductChange, true
+            $attributesForProductChange,
+            true
         );
 
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
-
                 $isExistInRunner = $this->getRunner()->isExistProductWithAction(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                 );
 
                 if ($isExistInRunner) {
@@ -456,12 +476,14 @@ class Revise extends AbstractModel
                 }
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
                 $configurator->reset();
                 $configurator->allowImages();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -473,10 +495,11 @@ class Revise extends AbstractModel
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -494,11 +517,11 @@ class Revise extends AbstractModel
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProductsByVariationOption */
         $changedListingsProductsByVariationOption = $this->getProductChangesManager()->getInstancesByVariationOption(
-            array_unique($attributesForProductChange), true
+            array_unique($attributesForProductChange),
+            true
         );
 
         foreach ($changedListingsProductsByVariationOption as $listingProduct) {
-
             try {
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
                 $ebayListingProduct = $listingProduct->getChildObject();
@@ -510,12 +533,14 @@ class Revise extends AbstractModel
                 }
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
                 $configurator->reset();
                 $configurator->allowVariations();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -527,10 +552,11 @@ class Revise extends AbstractModel
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -541,14 +567,14 @@ class Revise extends AbstractModel
 
     private function executeSpecificsChanged()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update specifics');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Update specifics');
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstances(
-            array(\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE)
+            [\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE]
         );
 
-        $attributesForProductChange = array();
+        $attributesForProductChange = [];
 
         foreach ($changedListingsProducts as $listingProduct) {
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
@@ -565,15 +591,15 @@ class Revise extends AbstractModel
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstancesByListingProduct(
-            $attributesForProductChange, true
+            $attributesForProductChange,
+            true
         );
 
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
-
                 $isExistInRunner = $this->getRunner()->isExistProductWithAction(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                 );
 
                 if ($isExistInRunner) {
@@ -594,12 +620,14 @@ class Revise extends AbstractModel
                 }
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
                 $configurator->reset();
                 $configurator->allowSpecifics();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -611,10 +639,11 @@ class Revise extends AbstractModel
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -625,14 +654,14 @@ class Revise extends AbstractModel
 
     private function executeShippingServicesChanged()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update shipping services');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Update shipping services');
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstances(
-            array(\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE)
+            [\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE]
         );
 
-        $attributesForProductChange = array();
+        $attributesForProductChange = [];
 
         foreach ($changedListingsProducts as $listingProduct) {
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
@@ -647,15 +676,15 @@ class Revise extends AbstractModel
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstancesByListingProduct(
-            $attributesForProductChange, true
+            $attributesForProductChange,
+            true
         );
 
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
-
                 $isExistInRunner = $this->getRunner()->isExistProductWithAction(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                 );
 
                 if ($isExistInRunner) {
@@ -672,12 +701,14 @@ class Revise extends AbstractModel
                 }
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
                 $configurator->reset();
                 $configurator->allowShippingServices();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -689,10 +720,11 @@ class Revise extends AbstractModel
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -705,15 +737,14 @@ class Revise extends AbstractModel
 
     private function executePickupStoreQtyChanged()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update Pickup Store Quantity');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Update Pickup Store Quantity');
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
         $changedListingsProducts = $this->getProductChangesManager()->getInstances(
-            array(\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE)
+            [\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE]
         );
 
         foreach ($changedListingsProducts as $listingProduct) {
-
             try {
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
                 $ebayListingProduct = $listingProduct->getChildObject();
@@ -728,7 +759,7 @@ class Revise extends AbstractModel
 
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\PickupStore\State\Updater $pickupStoreStateUpdater */
                 $pickupStoreStateUpdater = $this->modelFactory->getObject(
-                    'Ebay\Listing\Product\PickupStore\State\Updater'
+                    'Ebay_Listing_Product_PickupStore_State_Updater'
                 );
                 $pickupStoreStateUpdater->setListingProduct($listingProduct);
 
@@ -740,7 +771,6 @@ class Revise extends AbstractModel
 
                 $pickupStoreStateUpdater->process();
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -753,12 +783,13 @@ class Revise extends AbstractModel
 
     private function executeNeedSynchronize()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Execute is need synchronize');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Execute is need synchronize');
 
         $listingProductCollection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
         $listingProductCollection->addFieldToFilter('status', \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED);
         $listingProductCollection->addFieldToFilter(
-            'synch_status',\Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_NEED
+            'synch_status',
+            \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_NEED
         );
 
         $tag = 'in_action';
@@ -766,24 +797,24 @@ class Revise extends AbstractModel
         $limit = $this->getConfigValue($this->getFullSettingsPath().'need_synch/', 'items_limit');
 
         $listingProductCollection->getSelect()->joinLeft(
-            array(
-                'mpc' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_processing_lock')
-            ),
+            [
+                'mpc' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_processing_lock')
+            ],
             "mpc.object_id = main_table.id AND mpc.tag='{$tag}' AND mpc.model_name = '{$modelName}'",
-            array()
+            []
         );
-        $listingProductCollection->addFieldToFilter('mpc.id', array('null' => true));
+        $listingProductCollection->addFieldToFilter('mpc.id', ['null' => true]);
 
         $listingProductCollection->getSelect()->limit($limit);
 
         foreach ($listingProductCollection->getItems() as $listingProduct) {
-
             try {
                 /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
                 $listingProduct->setData('synch_status', \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_SKIP)->save();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithAction(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                 );
 
                 if ($isExistInRunner) {
@@ -791,10 +822,12 @@ class Revise extends AbstractModel
                 }
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -806,10 +839,11 @@ class Revise extends AbstractModel
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -820,13 +854,14 @@ class Revise extends AbstractModel
 
     private function executeTotal()
     {
-        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Execute Revise all');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__, 'Execute Revise all');
 
         $lastListingProductProcessed = $this->getConfigValue(
-            $this->getFullSettingsPath().'total/','last_listing_product_id'
+            $this->getFullSettingsPath().'total/',
+            'last_listing_product_id'
         );
 
-        if (is_null($lastListingProductProcessed)) {
+        if ($lastListingProductProcessed === null) {
             return;
         }
 
@@ -834,19 +869,18 @@ class Revise extends AbstractModel
 
         $collection = $this->ebayFactory->getObject('Listing\Product')
             ->getCollection()
-            ->addFieldToFilter('id',array('gt' => $lastListingProductProcessed))
+            ->addFieldToFilter('id', ['gt' => $lastListingProductProcessed])
             ->addFieldToFilter('status', \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED);
 
         $collection->getSelect()->limit($itemsPerCycle);
         $collection->getSelect()->order('id ASC');
 
-        /* @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+        /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
         foreach ($collection->getItems() as $listingProduct) {
-
             try {
-
                 $isExistInRunner = $this->getRunner()->isExistProductWithAction(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                 );
 
                 if ($isExistInRunner) {
@@ -854,10 +888,12 @@ class Revise extends AbstractModel
                 }
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
 
                 if ($isExistInRunner) {
@@ -869,10 +905,11 @@ class Revise extends AbstractModel
                 }
 
                 $this->getRunner()->addProduct(
-                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    $configurator
                 );
             } catch (\Exception $exception) {
-
                 $this->logError($listingProduct, $exception, false);
                 continue;
             }
@@ -881,17 +918,18 @@ class Revise extends AbstractModel
         $lastListingProduct = $collection->getLastItem()->getId();
 
         if ($collection->getSize() < $itemsPerCycle) {
-
             $this->setConfigValue(
-                $this->getFullSettingsPath().'total/', 'end_date',
+                $this->getFullSettingsPath().'total/',
+                'end_date',
                 $this->getHelper('Data')->getCurrentGmtDate()
             );
 
-            $lastListingProduct = NULL;
+            $lastListingProduct = null;
         }
 
         $this->setConfigValue(
-            $this->getFullSettingsPath().'total/', 'last_listing_product_id',
+            $this->getFullSettingsPath().'total/',
+            'last_listing_product_id',
             $lastListingProduct
         );
 

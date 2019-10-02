@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Lock;
 
+/**
+ * Class Transactional
+ * @package Ess\M2ePro\Model\Lock
+ */
 class Transactional extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     //########################################
@@ -29,7 +33,10 @@ class Transactional extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return false;
     }
 
-    public function deleteProcessingLocks($tag = false, $processingId = false) {}
+    public function deleteProcessingLocks($tag = false, $processingId = false)
+    {
+        return null;
+    }
 
     //########################################
 

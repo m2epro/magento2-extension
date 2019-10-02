@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Helper;
 
+/**
+ * Class Client
+ * @package Ess\M2ePro\Helper
+ */
 class Client extends AbstractHelper
 {
     const API_APACHE_HANDLER = 'apache2handler';
@@ -26,8 +30,7 @@ class Client extends AbstractHelper
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest
-    )
-    {
+    ) {
         $this->cacheConfig = $cacheConfig;
         $this->filesystem = $filesystem;
         $this->resource = $resource;
@@ -116,7 +119,7 @@ class Client extends AbstractHelper
 
         $domain = rtrim($this->phpEnvironmentRequest->getServer('HTTP_HOST'), '/');
         empty($domain) && $domain = '127.0.0.1';
-        strpos($domain,'www.') === 0 && $domain = substr($domain,4);
+        strpos($domain, 'www.') === 0 && $domain = substr($domain, 4);
         $this->cacheConfig->setGroupValue('/location_info/', 'domain', $domain);
 
         $ip = $this->phpEnvironmentRequest->getServer('SERVER_ADDR');
@@ -128,7 +131,9 @@ class Client extends AbstractHelper
         $this->cacheConfig->setGroupValue('/location_info/', 'directory', $directory->getAbsolutePath());
 
         $this->cacheConfig->setGroupValue(
-            '/location_info/', 'date_last_check', $this->getHelper('Data')->getCurrentGmtDate()
+            '/location_info/',
+            'date_last_check',
+            $this->getHelper('Data')->getCurrentGmtDate()
         );
     }
 
@@ -136,9 +141,9 @@ class Client extends AbstractHelper
 
     public function getPhpVersion($asArray = false)
     {
-        $version = array(
+        $version = [
             PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION
-        );
+        ];
 
         return $asArray ? $version : implode('.', $version);
     }
@@ -150,7 +155,7 @@ class Client extends AbstractHelper
 
     public function getPhpIniFileLoaded()
     {
-        return @php_ini_loaded_file();
+        return php_ini_loaded_file();
     }
 
     // ---------------------------------------
@@ -169,11 +174,11 @@ class Client extends AbstractHelper
 
     public function getPhpSettings()
     {
-        return array(
+        return [
             'memory_limit'       => $this->getMemoryLimit(),
             'max_execution_time' => $this->getExecutionTime(),
             'phpinfo'            => $this->getPhpInfoArray()
-        );
+        ];
     }
 
     public function getPhpInfoArray()
@@ -183,11 +188,11 @@ class Client extends AbstractHelper
         }
 
         try {
-
-            ob_start(); phpinfo(INFO_ALL);
+            ob_start();
+            phpinfo(INFO_ALL);
 
             $pi = preg_replace(
-            [
+                [
                 '#^.*<body>(.*)</body>.*$#m', '#<h2>PHP License</h2>.*$#ms',
                 '#<h1>Configuration</h1>#',  "#\r?\n#", "#</(h1|h2|h3|tr)>#", '# +<#',
                 "#[ \t]+#", '#&nbsp;#', '#  +#', '# class=".*?"#', '%&#039;%',
@@ -195,14 +200,15 @@ class Client extends AbstractHelper
                 '#<h1><a href="(?:.*?)\?=(.*?)">PHP Credits</a></h1>#',
                 '#<tr>(?:.*?)" src="(?:.*?)=(.*?)"(?:.*?)Zend Engine (.*?),(?:.*?)</tr>#',
                 "# +#", '#<tr>#', '#</tr>#'],
-            [
+                [
                 '$1', '', '', '', '</$1>' . "\n", '<', ' ', ' ', ' ', '', ' ',
                 '<h2>PHP Configuration</h2>'."\n".'<tr><td>PHP Version</td><td>$2</td></tr>'.
                 "\n".'<tr><td>PHP Egg</td><td>$1</td></tr>',
                 '<tr><td>PHP Credits Egg</td><td>$1</td></tr>',
                 '<tr><td>Zend Engine</td><td>$2</td></tr>' . "\n" .
                 '<tr><td>Zend Egg</td><td>$1</td></tr>', ' ', '%S%', '%E%'
-            ], ob_get_clean()
+                ],
+                ob_get_clean()
             );
 
             $sections = explode('<h2>', strip_tags($pi, '<h2><th><td>'));
@@ -221,10 +227,9 @@ class Client extends AbstractHelper
                     if (!isset($m[0]) || !isset($m[1]) || !isset($m[2])) {
                         continue;
                     }
-                    $pi[$n][$m[1]]=(!isset($m[3])||$m[2]==$m[3])?$m[2]:array_slice($m,2);
+                    $pi[$n][$m[1]]=(!isset($m[3]) || $m[2]==$m[3])?$m[2]:array_slice($m, 2);
                 }
             }
-
         } catch (\Exception $exception) {
             ob_get_clean();
             return [];
@@ -261,36 +266,35 @@ class Client extends AbstractHelper
         }
 
         $phpInfo = $this->getPhpInfoArray();
-        $settings = array_merge($settings,isset($phpInfo['mysql'])?$phpInfo['mysql']:[]);
+        $settings = array_merge($settings, isset($phpInfo['mysql'])?$phpInfo['mysql']:[]);
 
         return $settings;
     }
 
     public function getMysqlTotals()
     {
-        $moduleTables = $this->getHelper('Module\Database\Structure')->getMySqlTables();
+        $moduleTables = $this->getHelper('Module_Database_Structure')->getMySqlTables();
         $magentoTables = $this->getHelper('Magento')->getMySqlTables();
 
         $connRead = $this->resource->getConnection();
 
         $totalRecords = 0;
         foreach ($moduleTables as $moduleTable) {
-
-            $moduleTable = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($moduleTable);
+            $moduleTable = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($moduleTable);
 
             if (!in_array($moduleTable, $magentoTables)) {
                 continue;
             };
 
-            $dbSelect = $connRead->select()->from($moduleTable,new \Zend_Db_Expr('COUNT(*)'));
+            $dbSelect = $connRead->select()->from($moduleTable, new \Zend_Db_Expr('COUNT(*)'));
             $totalRecords += (int)$connRead->fetchOne($dbSelect);
         }
 
-        return array(
+        return [
             'magento_tables' => count($magentoTables),
             'module_tables' => count($moduleTables),
             'module_records' => $totalRecords
-        );
+        ];
     }
 
     // ---------------------------------------
@@ -310,7 +314,7 @@ class Client extends AbstractHelper
 
     public function getDisabledFunctions()
     {
-       return array_filter(explode(',', ini_get('disable_functions')));
+        return array_filter(explode(',', ini_get('disable_functions')));
     }
 
     //########################################
@@ -338,18 +342,18 @@ class Client extends AbstractHelper
         $lastMemoryLimitLetter = strtolower(substr($memoryLimit, -1));
         $memoryLimit = (int)$memoryLimit;
 
-        switch($lastMemoryLimitLetter) {
+        switch ($lastMemoryLimitLetter) {
             case 'g':
                 $memoryLimit *= 1024;
-                break;
+                // no break
 
             case 'm':
                 $memoryLimit *= 1024;
-                break;
+                // no break
 
             case 'k':
                 $memoryLimit *= 1024;
-                break;
+                // no break
         }
 
         if ($memoryLimit > 0 && $inMegabytes) {
@@ -369,8 +373,7 @@ class Client extends AbstractHelper
         }
 
         for ($i=$minSize; $i<=$maxSize; $i*=2) {
-
-            if (@ini_set('memory_limit',"{$i}M") === false) {
+            if (ini_set('memory_limit', "{$i}M") === false) {
                 if ($i == $minSize) {
                     return false;
                 } else {
@@ -387,10 +390,10 @@ class Client extends AbstractHelper
     public function getExecutionTime()
     {
         if (!$this->isPhpApiApacheHandler()) {
-            return NULL;
+            return null;
         }
 
-        return @ini_get('max_execution_time');
+        return ini_get('max_execution_time');
     }
 
     //########################################

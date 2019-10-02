@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\AttributeSet;
 
+/**
+ * Class Builder
+ * @package Ess\M2ePro\Model\Magento\AttributeSet
+ */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $productFactory;
@@ -17,7 +21,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     protected $attributeSetObj  = null;
 
     protected $setName = null;
-    protected $params = array();
+    protected $params = [];
 
     protected $entityTypeId;
     protected $skeletonId;
@@ -29,8 +33,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Eav\Model\Entity\Attribute\SetFactory $entityAttributeSetFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->entityAttributeSetFactory = $entityAttributeSetFactory;
         $this->productFactory = $productFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -48,12 +51,11 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     private function init()
     {
-        if (is_null($this->entityTypeId)) {
+        if ($this->entityTypeId === null) {
             $this->entityTypeId = $this->productFactory->create()->getResource()->getTypeId();
         }
 
-        if (!is_null($this->skeletonId)) {
-
+        if ($this->skeletonId !== null) {
             $skeletonAttributeSetId = $this->entityAttributeSetFactory->create()
                   ->load($this->skeletonId)
                   ->getId();
@@ -69,25 +71,23 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     private function saveAttributeSet()
     {
         if ($this->attributeSetObj->getId()) {
-            return array('result' => true, 'obj' => $this->attributeSetObj);
+            return ['result' => true, 'obj' => $this->attributeSetObj];
         }
 
         $this->attributeSetObj->setEntityTypeId($this->entityTypeId)
                               ->setAttributeSetName($this->setName);
 
         try {
-
             $this->attributeSetObj->validate();
             $this->attributeSetObj->save();
 
             $this->attributeSetObj->initFromSkeleton($this->skeletonId)
                                   ->save();
-
         } catch (\Exception $e) {
-            return array('result' => false, 'error' => $e->getMessage());
+            return ['result' => false, 'error' => $e->getMessage()];
         }
 
-        return array('result' => true, 'obj' => $this->attributeSetObj);
+        return ['result' => true, 'obj' => $this->attributeSetObj];
     }
 
     //########################################
@@ -98,7 +98,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    public function setParams(array $value = array())
+    public function setParams(array $value = [])
     {
         $this->params = $value;
         return $this;

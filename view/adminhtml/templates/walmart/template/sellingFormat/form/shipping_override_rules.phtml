@@ -1,5 +1,14 @@
 <?php
-    /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form\ShippingOverrideRules $this */
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form\ShippingOverrideRules $block */
+
 ?>
 
 <table id="shipping_override_rule_table"
@@ -9,27 +18,27 @@
     <thead>
     <tr class="headings">
         <th class="data-grid-th">
-            <?php echo $this->__('Service'); ?>
+            <?php echo $block->__('Service'); ?>
             <span class="required">*</span>
         </th>
         <th class="data-grid-th">
-            <?php echo $this->__('Locale'); ?>
+            <?php echo $block->__('Locale'); ?>
             <span class="required">*</span>
         </th>
         <th class="data-grid-th">
-            <?php echo $this->__('Action'); ?>
+            <?php echo $block->__('Action'); ?>
             <span class="required">*</span>
         </th>
         <th class="data-grid-th">
-            <?php echo $this->__('Mode'); ?>
+            <?php echo $block->__('Mode'); ?>
             <span class="required">*</span>
         </th>
         <th class="data-grid-th">
-            <?php echo $this->__('Cost'); ?>
+            <?php echo $block->__('Cost'); ?>
             <span class="required">*</span>
         </th>
         <th class="data-grid-th">
-            <?php echo $this->__('Currency'); ?>
+            <?php echo $block->__('Currency'); ?>
         </th>
         <th style="width: 35px;" class="type-butt last data-grid-th">&nbsp;</th>
     </tr>
@@ -40,8 +49,8 @@
     <tfoot>
     <tr>
         <td colspan="20" class="a-right">
-            <?php echo $this->getData('add_shipping_override_rule_button')
-                            ->setData('label', $this->__('Add'))
+            <?php echo $block->getData('add_shipping_override_rule_button')
+                            ->setData('label', $block->__('Add'))
                             ->toHtml();?>
         </td>
     </tr>
@@ -53,8 +62,8 @@
     <tfoot>
     <tr>
         <td colspan="20" class="a-center">
-            <?php echo $this->getData('add_shipping_override_rule_button')
-                            ->setData('label', $this->__('Add Shipping Override Service'))
+            <?php echo $block->getData('add_shipping_override_rule_button')
+                            ->setData('label', $block->__('Add Shipping Override Service'))
                             ->setData('id', 'shipping_override_rule_table_main_screen_button')
                             ->toHtml(); ?>
         </td>
@@ -68,31 +77,31 @@
     <tbody>
     <tr id="shipping_override_rule_%i%_tr" class="shipping-override-rule">
         <td style="text-align: center;">
-            <?php echo $this->getData('shipping_override_rule_service')->toHtml(); ?>
+            <?php echo $block->getData('shipping_override_rule_service')->toHtml(); ?>
         </td>
         <td style="text-align: center;">
-            <?php echo $this->getData('shipping_override_rule_location')->toHtml(); ?>
+            <?php echo $block->getData('shipping_override_rule_location')->toHtml(); ?>
         </td>
         <td style="text-align: center;">
-            <?php echo $this->getData('shipping_override_rule_action')->toHtml(); ?>
+            <?php echo $block->getData('shipping_override_rule_action')->toHtml(); ?>
         </td>
         <td style="text-align: center;">
-            <?php echo $this->getData('shipping_override_rule_cost_mode')->toHtml(); ?>
+            <?php echo $block->getData('shipping_override_rule_cost_mode')->toHtml(); ?>
         </td>
         <td style="text-align: center;">
-            <?php echo $this->getData('shipping_override_rule_cost_value')->toHtml(); ?>
+            <?php echo $block->getData('shipping_override_rule_cost_value')->toHtml(); ?>
 
-            <?php echo $this->getData('shipping_override_rule_cost_attribute')->toHtml(); ?>
+            <?php echo $block->getData('shipping_override_rule_cost_attribute')->toHtml(); ?>
         </td>
         <td style="text-align: center;">
-            <?php foreach ($this->getData('marketplaces') as $marketplace) { ?>
+            <?php foreach ($block->getData('marketplaces') as $marketplace) { ?>
                 <span class="shipping-override-rule-currency-<?php echo $marketplace->getId(); ?>" style="display: none;">
                     <?php echo $marketplace->getChildObject()->getData('default_currency'); ?>
                 </span>
             <?php } ?>
         </td>
         <td style="text-align: center;">
-            <?php echo $this->getData('remove_shipping_override_rule_button')->toHtml(); ?>
+            <?php echo $block->getData('remove_shipping_override_rule_button')->toHtml(); ?>
         </td>
     </tr>
     </tbody>

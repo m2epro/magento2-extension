@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Developers;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Developers
+ */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 {
     const TAB_ID_INSTALLATION_DETAILS = 'installation_details';
@@ -34,68 +38,68 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $this->css->addFile('developers.css');
 
         // ---------------------------------------
-        $tab = array(
+        $tab = [
             'label' => $this->__('About Module / Magento'),
             'title' => $this->__('About Module / Magento'),
-            'content' => $this->createBlock('Developers\Tabs\AboutModule')->toHtml()
-        );
+            'content' => $this->createBlock('Developers_Tabs_AboutModule')->toHtml()
+        ];
 
         $this->addTab(self::TAB_ID_INSTALLATION_DETAILS, $tab);
 
         // ---------------------------------------
 
         // ---------------------------------------
-        $tab = array(
+        $tab = [
             'label' => $this->__('System Requirements'),
             'title' => $this->__('System Requirements'),
-            'content' => $this->createBlock('Developers\Tabs\SystemRequirements')->toHtml()
-        );
+            'content' => $this->createBlock('Developers_Tabs_SystemRequirements')->toHtml()
+        ];
 
         $this->addTab(self::TAB_ID_SYSTEM_REQUIREMENTS, $tab);
 
         // ---------------------------------------
 
         // ---------------------------------------
-        $tab = array(
+        $tab = [
             'label' => $this->__('Cron Job Details / Status'),
             'title' => $this->__('Cron Job Details / Status'),
-            'content' => $this->createBlock('Developers\Tabs\CronJobDetails', '', [
+            'content' => $this->createBlock('Developers_Tabs_CronJobDetails', '', [
                 'data' => ['is_support_mode' => true]
             ])->toHtml()
-        );
+        ];
 
         $this->addTab(self::TAB_ID_CRON_JOB_INFO, $tab);
 
         // ---------------------------------------
 
         // ---------------------------------------
-        $tab = array(
+        $tab = [
             'label' => $this->__('Synchronization Log'),
             'title' => $this->__('Synchronization Log'),
-            'content' => $this->createBlock('Developers\Tabs\SynchronizationLog')->toHtml()
-        );
+            'content' => $this->createBlock('Developers_Tabs_SynchronizationLog')->toHtml()
+        ];
 
         $this->addTab(self::TAB_ID_SYNCHRONIZATION_LOG, $tab);
 
         // ---------------------------------------
 
         // ---------------------------------------
-        $tab = array(
+        $tab = [
             'label' => $this->__('Direct Database Changes'),
             'title' => $this->__('Direct Database Changes'),
-            'content' => $this->createBlock('Developers\Tabs\DirectDatabaseChanges')->toHtml()
-        );
+            'content' => $this->createBlock('Developers_Tabs_DirectDatabaseChanges')->toHtml()
+        ];
 
         $this->addTab(self::TAB_ID_DIRECT_DATABASE_CHANGES, $tab);
 
         // ---------------------------------------
 
         // ---------------------------------------
-        $tab = array(
+        $tab = [
             'label' => $this->__('Performance Notes'),
             'title' => $this->__('Performance Notes'),
-            'content' => $this->createBlock('Developers\Tabs\PerformanceNotes')->toHtml()
-        );
+            'content' => $this->createBlock('Developers_Tabs_PerformanceNotes')->toHtml()
+        ];
 
         $this->addTab(self::TAB_ID_PERFORMANCE_NOTES, $tab);
 
@@ -108,7 +112,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 
     public function getActiveTabById($id)
     {
-        return isset($this->_tabs[$id]) ? $this->_tabs[$id] : NULL;
+        return isset($this->_tabs[$id]) ? $this->_tabs[$id] : null;
     }
 
     //########################################

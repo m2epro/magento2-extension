@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 
+/**
+ * Class Tabs
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit
+ */
 class Tabs extends AbstractTabs
 {
     //########################################
@@ -28,7 +32,7 @@ class Tabs extends AbstractTabs
                 'label' => __('List Rules'),
                 'title' => __('List Rules'),
                 'content' => $this->createBlock(
-                    'Walmart\Template\Synchronization\Edit\Tabs\ListRules'
+                    'Walmart_Template_Synchronization_Edit_Tabs_ListRules'
                 )->toHtml(),
             ]
         );
@@ -39,7 +43,7 @@ class Tabs extends AbstractTabs
                 'label' => __('Revise Rules'),
                 'title' => __('Revise Rules'),
                 'content' => $this->createBlock(
-                    'Walmart\Template\Synchronization\Edit\Tabs\ReviseRules'
+                    'Walmart_Template_Synchronization_Edit_Tabs_ReviseRules'
                 )->toHtml(),
             ]
         );
@@ -50,7 +54,7 @@ class Tabs extends AbstractTabs
                 'label' => __('Relist Rules'),
                 'title' => __('Relist Rules'),
                 'content' => $this->createBlock(
-                    'Walmart\Template\Synchronization\Edit\Tabs\RelistRules'
+                    'Walmart_Template_Synchronization_Edit_Tabs_RelistRules'
                 )->toHtml(),
             ]
         );
@@ -61,7 +65,7 @@ class Tabs extends AbstractTabs
                 'label' => __('Stop Rules'),
                 'title' => __('Stop Rules'),
                 'content' => $this->createBlock(
-                    'Walmart\Template\Synchronization\Edit\Tabs\StopRules'
+                    'Walmart_Template_Synchronization_Edit_Tabs_StopRules'
                 )->toHtml(),
             ]
         );

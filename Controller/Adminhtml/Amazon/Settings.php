@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon;
 
+/**
+ * Class Settings
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon
+ */
 abstract class Settings extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
     //########################################

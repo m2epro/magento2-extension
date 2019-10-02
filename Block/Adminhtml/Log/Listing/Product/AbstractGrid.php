@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Log\Listing\Product;
 
+/**
+ * Class AbstractGrid
+ * @package Ess\M2ePro\Block\Adminhtml\Log\Listing\Product
+ */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\AbstractGrid
 {
     //########################################
@@ -55,20 +59,20 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             if ($this->isListingProductLog() && $this->getListingProduct()->isComponentModeAmazon() &&
                 $this->getListingProduct()->getChildObject()->getVariationManager()->isRelationParentType()) {
                 $collection->addFieldToFilter(
-                    array(
+                    [
                         self::LISTING_PRODUCT_ID_FIELD,
                         self::LISTING_PARENT_PRODUCT_ID_FIELD
-                    ),
-                    array(
-                        array(
+                    ],
+                    [
+                        [
                             'attribute' => self::LISTING_PRODUCT_ID_FIELD,
                             'eq' => $this->getEntityId()
-                        ),
-                        array(
+                        ],
+                        [
                             'attribute' => self::LISTING_PARENT_PRODUCT_ID_FIELD,
                             'eq' => $this->getEntityId()
-                        )
-                    )
+                        ]
+                    ]
                 );
             } else {
                 $collection->addFieldToFilter($this->getEntityField(), $this->getEntityId());
@@ -115,7 +119,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
 
     protected function _prepareColumns()
     {
-        $this->addColumn('create_date', array(
+        $this->addColumn('create_date', [
             'header'    => $this->__('Creation Date'),
             'align'     => 'left',
             'type'      => 'datetime',
@@ -123,10 +127,10 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             'filter_time' => true,
             'filter_index' => 'main_table.create_date',
             'index'     => 'create_date',
-            'frame_callback' => array($this, 'callbackColumnCreateDate'),
-        ));
+            'frame_callback' => [$this, 'callbackColumnCreateDate'],
+        ]);
 
-        $this->addColumn('action', array(
+        $this->addColumn('action', [
             'header'    => $this->__('Action'),
             'align'     => 'left',
             'type'      => 'options',
@@ -134,76 +138,75 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             'sortable'  => false,
             'filter_index' => 'main_table.action',
             'options' => $this->getActionTitles(),
-        ));
+        ]);
 
         if (!$this->getEntityId()) {
-            $this->addColumn('listing_title', array(
+            $this->addColumn('listing_title', [
                 'header'    => $this->__('Listing'),
                 'align'     => 'left',
                 'type'      => 'text',
                 'index'     => 'listing_title',
                 'filter_index' => 'main_table.listing_title',
-                'frame_callback' => array($this, 'callbackColumnListingTitleID'),
-                'filter_condition_callback' => array($this, 'callbackFilterListingTitleID')
-            ));
+                'frame_callback' => [$this, 'callbackColumnListingTitleID'],
+                'filter_condition_callback' => [$this, 'callbackFilterListingTitleID']
+            ]);
         }
 
         if (!$this->isListingProductLog()) {
-            $this->addColumn('product_title', array(
+            $this->addColumn('product_title', [
                 'header' => $this->__('Magento Product'),
                 'align' => 'left',
                 'type' => 'text',
                 'index' => 'product_title',
                 'filter_index' => 'main_table.product_title',
-                'frame_callback' => array($this, 'callbackColumnProductTitleID'),
-                'filter_condition_callback' => array($this, 'callbackFilterProductTitleID')
-            ));
+                'frame_callback' => [$this, 'callbackColumnProductTitleID'],
+                'filter_condition_callback' => [$this, 'callbackFilterProductTitleID']
+            ]);
         }
 
         if ($this->isListingProductLog() && $this->getListingProduct()->isComponentModeAmazon() &&
             ($this->getListingProduct()->getChildObject()->getVariationManager()->isRelationParentType() ||
                 $this->getListingProduct()->getChildObject()->getVariationManager()->isRelationChildType() ||
                 $this->getListingProduct()->getChildObject()->getVariationManager()->isIndividualType())) {
-
-            $this->addColumn('attributes', array(
+            $this->addColumn('attributes', [
                 'header' => $this->__('Variation'),
                 'align' => 'left',
                 'index' => 'additional_data',
                 'sortable'  => false,
                 'filter_index' => 'main_table.additional_data',
-                'frame_callback' => array($this, 'callbackColumnAttributes'),
-                'filter_condition_callback' => array($this, 'callbackFilterAttributes')
-            ));
+                'frame_callback' => [$this, 'callbackColumnAttributes'],
+                'filter_condition_callback' => [$this, 'callbackFilterAttributes']
+            ]);
         }
 
-        $this->addColumn('description', array(
+        $this->addColumn('description', [
             'header'    => $this->__('Message'),
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'description',
             'filter_index' => 'main_table.description',
-            'frame_callback' => array($this, 'callbackDescription')
-        ));
+            'frame_callback' => [$this, 'callbackDescription']
+        ]);
 
-        $this->addColumn('initiator', array(
+        $this->addColumn('initiator', [
             'header'=> $this->__('Run Mode'),
             'index' => 'initiator',
             'align' => 'right',
             'type'  => 'options',
             'sortable'  => false,
             'options' => $this->_getLogInitiatorList(),
-            'frame_callback' => array($this, 'callbackColumnInitiator')
-        ));
+            'frame_callback' => [$this, 'callbackColumnInitiator']
+        ]);
 
-        $this->addColumn('type', array(
+        $this->addColumn('type', [
             'header'=> $this->__('Type'),
             'index' => 'type',
             'align' => 'right',
             'type'  => 'options',
             'sortable'  => false,
             'options' => $this->_getLogTypeList(),
-            'frame_callback' => array($this, 'callbackColumnType')
-        ));
+            'frame_callback' => [$this, 'callbackColumnType']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -219,10 +222,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
         $value = $this->getHelper('Data')->escapeHtml($value);
 
         if ($row->getData('listing_id')) {
-
             $url = $this->getUrl(
                 '*/'.$row->getData('component_mode').'_listing/view',
-                array('id' => $row->getData('listing_id'))
+                ['id' => $row->getData('listing_id')]
             );
 
             $value = '<a target="_blank" href="'.$url.'">' .
@@ -239,7 +241,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             return $value;
         }
 
-        $url = $this->getUrl('catalog/product/edit', array('id' => $row->getData('product_id')));
+        $url = $this->getUrl('catalog/product/edit', ['id' => $row->getData('product_id')]);
         $value = '<a target="_blank" href="'.$url.'" target="_blank">'.
             $this->getHelper('Data')->escapeHtml($value).
             '</a><br/>ID: '.$row->getData('product_id');
@@ -286,7 +288,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
     {
         $logHash = $this->getLogHash($row);
 
-        if (!is_null($logHash)) {
+        if ($logHash !== null) {
             return "{$value}<div class='no-display log-hash'>{$logHash}</div>";
         }
 

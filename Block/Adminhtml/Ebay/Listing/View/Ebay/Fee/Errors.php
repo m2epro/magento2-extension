@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee;
 
+/**
+ * Class Errors
+ * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee
+ */
 class Errors extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     //########################################

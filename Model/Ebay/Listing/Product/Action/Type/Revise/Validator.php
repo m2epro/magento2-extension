@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise;
 
 use Ess\M2ePro\Model\Exception\Logic;
 
+/**
+ * Class Validator
+ * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise
+ */
 class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Validator
 {
     //########################################
@@ -19,12 +23,10 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
         $params = $this->getParams();
         if (!isset($params['out_of_stock_control_current_state']) ||
             !isset($params['out_of_stock_control_result'])) {
-
             throw new Logic('Miss required parameters.');
         }
 
         if (!$this->getListingProduct()->isRevisable()) {
-
             // M2ePro\TRANSLATIONS
             // Item is not Listed or not available
             $this->addMessage('Item is not Listed or not available');
@@ -37,7 +39,6 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
         }
 
         if ($this->getEbayListingProduct()->isVariationsReady()) {
-
             if (!$this->validateVariationsOptions()) {
                 return false;
             }

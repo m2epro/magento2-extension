@@ -11,9 +11,13 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Order;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 use Ess\M2ePro\Model\Walmart\Listing\Product;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Walmart\Order
+ */
 class Grid extends AbstractGrid
 {
-    private $itemsCollection = NULL;
+    private $itemsCollection = null;
 
     protected $resourceConnection;
     protected $walmartFactory;
@@ -26,8 +30,7 @@ class Grid extends AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->walmartFactory = $walmartFactory;
         parent::__construct($context, $backendHelper, $data);
@@ -57,9 +60,10 @@ class Grid extends AbstractGrid
 
         $collection->getSelect()
             ->joinLeft(
-                array('so' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('sales_order')),
+                ['so' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('sales_order')],
                 '(so.entity_id = `main_table`.magento_order_id)',
-                array('magento_order_num' => 'increment_id'));
+                ['magento_order_num' => 'increment_id']
+            );
 
         // Add Filter By Account
         // ---------------------------------------
@@ -78,7 +82,7 @@ class Grid extends AbstractGrid
         // Add Not Created Magento Orders Filter
         // ---------------------------------------
         if ($this->getRequest()->getParam('not_created_only')) {
-            $collection->addFieldToFilter('magento_order_id', array('null' => true));
+            $collection->addFieldToFilter('magento_order_id', ['null' => true]);
         }
         // ---------------------------------------
 
@@ -90,14 +94,14 @@ class Grid extends AbstractGrid
     {
         $this->itemsCollection = $this->walmartFactory->getObject('Order\Item')
             ->getCollection()
-            ->addFieldToFilter('order_id', array('in' => $this->getCollection()->getColumnValues('id')));
+            ->addFieldToFilter('order_id', ['in' => $this->getCollection()->getColumnValues('id')]);
 
         return parent::_afterLoadCollection();
     }
 
     protected function _prepareColumns()
     {
-        $this->addColumn('purchase_create_date', array(
+        $this->addColumn('purchase_create_date', [
             'header' => $this->__('Sale Date'),
             'align'  => 'left',
             'type'   => 'datetime',
@@ -106,69 +110,69 @@ class Grid extends AbstractGrid
             'filter_time' => true,
             'index'  => 'purchase_create_date',
             'width'  => '170px',
-            'frame_callback' => array($this, 'callbackPurchaseCreateDate')
-        ));
+            'frame_callback' => [$this, 'callbackPurchaseCreateDate']
+        ]);
 
-        $this->addColumn('magento_order_num', array(
+        $this->addColumn('magento_order_num', [
             'header' => $this->__('Magento Order #'),
             'align'  => 'left',
             'index'  => 'so.increment_id',
             'width'  => '110px',
-            'frame_callback' => array($this, 'callbackColumnMagentoOrder')
-        ));
+            'frame_callback' => [$this, 'callbackColumnMagentoOrder']
+        ]);
 
-        $this->addColumn('walmart_order_id', array(
+        $this->addColumn('walmart_order_id', [
             'header' => $this->__('Walmart Order #'),
             'align'  => 'left',
             'width'  => '110px',
             'index'  => 'walmart_order_id',
-            'frame_callback' => array($this, 'callbackColumnWalmartOrderId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnWalmartOrderId']
+        ]);
 
-        $this->addColumn('walmart_order_items', array(
+        $this->addColumn('walmart_order_items', [
             'header' => $this->__('Items'),
             'align'  => 'left',
             'index'  => 'walmart_order_items',
             'sortable' => false,
             'width'  => '*',
-            'frame_callback' => array($this, 'callbackColumnItems'),
-            'filter_condition_callback' => array($this, 'callbackFilterItems')
-        ));
+            'frame_callback' => [$this, 'callbackColumnItems'],
+            'filter_condition_callback' => [$this, 'callbackFilterItems']
+        ]);
 
-        $this->addColumn('buyer', array(
+        $this->addColumn('buyer', [
             'header' => $this->__('Buyer'),
             'align'  => 'left',
             'index'  => 'buyer_name',
             'width'  => '120px',
-            'frame_callback' => array($this, 'callbackColumnBuyer'),
-            'filter_condition_callback' => array($this, 'callbackFilterBuyer')
-        ));
+            'frame_callback' => [$this, 'callbackColumnBuyer'],
+            'filter_condition_callback' => [$this, 'callbackFilterBuyer']
+        ]);
 
-        $this->addColumn('paid_amount', array(
+        $this->addColumn('paid_amount', [
             'header' => $this->__('Total Paid'),
             'align'  => 'left',
             'width'  => '110px',
             'index'  => 'paid_amount',
             'type'   => 'number',
-            'frame_callback' => array($this, 'callbackColumnTotal')
-        ));
+            'frame_callback' => [$this, 'callbackColumnTotal']
+        ]);
 
-        $this->addColumn('status', array(
+        $this->addColumn('status', [
             'header'  => $this->__('Status'),
             'align'   => 'left',
             'width'   => '50px',
             'index'   => 'status',
             'filter_index' => 'second_table.status',
             'type'    => 'options',
-            'options' => array(
+            'options' => [
                 \Ess\M2ePro\Model\Walmart\Order::STATUS_CREATED             => $this->__('Created'),
                 \Ess\M2ePro\Model\Walmart\Order::STATUS_UNSHIPPED           => $this->__('Unshipped'),
                 \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED_PARTIALLY   => $this->__('Partially Shipped'),
                 \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED             => $this->__('Shipped'),
                 \Ess\M2ePro\Model\Walmart\Order::STATUS_CANCELED            => $this->__('Canceled')
-            ),
-            'frame_callback' => array($this, 'callbackColumnStatus')
-        ));
+            ],
+            'frame_callback' => [$this, 'callbackColumnStatus']
+        ]);
 
         return parent::_prepareColumns();
     }
@@ -184,17 +188,17 @@ class Grid extends AbstractGrid
         // Set mass-action
         // ---------------------------------------
 
-        $this->getMassactionBlock()->addItem('ship', array(
+        $this->getMassactionBlock()->addItem('ship', [
             'label'    => $this->__('Mark Order(s) as Shipped'),
             'url'      => $this->getUrl('*/walmart_order/updateShippingStatus'),
             'confirm'  => $this->__('Are you sure?')
-        ));
+        ]);
 
-        $this->getMassactionBlock()->addItem('resend_shipping', array(
+        $this->getMassactionBlock()->addItem('resend_shipping', [
             'label'    => $this->__('Resend Shipping Information'),
             'url'      => $this->getUrl('*/order/resubmitShippingInfo'),
             'confirm'  => $this->__('Are you sure?')
-        ));
+        ]);
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -205,7 +209,9 @@ class Grid extends AbstractGrid
     public function callbackPurchaseCreateDate($value, $row, $column, $isExport)
     {
         return $this->_localeDate->formatDate(
-            $row->getChildObject()->getData('purchase_create_date'), \IntlDateFormatter::MEDIUM, true
+            $row->getChildObject()->getData('purchase_create_date'),
+            \IntlDateFormatter::MEDIUM,
+            true
         );
     }
 
@@ -228,7 +234,7 @@ HTML;
 
         if ($row['magento_order_id']) {
             if ($row['magento_order_num']) {
-                $orderUrl = $this->getUrl('sales/order/view', array('order_id' => $magentoOrderId));
+                $orderUrl = $this->getUrl('sales/order/view', ['order_id' => $magentoOrderId]);
                 $returnString = '<a href="' . $orderUrl . '" target="_blank">' . $magentoOrderNumber . '</a>';
             } else {
                 $returnString = '<span style="color: red;">'.$this->__('Deleted').'</span>';
@@ -262,12 +268,12 @@ HTML;
 
         // ---------------------------------------
 
-        $summary = $this->createBlock('Order\Log\Grid\LastActions')->setData(array(
+        $summary = $this->createBlock('Order_Log_Grid_LastActions')->setData([
             'entity_id' => $orderId,
             'logs'      => $orderLogsCollection->getItems(),
             'view_help_handler' => 'OrderObj.viewOrderHelp',
             'hide_help_handler' => 'OrderObj.hideOrderHelp',
-        ));
+        ]);
 
         return $summary->toHtml();
     }
@@ -290,7 +296,7 @@ HTML;
             $isShowEditLink = false;
 
             $product = $item->getProduct();
-            if (!is_null($product)) {
+            if ($product !== null) {
                 /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
                 $magentoProduct = $this->modelFactory->getObject('Magento\Product');
                 $magentoProduct->setProduct($product);
@@ -367,7 +373,8 @@ HTML;
         if (empty($currency)) {
             /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
             $marketplace = $this->walmartFactory->getCachedObjectLoaded(
-                'Marketplace', $row->getData('marketplace_id')
+                'Marketplace',
+                $row->getData('marketplace_id')
             );
             /** @var \Ess\M2ePro\Model\Walmart\Marketplace $walmartMarketplace */
             $walmartMarketplace = $marketplace->getChildObject();
@@ -376,28 +383,29 @@ HTML;
         }
 
         return $this->modelFactory->getObject('Currency')->formatPrice(
-            $currency, $row->getChildObject()->getData('paid_amount')
+            $currency,
+            $row->getChildObject()->getData('paid_amount')
         );
     }
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
-        $statuses = array(
+        $statuses = [
             \Ess\M2ePro\Model\Walmart\Order::STATUS_CREATED             => $this->__('Created'),
             \Ess\M2ePro\Model\Walmart\Order::STATUS_UNSHIPPED           => $this->__('Unshipped'),
             \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED_PARTIALLY   => $this->__('Partially Shipped'),
             \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED             => $this->__('Shipped'),
             \Ess\M2ePro\Model\Walmart\Order::STATUS_CANCELED            => $this->__('Canceled')
-        );
+        ];
         $status = $row->getChildObject()->getData('status');
 
         $value = $statuses[$status];
 
-        $statusColors = array(
+        $statusColors = [
             \Ess\M2ePro\Model\Walmart\Order::STATUS_CREATED  => 'gray',
             \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED  => 'green',
             \Ess\M2ePro\Model\Walmart\Order::STATUS_CANCELED => 'red'
-        );
+        ];
 
         $color = isset($statusColors[$status]) ? $statusColors[$status] : 'black';
         $value = '<span style="color: '.$color.';">'.$value.'</span>';
@@ -429,7 +437,7 @@ HTML;
         $orderItemsCollection->getSelect()->where('title LIKE ? OR sku LIKE ?', '%'.$value.'%');
 
         $totalResult = $orderItemsCollection->getColumnValues('order_id');
-        $collection->addFieldToFilter('main_table.id', array('in' => $totalResult));
+        $collection->addFieldToFilter('main_table.id', ['in' => $totalResult]);
     }
 
     protected function callbackFilterBuyer($collection, $column)
@@ -448,20 +456,19 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/walmart_order/grid', array('_current' => true));
+        return $this->getUrl('*/walmart_order/grid', ['_current' => true]);
     }
 
     public function getRowUrl($row)
     {
         $back = $this->getHelper('Data')->makeBackUrlParam('*/walmart_order/index');
 
-        return $this->getUrl('*/walmart_order/view', array('id' => $row->getId(), 'back' => $back));
+        return $this->getUrl('*/walmart_order/view', ['id' => $row->getId(), 'back' => $back]);
     }
 
     protected function _toHtml()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
-
             $this->js->addOnReadyJs(
                 <<<JS
     OrderObj.initializeGrids();
@@ -471,17 +478,18 @@ JS
             return parent::_toHtml();
         }
 
-        $tempGridIds = array();
+        $tempGridIds = [];
         $this->getHelper('Component\Walmart')->isEnabled() && $tempGridIds[] = $this->getId();
 
         $tempGridIds = $this->getHelper('Data')->jsonEncode($tempGridIds);
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Log\AbstractModel'));
+        $this->jsPhp->addConstants($this->getHelper('Data')
+            ->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class));
 
         $this->jsUrl->addUrls([
             'walmart_order/view' => $this->getUrl(
                 '*/walmart_order/view',
-                array('back'=>$this->getHelper('Data')->makeBackUrlParam('*/walmart_order/index'))
+                ['back'=>$this->getHelper('Data')->makeBackUrlParam('*/walmart_order/index')]
             )
         ]);
 

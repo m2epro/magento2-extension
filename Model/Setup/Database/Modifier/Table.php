@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Model\Setup\Database\Modifier;
 use Ess\M2ePro\Model\Exception\Setup;
 use \Magento\Framework\DB\Ddl\Table as DdlTable;
 
+/**
+ * Class Table
+ * @package Ess\M2ePro\Model\Setup\Database\Modifier
+ */
 class Table extends AbstractModifier
 {
     const COMMIT_KEY_ADD_COLUMN    = 'add_column';
@@ -19,8 +23,8 @@ class Table extends AbstractModifier
     const COMMIT_KEY_ADD_INDEX     = 'add_index';
     const COMMIT_KEY_DROP_INDEX    = 'drop_index';
 
-    protected $sqlForCommit = array();
-    protected $columnsForCheckBeforeCommit = array();
+    protected $sqlForCommit = [];
+    protected $columnsForCheckBeforeCommit = [];
 
     //########################################
 
@@ -69,7 +73,7 @@ class Table extends AbstractModifier
             );
         }
 
-        $definition = $this->buildColumnDefinitionByName($from);
+        $definition = $this->buildColumnDefinitionByName($from, $autoCommit);
 
         if (empty($definition)) {
             throw new Setup(
@@ -78,11 +82,14 @@ class Table extends AbstractModifier
         }
 
         if ($autoCommit) {
-            $this->connection->changeColumn($this->tableName, $from, $to,
-                $this->convertColumnDefinitionToArray($definition));
+            $this->connection->changeColumn($this->tableName, $from, $to, $definition);
         } else {
-            $this->addQueryToCommit(self::COMMIT_KEY_CHANGE_COLUMN,
-                                    'CHANGE COLUMN %s %s %s', array($from, $to), $definition);
+            $this->addQueryToCommit(
+                self::COMMIT_KEY_CHANGE_COLUMN,
+                'CHANGE COLUMN %s %s %s',
+                [$from, $to],
+                $definition
+            );
         }
 
         if ($renameIndex) {
@@ -104,7 +111,7 @@ class Table extends AbstractModifier
      * @return $this
      * @throws Setup
      */
-    public function addColumn($name, $type, $default = NULL, $after = NULL, $addIndex = false, $autoCommit = true)
+    public function addColumn($name, $type, $default = null, $after = null, $addIndex = false, $autoCommit = true)
     {
         if ($this->isColumnExists($name)) {
             return $this;
@@ -119,10 +126,14 @@ class Table extends AbstractModifier
         }
 
         if ($autoCommit) {
-            $this->connection->addColumn($this->tableName, $name, $this->convertColumnDefinitionToArray($definition));
+            $this->connection->addColumn($this->tableName, $name, $definition);
         } else {
-            $this->addQueryToCommit(self::COMMIT_KEY_ADD_COLUMN,
-                                   'ADD COLUMN %s %s', array($name), $definition);
+            $this->addQueryToCommit(
+                self::COMMIT_KEY_ADD_COLUMN,
+                'ADD COLUMN %s %s',
+                [$name],
+                $definition
+            );
         }
 
         $addIndex && $this->addIndex($name, $autoCommit);
@@ -139,7 +150,7 @@ class Table extends AbstractModifier
      * @return $this
      * @throws Setup
      */
-    public function changeColumn($name, $type, $default = NULL, $after = NULL, $autoCommit = true)
+    public function changeColumn($name, $type, $default = null, $after = null, $autoCommit = true)
     {
         if (!$this->isColumnExists($name)) {
             throw new Setup(
@@ -156,11 +167,14 @@ class Table extends AbstractModifier
         }
 
         if ($autoCommit) {
-            $this->connection->modifyColumn($this->tableName, $name,
-                $this->convertColumnDefinitionToArray($definition));
+            $this->connection->modifyColumn($this->tableName, $name, $definition);
         } else {
-            $this->addQueryToCommit(self::COMMIT_KEY_CHANGE_COLUMN,
-                                    'MODIFY COLUMN %s %s', array($name), $definition);
+            $this->addQueryToCommit(
+                self::COMMIT_KEY_CHANGE_COLUMN,
+                'MODIFY COLUMN %s %s',
+                [$name],
+                $definition
+            );
         }
 
         return $this;
@@ -182,7 +196,7 @@ class Table extends AbstractModifier
         if ($autoCommit) {
             $this->connection->dropColumn($this->tableName, $name);
         } else {
-            $this->addQueryToCommit(self::COMMIT_KEY_DROP_COLUMN, 'DROP COLUMN %s', array($name));
+            $this->addQueryToCommit(self::COMMIT_KEY_DROP_COLUMN, 'DROP COLUMN %s', [$name]);
         }
 
         $dropIndex && $this->dropIndex($name, $autoCommit);
@@ -235,7 +249,7 @@ class Table extends AbstractModifier
         if ($autoCommit) {
             $this->connection->addIndex($this->tableName, $name, $name);
         } else {
-            $this->addQueryToCommit(self::COMMIT_KEY_ADD_INDEX, 'ADD INDEX %s (%s)', array($name, $name));
+            $this->addQueryToCommit(self::COMMIT_KEY_ADD_INDEX, 'ADD INDEX %s (%s)', [$name, $name]);
         }
 
         return $this;
@@ -256,7 +270,7 @@ class Table extends AbstractModifier
         if ($autoCommit) {
             $this->connection->dropIndex($this->tableName, $name);
         } else {
-            $this->addQueryToCommit(self::COMMIT_KEY_DROP_INDEX, 'DROP KEY %s', array($name));
+            $this->addQueryToCommit(self::COMMIT_KEY_DROP_INDEX, 'DROP KEY %s', [$name]);
         }
 
         return $this;
@@ -264,12 +278,84 @@ class Table extends AbstractModifier
 
     //########################################
 
-    private function buildColumnDefinition($type, $default = NULL, $after = NULL, $autoCommit = true)
+    private function buildColumnDefinition($type, $default = null, $after = null, $autoCommit = true)
     {
+        if ($autoCommit) {
+            $pattern = "#^(?P<type>[a-z]+(?:\(\d+\))?)";
+            $pattern .= "(?:(?P<unsigned>\sUNSIGNED)?(?P<nullable>\s(?:NOT\s)?NULL)?)?#i";
+
+            $matches = [];
+            $definitionData = ['type' => $type];
+
+            if (preg_match($pattern, $type, $matches) !== false && isset($matches['type'])) {
+                $typeMap = [
+                    DdlTable::TYPE_SMALLINT => ['TINYINT', 'SMALLINT'],
+                    DdlTable::TYPE_INTEGER  => ['INT'],
+                    DdlTable::TYPE_FLOAT    => ['FLOAT'],
+                    DdlTable::TYPE_DECIMAL  => ['DECIMAL'],
+                    DdlTable::TYPE_DATETIME => ['DATETIME'],
+                    DdlTable::TYPE_TEXT     => ['VARCHAR', 'TEXT', 'LONGTEXT'],
+                    DdlTable::TYPE_BLOB     => ['BLOB', 'LONGBLOB'],
+                ];
+
+                $size = null;
+                $type = $matches['type'];
+                if (strpos($type, '(') !== false) {
+                    $size = str_replace(['(', ')'], '', substr($type, strpos($type, '(')));
+                    $type = substr($type, 0, strpos($type, '('));
+                }
+
+                foreach ($typeMap as $ddlType => $types) {
+                    if (!in_array(strtoupper($type), $types)) {
+                        continue;
+                    }
+
+                    if ($ddlType == DdlTable::TYPE_TEXT || $ddlType == DdlTable::TYPE_BLOB) {
+                        $definitionData['length'] = $size;
+                    }
+
+                    if ($ddlType == DdlTable::TYPE_DECIMAL && strpos($size, ',') !== false) {
+                        list($precision, $scale) = array_map('trim', explode(',', $size, 2));
+                        $definitionData['precision'] = (int)$precision;
+                        $definitionData['scale'] = (int)$scale;
+                    }
+
+                    $definitionData['type'] = $ddlType;
+                    break;
+                }
+
+                if (!empty($matches['unsigned'])) {
+                    $definitionData['unsigned'] = true;
+                }
+
+                if (!empty($matches['nullable'])) {
+                    $definitionData['nullable'] = strpos(strtolower($matches['nullable']), 'not null') ==! false  ?
+                        false : true;
+                }
+            }
+
+            if ($default !== null) {
+                $definitionData['default'] = $default === 'NULL' ? null : $default;
+            }
+
+            if ($after !== null) {
+                if (!$this->isColumnExists($after)) {
+                    throw new Setup(
+                        "After column '{$after}' does not exist in '{$this->tableName}' table."
+                    );
+                }
+
+                $definitionData['after'] = $after;
+            }
+
+            $definitionData['comment'] = 'field';
+
+            return $definitionData;
+        }
+
         $definition = $type;
 
-        if (!is_null($default)) {
-
+        if ($default !== null) {
             if ($default === 'NULL') {
                 $definition .= ' DEFAULT NULL';
             } else {
@@ -278,24 +364,14 @@ class Table extends AbstractModifier
         }
 
         if (!empty($after)) {
-
-            if ($autoCommit) {
-                if (!$this->isColumnExists($after)) {
-                    throw new Setup(
-                        "After column '{$after}' does not exist in '{$this->tableName}' table."
-                    );
-                }
-            } else {
-                $this->columnsForCheckBeforeCommit[] = $after;
-            }
-
+            $this->columnsForCheckBeforeCommit[] = $after;
             $definition .= ' AFTER ' . $this->connection->quoteIdentifier($after);
         }
 
         return $definition;
     }
 
-    private function buildColumnDefinitionByName($name)
+    private function buildColumnDefinitionByName($name, $autoCommit = false)
     {
         if (!$this->isColumnExists($name)) {
             throw new Setup(
@@ -313,6 +389,10 @@ class Table extends AbstractModifier
 
         $columnInfo = $tableColumns[$name];
 
+        if ($autoCommit) {
+            return $this->connection->getColumnCreateByDescribe($columnInfo);
+        }
+
         $type = $columnInfo['DATA_TYPE'];
         if (is_numeric($columnInfo['LENGTH']) && $columnInfo['LENGTH'] > 0) {
             $type .= '('.$columnInfo['LENGTH'].')';
@@ -325,7 +405,8 @@ class Table extends AbstractModifier
             $this->connection->quoteInto('DEFAULT ?', $columnInfo['DEFAULT']);
         }
 
-        return sprintf('%s %s %s %s %s',
+        return sprintf(
+            '%s %s %s %s %s',
             $type,
             $columnInfo['UNSIGNED'] ? 'UNSIGNED' : '',
             $columnInfo['NULLABLE'] ? 'NULL' : 'NOT NULL',
@@ -334,102 +415,15 @@ class Table extends AbstractModifier
         );
     }
 
-    private function convertColumnDefinitionToArray($definition)
-    {
-        $pattern = "#^(?P<type>[a-z]+(?:\(\d+\))?)";
-        $pattern .= "(?:";
-        $pattern .= "(?P<unsigned>\sUNSIGNED)?";
-        $pattern .= "(?P<nullable>\s(?:NOT\s)?NULL)?";
-        $pattern .= "(?P<default>\sDEFAULT\s[^\s]+)?";
-        $pattern .= "(?P<auto_increment>\sAUTO_INCREMENT)?";
-        $pattern .= "(?P<primary_key>\sPRIMARY\sKEY)?";
-        $pattern .= "(?P<after>\sAFTER\s[^\s]+)?";
-        $pattern .= ")?#i";
-
-        $matches = [];
-        if (preg_match($pattern, $definition, $matches) === false || !isset($matches['type'])) {
-            return $definition;
-        }
-
-        $typeMap = [
-            DdlTable::TYPE_SMALLINT => ['TINYINT', 'SMALLINT'],
-            DdlTable::TYPE_INTEGER => ['INT'],
-            DdlTable::TYPE_FLOAT => ['FLOAT'],
-            DdlTable::TYPE_DECIMAL => ['DECIMAL'],
-            DdlTable::TYPE_DATETIME => ['DATETIME'],
-            DdlTable::TYPE_TEXT => ['VARCHAR', 'TEXT', 'LONGTEXT'],
-            DdlTable::TYPE_BLOB => ['BLOB', 'LONGBLOB'],
-        ];
-
-        $size = null;
-        $type = $matches['type'];
-        if (strpos($type, '(') !== false) {
-            $size = str_replace(['(', ')'], '', substr($type, strpos($type, '(')));
-            $type = substr($type, 0, strpos($type, '('));
-        }
-
-        $definitionData = [];
-        foreach ($typeMap as $ddlType => $types) {
-            if (!in_array(strtoupper($type), $types)) {
-                continue;
-            }
-
-            if ($ddlType == DdlTable::TYPE_TEXT || $ddlType == DdlTable::TYPE_BLOB) {
-                $definitionData['length'] = $size;
-            }
-
-            if ($ddlType == DdlTable::TYPE_DECIMAL && strpos($size, ',') !== false) {
-                list($precision, $scale) = array_map('trim', explode(',', $size, 2));
-                $definitionData['precision'] = (int)$precision;
-                $definitionData['scale'] = (int)$scale;
-            }
-
-            $definitionData['type'] = $ddlType;
-            break;
-        }
-
-        if (!empty($matches['unsigned'])) {
-            $definitionData['unsigned'] = true;
-        }
-
-        if (!empty($matches['nullable'])) {
-            $definitionData['nullable'] = strpos(strtolower($matches['nullable']), 'not null') ==! false
-                ? false : true;
-        }
-
-        if (!empty($matches['default'])) {
-            list(,$defaultData) = explode(' ', trim($matches['default']), 2);
-            $defaultData = trim($defaultData);
-            $definitionData['default'] = strtolower($defaultData) == 'null' ? null : $defaultData;
-        }
-
-        if (!empty($matches['auto_increment'])) {
-            $definitionData['auto_increment'] = true;
-        }
-
-        if (!empty($matches['primary_key'])) {
-            $definitionData['primary'] = true;
-        }
-
-        if (!empty($matches['after'])) {
-            list(,$afterColumn) = explode(' ', trim($matches['after']), 2);
-            $definitionData['after'] = trim($afterColumn, " \t\n\r\0\x0B`");
-        }
-
-        $definitionData['comment'] = 'field';
-
-        return $definitionData;
-    }
-
     //########################################
 
-    private function addQueryToCommit($key, $queryPattern, array $columns, $definition = NULL)
+    private function addQueryToCommit($key, $queryPattern, array $columns, $definition = null)
     {
         foreach ($columns as &$column) {
             $column = $this->connection->quoteIdentifier($column);
         }
 
-        $queryArgs = !is_null($definition) ? array_merge($columns, array($definition)) : $columns;
+        $queryArgs = $definition !== null ? array_merge($columns, [$definition]) : $columns;
         $tempQuery = vsprintf($queryPattern, $queryArgs);
 
         if (isset($this->sqlForCommit[$key]) && in_array($tempQuery, $this->sqlForCommit[$key])) {
@@ -443,16 +437,15 @@ class Table extends AbstractModifier
     private function checkColumnsBeforeCommit()
     {
         foreach ($this->columnsForCheckBeforeCommit as $index => $columnForCheck) {
-
             if ($this->isColumnExists($columnForCheck)) {
                 unset($this->columnsForCheckBeforeCommit[$index]);
                 continue;
             }
 
             foreach ($this->sqlForCommit as $key => $sqlData) {
-                if (!is_array($sqlData) || in_array($key, array(self::COMMIT_KEY_ADD_INDEX,
+                if (!is_array($sqlData) || in_array($key, [self::COMMIT_KEY_ADD_INDEX,
                                                                 self::COMMIT_KEY_DROP_INDEX,
-                                                                self::COMMIT_KEY_DROP_COLUMN))
+                                                                self::COMMIT_KEY_DROP_COLUMN])
                 ) {
                     continue;
                 }
@@ -480,21 +473,19 @@ class Table extends AbstractModifier
             return $this;
         }
 
-        $order = array(
+        $order = [
             self::COMMIT_KEY_ADD_COLUMN,
             self::COMMIT_KEY_CHANGE_COLUMN,
             self::COMMIT_KEY_DROP_COLUMN,
             self::COMMIT_KEY_ADD_INDEX,
             self::COMMIT_KEY_DROP_INDEX
-        );
+        ];
 
         $tempSql = '';
         $sep = '';
 
         foreach ($order as $orderKey) {
-
             foreach ($this->sqlForCommit as $key => $sqlData) {
-
                 if ($orderKey != $key || !is_array($sqlData)) {
                     continue;
                 }
@@ -504,13 +495,14 @@ class Table extends AbstractModifier
             }
         }
 
-        $resultSql = sprintf('ALTER TABLE %s %s',
+        $resultSql = sprintf(
+            'ALTER TABLE %s %s',
             $this->connection->quoteIdentifier($this->tableName),
             $tempSql
         );
 
         if (!$this->checkColumnsBeforeCommit()) {
-            $this->sqlForCommit = array();
+            $this->sqlForCommit = [];
             $failedColumns = implode("', '", $this->columnsForCheckBeforeCommit);
 
             throw new Setup(
@@ -520,7 +512,7 @@ class Table extends AbstractModifier
         }
 
         $this->runQuery($resultSql);
-        $this->sqlForCommit = array();
+        $this->sqlForCommit = [];
         return $this;
     }
 

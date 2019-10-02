@@ -8,12 +8,16 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database;
 
+/**
+ * Class DatabaseTableGrid
+ * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database
+ */
 class DatabaseTableGrid extends Table
 {
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Grid $grid */
-        $grid = $this->createBlock('ControlPanel\Tabs\Database\Table\Grid');
+        $grid = $this->createBlock('ControlPanel_Tabs_Database_Table_Grid');
         $this->setAjaxContent($grid->toHtml());
         return $this->getResult();
     }

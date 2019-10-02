@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
+/**
+ * Class GetRecent
+ * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Category
+ */
 class GetRecent extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {
 
@@ -20,13 +24,17 @@ class GetRecent extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $categoryType = $this->getRequest()->getParam('category_type');
         $selectedCategory = $this->getRequest()->getParam('selected_category');
 
-        if (in_array($categoryType, $this->getHelper('Component\Ebay\Category')->getEbayCategoryTypes())) {
-            $categories = $this->getHelper('Component\Ebay\Category')->getRecent(
-                $marketplaceId, $categoryType, $selectedCategory
+        if (in_array($categoryType, $this->getHelper('Component_Ebay_Category')->getEbayCategoryTypes())) {
+            $categories = $this->getHelper('Component_Ebay_Category')->getRecent(
+                $marketplaceId,
+                $categoryType,
+                $selectedCategory
             );
         } else {
-            $categories = $this->getHelper('Component\Ebay\Category')->getRecent(
-                $accountId, $categoryType, $selectedCategory
+            $categories = $this->getHelper('Component_Ebay_Category')->getRecent(
+                $accountId,
+                $categoryType,
+                $selectedCategory
             );
         }
 

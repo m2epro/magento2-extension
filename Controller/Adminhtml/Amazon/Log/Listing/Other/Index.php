@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing\Other;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
+/**
+ * Class Index
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing\Other
+ */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
 {
     //########################################
@@ -20,8 +24,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
         \Magento\Framework\Filter\FilterManager $filterManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         Context $context
-    )
-    {
+    ) {
         $this->filterManager = $filterManager;
 
         parent::__construct($amazonFactory, $context);
@@ -30,7 +33,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
     public function execute()
     {
         $listingId = $this->getRequest()->getParam(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid::LISTING_ID_FIELD, false
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid::LISTING_ID_FIELD,
+            false
         );
         $isListings = $this->getRequest()->getParam('listings', false);
 
@@ -39,7 +43,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
         } elseif ($listingId) {
             $listingOther = $this->amazonFactory->getObjectLoaded('Listing\Other', $listingId, null, false);
 
-            if (is_null($listingOther)) {
+            if ($listingOther === null) {
                 $this->getMessageManager()->addErrorMessage($this->__('3rd Party Listing does not exist.'));
                 return $this->_redirect('*/*/index');
             }
@@ -54,7 +58,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
             $this->getResult()->getConfig()->getTitle()->prepend($this->__('Listings Logs & Events'));
         }
 
-        $this->addContent($this->createBlock('Amazon\Log\Listing\Other\View'));
+        $this->addContent($this->createBlock('Amazon_Log_Listing_Other_View'));
 
         return $this->getResult();
     }

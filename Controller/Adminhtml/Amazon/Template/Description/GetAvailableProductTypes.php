@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
+/**
+ * Class GetAvailableProductTypes
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description
+ */
 class GetAvailableProductTypes extends Description
 {
     //########################################
@@ -19,7 +23,7 @@ class GetAvailableProductTypes extends Description
         $marketplaceId = (int)$this->getRequest()->getPost('marketplace_id');
         $browsenodeId  = $this->getRequest()->getPost('browsenode_id');
 
-        $tableName = $this->getHelper('Module\Database\Structure')
+        $tableName = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_amazon_dictionary_category_product_data');
 
         $queryStmt = $this->resourceConnection->getConnection()
@@ -29,18 +33,17 @@ class GetAvailableProductTypes extends Description
             ->where('browsenode_id = ?', $browsenodeId)
             ->query();
 
-        $cachedProductTypes = array();
+        $cachedProductTypes = [];
 
         while ($row = $queryStmt->fetch()) {
-
-            $cachedProductTypes[$row['product_data_nick']] = array(
+            $cachedProductTypes[$row['product_data_nick']] = [
                 'product_data_nick'   => $row['product_data_nick'],
                 'is_applicable'       => $row['is_applicable'],
                 'required_attributes' => $row['required_attributes']
-            );
+            ];
         }
 
-        $model = $this->modelFactory->getObject('Amazon\Marketplace\Details');
+        $model = $this->modelFactory->getObject('Amazon_Marketplace_Details');
         $model->setMarketplaceId($marketplaceId);
 
         $allAvailableProductTypes = $model->getProductData();
@@ -49,14 +52,12 @@ class GetAvailableProductTypes extends Description
             array_keys($cachedProductTypes)
         );
 
-        if (count($shouldBeUpdatedProductTypes) > 0) {
-
+        if (!empty($shouldBeUpdatedProductTypes)) {
             $result = $this->updateProductDataNicksInfo($marketplaceId, $browsenodeId, $shouldBeUpdatedProductTypes);
             $cachedProductTypes = array_merge($cachedProductTypes, $result);
         }
 
         foreach ($cachedProductTypes as $nick => &$productTypeInfo) {
-
             if (!$productTypeInfo['is_applicable']) {
                 unset($cachedProductTypes[$nick]);
                 continue;
@@ -89,33 +90,36 @@ class GetAvailableProductTypes extends Description
             ->getCachedObjectLoaded('Marketplace', $marketplaceId)
             ->getNativeId();
 
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('category','get','productsDataInfo',
-            array(
+        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
+        $connectorObj = $dispatcherObject->getVirtualConnector(
+            'category',
+            'get',
+            'productsDataInfo',
+            [
                 'marketplace'        => $marketplaceNativeId,
                 'browsenode_id'      => $browsenodeId,
                 'product_data_nicks' => $productDataNicks
-            ));
+            ]
+        );
         $dispatcherObject->process($connectorObj);
         $response = $connectorObj->getResponseData();
 
         if ($response === false || empty($response['info'])) {
-            return array();
+            return [];
         }
 
-        $insertsData = array();
+        $insertsData = [];
         foreach ($response['info'] as $dataNickKey => $info) {
-
-            $insertsData[$dataNickKey] = array(
+            $insertsData[$dataNickKey] = [
                 'marketplace_id'      => $marketplaceId,
                 'browsenode_id'       => $browsenodeId,
                 'product_data_nick'   => $dataNickKey,
                 'is_applicable'       => (int)$info['applicable'],
                 'required_attributes' => $this->getHelper('Data')->jsonEncode($info['required_attributes'])
-            );
+            ];
         }
 
-        $tableName = $this->getHelper('Module\Database\Structure')
+        $tableName = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_amazon_dictionary_category_product_data');
         $this->resourceConnection->getConnection()->insertMultiple($tableName, $insertsData);
 
@@ -124,7 +128,7 @@ class GetAvailableProductTypes extends Description
 
     private function getGroupedProductDataNicksInfo(array $cachedProductTypes)
     {
-        $groupedData = array();
+        $groupedData = [];
 
         foreach ($cachedProductTypes as $nick => $productTypeInfo) {
             $groupedData[$productTypeInfo['group']][$productTypeInfo['title']] = $productTypeInfo;
@@ -140,21 +144,20 @@ class GetAvailableProductTypes extends Description
 
     private function getRecentProductDataNicksInfo($marketplaceId, array $cachedProductTypes)
     {
-        $recentProductDataNicks = array();
+        $recentProductDataNicks = [];
 
-        foreach ($this->getHelper('Component\Amazon\ProductData')->getRecent($marketplaceId) as $nick) {
-
+        foreach ($this->getHelper('Component_Amazon_ProductData')->getRecent($marketplaceId) as $nick) {
             if (!isset($cachedProductTypes[$nick]) || !$cachedProductTypes[$nick]['is_applicable']) {
                 continue;
             }
 
-            $recentProductDataNicks[$nick] = array(
+            $recentProductDataNicks[$nick] = [
                 'title'               => $cachedProductTypes[$nick]['title'],
                 'group'               => $cachedProductTypes[$nick]['group'],
                 'product_data_nick'   => $nick,
                 'is_applicable'       => 1,
                 'required_attributes' => $cachedProductTypes[$nick]['required_attributes']
-            );
+            ];
         }
 
         return $recentProductDataNicks;

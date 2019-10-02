@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Moving;
 
+/**
+ * Class MoveToListing
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing\Moving
+ */
 class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
 {
     //########################################
@@ -23,7 +27,9 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
 
         /** @var \Ess\M2ePro\Model\Listing $listingInstance */
         $listingInstance = $this->parentFactory->getCachedObjectLoaded(
-            $componentMode,'Listing',$listingId
+            $componentMode,
+            'Listing',
+            $listingId
         );
 
         $logModel = $this->activeRecordFactory->getObject('Listing\Log');
@@ -41,17 +47,16 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
 
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProductInstance */
             $listingProductInstance = $this->parentFactory
-                ->getObjectLoaded($componentMode,'Listing\Product',$listingProductId);
+                ->getObjectLoaded($componentMode, 'Listing\Product', $listingProductId);
 
             if ($listingProductInstance->isSetProcessingLock() ||
                 $listingProductInstance->isSetProcessingLock('in_action')) {
-
                 $logModel->addProductMessage(
                     $listingProductInstance->getListingId(),
                     $listingProductInstance->getProductId(),
                     $listingProductInstance->getId(),
                     \Ess\M2ePro\Helper\Data::INITIATOR_USER,
-                    NULL,
+                    null,
                     \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
                     // M2ePro_TRANSLATIONS
                     // Product was not Moved because it is in progress state now
@@ -65,13 +70,12 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
             }
 
             if (!$this->productCanBeMoved($listingProductInstance->getProductId(), $listingInstance)) {
-
                 $logModel->addProductMessage(
                     $listingProductInstance->getListingId(),
                     $listingProductInstance->getProductId(),
                     $listingProductInstance->getId(),
                     \Ess\M2ePro\Helper\Data::INITIATOR_USER,
-                    NULL,
+                    null,
                     \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
                     // M2ePro_TRANSLATIONS
                     // Product was not Moved
@@ -89,7 +93,7 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
                 $listingProductInstance->getProductId(),
                 $listingProductInstance->getId(),
                 \Ess\M2ePro\Helper\Data::INITIATOR_USER,
-                NULL,
+                null,
                 \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
                 // M2ePro_TRANSLATIONS
                 // Product was successfully Moved
@@ -103,7 +107,7 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
                 $listingProductInstance->getProductId(),
                 $listingProductInstance->getId(),
                 \Ess\M2ePro\Helper\Data::INITIATOR_USER,
-                NULL,
+                null,
                 \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
                 // M2ePro_TRANSLATIONS
                 // Product was successfully Moved
@@ -145,9 +149,9 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
         $variationUpdaterObject->afterMassProcessEvent();
 
         if ($errors == 0) {
-            $this->setJsonContent(array('result'=>'success'));
+            $this->setJsonContent(['result'=>'success']);
         } else {
-            $this->setJsonContent(array('result'=>'error', 'errors'=>$errors));
+            $this->setJsonContent(['result'=>'error', 'errors'=>$errors]);
         }
 
         return $this->getResult();
@@ -161,18 +165,18 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
         // ---------------------------------------
         $dbSelect = $connection->select()
             ->from(
-                $this->activeRecordFactory->getObject('Amazon\Listing\Product')->getResource()->getMainTable(),
-                array('listing_product_id', 'sku')
+                $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable(),
+                ['listing_product_id', 'sku']
             )
-            ->where('`variation_parent_id` = ?',$parentListingProductId);
+            ->where('`variation_parent_id` = ?', $parentListingProductId);
         $products = $connection->fetchPairs($dbSelect);
 
         if (!empty($products)) {
             $connection->update(
                 $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable(),
-                array(
+                [
                     'listing_id' => $listing->getId()
-                ),
+                ],
                 '`id` IN (' . implode(',', array_keys($products)) . ')'
             );
         }
@@ -180,19 +184,19 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
         $dbSelect = $connection->select()
             ->from(
                 $this->activeRecordFactory->getObject('Amazon\Item')->getResource()->getMainTable(),
-                array('id')
+                ['id']
             )
             ->where('`account_id` = ?', $listing->getAccountId())
-            ->where('`marketplace_id` = ?',$listing->getMarketplaceId())
+            ->where('`marketplace_id` = ?', $listing->getMarketplaceId())
             ->where('`sku` IN (?)', implode(',', array_values($products)));
         $items = $connection->fetchCol($dbSelect);
 
         if (!empty($items)) {
             $connection->update(
                 $this->activeRecordFactory->getObject('Amazon\Item')->getResource()->getMainTable(),
-                array(
+                [
                     'store_id' => $listing->getStoreId()
-                ),
+                ],
                 '`id` IN ('.implode(',', $items).')'
             );
         }

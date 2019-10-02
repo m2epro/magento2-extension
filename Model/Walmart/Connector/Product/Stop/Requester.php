@@ -8,13 +8,17 @@
 
 namespace Ess\M2ePro\Model\Walmart\Connector\Product\Stop;
 
+/**
+ * Class Requester
+ * @package Ess\M2ePro\Model\Walmart\Connector\Product\Stop
+ */
 class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
 {
     // ########################################
 
     public function getCommand()
     {
-        return array('product', 'update', 'entities');
+        return ['product', 'update', 'entities'];
     }
 
     // ########################################
@@ -61,7 +65,7 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
         $validationResult = $validator->validate();
 
         if (!$validationResult && $this->listingProduct->isDeleted()) {
-            if (!is_null($parentListingProduct)) {
+            if ($parentListingProduct !== null) {
                 $parentListingProduct->load($parentListingProduct->getId());
 
                 /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartParentListingProduct */
@@ -73,8 +77,7 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
         }
 
         foreach ($validator->getMessages() as $messageData) {
-
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData($messageData['text'], $messageData['type']);
 
             $this->getLogger()->logListingProductMessage(
@@ -123,12 +126,10 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
         if (!empty($this->params['remove'])) {
             $walmartListingProduct->getVariationManager()->switchModeToAnother();
 
-            $this->listingProduct->addData(array(
+            $this->listingProduct->addData([
                 'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
-            ));
+            ]);
             $this->listingProduct->save();
-
-            $this->getProcessingRunner()->stop();
 
             foreach ($childListingsProducts as $childListingProduct) {
                 if ($childListingProduct->isNotListed() ||
@@ -146,14 +147,14 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
             return true;
         }
 
-        $childListingsProductsIds = array();
+        $childListingsProductsIds = [];
         foreach ($filteredByStatusNotLockedChildListingProducts as $listingProduct) {
             $childListingsProductsIds[] = $listingProduct->getId();
         }
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('id', array('in' => $childListingsProductsIds));
+        $listingProductCollection->addFieldToFilter('id', ['in' => $childListingsProductsIds]);
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $processChildListingsProducts */
         $processChildListingsProducts = $listingProductCollection->getItems();
@@ -161,11 +162,13 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
             return true;
         }
 
-        $dispatcherParams = array_merge($this->params, array('is_parent_action' => true));
+        $dispatcherParams = array_merge($this->params, ['is_parent_action' => true]);
 
-        $dispatcherObject = $this->modelFactory->getObject('Walmart\Connector\Product\Dispatcher');
+        $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Product_Dispatcher');
         $processStatus = $dispatcherObject->process(
-            $this->getActionType(), $processChildListingsProducts, $dispatcherParams
+            $this->getActionType(),
+            $processChildListingsProducts,
+            $dispatcherParams
         );
 
         if ($processStatus == \Ess\M2ePro\Helper\Data::STATUS_ERROR) {
@@ -183,7 +186,7 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
      */
     protected function filterChildListingProductsByStatus(array $listingProducts)
     {
-        $resultListingProducts = array();
+        $resultListingProducts = [];
 
         foreach ($listingProducts as $id => $childListingProduct) {
             if ((!$childListingProduct->isListed() || !$childListingProduct->isStoppable()) &&
@@ -221,7 +224,7 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
 
         // M2ePro_TRANSLATIONS
         // Another Action is being processed. Try again when the Action is completed.
-        $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
             'Stop and Remove action is not supported if Child Products are in Action.',
             \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR

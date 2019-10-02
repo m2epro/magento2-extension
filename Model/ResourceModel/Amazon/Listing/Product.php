@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Listing;
 
+/**
+ * Class Product
+ * @package Ess\M2ePro\Model\ResourceModel\Amazon\Listing
+ */
 class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
@@ -23,8 +27,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         $connectionName = null
-    )
-    {
+    ) {
         parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
 
         $this->amazonFactory = $amazonFactory;
@@ -40,9 +43,10 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     //########################################
 
-    public function getChangedItems(array $attributes,
-                                    $withStoreFilter = false)
-    {
+    public function getChangedItems(
+        array $attributes,
+        $withStoreFilter = false
+    ) {
         return $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getChangedItems(
             $attributes,
             \Ess\M2ePro\Helper\Component\Amazon::NICK,
@@ -50,9 +54,10 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         );
     }
 
-    public function getChangedItemsByListingProduct(array $attributes,
-                                                    $withStoreFilter = false)
-    {
+    public function getChangedItemsByListingProduct(
+        array $attributes,
+        $withStoreFilter = false
+    ) {
         return $this->activeRecordFactory->getObject('Listing\Product')
             ->getResource()->getChangedItemsByListingProduct(
                 $attributes,
@@ -61,9 +66,10 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
             );
     }
 
-    public function getChangedItemsByVariationOption(array $attributes,
-                                                     $withStoreFilter = false)
-    {
+    public function getChangedItemsByVariationOption(
+        array $attributes,
+        $withStoreFilter = false
+    ) {
         return $this->activeRecordFactory->getObject('Listing\Product')
             ->getResource()->getChangedItemsByVariationOption(
                 $attributes,
@@ -76,91 +82,104 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     public function setSynchStatusNeedByDescriptionTemplate($newData, $oldData, $listingProduct)
     {
-        $newTemplateData = array();
+        $newTemplateData = [];
         if ($newData['template_description_id']) {
-
             $template = $this->amazonFactory->getCachedObjectLoaded(
-                'Template\Description', $newData['template_description_id'], null, false
+                'Template\Description',
+                $newData['template_description_id'],
+                null,
+                false
             );
-            !is_null($template) && $newTemplateData = $template->getDataSnapshot();
+            $template !== null && $newTemplateData = $template->getDataSnapshot();
         }
 
-        $oldTemplateData = array();
+        $oldTemplateData = [];
         if ($oldData['template_description_id']) {
-
             $template = $this->amazonFactory->getCachedObjectLoaded(
-                'Template\Description', $oldData['template_description_id'], null, false
+                'Template\Description',
+                $oldData['template_description_id'],
+                null,
+                false
             );
-            !is_null($template) && $oldTemplateData = $template->getDataSnapshot();
+            $template !== null && $oldTemplateData = $template->getDataSnapshot();
         }
 
-        $this->activeRecordFactory->getObject('Amazon\Template\Description')->getResource()->setSynchStatusNeed(
+        $this->activeRecordFactory->getObject('Amazon_Template_Description')->getResource()->setSynchStatusNeed(
             $newTemplateData,
             $oldTemplateData,
-            array($listingProduct)
+            [$listingProduct]
         );
     }
 
     public function setSynchStatusNeedByShippingTemplate($newData, $oldData, $listingProduct, $modelName, $fieldName)
     {
-        $newTemplateData = array();
+        $newTemplateData = [];
         if (!empty($newData[$fieldName])) {
-
             $template = $this->activeRecordFactory->getCachedObjectLoaded(
-                $modelName, $newData[$fieldName], null, false
+                $modelName,
+                $newData[$fieldName],
+                null,
+                false
             );
-            !is_null($template) && $newTemplateData = $template->getDataSnapshot();
+            $template !== null && $newTemplateData = $template->getDataSnapshot();
         }
 
-        $oldTemplateData = array();
+        $oldTemplateData = [];
         if (!empty($oldData[$fieldName])) {
-
             $template = $this->activeRecordFactory->getCachedObjectLoaded(
-                $modelName, $oldData[$fieldName], null, false
+                $modelName,
+                $oldData[$fieldName],
+                null,
+                false
             );
-            !is_null($template) && $oldTemplateData = $template->getDataSnapshot();
+            $template !== null && $oldTemplateData = $template->getDataSnapshot();
         }
 
         $this->activeRecordFactory->getObject($modelName)->getResource()->setSynchStatusNeed(
             $newTemplateData,
             $oldTemplateData,
-            array($listingProduct)
+            [$listingProduct]
         );
     }
 
     public function setSynchStatusNeedByProductTaxCodeTemplate($newData, $oldData, $listingProduct)
     {
-        $newTemplateData = array();
+        $newTemplateData = [];
         if ($newData['template_product_tax_code_id']) {
-
             $template = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Amazon\Template\ProductTaxCode', $newData['template_product_tax_code_id'], NULL, array('template')
+                'Amazon_Template_ProductTaxCode',
+                $newData['template_product_tax_code_id'],
+                null,
+                ['template']
             );
             $template && $newTemplateData = $template->getDataSnapshot();
         }
 
-        $oldTemplateData = array();
+        $oldTemplateData = [];
         if ($oldData['template_product_tax_code_id']) {
-
             $template = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Amazon\Template\ProductTaxCode', $oldData['template_product_tax_code_id'], NULL, array('template')
+                'Amazon_Template_ProductTaxCode',
+                $oldData['template_product_tax_code_id'],
+                null,
+                ['template']
             );
             $template && $oldTemplateData = $template->getDataSnapshot();
         }
 
-        $this->activeRecordFactory->getObject('Amazon\Template\ProductTaxCode')->getResource()->setSynchStatusNeed(
+        $this->activeRecordFactory->getObject('Amazon_Template_ProductTaxCode')->getResource()->setSynchStatusNeed(
             $newTemplateData,
             $oldTemplateData,
-            array($listingProduct)
+            [$listingProduct]
         );
     }
 
     //########################################
 
-    public function getProductsDataBySkus(array $skus = array(),
-                                          array $filters = array(),
-                                          array $columns = array())
-    {
+    public function getProductsDataBySkus(
+        array $skus = [],
+        array $filters = [],
+        array $columns = []
+    ) {
         $result = [];
         $skuWithQuotes = false;
 
@@ -174,17 +193,18 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         $skus = (empty($skus) || !$skuWithQuotes) ? [$skus] : array_chunk($skus, 500);
 
         foreach ($skus as $skusChunk) {
-
             $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
             $listingProductCollection->getSelect()->joinLeft(
-                array('l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()),
+                ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
                 'l.id = main_table.listing_id',
-                array()
+                []
             );
 
             if (!empty($skusChunk)) {
-                $skusChunk = array_map(function($el){ return (string)$el; }, $skusChunk);
-                $listingProductCollection->addFieldToFilter('sku', array('in' => array_unique($skusChunk)));
+                $skusChunk = array_map(function ($el) {
+                    return (string)$el;
+                }, $skusChunk);
+                $listingProductCollection->addFieldToFilter('sku', ['in' => array_unique($skusChunk)]);
             }
 
             if (!empty($filters)) {

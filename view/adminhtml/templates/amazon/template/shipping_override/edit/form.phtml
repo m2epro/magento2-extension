@@ -1,4 +1,12 @@
 <?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
 /** @var $block \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingOverride\Edit\Form */
 
 $block->css->add("
@@ -72,7 +80,7 @@ $block->css->add("
         </td>
         <td>
                 <span class="shipping-override-rule-currency" style="line-height: 33px;">
-                    <?php if (!empty($this->formData['marketplace_id'])) { ?>
+                    <?php if (!empty($block->formData['marketplace_id'])) { ?>
                         <?php echo $block->getHelper('Data')->escapeHtml($block->getActiveRecordFactory()->getCachedObjectLoaded('Marketplace', $block->formData['marketplace_id'])->getChildObject()->getCurrency()) ?>
                     <?php } ?>
                 </span>

@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
+/**
+ * Class GoToWalmart
+ * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Order
+ */
 class GoToWalmart extends Order
 {
     public function execute()
@@ -19,13 +23,14 @@ class GoToWalmart extends Order
         /** @var $order \Ess\M2ePro\Model\Order */
         $order = $this->walmartFactory->getObjectLoaded('Order', $magentoOrderId, 'magento_order_id');
 
-        if (is_null($order->getId())) {
+        if ($order->getId() === null) {
             $this->messageManager->addError($this->__('Order does not exist.'));
             return $this->_redirect('*/walmart_order/index');
         }
 
         $url = $this->getHelper('Component\Walmart')->getOrderUrl(
-            $order->getChildObject()->getWalmartOrderId(), $order->getMarketplaceId()
+            $order->getChildObject()->getWalmartOrderId(),
+            $order->getMarketplaceId()
         );
 
         return $this->_redirect($url);

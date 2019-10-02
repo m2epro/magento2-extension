@@ -8,14 +8,16 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Product;
 
+/**
+ * Class Grid
+ * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Product
+ */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     private $listing;
 
     protected $magentoProductCollectionFactory;
     protected $type;
-    protected $visibility;
-    protected $status;
     protected $websiteFactory;
 
     //########################################
@@ -23,18 +25,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Catalog\Model\Product\Type $type,
-        \Magento\Catalog\Model\Product\Visibility $visibility,
-        \Magento\Catalog\Model\Product\Attribute\Source\Status $status,
         \Magento\Store\Model\WebsiteFactory $websiteFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->type = $type;
-        $this->visibility = $visibility;
-        $this->status = $status;
         $this->websiteFactory = $websiteFactory;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -68,22 +65,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
     protected function _prepareCollection()
     {
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create()
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('type_id');
 
-        /**
-         * We have to use Admin Store view for collection. Otherwise magento will use index table for price column
-         * vendor/magento/module-catalog/Model/ResourceModel/Product/Collection.php
-         * setOrder() | addAttributeToSort()
-         */
-        $collection->setStoreId(\Magento\Store\Model\Store::DEFAULT_STORE_ID);
-        $collection->joinStockItem(array(
-            'qty'         => 'qty',
-            'is_in_stock' => 'is_in_stock'
-        ));
+        $collection->setStoreId($this->listing->getStoreId());
+        $collection->joinStockItem();
 
         // ---------------------------------------
         $collection->getSelect()->distinct();
@@ -94,36 +83,46 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $store = $this->_getStore();
 
         if ($store->getId()) {
-            $collection->joinAttribute('name',
+            $collection->joinAttribute(
+                'name',
                 'catalog_product/name',
                 'entity_id',
                 null,
                 'inner',
-                0);
-            $collection->joinAttribute('status',
+                0
+            );
+            $collection->joinAttribute(
+                'status',
                 'catalog_product/status',
                 'entity_id',
                 null,
                 'inner',
-                $store->getId());
-            $collection->joinAttribute('visibility',
+                $store->getId()
+            );
+            $collection->joinAttribute(
+                'visibility',
                 'catalog_product/visibility',
                 'entity_id',
                 null,
                 'inner',
-                $store->getId());
-            $collection->joinAttribute('price',
+                $store->getId()
+            );
+            $collection->joinAttribute(
+                'price',
                 'catalog_product/price',
                 'entity_id',
                 null,
                 'left',
-                $store->getId());
-            $collection->joinAttribute('thumbnail',
+                $store->getId()
+            );
+            $collection->joinAttribute(
+                'thumbnail',
                 'catalog_product/thumbnail',
                 'entity_id',
                 null,
                 'left',
-                0);
+                0
+            );
         } else {
             $collection->addAttributeToSelect('price');
             $collection->addAttributeToSelect('status');
@@ -140,39 +139,37 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         }
 
         if ($hideParam || isset($this->listing['id'])) {
-
             $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
             $dbExcludeSelect = $collection->getConnection()
                 ->select()
                 ->from($lpTable, new \Zend_Db_Expr('DISTINCT `product_id`'));
 
             if ($hideParam) {
-
                 $lTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
                 $dbExcludeSelect->join(
-                    array('l' => $lTable),
-                    '`l`.`id` = `listing_id`', NULL
+                    ['l' => $lTable],
+                    '`l`.`id` = `listing_id`',
+                    null
                 );
 
                 $dbExcludeSelect->where('`l`.`account_id` = ?', $this->listing['account_id']);
                 $dbExcludeSelect->where('`l`.`marketplace_id` = ?', $this->listing['marketplace_id']);
                 $dbExcludeSelect->where('`l`.`component_mode` = ?', \Ess\M2ePro\Helper\Component\Amazon::NICK);
-
             } else {
                 $dbExcludeSelect->where('`listing_id` = ?', (int)$this->listing['id']);
             }
 
             $collection->getSelect()
-                ->joinLeft(array('sq' => $dbExcludeSelect), 'sq.product_id = e.entity_id', array())
+                ->joinLeft(['sq' => $dbExcludeSelect], 'sq.product_id = e.entity_id', [])
                 ->where('sq.product_id IS NULL');
         }
         // ---------------------------------------
 
         $collection->addFieldToFilter(
-            array(array(
+            [[
                 'attribute' => 'type_id',
                 'in' => $this->getHelper('Magento\Product')->getOriginKnownTypes()
-            ))
+            ]]
         );
 
         $this->setCollection($collection);
@@ -184,27 +181,27 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('product_id', array(
+        $this->addColumn('product_id', [
             'header' => $this->__('ID'),
             'align' => 'right',
             'width' => '100px',
             'type' => 'number',
             'index' => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => array($this, 'callbackColumnProductId')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductId']
+        ]);
 
-        $this->addColumn('name', array(
+        $this->addColumn('name', [
             'header' => $this->__('Title'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'name',
             'filter_index' => 'name',
             'escape'       => false,
-            'frame_callback' => array($this, 'callbackColumnProductTitle')
-        ));
+            'frame_callback' => [$this, 'callbackColumnProductTitle']
+        ]);
 
-        $this->addColumn('type', array(
+        $this->addColumn('type', [
             'header' => $this->__('Type'),
             'align' => 'left',
             'width' => '90px',
@@ -213,9 +210,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'index' => 'type_id',
             'filter_index' => 'type_id',
             'options' => $this->getProductTypes()
-        ));
+        ]);
 
-        $this->addColumn('is_in_stock', array(
+        $this->addColumn('is_in_stock', [
             'header' => $this->__('Stock Availability'),
             'align' => 'left',
             'width' => '90px',
@@ -223,25 +220,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'sortable' => false,
             'index' => 'is_in_stock',
             'filter_index' => 'is_in_stock',
-            'options' => array(
+            'options' => [
                 '1' => $this->__('In Stock'),
                 '0' => $this->__('Out of Stock')
-            ),
-            'frame_callback' => array($this, 'callbackColumnIsInStock')
-        ));
+            ],
+            'frame_callback' => [$this, 'callbackColumnIsInStock']
+        ]);
 
-        $this->addColumn('sku', array(
+        $this->addColumn('sku', [
             'header' => $this->__('SKU'),
             'align' => 'left',
             'width' => '90px',
             'type' => 'text',
             'index' => 'sku',
             'filter_index' => 'sku'
-        ));
+        ]);
 
         $store = $this->_getStore();
 
-        $this->addColumn('price', array(
+        $this->addColumn('price', [
             'header' => $this->__('Price'),
             'align' => 'right',
             'width' => '100px',
@@ -250,20 +247,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'currency_code' => $store->getBaseCurrency()->getCode(),
             'index' => 'price',
             'filter_index' => 'price',
-            'frame_callback' => array($this, 'callbackColumnPrice')
-        ));
+            'frame_callback' => [$this, 'callbackColumnPrice']
+        ]);
 
-        $this->addColumn('qty', array(
+        $this->addColumn('qty', [
             'header' => $this->__('QTY'),
             'align' => 'right',
             'width' => '100px',
             'type' => 'number',
             'index' => 'qty',
             'filter_index' => 'qty',
-            'frame_callback' => array($this, 'callbackColumnQty')
-        ));
+            'frame_callback' => [$this, 'callbackColumnQty']
+        ]);
 
-        $this->addColumn('visibility', array(
+        $this->addColumn('visibility', [
             'header' => $this->__('Visibility'),
             'align' => 'left',
             'width' => '90px',
@@ -271,10 +268,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'sortable' => false,
             'index' => 'visibility',
             'filter_index' => 'visibility',
-            'options' => $this->visibility->getOptionArray()
-        ));
+            'options' => \Magento\Catalog\Model\Product\Visibility::getOptionArray()
+        ]);
 
-        $this->addColumn('status', array(
+        $this->addColumn('status', [
             'header' => $this->__('Status'),
             'align' => 'left',
             'width' => '90px',
@@ -282,13 +279,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'sortable' => false,
             'index' => 'status',
             'filter_index' => 'status',
-            'options' => $this->status->getOptionArray(),
-            'frame_callback' => array($this, 'callbackColumnStatus')
-        ));
+            'options' => \Magento\Catalog\Model\Product\Attribute\Source\Status::getOptionArray(),
+            'frame_callback' => [$this, 'callbackColumnStatus']
+        ]);
 
         if (!$this->_storeManager->isSingleStoreMode()) {
-
-            $this->addColumn('websites', array(
+            $this->addColumn('websites', [
                 'header' => $this->__('Websites'),
                 'align' => 'left',
                 'width' => '90px',
@@ -297,7 +293,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
                 'index' => 'websites',
                 'filter_index' => 'websites',
                 'options' => $this->websiteFactory->create()->getCollection()->toOptionHash()
-            ));
+            ]);
         }
 
         return parent::_prepareColumns();
@@ -370,14 +366,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         // ---------------------------------------
 
         $this->jsUrl->add(
-            $this->getUrl('*/amazon_listing_product_add/add', array('_current' => true, 'step' => null)),
+            $this->getUrl('*/amazon_listing_product_add/add', ['_current' => true, 'step' => null]),
             'add_products'
         );
 
         $this->jsUrl->add($this->getUrl('*/*/index'), 'back');
 
         $this->js->add(
-<<<JS
+            <<<JS
     require([
         'M2ePro/Amazon/Listing/Product/Add',
         'M2ePro/Listing/Product/Grid',

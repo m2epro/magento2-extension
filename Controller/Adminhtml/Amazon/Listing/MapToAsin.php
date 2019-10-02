@@ -11,6 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
+/**
+ * Class MapToAsin
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ */
 class MapToAsin extends Main
 {
     public function execute()
@@ -64,18 +68,18 @@ class MapToAsin extends Main
         }
 
         if (!empty($searchType) && !empty($searchValue)) {
-            $generalIdSearchInfo = array(
+            $generalIdSearchInfo = [
                 'is_set_automatic' => false,
                 'type'  => $searchType,
                 'value' => $searchValue,
-            );
+            ];
 
             $amazonListingProduct->setSettings('general_id_search_info', $generalIdSearchInfo);
         }
 
-        $amazonListingProduct->setData('general_id',$generalId);
-        $amazonListingProduct->setData('search_settings_status',NULL);
-        $amazonListingProduct->setData('search_settings_data',NULL);
+        $amazonListingProduct->setData('general_id', $generalId);
+        $amazonListingProduct->setData('search_settings_status', null);
+        $amazonListingProduct->setData('search_settings_data', null);
 
         $amazonListingProduct->save();
 
@@ -93,13 +97,14 @@ class MapToAsin extends Main
             } else {
                 $attributesData = $optionsData['virtual_matched_attributes'];
 
-                $matchedAttributes = array();
-                $virtualMagentoAttributes = array();
-                $virtualAmazonAttributes = array();
+                $matchedAttributes = [];
+                $virtualMagentoAttributes = [];
+                $virtualAmazonAttributes = [];
 
                 foreach ($attributesData as $key => $value) {
                     if (strpos($key, 'virtual_magento_attributes_') !== false) {
-                        $amazonAttrKey = 'virtual_magento_option_' . str_replace('virtual_magento_attributes_','',$key);
+                        $amazonAttrKey = 'virtual_magento_option_' .
+                            str_replace('virtual_magento_attributes_', '', $key);
                         $virtualMagentoAttributes[$value] = $attributesData[$amazonAttrKey];
 
                         unset($attributesData[$key]);
@@ -108,7 +113,7 @@ class MapToAsin extends Main
                     }
 
                     if (strpos($key, 'virtual_amazon_attributes_') !== false) {
-                        $amazonAttrKey = 'virtual_amazon_option_' . str_replace('virtual_amazon_attributes_','',$key);
+                        $amazonAttrKey = 'virtual_amazon_option_' . str_replace('virtual_amazon_attributes_', '', $key);
                         $virtualAmazonAttributes[$value] = $attributesData[$amazonAttrKey];
 
                         unset($attributesData[$key]);
@@ -117,7 +122,7 @@ class MapToAsin extends Main
                     }
 
                     if (strpos($key, 'magento_attributes_') !== false) {
-                        $amazonAttrKey = 'amazon_attributes_' . str_replace('magento_attributes_','',$key);
+                        $amazonAttrKey = 'amazon_attributes_' . str_replace('magento_attributes_', '', $key);
                         $matchedAttributes[$value] = $attributesData[$amazonAttrKey];
 
                         unset($attributesData[$key]);
@@ -127,7 +132,7 @@ class MapToAsin extends Main
                 }
             }
 
-            $channelVariationsSet = array();
+            $channelVariationsSet = [];
             foreach ($optionsData['variations']['set'] as $attribute => $options) {
                 $channelVariationsSet[$attribute] = array_values($options);
             }
@@ -137,14 +142,14 @@ class MapToAsin extends Main
 
             if (!empty($virtualMagentoAttributes)) {
                 $parentTypeModel->setVirtualProductAttributes($virtualMagentoAttributes);
-            } else if (!empty($virtualAmazonAttributes)) {
+            } elseif (!empty($virtualAmazonAttributes)) {
                 $parentTypeModel->setVirtualChannelAttributes($virtualAmazonAttributes);
             }
 
             $parentTypeModel->setMatchedAttributes($matchedAttributes, false);
             $parentTypeModel->setChannelAttributesSets($channelVariationsSet, false);
 
-            $channelVariations = array();
+            $channelVariations = [];
             foreach ($optionsData['variations']['asins'] as $asin => $asinAttributes) {
                 $channelVariations[$asin] = $asinAttributes['specifics'];
             }
@@ -158,7 +163,7 @@ class MapToAsin extends Main
                 return $this->getResult();
             }
 
-            $vocabularyHelper = $this->getHelper('Component\Amazon\Vocabulary');
+            $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
 
             if ($vocabularyHelper->isAttributeAutoActionDisabled()) {
                 $this->setAjaxContent('0', false);
@@ -166,7 +171,7 @@ class MapToAsin extends Main
                 return $this->getResult();
             }
 
-            $attributesForAddingToVocabulary = array();
+            $attributesForAddingToVocabulary = [];
 
             foreach ($matchedAttributes as $productAttribute => $channelAttribute) {
                 if ($productAttribute == $channelAttribute) {
@@ -185,7 +190,7 @@ class MapToAsin extends Main
             }
 
             if ($vocabularyHelper->isAttributeAutoActionNotSet()) {
-                $result = array('result' => '0');
+                $result = ['result' => '0'];
 
                 if (!empty($attributesForAddingToVocabulary)) {
                     $result['vocabulary_attributes'] = $attributesForAddingToVocabulary;
@@ -219,13 +224,13 @@ class MapToAsin extends Main
             return $this->getResult();
         }
 
-        $channelVariations = array();
+        $channelVariations = [];
         foreach ($optionsData as $asin => $asinAttributes) {
             $channelVariations[$asin] = $asinAttributes['specifics'];
         }
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Attribute $attributesMatcher */
-        $attributesMatcher = $this->modelFactory->getObject('Amazon\Listing\Product\Variation\Matcher\Attribute');
+        $attributesMatcher = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Matcher_Attribute');
         $attributesMatcher->setMagentoProduct($listingProduct->getMagentoProduct());
         $attributesMatcher->setDestinationAttributes(array_keys($channelVariations[$generalId]));
 
@@ -240,7 +245,7 @@ class MapToAsin extends Main
         $productOptions = $variationManager->getTypeModel()->getProductOptions();
         $channelOptions = $channelVariations[$generalId];
 
-        $vocabularyHelper = $this->getHelper('Component\Amazon\Vocabulary');
+        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
 
         if ($vocabularyHelper->isOptionAutoActionDisabled()) {
             $this->setAjaxContent('0', false);
@@ -248,7 +253,7 @@ class MapToAsin extends Main
             return $this->getResult();
         }
 
-        $optionsForAddingToVocabulary = array();
+        $optionsForAddingToVocabulary = [];
 
         foreach ($matchedAttributes as $productAttribute => $channelAttribute) {
             $productOption = $productOptions[$productAttribute];
@@ -266,11 +271,11 @@ class MapToAsin extends Main
                 continue;
             }
 
-            $optionsForAddingToVocabulary[$channelAttribute] = array($productOption => $channelOption);
+            $optionsForAddingToVocabulary[$channelAttribute] = [$productOption => $channelOption];
         }
 
         if ($vocabularyHelper->isOptionAutoActionNotSet()) {
-            $result = array('result' => '0');
+            $result = ['result' => '0'];
 
             if (!empty($optionsForAddingToVocabulary)) {
                 $result['vocabulary_attribute_options'] = $optionsForAddingToVocabulary;

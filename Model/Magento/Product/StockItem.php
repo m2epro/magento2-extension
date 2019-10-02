@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Magento\Product;
 
+/**
+ * Class StockItem
+ * @package Ess\M2ePro\Model\Magento\Product
+ */
 class StockItem extends \Ess\M2ePro\Model\AbstractModel
 {
     private $stockConfiguration;
@@ -41,7 +45,7 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
         \Magento\CatalogInventory\Api\Data\StockItemInterface $stockItem,
         \Magento\CatalogInventory\Api\StockItemRepositoryInterface $stockItemRepository,
         \Magento\CatalogInventory\Model\StockRegistryStorage $stockRegistryStorage
-    ){
+    ) {
         $this->stockConfiguration  = $stockConfiguration;
         $this->indexStockProcessor = $indexStockProcessor;
         $this->stockStateProvider  = $stockStateProvider;
@@ -60,7 +64,7 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getStockItem()
     {
-        if (is_null($this->stockItem)) {
+        if ($this->stockItem === null) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Stock Item is not set.');
         }
 

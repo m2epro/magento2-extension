@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category;
 
+/**
+ * Class Collection
+ * @package Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     //########################################
@@ -26,14 +30,13 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     /**
      * @param $primaryCategoriesData
      * @return \Ess\M2ePro\Model\Ebay\Template\Category[]
-    */
+     */
     public function getItemsByPrimaryCategories($primaryCategoriesData)
     {
         $conn = $this->getConnection();
 
         $where = '';
         foreach ($primaryCategoriesData as $categoryData) {
-
             $where && $where .= ' OR ';
 
             $categoryData['category_main_id'] = (int)$categoryData['category_main_id'];
@@ -48,10 +51,9 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         $this->getSelect()->where($where);
         $this->getSelect()->order('create_date DESC');
 
-        $templates = array();
-        /* @var $template \Ess\M2ePro\Model\Ebay\Template\Category */
+        $templates = [];
+        /** @var $template \Ess\M2ePro\Model\Ebay\Template\Category */
         foreach ($this->getItems() as $template) {
-
             if ($template['category_main_mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY) {
                 $key = $template['category_main_id'];
             } else {

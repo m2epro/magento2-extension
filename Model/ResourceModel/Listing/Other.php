@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing;
 
+/**
+ * Class Other
+ * @package Ess\M2ePro\Model\ResourceModel\Listing
+ */
 class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {
     protected $synchronizationConfig;
@@ -21,8 +25,7 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Paren
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         $connectionName = null
-    )
-    {
+    ) {
         $this->synchronizationConfig = $synchronizationConfig;
         parent::__construct(
             $helperFactory,
@@ -42,22 +45,22 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Paren
 
     //########################################
 
-    public function getItemsByProductId($productId, array $filters = array())
+    public function getItemsByProductId($productId, array $filters = [])
     {
         $cacheKey   = __METHOD__.$productId.sha1($this->getHelper('Data')->jsonEncode($filters));
-        $cacheValue = $this->getHelper('Data\Cache\Runtime')->getValue($cacheKey);
+        $cacheValue = $this->getHelper('Data_Cache_Runtime')->getValue($cacheKey);
 
-        if (!is_null($cacheValue)) {
+        if ($cacheValue !== null) {
             return $cacheValue;
         }
 
         $select = $this->getConnection()
             ->select()
             ->from(
-               $this->getMainTable(),
-               array('id','component_mode')
+                $this->getMainTable(),
+                ['id','component_mode']
             )
-            ->where("`product_id` IS NOT NULL AND `product_id` = ?",(int)$productId);
+            ->where("`product_id` IS NOT NULL AND `product_id` = ?", (int)$productId);
 
         if (!empty($filters)) {
             foreach ($filters as $column => $value) {
@@ -65,73 +68,74 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Paren
             }
         }
 
-        $result = array();
+        $result = [];
 
         foreach ($select->query()->fetchAll() as $item) {
-
             $result[] = $this->parentFactory->getObjectLoaded(
-                $item['component_mode'], 'Listing\Other', (int)$item['id']
+                $item['component_mode'],
+                'Listing\Other',
+                (int)$item['id']
             );
         }
 
-        $this->getHelper('Data\Cache\Runtime')->setValue($cacheKey, $result);
+        $this->getHelper('Data_Cache_Runtime')->setValue($cacheKey, $result);
 
         return $result;
     }
 
     //########################################
 
-    public function getChangedItems(array $attributes,
-                                    $componentMode = NULL,
-                                    $withStoreFilter = false)
-    {
+    public function getChangedItems(
+        array $attributes,
+        $componentMode = null,
+        $withStoreFilter = false
+    ) {
         if (count($attributes) <= 0) {
-            return array();
+            return [];
         }
 
         $productsChangesTable = $this->activeRecordFactory->getObject('ProductChange')->getResource()->getMainTable();
 
         $limit = (int)$this->synchronizationConfig->getGroupValue(
-            '/settings/product_change/', 'max_count_per_one_time'
+            '/settings/product_change/',
+            'max_count_per_one_time'
         );
 
         $select = $this->getConnection()
                        ->select()
-                       ->from($productsChangesTable,'*')
-                       ->order(array('id ASC'))
+                       ->from($productsChangesTable, '*')
+                       ->order(['id ASC'])
                        ->limit($limit);
 
         $select = $this->getConnection()
                        ->select()
                        ->from(
-                            array('pc' => $select),
-                            array(
+                           ['pc' => $select],
+                           [
                                 'changed_attribute'=>'attribute',
                                 'changed_to_value'=>'value_new',
-                            )
+                            ]
                        )
                        ->join(
-                            array('lo' => $this->getMainTable()),
-                            '`pc`.`product_id` = `lo`.`product_id`',
-                            'id'
+                           ['lo' => $this->getMainTable()],
+                           '`pc`.`product_id` = `lo`.`product_id`',
+                           'id'
                        )
-                       ->where('`pc`.`action` = ?',(string)\Ess\M2ePro\Model\ProductChange::ACTION_UPDATE)
-                       ->where("`pc`.`attribute` IN ('".implode("','",$attributes)."')");
+                       ->where('`pc`.`action` = ?', (string)\Ess\M2ePro\Model\ProductChange::ACTION_UPDATE)
+                       ->where("`pc`.`attribute` IN ('".implode("','", $attributes)."')");
 
         if ($withStoreFilter) {
-
             $whereStatement = '';
 
-            if (!is_null($componentMode)) {
-                $components = array($componentMode);
+            if ($componentMode !== null) {
+                $components = [$componentMode];
             } else {
                 $components = $this->getHelper('Component')->getEnabledComponents();
             }
 
             foreach ($components as $component) {
-
-                $accounts = $this->parentFactory->getObject($component,'Account')->getCollection()->getItems();
-                $marketplaces = $this->parentFactory->getObject($component,'Marketplace')->getCollection()->getItems();
+                $accounts = $this->parentFactory->getObject($component, 'Account')->getCollection()->getItems();
+                $marketplaces = $this->parentFactory->getObject($component, 'Marketplace')->getCollection()->getItems();
 
                 foreach ($accounts as $account) {
                     /** @var $account \Ess\M2ePro\Model\Account */
@@ -151,9 +155,9 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Paren
             $whereStatement != '' && $select->where($whereStatement);
         }
 
-        !is_null($componentMode) && $select->where("`lo`.`component_mode` = ?",(string)$componentMode);
+        $componentMode !== null && $select->where("`lo`.`component_mode` = ?", (string)$componentMode);
 
-        $results = array();
+        $results = [];
 
         foreach ($select->query()->fetchAll() as $item) {
             if (isset($results[$item['id'].'_'.$item['changed_attribute']])) {

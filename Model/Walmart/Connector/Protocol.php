@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Connector;
 
+/**
+ * Class Protocol
+ * @package Ess\M2ePro\Model\Walmart\Connector
+ */
 class Protocol extends \Ess\M2ePro\Model\Connector\Protocol
 {
     // ########################################
@@ -19,7 +23,7 @@ class Protocol extends \Ess\M2ePro\Model\Connector\Protocol
 
     public function getComponentVersion()
     {
-        return 1;
+        return 2;
     }
 
     // ########################################

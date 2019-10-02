@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Ebay\Order;
 
+/**
+ * Class Helper
+ * @package Ess\M2ePro\Model\Ebay\Order
+ */
 class Helper extends \Ess\M2ePro\Model\AbstractModel
 {
     const EBAY_ORDER_STATUS_ACTIVE    = 'Active';
@@ -28,8 +32,7 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -75,7 +78,6 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
     public function getPaymentStatus($paymentMethod, $paymentDate, $paymentStatusEbay)
     {
         if ($paymentMethod == self::EBAY_PAYMENT_METHOD_NONE) {
-
             if ($paymentDate) {
                 return \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED;
             }
@@ -83,9 +85,7 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
             if ($paymentStatusEbay == self::EBAY_PAYMENT_STATUS_SUCCEEDED) {
                 return \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_NOT_SELECTED;
             }
-
         } else {
-
             if ($paymentStatusEbay == self::EBAY_PAYMENT_STATUS_SUCCEEDED) {
                 return $paymentDate
                     ?\Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED
@@ -116,7 +116,7 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $connRead = $this->resourceConnection->getConnection();
-        $tableDictMarketplace = $this->getHelper('Module\Database\Structure')
+        $tableDictMarketplace = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_marketplace');
 
         $dbSelect = $connRead->select()
@@ -146,7 +146,7 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $connRead          = $this->resourceConnection->getConnection();
-        $tableDictShipping = $this->getHelper('Module\Database\Structure')
+        $tableDictShipping = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_shipping');
 
         $dbSelect = $connRead->select()

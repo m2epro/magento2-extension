@@ -8,15 +8,19 @@
 
 namespace Ess\M2ePro\Model\Connector\Connection;
 
+/**
+ * Class Request
+ * @package Ess\M2ePro\Model\Connector\Connection
+ */
 class Request extends \Ess\M2ePro\Model\AbstractModel
 {
     // ########################################
 
-    private $component = NULL;
-    private $componentVersion = NULL;
-    private $command = NULL;
+    private $component = null;
+    private $componentVersion = null;
+    private $command = null;
 
-    private $infoRewrites = array();
+    private $infoRewrites = [];
 
     // ########################################
 
@@ -67,55 +71,54 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
 
     public function getInfo()
     {
-        $data = array(
-            'mode' => $this->getHelper('Module')->isDevelopmentEnvironment() ? 'development' : 'production',
-            'client' => array(
-                'platform' => array(
+        $data = [
+            'client' => [
+                'platform' => [
                     'name' => $this->getHelper('Magento')->getName().
                                 ' ('.$this->getHelper('Magento')->getEditionName().')',
                     'version' => $this->getHelper('Magento')->getVersion(),
                     'revision' => $this->getHelper('Magento')->getRevision(),
-                ),
-                'module' => array(
+                ],
+                'module' => [
                     'name' => $this->getHelper('Module')->getName(),
                     'version' => $this->getHelper('Module')->getPublicVersion(),
                     'revision' => $this->getHelper('Module')->getRevision()
-                ),
-                'location' => array(
+                ],
+                'location' => [
                     'domain' => $this->getHelper('Client')->getDomain(),
                     'ip' => $this->getHelper('Client')->getIp(),
                     'directory' => $this->getHelper('Client')->getBaseDirectory()
-                ),
+                ],
                 'locale' => $this->getHelper('Magento')->getLocaleCode()
-            ),
-            'auth' => array(),
-            'component' => array(
+            ],
+            'auth' => [],
+            'component' => [
                 'name' => $this->component,
                 'version' => $this->componentVersion
-            ),
-            'command' => array(
+            ],
+            'command' => [
                 'entity' => $this->command[0],
                 'type' => $this->command[1],
                 'name' => $this->command[2]
-            )
-        );
+            ]
+        ];
 
         $adminKey = $this->getHelper('Server')->getAdminKey();
-        !is_null($adminKey) && $adminKey != '' && $data['auth']['admin_key'] = $adminKey;
+        $adminKey !== null && $adminKey != '' && $data['auth']['admin_key'] = $adminKey;
 
         $applicationKey = $this->getHelper('Server')->getApplicationKey();
-        !is_null($applicationKey) && $applicationKey != '' && $data['auth']['application_key'] = $applicationKey;
+        $applicationKey !== null && $applicationKey != '' && $data['auth']['application_key'] = $applicationKey;
 
         $licenseKey = $this->getHelper('Module\License')->getKey();
-        !is_null($licenseKey) && $licenseKey != '' && $data['auth']['license_key'] = $licenseKey;
+        $licenseKey !== null && $licenseKey != '' && $data['auth']['license_key'] = $licenseKey;
 
         $installationKey = $this->getHelper('Module')->getInstallationKey();
-        !is_null($installationKey) && $installationKey != '' && $data['auth']['installation_key'] = $installationKey;
+        $installationKey !== null && $installationKey != '' && $data['auth']['installation_key'] = $installationKey;
 
-        return array_merge_recursive($data,$this->infoRewrites);
+        return array_merge_recursive($data, $this->infoRewrites);
     }
 
-    public function setInfoRewrites(array $value = array())
+    public function setInfoRewrites(array $value = [])
     {
         $this->infoRewrites = $value;
         return $this;
@@ -125,10 +128,10 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
 
     public function getPackage()
     {
-        return array(
+        return [
             'info' => $this->getInfo(),
             'data' => $this->getData()
-        );
+        ];
     }
 
     // ########################################

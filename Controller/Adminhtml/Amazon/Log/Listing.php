@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Log;
 
+/**
+ * Class Listing
+ * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Log
+ */
 abstract class Listing extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 {
     //########################################

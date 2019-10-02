@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Model\Cron\Task;
 
+/**
+ * Class ArchiveOrdersEntities
+ * @package Ess\M2ePro\Model\Cron\Task
+ */
 class ArchiveOrdersEntities extends AbstractModel
 {
     const NICK = 'archive_orders_entities';
@@ -37,7 +41,6 @@ class ArchiveOrdersEntities extends AbstractModel
         $affectedOrders = $this->getAffectedOrdersGroupedByComponent();
 
         foreach ($this->getHelper('Component')->getEnabledComponents() as $component) {
-
             if (empty($affectedOrders[$component])) {
                 continue;
             }
@@ -56,14 +59,14 @@ class ArchiveOrdersEntities extends AbstractModel
         $firstAffectedId = $connRead->select()
             ->from(
                 $this->activeRecordFactory->getObject('Order')->getResource()->getMainTable(),
-                array('id')
+                ['id']
             )
             ->order('id DESC')
             ->limit(1, self::COUNT_EXCEEDS_TRIGGER)
             ->query()->fetchColumn();
 
         if ($firstAffectedId === false) {
-            return array();
+            return [];
         }
 
         $archiveFromDate = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -72,14 +75,14 @@ class ArchiveOrdersEntities extends AbstractModel
         $queryStmt = $connRead->select()
             ->from(
                 $this->activeRecordFactory->getObject('Order')->getResource()->getMainTable(),
-                array('id', 'component_mode')
+                ['id', 'component_mode']
             )
             ->where('id <= ?', (int)$firstAffectedId)
             ->where('create_date <= ?', $archiveFromDate->format('Y-m-d H:i:s'))
             ->limit(self::MAX_ENTITIES_COUNT_FOR_ONE_TIME)
             ->query();
 
-        $orders = array();
+        $orders = [];
         while ($row = $queryStmt->fetch()) {
             $orders[$row['component_mode']][] = (int)$row['id'];
         }
@@ -97,26 +100,25 @@ class ArchiveOrdersEntities extends AbstractModel
                                     ->getResource()->getMainTable();
 
         $queryStmt = $coreResource->getConnection()->select()
-            ->from(array('main_table' => $mainOrderTable))
+            ->from(['main_table' => $mainOrderTable])
             ->joinInner(
-                array('second_table' => $componentOrderTable),
+                ['second_table' => $componentOrderTable],
                 'second_table.order_id = main_table.id'
             )
             ->where('main_table.id IN (?)', $componentOrdersIds)
             ->query();
 
-        $insertsData = array();
+        $insertsData = [];
 
         while ($orderRow = $queryStmt->fetch()) {
-
-            $insertsData[$orderRow['id']] = array(
+            $insertsData[$orderRow['id']] = [
                 'name' => 'Order',
                 'origin_id' => $orderRow['id'],
-                'data' => array(
+                'data' => [
                     'order_data' => $orderRow
-                ),
+                ],
                 'create_date' => $this->getHelper('Data')->getCurrentGmtDate()
-            );
+            ];
         }
 
         $mainOrderItemTable = $this->activeRecordFactory->getObject('Order\Item')->getResource()->getMainTable();
@@ -125,18 +127,17 @@ class ArchiveOrdersEntities extends AbstractModel
                                         ->getResource()->getMainTable();
 
         $queryStmt = $coreResource->getConnection()->select()
-            ->from(array('main_table' => $mainOrderItemTable))
+            ->from(['main_table' => $mainOrderItemTable])
             ->joinInner(
-                array('second_table' => $componentOrderItemTable),
+                ['second_table' => $componentOrderItemTable],
                 'second_table.order_item_id = main_table.id'
             )
             ->where('main_table.order_id IN (?)', $componentOrdersIds)
             ->query();
 
-        $orderItemsIds = array();
+        $orderItemsIds = [];
 
         while ($itemRow = $queryStmt->fetch()) {
-
             if (!isset($insertsData[$itemRow['order_id']])) {
                 continue;
             }
@@ -160,11 +161,11 @@ class ArchiveOrdersEntities extends AbstractModel
             $insertsData
         );
 
-        $connWrite->delete($mainOrderTable, array('id IN (?)' => $componentOrdersIds));
-        $connWrite->delete($componentOrderTable, array('order_id IN (?)' => $componentOrdersIds));
+        $connWrite->delete($mainOrderTable, ['id IN (?)' => $componentOrdersIds]);
+        $connWrite->delete($componentOrderTable, ['order_id IN (?)' => $componentOrdersIds]);
 
-        $connWrite->delete($mainOrderItemTable, array('id IN (?)' => $orderItemsIds));
-        $connWrite->delete($componentOrderItemTable, array('order_item_id IN (?)' => $orderItemsIds));
+        $connWrite->delete($mainOrderItemTable, ['id IN (?)' => $orderItemsIds]);
+        $connWrite->delete($componentOrderItemTable, ['order_item_id IN (?)' => $orderItemsIds]);
     }
 
     //########################################

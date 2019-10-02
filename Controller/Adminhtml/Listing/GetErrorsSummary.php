@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing;
 
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 
+/**
+ * Class GetErrorsSummary
+ * @package Ess\M2ePro\Controller\Adminhtml\Listing
+ */
 class GetErrorsSummary extends Listing
 {
     public function execute()
@@ -19,7 +23,7 @@ class GetErrorsSummary extends Listing
             'table_name' => $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getMainTable(),
             'type_log'   => 'listing'
         ];
-        $block = $this->createBlock('Listing\Log\ErrorsSummary','', ['data' => $blockParams]);
+        $block = $this->createBlock('Listing_Log_ErrorsSummary', '', ['data' => $blockParams]);
         $this->setAjaxContent($block);
 
         return $this->getResult();
