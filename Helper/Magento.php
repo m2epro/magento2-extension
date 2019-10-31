@@ -310,7 +310,19 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
             $basePath .= $path;
         }
 
-        return $directoryReader->isExist($basePath);
+        $exist = $directoryReader->isExist($basePath);
+        if (!$exist) {
+            $themePath = str_replace('backend','base', $this->getThemePath());
+            $basePath = $themePath . DIRECTORY_SEPARATOR
+                . 'default' . DIRECTORY_SEPARATOR;
+
+            if (!is_null($path)) {
+                $basePath .= $path;
+            }
+            $exist = $directoryReader->isExist($basePath);
+        }
+
+        return $exist;
     }
 
     public function getLastStaticContentDeployDate()
