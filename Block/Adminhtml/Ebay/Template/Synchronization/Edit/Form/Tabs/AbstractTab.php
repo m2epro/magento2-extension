@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tab
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 /**
- * Class AbstractTab
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\AbstractTab
  */
 abstract class AbstractTab extends AbstractForm
 {

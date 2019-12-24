@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Template\Shipping;
 use \Ess\M2ePro\Model\Ebay\Template\Shipping as TemplateShipping;
 
 /**
- * Class Builder
- * @package Ess\M2ePro\Model\Ebay\Template\Shipping
+ * Class \Ess\M2ePro\Model\Ebay\Template\Shipping\Builder
  */
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 {

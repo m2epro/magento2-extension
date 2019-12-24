@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Connector\Connection\Response;
 
 /**
- * Class Message
- * @package Ess\M2ePro\Model\Connector\Connection\Response
+ * Class \Ess\M2ePro\Model\Connector\Connection\Response\Message
  */
 class Message extends \Ess\M2ePro\Model\Response\Message
 {

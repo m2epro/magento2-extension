@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore\Edit
  */
 class Edit extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {

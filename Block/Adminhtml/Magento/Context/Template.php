@@ -13,8 +13,7 @@ use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
 /**
- * Class Template
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Context
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template
  */
 class Template extends Context
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Group;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Group
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Group\Form
  */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

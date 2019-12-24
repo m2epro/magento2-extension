@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Listing\Product as ListingProduct;
 use Ess\M2ePro\Model\Amazon\Template\Synchronization as SynchronizationPolicy;
 
 /**
- * Class Inspector
- * @package Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization\Inspector
  */
 class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Inspector
 {

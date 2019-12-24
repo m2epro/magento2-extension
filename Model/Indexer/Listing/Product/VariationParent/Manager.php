@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Indexer\Listing\Product\VariationParent;
 
 /**
- * Class Manager
- * @package Ess\M2ePro\Model\Indexer\Listing\Product\VariationParent
+ * Class \Ess\M2ePro\Model\Indexer\Listing\Product\VariationParent\Manager
  */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {

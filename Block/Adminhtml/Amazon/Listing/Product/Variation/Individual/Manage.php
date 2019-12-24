@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Individual;
 
 /**
- * Class Manage
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Individual
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Individual\Manage
  */
 class Manage extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Individual
 {

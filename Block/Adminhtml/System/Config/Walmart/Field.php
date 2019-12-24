@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\System\Config\Walmart;
 
 /**
- * Class Field
- * @package Ess\M2ePro\Block\Adminhtml\System\Config\Walmart
+ * Class \Ess\M2ePro\Block\Adminhtml\System\Config\Walmart\Field
  */
 class Field extends \Ess\M2ePro\Block\Adminhtml\System\Config\Integration
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter\Form
  */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

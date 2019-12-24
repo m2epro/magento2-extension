@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Description\Edit;
 use \Ess\M2ePro\Model\Walmart\Template\Description as Description;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Description\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Description\Edit\Form
  */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

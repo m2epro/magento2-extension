@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom;
 
 /**
- * Class EbaySoldQty
- * @package Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom
+ * Class \Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom\EbaySoldQty
  */
 class EbaySoldQty extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {

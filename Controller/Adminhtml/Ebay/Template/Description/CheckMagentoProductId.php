@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
 /**
- * Class CheckMagentoProductId
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description\CheckMagentoProductId
  */
 class CheckMagentoProductId extends Description
 {

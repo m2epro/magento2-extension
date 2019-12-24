@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type;
 
 /**
- * Class Individual
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Individual
  */
 class Individual extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\PhysicalUnit
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Custom;
 use Ess\M2ePro\Model\Amazon\Listing\Product as AmazonListingProduct;
 
 /**
- * Class AmazonIsAfnChanel
- * @package Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Custom
+ * Class \Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Custom\AmazonIsAfnChanel
  */
 class AmazonIsAfnChanel extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {

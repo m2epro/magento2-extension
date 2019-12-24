@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class AbstractInspection
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\AbstractInspection
  */
 abstract class AbstractInspection extends AbstractBlock
 {

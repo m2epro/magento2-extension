@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize;
 
 /**
- * Class ProductsRequester
- * @package Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize
+ * Class \Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize\ProductsRequester
  */
 class ProductsRequester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Requester
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add;
 
 /**
- * Class NewAsin
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin
  */
 class NewAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
@@ -43,7 +42,7 @@ class NewAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
 
         $url = $this->getUrl('*/*/index', [
-            'step' => 1,
+            'step' => 3,
             '_current' => true
         ]);
         $this->addButton('back', [

@@ -12,8 +12,7 @@ use Magento\Backend\Block\Widget\Form\Renderer\Fieldset\Element as MagentoElemen
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
 /**
- * Class Element
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Form\Renderer
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Form\Renderer\Element
  */
 class Element extends MagentoElement
 {

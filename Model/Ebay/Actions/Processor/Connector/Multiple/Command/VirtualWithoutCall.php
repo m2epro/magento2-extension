@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Actions\Processor\Connector\Multiple\Command;
 
 /**
- * Class VirtualWithoutCall
- * @package Ess\M2ePro\Model\Ebay\Actions\Processor\Connector\Multiple\Command
+ * Class \Ess\M2ePro\Model\Ebay\Actions\Processor\Connector\Multiple\Command\VirtualWithoutCall
  */
 class VirtualWithoutCall extends \Ess\M2ePro\Model\Connector\Command\RealTime\Virtual
 {

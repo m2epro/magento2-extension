@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore\Index
  */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {

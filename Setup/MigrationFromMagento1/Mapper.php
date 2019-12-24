@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Setup\MigrationFromMagento1;
 
 /**
- * Class Mapper
- * @package Ess\M2ePro\Setup\MigrationFromMagento1
+ * Class \Ess\M2ePro\Setup\MigrationFromMagento1\Mapper
  */
 class Mapper
 {

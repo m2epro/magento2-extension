@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Settings;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
- * Class RunReviseAll
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Synchronization
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Synchronization\RunReviseAll
  */
 class RunReviseAll extends Settings
 {

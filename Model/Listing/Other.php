@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Listing;
 
 /**
- * Class Other
- * @package Ess\M2ePro\Model\Listing
+ * Class \Ess\M2ePro\Model\Listing\Other
  */
 class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {

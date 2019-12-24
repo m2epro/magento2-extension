@@ -13,8 +13,7 @@
 namespace Ess\M2ePro\Model\Walmart;
 
 /**
- * Class Marketplace
- * @package Ess\M2ePro\Model\Walmart
+ * Class \Ess\M2ePro\Model\Walmart\Marketplace
  */
 class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {

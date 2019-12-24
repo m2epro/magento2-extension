@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
 /**
- * Class GetJsonSpecificsFromPost
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Category
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Category\GetJsonSpecificsFromPost
  */
 class GetJsonSpecificsFromPost extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {

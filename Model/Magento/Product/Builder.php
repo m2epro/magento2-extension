@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Product;
 
 /**
- * Class Builder
- * @package Ess\M2ePro\Model\Magento\Product
+ * Class \Ess\M2ePro\Model\Magento\Product\Builder
  */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {

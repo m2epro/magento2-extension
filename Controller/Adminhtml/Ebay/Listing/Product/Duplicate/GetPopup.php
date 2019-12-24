@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Duplicate;
 
 /**
- * Class GetPopup
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Duplicate
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Duplicate\GetPopup
  */
 class GetPopup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

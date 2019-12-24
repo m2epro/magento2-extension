@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon;
 
 /**
- * Class Item
- * @package Ess\M2ePro\Model\Amazon
+ * Class \Ess\M2ePro\Model\Amazon\Item
  */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {

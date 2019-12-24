@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
 /**
- * Class MapToAsin
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\MapToAsin
  */
 class MapToAsin extends Main
 {

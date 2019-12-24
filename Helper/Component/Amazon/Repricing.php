@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\Amazon\Account as AmazonAccount;
 use Ess\M2ePro\Model\Exception\Connection;
 
 /**
- * Class Repricing
- * @package Ess\M2ePro\Helper\Component\Amazon
+ * Class \Ess\M2ePro\Helper\Component\Amazon\Repricing
  */
 class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
 {

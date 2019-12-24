@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml;
 
 /**
- * Class Support
- * @package Ess\M2ePro\Controller\Adminhtml
+ * Class \Ess\M2ePro\Controller\Adminhtml\Support
  */
 abstract class Support extends \Ess\M2ePro\Controller\Adminhtml\Base
 {

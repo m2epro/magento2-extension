@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Order;
 
 /**
- * Class ProxyObject
- * @package Ess\M2ePro\Model\Ebay\Order
+ * Class \Ess\M2ePro\Model\Ebay\Order\ProxyObject
  */
 class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 {
@@ -91,7 +90,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             return '';
         }
 
-        return $this->order->getEbayAccount()->getMagentoOrdersNumberPrefix();
+        return $this->order->getEbayAccount()->getMagentoOrdersNumberRegularPrefix();
     }
 
     //########################################

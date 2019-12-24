@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
 /**
- * Class CheckProductOptionStockAvailability
- * @package Ess\M2ePro\Controller\Adminhtml\Order
+ * Class \Ess\M2ePro\Controller\Adminhtml\Order\CheckProductOptionStockAvailability
  */
 class CheckProductOptionStockAvailability extends Order
 {

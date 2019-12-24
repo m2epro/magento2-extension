@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Magento;
 use Ess\M2ePro\Model\AbstractModel;
 
 /**
- * Class Customer
- * @package Ess\M2ePro\Model\Magento
+ * Class \Ess\M2ePro\Model\Magento\Customer
  */
 class Customer extends AbstractModel
 {
@@ -68,7 +67,7 @@ class Customer extends AbstractModel
 
     public function buildCustomer()
     {
-        $password = $this->mathRandom->getRandomString(6);
+        $password = $this->mathRandom->getRandomString(7);
 
         /**
          * Magento can replace customer group to the default.

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
 
 /**
- * Class DisableModule
- * @package Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1
+ * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1\DisableModule
  */
 class DisableModule extends BaseMigrationFromMagento1
 {

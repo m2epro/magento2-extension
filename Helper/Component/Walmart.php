@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Helper\Component;
 use \Ess\M2ePro\Model\Listing\Product as ListingProduct;
 
 /**
- * Class Walmart
- * @package Ess\M2ePro\Helper\Component
+ * Class \Ess\M2ePro\Helper\Component\Walmart
  */
 class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 {
@@ -138,6 +137,7 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
         return 'https://'.$domain.'/ip/'.$productItemId;
     }
 
+    //todo is not correct. there are no orders to check
     public function getOrderUrl($orderId, $marketplaceId = null)
     {
         $marketplaceId = (int)$marketplaceId;

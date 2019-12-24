@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
 /**
- * Class Add
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
  */
 abstract class Add extends Main
 {

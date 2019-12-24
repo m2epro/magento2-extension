@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Tabs;
 
 /**
- * Class AbstractVerticalTabs
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractVerticalTabs
  */
 abstract class AbstractVerticalTabs extends AbstractTabs
 {

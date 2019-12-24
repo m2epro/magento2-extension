@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Exception\Setup;
 use \Magento\Framework\DB\Ddl\Table as DdlTable;
 
 /**
- * Class Table
- * @package Ess\M2ePro\Model\Setup\Database\Modifier
+ * Class \Ess\M2ePro\Model\Setup\Database\Modifier\Table
  */
 class Table extends AbstractModifier
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace;
 
 /**
- * Class RunSynchNow
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace\RunSynchNow
  */
 class RunSynchNow extends Marketplace
 {

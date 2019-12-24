@@ -16,8 +16,7 @@ use Ess\M2ePro\Model\Request\Pending\Single;
 use Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel as AbstractCollection;
 
 /**
- * Class Processor
- * @package Ess\M2ePro\Model\Walmart\Actions
+ * Class \Ess\M2ePro\Model\Walmart\Actions\Processor
  */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
@@ -285,7 +284,14 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
         if (empty($responseData['processing_id'])) {
             foreach ($actions as $action) {
-                $messages = $this->getResponseMessages($responseData, $responseMessages, $action->getRelatedId());
+                $messages = $responseMessages;
+
+                if (!empty($responseData['data'][$action->getRelatedId().'-id']['errors'])) {
+                    $messages = array_merge(
+                        $messages, $responseData['data'][$action->getRelatedId().'-id']['errors']
+                    );
+                }
+
                 $this->completeAction($action, ['errors' => $messages]);
             }
 

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 /**
- * Class GetListingProductBids
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\GetListingProductBids
  */
 class GetListingProductBids extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

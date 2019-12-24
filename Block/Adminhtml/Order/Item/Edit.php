@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Order\Item;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Block\Adminhtml\Order\Item
+ * Class \Ess\M2ePro\Block\Adminhtml\Order\Item\Edit
  */
 class Edit extends AbstractContainer
 {

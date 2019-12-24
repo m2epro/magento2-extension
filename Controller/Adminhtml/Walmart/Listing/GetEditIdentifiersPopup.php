@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
 /**
- * Class GetEditIdentifiersPopup
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\GetEditIdentifiersPopup
  */
 class GetEditIdentifiersPopup extends Main
 {

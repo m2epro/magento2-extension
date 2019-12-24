@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser;
 
 /**
- * Class Tabs
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs
  */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs
 {

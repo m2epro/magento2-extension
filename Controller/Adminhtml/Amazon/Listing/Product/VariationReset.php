@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
- * Class VariationReset
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\VariationReset
  */
 class VariationReset extends Main
 {

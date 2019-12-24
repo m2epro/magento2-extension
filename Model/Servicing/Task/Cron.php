@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Servicing\Task;
 
 /**
- * Class Cron
- * @package Ess\M2ePro\Model\Servicing\Task
+ * Class \Ess\M2ePro\Model\Servicing\Task\Cron
  */
 class Cron extends \Ess\M2ePro\Model\Servicing\Task
 {
@@ -71,18 +70,9 @@ class Cron extends \Ess\M2ePro\Model\Servicing\Task
      */
     public function getRequestData()
     {
-        $adminStore = $this->storeManager->getStore(\Magento\Store\Model\Store::DEFAULT_STORE_ID);
-
         return [
-            'base_url' => $adminStore->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_LINK, null),
-            'calculation_url' => $adminStore->getUrl(
-                'M2ePro/cron/test',
-                [
-                    '_use_rewrite' => true,
-                    '_nosid' => true,
-                    '_secure' => false
-                ]
-            )
+            'base_url' => $this->storeManager->getStore(\Magento\Store\Model\Store::DEFAULT_STORE_ID)
+                ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB, null)
         ];
     }
 

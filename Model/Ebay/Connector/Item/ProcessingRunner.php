@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Connector\Item;
 
 /**
- * Class ProcessingRunner
- * @package Ess\M2ePro\Model\Ebay\Connector\Item
+ * Class \Ess\M2ePro\Model\Ebay\Connector\Item\ProcessingRunner
  */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {

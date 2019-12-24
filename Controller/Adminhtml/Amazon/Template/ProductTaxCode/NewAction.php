@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductTaxCode;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
 /**
- * Class NewAction
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductTaxCode
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductTaxCode\NewAction
  */
 class NewAction extends Template
 {

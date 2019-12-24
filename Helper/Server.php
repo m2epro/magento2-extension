@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper;
 
 /**
- * Class Server
- * @package Ess\M2ePro\Helper
+ * Class \Ess\M2ePro\Helper\Server
  */
 class Server extends \Ess\M2ePro\Helper\AbstractHelper
 {

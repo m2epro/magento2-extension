@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Order;
 
 /**
- * Class Shipment
- * @package Ess\M2ePro\Model\Magento\Order
+ * Class \Ess\M2ePro\Model\Magento\Order\Shipment
  */
 class Shipment extends \Ess\M2ePro\Model\AbstractModel
 {
@@ -80,7 +79,13 @@ class Shipment extends \Ess\M2ePro\Model\AbstractModel
 
             $this->magentoOrder->getShipmentsCollection()->addItem($shipment);
         }
-        $transaction->save();
+
+        try {
+            $transaction->save();
+        } catch (\Exception $e) {
+            $this->magentoOrder->getShipmentsCollection()->clear();
+            throw $e;
+        }
 
         $this->getHelper('Data\GlobalData')->unsetValue('skip_shipment_observer');
     }

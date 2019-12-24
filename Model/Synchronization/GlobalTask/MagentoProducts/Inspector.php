@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts;
 
 /**
- * Class Inspector
- * @package Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts
+ * Class \Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts\Inspector
  */
 class Inspector extends AbstractModel
 {

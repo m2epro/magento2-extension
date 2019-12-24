@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Settings\License;
 
 /**
- * Class Create
- * @package Ess\M2ePro\Controller\Adminhtml\Settings\License
+ * Class \Ess\M2ePro\Controller\Adminhtml\Settings\License\Create
  */
 class Create extends \Ess\M2ePro\Controller\Adminhtml\Base
 {

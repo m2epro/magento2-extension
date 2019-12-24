@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Cancel;
 
 /**
- * Class ItemsRequester
- * @package Ess\M2ePro\Model\Amazon\Connector\Orders\Cancel
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Orders\Cancel\ItemsRequester
  */
 abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {

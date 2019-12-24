@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\Chooser;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
 /**
- * Class Sku
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\Chooser
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\Chooser\Sku
  */
 class Sku extends AbstractGrid
 {

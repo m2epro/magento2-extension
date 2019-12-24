@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml;
 
 /**
- * Class Developers
- * @package Ess\M2ePro\Controller\Adminhtml
+ * Class \Ess\M2ePro\Controller\Adminhtml\Developers
  */
 abstract class Developers extends \Ess\M2ePro\Controller\Adminhtml\Base
 {

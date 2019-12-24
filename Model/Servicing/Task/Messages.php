@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Servicing\Task;
 
 /**
- * Class Messages
- * @package Ess\M2ePro\Model\Servicing\Task
+ * Class \Ess\M2ePro\Model\Servicing\Task\Messages
  */
 class Messages extends \Ess\M2ePro\Model\Servicing\Task
 {

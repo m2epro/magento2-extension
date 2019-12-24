@@ -8,8 +8,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin;
 
 /**
- * Class Category
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Category
  */
 class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
@@ -40,12 +39,9 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/*/resetNewAsin', [
-            '_current' => true,
-        ]);
         $this->addButton('back', [
             'label'     => $this->__('Back'),
-            'onclick'   => 'ListingGridHandlerObj.backClick(\'' . $url . '\')',
+            'onclick'   => 'ListingGridHandlerObj.stepNewAsinBack()',
             'class'     => 'back'
         ]);
         // ---------------------------------------
@@ -96,6 +92,11 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         $this->jsUrl->add(
             $this->getUrl('*/amazon_listing_product_add/checkNewAsinCategoryProducts', ['_current' => true]),
             'amazon_listing_product_add/checkNewAsinCategoryProducts'
+        );
+
+        $this->jsUrl->add(
+            $this->getUrl('*/amazon_listing_product_add/resetDescriptionTemplate', ['_current' => true]),
+            'amazon_listing_product_add/resetDescriptionTemplate'
         );
         // ---------------------------------------
 

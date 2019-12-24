@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Order\Shipment;
 
 /**
- * Class DocumentFactory
- * @package Ess\M2ePro\Model\Magento\Order\Shipment
+ * Class \Ess\M2ePro\Model\Magento\Order\Shipment\DocumentFactory
  */
 class DocumentFactory
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon;
 
 /**
- * Class Account
- * @package Ess\M2ePro\Model\Amazon
+ * Class \Ess\M2ePro\Model\Amazon\Account
  */
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
@@ -358,7 +357,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getOtherListingsMappingGeneralIdAttribute()
     {
         $setting = $this->getSetting('other_listings_mapping_settings', ['general_id', 'attribute']);
-
         return $setting;
     }
 
@@ -435,7 +433,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getOtherListingsMappingTitleAttribute()
     {
         $setting = $this->getSetting('other_listings_mapping_settings', ['title', 'attribute']);
-
         return $setting;
     }
 
@@ -636,7 +633,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getMagentoOrdersListingsStoreId()
     {
         $setting = $this->getSetting('magento_orders_settings', ['listing', 'store_id'], 0);
-
         return (int)$setting;
     }
 
@@ -662,7 +658,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getMagentoOrdersListingsOtherStoreId()
     {
         $setting = $this->getSetting('magento_orders_settings', ['listing_other', 'store_id'], 0);
-
         return (int)$setting;
     }
 
@@ -737,9 +732,28 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $setting == self::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_YES;
     }
 
-    public function getMagentoOrdersNumberPrefix()
+    public function getMagentoOrdersNumberRegularPrefix()
     {
-        return $this->getSetting('magento_orders_settings', ['number', 'prefix', 'prefix'], '');
+        $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
+        return isset($settings['prefix']) ? $settings['prefix'] : '';
+    }
+
+    public function getMagentoOrdersNumberAfnPrefix()
+    {
+        $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
+        return isset($settings['afn-prefix']) ? $settings['afn-prefix'] : '';
+    }
+
+    public function getMagentoOrdersNumberPrimePrefix()
+    {
+        $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
+        return isset($settings['prime-prefix']) ? $settings['prime-prefix'] : '';
+    }
+
+    public function getMagentoOrdersNumberB2bPrefix()
+    {
+        $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
+        return isset($settings['b2b-prefix']) ? $settings['b2b-prefix'] : '';
     }
 
     // ---------------------------------------
@@ -750,7 +764,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getQtyReservationDays()
     {
         $setting = $this->getSetting('magento_orders_settings', ['qty_reservation', 'days'], 1);
-
         return (int)$setting;
     }
 
@@ -762,7 +775,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function isRefundEnabled()
     {
         $setting = $this->getSetting('magento_orders_settings', ['refund_and_cancellation', 'refund_mode']);
-
         return (bool)$setting;
     }
 
@@ -774,7 +786,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function isMagentoOrdersTaxModeNone()
     {
         $setting = $this->getSetting('magento_orders_settings', ['tax', 'mode']);
-
         return $setting == self::MAGENTO_ORDERS_TAX_MODE_NONE;
     }
 
@@ -784,7 +795,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function isMagentoOrdersTaxModeChannel()
     {
         $setting = $this->getSetting('magento_orders_settings', ['tax', 'mode']);
-
         return $setting == self::MAGENTO_ORDERS_TAX_MODE_CHANNEL;
     }
 
@@ -794,7 +804,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function isMagentoOrdersTaxModeMagento()
     {
         $setting = $this->getSetting('magento_orders_settings', ['tax', 'mode']);
-
         return $setting == self::MAGENTO_ORDERS_TAX_MODE_MAGENTO;
     }
 
@@ -804,7 +813,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function isMagentoOrdersTaxModeMixed()
     {
         $setting = $this->getSetting('magento_orders_settings', ['tax', 'mode']);
-
         return $setting == self::MAGENTO_ORDERS_TAX_MODE_MIXED;
     }
 
@@ -858,7 +866,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getMagentoOrdersCustomerId()
     {
         $setting = $this->getSetting('magento_orders_settings', ['customer', 'id']);
-
         return (int)$setting;
     }
 
@@ -882,7 +889,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function isMagentoOrdersCustomerNewNotifyWhenCreated()
     {
         $setting = $this->getSetting('magento_orders_settings', ['customer', 'notifications', 'customer_created']);
-
         return (bool)$setting;
     }
 
@@ -892,7 +898,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function isMagentoOrdersCustomerNewNotifyWhenOrderCreated()
     {
         $setting = $this->getSetting('magento_orders_settings', ['customer', 'notifications', 'order_created']);
-
         return (bool)$setting;
     }
 
@@ -902,7 +907,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function isMagentoOrdersCustomerNewNotifyWhenInvoiceCreated()
     {
         $setting = $this->getSetting('magento_orders_settings', ['customer', 'notifications', 'invoice_created']);
-
         return (bool)$setting;
     }
 
@@ -912,7 +916,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getMagentoOrdersCustomerNewWebsiteId()
     {
         $setting = $this->getSetting('magento_orders_settings', ['customer', 'website_id']);
-
         return (int)$setting;
     }
 
@@ -922,7 +925,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getMagentoOrdersCustomerNewGroupId()
     {
         $setting = $this->getSetting('magento_orders_settings', ['customer', 'group_id']);
-
         return (int)$setting;
     }
 
@@ -934,7 +936,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function isMagentoOrdersBillingAddressSameAsShipping()
     {
         $setting = $this->getSetting('magento_orders_settings', ['customer', 'billing_address_mode']);
-
         return (int)$setting == self::MAGENTO_ORDERS_BILLING_ADDRESS_MODE_SHIPPING;
     }
 
@@ -1008,7 +1009,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function isMagentoOrdersFbaStockEnabled()
     {
         $setting = $this->getSetting('magento_orders_settings', ['fba', 'stock_mode']);
-
         return $setting == self::MAGENTO_ORDERS_FBA_STOCK_MODE_YES;
     }
 

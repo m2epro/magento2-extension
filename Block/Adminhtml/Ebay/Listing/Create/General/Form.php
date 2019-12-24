@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\General;
 use Ess\M2ePro\Block\Adminhtml\StoreSwitcher;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\General
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\General\Form
  */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

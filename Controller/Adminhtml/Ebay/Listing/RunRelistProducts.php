@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 /**
- * Class RunRelistProducts
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\RunRelistProducts
  */
 class RunRelistProducts extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\ActionAbstract
 {

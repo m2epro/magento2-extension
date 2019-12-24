@@ -14,8 +14,7 @@ use Magento\Framework\Module\Setup;
 use \Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
- * Class NewUpgradesEngine
- * @package Ess\M2ePro\Setup\Update\y19_m01
+ * Class \Ess\M2ePro\Setup\Update\y19\NewUpgradesEngine_m01
  */
 class NewUpgradesEngine extends AbstractFeature
 {

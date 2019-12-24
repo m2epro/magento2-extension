@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Log;
 
 /**
- * Class Order
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Log
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Log\Order
  */
 class Order extends \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractContainer
 {

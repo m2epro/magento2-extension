@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 
 /**
- * Class ClearLog
- * @package Ess\M2ePro\Controller\Adminhtml\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Listing\ClearLog
  */
 class ClearLog extends Listing
 {

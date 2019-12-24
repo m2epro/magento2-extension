@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Order\Item;
 
 /**
- * Class ProxyObject
- * @package Ess\M2ePro\Model\Ebay\Order\Item
+ * Class \Ess\M2ePro\Model\Ebay\Order\Item\ProxyObject
  */
 class ProxyObject extends \Ess\M2ePro\Model\Order\Item\ProxyObject
 {

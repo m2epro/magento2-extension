@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Info;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class Actual
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Info
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\Actual
  */
 class Actual extends AbstractBlock
 {
@@ -40,7 +39,6 @@ class Actual extends AbstractBlock
         // ---------------------------------------
         $this->publicVersion = $this->getHelper('Module')->getPublicVersion();
         $this->setupVersion  = $this->getHelper('Module')->getSetupVersion();
-        $this->filesVersion  = $this->getHelper('Module')->getFilesVersion();
         // ---------------------------------------
 
         // ---------------------------------------

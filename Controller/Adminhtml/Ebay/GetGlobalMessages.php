@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
 /**
- * Class GetGlobalMessages
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\GetGlobalMessages
  */
 class GetGlobalMessages extends Main
 {

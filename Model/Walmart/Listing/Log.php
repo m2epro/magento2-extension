@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing;
 
 /**
- * Class Log
- * @package Ess\M2ePro\Model\Walmart\Listing
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Log
  */
 class Log extends \Ess\M2ePro\Model\Listing\Log
 {

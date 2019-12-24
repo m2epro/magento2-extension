@@ -12,8 +12,7 @@ use \Magento\Backend\App\Action;
 use \Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Maintenance
+ * Class \Ess\M2ePro\Controller\Adminhtml\Maintenance\Index
  */
 class Index extends Action
 {

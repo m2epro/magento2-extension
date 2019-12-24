@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Magento;
 
 /**
- * Class AttributeSet
- * @package Ess\M2ePro\Helper\Magento
+ * Class \Ess\M2ePro\Helper\Magento\AttributeSet
  */
 class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
 {

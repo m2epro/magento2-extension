@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Config;
 
 /**
- * Class Module
- * @package Ess\M2ePro\Model\Config
+ * Class \Ess\M2ePro\Model\Config\Module
  */
 class Module extends AbstractModel
 {

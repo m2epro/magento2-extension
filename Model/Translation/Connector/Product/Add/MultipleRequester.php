@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Translation\Connector\Product\Add;
 
 /**
- * Class MultipleRequester
- * @package Ess\M2ePro\Model\Translation\Connector\Product\Add
+ * Class \Ess\M2ePro\Model\Translation\Connector\Product\Add\MultipleRequester
  */
 class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\Pending\Requester
 {

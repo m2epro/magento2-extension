@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Component\Walmart;
 
 /**
- * Class Variation
- * @package Ess\M2ePro\Helper\Component\Walmart
+ * Class \Ess\M2ePro\Helper\Component\Walmart\Variation
  */
 class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 {

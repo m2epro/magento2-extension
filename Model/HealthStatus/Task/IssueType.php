@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\HealthStatus\Task;
 
 /**
- * Class IssueType
- * @package Ess\M2ePro\Model\HealthStatus\Task
+ * Class \Ess\M2ePro\Model\HealthStatus\Task\IssueType
  */
 abstract class IssueType extends AbstractModel
 {

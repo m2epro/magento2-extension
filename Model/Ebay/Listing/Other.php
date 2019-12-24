@@ -12,8 +12,7 @@
 namespace Ess\M2ePro\Model\Ebay\Listing;
 
 /**
- * Class Other
- * @package Ess\M2ePro\Model\Ebay\Listing
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Other
  */
 class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {

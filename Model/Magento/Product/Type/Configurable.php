@@ -14,8 +14,7 @@
 namespace Ess\M2ePro\Model\Magento\Product\Type;
 
 /**
- * Class Configurable
- * @package Ess\M2ePro\Model\Magento\Product\Type
+ * Class \Ess\M2ePro\Model\Magento\Product\Type\Configurable
  */
 class Configurable extends \Magento\ConfigurableProduct\Model\Product\Type\Configurable
 {

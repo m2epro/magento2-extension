@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Task\Amazon;
 
 /**
- * Class RepricingUpdateSettings
- * @package Ess\M2ePro\Model\Cron\Task\Amazon
+ * Class \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingUpdateSettings
  */
 class RepricingUpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {

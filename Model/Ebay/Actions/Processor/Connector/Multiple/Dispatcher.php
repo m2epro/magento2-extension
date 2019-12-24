@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Actions\Processor\Connector\Multiple;
 
 /**
- * Class Dispatcher
- * @package Ess\M2ePro\Model\Ebay\Actions\Processor\Connector\Multiple
+ * Class \Ess\M2ePro\Model\Ebay\Actions\Processor\Connector\Multiple\Dispatcher
  */
 class Dispatcher extends \Ess\M2ePro\Model\Ebay\Connector\Dispatcher
 {

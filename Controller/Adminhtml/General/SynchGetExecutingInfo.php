@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\General;
 use Ess\M2ePro\Controller\Adminhtml\General;
 
 /**
- * Class SynchGetExecutingInfo
- * @package Ess\M2ePro\Controller\Adminhtml\General
+ * Class \Ess\M2ePro\Controller\Adminhtml\General\SynchGetExecutingInfo
  */
 class SynchGetExecutingInfo extends General
 {

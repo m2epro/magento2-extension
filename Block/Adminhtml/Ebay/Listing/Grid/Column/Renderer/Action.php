@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid as ListingGrid;
 
 /**
- * Class Action
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Column\Renderer
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Column\Renderer\Action
  */
 class Action extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action
 {

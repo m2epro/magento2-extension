@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\AttributeSet;
 
 /**
- * Class Group
- * @package Ess\M2ePro\Model\Magento\AttributeSet
+ * Class \Ess\M2ePro\Model\Magento\AttributeSet\Group
  */
 class Group extends \Ess\M2ePro\Model\AbstractModel
 {

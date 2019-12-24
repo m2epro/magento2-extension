@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\HealthStatus\Notification;
 
 /**
- * Class Settings
- * @package Ess\M2ePro\Model\HealthStatus\Notification
+ * Class \Ess\M2ePro\Model\HealthStatus\Notification\Settings
  */
 class Settings extends \Ess\M2ePro\Model\AbstractModel
 {

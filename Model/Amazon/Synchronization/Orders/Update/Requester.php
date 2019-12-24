@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders\Update;
 
 /**
- * Class Requester
- * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders\Update
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\Orders\Update\Requester
  */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRequester
 {

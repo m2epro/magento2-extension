@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml;
 
 /**
- * Class Switcher
- * @package Ess\M2ePro\Block\Adminhtml
+ * Class \Ess\M2ePro\Block\Adminhtml\Switcher
  */
 abstract class Switcher extends Magento\AbstractBlock
 {

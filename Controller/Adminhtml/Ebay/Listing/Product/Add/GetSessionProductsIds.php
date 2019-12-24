@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
 
 /**
- * Class GetSessionProductsIds
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add\GetSessionProductsIds
  */
 class GetSessionProductsIds extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {

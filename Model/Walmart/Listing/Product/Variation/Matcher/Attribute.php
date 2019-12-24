@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Matcher;
 
 /**
- * Class Attribute
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Matcher
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Matcher\Attribute
  */
 class Attribute extends \Ess\M2ePro\Model\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tabs;
 
 /**
- * Class Selling
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tabs\Selling
  */
 class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

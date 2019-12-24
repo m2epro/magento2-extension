@@ -12,8 +12,7 @@ use Magento\InventorySalesApi\Model\StockByWebsiteIdResolverInterface;
 use Magento\InventoryIndexer\Model\StockIndexTableNameResolverInterface;
 
 /**
- * Class StockDataResolver
- * @package Ess\M2ePro\Model\ResourceModel\MSI\Listing\Product\Variation
+ * Class \Ess\M2ePro\Model\ResourceModel\MSI\Listing\Product\Variation\StockDataResolver
  */
 class StockDataResolver extends \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\StockDataResolver
 {

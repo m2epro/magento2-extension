@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Magento;
 
 /**
- * Class Category
- * @package Ess\M2ePro\Helper\Magento
+ * Class \Ess\M2ePro\Helper\Magento\Category
  */
 class Category extends \Ess\M2ePro\Helper\Magento\AbstractHelper
 {

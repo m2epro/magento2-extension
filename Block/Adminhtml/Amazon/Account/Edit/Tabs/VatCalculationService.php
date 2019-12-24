@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 /**
- * Class VatCalculationService
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\VatCalculationService
  */
 class VatCalculationService extends AbstractForm
 {

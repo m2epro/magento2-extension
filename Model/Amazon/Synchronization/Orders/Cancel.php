@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders;
 
 /**
- * Class Cancel
- * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\Orders\Cancel
  */
 class Cancel extends AbstractModel
 {

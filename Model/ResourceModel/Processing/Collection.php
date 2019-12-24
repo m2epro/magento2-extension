@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Processing;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Processing
+ * Class \Ess\M2ePro\Model\ResourceModel\Processing\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

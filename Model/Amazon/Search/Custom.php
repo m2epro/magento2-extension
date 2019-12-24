@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Search;
 
 /**
- * Class Custom
- * @package Ess\M2ePro\Model\Amazon\Search
+ * Class \Ess\M2ePro\Model\Amazon\Search\Custom
  */
 class Custom extends \Ess\M2ePro\Model\AbstractModel
 {

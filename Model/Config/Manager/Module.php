@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Config\Manager;
 
 /**
- * Class Module
- * @package Ess\M2ePro\Model\Config\Manager
+ * Class \Ess\M2ePro\Model\Config\Manager\Module
  */
 class Module extends AbstractModel
 {

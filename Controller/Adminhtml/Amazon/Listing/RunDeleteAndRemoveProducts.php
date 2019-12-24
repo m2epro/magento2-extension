@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
 /**
- * Class RunDeleteAndRemoveProducts
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\RunDeleteAndRemoveProducts
  */
 class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\ActionAbstract
 {

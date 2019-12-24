@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Template\ShippingOverride\Service;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Amazon\Template\ShippingOverride\Service
+ * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ShippingOverride\Service\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

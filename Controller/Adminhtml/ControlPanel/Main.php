@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel;
 
 /**
- * Class Main
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main
  */
 abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Base
 {

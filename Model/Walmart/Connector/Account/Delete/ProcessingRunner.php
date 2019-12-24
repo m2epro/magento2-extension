@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Connector\Account\Delete;
 
 /**
- * Class ProcessingRunner
- * @package Ess\M2ePro\Model\Walmart\Connector\Account\Delete
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Account\Delete\ProcessingRunner
  */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {

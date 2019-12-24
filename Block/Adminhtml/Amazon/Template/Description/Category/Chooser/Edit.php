@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Edit
  */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {

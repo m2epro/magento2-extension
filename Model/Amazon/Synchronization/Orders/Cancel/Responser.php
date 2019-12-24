@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders\Cancel;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders\Cancel
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\Orders\Cancel\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Cancel\ItemsResponser
 {

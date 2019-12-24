@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Strategy;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\Cron\Strategy
+ * Class \Ess\M2ePro\Model\Cron\Strategy\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {

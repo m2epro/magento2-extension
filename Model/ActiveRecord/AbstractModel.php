@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ActiveRecord;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\ActiveRecord
+ * Class \Ess\M2ePro\Model\ActiveRecord\AbstractModel
  */
 abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
 {

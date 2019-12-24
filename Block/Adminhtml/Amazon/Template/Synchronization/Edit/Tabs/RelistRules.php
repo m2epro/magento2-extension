@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Template\Synchronization;
 
 /**
- * Class RelistRules
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs\RelistRules
  */
 class RelistRules extends AbstractForm
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 /**
- * Class PickupStore
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
  */
 abstract class PickupStore extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

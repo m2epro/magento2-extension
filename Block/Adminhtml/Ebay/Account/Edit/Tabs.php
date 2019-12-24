@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit;
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 
 /**
- * Class Tabs
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs
  */
 class Tabs extends AbstractTabs
 {
@@ -123,9 +122,6 @@ class Tabs extends AbstractTabs
             ),
             'You should create at least one Response Template.' => $this->__(
                 'You should create at least one Response Template.'
-            ),
-            'Prefix length should not be greater than 5 characters.' => $this->__(
-                'Prefix length should not be greater than 5 characters.'
             ),
             'You must get token.' => $this->__('You must get token.')
         ]);

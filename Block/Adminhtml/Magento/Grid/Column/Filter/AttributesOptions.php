@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter;
 
 /**
- * Class AttributesOptions
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions
  */
 class AttributesOptions extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
 {

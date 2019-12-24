@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Magento\Category;
 use Magento\Catalog\Api\Data\CategoryAttributeInterface;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Magento\Category
+ * Class \Ess\M2ePro\Model\ResourceModel\Magento\Category\Collection
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collection
 {

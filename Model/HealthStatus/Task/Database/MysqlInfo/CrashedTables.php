@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 
 /**
- * Class CrashedTables
- * @package Ess\M2ePro\Model\HealthStatus\Task\Database\MysqlInfo
+ * Class \Ess\M2ePro\Model\HealthStatus\Task\Database\MysqlInfo\CrashedTables
  */
 class CrashedTables extends IssueType
 {

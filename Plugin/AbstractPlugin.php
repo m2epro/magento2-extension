@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Plugin;
 use Ess\M2ePro\Model\Exception;
 
 /**
- * Class AbstractPlugin
- * @package Ess\M2ePro\Plugin
+ * Class \Ess\M2ePro\Plugin\AbstractPlugin
  */
 abstract class AbstractPlugin
 {

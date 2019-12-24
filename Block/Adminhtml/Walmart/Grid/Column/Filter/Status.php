@@ -9,8 +9,7 @@
 namespace  Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter;
 
 /**
- * Class Status
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter\Status
  */
 class Status extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
 {

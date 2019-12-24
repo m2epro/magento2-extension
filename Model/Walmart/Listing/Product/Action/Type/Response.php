@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type;
 
 /**
- * Class Response
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Response
  */
 abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 {

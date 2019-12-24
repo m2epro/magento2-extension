@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders\Receive;
 
 /**
- * Class Details
- * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders\Receive
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\Orders\Receive\Details
  */
 class Details extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\AbstractModel
 {
@@ -129,7 +128,13 @@ class Details extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\AbstractMo
         $orderCollection->addFieldToFilter('is_afn_channel', 1);
         $orderCollection->addFieldToFilter('status', ['neq' => \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING]);
         $orderCollection->addFieldToFilter('create_date', ['gt' => $from->format('Y-m-d H:i:s')]);
-        $orderCollection->addFieldToFilter('additional_data', ['nlike' => '%fulfillment_details%']);
+        $orderCollection->addFieldToFilter(
+            ['additional_data', 'additional_data'],
+            [
+                ['additional_data', 'null' => true],
+                ['additional_data', 'nlike' => '%fulfillment_details%']
+            ]
+        );
 
         $amazonOrdersIds = $orderCollection->getColumnValues('amazon_order_id');
         if (empty($amazonOrdersIds)) {

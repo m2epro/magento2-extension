@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Search;
 
 /**
- * Class Dispatcher
- * @package Ess\M2ePro\Model\Amazon\Search
+ * Class \Ess\M2ePro\Model\Amazon\Search\Dispatcher
  */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {

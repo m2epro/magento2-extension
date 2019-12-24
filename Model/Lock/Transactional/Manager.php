@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Lock\Transactional;
 
 /**
- * Class Manager
- * @package Ess\M2ePro\Model\Lock\Transactional
+ * Class \Ess\M2ePro\Model\Lock\Transactional\Manager
  */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {

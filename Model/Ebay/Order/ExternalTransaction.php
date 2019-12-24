@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Order;
 
 /**
- * Class ExternalTransaction
- * @package Ess\M2ePro\Model\Ebay\Order
+ * Class \Ess\M2ePro\Model\Ebay\Order\ExternalTransaction
  */
 class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Other;
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractView;
 
 /**
- * Class View
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Other
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Other\View
  */
 class View extends AbstractView
 {

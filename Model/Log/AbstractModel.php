@@ -10,8 +10,7 @@ namespace Ess\M2ePro\Model\Log;
 use Ess\M2ePro\Model\Exception;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\Log
+ * Class \Ess\M2ePro\Model\Log\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {

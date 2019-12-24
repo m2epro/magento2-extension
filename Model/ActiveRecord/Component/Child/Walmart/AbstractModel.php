@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
+ * Class \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request;
 
 /**
- * Class Details
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Details
  */
 class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search;
 
 /**
- * Class AbstractGrid
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGrid
  */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Connector\Item\ListAction;
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Ebay\Connector\Item\ListAction
+ * Class \Ess\M2ePro\Model\Ebay\Connector\Item\ListAction\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Edit;
 
 /**
- * Class Tabs
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Edit\Tabs
  */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs
 {

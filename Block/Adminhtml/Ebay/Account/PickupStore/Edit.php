@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit
  */
 class Edit extends AbstractContainer
 {

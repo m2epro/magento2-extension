@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
 /**
- * Class Category
- * @package Ess\M2ePro\Helper\Component\Amazon
+ * Class \Ess\M2ePro\Helper\Component\Amazon\Category
  */
 class Category extends \Ess\M2ePro\Helper\AbstractHelper
 {

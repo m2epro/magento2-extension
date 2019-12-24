@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Ta
 use Ess\M2ePro\Helper\Component\Walmart\Vocabulary;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Vocabulary
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Vocabulary\Form
  */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

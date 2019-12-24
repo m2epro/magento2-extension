@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector\Product;
 
 /**
- * Class ProcessingRunner
- * @package Ess\M2ePro\Model\Amazon\Connector\Product
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Product\ProcessingRunner
  */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {

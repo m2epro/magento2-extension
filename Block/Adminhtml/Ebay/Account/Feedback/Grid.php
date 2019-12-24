@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Feedback;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\Feedback
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Feedback\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {

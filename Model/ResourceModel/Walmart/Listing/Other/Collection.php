@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other
+ * Class \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Child\AbstractModel
 {

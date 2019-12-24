@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Task;
 
 /**
- * Class IssuesResolver
- * @package Ess\M2ePro\Model\Cron\Task
+ * Class \Ess\M2ePro\Model\Cron\Task\IssuesResolver
  */
 class IssuesResolver extends AbstractModel
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Cron\Strategy;
 use Ess\M2ePro\Model\Exception;
 
 /**
- * Class Parallel
- * @package Ess\M2ePro\Model\Cron\Strategy
+ * Class \Ess\M2ePro\Model\Cron\Strategy\Parallel
  */
 class Parallel extends AbstractModel
 {

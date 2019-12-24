@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation;
 use Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation;
 
 /**
- * Class ListingTutorial
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\ListingTutorial
  */
 class ListingTutorial extends Installation
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer\Product;
 
 /**
- * Class AbstractProduct
- * @package Ess\M2ePro\Observer\Product
+ * Class \Ess\M2ePro\Observer\Product\AbstractProduct
  */
 abstract class AbstractProduct extends \Ess\M2ePro\Observer\AbstractModel
 {

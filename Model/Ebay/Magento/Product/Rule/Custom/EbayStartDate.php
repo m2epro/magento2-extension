@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom;
 
 /**
- * Class EbayStartDate
- * @package Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom
+ * Class \Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom\EbayStartDate
  */
 class EbayStartDate extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {

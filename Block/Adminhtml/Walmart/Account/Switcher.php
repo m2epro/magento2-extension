@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account;
 
 /**
- * Class Switcher
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Account
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Switcher
  */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Account\Switcher
 {

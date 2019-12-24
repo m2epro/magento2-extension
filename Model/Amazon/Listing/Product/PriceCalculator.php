@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Amazon\Template\SellingFormat;
 use Ess\M2ePro\Model\Magento\Product;
 
 /**
- * Class PriceCalculator
- * @package Ess\M2ePro\Model\Amazon\Listing\Product
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator
  */
 class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
 {

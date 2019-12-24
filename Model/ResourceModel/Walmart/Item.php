@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Walmart;
 
 /**
- * Class Item
- * @package Ess\M2ePro\Model\ResourceModel\Walmart
+ * Class \Ess\M2ePro\Model\ResourceModel\Walmart\Item
  */
 class Item extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

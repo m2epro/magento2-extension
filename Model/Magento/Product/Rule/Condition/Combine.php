@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Product\Rule\Condition;
 
 /**
- * Class Combine
- * @package Ess\M2ePro\Model\Magento\Product\Rule\Condition
+ * Class \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
  */
 class Combine extends AbstractModel
 {

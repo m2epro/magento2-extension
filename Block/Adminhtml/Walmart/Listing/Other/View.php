@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Other;
 
 /**
- * Class View
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Other
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Other\View
  */
 class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\HealthStatus\Notification;
 
 /**
- * Class MessageBuilder
- * @package Ess\M2ePro\Model\HealthStatus\Notification
+ * Class \Ess\M2ePro\Model\HealthStatus\Notification\MessageBuilder
  */
 class MessageBuilder extends \Ess\M2ePro\Model\AbstractModel
 {

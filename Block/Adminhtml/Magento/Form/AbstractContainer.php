@@ -13,8 +13,7 @@ use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
 /**
- * Class AbstractContainer
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Form
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
  */
 abstract class AbstractContainer extends Container
 {

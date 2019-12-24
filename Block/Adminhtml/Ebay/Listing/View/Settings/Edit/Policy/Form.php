@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Edit\Policy;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Edit\Policy
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Edit\Policy\Form
  */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

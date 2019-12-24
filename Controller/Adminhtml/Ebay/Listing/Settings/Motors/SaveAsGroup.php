@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
 /**
- * Class SaveAsGroup
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors\SaveAsGroup
  */
 class SaveAsGroup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

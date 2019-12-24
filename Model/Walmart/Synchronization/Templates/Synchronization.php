@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Synchronization\Templates;
 
 /**
- * Class Synchronization
- * @package Ess\M2ePro\Model\Walmart\Synchronization\Templates
+ * Class \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization
  */
 class Synchronization extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\AbstractModel
 {

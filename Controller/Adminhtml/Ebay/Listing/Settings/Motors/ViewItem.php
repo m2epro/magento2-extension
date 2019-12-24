@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
 /**
- * Class ViewItem
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors\ViewItem
  */
 class ViewItem extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

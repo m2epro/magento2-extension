@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Task;
 
 /**
- * Class LogsClearing
- * @package Ess\M2ePro\Model\Cron\Task
+ * Class \Ess\M2ePro\Model\Cron\Task\LogsClearing
  */
 class LogsClearing extends AbstractModel
 {

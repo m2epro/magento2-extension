@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
 /**
- * Class GetChildCategories
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Category
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Category\GetChildCategories
  */
 class GetChildCategories extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {

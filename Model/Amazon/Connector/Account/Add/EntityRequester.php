@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector\Account\Add;
 
 /**
- * Class EntityRequester
- * @package Ess\M2ePro\Model\Amazon\Connector\Account\Add
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Account\Add\EntityRequester
  */
 class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {

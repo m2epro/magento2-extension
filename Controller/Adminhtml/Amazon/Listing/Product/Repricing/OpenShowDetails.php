@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing;
 
 /**
- * Class OpenShowDetails
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing\OpenShowDetails
  */
 class OpenShowDetails extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {

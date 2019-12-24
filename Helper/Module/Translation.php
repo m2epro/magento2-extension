@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Module;
 
 /**
- * Class Translation
- * @package Ess\M2ePro\Helper\Module
+ * Class \Ess\M2ePro\Helper\Module\Translation
  */
 class Translation extends \Ess\M2ePro\Helper\AbstractHelper
 {

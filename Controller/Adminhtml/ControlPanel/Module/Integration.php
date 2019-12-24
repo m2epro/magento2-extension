@@ -15,8 +15,7 @@ use Ess\M2ePro\Helper\Component\Amazon;
 use Ess\M2ePro\Helper\Component\Ebay;
 
 /**
- * Class Integration
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration
  */
 class Integration extends Command
 {

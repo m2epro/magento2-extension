@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manag
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
- * Class ViewVariationsSettingsAjax
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manage
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manage\ViewVariationsSettingsAjax
  */
 class ViewVariationsSettingsAjax extends Main
 {
@@ -28,7 +27,6 @@ class ViewVariationsSettingsAjax extends Main
         $settings->setListingProduct($this->amazonFactory->getObjectLoaded('Listing\Product', $productId));
 
         $this->setJsonContent([
-            'error_icon' => count($settings->getMessages()) > 0 ? $settings->getMessagesType() : '',
             'html' => $settings->toHtml()
         ]);
         return $this->getResult();

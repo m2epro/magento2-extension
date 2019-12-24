@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Exception;
 
 /**
- * Class Connection
- * @package Ess\M2ePro\Model\Exception
+ * Class \Ess\M2ePro\Model\Exception\Connection
  */
 class Connection extends \Ess\M2ePro\Model\Exception
 {

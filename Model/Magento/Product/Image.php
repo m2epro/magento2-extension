@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\AbstractModel;
 use \Magento\Framework\App\Area;
 
 /**
- * Class Image
- * @package Ess\M2ePro\Model\Magento\Product
+ * Class \Ess\M2ePro\Model\Magento\Product\Image
  */
 class Image extends AbstractModel
 {

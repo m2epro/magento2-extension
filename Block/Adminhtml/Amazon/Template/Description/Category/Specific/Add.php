@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Specific;
 
 /**
- * Class Add
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Specific
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Specific\Add
  */
 class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

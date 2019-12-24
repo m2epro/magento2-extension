@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer\Product\AddUpdate\Before;
 
 /**
- * Class Proxy
- * @package Ess\M2ePro\Observer\Product\AddUpdate\Before
+ * Class \Ess\M2ePro\Observer\Product\AddUpdate\Before\Proxy
  */
 class Proxy
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ShippingTemplate;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ShippingTemplate
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ShippingTemplate\Edit
  */
 class Edit extends Template
 {

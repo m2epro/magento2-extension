@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Index
  */
 class Index extends Template
 {

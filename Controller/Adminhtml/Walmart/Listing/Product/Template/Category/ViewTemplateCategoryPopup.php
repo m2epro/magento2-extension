@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category;
 
 /**
- * Class ViewTemplateCategoryPopup
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category\ViewTemplateCategoryPopup
  */
 class ViewTemplateCategoryPopup extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {

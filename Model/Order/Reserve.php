@@ -12,8 +12,7 @@ use Magento\InventoryConfigurationApi\Model\IsSourceItemManagementAllowedForProd
 use Magento\InventorySalesApi\Model\StockByWebsiteIdResolverInterface;
 
 /**
- * Class Reserve
- * @package Ess\M2ePro\Model\Order
+ * Class \Ess\M2ePro\Model\Order\Reserve
  */
 class Reserve extends \Ess\M2ePro\Model\AbstractModel
 {

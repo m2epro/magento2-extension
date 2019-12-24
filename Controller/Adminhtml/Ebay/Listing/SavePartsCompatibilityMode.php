@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 /**
- * Class SavePartsCompatibilityMode
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\SavePartsCompatibilityMode
  */
 class SavePartsCompatibilityMode extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Servicing\Task;
 
 /**
- * Class Settings
- * @package Ess\M2ePro\Model\Servicing\Task
+ * Class \Ess\M2ePro\Model\Servicing\Task\Settings
  */
 class Settings extends \Ess\M2ePro\Model\Servicing\Task
 {

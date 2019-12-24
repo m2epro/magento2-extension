@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
 /**
- * Class AccountGrid
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Account
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Account\AccountGrid
  */
 class AccountGrid extends Account
 {

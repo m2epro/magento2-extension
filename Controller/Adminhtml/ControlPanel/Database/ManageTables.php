@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database;
 
 /**
- * Class ManageTables
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database\ManageTables
  */
 class ManageTables extends Table
 {

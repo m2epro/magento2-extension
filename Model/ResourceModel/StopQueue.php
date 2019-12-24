@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel;
 
 /**
- * Class StopQueue
- * @package Ess\M2ePro\Model\ResourceModel
+ * Class \Ess\M2ePro\Model\ResourceModel\StopQueue
  */
 class StopQueue extends ActiveRecord\AbstractModel
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Description;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Description
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Description\Edit
  */
 class Edit extends Template
 {

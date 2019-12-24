@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database;
 
 /**
- * Class AddTableRow
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database\AddTableRow
  */
 class AddTableRow extends Table
 {

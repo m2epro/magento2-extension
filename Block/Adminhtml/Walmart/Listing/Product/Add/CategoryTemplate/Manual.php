@@ -8,8 +8,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate;
 
 /**
- * Class Manual
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\Manual
  */
 class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

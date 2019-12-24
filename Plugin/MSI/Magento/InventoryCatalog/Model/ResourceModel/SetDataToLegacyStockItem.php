@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Plugin\MSI\Magento\InventoryCatalog\Model\ResourceModel;
 
 /**
- * Class SetDataToLegacyStockItem
- * @package Ess\M2ePro\Plugin\MSI\Magento\InventoryCatalog\Model\ResourceModel
+ * Class \Ess\M2ePro\Plugin\MSI\Magento\InventoryCatalog\Model\ResourceModel\SetDataToLegacyStockItem
  */
 class SetDataToLegacyStockItem extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

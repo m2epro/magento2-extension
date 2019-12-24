@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Moving;
 
 /**
- * Class MoveToListingGrid
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Moving
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Moving\MoveToListingGrid
  */
 class MoveToListingGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Search\Settings\ByIdentifier;
 
 /**
- * Class Requester
- * @package Ess\M2ePro\Model\Amazon\Search\Settings\ByIdentifier
+ * Class \Ess\M2ePro\Model\Amazon\Search\Settings\ByIdentifier\Requester
  */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByIdentifier\ItemsRequester
 {

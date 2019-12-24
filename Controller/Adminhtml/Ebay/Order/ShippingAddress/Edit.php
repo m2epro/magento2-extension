@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order\ShippingAddress;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Order\ShippingAddress
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Order\ShippingAddress\Edit
  */
 class Edit extends Order
 {

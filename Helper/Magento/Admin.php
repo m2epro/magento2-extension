@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Magento;
 
 /**
- * Class Admin
- * @package Ess\M2ePro\Helper\Magento
+ * Class \Ess\M2ePro\Helper\Magento\Admin
  */
 class Admin extends AbstractHelper
 {

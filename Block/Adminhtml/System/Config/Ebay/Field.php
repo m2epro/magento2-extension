@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\System\Config\Ebay;
 
 /**
- * Class Field
- * @package Ess\M2ePro\Block\Adminhtml\System\Config\Ebay
+ * Class \Ess\M2ePro\Block\Adminhtml\System\Config\Ebay\Field
  */
 class Field extends \Ess\M2ePro\Block\Adminhtml\System\Config\Integration
 {

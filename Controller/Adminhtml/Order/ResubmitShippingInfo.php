@@ -12,18 +12,17 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
 /**
- * Class ResubmitShippingInfo
- * @package Ess\M2ePro\Controller\Adminhtml\Order
+ * Class \Ess\M2ePro\Controller\Adminhtml\Order\ResubmitShippingInfo
  */
 class ResubmitShippingInfo extends Order
 {
-    protected $orderShipmentCollection;
+    protected $orderShipmentCollectionFactory;
 
     public function __construct(
-        \Magento\Sales\Model\ResourceModel\Order\Shipment\Collection $orderShipmentCollection,
+        \Magento\Sales\Model\ResourceModel\Order\Shipment\CollectionFactory $orderShipmentCollectionFactory,
         Context $context
     ) {
-        $this->orderShipmentCollection = $orderShipmentCollection;
+        $this->orderShipmentCollectionFactory = $orderShipmentCollectionFactory;
 
         parent::__construct($context);
     }
@@ -38,8 +37,8 @@ class ResubmitShippingInfo extends Order
             /** @var \Ess\M2ePro\Model\Order $order */
             $order = $this->activeRecordFactory->getObjectLoaded('Order', $id);
 
-            $shipmentsCollection = $this->orderShipmentCollection
-                ->setOrderFilter($order->getMagentoOrderId());
+            $shipmentsCollection = $this->orderShipmentCollectionFactory->create();
+            $shipmentsCollection->setOrderFilter($order->getMagentoOrderId());
 
             foreach ($shipmentsCollection->getItems() as $shipment) {
                 /** @var \Magento\Sales\Model\Order\Shipment $shipment */

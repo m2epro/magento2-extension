@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Listing;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling\Form
  */
 class Form extends AbstractForm
 {

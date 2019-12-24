@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Settings;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings\Index
  */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
 {

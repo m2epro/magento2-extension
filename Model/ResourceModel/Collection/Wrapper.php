@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Collection;
 
 /**
- * Class Wrapper
- * @package Ess\M2ePro\Model\ResourceModel\Collection
+ * Class \Ess\M2ePro\Model\ResourceModel\Collection\Wrapper
  */
 class Wrapper extends \Magento\Framework\Data\Collection\AbstractDb
 {

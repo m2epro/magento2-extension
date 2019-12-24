@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
- * Class GetProductsSearchStatus
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search\GetProductsSearchStatus
  */
 class GetProductsSearchStatus extends Main
 {

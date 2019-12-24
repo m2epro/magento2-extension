@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation;
 
 /**
- * Class SwitchToParentPopup
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\SwitchToParentPopup
  */
 class SwitchToParentPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

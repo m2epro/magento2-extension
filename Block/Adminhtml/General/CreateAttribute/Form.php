@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Magento\Attribute\Builder as AttributeBuilder;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\General\CreateAttribute
+ * Class \Ess\M2ePro\Block\Adminhtml\General\CreateAttribute\Form
  */
 class Form extends AbstractForm
 {

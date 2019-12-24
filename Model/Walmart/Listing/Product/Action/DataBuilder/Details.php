@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
 /**
- * Class Details
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\Details
  */
 class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1;
 
 /**
- * Class Breadcrumb
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Breadcrumb
  */
 class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
 {

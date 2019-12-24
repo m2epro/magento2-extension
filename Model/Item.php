@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model;
 
 /**
- * Class Item
- * @package Ess\M2ePro\Model
+ * Class \Ess\M2ePro\Model\Item
  */
 class Item extends \Ess\M2ePro\Model\AbstractModel
 {

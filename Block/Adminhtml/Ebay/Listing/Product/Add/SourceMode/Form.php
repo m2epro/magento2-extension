@@ -8,8 +8,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode\Form
  */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

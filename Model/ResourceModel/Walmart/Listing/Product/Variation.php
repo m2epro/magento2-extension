@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product;
 
 /**
- * Class Variation
- * @package Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product
+ * Class \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Variation
  */
 class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {

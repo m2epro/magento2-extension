@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Server;
 
 /**
- * Class Request
- * @package Ess\M2ePro\Helper\Server
+ * Class \Ess\M2ePro\Helper\Server\Request
  */
 class Request extends \Ess\M2ePro\Helper\AbstractHelper
 {

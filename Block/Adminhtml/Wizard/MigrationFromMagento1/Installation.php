@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1;
 
 /**
- * Class Installation
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation
  */
 abstract class Installation extends \Ess\M2ePro\Block\Adminhtml\Wizard\Installation
 {

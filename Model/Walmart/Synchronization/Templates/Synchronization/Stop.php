@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization;
 use Ess\M2ePro\Model\Walmart\Template\Synchronization as SynchronizationPolicy;
 
 /**
- * Class Stop
- * @package Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization
+ * Class \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization\Stop
  */
 class Stop extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization\AbstractModel
 {

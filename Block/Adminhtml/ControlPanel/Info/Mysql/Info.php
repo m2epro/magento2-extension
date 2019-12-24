@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\Mysql;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class Info
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\Mysql
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\Mysql\Info
  */
 class Info extends AbstractBlock
 {

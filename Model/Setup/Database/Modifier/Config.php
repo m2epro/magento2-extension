@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Setup\Database\Modifier;
 use Ess\M2ePro\Model\Setup\Database\Modifier\Config\Entity;
 
 /**
- * Class Config
- * @package Ess\M2ePro\Model\Setup\Database\Modifier
+ * Class \Ess\M2ePro\Model\Setup\Database\Modifier\Config
  */
 class Config extends AbstractModifier
 {

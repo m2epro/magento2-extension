@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\AttributeSet;
 
 /**
- * Class Builder
- * @package Ess\M2ePro\Model\Magento\AttributeSet
+ * Class \Ess\M2ePro\Model\Magento\AttributeSet\Builder
  */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml;
 
 /**
- * Class Messages
- * @package Ess\M2ePro\Block\Adminhtml
+ * Class \Ess\M2ePro\Block\Adminhtml\Messages
  */
 class Messages extends \Magento\Framework\View\Element\Messages
 {

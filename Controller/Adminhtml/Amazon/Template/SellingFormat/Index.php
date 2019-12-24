@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat\Index
  */
 class Index extends Template
 {

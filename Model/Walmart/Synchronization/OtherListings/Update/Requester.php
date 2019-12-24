@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Synchronization\OtherListings\Update;
 
 /**
- * Class Requester
- * @package Ess\M2ePro\Model\Walmart\Synchronization\OtherListings\Update
+ * Class \Ess\M2ePro\Model\Walmart\Synchronization\OtherListings\Update\Requester
  */
 class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsRequester
 {

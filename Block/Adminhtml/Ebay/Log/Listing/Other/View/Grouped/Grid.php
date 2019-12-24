@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\View\Grouped\AbstractGrid;
 use Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Other\GridTrait;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Other\View\Grouped
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Other\View\Grouped\Grid
  */
 class Grid extends AbstractGrid
 {

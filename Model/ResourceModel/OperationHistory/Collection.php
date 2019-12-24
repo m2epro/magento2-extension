@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\OperationHistory;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\OperationHistory
+ * Class \Ess\M2ePro\Model\ResourceModel\OperationHistory\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

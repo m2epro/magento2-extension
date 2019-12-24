@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
 {

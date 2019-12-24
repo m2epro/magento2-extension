@@ -13,8 +13,7 @@ use Ess\M2ePro\Helper\Module;
 use Magento\Backend\App\Action;
 
 /**
- * Class PhpInfo
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Inspection
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Inspection\PhpInfo
  */
 class PhpInfo extends Main
 {

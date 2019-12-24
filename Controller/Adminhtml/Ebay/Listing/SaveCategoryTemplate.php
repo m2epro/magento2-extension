@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 /**
- * Class SaveCategoryTemplate
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\SaveCategoryTemplate
  */
 class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

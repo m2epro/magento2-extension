@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request;
 
 /**
- * Class ShippingOverride
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\ShippingOverride
  */
 class ShippingOverride extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\AbstractModel
 {

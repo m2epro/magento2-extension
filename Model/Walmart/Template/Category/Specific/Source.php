@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Template\Category\Specific;
 use Ess\M2ePro\Model\Walmart\Template\Category\Specific as CategorySpecific;
 
 /**
- * Class Source
- * @package Ess\M2ePro\Model\Walmart\Template\Category\Specific
+ * Class \Ess\M2ePro\Model\Walmart\Template\Category\Specific\Source
  */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {

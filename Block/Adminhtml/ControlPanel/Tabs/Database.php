@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
 /**
- * Class Database
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database
  */
 class Database extends AbstractContainer
 {

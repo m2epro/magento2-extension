@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationAmazon;
 
 /**
- * Class Installation
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationAmazon
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\InstallationAmazon\Installation
  */
 abstract class Installation extends \Ess\M2ePro\Block\Adminhtml\Wizard\Installation
 {

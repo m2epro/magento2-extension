@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Synchronization;
 
 /**
- * Class Log
- * @package Ess\M2ePro\Model\ResourceModel\Synchronization
+ * Class \Ess\M2ePro\Model\ResourceModel\Synchronization\Log
  */
 class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
 {

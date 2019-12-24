@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart;
 
 /**
- * Class Order
- * @package Ess\M2ePro\Model\Walmart
+ * Class \Ess\M2ePro\Model\Walmart\Order
  */
 /**
  * @method \Ess\M2ePro\Model\Order getParentObject()
@@ -638,13 +637,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
             foreach ($existingParams['items'] as &$existingItem) {
                 if ($newItem['walmart_order_item_id'] === $existingItem['walmart_order_item_id']) {
                     $newQtyTotal = $newItem['qty'] + $existingItem['qty'];
-
-                    $maxQtyTotal = $this->activeRecordFactory->getObject('Walmart_Order_Item')->getCollection()
-                        ->addFieldToFilter(
-                            'walmart_order_item_id',
-                            $existingItem['walmart_order_item_id']
-                        )
+                    $maxQtyTotal = $this->walmartFactory->getObject('Order_Item')
+                        ->getCollection()
+                        ->addFieldToFilter('order_id', $this->getId())
+                        ->addFieldToFilter('walmart_order_item_id', $existingItem['walmart_order_item_id'])
                         ->getFirstItem()
+                        ->getChildObject()
                         ->getQty();
                     $newQtyTotal >= $maxQtyTotal && $newQtyTotal = $maxQtyTotal;
                     $existingItem['qty'] = $newQtyTotal;

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
 /**
- * Class SynchronizationLog
- * @package Ess\M2ePro\Block\Adminhtml\Developers\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SynchronizationLog
  */
 class SynchronizationLog extends AbstractContainer
 {

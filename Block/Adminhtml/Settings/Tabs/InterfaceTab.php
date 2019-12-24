@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs;
 
 /**
- * Class InterfaceTab
- * @package Ess\M2ePro\Block\Adminhtml\Settings\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\InterfaceTab
  */
 class InterfaceTab extends AbstractTab
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\M2ePro\Connector\Server\Check;
 
 /**
- * Class State
- * @package Ess\M2ePro\Model\M2ePro\Connector\Server\Check
+ * Class \Ess\M2ePro\Model\M2ePro\Connector\Server\Check\State
  */
 class State extends \Ess\M2ePro\Model\Connector\Command\RealTime
 {

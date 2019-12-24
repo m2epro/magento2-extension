@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Mana
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
 /**
- * Class CreateNewChild
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage\CreateNewChild
  */
 class CreateNewChild extends Main
 {

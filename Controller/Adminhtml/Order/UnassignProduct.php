@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
 /**
- * Class UnassignProduct
- * @package Ess\M2ePro\Controller\Adminhtml\Order
+ * Class \Ess\M2ePro\Controller\Adminhtml\Order\UnassignProduct
  */
 class UnassignProduct extends Order
 {

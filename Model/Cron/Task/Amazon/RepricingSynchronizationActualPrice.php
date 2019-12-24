@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Task\Amazon;
 
 /**
- * Class RepricingSynchronizationActualPrice
- * @package Ess\M2ePro\Model\Cron\Task\Amazon
+ * Class \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingSynchronizationActualPrice
  */
 class RepricingSynchronizationActualPrice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {

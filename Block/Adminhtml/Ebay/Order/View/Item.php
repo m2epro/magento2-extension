@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Order\View;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
 /**
- * Class Item
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Order\View
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Order\View\Item
  */
 class Item extends AbstractGrid
 {

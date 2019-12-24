@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\Installation\Registration;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 /**
- * Class Content
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\Installation\Registration
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\Installation\Registration\Content
  */
 abstract class Content extends AbstractForm
 {

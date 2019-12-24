@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Order\Shipment;
 
 /**
- * Class Handler
- * @package Ess\M2ePro\Model\Ebay\Order\Shipment
+ * Class \Ess\M2ePro\Model\Ebay\Order\Shipment\Handler
  */
 class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
 {

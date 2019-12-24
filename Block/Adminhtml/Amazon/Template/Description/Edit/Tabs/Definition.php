@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs;
 use Ess\M2ePro\Model\Amazon\Template\Description\Definition as DefinitionTemplate;
 
 /**
- * Class Definition
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs\Definition
  */
 class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
@@ -1348,7 +1347,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $this->appendKeywordsFields($fieldSet, 5, 'search_terms', $this->__('Search Terms'));
+        $this->appendKeywordsFields($fieldSet, 5, 'search_terms', $this->__('Search Terms'), 250);
 
         $fieldSet->addField('search_terms_mode_separator', self::SEPARATOR, []);
 
@@ -1385,7 +1384,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Data\Form\Element\Fieldset $fieldSet,
         $fieldCount,
         $name,
-        $fieldTitle
+        $fieldTitle,
+        $maxlength = 50
     ) {
         $helper = $this->getHelper('Data');
         for ($i = 0; $i < $fieldCount; $i++) {
@@ -1409,7 +1409,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'css_class' => $name.'_tr no-margin-bottom',
                     'field_extra_attributes' => 'style="display: none;"',
                     'after_element_html' => $button->toHtml(),
-                    'tooltip' => $this->__('Max. 50 characters.')
+                    'maxlength' => $maxlength,
+                    'tooltip' => $this->__('Max. ' . $maxlength . ' characters.')
                 ]
             );
         }

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\Orders;
 use Ess\M2ePro\Model\Order;
 
 /**
- * Class CreateFailed
- * @package Ess\M2ePro\Model\Ebay\Synchronization\Orders
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\Orders\CreateFailed
  */
 class CreateFailed extends AbstractModel
 {

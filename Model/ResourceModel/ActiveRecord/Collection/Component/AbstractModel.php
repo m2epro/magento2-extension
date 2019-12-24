@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component
+ * Class \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Blocked;
 
 /**
- * Class Requester
- * @package Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Blocked
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Blocked\Requester
  */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked\ItemsRequester
 {

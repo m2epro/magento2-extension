@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other;
 
 /**
- * Class View
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other\View
  */
 class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

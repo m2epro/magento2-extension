@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Order;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
 /**
- * Class NotCreatedFilter
- * @package Ess\M2ePro\Block\Adminhtml\Order
+ * Class \Ess\M2ePro\Block\Adminhtml\Order\NotCreatedFilter
  */
 class NotCreatedFilter extends AbstractContainer
 {

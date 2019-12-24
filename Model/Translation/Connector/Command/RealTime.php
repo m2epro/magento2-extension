@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Translation\Connector\Command;
 
 /**
- * Class RealTime
- * @package Ess\M2ePro\Model\Translation\Connector\Command
+ * Class \Ess\M2ePro\Model\Translation\Connector\Command\RealTime
  */
 abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
 {

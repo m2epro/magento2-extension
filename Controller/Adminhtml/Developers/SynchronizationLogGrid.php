@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Developers;
 use Ess\M2ePro\Controller\Adminhtml\Developers;
 
 /**
- * Class SynchronizationLogGrid
- * @package Ess\M2ePro\Controller\Adminhtml\Developers
+ * Class \Ess\M2ePro\Controller\Adminhtml\Developers\SynchronizationLogGrid
  */
 class SynchronizationLogGrid extends Developers
 {

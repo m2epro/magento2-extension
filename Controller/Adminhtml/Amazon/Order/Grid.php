@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Order
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Order\Grid
  */
 class Grid extends Order
 {

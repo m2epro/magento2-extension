@@ -15,8 +15,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Ess\M2ePro\Setup\LoggerFactory;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\SetupManagement
+ * Class \Ess\M2ePro\Controller\Adminhtml\SetupManagement\Index
  */
 class Index extends \Magento\Backend\App\Action
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add;
 
 /**
- * Class CategoryTemplate
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate
  */
 class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {

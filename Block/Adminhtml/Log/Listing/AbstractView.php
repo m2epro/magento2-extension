@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Log\Listing;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
 /**
- * Class AbstractView
- * @package Ess\M2ePro\Block\Adminhtml\Log\Listing
+ * Class \Ess\M2ePro\Block\Adminhtml\Log\Listing\AbstractView
  */
 abstract class AbstractView extends AbstractContainer
 {

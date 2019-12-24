@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
 /**
- * Class ListingSelling
- * @package Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon
+ * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon\ListingSelling
  */
 class ListingSelling extends InstallationAmazon
 {

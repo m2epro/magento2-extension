@@ -13,8 +13,7 @@ use Magento\Quote\Model\Quote\Address\Total\AbstractTotal;
 use Magento\Tax\Model\Sales\Total\Quote\CommonTaxCollector;
 
 /**
- * Class WasteRecyclingFee
- * @package Ess\M2ePro\Model\Magento\Quote\Total
+ * Class \Ess\M2ePro\Model\Magento\Quote\Total\WasteRecyclingFee
  */
 class WasteRecyclingFee extends AbstractTotal
 {

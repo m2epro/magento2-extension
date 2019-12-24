@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Log;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\ResourceModel\Log
+ * Class \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

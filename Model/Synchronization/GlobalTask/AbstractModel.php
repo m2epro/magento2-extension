@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\Synchronization\GlobalTask
+ * Class \Ess\M2ePro\Model\Synchronization\GlobalTask\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal
 {

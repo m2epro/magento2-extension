@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs;
 
 /**
- * Class AbstractTab
- * @package Ess\M2ePro\Block\Adminhtml\Settings\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
  */
 abstract class AbstractTab extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

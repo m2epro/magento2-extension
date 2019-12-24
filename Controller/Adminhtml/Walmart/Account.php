@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
 /**
- * Class Account
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Account
  */
 abstract class Account extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {

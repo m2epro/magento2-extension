@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Settings;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings\Index
  */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
 {

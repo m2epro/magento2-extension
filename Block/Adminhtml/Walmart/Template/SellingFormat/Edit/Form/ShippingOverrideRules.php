@@ -12,8 +12,7 @@ use \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm as Form;
 use \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride;
 
 /**
- * Class ShippingOverrideRules
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form\ShippingOverrideRules
  */
 class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

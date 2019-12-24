@@ -16,8 +16,7 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 
 /**
- * Class Uninstall
- * @package Ess\M2ePro\Setup
+ * Class \Ess\M2ePro\Setup\Uninstall
  */
 class Uninstall implements \Magento\Framework\Setup\UninstallInterface
 {

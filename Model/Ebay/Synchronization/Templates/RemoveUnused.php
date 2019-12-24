@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Templates;
 
 /**
- * Class RemoveUnused
- * @package Ess\M2ePro\Model\Ebay\Synchronization\Templates
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\Templates\RemoveUnused
  */
 class RemoveUnused extends AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Request\Pending;
 
 /**
- * Class Single
- * @package Ess\M2ePro\Model\ResourceModel\Request\Pending
+ * Class \Ess\M2ePro\Model\ResourceModel\Request\Pending\Single
  */
 class Single extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template;
 
 /**
- * Class Payment
- * @package Ess\M2ePro\Model\ResourceModel\Ebay\Template
+ * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Payment
  */
 class Payment extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

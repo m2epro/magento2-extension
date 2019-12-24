@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Servicing\Task;
 
 /**
- * Class License
- * @package Ess\M2ePro\Model\Servicing\Task
+ * Class \Ess\M2ePro\Model\Servicing\Task\License
  */
 class License extends \Ess\M2ePro\Model\Servicing\Task
 {

@@ -15,8 +15,7 @@ use Ess\M2ePro\Helper\Component\Ebay;
 use Ess\M2ePro\Model\Exception\Connection;
 
 /**
- * Class General
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\M2ePro
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\M2ePro\General
  */
 class General extends Command
 {

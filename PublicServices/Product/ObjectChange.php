@@ -28,8 +28,7 @@ namespace Ess\M2ePro\PublicServices\Product;
 use Magento\Framework\Event\Observer;
 
 /**
- * Class ObjectChange
- * @package Ess\M2ePro\PublicServices\Product
+ * Class \Ess\M2ePro\PublicServices\Product\ObjectChange
  */
 class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
 {

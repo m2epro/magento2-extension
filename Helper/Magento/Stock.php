@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Magento;
 
 /**
- * Class Stock
- * @package Ess\M2ePro\Helper\Magento
+ * Class \Ess\M2ePro\Helper\Magento\Stock
  */
 class Stock extends \Ess\M2ePro\Helper\AbstractHelper
 {

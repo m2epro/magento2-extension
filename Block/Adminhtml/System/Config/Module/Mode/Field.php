@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\System\Config\Module\Mode;
 
 /**
- * Class Field
- * @package Ess\M2ePro\Block\Adminhtml\System\Config\Module\Mode
+ * Class \Ess\M2ePro\Block\Adminhtml\System\Config\Module\Mode\Field
  */
 class Field extends \Ess\M2ePro\Block\Adminhtml\System\Config\Integration
 {

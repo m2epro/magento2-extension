@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 use Ess\M2ePro\Model\Lock\Item\Manager;
 
 /**
- * Class RunDeleteAndRemoveProducts
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\RunDeleteAndRemoveProducts
  */
 class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbstract
 {

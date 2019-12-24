@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Order\Change;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Order\Change
+ * Class \Ess\M2ePro\Model\ResourceModel\Order\Change\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

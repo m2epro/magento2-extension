@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Synchronization\Templates\Synchronization;
 
 /**
- * Class Inspector
- * @package Ess\M2ePro\Model\Synchronization\Templates\Synchronization
+ * Class \Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Inspector
  */
 abstract class Inspector extends \Ess\M2ePro\Model\AbstractModel
 {

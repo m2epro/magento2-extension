@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Indi
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Individual
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Individual\Edit
  */
 class Edit extends Main
 {

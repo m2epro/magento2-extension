@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
 /**
- * Class Delete
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Account
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Account\Delete
  */
 class Delete extends Account
 {

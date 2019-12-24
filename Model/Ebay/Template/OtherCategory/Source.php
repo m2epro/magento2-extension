@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Template\OtherCategory;
 
 /**
- * Class Source
- * @package Ess\M2ePro\Model\Ebay\Template\OtherCategory
+ * Class \Ess\M2ePro\Model\Ebay\Template\OtherCategory\Source
  */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {

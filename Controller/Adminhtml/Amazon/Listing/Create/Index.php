@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Create;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Create
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Create\Index
  */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {

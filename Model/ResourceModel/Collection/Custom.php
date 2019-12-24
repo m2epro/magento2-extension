@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Collection;
 
 /**
- * Class Custom
- * @package Ess\M2ePro\Model\ResourceModel\Collection
+ * Class \Ess\M2ePro\Model\ResourceModel\Collection\Custom
  */
 class Custom extends \Magento\Framework\Data\Collection
 {

@@ -3,8 +3,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product;
 
 /**
- * Class GetEditIdentifiersPopup
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\GetEditIdentifiersPopup
  */
 class GetEditIdentifiersPopup extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {

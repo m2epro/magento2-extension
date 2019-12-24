@@ -33,14 +33,14 @@ define([
                     this.mapToNewAsin(this.getSelectedProductsString())
                 }).bind(this),
                 resetDescriptionTemplateAction: (function () {
-                    this.unmapFromNewAsin(this.getSelectedProductsString())
+                    this.unmapFromNewAsinForProducts(this.getSelectedProductsString())
                 }).bind(this),
 
                 setDescriptionTemplateByCategoryAction: (function () {
                     this.mapToNewAsin(this.getSelectedProductsStringFromCategory())
                 }).bind(this),
                 resetDescriptionTemplateByCategoryAction: (function () {
-                    this.unmapFromNewAsin(this.getSelectedProductsStringFromCategory())
+                    this.unmapFromNewAsinForProducts(this.getSelectedProductsStringFromCategory())
                 }).bind(this)
             });
         },
@@ -66,7 +66,7 @@ define([
         },
 
         resetDescriptionTemplateRowAction: function (id) {
-            this.unmapFromNewAsin(id);
+            this.unmapFromNewAsinForProducts(id);
         },
 
         // ---------------------------------------
@@ -76,7 +76,7 @@ define([
         },
 
         resetDescriptionTemplateByCategoryRowAction: function (id) {
-            this.unmapFromNewAsin(this.getSelectedProductsStringFromCategory(id));
+            this.unmapFromNewAsinForProducts(this.getSelectedProductsStringFromCategory(id));
         },
 
         // ---------------------------------------
@@ -96,6 +96,17 @@ define([
             });
 
             return productsIdsStr;
+        },
+
+        unmapFromNewAsinForProducts: function(productsIds)
+        {
+            var self = this;
+            self.unmapFromNewAsin(
+                productsIds,
+                function(productsIds) {
+                    self.templateDescriptionHandler.unassignFromTemplateDescription(productsIds)
+                }
+            );
         },
 
         // ---------------------------------------
@@ -134,7 +145,8 @@ define([
             });
         },
 
-        unmapFromNewAsin: function (productsIds) {
+        unmapFromNewAsin: function (productsIds, callback)
+        {
             var self = this;
 
             self.templateDescriptionHandler.gridHandler.unselectAll();
@@ -142,7 +154,8 @@ define([
             new Ajax.Request(M2ePro.url.get('amazon_listing_product/unmapFromAsin'), {
                 method: 'post',
                 parameters: {
-                    products_ids: productsIds
+                    products_ids: productsIds,
+                    listing_id: self.listingId
                 },
                 onSuccess: function (transport) {
 
@@ -154,7 +167,7 @@ define([
                     var response = transport.responseText.evalJSON();
 
                     if (response.type == 'success') {
-                        self.templateDescriptionHandler.unassignFromTemplateDescription(productsIds);
+                        callback(productsIds);
                     }
                 }
             });
@@ -257,6 +270,28 @@ define([
                     }
                 }
             });
+        },
+
+        //----------------------------------------
+
+        stepNewAsinBack: function()
+        {
+            var self = this;
+            self.unmapFromNewAsin(
+                null,
+                function(productsIds) {
+                    new Ajax.Request(M2ePro.url.get('amazon_listing_product_add/resetDescriptionTemplate'), {
+                        method: 'post',
+                        parameters: {
+                            listing_id: self.listingId
+                        },
+                        onSuccess: function (transport) {
+                            var response = transport.responseText.evalJSON();
+                            setLocation(response.back_url);
+                        }
+                    });
+                }
+            )
         }
 
         // ---------------------------------------

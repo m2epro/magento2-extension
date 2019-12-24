@@ -261,6 +261,27 @@ define([
             } else {
                 obj.simulate(action);
             }
+        },
+
+        // ---------------------------------------
+
+        getRenderedSpecificsInBlock: function(blockPath)
+        {
+            var self = this,
+                addedSpecificXpathes = [],
+                renderedSpecifics = [];
+
+            blockPath = blockPath || self.indexedXPath;
+
+            self.specificHandler.renderedSpecifics.each(function(sp) {
+                var xPath = sp.replace(blockPath + '/', '').replace(/-\d+/, '');
+                if (xPath.split('/').length === 1 && addedSpecificXpathes.indexOf(xPath) === -1) {
+                    renderedSpecifics.push(sp);
+                    addedSpecificXpathes.push(xPath);
+                }
+            });
+
+            return renderedSpecifics;
         }
 
         // ---------------------------------------

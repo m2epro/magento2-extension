@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Task\Amazon;
 
 /**
- * Class RepricingInspectProducts
- * @package Ess\M2ePro\Model\Cron\Task\Amazon
+ * Class \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingInspectProducts
  */
 class RepricingInspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {

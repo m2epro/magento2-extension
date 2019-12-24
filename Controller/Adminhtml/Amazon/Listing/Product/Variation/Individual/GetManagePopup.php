@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Indiv
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
- * Class GetManagePopup
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Individual
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Individual\GetManagePopup
  */
 class GetManagePopup extends Main
 {

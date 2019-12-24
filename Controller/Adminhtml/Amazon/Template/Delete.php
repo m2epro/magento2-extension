@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
 /**
- * Class Delete
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Delete
  */
 class Delete extends Template
 {

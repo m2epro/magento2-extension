@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Config\Synchronization;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Config\Synchronization
+ * Class \Ess\M2ePro\Model\ResourceModel\Config\Synchronization\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

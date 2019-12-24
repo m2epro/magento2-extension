@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize;
 
 /**
- * Class ProductsResponser
- * @package Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize
+ * Class \Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize\ProductsResponser
  */
 class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Responser
 {

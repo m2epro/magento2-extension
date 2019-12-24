@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper;
 
 /**
- * Class Module
- * @package Ess\M2ePro\Helper
+ * Class \Ess\M2ePro\Helper\Module
  */
 class Module extends AbstractHelper
 {
@@ -94,42 +93,19 @@ class Module extends AbstractHelper
 
     public function getPublicVersion()
     {
-        return '1.4.2';
+        return $this->packageInfo->getVersion(self::IDENTIFIER);
     }
 
     public function getSetupVersion()
     {
-        return $this->getConfigSetupVersion();
-    }
-
-    public function getFilesVersion()
-    {
-        return $this->getComposerVersion();
-    }
-
-    // ---------------------------------------
-
-    public function getConfigSetupVersion()
-    {
         return $this->moduleList->getOne(self::IDENTIFIER)['setup_version'];
-    }
-
-    public function getMagentoSetupVersion()
-    {
-        // returns only data version because we do not manage schema upgrades separately
-        return $this->moduleResource->getDataVersion(self::IDENTIFIER);
-    }
-
-    public function getComposerVersion()
-    {
-        return $this->packageInfo->getVersion(self::IDENTIFIER);
     }
 
     // ---------------------------------------
 
     public function getRevision()
     {
-        return '3104';
+        return '3232';
     }
 
     //########################################

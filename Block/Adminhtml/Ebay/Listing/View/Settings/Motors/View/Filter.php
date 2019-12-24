@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View;
 
 /**
- * Class Filter
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Filter
  */
 class Filter extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

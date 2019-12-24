@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
- * Class GetAFNQtyBySku
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\GetAFNQtyBySku
  */
 class GetAFNQtyBySku extends Main
 {

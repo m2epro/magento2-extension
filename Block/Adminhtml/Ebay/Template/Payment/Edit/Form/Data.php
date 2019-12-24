@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Payment\Edit\Form;
 
 /**
- * Class Data
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Payment\Edit\Form
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Payment\Edit\Form\Data
  */
 class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

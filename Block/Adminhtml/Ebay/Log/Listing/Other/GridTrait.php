@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Other;
 
 /**
- * Trait GridTrait
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Other
+ * Trait \Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Other\GridTrait
  */
 trait GridTrait
 {

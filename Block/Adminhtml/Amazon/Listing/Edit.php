@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Edit
  */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {

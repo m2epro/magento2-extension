@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization;
 
 /**
- * Class General
- * @package Ess\M2ePro\Model\Amazon\Synchronization
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\General
  */
 class General extends AbstractModel
 {

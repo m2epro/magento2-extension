@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart;
 
 /**
- * Class Factory
- * @package Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart
+ * Class \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory
  */
 class Factory extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractFactory
 {

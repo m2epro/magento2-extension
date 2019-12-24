@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template;
 use Magento\Framework\DB\Select;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {

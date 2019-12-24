@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Custom;
 
 /**
- * Class AmazonGeneralIdState
- * @package Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Custom
+ * Class \Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Custom\AmazonGeneralIdState
  */
 class AmazonGeneralIdState extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {

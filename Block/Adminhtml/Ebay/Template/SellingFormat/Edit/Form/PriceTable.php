@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class PriceTable
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\PriceTable
  */
 class PriceTable extends AbstractBlock
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer\StockItem\Save;
 
 /**
- * Class Before
- * @package Ess\M2ePro\Observer\StockItem\Save
+ * Class \Ess\M2ePro\Observer\StockItem\Save\Before
  */
 class Before extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 {

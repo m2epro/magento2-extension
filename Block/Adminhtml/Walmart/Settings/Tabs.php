@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Settings;
 
 /**
- * Class Tabs
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Settings
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs
  */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 {

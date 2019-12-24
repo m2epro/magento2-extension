@@ -13,8 +13,7 @@ use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 use Ess\M2ePro\Helper\Component\Ebay as EbayHelper;
 
 /**
- * Class Ebay
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration\Ebay
  */
 class Ebay extends Command
 {

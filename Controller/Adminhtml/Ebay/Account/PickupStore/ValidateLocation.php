@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore;
 
 /**
- * Class ValidateLocation
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore\ValidateLocation
  */
 class ValidateLocation extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {

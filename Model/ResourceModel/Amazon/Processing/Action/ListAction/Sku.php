@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Processing\Action\ListAction;
 
 /**
- * Class Sku
- * @package Ess\M2ePro\Model\ResourceModel\Amazon\Processing\Action\ListAction
+ * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Processing\Action\ListAction\Sku
  */
 class Sku extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

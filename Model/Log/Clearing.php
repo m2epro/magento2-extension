@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Log;
 
 /**
- * Class Clearing
- * @package Ess\M2ePro\Model\Log
+ * Class \Ess\M2ePro\Model\Log\Clearing
  */
 class Clearing extends \Ess\M2ePro\Model\AbstractModel
 {

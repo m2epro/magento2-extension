@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Edit
  */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {

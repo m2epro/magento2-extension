@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\System\Config;
 
 /**
- * Class Integration
- * @package Ess\M2ePro\Block\Adminhtml\System\Config
+ * Class \Ess\M2ePro\Block\Adminhtml\System\Config\Integration
  */
 abstract class Integration extends \Magento\Config\Block\System\Config\Form\Field
 {

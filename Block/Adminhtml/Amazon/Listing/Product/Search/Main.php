@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search;
 
 /**
- * Class Main
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search\Main
  */
 class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {

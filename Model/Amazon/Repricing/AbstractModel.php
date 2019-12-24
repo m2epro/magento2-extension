@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\Exception\Logic;
 use Ess\M2ePro\Model\Amazon\Account\Repricing as AccountRepricing;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\Amazon\Repricing
+ * Class \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {

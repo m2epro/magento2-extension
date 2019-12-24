@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
- * Class Shipping
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
  */
 abstract class Shipping extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template
 {

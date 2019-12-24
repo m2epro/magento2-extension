@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Product;
 
 /**
- * Class Status
- * @package Ess\M2ePro\Model\Magento\Product
+ * Class \Ess\M2ePro\Model\Magento\Product\Status
  */
 class Status extends \Ess\M2ePro\Model\AbstractModel
 {

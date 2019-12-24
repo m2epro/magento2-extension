@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Listing\Auto\Actions\Mode;
 
 /**
- * Class Website
- * @package Ess\M2ePro\Model\Listing\Auto\Actions\Mode
+ * Class \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Website
  */
 class Website extends AbstractMode
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
 /**
- * Class ViewFilter
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors\ViewFilter
  */
 class ViewFilter extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

@@ -10,8 +10,7 @@ namespace Ess\M2ePro\Setup\Update\y19_m05;
 use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
 
 /**
- * Class WalmartAddMissingColumn
- * @package Ess\M2ePro\Setup\Update\y19_m05
+ * Class \Ess\M2ePro\Setup\Update\y19\WalmartAddMissingColumn_m05
  */
 class WalmartAddMissingColumn extends AbstractFeature
 {

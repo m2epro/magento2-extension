@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat;
 
 /**
- * Class Promotion
- * @package Ess\M2ePro\Model\Walmart\Template\SellingFormat
+ * Class \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion
  */
 class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {

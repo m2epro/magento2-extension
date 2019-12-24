@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
 
 /**
- * Class Main
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\Main
  */
 class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {

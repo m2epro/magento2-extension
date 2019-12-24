@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector\Product;
 
 /**
- * Class Requester
- * @package Ess\M2ePro\Model\Amazon\Connector\Product
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
  */
 abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {

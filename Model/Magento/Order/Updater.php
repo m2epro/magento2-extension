@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Order;
 
 /**
- * Class Updater
- * @package Ess\M2ePro\Model\Magento\Order
+ * Class \Ess\M2ePro\Model\Magento\Order\Updater
  */
 class Updater extends \Ess\M2ePro\Model\AbstractModel
 {

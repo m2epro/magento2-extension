@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Processing;
 
 /**
- * Class Action
- * @package Ess\M2ePro\Model\Walmart\Processing
+ * Class \Ess\M2ePro\Model\Walmart\Processing\Action
  */
 class Action extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {

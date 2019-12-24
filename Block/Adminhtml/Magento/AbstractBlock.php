@@ -12,8 +12,7 @@ use Magento\Backend\Block\Widget;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
 /**
- * Class AbstractBlock
- * @package Ess\M2ePro\Block\Adminhtml\Magento
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
  */
 abstract class AbstractBlock extends Widget
 {

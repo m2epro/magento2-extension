@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Magento\Product;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Magento\Product
+ * Class \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {

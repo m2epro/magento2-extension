@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Exception;
 use Ess\M2ePro\Model\Log\AbstractModel as LogModel;
 
 /**
- * Class AbstractTask
- * @package Ess\M2ePro\Model\Synchronization
+ * Class \Ess\M2ePro\Model\Synchronization\AbstractTask
  */
 abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
 {

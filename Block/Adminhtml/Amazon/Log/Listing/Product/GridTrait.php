@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Product;
 
 /**
- * Trait GridTrait
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Product
+ * Trait \Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Product\GridTrait
  */
 trait GridTrait
 {

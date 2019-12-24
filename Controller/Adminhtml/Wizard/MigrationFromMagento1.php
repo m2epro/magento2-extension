@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard;
 use Ess\M2ePro\Controller\Adminhtml\Wizard;
 
 /**
- * Class MigrationFromMagento1
- * @package Ess\M2ePro\Controller\Adminhtml\Wizard
+ * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1
  */
 abstract class MigrationFromMagento1 extends Wizard
 {

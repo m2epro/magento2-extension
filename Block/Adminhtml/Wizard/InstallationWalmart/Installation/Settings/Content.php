@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\Set
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 /**
- * Class Content
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\Settings
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\Settings\Content
  */
 class Content extends AbstractForm
 {

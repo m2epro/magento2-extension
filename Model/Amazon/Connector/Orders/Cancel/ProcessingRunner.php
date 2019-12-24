@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Cancel;
 
 /**
- * Class ProcessingRunner
- * @package Ess\M2ePro\Model\Amazon\Connector\Orders\Cancel
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Orders\Cancel\ProcessingRunner
  */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {

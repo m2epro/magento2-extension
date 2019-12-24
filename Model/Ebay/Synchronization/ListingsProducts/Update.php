@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization\ListingsProducts;
 
 /**
- * Class Update
- * @package Ess\M2ePro\Model\Ebay\Synchronization\ListingsProducts
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\ListingsProducts\Update
  */
 class Update extends AbstractModel
 {

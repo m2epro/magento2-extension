@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection;
 
 /**
- * Class ConflictedModules
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\ConflictedModules
  */
 class ConflictedModules extends AbstractInspection
 {

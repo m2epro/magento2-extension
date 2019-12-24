@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay;
 
 /**
- * Class Settings
- * @package Ess\M2ePro\Block\Adminhtml\Ebay
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Settings
  */
 class Settings extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {

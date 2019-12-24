@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Inspector;
 use Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner;
 
 /**
- * Class Synchronization
- * @package Ess\M2ePro\Model\Ebay\Synchronization\Templates
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization
  */
 class Synchronization extends AbstractModel
 {

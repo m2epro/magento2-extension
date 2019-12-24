@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation;
 
 /**
- * Class StockDataResolver
- * @package Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation
+ * Class \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\StockDataResolver
  */
 class StockDataResolver extends \Ess\M2ePro\Model\AbstractModel
 {

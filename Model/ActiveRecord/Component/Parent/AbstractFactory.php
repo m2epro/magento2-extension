@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ActiveRecord\Component\Parent;
 
 /**
- * Class AbstractFactory
- * @package Ess\M2ePro\Model\ActiveRecord\Component\Parent
+ * Class \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractFactory
  */
 abstract class AbstractFactory
 {

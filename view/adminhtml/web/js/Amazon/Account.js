@@ -81,15 +81,6 @@ define([
                 return checkResult;
             }, M2ePro.translator.translate('No Customer entry is found for specified ID.'));
 
-            jQuery.validator.addMethod('M2ePro-account-order-number-prefix', function(value) {
-
-                if ($('magento_orders_number_prefix_mode').value == 0) {
-                    return true;
-                }
-
-                return value.length <= 5;
-            }, M2ePro.translator.translate('Prefix length should not be greater than 5 characters.'));
-
             jQuery.validator.addMethod('M2ePro-require-select-attribute', function(value, el) {
 
                 if ($('other_listings_mapping_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::OTHER_LISTINGS_MAPPING_MODE_NO')) {
@@ -184,16 +175,20 @@ define([
             $('magento_orders_listings_other_product_mode').observe('change', AmazonAccountObj.magentoOrdersListingsOtherProductModeChange);
 
             $('magento_orders_number_source').observe('change', AmazonAccountObj.magentoOrdersNumberSourceChange).simulate('change');
-            $('magento_orders_number_prefix_mode').observe('change', AmazonAccountObj.magentoOrdersNumberPrefixModeChange).simulate('change');
-            $('magento_orders_number_prefix_prefix').observe('keyup', AmazonAccountObj.magentoOrdersNumberPrefixPrefixChange).simulate('change');
-            AmazonAccountObj.renderOrderNumberExample();
+
+            $('magento_orders_number_prefix_mode')
+                .observe('change', AmazonAccountObj.magentoOrdersNumberPrefixModeChange)
+                .simulate('change');
+
+            $('magento_orders_number_prefix_prefix').observe('keyup', AmazonAccountObj.magentoOrdersNumberPrefixPrefixChange);
+            $('magento_orders_number_prefix_afn').observe('keyup', AmazonAccountObj.magentoOrdersNumberPrefixPrefixChange);
+            $('magento_orders_number_prefix_prime').observe('keyup', AmazonAccountObj.magentoOrdersNumberPrefixPrefixChange);
+            $('magento_orders_number_prefix_b2b').observe('keyup', AmazonAccountObj.magentoOrdersNumberPrefixPrefixChange);
 
             $('magento_orders_fba_mode').observe('change', AmazonAccountObj.magentoOrdersFbaModeChange).simulate('change');
 
             $('magento_orders_customer_mode').observe('change', AmazonAccountObj.magentoOrdersCustomerModeChange).simulate('change');
             $('magento_orders_status_mapping_mode').observe('change', AmazonAccountObj.magentoOrdersStatusMappingModeChange);
-
-            $('order_number_example-note').previous().remove();
 
             if ($('regular_price_mode')) {
                 $('regular_price_mode')
@@ -449,7 +444,6 @@ define([
                 $('magento_orders_number_prefix_container').show();
             } else {
                 $('magento_orders_number_prefix_container').hide();
-                $('magento_orders_number_prefix_prefix').value = '';
             }
 
             self.renderOrderNumberExample();
@@ -468,11 +462,23 @@ define([
                 orderNumber = $('sample_amazon_order_id').value;
             }
 
+            var regular = orderNumber,
+                afn = orderNumber,
+                prime = orderNumber,
+                b2b = orderNumber;
+
             if ($('magento_orders_number_prefix_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_YES')) {
-                orderNumber = $('magento_orders_number_prefix_prefix').value + orderNumber;
+                var regularPrefix = $('magento_orders_number_prefix_prefix').value;
+                regular = regularPrefix + regular;
+                afn = regularPrefix + $('magento_orders_number_prefix_afn').value + afn;
+                prime = regularPrefix + $('magento_orders_number_prefix_prime').value + prime;
+                b2b = regularPrefix + $('magento_orders_number_prefix_b2b').value + b2b;
             }
 
-            $('order_number_example_container').update(orderNumber);
+            $('order_number_example_container_regular').update(regular);
+            $('order_number_example_container_afn').update(afn);
+            $('order_number_example_container_prime').update(prime);
+            $('order_number_example_container_b2b').update(b2b);
         },
 
         magentoOrdersFbaModeChange: function()

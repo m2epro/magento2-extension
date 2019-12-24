@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer;
 
 /**
- * Class Invoice
- * @package Ess\M2ePro\Observer
+ * Class \Ess\M2ePro\Observer\Invoice
  */
 class Invoice extends AbstractModel
 {

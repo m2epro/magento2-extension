@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action;
 
 /**
- * Class Logger
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Logger
  */
 class Logger extends \Ess\M2ePro\Model\AbstractModel
 {

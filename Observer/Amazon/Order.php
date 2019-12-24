@@ -12,8 +12,7 @@ use Magento\InventorySalesApi\Api\Data\SalesEventInterface;
 use Ess\M2ePro\Model\MSI\Order\Reserve as MSIReserve;
 
 /**
- * Class Order
- * @package Ess\M2ePro\Observer\Amazon
+ * Class \Ess\M2ePro\Observer\Amazon\Order
  */
 class Order extends \Ess\M2ePro\Observer\AbstractModel
 {

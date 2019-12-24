@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser;
 
 /**
- * Class Wrapper
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser\Wrapper
  */
 class Wrapper extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Connector\OrderItem\Add;
 
 /**
- * Class Dispute
- * @package Ess\M2ePro\Model\Ebay\Connector\OrderItem\Add
+ * Class \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Add\Dispute
  */
 class Dispute extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 {

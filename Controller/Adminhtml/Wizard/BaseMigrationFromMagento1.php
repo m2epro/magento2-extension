@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard;
 use \Magento\Backend\App\Action;
 
 /**
- * Class BaseMigrationFromMagento1
- * @package Ess\M2ePro\Controller\Adminhtml\Wizard
+ * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1
  */
 abstract class BaseMigrationFromMagento1 extends Action
 {

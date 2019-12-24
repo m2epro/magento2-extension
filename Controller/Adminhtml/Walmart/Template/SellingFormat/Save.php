@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 use Ess\M2ePro\Helper\Component\Walmart;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat\Save
  */
 class Save extends Template
 {

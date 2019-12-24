@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
- * Class Main
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
  */
 abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
 {

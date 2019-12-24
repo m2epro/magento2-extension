@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\M2ePro\Connector;
 
 /**
- * Class Protocol
- * @package Ess\M2ePro\Model\M2ePro\Connector
+ * Class \Ess\M2ePro\Model\M2ePro\Connector\Protocol
  */
 class Protocol extends \Ess\M2ePro\Model\Connector\Protocol
 {

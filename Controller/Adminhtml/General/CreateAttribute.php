@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\General;
 use Ess\M2ePro\Controller\Adminhtml\General;
 
 /**
- * Class CreateAttribute
- * @package Ess\M2ePro\Controller\Adminhtml\General
+ * Class \Ess\M2ePro\Controller\Adminhtml\General\CreateAttribute
  */
 class CreateAttribute extends General
 {

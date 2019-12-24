@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay;
 
 /**
- * Class Feedback
- * @package Ess\M2ePro\Model\Ebay
+ * Class \Ess\M2ePro\Model\Ebay\Feedback
  */
 class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {

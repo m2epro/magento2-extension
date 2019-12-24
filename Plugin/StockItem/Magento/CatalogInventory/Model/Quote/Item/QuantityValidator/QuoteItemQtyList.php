@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Plugin\StockItem\Magento\CatalogInventory\Model\Quote\Item\
 use \Ess\M2ePro\Model\Magento\Quote\Builder;
 
 /**
- * Class QuoteItemQtyList
- * @package Ess\M2ePro\Plugin\StockItem\Magento\CatalogInventory\Model\Quote\Item\QuantityValidator
+ * Class \Ess\M2ePro\Plugin\StockItem\Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\QuoteItemQtyList
  */
 class QuoteItemQtyList extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

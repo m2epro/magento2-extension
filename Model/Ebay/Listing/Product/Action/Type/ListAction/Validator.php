@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction;
 
 /**
- * Class Validator
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction\Validator
  */
 class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Validator
 {

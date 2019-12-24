@@ -13,8 +13,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Module\Setup;
 
 /**
- * Class AbstractModifier
- * @package Ess\M2ePro\Model\Setup\Database\Modifier
+ * Class \Ess\M2ePro\Model\Setup\Database\Modifier\AbstractModifier
  */
 class AbstractModifier extends AbstractModel
 {

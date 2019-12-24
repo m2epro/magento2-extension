@@ -12,8 +12,7 @@ use Ess\M2ePro\Helper\Module;
 use Magento\Framework\Component\ComponentRegistrar;
 
 /**
- * Class Structure
- * @package Ess\M2ePro\Helper\Module\Database
+ * Class \Ess\M2ePro\Helper\Module\Database\Structure
  */
 class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 {

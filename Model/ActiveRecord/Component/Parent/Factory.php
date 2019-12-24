@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ActiveRecord\Component\Parent;
 
 /**
- * Class Factory
- * @package Ess\M2ePro\Model\ActiveRecord\Component\Parent
+ * Class \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory
  */
 class Factory
 {

@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Template\SellingFormat;
 
 /**
- * Class Data
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Data
  */
 class Data extends AbstractForm
 {

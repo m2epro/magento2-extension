@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
 /**
- * Class Order
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
  */
 abstract class Order extends Main
 {

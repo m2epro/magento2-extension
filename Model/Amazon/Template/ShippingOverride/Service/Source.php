@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service;
 
 /**
- * Class Source
- * @package Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service
+ * Class \Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service\Source
  */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {

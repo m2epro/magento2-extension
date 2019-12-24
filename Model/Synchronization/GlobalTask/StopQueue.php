@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask;
 
 /**
- * Class StopQueue
- * @package Ess\M2ePro\Model\Synchronization\GlobalTask
+ * Class \Ess\M2ePro\Model\Synchronization\GlobalTask\StopQueue
  */
 class StopQueue extends AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Component\Ebay;
 
 /**
- * Class PickupStore
- * @package Ess\M2ePro\Helper\Component\Ebay
+ * Class \Ess\M2ePro\Helper\Component\Ebay\PickupStore
  */
 class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
 {

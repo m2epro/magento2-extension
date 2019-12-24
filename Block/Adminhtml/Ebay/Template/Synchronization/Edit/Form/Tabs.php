@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form;
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractVerticalTabs;
 
 /**
- * Class Tabs
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs
  */
 class Tabs extends AbstractVerticalTabs
 {

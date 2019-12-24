@@ -19,8 +19,7 @@ use Ess\M2ePro\Model\Listing\Product\Variation;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Ebay\Connector\Item
+ * Class \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
  */
 abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Responser
 {

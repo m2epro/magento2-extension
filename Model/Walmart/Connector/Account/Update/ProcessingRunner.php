@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Connector\Account\Update;
 
 /**
- * Class ProcessingRunner
- * @package Ess\M2ePro\Model\Walmart\Connector\Account\Update
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Account\Update\ProcessingRunner
  */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {

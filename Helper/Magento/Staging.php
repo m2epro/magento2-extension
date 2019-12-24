@@ -13,8 +13,7 @@ use Magento\Catalog\Api\Data\CategoryAttributeInterface;
 use Magento\Framework\Config\ConfigOptionsListConstants;
 
 /**
- * Class Staging
- * @package Ess\M2ePro\Helper\Magento
+ * Class \Ess\M2ePro\Helper\Magento\Staging
  */
 class Staging extends \Ess\M2ePro\Helper\AbstractHelper
 {

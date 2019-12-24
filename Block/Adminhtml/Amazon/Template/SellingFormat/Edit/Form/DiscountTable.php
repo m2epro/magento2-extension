@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit\Form;
 
 /**
- * Class DiscountTable
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit\Form
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit\Form\DiscountTable
  */
 class DiscountTable extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

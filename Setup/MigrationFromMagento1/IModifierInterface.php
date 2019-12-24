@@ -9,10 +9,9 @@
 namespace Ess\M2ePro\Setup\MigrationFromMagento1;
 
 /**
- * Interface IModifier
- * @package Ess\M2ePro\Setup\MigrationFromMagento1
+ * Interface \Ess\M2ePro\Setup\MigrationFromMagento1\IModifierInterface
  */
-interface IModifier
+interface IModifierInterface
 {
     //########################################
 

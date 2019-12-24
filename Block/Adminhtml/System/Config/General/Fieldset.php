@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\System\Config\General;
 
 /**
- * Class Fieldset
- * @package Ess\M2ePro\Block\Adminhtml\System\Config\General
+ * Class \Ess\M2ePro\Block\Adminhtml\System\Config\General\Fieldset
  */
 class Fieldset extends \Magento\Config\Block\System\Config\Form\Fieldset
 {

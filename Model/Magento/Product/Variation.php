@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Product;
 
 /**
- * Class Variation
- * @package Ess\M2ePro\Model\Magento\Product
+ * Class \Ess\M2ePro\Model\Magento\Product\Variation
  */
 class Variation extends \Ess\M2ePro\Model\AbstractModel
 {

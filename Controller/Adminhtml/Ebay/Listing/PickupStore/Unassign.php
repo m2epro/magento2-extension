@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore;
 
 /**
- * Class Unassign
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore\Unassign
  */
 class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
 {

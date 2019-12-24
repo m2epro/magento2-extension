@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Search;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Search
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Search\Index
  */
 class Index extends Main
 {

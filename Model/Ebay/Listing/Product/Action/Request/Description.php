@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request;
 
 /**
- * Class Description
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description
  */
 class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\AbstractModel
 {

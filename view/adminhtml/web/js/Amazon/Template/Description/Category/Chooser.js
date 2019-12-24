@@ -83,13 +83,8 @@ define([
             var self = this,
                 modalDialogMessage = $('modal_dialog_message');
 
-            if (self.popUp) {
-                self.popUp.modal('openModal');
-                modalDialogMessage.innerHTML = '';
-                modalDialogMessage.insert(html);
-                modalDialogMessage.innerHTML.evalScripts();
-                AmazonTemplateDescriptionCategoryChooserObj.renderTopLevelCategories('chooser_browser');
-                return;
+            if (modalDialogMessage) {
+                modalDialogMessage.remove();
             }
 
             modalDialogMessage = new Element('div', {

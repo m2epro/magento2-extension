@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Support;
 use Ess\M2ePro\Controller\Adminhtml\Support;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Support
+ * Class \Ess\M2ePro\Controller\Adminhtml\Support\Index
  */
 class Index extends Support
 {

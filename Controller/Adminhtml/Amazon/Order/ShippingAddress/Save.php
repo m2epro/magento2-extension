@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Order\ShippingAddress;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Order\ShippingAddress
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Order\ShippingAddress\Save
  */
 class Save extends Order
 {

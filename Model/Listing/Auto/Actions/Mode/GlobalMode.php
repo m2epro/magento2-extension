@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Listing\Auto\Actions\Mode;
 
 /**
- * Class GlobalMode
- * @package Ess\M2ePro\Model\Listing\Auto\Actions\Mode
+ * Class \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\GlobalMode
  */
 class GlobalMode extends AbstractMode
 {

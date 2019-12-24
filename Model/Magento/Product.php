@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\Magento\Product\Inventory\Factory;
 use \Magento\Catalog\Model\Product\Attribute\Source\Status;
 
 /**
- * Class Product
- * @package Ess\M2ePro\Model\Magento
+ * Class \Ess\M2ePro\Model\Magento\Product
  */
 class Product extends \Ess\M2ePro\Model\AbstractModel
 {

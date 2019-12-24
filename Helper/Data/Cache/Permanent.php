@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Helper\Data\Cache;
 use Ess\M2ePro\Model\Exception;
 
 /**
- * Class Permanent
- * @package Ess\M2ePro\Helper\Data\Cache
+ * Class \Ess\M2ePro\Helper\Data\Cache\Permanent
  */
 class Permanent extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
 {
@@ -56,7 +55,7 @@ class Permanent extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
         }
 
         if ($lifeTime === null || (int)$lifeTime <= 0) {
-            $lifeTime = 60*60*24*365*5;
+            $lifeTime = 60*60*24;
         }
 
         $cacheKey = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$key;
@@ -67,7 +66,7 @@ class Permanent extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
         }
 
         $this->cache->save(
-            $this->getHelper('Data')->serialize($value),
+            \Zend\Serializer\Serializer::getDefaultAdapter()->serialize($value),
             $cacheKey,
             $preparedTags,
             (int)$lifeTime

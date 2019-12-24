@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization\Log;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization\Log
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization\Log\Index
  */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
 {

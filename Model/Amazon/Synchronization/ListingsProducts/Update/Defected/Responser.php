@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Defected;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Defected
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Defected\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defected\ItemsResponser
 {

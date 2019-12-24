@@ -13,8 +13,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector\Product\Relist;
 
 /**
- * Class Requester
- * @package Ess\M2ePro\Model\Amazon\Connector\Product\Relist
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Product\Relist\Requester
  */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 {

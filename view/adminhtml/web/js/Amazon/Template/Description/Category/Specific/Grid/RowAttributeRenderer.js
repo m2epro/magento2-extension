@@ -191,6 +191,7 @@ define([
                 'name'            : this.indexedXPath + '_attribute_' + this.attribute.title + '_' + this.MODE_CUSTOM_ATTRIBUTE,
                 'indexedxpath'    : this.indexedXPath,
                 'specific_id'     : this.specific.specific_id,
+                'specific_type'   : this.specific.params.type,
                 'attribute_index' : this.attributeIndex,
                 'mode'            : this.MODE_CUSTOM_ATTRIBUTE,
                 'class'           : 'attributes M2ePro-required-when-visible select admin__control-select',

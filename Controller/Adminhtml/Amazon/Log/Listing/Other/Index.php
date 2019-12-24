@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing\Other;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing\Other
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing\Other\Index
  */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
 {

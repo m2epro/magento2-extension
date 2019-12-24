@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Cron;
 use Magento\Framework\Controller\ResultFactory;
 
 /**
- * Class Test
- * @package Ess\M2ePro\Controller\Cron
+ * Class \Ess\M2ePro\Controller\Cron\Test
  */
 class Test extends \Magento\Framework\App\Action\Action
 {

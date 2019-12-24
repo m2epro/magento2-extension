@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add;
 
 /**
- * Class SearchAsin
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin
  */
 class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

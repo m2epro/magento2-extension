@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Settings;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Settings
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Settings\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {

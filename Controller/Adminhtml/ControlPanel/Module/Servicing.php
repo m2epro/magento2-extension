@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
 /**
- * Class Servicing
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Servicing
  */
 class Servicing extends Command
 {

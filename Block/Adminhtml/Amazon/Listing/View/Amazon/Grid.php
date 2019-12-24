@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\Pare
 use Ess\M2ePro\Model\Listing\Log;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Amazon
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Amazon\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {

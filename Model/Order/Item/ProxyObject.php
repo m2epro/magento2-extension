@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\Amazon\Order\Item as AmazonItem;
 use Ess\M2ePro\Model\Walmart\Order\Item as WalmartItem;
 
 /**
- * Class ProxyObject
- * @package Ess\M2ePro\Model\Order\Item
+ * Class \Ess\M2ePro\Model\Order\Item\ProxyObject
  */
 abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 {

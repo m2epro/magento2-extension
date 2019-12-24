@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\VersionsHistory;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\VersionsHistory
+ * Class \Ess\M2ePro\Model\ResourceModel\VersionsHistory\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

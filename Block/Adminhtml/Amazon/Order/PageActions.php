@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class PageActions
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Order
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Order\PageActions
  */
 class PageActions extends AbstractBlock
 {

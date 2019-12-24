@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 use Ess\M2ePro\Model\M2ePro\Connector\Tables\Get\Diff as Connector;
 
 /**
- * Class TablesStructure
- * @package Ess\M2ePro\Model\HealthStatus\Task\Database\MysqlInfo
+ * Class \Ess\M2ePro\Model\HealthStatus\Task\Database\MysqlInfo\TablesStructure
  */
 class TablesStructure extends IssueType
 {

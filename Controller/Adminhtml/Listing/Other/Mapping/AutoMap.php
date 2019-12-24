@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
- * Class AutoMap
- * @package Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping
+ * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping\AutoMap
  */
 class AutoMap extends Listing
 {

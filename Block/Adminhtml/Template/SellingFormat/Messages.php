@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Template\SellingFormat;
 
 /**
- * Class Messages
- * @package Ess\M2ePro\Block\Adminhtml\Template\SellingFormat
+ * Class \Ess\M2ePro\Block\Adminhtml\Template\SellingFormat\Messages
  */
 class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 {

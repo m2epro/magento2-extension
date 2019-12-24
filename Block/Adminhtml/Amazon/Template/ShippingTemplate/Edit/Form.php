@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingTemplate\Edit;
 use Ess\M2ePro\Model\Amazon\Template\ShippingTemplate;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingTemplate\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingTemplate\Edit\Form
  */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

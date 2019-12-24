@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Connector\Connection\Multiple;
 
 /**
- * Class RequestContainer
- * @package Ess\M2ePro\Model\Connector\Connection\Multiple
+ * Class \Ess\M2ePro\Model\Connector\Connection\Multiple\RequestContainer
  */
 class RequestContainer extends \Ess\M2ePro\Model\AbstractModel
 {

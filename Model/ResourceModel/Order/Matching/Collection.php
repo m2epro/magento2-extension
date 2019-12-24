@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Order\Matching;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Order\Matching
+ * Class \Ess\M2ePro\Model\ResourceModel\Order\Matching\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

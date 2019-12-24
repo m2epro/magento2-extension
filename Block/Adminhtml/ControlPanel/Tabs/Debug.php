@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class Debug
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Debug
  */
 class Debug extends AbstractBlock
 {

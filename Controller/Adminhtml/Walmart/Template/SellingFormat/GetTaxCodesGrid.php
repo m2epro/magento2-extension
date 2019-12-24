@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
 /**
- * Class GetTaxCodesGrid
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat\GetTaxCodesGrid
  */
 class GetTaxCodesGrid extends Template
 {

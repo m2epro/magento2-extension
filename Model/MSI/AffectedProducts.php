@@ -12,8 +12,7 @@ use Magento\InventorySalesApi\Model\GetAssignedSalesChannelsForStockInterface;
 use Magento\InventorySalesApi\Api\Data\SalesChannelInterface;
 
 /**
- * Class AffectedProducts
- * @package Ess\M2ePro\Model\MSI
+ * Class \Ess\M2ePro\Model\MSI\AffectedProducts
  */
 class AffectedProducts extends \Ess\M2ePro\Model\AbstractModel
 {

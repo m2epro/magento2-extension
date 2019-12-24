@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing\Product;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing\Product
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing\Product\Index
  */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
 {

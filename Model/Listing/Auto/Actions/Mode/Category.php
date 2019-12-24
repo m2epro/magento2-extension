@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Listing\Auto\Actions\Mode;
 
 /**
- * Class Category
- * @package Ess\M2ePro\Model\Listing\Auto\Actions\Mode
+ * Class \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Category
  */
 class Category extends AbstractMode
 {

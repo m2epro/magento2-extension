@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product;
 
 /**
- * Class Add
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add
  */
 class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

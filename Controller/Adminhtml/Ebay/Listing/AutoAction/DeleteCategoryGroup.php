@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction;
 
 /**
- * Class DeleteCategoryGroup
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction\DeleteCategoryGroup
  */
 class DeleteCategoryGroup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
 {

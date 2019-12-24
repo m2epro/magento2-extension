@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product;
 
 /**
- * Class Variation
- * @package Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product
+ * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Variation
  */
 class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {

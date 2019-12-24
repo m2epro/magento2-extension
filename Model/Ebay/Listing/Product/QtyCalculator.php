@@ -14,8 +14,7 @@
 namespace Ess\M2ePro\Model\Ebay\Listing\Product;
 
 /**
- * Class QtyCalculator
- * @package Ess\M2ePro\Model\Ebay\Listing\Product
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\QtyCalculator
  */
 class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
 {

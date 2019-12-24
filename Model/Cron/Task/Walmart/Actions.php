@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Task\Walmart;
 
 /**
- * Class Actions
- * @package Ess\M2ePro\Model\Cron\Task\Walmart
+ * Class \Ess\M2ePro\Model\Cron\Task\Walmart\Actions
  */
 class Actions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {

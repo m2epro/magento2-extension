@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
 /**
- * Class GlobalSettings
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\GlobalSettings
  */
 class GlobalSettings extends Main
 {

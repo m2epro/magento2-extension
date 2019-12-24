@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Order;
 use Ess\M2ePro\Model\Walmart\Order\Item as OrderItem;
 
 /**
- * Class Helper
- * @package Ess\M2ePro\Model\Walmart\Order
+ * Class \Ess\M2ePro\Model\Walmart\Order\Helper
  */
 class Helper extends \Ess\M2ePro\Model\AbstractModel
 {

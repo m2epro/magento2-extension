@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat
+ * Class \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Child\AbstractModel
 {

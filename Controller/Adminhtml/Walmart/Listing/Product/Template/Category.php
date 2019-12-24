@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
- * Class Category
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category
  */
 abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction;
 
 /**
- * Class Validator
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction\Validator
  */
 class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Validator
 {
@@ -106,6 +105,10 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
 
         $helper = $this->getHelper('Component_Walmart_Configuration');
 
+        if ($helper->isProductIdOverrideModeAll()) {
+            return \Ess\M2ePro\Helper\Component\Walmart\Configuration::PRODUCT_ID_OVERRIDE_CUSTOM_CODE;
+        }
+
         if ($helper->isGtinModeNotSet()) {
             return null;
         }
@@ -123,6 +126,10 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
         }
 
         $helper = $this->getHelper('Component_Walmart_Configuration');
+
+        if ($helper->isProductIdOverrideModeAll()) {
+            return \Ess\M2ePro\Helper\Component\Walmart\Configuration::PRODUCT_ID_OVERRIDE_CUSTOM_CODE;
+        }
 
         if ($helper->isUpcModeNotSet()) {
             return null;
@@ -142,6 +149,10 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
 
         $helper = $this->getHelper('Component_Walmart_Configuration');
 
+        if ($helper->isProductIdOverrideModeAll()) {
+            return \Ess\M2ePro\Helper\Component\Walmart\Configuration::PRODUCT_ID_OVERRIDE_CUSTOM_CODE;
+        }
+
         if ($helper->isEanModeNotSet()) {
             return null;
         }
@@ -159,6 +170,10 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
         }
 
         $helper = $this->getHelper('Component_Walmart_Configuration');
+
+        if ($helper->isProductIdOverrideModeAll()) {
+            return \Ess\M2ePro\Helper\Component\Walmart\Configuration::PRODUCT_ID_OVERRIDE_CUSTOM_CODE;
+        }
 
         if ($helper->isIsbnModeNotSet()) {
             return null;

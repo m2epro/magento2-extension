@@ -13,8 +13,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Account;
 
 /**
- * Class Order
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order
  */
 class Order extends AbstractForm
 {
@@ -83,7 +82,10 @@ class Order extends AbstractForm
                     'source' => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
                     'prefix' => [
                         'mode'   => Account::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_NO,
-                        'prefix' => '',
+                        'prefix'       => '',
+                        'afn-prefix'   => '',
+                        'prime-prefix' => '',
+                        'b2b-prefix'   => '',
                     ],
                 ],
                 'tax' => [
@@ -340,41 +342,14 @@ HTML
         );
 
         $fieldset->addField(
-            'magento_orders_number_prefix_prefix',
-            'text',
+            'magento_orders_number_prefix_container',
+            self::CUSTOM_CONTAINER,
             [
-                'container_id' => 'magento_orders_number_prefix_container',
-                'class' => 'M2ePro-account-order-number-prefix',
-                'name' => 'magento_orders_settings[number][prefix][prefix]',
-                'label' => $this->__('Prefix'),
-                'value' => $formData['magento_orders_settings']['number']['prefix']['prefix'],
-                'required' => true,
-                'maxlength' => 5
-            ]
-        );
-
-        $fieldset->addField(
-            'sample_magento_order_id',
-            'hidden',
-            [
-                'value' => $this->getHelper('Magento')->getNextMagentoOrderId()
-            ]
-        );
-
-        $fieldset->addField(
-            'sample_amazon_order_id',
-            'hidden',
-            [
-                'value' => '141-4423723-6495633'
-            ]
-        );
-
-        $fieldset->addField(
-            'order_number_example',
-            'label',
-            [
-                'label' => '',
-                'note' => $this->__('e.g.') . ' <span id="order_number_example_container"></span>'
+                'text' => $this->createBlock('Amazon_Account_Edit_Tabs_Order_PrefixesTable')
+                                ->addData(['form_data' => $formData])
+                                ->toHtml(),
+                'css_class' => 'm2epro-fieldset-table',
+                'style' => 'padding: 0 !important;'
             ]
         );
 
@@ -780,67 +755,7 @@ HTML
 
         $this->jsTranslator->addTranslations([
             'No Customer entry is found for specified ID.' => $this->__('No Customer entry is found for specified ID.'),
-            'Prefix length should not be greater than 5 characters.' => $this->__(
-                'Prefix length should not be greater than 5 characters.'
-            )
         ]);
-
-        $formData['magento_orders_settings']['listing']['mode'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['listing']['mode']
-        );
-        $formData['magento_orders_settings']['listing']['store_mode'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['listing']['store_mode']
-        );
-        $formData['magento_orders_settings']['listing']['store_id'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['listing']['store_id']
-        );
-
-        $formData['magento_orders_settings']['listing_other']['mode'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['listing_other']['mode']
-        );
-        $formData['magento_orders_settings']['listing_other']['store_id'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['listing_other']['store_id']
-        );
-        $formData['magento_orders_settings']['listing_other']['product_mode'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['listing_other']['product_mode']
-        );
-
-        $formData['magento_orders_settings']['customer']['mode'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['customer']['mode']
-        );
-        $formData['magento_orders_settings']['customer']['id'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['customer']['id']
-        );
-        $formData['magento_orders_settings']['customer']['website_id'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['customer']['website_id']
-        );
-        $formData['magento_orders_settings']['customer']['group_id'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['customer']['group_id']
-        );
-
-        $this->js->add(<<<JS
-
-    M2ePro.formData.magento_orders_listings_mode = "{$formData['magento_orders_settings']['listing']['mode']}";
-    M2ePro.formData.magento_orders_listings_store_mode
-                             = "{$formData['magento_orders_settings']['listing']['store_mode']}";
-    M2ePro.formData.magento_orders_listings_store_id = "{$formData['magento_orders_settings']['listing']['store_id']}";
-
-    M2ePro.formData.magento_orders_listings_other_mode
-                             = "{$formData['magento_orders_settings']['listing_other']['mode']}";
-    M2ePro.formData.magento_orders_listings_other_store_id
-                             = "{$formData['magento_orders_settings']['listing_other']['store_id']}";
-    M2ePro.formData.magento_orders_listings_other_product_mode
-                             = "{$formData['magento_orders_settings']['listing_other']['product_mode']}";
-
-    M2ePro.formData.magento_orders_customer_mode = "{$formData['magento_orders_settings']['customer']['mode']}";
-    M2ePro.formData.magento_orders_customer_id = "{$formData['magento_orders_settings']['customer']['id']}";
-    M2ePro.formData.magento_orders_customer_new_website_id
-                             = "{$formData['magento_orders_settings']['customer']['website_id']}";
-    M2ePro.formData.magento_orders_customer_new_group_id
-                             = "{$formData['magento_orders_settings']['customer']['group_id']}";
-
-JS
-        );
 
         return parent::_prepareForm();
     }

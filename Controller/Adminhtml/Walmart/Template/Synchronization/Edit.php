@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Synchronization;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Synchronization
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Synchronization\Edit
  */
 class Edit extends Template
 {

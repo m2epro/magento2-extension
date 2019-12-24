@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
 /**
- * Class Variation
- * @package Ess\M2ePro\Helper\Component\Amazon
+ * Class \Ess\M2ePro\Helper\Component\Amazon\Variation
  */
 class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 {

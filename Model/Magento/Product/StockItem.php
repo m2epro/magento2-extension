@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Product;
 
 /**
- * Class StockItem
- * @package Ess\M2ePro\Model\Magento\Product
+ * Class \Ess\M2ePro\Model\Magento\Product\StockItem
  */
 class StockItem extends \Ess\M2ePro\Model\AbstractModel
 {

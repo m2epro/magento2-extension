@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Connector\Item\Stop;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Ebay\Connector\Item\Stop
+ * Class \Ess\M2ePro\Model\Ebay\Connector\Item\Stop\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 {

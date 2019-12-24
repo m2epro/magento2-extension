@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Refund;
 
 /**
- * Class ItemsResponser
- * @package Ess\M2ePro\Model\Amazon\Connector\Orders\Refund
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Orders\Refund\ItemsResponser
  */
 abstract class ItemsResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
 {

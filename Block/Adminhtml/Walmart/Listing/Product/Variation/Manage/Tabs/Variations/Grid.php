@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Chi
 use Ess\M2ePro\Model\Listing\Log;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Variations
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Variations\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {

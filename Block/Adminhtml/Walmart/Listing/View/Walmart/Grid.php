@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Par
 use Ess\M2ePro\Model\Listing\Log;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Walmart
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Walmart\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {

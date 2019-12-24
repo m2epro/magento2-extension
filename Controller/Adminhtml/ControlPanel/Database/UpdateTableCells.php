@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database;
 
 /**
- * Class UpdateTableCells
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database\UpdateTableCells
  */
 class UpdateTableCells extends Table
 {

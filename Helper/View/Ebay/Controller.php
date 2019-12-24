@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\View\Ebay;
 
 /**
- * Class Controller
- * @package Ess\M2ePro\Helper\View\Ebay
+ * Class \Ess\M2ePro\Helper\View\Ebay\Controller
  */
 class Controller extends \Ess\M2ePro\Helper\AbstractHelper
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\View\Amazon;
 
 /**
- * Class Controller
- * @package Ess\M2ePro\Helper\View\Amazon
+ * Class \Ess\M2ePro\Helper\View\Amazon\Controller
  */
 class Controller extends \Ess\M2ePro\Helper\AbstractHelper
 {

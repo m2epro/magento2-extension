@@ -8,13 +8,12 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
-use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
+use Ess\M2ePro\Model\Ebay\Account as Account;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Save
  */
-class Save extends Account
+class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {
     public function execute()
     {
@@ -83,7 +82,11 @@ class Save extends Account
 
             'mapping_title_mode',
             'mapping_title_priority',
-            'mapping_title_attribute'
+            'mapping_title_attribute',
+
+            'mapping_item_id_mode',
+            'mapping_item_id_priority',
+            'mapping_item_id_attribute'
         ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -93,30 +96,34 @@ class Save extends Account
 
         $mappingSettings = [];
 
-        $temp1 = \Ess\M2ePro\Model\Ebay\Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT;
-        $temp2 = \Ess\M2ePro\Model\Ebay\Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE;
-        $temp3 = \Ess\M2ePro\Model\Ebay\Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID;
         if (isset($tempData['mapping_sku_mode']) &&
-            ($tempData['mapping_sku_mode'] == $temp1 ||
-                $tempData['mapping_sku_mode'] == $temp2 ||
-                $tempData['mapping_sku_mode'] == $temp3)) {
+            ($tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT ||
+             $tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE ||
+             $tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID)
+        ) {
             $mappingSettings['sku']['mode'] = (int)$tempData['mapping_sku_mode'];
             $mappingSettings['sku']['priority'] = (int)$tempData['mapping_sku_priority'];
 
-            $temp = \Ess\M2ePro\Model\Ebay\Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE;
-            if ($tempData['mapping_sku_mode'] == $temp) {
+            if ($tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE) {
                 $mappingSettings['sku']['attribute'] = (string)$tempData['mapping_sku_attribute'];
             }
         }
 
-        $temp1 = \Ess\M2ePro\Model\Ebay\Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT;
-        $temp2 = \Ess\M2ePro\Model\Ebay\Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE;
         if (isset($tempData['mapping_title_mode']) &&
-            ($tempData['mapping_title_mode'] == $temp1 ||
-                $tempData['mapping_title_mode'] == $temp2)) {
+            ($tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT ||
+             $tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE)
+        ) {
             $mappingSettings['title']['mode'] = (int)$tempData['mapping_title_mode'];
             $mappingSettings['title']['priority'] = (int)$tempData['mapping_title_priority'];
             $mappingSettings['title']['attribute'] = (string)$tempData['mapping_title_attribute'];
+        }
+
+        if (isset($tempData['mapping_item_id_mode']) &&
+            $tempData['mapping_item_id_mode'] == Account::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE
+        ) {
+            $mappingSettings['item_id']['mode'] = (int)$tempData['mapping_item_id_mode'];
+            $mappingSettings['item_id']['priority'] = (int)$tempData['mapping_item_id_priority'];
+            $mappingSettings['item_id']['attribute'] = (string)$tempData['mapping_item_id_attribute'];
         }
 
         $data['other_listings_mapping_settings'] = $this->getHelper('Data')->jsonEncode($mappingSettings);

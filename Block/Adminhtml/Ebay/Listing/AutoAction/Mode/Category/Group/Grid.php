@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Category\Group;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Category\Group
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Category\Group\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\Group\Grid
 {

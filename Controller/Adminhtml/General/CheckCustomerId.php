@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\General;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
- * Class CheckCustomerId
- * @package Ess\M2ePro\Controller\Adminhtml\General
+ * Class \Ess\M2ePro\Controller\Adminhtml\General\CheckCustomerId
  */
 class CheckCustomerId extends General
 {

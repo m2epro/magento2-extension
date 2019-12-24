@@ -13,8 +13,7 @@
 namespace Ess\M2ePro\Model\Walmart\Order;
 
 /**
- * Class Item
- * @package Ess\M2ePro\Model\Walmart\Order
+ * Class \Ess\M2ePro\Model\Walmart\Order\Item
  */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {

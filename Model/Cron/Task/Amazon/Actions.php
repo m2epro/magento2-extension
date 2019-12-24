@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Task\Amazon;
 
 /**
- * Class Actions
- * @package Ess\M2ePro\Model\Cron\Task\Amazon
+ * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Actions
  */
 class Actions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {

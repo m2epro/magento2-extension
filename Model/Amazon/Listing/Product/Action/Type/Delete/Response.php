@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Delete;
 
 /**
- * Class Response
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Delete
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Delete\Response
  */
 class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
 {

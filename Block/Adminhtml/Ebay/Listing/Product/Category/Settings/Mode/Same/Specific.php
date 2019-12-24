@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Same;
 
 /**
- * Class Specific
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Same
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Same\Specific
  */
 class Specific extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {

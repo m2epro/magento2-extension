@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts;
 
 /**
- * Class AddedProducts
- * @package Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts
+ * Class \Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts\AddedProducts
  */
 class AddedProducts extends AbstractModel
 {

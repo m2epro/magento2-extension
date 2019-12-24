@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Component\Walmart;
 
 /**
- * Class Category
- * @package Ess\M2ePro\Helper\Component\Walmart
+ * Class \Ess\M2ePro\Helper\Component\Walmart\Category
  */
 class Category extends \Ess\M2ePro\Helper\AbstractHelper
 {

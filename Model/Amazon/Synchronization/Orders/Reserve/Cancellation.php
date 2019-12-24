@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders\Reserve;
 
 /**
- * Class Cancellation
- * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders\Reserve
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\Orders\Reserve\Cancellation
  */
 class Cancellation extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\AbstractModel
 {

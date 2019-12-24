@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Template\SellingFormat;
 
 /**
- * Class Source
- * @package Ess\M2ePro\Model\Ebay\Template\SellingFormat
+ * Class \Ess\M2ePro\Model\Ebay\Template\SellingFormat\Source
  */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {

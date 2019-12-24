@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form;
 
 /**
- * Class Charity
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity
  */
 class Charity extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

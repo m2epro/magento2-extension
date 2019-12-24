@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 use Ess\M2ePro\Helper\Module\Database\Structure;
 
 /**
- * Class Module
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\Mysql
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\Mysql\Module
  */
 class Module extends AbstractBlock
 {

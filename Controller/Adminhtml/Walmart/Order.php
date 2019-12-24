@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
 /**
- * Class Order
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Order
  */
 abstract class Order extends Main
 {

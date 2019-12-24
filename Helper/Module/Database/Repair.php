@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Helper\Module\Database;
 use Magento\Framework\DB\Ddl\Table as DdlTable;
 
 /**
- * Class Repair
- * @package Ess\M2ePro\Helper\Module\Database
+ * Class \Ess\M2ePro\Helper\Module\Database\Repair
  */
 class Repair extends \Ess\M2ePro\Helper\AbstractHelper
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Traits;
 
 /**
- * Trait RendererTrait
- * @package Ess\M2ePro\Block\Adminhtml\Traits
+ * Trait \Ess\M2ePro\Block\Adminhtml\Traits\RendererTrait
  */
 trait RendererTrait
 {

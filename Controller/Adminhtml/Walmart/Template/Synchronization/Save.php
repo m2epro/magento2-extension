@@ -13,8 +13,7 @@ use Ess\M2ePro\Helper\Component\Walmart;
 use Ess\M2ePro\Model\Walmart\Template\Synchronization as SynchronizationPolicy;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Synchronization
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Synchronization\Save
  */
 class Save extends Template
 {

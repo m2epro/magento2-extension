@@ -8,10 +8,19 @@ define([
 
         // ---------------------------------------
 
+        blockRenderer: null,
+
         childAllSpecifics  : [],
         childRowsSpecifics : [],
 
         selectedSpecifics : [],
+
+        // ---------------------------------------
+
+        setBlockRenderer: function(blockRenderer)
+        {
+            this.blockRenderer = blockRenderer;
+        },
 
         // ---------------------------------------
 
@@ -44,7 +53,7 @@ define([
         {
             this.tuneStyles();
 
-            if (this.indexedXPath == this.getRootIndexedXpath()) {
+            if (this.blockRenderer.isRootBlock) {
                 return;
             }
 
@@ -64,7 +73,7 @@ define([
             // ---------------------------------------
             addSpecificsRowObj && addSpecificsRowObj.show();
 
-            if ((this.getRootIndexedXpath() != this.indexedXPath && this.isAnyOfChildSpecificsRendered()) ||
+            if ((!this.blockRenderer.isRootBlock && this.isAnyOfChildSpecificsRendered()) ||
                 this.isAllOfSpecificsRendered())
             {
                 addSpecificsRowObj && addSpecificsRowObj.hide();
@@ -74,7 +83,7 @@ define([
             // ---------------------------------------
             addSpecificBlockButtonObj && addSpecificBlockButtonObj.show();
 
-            if (this.getRootIndexedXpath() == this.indexedXPath || this.isAllOfSpecificsRendered() || !this.isAnyOfChildSpecificsRendered()) {
+            if (this.blockRenderer.isRootBlock || this.isAllOfSpecificsRendered() || !this.isAnyOfChildSpecificsRendered()) {
                 addSpecificBlockButtonObj && addSpecificBlockButtonObj.hide();
             }
             // ---------------------------------------
@@ -82,28 +91,12 @@ define([
 
         isAnyOfChildSpecificsRendered: function()
         {
-            var countOfRenderedSpecifics = 0;
-            var realRenderedXpathes = this.specificHandler.getRealXpathesOfRenderedSpecifics();
-
-            this.childAllSpecifics.each(function(sp) {
-                if (realRenderedXpathes.indexOf(sp.xpath) >= 0) countOfRenderedSpecifics++;
-            });
-
-            return countOfRenderedSpecifics > 0;
+            return this.getRenderedSpecificsInBlock().length > 0;
         },
 
         isAllOfSpecificsRendered: function()
         {
-            var countOfRenderedSpecifics = 0;
-
-            var realRenderedXpathes = this.specificHandler.getRealXpathesOfRenderedSpecifics(),
-                allChildSpecifics   = this.specificHandler.dictionaryHelper.getAllChildSpecifics(this.specific);
-
-            allChildSpecifics.each(function(sp) {
-                if (realRenderedXpathes.indexOf(sp.xpath) >= 0) countOfRenderedSpecifics++;
-            });
-
-            return countOfRenderedSpecifics == allChildSpecifics.length;
+            return this.getRenderedSpecificsInBlock().length >= this.childAllSpecifics.length;
         },
 
         //########################################
@@ -141,7 +134,8 @@ define([
                     marketplace_id        : $('marketplace_id').value,
                     product_data_nick     : $('product_data_nick').value,
                     current_indexed_xpath : self.indexedXPath,
-                    rendered_specifics    : Object.toJSON(self.specificHandler.renderedSpecifics)
+                    all_rendered_specifics  : Object.toJSON(self.specificHandler.renderedSpecifics),
+                    block_rendered_specifics: Object.toJSON(self.getRenderedSpecificsInBlock())
                 },
                 onSuccess: function(transport) {
 
@@ -321,13 +315,14 @@ define([
             new Ajax.Request(M2ePro.url.get('amazon_template_description/getAddSpecificsGridHtml'), {
                 method: 'post',
                 parameters: {
-                    marketplace_id        : $('marketplace_id').value,
-                    product_data_nick     : $('product_data_nick').value,
-                    current_indexed_xpath : self.indexedXPath,
-                    rendered_specifics    : Object.toJSON(self.specificHandler.renderedSpecifics),
-                    selected_specifics    : Object.toJSON(self.selectedSpecifics),
-                    only_desired          : onlyDesired,
-                    query                 : query
+                    marketplace_id           : $('marketplace_id').value,
+                    product_data_nick        : $('product_data_nick').value,
+                    current_indexed_xpath    : self.indexedXPath,
+                    all_rendered_specifics   : Object.toJSON(self.specificHandler.renderedSpecifics),
+                    block_rendered_specifics : Object.toJSON(self.getRenderedSpecificsInBlock()),
+                    selected_specifics       : Object.toJSON(self.selectedSpecifics),
+                    only_desired             : onlyDesired,
+                    query                    : query
                 },
                 onSuccess: function(transport) {
                     $('specifics_grid_container').down('div.grid-wrapper').update(transport.responseText);

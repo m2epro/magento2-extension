@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Repricing\Synchronization;
 
 /**
- * Class ActualPrice
- * @package Ess\M2ePro\Model\Amazon\Repricing\Synchronization
+ * Class \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\ActualPrice
  */
 class ActualPrice extends AbstractModel
 {

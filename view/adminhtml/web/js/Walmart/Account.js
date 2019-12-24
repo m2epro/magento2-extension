@@ -8,13 +8,35 @@ define([
 
         initialize: function()
         {
+            var self = this;
             this.setValidationCheckRepetitionValue('M2ePro-account-title',
                                                    M2ePro.translator.translate('The specified Title is already used for other Account. Account Title must be unique.'),
                                                    'Account', 'title', 'id',
                                                    M2ePro.formData.id,
                                                    M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart::NICK'));
 
+            jQuery.validator.addMethod('M2ePro-validate-consumer-id', function(value, el) {
+
+                if (self.isElementHiddenFromPage(el)) {
+                    return true;
+                }
+
+                // Do not validate on edit
+                if (el.disabled) {
+                    return true;
+                }
+
+                // Partner ID example: 10000004781
+                // Consumer ID Example: c2cfff2c-57a9-4f0a-b5ab-00b000dfe000
+                return /^[0-9]{11}$/.test(value) || /^[a-f0-9-]{36}$/.test(value);
+
+            }, M2ePro.translator.translate('The specified Consumer ID / Partner ID is not valid'));
+
             jQuery.validator.addMethod('M2ePro-marketplace-merchant', function(value, el) {
+
+                if (self.isElementHiddenFromPage(el)) {
+                    return true;
+                }
 
                 // reset error message to the default
                 this.error = M2ePro.translator.translate('M2E Pro was not able to get access to the Walmart Account');
@@ -83,15 +105,6 @@ define([
                 return checkResult;
             }, M2ePro.translator.translate('No Customer entry is found for specified ID.'));
 
-            jQuery.validator.addMethod('M2ePro-account-order-number-prefix' , function(value) {
-
-                if ($('magento_orders_number_prefix_mode').value == 0) {
-                    return true;
-                }
-
-                return value.length <= 5;
-            }, M2ePro.translator.translate('Prefix length should not be greater than 5 characters.'));
-
             jQuery.validator.addMethod('M2ePro-require-select-attribute' , function(value, el) {
 
                 if ($('other_listings_mapping_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::OTHER_LISTINGS_MAPPING_MODE_NO')) {
@@ -130,8 +143,6 @@ define([
             $('marketplace_id')
                 .observe('change', WalmartAccountObj.changeMarketplace)
                 .simulate('change');
-            $('marketplaces_register_url')
-                .observe('click', WalmartAccountObj.getAccessDataUrl);
 
             $('other_listings_synchronization')
                 .observe('change', WalmartAccountObj.other_listings_synchronization_change)
@@ -158,41 +169,33 @@ define([
 
             $('magento_orders_listings_mode')
                 .observe('change', WalmartAccountObj.magentoOrdersListingsModeChange)
-                .simulate('change');;
+                .simulate('change');
             $('magento_orders_listings_store_mode')
                 .observe('change', WalmartAccountObj.magentoOrdersListingsStoreModeChange)
-                .simulate('change');;
+                .simulate('change');
 
             $('magento_orders_listings_other_mode')
                 .observe('change', WalmartAccountObj.magentoOrdersListingsOtherModeChange)
-                .simulate('change');;
+                .simulate('change');
             $('magento_orders_listings_other_product_mode')
                 .observe('change', WalmartAccountObj.magentoOrdersListingsOtherProductModeChange);
 
             $('magento_orders_number_source')
                 .observe('change', WalmartAccountObj.magentoOrdersNumberSourceChange)
-                .simulate('change');;
+                .simulate('change');
             $('magento_orders_number_prefix_mode')
                 .observe('change', WalmartAccountObj.magentoOrdersNumberPrefixModeChange)
-                .simulate('change');;
+                .simulate('change');
             $('magento_orders_number_prefix_prefix')
                 .observe('keyup', WalmartAccountObj.magentoOrdersNumberPrefixPrefixChange)
-                .simulate('change');;
+                .simulate('change');
             WalmartAccountObj.renderOrderNumberExample();
 
             $('magento_orders_customer_mode')
                 .observe('change', WalmartAccountObj.magentoOrdersCustomerModeChange)
-                .simulate('change');;
+                .simulate('change');
             $('magento_orders_status_mapping_mode')
                 .observe('change', WalmartAccountObj.magentoOrdersStatusMappingModeChange);
-        },
-
-        // ---------------------------------------
-
-        completeStep: function()
-        {
-            window.opener.completeStep = 1;
-            window.close();
         },
 
         // ---------------------------------------
@@ -208,24 +211,16 @@ define([
                 return;
             }
 
-            $('marketplaces_register_url_container').show();
-
-            $$('.marketplace-required-input').each(function(obj) {
-                if (obj.hasClassName('marketplace-required-input-text-id' + marketplaceId)) {
-                    obj.addClassName('M2ePro-marketplace-merchant');
-                } else {
-                    obj.removeClassName('M2ePro-marketplace-merchant');
-                }
-            });
+            $('consumer_id').removeClassName('M2ePro-validate-consumer-id');
+            $$('label[for="consumer_id"] > span').first().innerHTML = M2ePro.translator.translate('Consumer ID');
+            if (marketplaceId == M2ePro.php.constant('\\Ess\\M2ePro\\Helper\\Component\\Walmart::MARKETPLACE_US')) {
+                $('consumer_id').addClassName('M2ePro-validate-consumer-id');
+                $$('label[for="consumer_id"] > span').first().innerHTML = M2ePro.translator.translate('Consumer ID / Partner ID');
+            }
 
             $$('.marketplace-required-field-id' + marketplaceId, '.marketplace-required-field-id-not-null').each(function(obj) {
                 obj.show();
             });
-        },
-
-        getAccessDataUrl: function(e) {
-            var marketplaceId = $('marketplace_id').value;
-            window.open(M2ePro.customData['marketplace-'+marketplaceId+'-url'], '_blank')
         },
 
         // ---------------------------------------

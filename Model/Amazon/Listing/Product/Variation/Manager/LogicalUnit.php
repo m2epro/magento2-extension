@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager;
 
 /**
- * Class LogicalUnit
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\LogicalUnit
  */
 class LogicalUnit extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\AbstractModel
 {

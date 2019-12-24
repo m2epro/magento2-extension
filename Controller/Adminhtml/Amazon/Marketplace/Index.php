@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Marketplace;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Marketplace;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Marketplace
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Marketplace\Index
  */
 class Index extends Marketplace
 {

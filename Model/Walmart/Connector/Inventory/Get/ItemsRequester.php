@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Connector\Inventory\Get;
 
 /**
- * Class ItemsRequester
- * @package Ess\M2ePro\Model\Walmart\Connector\Inventory\Get
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsRequester
  */
 abstract class ItemsRequester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Requester
 {

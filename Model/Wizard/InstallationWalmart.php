@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Wizard;
 use Ess\M2ePro\Model\Wizard;
 
 /**
- * Class InstallationWalmart
- * @package Ess\M2ePro\Model\Wizard
+ * Class \Ess\M2ePro\Model\Wizard\InstallationWalmart
  */
 class InstallationWalmart extends Wizard
 {

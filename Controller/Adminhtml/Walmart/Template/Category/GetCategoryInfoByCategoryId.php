@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 /**
- * Class GetCategoryInfoByCategoryId
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category\GetCategoryInfoByCategoryId
  */
 class GetCategoryInfoByCategoryId extends Category
 {

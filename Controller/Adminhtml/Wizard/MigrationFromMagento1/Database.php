@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
 
 /**
- * Class Database
- * @package Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1
+ * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1\Database
  */
 class Database extends BaseMigrationFromMagento1
 {

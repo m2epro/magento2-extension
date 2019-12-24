@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use \Ess\M2ePro\Model\Ebay\Account\PickupStore;
 
 /**
- * Class StockSettings
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs\StockSettings
  */
 class StockSettings extends AbstractForm
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder;
 
 /**
- * Class Price
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\Price
  */
 class Price extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\AbstractModel
 {

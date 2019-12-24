@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento;
 
 /**
- * Class Payment
- * @package Ess\M2ePro\Model\Magento
+ * Class \Ess\M2ePro\Model\Magento\Payment
  */
 class Payment extends \Magento\Payment\Model\Method\AbstractMethod
 {

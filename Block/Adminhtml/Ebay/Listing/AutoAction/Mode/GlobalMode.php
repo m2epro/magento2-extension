@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode;
 
 /**
- * Class GlobalMode
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\GlobalMode
  */
 class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\GlobalMode
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation;
 use Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation;
 
 /**
- * Class Synchronization
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Synchronization
  */
 class Synchronization extends Installation
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
 /**
- * Class NewAction
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat\NewAction
  */
 class NewAction extends Template
 {

@@ -26,16 +26,16 @@
         'always_show' => true,
         'style' => 'margin-bottom: 0px',
         'content' => $block->__(
-            'M2E Pro is able to work with Magento Variational Products in two different Modes:
+            'You can sell Magento Variational Product on Amazon in two different ways:
             <ul class="list">
-                <li>Selling Magento Variational Product as an Amazon Product with Parent/Child relation;</li>
-                <li>Selling certain Variation of Magento Product as Individual Amazon Product.</li>
+                <li>as Amazon Variational Product using Parent/Child Mode;</li>
+                <li>as Amazon Individual Product using Individual Mode.</li>
             </ul>
+            Find more details <a href="%url%" target="_blank" class="external-link">here</a>. <br/>
 
-            You can read more about those two Modes in M2E Pro <a href="%url%" target="_blank" class="external-link">documentation</a>. <br/>
-            This Product is now being treated as <strong>Individual Amazon Product</strong>, do you want to
-            switch to <strong>Parent/Child Mode</strong>? <br/>',
-            $block->getHelper('Module\Support')->getDocumentationArticleUrl('x/O4oVAQ')
+            This Product is currently managed under <strong>Individual Mode</strong>. Do you want to switch it to 
+            <strong>Parent/Child Mode</strong>? <br/>',
+            $block->getHelper('Module\Support')->getDocumentationArticleUrl('x/OwgtAQ')
         )
     ])->toHtml(); ?>
 

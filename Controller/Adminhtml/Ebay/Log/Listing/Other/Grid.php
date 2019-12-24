@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\View;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing\Other
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing\Other\Grid
  */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
 {

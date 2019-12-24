@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders\Receive\Details;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders\Receive\Details
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\Orders\Receive\Details\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details\ItemsResponser
 {
@@ -87,11 +86,18 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details\It
     protected function processResponseData()
     {
         $responseData = $this->getPreparedResponseData();
+        $responseData = $responseData['data'];
 
         $amazonOrdersIds = [];
-        foreach ($responseData['data'] as $details) {
-            $amazonOrdersIds[] = $details['amazon_order_id'];
+        foreach ($responseData as &$details) {
+            if (!empty($details['fulfillment_center_id'])) {
+                $amazonOrdersIds[] = $details['amazon_order_id'];
+                continue;
+            }
+
+            unset($details);
         }
+        unset($details);
 
         $amazonOrdersIds = array_unique($amazonOrdersIds);
         if (empty($amazonOrdersIds)) {
@@ -101,7 +107,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details\It
         $ordersCollection = $this->amazonFactory->getObject('Order')->getCollection();
         $ordersCollection->addFieldToFilter('amazon_order_id', ['in' => $amazonOrdersIds]);
 
-        foreach ($responseData['data'] as $details) {
+        foreach ($responseData as $details) {
             /** @var \Ess\M2ePro\Model\Order $order */
             $order = $ordersCollection->getItemByColumnValue('amazon_order_id', $details['amazon_order_id']);
             if ($order === null) {

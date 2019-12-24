@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Order;
 
 /**
- * Class Builder
- * @package Ess\M2ePro\Model\Walmart\Order
+ * Class \Ess\M2ePro\Model\Walmart\Order\Builder
  */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {

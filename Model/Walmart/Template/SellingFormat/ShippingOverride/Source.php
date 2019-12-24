@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride;
 
 /**
- * Class Source
- * @package Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride
+ * Class \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride\Source
  */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Moving;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Moving
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Moving\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Moving\Grid
 {

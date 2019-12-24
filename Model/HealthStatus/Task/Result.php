@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\HealthStatus\Task;
 
 /**
- * Class Result
- * @package Ess\M2ePro\Model\HealthStatus\Task
+ * Class \Ess\M2ePro\Model\HealthStatus\Task\Result
  */
 class Result extends \Ess\M2ePro\Model\AbstractModel
 {

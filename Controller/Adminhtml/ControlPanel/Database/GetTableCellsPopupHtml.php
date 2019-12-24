@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database;
 
 /**
- * Class GetTableCellsPopupHtml
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database\GetTableCellsPopupHtml
  */
 class GetTableCellsPopupHtml extends Table
 {

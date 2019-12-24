@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
 /**
- * Class Synchronization
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Synchronization
  */
 class Synchronization extends Command
 {

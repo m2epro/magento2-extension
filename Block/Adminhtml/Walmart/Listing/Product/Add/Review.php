@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add;
 use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode as SourceModeBlock;
 
 /**
- * Class Review
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\Review
  */
 class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {

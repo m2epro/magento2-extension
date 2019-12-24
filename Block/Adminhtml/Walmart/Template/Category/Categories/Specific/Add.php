@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Specific;
 
 /**
- * Class Add
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Specific
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Specific\Add
  */
 class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

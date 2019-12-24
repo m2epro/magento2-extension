@@ -17,10 +17,9 @@ use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\DB\Adapter\AdapterInterface as DbAdapter;
 
 /**
- * Class Modifier
- * @package Ess\M2ePro\Setup\MigrationFromMagento1\v1_0_0
+ * Class \Ess\M2ePro\Setup\MigrationFromMagento1\v1\Modifier_0_0
  */
-class Modifier implements \Ess\M2ePro\Setup\MigrationFromMagento1\IModifier
+class Modifier implements \Ess\M2ePro\Setup\MigrationFromMagento1\IModifierInterface
 {
     const LONG_COLUMN_SIZE = 16777217;
 

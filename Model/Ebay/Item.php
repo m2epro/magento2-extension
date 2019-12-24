@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Ebay;
 use Ess\M2ePro\Model\ActiveRecord\Factory;
 
 /**
- * Class Item
- * @package Ess\M2ePro\Model\Ebay
+ * Class \Ess\M2ePro\Model\Ebay\Item
  */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other;
 
 /**
- * Class Removing
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other\Removing
  */
 class Removing extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
 {

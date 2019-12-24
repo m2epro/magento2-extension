@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 use \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel as ParentAbstractModel;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Grid
  */
 class Grid extends AbstractGrid
 {

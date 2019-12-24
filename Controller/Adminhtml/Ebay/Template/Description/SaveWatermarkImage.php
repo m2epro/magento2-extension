@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
 /**
- * Class SaveWatermarkImage
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description\SaveWatermarkImage
  */
 class SaveWatermarkImage extends Description
 {

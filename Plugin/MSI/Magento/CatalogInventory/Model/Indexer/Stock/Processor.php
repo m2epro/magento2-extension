@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Plugin\MSI\Magento\CatalogInventory\Model\Indexer\Stock;
 
 /**
- * Class Processor
- * @package Ess\M2ePro\Plugin\MSI\Magento\CatalogInventory\Model\Indexer\Stock
+ * Class \Ess\M2ePro\Plugin\MSI\Magento\CatalogInventory\Model\Indexer\Stock\Processor
  */
 class Processor extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

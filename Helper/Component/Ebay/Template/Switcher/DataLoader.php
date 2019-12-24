@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Component\Ebay\Template\Switcher;
 
 /**
- * Class DataLoader
- * @package Ess\M2ePro\Helper\Component\Ebay\Template\Switcher
+ * Class \Ess\M2ePro\Helper\Component\Ebay\Template\Switcher\DataLoader
  */
 class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
 {

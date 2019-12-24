@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
 /**
- * Class EditListingProductsPolicy
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\EditListingProductsPolicy
  */
 class EditListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
 {

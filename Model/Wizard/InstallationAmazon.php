@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Wizard;
 use Ess\M2ePro\Model\Wizard;
 
 /**
- * Class InstallationAmazon
- * @package Ess\M2ePro\Model\Wizard
+ * Class \Ess\M2ePro\Model\Wizard\InstallationAmazon
  */
 class InstallationAmazon extends Wizard
 {

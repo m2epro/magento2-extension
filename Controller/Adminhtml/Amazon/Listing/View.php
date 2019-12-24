@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
- * Class View
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\View
  */
 class View extends Main
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Synchronization\Task;
 use Ess\M2ePro\Model\Listing\Log;
 
 /**
- * Class AbstractComponent
- * @package Ess\M2ePro\Model\Synchronization\Task
+ * Class \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent
  */
 abstract class AbstractComponent extends \Ess\M2ePro\Model\Synchronization\AbstractTask
 {

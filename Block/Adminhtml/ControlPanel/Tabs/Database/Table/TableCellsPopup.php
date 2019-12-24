@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class TableCellsPopup
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\TableCellsPopup
  */
 class TableCellsPopup extends AbstractBlock
 {

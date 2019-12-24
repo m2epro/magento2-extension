@@ -11,9 +11,7 @@ namespace Ess\M2ePro\Model\Magento\Product\Inventory;
 use Ess\M2ePro\Model\Exception;
 
 /**
- * Class AbstractModel
- *
- * @package Ess\M2ePro\Model\Magento\Product\Inventory
+ * Class \Ess\M2ePro\Model\Magento\Product\Inventory\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
@@ -37,8 +35,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->stockRegistry = $stockRegistry;
         parent::__construct($helperFactory, $modelFactory, $data);
     }

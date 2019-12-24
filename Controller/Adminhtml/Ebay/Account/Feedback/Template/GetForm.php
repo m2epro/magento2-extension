@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback\Template;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
 /**
- * Class GetForm
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback\Template
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback\Template\GetForm
  */
 class GetForm extends Account
 {

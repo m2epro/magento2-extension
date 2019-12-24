@@ -15,8 +15,7 @@ use Magento\Framework\Component\ComponentRegistrar;
 use Ess\M2ePro\Model\M2ePro\Connector\Tables\Get\Diff as TablesDiffConnector;
 
 /**
- * Class Install
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\M2ePro
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\M2ePro\Install
  */
 class Install extends Command
 {

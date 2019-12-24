@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper;
 
 /**
- * Class Primary
- * @package Ess\M2ePro\Helper
+ * Class \Ess\M2ePro\Helper\Primary
  */
 class Primary extends \Ess\M2ePro\Helper\AbstractHelper
 {

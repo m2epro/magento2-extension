@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 
 /**
- * Class GmtTime
- * @package Ess\M2ePro\Model\HealthStatus\Task\Server\Status
+ * Class \Ess\M2ePro\Model\HealthStatus\Task\Server\Status\GmtTime
  */
 class GmtTime extends IssueType
 {

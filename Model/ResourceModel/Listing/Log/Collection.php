@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Log;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Listing\Log
+ * Class \Ess\M2ePro\Model\ResourceModel\Listing\Log\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

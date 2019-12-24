@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Motors;
 
 /**
- * Class Manage
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Motors
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Motors\Manage
  */
 class Manage extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class Switcher
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher
  */
 class Switcher extends AbstractBlock
 {

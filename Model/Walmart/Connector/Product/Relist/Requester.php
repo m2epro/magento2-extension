@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Connector\Product\Relist;
 
 /**
- * Class Requester
- * @package Ess\M2ePro\Model\Walmart\Connector\Product\Relist
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Product\Relist\Requester
  */
 class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
 {

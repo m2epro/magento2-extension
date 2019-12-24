@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\HealthStatus;
 use Ess\M2ePro\Model\HealthStatus\Task\Result\Set;
 
 /**
- * Class CurrentStatus
- * @package Ess\M2ePro\Model\HealthStatus
+ * Class \Ess\M2ePro\Model\HealthStatus\CurrentStatus
  */
 class CurrentStatus extends \Ess\M2ePro\Model\AbstractModel
 {

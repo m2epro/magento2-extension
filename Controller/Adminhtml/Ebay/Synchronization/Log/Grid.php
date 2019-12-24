@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization\Log;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization\Log
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization\Log\Grid
  */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 {

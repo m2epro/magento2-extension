@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingOverride\Edit;
 use \Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingOverride\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingOverride\Edit\Form
  */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

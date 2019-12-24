@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Custom;
 
 /**
- * Class WalmartOnlineQty
- * @package Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Custom
+ * Class \Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Custom\WalmartOnlineQty
  */
 class WalmartOnlineQty extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {

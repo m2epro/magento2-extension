@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
 /**
- * Class AfterGetTokenManual
- * @package Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon
+ * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon\AfterGetTokenManual
  */
 class AfterGetTokenManual extends AfterGetTokenAbstract
 {

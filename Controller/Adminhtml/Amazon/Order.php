@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon;
 
 /**
- * Class Order
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Order
  */
 abstract class Order extends Main
 {

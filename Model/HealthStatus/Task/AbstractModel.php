@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\HealthStatus\Task;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\HealthStatus\Task
+ * Class \Ess\M2ePro\Model\HealthStatus\Task\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization\Log;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization\Log
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization\Log\Index
  */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Template;
 
 /**
- * Class SellingFormat
- * @package Ess\M2ePro\Model\Template
+ * Class \Ess\M2ePro\Model\Template\SellingFormat
  */
 class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {

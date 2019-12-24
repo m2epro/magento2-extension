@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Module\Support;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Helper\Module\Support
+ * Class \Ess\M2ePro\Helper\Module\Support\Form
  */
 class Form extends \Ess\M2ePro\Helper\AbstractHelper
 {

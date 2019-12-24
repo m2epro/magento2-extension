@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 /**
- * Class Delete
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Delete
  */
 class Delete extends Listing
 {

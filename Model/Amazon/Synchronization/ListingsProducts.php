@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization;
 
 /**
- * Class ListingsProducts
- * @package Ess\M2ePro\Model\Amazon\Synchronization
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts
  */
 class ListingsProducts extends AbstractModel
 {

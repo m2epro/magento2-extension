@@ -12,8 +12,7 @@ use Magento\Framework\Message\MessageInterface;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
 /**
- * Class FrontController
- * @package Ess\M2ePro\Plugin\HealthStatus\Magento\Framework\App
+ * Class \Ess\M2ePro\Plugin\HealthStatus\Magento\Framework\App\FrontController
  */
 class FrontController extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

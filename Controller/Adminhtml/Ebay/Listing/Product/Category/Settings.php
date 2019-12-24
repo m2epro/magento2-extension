@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 /**
- * Class Settings
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
  */
 abstract class Settings extends Listing
 {

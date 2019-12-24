@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Log\Listing\Product;
 
 /**
- * Class AbstractView
- * @package Ess\M2ePro\Block\Adminhtml\Log\Listing\Product
+ * Class \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractView
  */
 abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\AbstractView
 {

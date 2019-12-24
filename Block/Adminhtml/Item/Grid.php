@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Item;
 use \Magento\Backend\Block\Widget\Grid\Extended as WidgetGrid;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Item
+ * Class \Ess\M2ePro\Block\Adminhtml\Item\Grid
  */
 class Grid extends WidgetGrid
 {

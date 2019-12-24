@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Order;
 
 /**
- * Class Log
- * @package Ess\M2ePro\Model\Order
+ * Class \Ess\M2ePro\Model\Order\Log
  */
 class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 {

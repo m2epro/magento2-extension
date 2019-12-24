@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Module;
 
 /**
- * Class Wizard
- * @package Ess\M2ePro\Helper\Module
+ * Class \Ess\M2ePro\Helper\Module\Wizard
  */
 class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
 {

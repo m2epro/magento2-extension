@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Stop;
 
 /**
- * Class Validator
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Stop
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Stop\Validator
  */
 class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
 {

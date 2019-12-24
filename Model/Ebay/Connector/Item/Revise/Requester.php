@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Connector\Item\Revise;
 
 /**
- * Class Requester
- * @package Ess\M2ePro\Model\Ebay\Connector\Item\Revise
+ * Class \Ess\M2ePro\Model\Ebay\Connector\Item\Revise\Requester
  */
 class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
 {

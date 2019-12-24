@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders\Refund;
 
 /**
- * Class Requester
- * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders\Refund
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\Orders\Refund\Requester
  */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Refund\ItemsRequester
 {

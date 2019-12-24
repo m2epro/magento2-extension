@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Search\Settings;
 
 /**
- * Class ProcessingRunner
- * @package Ess\M2ePro\Model\Amazon\Search\Settings
+ * Class \Ess\M2ePro\Model\Amazon\Search\Settings\ProcessingRunner
  */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {

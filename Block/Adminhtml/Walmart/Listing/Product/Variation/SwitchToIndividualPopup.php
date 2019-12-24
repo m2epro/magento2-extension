@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation;
 
 /**
- * Class SwitchToIndividualPopup
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\SwitchToIndividualPopup
  */
 class SwitchToIndividualPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

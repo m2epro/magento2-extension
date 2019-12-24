@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving;
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 
 /**
- * Class GetFailedProductsGrid
- * @package Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving
+ * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving\GetFailedProductsGrid
  */
 class GetFailedProductsGrid extends Listing
 {

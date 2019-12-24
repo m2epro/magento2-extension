@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Stop;
 
 /**
- * Class Request
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Stop
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Stop\Request
  */
 class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 {

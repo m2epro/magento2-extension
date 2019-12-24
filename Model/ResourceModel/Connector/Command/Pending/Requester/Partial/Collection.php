@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Connector\Command\Pending\Requester\Partial;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Connector\Command\Pending\Requester\Partial
+ * Class \Ess\M2ePro\Model\ResourceModel\Connector\Command\Pending\Requester\Partial\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

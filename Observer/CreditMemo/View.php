@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer\CreditMemo;
 
 /**
- * Class View
- * @package Ess\M2ePro\Observer\CreditMemo
+ * Class \Ess\M2ePro\Observer\CreditMemo\View
  */
 class View extends \Ess\M2ePro\Observer\AbstractModel
 {

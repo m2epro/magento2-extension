@@ -14,8 +14,7 @@ use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
 /**
- * Class Widget
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Context
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget
  */
 class Widget extends Context
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping\Edit\Form;
 use Ess\M2ePro\Model\Ebay\Template\Shipping;
 
 /**
- * Class Data
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping\Edit\Form
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping\Edit\Form\Data
  */
 class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

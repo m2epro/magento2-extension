@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
 /**
- * Class Template
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template
  */
 abstract class Template extends Main
 {

@@ -9,15 +9,12 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage;
 
 /**
- * Class Tabs
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs
  */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
-
-    private $errorsCount;
 
     //########################################
 
@@ -66,27 +63,12 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
         $settingsBlock = $this->createBlock('Walmart_Listing_Product_Variation_Manage_Tabs_Settings_Form')
             ->setListingProduct($this->getListingProduct());
         $settingsBlock->calculateWarnings();
-        $this->errorsCount = count($settingsBlock->getMessages());
-
-        $settingsBlockLabel = $this->__('Settings');
-        $settingsBlockTitle = $this->__('Settings');
-
-        $iconPath = $this->getViewFileUrl('Ess_M2ePro::images/'. $settingsBlock->getMessagesType() .'.png');
-        $iconTitle = $this->__('Action required.');
-        $iconStyle = 'vertical-align: middle;';
-
-        if ($this->errorsCount == 0) {
-            $iconStyle .= 'display:none;';
-        }
-
-        $problemIcon = <<<HTML
-<img style="{$iconStyle}" src="{$iconPath}" title="{$iconTitle}" alt="" width="16" height="15">&nbsp;
-HTML;
 
         $this->addTab('settings', [
-            'label'   => $problemIcon . $settingsBlockLabel,
-            'title'   => $settingsBlockTitle,
-            'content' => $settingsBlock->toHtml()
+            'label'   => $this->__('Settings'),
+            'title'   => $this->__('Settings'),
+            'content' => $settingsBlock->toHtml(),
+            'class'   => (!empty($settingsBlock->getMessages())) ? 'listing-view-warning-icon' : ''
         ]);
 
         $this->addTab('vocabulary', [
@@ -97,7 +79,7 @@ HTML;
                 ->toHtml()
         ]);
 
-        if ($this->errorsCount > 0) {
+        if (!empty($settingsBlock->getMessages())) {
             $this->setActiveTab('settings');
         } else {
             $this->setActiveTab('variations');

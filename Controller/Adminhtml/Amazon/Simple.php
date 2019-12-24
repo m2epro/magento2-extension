@@ -12,8 +12,7 @@ use Ess\M2ePro\Helper\Module;
 use Magento\Backend\App\Action;
 
 /**
- * Class Simple
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Simple
  */
 abstract class Simple extends \Ess\M2ePro\Controller\Adminhtml\Base
 {

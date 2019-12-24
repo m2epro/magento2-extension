@@ -12,8 +12,7 @@ use Magento\InventorySalesApi\Api\Data\SalesEventInterface;
 use Ess\M2ePro\Model\MSI\Order\Reserve;
 
 /**
- * Class PlaceReservationsForSalesEvent
- * @package Ess\M2ePro\Plugin\MSI\Magento\InventorySales\Model
+ * Class \Ess\M2ePro\Plugin\MSI\Magento\InventorySales\Model\PlaceReservationsForSalesEvent
  */
 class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

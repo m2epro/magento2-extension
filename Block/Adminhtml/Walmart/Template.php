@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart;
 use Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid;
 
 /**
- * Class Template
- * @package Ess\M2ePro\Block\Adminhtml\Walmart
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template
  */
 class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

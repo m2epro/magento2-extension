@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Translation\Connector\Product\Add;
 
 /**
- * Class ProcessingRunner
- * @package Ess\M2ePro\Model\Translation\Connector\Product\Add
+ * Class \Ess\M2ePro\Model\Translation\Connector\Product\Add\ProcessingRunner
  */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Order\Edit\ShippingAddress;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Order\Edit\ShippingAddress
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Order\Edit\ShippingAddress\Form
  */
 class Form extends AbstractForm
 {

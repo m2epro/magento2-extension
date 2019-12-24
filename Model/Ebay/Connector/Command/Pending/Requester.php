@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Connector\Command\Pending;
 
 /**
- * Class Requester
- * @package Ess\M2ePro\Model\Ebay\Connector\Command\Pending
+ * Class \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Requester
  */
 abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\Pending\Requester
 {

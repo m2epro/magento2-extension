@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 
 /**
- * Class Account
- * @package Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay
+ * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay\Account
  */
 class Account extends InstallationEbay
 {

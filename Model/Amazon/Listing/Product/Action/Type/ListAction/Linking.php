@@ -12,8 +12,7 @@ use \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\Chi
 use \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
 /**
- * Class Linking
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Linking
  */
 class Linking extends \Ess\M2ePro\Model\AbstractModel
 {

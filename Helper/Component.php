@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper;
 
 /**
- * Class Component
- * @package Ess\M2ePro\Helper
+ * Class \Ess\M2ePro\Helper\Component
  */
 class Component extends AbstractHelper
 {

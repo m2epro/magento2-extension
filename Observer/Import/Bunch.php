@@ -8,8 +8,7 @@
 namespace Ess\M2ePro\Observer\Import;
 
 /**
- * Class Bunch
- * @package Ess\M2ePro\Observer\Import
+ * Class \Ess\M2ePro\Observer\Import\Bunch
  */
 class Bunch extends \Ess\M2ePro\Observer\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Category;
 
 /**
- * Class Tree
- * @package Ess\M2ePro\Block\Adminhtml\Listing\Category
+ * Class \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
  */
 class Tree extends \Ess\M2ePro\Block\Adminhtml\Magento\Category\AbstractCategory
 {

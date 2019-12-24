@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace;
 
 /**
- * Class RunSynchNow
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace\RunSynchNow
  */
 class RunSynchNow extends Marketplace
 {

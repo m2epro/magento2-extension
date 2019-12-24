@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 
 /**
- * Class UpdateShippingStatus
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Order
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Order\UpdateShippingStatus
  */
 class UpdateShippingStatus extends Order
 {

@@ -13,8 +13,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Walmart\Account;
 
 /**
- * Class ListingOther
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\ListingOther
  */
 class ListingOther extends AbstractForm
 {

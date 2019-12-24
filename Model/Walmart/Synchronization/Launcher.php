@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Synchronization;
 
 /**
- * Class Launcher
- * @package Ess\M2ePro\Model\Walmart\Synchronization
+ * Class \Ess\M2ePro\Model\Walmart\Synchronization\Launcher
  */
 class Launcher extends AbstractModel
 {

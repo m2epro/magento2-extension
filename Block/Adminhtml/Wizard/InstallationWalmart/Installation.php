@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart;
 
 /**
- * Class Installation
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation
  */
 abstract class Installation extends \Ess\M2ePro\Block\Adminhtml\Wizard\Installation
 {

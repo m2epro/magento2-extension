@@ -12,8 +12,7 @@ use \Ess\M2ePro\Model\Amazon\Template;
 use \Ess\M2ePro\Helper\Component\Amazon;
 
 /**
- * Class Moving
- * @package Ess\M2ePro\Model\Amazon\Listing\Other
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Other\Moving
  */
 class Moving extends \Ess\M2ePro\Model\AbstractModel
 {

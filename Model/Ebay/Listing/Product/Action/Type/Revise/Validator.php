@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise;
 use Ess\M2ePro\Model\Exception\Logic;
 
 /**
- * Class Validator
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise\Validator
  */
 class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Validator
 {

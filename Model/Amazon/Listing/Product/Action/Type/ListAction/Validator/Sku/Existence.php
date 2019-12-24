@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku;
 
 /**
- * Class Existence
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\Existence
  */
 class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
 {

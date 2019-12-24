@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Connector\Inventory\Get;
 
 /**
- * Class ItemsResponser
- * @package Ess\M2ePro\Model\Walmart\Connector\Inventory\Get
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsResponser
  */
 abstract class ItemsResponser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Responser
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Log\Listing;
 
 /**
- * Class TypeSwitcher
- * @package Ess\M2ePro\Block\Adminhtml\Log\Listing
+ * Class \Ess\M2ePro\Block\Adminhtml\Log\Listing\TypeSwitcher
  */
 class TypeSwitcher extends \Ess\M2ePro\Block\Adminhtml\Listing\TypeSwitcher
 {

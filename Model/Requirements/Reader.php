@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Requirements;
 use Magento\Framework\Component\ComponentRegistrar;
 
 /**
- * Class Reader
- * @package Ess\M2ePro\Model\Requirements
+ * Class \Ess\M2ePro\Model\Requirements\Reader
  */
 class Reader extends \Ess\M2ePro\Model\AbstractModel
 {

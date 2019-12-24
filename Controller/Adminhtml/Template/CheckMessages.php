@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Template;
 use Ess\M2ePro\Controller\Adminhtml\Base;
 
 /**
- * Class CheckMessages
- * @package Ess\M2ePro\Controller\Adminhtml\Template
+ * Class \Ess\M2ePro\Controller\Adminhtml\Template\CheckMessages
  */
 class CheckMessages extends Base
 {

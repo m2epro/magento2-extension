@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector\Product\Delete;
 
 /**
- * Class Requester
- * @package Ess\M2ePro\Model\Amazon\Connector\Product\Delete
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Product\Delete\Requester
  */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 {

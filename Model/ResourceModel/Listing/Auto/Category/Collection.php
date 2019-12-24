@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category
+ * Class \Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

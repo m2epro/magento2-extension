@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Amazon;
 
 /**
- * Class Account
- * @package Ess\M2ePro\Model\ResourceModel\Amazon
+ * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Account
  */
 class Account extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {

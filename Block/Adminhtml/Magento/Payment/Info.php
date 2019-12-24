@@ -12,8 +12,7 @@ use Ess\M2ePro\Helper\Component\Amazon;
 use Ess\M2ePro\Helper\Component\Ebay;
 
 /**
- * Class Info
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Payment
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Payment\Info
  */
 class Info extends \Magento\Payment\Block\Info
 {

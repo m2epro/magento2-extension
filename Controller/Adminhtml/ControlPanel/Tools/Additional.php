@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
 /**
- * Class Additional
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\Additional
  */
 class Additional extends Command
 {

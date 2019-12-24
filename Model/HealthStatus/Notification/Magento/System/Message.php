@@ -12,8 +12,7 @@ use Magento\Framework\Notification\MessageInterface;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
 /**
- * Class Message
- * @package Ess\M2ePro\Model\HealthStatus\Notification\Magento\System
+ * Class \Ess\M2ePro\Model\HealthStatus\Notification\Magento\System\Message
  */
 class Message extends \Ess\M2ePro\Model\AbstractModel implements MessageInterface
 {

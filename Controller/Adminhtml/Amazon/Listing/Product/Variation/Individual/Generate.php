@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Indiv
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
- * Class Generate
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Individual
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Individual\Generate
  */
 class Generate extends Main
 {

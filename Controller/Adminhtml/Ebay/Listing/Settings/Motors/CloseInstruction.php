@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
 /**
- * Class CloseInstruction
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors\CloseInstruction
  */
 class CloseInstruction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

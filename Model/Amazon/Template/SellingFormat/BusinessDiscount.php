@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Template\SellingFormat;
 
 /**
- * Class BusinessDiscount
- * @package Ess\M2ePro\Model\Amazon\Template\SellingFormat
+ * Class \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount
  */
 class BusinessDiscount extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {

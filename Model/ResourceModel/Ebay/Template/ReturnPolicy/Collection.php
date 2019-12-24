@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template\ReturnPolicy;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Ebay\Template\ReturnPolicy
+ * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Template\ReturnPolicy\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

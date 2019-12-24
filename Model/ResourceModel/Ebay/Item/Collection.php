@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Item;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Ebay\Item
+ * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Item\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

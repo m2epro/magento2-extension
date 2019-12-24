@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Variation\Product\Manage;
 
 /**
- * Class GetGridHtml
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Variation\Product\Manage
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Variation\Product\Manage\GetGridHtml
  */
 class GetGridHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

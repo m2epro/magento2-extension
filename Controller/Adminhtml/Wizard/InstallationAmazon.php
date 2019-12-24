@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Wizard;
 
 /**
- * Class InstallationAmazon
- * @package Ess\M2ePro\Controller\Adminhtml\Wizard
+ * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon
  */
 abstract class InstallationAmazon extends Wizard
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\View;
 
 /**
- * Class Amazon
- * @package Ess\M2ePro\Helper\View
+ * Class \Ess\M2ePro\Helper\View\Amazon
  */
 class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 {

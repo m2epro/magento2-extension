@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 use Ess\M2ePro\Helper\View\ControlPanel\Command;
 
 /**
- * Class ToolsGeneral
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ToolsGeneral
  */
 class ToolsGeneral extends AbstractBlock
 {

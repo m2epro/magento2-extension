@@ -14,8 +14,7 @@
 namespace Ess\M2ePro\Model\Walmart\Template;
 
 /**
- * Class Description
- * @package Ess\M2ePro\Model\Walmart\Template
+ * Class \Ess\M2ePro\Model\Walmart\Template\Description
  */
 class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {

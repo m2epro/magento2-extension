@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Backend\Model\Session;
 
 /**
- * Class Quote
- * @package Ess\M2ePro\Model\Magento\Backend\Model\Session
+ * Class \Ess\M2ePro\Model\Magento\Backend\Model\Session\Quote
  */
 class Quote extends \Magento\Backend\Model\Session\Quote
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Account\Repricing;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Amazon\Account\Repricing
+ * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Account\Repricing\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

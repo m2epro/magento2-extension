@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
 use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
 /**
- * Class StepTwoDeleteProductsModeProduct
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings\StepTwoDeleteProductsModeProduct
  */
 class StepTwoDeleteProductsModeProduct extends Settings
 {

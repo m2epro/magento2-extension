@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Setup\Upgrade\Entity;
 
 /**
- * Class Factory
- * @package Ess\M2ePro\Model\Setup\Upgrade\Entity
+ * Class \Ess\M2ePro\Model\Setup\Upgrade\Entity\Factory
  */
 class Factory
 {

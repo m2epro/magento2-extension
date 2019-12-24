@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
- * Class MoveToListing
- * @package Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving
+ * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving\MoveToListing
  */
 class MoveToListing extends Listing
 {

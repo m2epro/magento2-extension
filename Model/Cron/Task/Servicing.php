@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Task;
 
 /**
- * Class Servicing
- * @package Ess\M2ePro\Model\Cron\Task
+ * Class \Ess\M2ePro\Model\Cron\Task\Servicing
  */
 class Servicing extends AbstractModel
 {

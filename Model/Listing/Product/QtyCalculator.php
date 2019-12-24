@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Listing\Product;
 use Ess\M2ePro\Model\Exception\Logic;
 
 /**
- * Class QtyCalculator
- * @package Ess\M2ePro\Model\Listing\Product
+ * Class \Ess\M2ePro\Model\Listing\Product\QtyCalculator
  */
 abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
 {

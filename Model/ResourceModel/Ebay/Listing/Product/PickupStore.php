@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product;
 use \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\PickupStore\CollectionFactory;
 
 /**
- * Class PickupStore
- * @package Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product
+ * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\PickupStore
  */
 class PickupStore extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

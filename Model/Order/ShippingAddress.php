@@ -12,8 +12,7 @@
 namespace Ess\M2ePro\Model\Order;
 
 /**
- * Class ShippingAddress
- * @package Ess\M2ePro\Model\Order
+ * Class \Ess\M2ePro\Model\Order\ShippingAddress
  */
 abstract class ShippingAddress extends \Magento\Framework\DataObject
 {

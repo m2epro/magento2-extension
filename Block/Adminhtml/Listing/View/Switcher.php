@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Listing\View;
 
 /**
- * Class Switcher
- * @package Ess\M2ePro\Block\Adminhtml\Listing\View
+ * Class \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
  */
 abstract class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
 {

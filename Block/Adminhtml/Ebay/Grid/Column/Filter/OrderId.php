@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter;
 
 /**
- * Class OrderId
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\OrderId
  */
 class OrderId extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Text
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Synchronization;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
 /**
- * Class Delete
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Synchronization
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Synchronization\Delete
  */
 class Delete extends Template
 {

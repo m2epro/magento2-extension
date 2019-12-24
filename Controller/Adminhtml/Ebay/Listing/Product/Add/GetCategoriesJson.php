@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
 
 /**
- * Class GetCategoriesJson
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add\GetCategoriesJson
  */
 class GetCategoriesJson extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {

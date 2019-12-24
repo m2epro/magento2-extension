@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
  */
 abstract class Edit extends AbstractContainer
 {

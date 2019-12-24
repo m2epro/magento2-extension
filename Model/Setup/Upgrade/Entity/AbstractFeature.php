@@ -15,8 +15,7 @@ use Ess\M2ePro\Model\Setup\Database\Modifier\Config;
 use Magento\Framework\Module\Setup;
 
 /**
- * Class AbstractFeature
- * @package Ess\M2ePro\Model\Setup\Upgrade\Entity
+ * Class \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature
  */
 abstract class AbstractFeature
 {

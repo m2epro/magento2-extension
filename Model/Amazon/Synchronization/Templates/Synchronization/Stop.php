@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization;
 use Ess\M2ePro\Model\Amazon\Template\Synchronization as SynchronizationPolicy;
 
 /**
- * Class Stop
- * @package Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization\Stop
  */
 class Stop extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization\AbstractModel
 {

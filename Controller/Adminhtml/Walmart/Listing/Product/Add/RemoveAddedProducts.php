@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode as SourceModeBlock;
 
 /**
- * Class RemoveAddedProducts
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\RemoveAddedProducts
  */
 class RemoveAddedProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {

@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 use Magento\Backend\App\Action;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Save
  */
 class Save extends Template
 {

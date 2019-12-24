@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer\Shipment;
 
 /**
- * Class View
- * @package Ess\M2ePro\Observer\Shipment
+ * Class \Ess\M2ePro\Observer\Shipment\View
  */
 class View extends \Ess\M2ePro\Observer\AbstractModel
 {

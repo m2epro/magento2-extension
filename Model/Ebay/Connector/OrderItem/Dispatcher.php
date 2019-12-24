@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Connector\OrderItem;
 
 /**
- * Class Dispatcher
- * @package Ess\M2ePro\Model\Ebay\Connector\OrderItem
+ * Class \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Dispatcher
  */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {

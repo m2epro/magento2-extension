@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Marketplace;
 
 /**
- * Class Details
- * @package Ess\M2ePro\Model\Walmart\Marketplace
+ * Class \Ess\M2ePro\Model\Walmart\Marketplace\Details
  */
 class Details extends \Ess\M2ePro\Model\AbstractModel
 {

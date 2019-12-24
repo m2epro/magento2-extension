@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manag
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
- * Class SetListingProductSku
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manage
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manage\SetListingProductSku
  */
 class SetListingProductSku extends Main
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\System\Config\Module\Migration;
 
 /**
- * Class Field
- * @package Ess\M2ePro\Block\Adminhtml\System\Config\Module\Migration
+ * Class \Ess\M2ePro\Block\Adminhtml\System\Config\Module\Migration\Field
  */
 class Field extends \Ess\M2ePro\Block\Adminhtml\System\Config\Integration
 {

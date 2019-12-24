@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon
+ * Class \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel
 {

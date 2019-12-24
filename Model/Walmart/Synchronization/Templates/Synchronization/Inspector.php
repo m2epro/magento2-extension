@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Listing\Product as ListingProduct;
 use Ess\M2ePro\Model\Walmart\Template\Synchronization as SynchronizationPolicy;
 
 /**
- * Class Inspector
- * @package Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization
+ * Class \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization\Inspector
  */
 class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Inspector
 {
@@ -804,7 +803,13 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
             ->getObject('Walmart_Listing_Product_Action_DataBuilder_Promotions');
         $promotionsActionDataBuilder->setListingProduct($listingProduct);
 
-        return $promotionsActionDataBuilder->getRequestData() != $walmartListingProduct->getOnlinePromotions();
+        $onlinePromotions = $walmartListingProduct->getOnlinePromotions();
+
+        if (empty($onlinePromotions)) {
+            $onlinePromotions = ['promotion_prices' => []];
+        }
+
+        return $promotionsActionDataBuilder->getRequestData() != $onlinePromotions;
     }
 
     // ---------------------------------------

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Marketplaces;
 
 /**
- * Class Specifics
- * @package Ess\M2ePro\Model\Amazon\Synchronization\Marketplaces
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\Marketplaces\Specifics
  */
 class Specifics extends AbstractModel
 {

@@ -5,8 +5,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
 /**
- * Class GetEditSkuPopup
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\GetEditSkuPopup
  */
 class GetEditSkuPopup extends Main
 {

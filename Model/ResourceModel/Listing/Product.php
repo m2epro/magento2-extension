@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Listing;
 
 /**
- * Class Product
- * @package Ess\M2ePro\Model\ResourceModel\Listing
+ * Class \Ess\M2ePro\Model\ResourceModel\Listing\Product
  */
 class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {

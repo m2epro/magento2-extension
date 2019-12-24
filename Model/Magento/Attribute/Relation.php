@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Attribute;
 
 /**
- * Class Relation
- * @package Ess\M2ePro\Model\Magento\Attribute
+ * Class \Ess\M2ePro\Model\Magento\Attribute\Relation
  */
 class Relation extends \Ess\M2ePro\Model\AbstractModel
 {

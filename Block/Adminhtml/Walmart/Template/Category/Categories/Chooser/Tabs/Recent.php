@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs;
 
 /**
- * Class Recent
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs\Recent
  */
 class Recent extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

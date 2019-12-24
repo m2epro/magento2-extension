@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Edit
  */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {

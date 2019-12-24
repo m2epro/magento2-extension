@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Fulfillment;
 
 /**
- * Class SwitchToAFN
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Fulfillment
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Fulfillment\SwitchToAFN
  */
 class SwitchToAFN extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Fulfillment
 {

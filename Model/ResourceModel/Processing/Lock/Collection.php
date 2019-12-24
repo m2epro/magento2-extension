@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Processing\Lock;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Processing\Lock
+ * Class \Ess\M2ePro\Model\ResourceModel\Processing\Lock\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

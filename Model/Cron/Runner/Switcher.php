@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Cron\Runner;
 use \Ess\M2ePro\Helper\Module\Cron as CronHelper;
 
 /**
- * Class Switcher
- * @package Ess\M2ePro\Model\Cron\Runner
+ * Class \Ess\M2ePro\Model\Cron\Runner\Switcher
  */
 class Switcher extends \Ess\M2ePro\Model\AbstractModel
 {

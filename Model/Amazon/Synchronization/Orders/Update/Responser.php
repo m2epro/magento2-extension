@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders\Update;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders\Update
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\Orders\Update\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsResponser
 {

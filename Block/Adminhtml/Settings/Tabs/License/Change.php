@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License;
 
 /**
- * Class Change
- * @package Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License
+ * Class \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License\Change
  */
 class Change extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

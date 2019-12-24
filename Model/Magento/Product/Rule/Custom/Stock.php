@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Product\Rule\Custom;
 
 /**
- * Class Stock
- * @package Ess\M2ePro\Model\Magento\Product\Rule\Custom
+ * Class \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Stock
  */
 class Stock extends AbstractModel
 {

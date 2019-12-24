@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
 /**
- * Class Preview
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description\Preview
  */
 class Preview extends Description
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Product;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 /**
- * Class Rule
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Product
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule
  */
 class Rule extends AbstractForm
 {

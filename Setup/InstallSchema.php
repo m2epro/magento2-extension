@@ -19,8 +19,7 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Config\ConfigOptionsListConstants;
 
 /**
- * Class InstallSchema
- * @package Ess\M2ePro\Setup
+ * Class \Ess\M2ePro\Setup\InstallSchema
  */
 class InstallSchema implements InstallSchemaInterface
 {

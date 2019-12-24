@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account;
 use Ess\M2ePro\Block\Adminhtml\Account\Grid as AccountGrid;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Grid
  */
 class Grid extends AccountGrid
 {

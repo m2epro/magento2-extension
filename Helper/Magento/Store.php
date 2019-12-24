@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Magento;
 
 /**
- * Class Store
- * @package Ess\M2ePro\Helper\Magento
+ * Class \Ess\M2ePro\Helper\Magento\Store
  */
 class Store extends \Ess\M2ePro\Helper\AbstractHelper
 {

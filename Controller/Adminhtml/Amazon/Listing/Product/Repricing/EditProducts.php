@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing;
 
 /**
- * Class EditProducts
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing\EditProducts
  */
 class EditProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Plugin\Order\Magento\Framework\App;
 
 /**
- * Class Config
- * @package Ess\M2ePro\Plugin\Order\Magento\Framework\App
+ * Class \Ess\M2ePro\Plugin\Order\Magento\Framework\App\Config
  */
 class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

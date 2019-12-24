@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Order;
 
 /**
- * Class Matching
- * @package Ess\M2ePro\Model\Order
+ * Class \Ess\M2ePro\Model\Order\Matching
  */
 class Matching extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {

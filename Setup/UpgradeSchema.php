@@ -13,8 +13,7 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 
 /**
- * Class UpgradeSchema
- * @package Ess\M2ePro\Setup
+ * Class \Ess\M2ePro\Setup\UpgradeSchema
  */
 class UpgradeSchema implements UpgradeSchemaInterface
 {

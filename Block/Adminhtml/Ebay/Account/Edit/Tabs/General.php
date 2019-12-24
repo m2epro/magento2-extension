@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Account;
 
 /**
- * Class General
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\General
  */
 class General extends AbstractForm
 {
@@ -105,7 +104,7 @@ HTML
                 'label' => $this->__('Title'),
                 'required' => true,
                 'value' => $formData['title'],
-                'tooltip' => $this->__('Title or Identifier of Ebay Account for your internal use.')
+                'tooltip' => $this->__('Title or Identifier of eBay Account for your internal use.')
             ]
         );
 

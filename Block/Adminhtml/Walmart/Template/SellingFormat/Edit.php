@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit
  */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
 {

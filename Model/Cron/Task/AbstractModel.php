@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Cron\Task;
 use Ess\M2ePro\Model\Exception;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\Cron\Task
+ * Class \Ess\M2ePro\Model\Cron\Task\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {

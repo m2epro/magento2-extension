@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Chi
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Walmart\Connector\Product\Stop
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Product\Stop\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
 {

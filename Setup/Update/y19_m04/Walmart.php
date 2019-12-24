@@ -12,8 +12,7 @@ use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 
 /**
- * Class Walmart
- * @package Ess\M2ePro\Setup\Update\y19_m04
+ * Class \Ess\M2ePro\Setup\Update\y19\Walmart_m04
  */
 class Walmart extends AbstractFeature
 {

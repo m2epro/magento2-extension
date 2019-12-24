@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
 /**
- * Class SaveProductsToSessionAndGetInfo
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add\SaveProductsToSessionAndGetInfo
  */
 class SaveProductsToSessionAndGetInfo extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {

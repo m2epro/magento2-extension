@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay;
 
 /**
- * Class Factory
- * @package Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay
+ * Class \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory
  */
 class Factory extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractFactory
 {

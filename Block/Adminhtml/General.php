@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml;
 
 /**
- * Class General
- * @package Ess\M2ePro\Block\Adminhtml
+ * Class \Ess\M2ePro\Block\Adminhtml\General
  */
 class General extends Magento\AbstractBlock
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Connector\Product\ListAction;
 
 /**
- * Class ProcessingRunner
- * @package Ess\M2ePro\Model\Walmart\Connector\Product\ListAction
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Product\ListAction\ProcessingRunner
  */
 class ProcessingRunner extends \Ess\M2ePro\Model\Walmart\Connector\Product\ProcessingRunner
 {

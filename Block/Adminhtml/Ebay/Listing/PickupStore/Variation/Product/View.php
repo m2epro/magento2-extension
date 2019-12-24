@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Variation\Product;
 
 /**
- * Class View
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Variation\Product
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Variation\Product\View
  */
 class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

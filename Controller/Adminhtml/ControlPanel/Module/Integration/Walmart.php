@@ -13,8 +13,7 @@ use Ess\M2ePro\Helper\Component\Walmart as WalmartHelper;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
- * Class Walmart
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration\Walmart
  */
 class Walmart extends Command
 {

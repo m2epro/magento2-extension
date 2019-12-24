@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group;
 
 /**
- * Class Items
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group\Items
  */
 class Items extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

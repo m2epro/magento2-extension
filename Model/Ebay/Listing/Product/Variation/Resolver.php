@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Variation;
 use \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description as RequestDescription;
 
 /**
- * Class Resolver
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\Variation
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Resolver
  */
 class Resolver extends \Ess\M2ePro\Model\AbstractModel
 {

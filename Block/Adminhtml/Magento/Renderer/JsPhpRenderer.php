@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
 /**
- * Class JsPhpRenderer
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Renderer
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Renderer\JsPhpRenderer
  */
 class JsPhpRenderer extends AbstractRenderer
 {

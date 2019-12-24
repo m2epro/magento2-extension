@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
 /**
- * Class GoToPaypal
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Order
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Order\GoToPaypal
  */
 class GoToPaypal extends Order
 {

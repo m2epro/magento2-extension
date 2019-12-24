@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product;
 
 /**
- * Class Template
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template
  */
 abstract class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {

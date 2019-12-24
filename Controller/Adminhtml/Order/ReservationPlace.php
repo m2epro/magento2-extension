@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
 /**
- * Class ReservationPlace
- * @package Ess\M2ePro\Controller\Adminhtml\Order
+ * Class \Ess\M2ePro\Controller\Adminhtml\Order\ReservationPlace
  */
 class ReservationPlace extends Order
 {

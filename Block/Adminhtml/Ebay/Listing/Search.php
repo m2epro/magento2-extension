@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
 /**
- * Class Search
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search
  */
 class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
 /**
- * Class AbstractWizard
- * @package Ess\M2ePro\Block\Adminhtml\Wizard
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\AbstractWizard
  */
 abstract class AbstractWizard extends AbstractContainer
 {

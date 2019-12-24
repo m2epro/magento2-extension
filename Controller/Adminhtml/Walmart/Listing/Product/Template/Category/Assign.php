@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category;
 
 /**
- * Class Assign
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category\Assign
  */
 class Assign extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category
 {

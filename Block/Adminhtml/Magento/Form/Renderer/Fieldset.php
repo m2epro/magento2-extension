@@ -12,8 +12,7 @@ use Magento\Backend\Block\Widget\Form\Renderer\Fieldset as MagentoFieldset;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
 /**
- * Class Fieldset
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Form\Renderer
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Form\Renderer\Fieldset
  */
 class Fieldset extends MagentoFieldset
 {

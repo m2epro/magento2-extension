@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Moving;
 
 /**
- * Class FailedProducts
- * @package Ess\M2ePro\Block\Adminhtml\Listing\Moving
+ * Class \Ess\M2ePro\Block\Adminhtml\Listing\Moving\FailedProducts
  */
 class FailedProducts extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Settings;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization\Save
  */
 class Save extends Settings
 {

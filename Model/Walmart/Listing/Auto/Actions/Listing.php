@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Auto\Actions;
 
 /**
- * Class Listing
- * @package Ess\M2ePro\Model\Walmart\Listing\Auto\Actions
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Auto\Actions\Listing
  */
 class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 {
@@ -197,9 +196,8 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
         $walmartListingProduct = $listingProduct->getChildObject();
-
-        $listingProduct->setData('template_category_id', $params['template_category_id']);
-        $listingProduct->save();
+        $walmartListingProduct->setData('template_category_id', $params['template_category_id']);
+        $walmartListingProduct->save();
 
         if ($walmartListingProduct->getVariationManager()->isRelationParentType()) {
             $processor = $walmartListingProduct->getVariationManager()->getTypeModel()->getProcessor();

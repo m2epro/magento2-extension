@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Renderer\Description;
 
 /**
- * Class Gallery
- * @package Ess\M2ePro\Block\Adminhtml\Renderer\Description
+ * Class \Ess\M2ePro\Block\Adminhtml\Renderer\Description\Gallery
  */
 class Gallery extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
 {

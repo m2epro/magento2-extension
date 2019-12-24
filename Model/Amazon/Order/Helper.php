@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Order;
 
 /**
- * Class Helper
- * @package Ess\M2ePro\Model\Amazon\Order
+ * Class \Ess\M2ePro\Model\Amazon\Order\Helper
  */
 class Helper extends \Ess\M2ePro\Model\AbstractModel
 {

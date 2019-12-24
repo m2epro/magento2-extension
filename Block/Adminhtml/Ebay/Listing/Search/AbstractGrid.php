@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search;
 
 /**
- * Class AbstractGrid
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
  */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {

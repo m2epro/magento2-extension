@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Template;
 
 /**
- * Class Synchronization
- * @package Ess\M2ePro\Model\Template
+ * Class \Ess\M2ePro\Model\Template\Synchronization
  */
 class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {

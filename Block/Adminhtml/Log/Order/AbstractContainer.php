@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Log\Order;
 
 /**
- * Class AbstractContainer
- * @package Ess\M2ePro\Block\Adminhtml\Log\Order
+ * Class \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractContainer
  */
 abstract class AbstractContainer extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

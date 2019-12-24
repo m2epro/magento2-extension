@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Data;
 
 /**
- * Class Session
- * @package Ess\M2ePro\Helper\Data
+ * Class \Ess\M2ePro\Helper\Data\Session
  */
 class Session extends \Ess\M2ePro\Helper\AbstractHelper
 {

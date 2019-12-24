@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat;
 use Ess\M2ePro\Model\Walmart\Template\SellingFormat as WalmartSellingFormat;
 
 /**
- * Class Source
- * @package Ess\M2ePro\Model\Walmart\Template\SellingFormat
+ * Class \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Source
  */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {

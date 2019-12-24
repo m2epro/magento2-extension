@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Product\Rule\Custom;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\Magento\Product\Rule\Custom
+ * Class \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {

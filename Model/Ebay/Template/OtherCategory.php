@@ -12,8 +12,7 @@
 namespace Ess\M2ePro\Model\Ebay\Template;
 
 /**
- * Class OtherCategory
- * @package Ess\M2ePro\Model\Ebay\Template
+ * Class \Ess\M2ePro\Model\Ebay\Template\OtherCategory
  */
 class OtherCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {

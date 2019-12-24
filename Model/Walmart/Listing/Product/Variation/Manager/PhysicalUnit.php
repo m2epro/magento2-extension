@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager;
 use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory;
 
 /**
- * Class PhysicalUnit
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\PhysicalUnit
  */
 abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\AbstractModel
 {

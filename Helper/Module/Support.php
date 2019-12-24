@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Module;
 
 /**
- * Class Support
- * @package Ess\M2ePro\Helper\Module
+ * Class \Ess\M2ePro\Helper\Module\Support
  */
 class Support extends \Ess\M2ePro\Helper\AbstractHelper
 {
@@ -60,9 +59,18 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->moduleConfig->getGroupValue('/support/', 'clients_portal_url');
     }
 
-    public function getSupportUrl()
+    public function getSupportUrl($urlPart = null)
     {
-        return $this->moduleConfig->getGroupValue('/support/', 'support_url');
+        $urlParts[] = trim(
+            $this->moduleConfig->getGroupValue('/support/', 'support_url'),
+            '/'
+        );
+
+        if ($urlPart) {
+            $urlParts[] = trim($urlPart, '/');
+        }
+
+        return implode('/', $urlParts);
     }
 
     //########################################
@@ -93,7 +101,7 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getKnowledgebaseUrl()
     {
-        return $this->getSupportUrl() . 'knowledgebase/';
+        return $this->getSupportUrl('knowledgebase');
     }
 
     public function getKnowledgebaseComponentUrl($component)
@@ -119,7 +127,7 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getIdeasUrl()
     {
-        return $this->getSupportUrl() . 'ideas/';
+        return $this->getSupportUrl('ideas');
     }
 
     public function getIdeasComponentUrl($component)
@@ -138,7 +146,7 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getIdeasArticleUrl($articleLink)
     {
-        return  $this->getIdeasUrl() . trim($articleLink, '/') . '/';
+        return $this->getIdeasUrl() . trim($articleLink, '/') . '/';
     }
 
     //----------------------------------------

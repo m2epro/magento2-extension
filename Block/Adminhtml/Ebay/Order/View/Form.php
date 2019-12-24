@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Order\View;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Order\View
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Order\View\Form
  */
 class Form extends AbstractContainer
 {

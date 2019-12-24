@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Repricing\Synchronization;
 
 /**
- * Class General
- * @package Ess\M2ePro\Model\Amazon\Repricing\Synchronization
+ * Class \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General
  */
 class General extends AbstractModel
 {

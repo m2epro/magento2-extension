@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
 /**
- * Class GetTreeInfo
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\GetTreeInfo
  */
 class GetTreeInfo extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {

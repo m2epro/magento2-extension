@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\HealthStatus;
 use Ess\M2ePro\Controller\Adminhtml\HealthStatus;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\HealthStatus
+ * Class \Ess\M2ePro\Controller\Adminhtml\HealthStatus\Index
  */
 class Index extends HealthStatus
 {

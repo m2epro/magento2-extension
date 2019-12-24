@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Indexer\Listing\Product;
 
 /**
- * Class VariationParent
- * @package Ess\M2ePro\Model\Walmart\Indexer\Listing\Product
+ * Class \Ess\M2ePro\Model\Walmart\Indexer\Listing\Product\VariationParent
  */
 class VariationParent extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Search\Custom\ByIdentifier;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Amazon\Search\Custom\ByIdentifier
+ * Class \Ess\M2ePro\Model\Amazon\Search\Custom\ByIdentifier\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByIdentifier\ItemsResponser
 {

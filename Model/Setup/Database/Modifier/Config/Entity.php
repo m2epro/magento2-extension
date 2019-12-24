@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\AbstractModel;
 use Ess\M2ePro\Model\Setup\Database\Modifier\Config;
 
 /**
- * Class Entity
- * @package Ess\M2ePro\Model\Setup\Database\Modifier\Config
+ * Class \Ess\M2ePro\Model\Setup\Database\Modifier\Config\Entity
  */
 class Entity extends AbstractModel
 {

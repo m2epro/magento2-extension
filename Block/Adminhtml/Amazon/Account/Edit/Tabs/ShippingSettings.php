@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Account;
 
 /**
- * Class ShippingSettings
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\ShippingSettings
  */
 class ShippingSettings extends AbstractForm
 {

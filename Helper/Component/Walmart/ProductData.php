@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Component\Walmart;
 
 /**
- * Class ProductData
- * @package Ess\M2ePro\Helper\Component\Walmart
+ * Class \Ess\M2ePro\Helper\Component\Walmart\ProductData
  */
 class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
 {

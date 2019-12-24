@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts\Update;
 use \Ess\M2ePro\Model\Walmart\Listing\Product as WalmartProduct;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts\Update
+ * Class \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts\Update\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsResponser
 {

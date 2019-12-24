@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Template;
 
 /**
- * Class Category
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Template
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Template\Category
  */
 class Category extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Template
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
 /**
- * Class ActionAbstract
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\ActionAbstract
  */
 abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {

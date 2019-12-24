@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts;
 
 /**
- * Class DeletedProducts
- * @package Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts
+ * Class \Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts\DeletedProducts
  */
 class DeletedProducts extends AbstractModel
 {

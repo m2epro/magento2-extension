@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 use \Ess\M2ePro\Block\Adminhtml\Listing\Switcher as AbstractSwitcher;
 
 /**
- * Class Switcher
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Switcher
  */
 class Switcher extends AbstractSwitcher
 {

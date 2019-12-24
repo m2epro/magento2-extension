@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Account;
 
 /**
- * Class ListingOther
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\ListingOther
  */
 class ListingOther extends AbstractForm
 {
@@ -245,6 +244,8 @@ HTML
             ];
         }
 
+        // ---------------------------------------
+
         $mappingTitlePriority = isset($mappingSettings['title']['priority'])
             ? (int)$mappingSettings['title']['priority'] : Account::OTHER_LISTINGS_MAPPING_TITLE_DEFAULT_PRIORITY;
         $fieldset->addField(
@@ -288,6 +289,70 @@ HTML
             [
                 'name' => 'mapping_title_attribute',
                 'value' => isset($mappingSettings['title']['attribute']) ? $mappingSettings['title']['attribute'] : '',
+            ]
+        );
+
+        // ---------------------------------------
+
+        $preparedAttributes = [];
+        foreach ($attributes as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if (isset($mappingSettings['item_id']['mode'])
+                && $mappingSettings['item_id']['mode'] == Account::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE
+                && $mappingSettings['item_id']['attribute'] == $attribute['code']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => Account::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE,
+                'label' => $attribute['label']
+            ];
+        }
+
+        $mappingItemPriority = isset($mappingSettings['item_id']['priority'])
+            ? (int)$mappingSettings['item_id']['priority'] : Account::OTHER_LISTINGS_MAPPING_ITEM_ID_DEFAULT_PRIORITY;
+        $fieldset->addField(
+            'mapping_item_id_mode',
+            self::SELECT,
+            [
+                'name' => 'mapping_item_id_mode',
+                'label' => $this->__('eBay Item ID'),
+                'class' => 'attribute-mode-select',
+                'style' => 'float:left; margin-right: 15px;',
+                'values' => [
+                    Account::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_NONE => $this->__('None'),
+                    [
+                        'label' => $this->__('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true
+                        ]
+                    ]
+                ],
+                'value' => isset($mappingSettings['item_id']['mode'])
+                && $mappingSettings['item_id']['mode'] != Account::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE
+                    ? $mappingSettings['item_id']['mode'] : '',
+                'create_magento_attribute' => true,
+            ]
+        )->setAfterElementHtml(<<<HTML
+<div id="mapping_item_id_priority">
+    {$this->__('Priority')}: <input style="width: 50px;"
+                                    name="mapping_item_id_priority"
+                                    value="$mappingItemPriority"
+                                    type="text"
+                                    class="input-text admin__control-text required-entry _required">
+</div>
+HTML
+        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
+
+        $fieldset->addField(
+            'mapping_item_id_attribute',
+            'hidden',
+            [
+                'name' => 'mapping_item_id_attribute',
+                'value' => isset($mappingSettings['item_id']['attribute'])
+                    ? $mappingSettings['item_id']['attribute'] : '',
             ]
         );
 

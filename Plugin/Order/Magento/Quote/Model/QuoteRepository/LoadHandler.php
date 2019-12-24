@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Plugin\Order\Magento\Quote\Model\QuoteRepository;
 use \Ess\M2ePro\Model\Magento\Quote\Builder;
 
 /**
- * Class LoadHandler
- * @package Ess\M2ePro\Plugin\Order\Magento\Quote\Model\QuoteRepository
+ * Class \Ess\M2ePro\Plugin\Order\Magento\Quote\Model\QuoteRepository\LoadHandler
  */
 class LoadHandler extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

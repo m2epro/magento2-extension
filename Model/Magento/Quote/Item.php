@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Quote;
 
 /**
- * Class Item
- * @package Ess\M2ePro\Model\Magento\Quote
+ * Class \Ess\M2ePro\Model\Magento\Quote\Item
  */
 class Item extends \Ess\M2ePro\Model\AbstractModel
 {

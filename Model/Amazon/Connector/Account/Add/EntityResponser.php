@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector\Account\Add;
 
 /**
- * Class EntityResponser
- * @package Ess\M2ePro\Model\Amazon\Connector\Account\Add
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Account\Add\EntityResponser
  */
 class EntityResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
 {

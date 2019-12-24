@@ -8,11 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs;
 
-use \Ess\M2ePro\Helper\Component\Walmart\Configuration as HelperWalmartConfiguration;
+use \Ess\M2ePro\Helper\Component\Walmart\Configuration as HelperConfiguration;
 
 /**
- * Class Main
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs\Main
  */
 class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
@@ -92,14 +91,14 @@ HTML
         $preparedAttributes = [];
         foreach ($attributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['sku_mode'] == HelperWalmartConfiguration::SKU_MODE_CUSTOM_ATTRIBUTE
+            if ($formData['sku_mode'] == HelperConfiguration::SKU_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['sku_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
             }
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => HelperWalmartConfiguration::SKU_MODE_CUSTOM_ATTRIBUTE,
+                'value' => HelperConfiguration::SKU_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $attribute['label'],
             ];
         }
@@ -111,8 +110,8 @@ HTML
                 'name' => 'sku_mode',
                 'label' => $this->__('Source'),
                 'values' => [
-                    HelperWalmartConfiguration::SKU_MODE_PRODUCT_ID => $this->__('Product ID'),
-                    HelperWalmartConfiguration::SKU_MODE_DEFAULT => $this->__('Product SKU'),
+                    HelperConfiguration::SKU_MODE_PRODUCT_ID => $this->__('Product ID'),
+                    HelperConfiguration::SKU_MODE_DEFAULT => $this->__('Product SKU'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
@@ -121,7 +120,7 @@ HTML
                         ]
                     ]
                 ],
-                'value' => $formData['sku_mode'] != HelperWalmartConfiguration::SKU_MODE_CUSTOM_ATTRIBUTE ?
+                'value' => $formData['sku_mode'] != HelperConfiguration::SKU_MODE_CUSTOM_ATTRIBUTE ?
                     $formData['sku_mode'] : '',
                 'create_magento_attribute' => true,
                 'tooltip' => $this->__(
@@ -140,10 +139,10 @@ HTML
                 'label' => $this->__('Modification'),
                 'name' => 'sku_modification_mode',
                 'values' => [
-                    HelperWalmartConfiguration::SKU_MODIFICATION_MODE_NONE => $this->__('None'),
-                    HelperWalmartConfiguration::SKU_MODIFICATION_MODE_PREFIX => $this->__('Prefix'),
-                    HelperWalmartConfiguration::SKU_MODIFICATION_MODE_POSTFIX => $this->__('Postfix'),
-                    HelperWalmartConfiguration::SKU_MODIFICATION_MODE_TEMPLATE => $this->__('Template'),
+                    HelperConfiguration::SKU_MODIFICATION_MODE_NONE => $this->__('None'),
+                    HelperConfiguration::SKU_MODIFICATION_MODE_PREFIX => $this->__('Prefix'),
+                    HelperConfiguration::SKU_MODIFICATION_MODE_POSTFIX => $this->__('Postfix'),
+                    HelperConfiguration::SKU_MODIFICATION_MODE_TEMPLATE => $this->__('Template'),
                 ],
                 'value' => $formData['sku_modification_mode'],
                 'tooltip' => $this->__(
@@ -154,7 +153,7 @@ HTML
         );
 
         $fieldStyle = '';
-        if ($formData['sku_modification_mode'] == HelperWalmartConfiguration::SKU_MODIFICATION_MODE_NONE) {
+        if ($formData['sku_modification_mode'] == HelperConfiguration::SKU_MODIFICATION_MODE_NONE) {
             $fieldStyle = 'style="display: none"';
         }
 
@@ -180,8 +179,8 @@ HTML
                 'label' => $this->__('Generate'),
                 'name' => 'generate_sku_mode',
                 'values' => [
-                    HelperWalmartConfiguration::GENERATE_SKU_MODE_NO => $this->__('No'),
-                    HelperWalmartConfiguration::GENERATE_SKU_MODE_YES => $this->__('Yes')
+                    HelperConfiguration::GENERATE_SKU_MODE_NO => $this->__('No'),
+                    HelperConfiguration::GENERATE_SKU_MODE_YES => $this->__('Yes')
                 ],
                 'value' => $formData['generate_sku_mode'],
                 'tooltip' => $this->__(
@@ -214,7 +213,7 @@ HTML
 
         $warningToolTip = '';
 
-        if ($formData['upc_mode'] == HelperWalmartConfiguration::UPC_MODE_CUSTOM_ATTRIBUTE &&
+        if ($formData['upc_mode'] == HelperConfiguration::UPC_MODE_CUSTOM_ATTRIBUTE &&
             !$magentoAttributeHelper->isExistInAttributesArray(
                 $formData['upc_custom_attribute'],
                 $attributesByTypes['text']
@@ -240,21 +239,21 @@ HTML
             $attrs['selected'] = 'selected';
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => HelperWalmartConfiguration::UPC_MODE_CUSTOM_ATTRIBUTE,
+                'value' => HelperConfiguration::UPC_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $magentoAttributeHelper->getAttributeLabel($formData['upc_custom_attribute'])
             ];
         }
 
         foreach ($attributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['upc_mode'] == HelperWalmartConfiguration::UPC_MODE_CUSTOM_ATTRIBUTE
+            if ($formData['upc_mode'] == HelperConfiguration::UPC_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['upc_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
             }
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => HelperWalmartConfiguration::UPC_MODE_CUSTOM_ATTRIBUTE,
+                'value' => HelperConfiguration::UPC_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $attribute['label'],
             ];
         }
@@ -267,7 +266,7 @@ HTML
                 'label' => $this->__('UPC'),
                 'class' => 'M2ePro-walmart-required-identifier-setting',
                 'values' => [
-                    HelperWalmartConfiguration::UPC_MODE_NOT_SET => $this->__('Not Set'),
+                    HelperConfiguration::UPC_MODE_NOT_SET => $this->__('Not Set'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
@@ -276,7 +275,7 @@ HTML
                         ]
                     ]
                 ],
-                'value' => $formData['upc_mode'] != HelperWalmartConfiguration::UPC_MODE_CUSTOM_ATTRIBUTE ?
+                'value' => $formData['upc_mode'] != HelperConfiguration::UPC_MODE_CUSTOM_ATTRIBUTE ?
                     $formData['upc_mode'] : '',
                 'create_magento_attribute' => true,
                 'tooltip' => $this->__(
@@ -303,7 +302,7 @@ HTML
 
         $warningToolTip = '';
 
-        if ($formData['ean_mode'] == HelperWalmartConfiguration::EAN_MODE_CUSTOM_ATTRIBUTE &&
+        if ($formData['ean_mode'] == HelperConfiguration::EAN_MODE_CUSTOM_ATTRIBUTE &&
             !$magentoAttributeHelper->isExistInAttributesArray(
                 $formData['ean_custom_attribute'],
                 $attributesByTypes['text']
@@ -329,21 +328,21 @@ HTML
             $attrs['selected'] = 'selected';
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => HelperWalmartConfiguration::EAN_MODE_CUSTOM_ATTRIBUTE,
+                'value' => HelperConfiguration::EAN_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $magentoAttributeHelper->getAttributeLabel($formData['ean_custom_attribute'])
             ];
         }
 
         foreach ($attributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['ean_mode'] == HelperWalmartConfiguration::EAN_MODE_CUSTOM_ATTRIBUTE
+            if ($formData['ean_mode'] == HelperConfiguration::EAN_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['ean_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
             }
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => HelperWalmartConfiguration::EAN_MODE_CUSTOM_ATTRIBUTE,
+                'value' => HelperConfiguration::EAN_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $attribute['label'],
             ];
         }
@@ -356,7 +355,7 @@ HTML
                 'label' => $this->__('EAN'),
                 'class' => 'M2ePro-walmart-required-identifier-setting',
                 'values' => [
-                    HelperWalmartConfiguration::EAN_MODE_NOT_SET => $this->__('Not Set'),
+                    HelperConfiguration::EAN_MODE_NOT_SET => $this->__('Not Set'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
@@ -365,7 +364,7 @@ HTML
                         ]
                     ]
                 ],
-                'value' => $formData['ean_mode'] != HelperWalmartConfiguration::EAN_MODE_CUSTOM_ATTRIBUTE ?
+                'value' => $formData['ean_mode'] != HelperConfiguration::EAN_MODE_CUSTOM_ATTRIBUTE ?
                     $formData['ean_mode'] : '',
                 'create_magento_attribute' => true,
                 'tooltip' => $this->__(
@@ -392,7 +391,7 @@ HTML
 
         $warningToolTip = '';
 
-        if ($formData['gtin_mode'] == HelperWalmartConfiguration::GTIN_MODE_CUSTOM_ATTRIBUTE &&
+        if ($formData['gtin_mode'] == HelperConfiguration::GTIN_MODE_CUSTOM_ATTRIBUTE &&
             !$magentoAttributeHelper->isExistInAttributesArray(
                 $formData['gtin_custom_attribute'],
                 $attributesByTypes['text']
@@ -418,21 +417,21 @@ HTML
             $attrs['selected'] = 'selected';
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => HelperWalmartConfiguration::GTIN_MODE_CUSTOM_ATTRIBUTE,
+                'value' => HelperConfiguration::GTIN_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $magentoAttributeHelper->getAttributeLabel($formData['gtin_custom_attribute'])
             ];
         }
 
         foreach ($attributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['gtin_mode'] == HelperWalmartConfiguration::GTIN_MODE_CUSTOM_ATTRIBUTE
+            if ($formData['gtin_mode'] == HelperConfiguration::GTIN_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['gtin_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
             }
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => HelperWalmartConfiguration::GTIN_MODE_CUSTOM_ATTRIBUTE,
+                'value' => HelperConfiguration::GTIN_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $attribute['label'],
             ];
         }
@@ -445,7 +444,7 @@ HTML
                 'label' => $this->__('GTIN'),
                 'class' => 'M2ePro-walmart-required-identifier-setting',
                 'values' => [
-                    HelperWalmartConfiguration::GTIN_MODE_NOT_SET => $this->__('Not Set'),
+                    HelperConfiguration::GTIN_MODE_NOT_SET => $this->__('Not Set'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
@@ -454,7 +453,7 @@ HTML
                         ]
                     ]
                 ],
-                'value' => $formData['gtin_mode'] != HelperWalmartConfiguration::GTIN_MODE_CUSTOM_ATTRIBUTE ?
+                'value' => $formData['gtin_mode'] != HelperConfiguration::GTIN_MODE_CUSTOM_ATTRIBUTE ?
                     $formData['gtin_mode'] : '',
                 'create_magento_attribute' => true,
                 'tooltip' => $this->__(
@@ -481,7 +480,7 @@ HTML
 
         $warningToolTip = '';
 
-        if ($formData['isbn_mode'] == HelperWalmartConfiguration::ISBN_MODE_CUSTOM_ATTRIBUTE &&
+        if ($formData['isbn_mode'] == HelperConfiguration::ISBN_MODE_CUSTOM_ATTRIBUTE &&
             !$magentoAttributeHelper->isExistInAttributesArray(
                 $formData['isbn_custom_attribute'],
                 $attributesByTypes['text']
@@ -507,21 +506,21 @@ HTML
             $attrs['selected'] = 'selected';
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => HelperWalmartConfiguration::ISBN_MODE_CUSTOM_ATTRIBUTE,
+                'value' => HelperConfiguration::ISBN_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $magentoAttributeHelper->getAttributeLabel($formData['isbn_custom_attribute'])
             ];
         }
 
         foreach ($attributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['isbn_mode'] == HelperWalmartConfiguration::ISBN_MODE_CUSTOM_ATTRIBUTE
+            if ($formData['isbn_mode'] == HelperConfiguration::ISBN_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['isbn_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
             }
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => HelperWalmartConfiguration::ISBN_MODE_CUSTOM_ATTRIBUTE,
+                'value' => HelperConfiguration::ISBN_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $attribute['label'],
             ];
         }
@@ -534,7 +533,7 @@ HTML
                 'label' => $this->__('ISBN'),
                 'class' => 'M2ePro-walmart-required-identifier-setting',
                 'values' => [
-                    HelperWalmartConfiguration::ISBN_MODE_NOT_SET => $this->__('Not Set'),
+                    HelperConfiguration::ISBN_MODE_NOT_SET => $this->__('Not Set'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
@@ -543,7 +542,7 @@ HTML
                         ]
                     ]
                 ],
-                'value' => $formData['isbn_mode'] != HelperWalmartConfiguration::ISBN_MODE_CUSTOM_ATTRIBUTE ?
+                'value' => $formData['isbn_mode'] != HelperConfiguration::ISBN_MODE_CUSTOM_ATTRIBUTE ?
                     $formData['isbn_mode'] : '',
                 'create_magento_attribute' => true,
                 'tooltip' => $this->__(
@@ -555,6 +554,29 @@ HTML
                 'after_element_html' => $warningToolTip
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
+
+        $fieldset->addField(
+            'product_id_override_mode',
+            self::SELECT,
+            [
+                'name' => 'product_id_override_mode',
+                'label' => $this->__('Product ID Override'),
+                'values' => [
+                    HelperConfiguration::PRODUCT_ID_OVERRIDE_MODE_NONE => $this->__('Not Set'),
+                    HelperConfiguration::PRODUCT_ID_OVERRIDE_MODE_ALL => $this->__('All products'),
+                    HelperConfiguration::PRODUCT_ID_OVERRIDE_MODE_SPECIFIC_PRODUCTS => $this->__('Specific products'),
+                ],
+                'value' => $formData['product_id_override_mode'],
+                'tooltip' => $this->__(
+                    '<b>None</b> - all products will be listed with the standard Product IDs.<br/>
+                     <b>All products</b> - Product ID exemption will be applied to all products.<br/>
+                     <b>Specific products</b> - Product ID exemption will be applied to products that have a value
+                     “CUSTOM” in Product ID attribute.<br/><br/>
+
+                    <b>Note:</b> You must apply for Product ID exemption on Walmart first.'
+                )
+            ]
+        );
 
         // Advanced
         $fieldset = $form->addFieldset(
@@ -571,9 +593,9 @@ HTML
                 'name' => 'option_images_url_mode',
                 'label' => $this->__('Image(s) URL'),
                 'values' => [
-                    HelperWalmartConfiguration::OPTION_IMAGES_URL_MODE_ORIGINAL => $this->__('Original'),
-                    HelperWalmartConfiguration::OPTION_IMAGES_URL_MODE_HTTPS => $this->__(' Replace with HTTPS'),
-                    HelperWalmartConfiguration::OPTION_IMAGES_URL_MODE_HTTP => $this->__('Replace with HTTP')
+                    HelperConfiguration::OPTION_IMAGES_URL_MODE_ORIGINAL => $this->__('Original'),
+                    HelperConfiguration::OPTION_IMAGES_URL_MODE_HTTPS => $this->__(' Replace with HTTPS'),
+                    HelperConfiguration::OPTION_IMAGES_URL_MODE_HTTP => $this->__('Replace with HTTP')
                 ],
                 'value' => $formData['option_images_url_mode'],
                 'tooltip' => $this->__('

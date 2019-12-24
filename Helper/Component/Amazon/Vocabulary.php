@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
 /**
- * Class Vocabulary
- * @package Ess\M2ePro\Helper\Component\Amazon
+ * Class \Ess\M2ePro\Helper\Component\Amazon\Vocabulary
  */
 class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs;
 use Magento\Framework\Message\MessageInterface;
 
 /**
- * Class Synchronization
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Synchronization
  */
 class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {

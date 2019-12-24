@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Categ
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
 /**
- * Class ViewGrid
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category\ViewGrid
  */
 class ViewGrid extends Main
 {

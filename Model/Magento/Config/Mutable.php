@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\Exception;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 
 /**
- * Class Mutable
- * @package Ess\M2ePro\Model\Magento\Config
+ * Class \Ess\M2ePro\Model\Magento\Config\Mutable
  */
 class Mutable extends AbstractModel
 {

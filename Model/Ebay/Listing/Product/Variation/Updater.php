@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Variation;
 
 /**
- * Class Updater
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\Variation
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater
  */
 class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 {

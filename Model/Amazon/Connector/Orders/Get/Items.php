@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Get;
 
 /**
- * Class Items
- * @package Ess\M2ePro\Model\Amazon\Connector\Orders\Get
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Items
  */
 class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 {

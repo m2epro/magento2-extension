@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml;
 
 /**
- * Class General
- * @package Ess\M2ePro\Controller\Adminhtml
+ * Class \Ess\M2ePro\Controller\Adminhtml\General
  */
 abstract class General extends \Ess\M2ePro\Controller\Adminhtml\Base
 {

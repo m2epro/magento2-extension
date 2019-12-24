@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper;
 
 /**
- * Class Data
- * @package Ess\M2ePro\Helper
+ * Class \Ess\M2ePro\Helper\Data
  */
 class Data extends AbstractHelper
 {
@@ -485,7 +484,11 @@ class Data extends AbstractHelper
      */
     public function unserialize($data)
     {
-        if (preg_match('/^(a|s):[0-9]+:.+/', $data)) {
+        if (empty($data) || !is_string($data)) {
+            return [];
+        }
+
+        if (preg_match('/^((s|i|d|b|a|O|C):|N;)/', $data)) {
             return $this->phpSerialize->unserialize($data);
         }
 

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Settings;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Settings;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings\Save
  */
 class Save extends Settings
 {

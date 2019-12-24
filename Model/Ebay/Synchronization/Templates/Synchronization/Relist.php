@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization;
 use Ess\M2ePro\Model\Ebay\Template\Synchronization as SynchronizationPolicy;
 
 /**
- * Class Relist
- * @package Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization\Relist
  */
 class Relist extends AbstractModel
 {

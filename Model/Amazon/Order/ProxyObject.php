@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Order;
 
 /**
- * Class ProxyObject
- * @package Ess\M2ePro\Model\Amazon\Order
+ * Class \Ess\M2ePro\Model\Amazon\Order\ProxyObject
  */
 class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 {
@@ -83,11 +82,26 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
      */
     public function getOrderNumberPrefix()
     {
-        if (!$this->order->getAmazonAccount()->isMagentoOrdersNumberPrefixEnable()) {
+        $amazonAccount = $this->order->getAmazonAccount();
+        if (!$amazonAccount->isMagentoOrdersNumberPrefixEnable()) {
             return '';
         }
 
-        return $this->order->getAmazonAccount()->getMagentoOrdersNumberPrefix();
+        $prefix = $amazonAccount->getMagentoOrdersNumberRegularPrefix();
+
+        if ($amazonAccount->getMagentoOrdersNumberAfnPrefix() && $this->order->isFulfilledByAmazon()) {
+            $prefix .= $amazonAccount->getMagentoOrdersNumberAfnPrefix();
+        }
+
+        if ($amazonAccount->getMagentoOrdersNumberPrimePrefix() && $this->order->isPrime()) {
+            $prefix .= $amazonAccount->getMagentoOrdersNumberPrimePrefix();
+        }
+
+        if ($amazonAccount->getMagentoOrdersNumberB2bPrefix() && $this->order->isBusiness()) {
+            $prefix .= $amazonAccount->getMagentoOrdersNumberB2bPrefix();
+        }
+
+        return $prefix;
     }
 
     //########################################

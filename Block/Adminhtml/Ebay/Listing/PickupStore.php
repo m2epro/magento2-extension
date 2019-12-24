@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
 /**
- * Class PickupStore
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore
  */
 class PickupStore extends AbstractContainer
 {

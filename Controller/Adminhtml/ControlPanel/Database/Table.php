@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main;
 
 /**
- * Class Table
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database\Table
  */
 abstract class Table extends Main
 {

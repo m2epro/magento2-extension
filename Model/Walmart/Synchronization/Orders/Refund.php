@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Synchronization\Orders;
 
 /**
- * Class Refund
- * @package Ess\M2ePro\Model\Walmart\Synchronization\Orders
+ * Class \Ess\M2ePro\Model\Walmart\Synchronization\Orders\Refund
  */
 class Refund extends AbstractModel
 {

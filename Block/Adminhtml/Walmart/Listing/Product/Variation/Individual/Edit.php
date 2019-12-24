@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Individual;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Individual
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Individual\Edit
  */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Individual
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
 /**
- * Class GetPopup
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Feedback\GetPopup
  */
 class GetPopup extends Account
 {

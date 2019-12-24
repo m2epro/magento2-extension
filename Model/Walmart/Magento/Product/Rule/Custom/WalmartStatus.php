@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Custom;
 
 /**
- * Class WalmartStatus
- * @package Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Custom
+ * Class \Ess\M2ePro\Model\Walmart\Magento\Product\Rule\Custom\WalmartStatus
  */
 class WalmartStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {

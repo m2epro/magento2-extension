@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder;
 
 /**
- * Class Promotions
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\Promotions
  */
 class Promotions extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\AbstractModel
 {

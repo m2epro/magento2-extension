@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Moving;
 
 /**
- * Class GetFailedProductsGrid
- * @package Ess\M2ePro\Controller\Adminhtml\Listing\Moving
+ * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Moving\GetFailedProductsGrid
  */
 class GetFailedProductsGrid extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
 {

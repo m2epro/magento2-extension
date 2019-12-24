@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise;
 
 /**
- * Class Response
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise\Response
  */
 class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response
 {

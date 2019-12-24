@@ -15,8 +15,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product;
 
 /**
- * Class QtyCalculator
- * @package Ess\M2ePro\Model\Walmart\Listing\Product
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\QtyCalculator
  */
 class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
 {

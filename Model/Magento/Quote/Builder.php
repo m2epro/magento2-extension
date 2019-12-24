@@ -18,18 +18,24 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     protected $proxyOrder;
-    /** @var  \Magento\Quote\Model\Quote $quote */
+
+    /** @var  \Magento\Quote\Model\Quote */
     protected $quote;
+
     protected $currency;
     protected $magentoCurrencyFactory;
     protected $calculation;
     protected $storeConfig;
     protected $productResource;
+
     /** @var \Ess\M2ePro\Model\Magento\Quote\Manager  */
     protected $quoteManager;
 
     /** @var \Ess\M2ePro\Model\Magento\Quote\Store\Configurator */
     protected $storeConfigurator;
+
+    /** @var \Magento\Sales\Model\OrderIncrementIdChecker */
+    protected $orderIncrementIdChecker;
 
     //########################################
 
@@ -42,15 +48,17 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\App\Config\ReinitableConfigInterface $storeConfig,
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Magento\Quote\Manager $quoteManager
+        \Ess\M2ePro\Model\Magento\Quote\Manager $quoteManager,
+        \Magento\Sales\Model\OrderIncrementIdChecker $orderIncrementIdChecker
     ) {
-        $this->proxyOrder             = $proxyOrder;
-        $this->currency               = $currency;
-        $this->magentoCurrencyFactory = $magentoCurrencyFactory;
-        $this->calculation            = $calculation;
-        $this->storeConfig            = $storeConfig;
-        $this->productResource        = $productResource;
-        $this->quoteManager           = $quoteManager;
+        $this->proxyOrder              = $proxyOrder;
+        $this->currency                = $currency;
+        $this->magentoCurrencyFactory  = $magentoCurrencyFactory;
+        $this->calculation             = $calculation;
+        $this->storeConfig             = $storeConfig;
+        $this->productResource         = $productResource;
+        $this->quoteManager            = $quoteManager;
+        $this->orderIncrementIdChecker = $orderIncrementIdChecker;
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -318,29 +326,22 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     private function prepareOrderNumber()
     {
         if ($this->proxyOrder->isOrderNumberPrefixSourceChannel()) {
-            $orderNumber = $this->addPrefixToOrderNumberIfNeed($this->proxyOrder->getChannelOrderNumber());
+            $orderNumber = $this->proxyOrder->getOrderNumberPrefix() . $this->proxyOrder->getChannelOrderNumber();
+            $this->orderIncrementIdChecker->isIncrementIdUsed($orderNumber) && $orderNumber .= '(1)';
+
             $this->quote->setReservedOrderId($orderNumber);
             return;
         }
 
         $orderNumber = $this->quote->getReservedOrderId();
-        if (empty($orderNumber)) {
+        empty($orderNumber) && $orderNumber = $this->quote->getResource()->getReservedOrderId($this->quote);
+        $orderNumber = $this->proxyOrder->getOrderNumberPrefix() . $orderNumber;
+
+        if ($this->orderIncrementIdChecker->isIncrementIdUsed($orderNumber)) {
             $orderNumber = $this->quote->getResource()->getReservedOrderId($this->quote);
         }
 
-        $orderNumber = $this->addPrefixToOrderNumberIfNeed($orderNumber);
-
         $this->quote->setReservedOrderId($orderNumber);
-    }
-
-    private function addPrefixToOrderNumberIfNeed($orderNumber)
-    {
-        $prefix = $this->proxyOrder->getOrderNumberPrefix();
-        if (empty($prefix)) {
-            return $orderNumber;
-        }
-
-        return $prefix.$orderNumber;
     }
 
     //########################################

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1;
 
 /**
- * Class SetStatus
- * @package Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1
+ * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1\SetStatus
  */
 class SetStatus extends MigrationFromMagento1
 {

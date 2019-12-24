@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 /**
- * Class General
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs\General
  */
 class General extends AbstractForm
 {

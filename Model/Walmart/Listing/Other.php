@@ -13,8 +13,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing;
 
 /**
- * Class Other
- * @package Ess\M2ePro\Model\Walmart\Listing
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Other
  */
 class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {

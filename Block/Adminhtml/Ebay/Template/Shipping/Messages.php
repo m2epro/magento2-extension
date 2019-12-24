@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping;
 
 /**
- * Class Messages
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping\Messages
  */
 class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 {

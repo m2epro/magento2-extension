@@ -15,10 +15,9 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Setup\Module\Setup as MagentoSetup;
 
 /**
- * Class Modifier
- * @package Ess\M2ePro\Setup\MigrationFromMagento1\v0_0_1
+ * Class \Ess\M2ePro\Setup\MigrationFromMagento1\v0\Modifier_0_1
  */
-class Modifier implements \Ess\M2ePro\Setup\MigrationFromMagento1\IModifier
+class Modifier implements \Ess\M2ePro\Setup\MigrationFromMagento1\IModifierInterface
 {
     const LOGS_TASK_DELETE            = 'delete';
     const LOGS_TASK_ACTION_ID         = 'action_id';

@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
 /**
- * Class AssignProduct
- * @package Ess\M2ePro\Controller\Adminhtml\Order
+ * Class \Ess\M2ePro\Controller\Adminhtml\Order\AssignProduct
  */
 class AssignProduct extends Order
 {

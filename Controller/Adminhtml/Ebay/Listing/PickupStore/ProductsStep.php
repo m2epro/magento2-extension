@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore;
 
 /**
- * Class ProductsStep
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore\ProductsStep
  */
 class ProductsStep extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
 {

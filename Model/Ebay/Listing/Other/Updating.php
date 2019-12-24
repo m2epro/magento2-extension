@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Listing\Other;
 
 /**
- * Class Updating
- * @package Ess\M2ePro\Model\Ebay\Listing\Other
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Other\Updating
  */
 class Updating extends \Ess\M2ePro\Model\AbstractModel
 {

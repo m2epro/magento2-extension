@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Connector\Command\Pending\Requester;
 
 /**
- * Class Partial
- * @package Ess\M2ePro\Model\Connector\Command\Pending\Requester
+ * Class \Ess\M2ePro\Model\Connector\Command\Pending\Requester\Partial
  */
 class Partial extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {

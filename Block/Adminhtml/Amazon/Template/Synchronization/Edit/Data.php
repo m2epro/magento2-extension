@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class Data
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Data
  */
 class Data extends AbstractBlock
 {

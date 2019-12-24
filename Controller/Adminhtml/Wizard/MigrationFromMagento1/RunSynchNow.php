@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1;
 
 /**
- * Class RunSynchNow
- * @package Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1
+ * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1\RunSynchNow
  */
 class RunSynchNow extends MigrationFromMagento1
 {

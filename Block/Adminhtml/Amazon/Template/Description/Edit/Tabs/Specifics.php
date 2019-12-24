@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs;
 
 /**
- * Class Specifics
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs\Specifics
  */
 class Specifics extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

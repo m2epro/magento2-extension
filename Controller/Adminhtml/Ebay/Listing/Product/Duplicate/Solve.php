@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Duplicate;
 
 /**
- * Class Solve
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Duplicate
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Duplicate\Solve
  */
 class Solve extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

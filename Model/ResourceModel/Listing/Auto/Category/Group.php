@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category;
 
 /**
- * Class Group
- * @package Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category
+ * Class \Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category\Group
  */
 class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {

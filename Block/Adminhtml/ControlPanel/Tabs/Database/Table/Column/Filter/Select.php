@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Column\Filter;
 
 /**
- * Class Select
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Column\Filter
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Column\Filter\Select
  */
 class Select extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
 {

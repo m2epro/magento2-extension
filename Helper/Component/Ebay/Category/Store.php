@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Component\Ebay\Category;
 
 /**
- * Class Store
- * @package Ess\M2ePro\Helper\Component\Ebay\Category
+ * Class \Ess\M2ePro\Helper\Component\Ebay\Category\Store
  */
 class Store extends \Ess\M2ePro\Helper\AbstractHelper
 {

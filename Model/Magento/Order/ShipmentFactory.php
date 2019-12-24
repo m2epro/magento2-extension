@@ -18,8 +18,7 @@ use Magento\InventoryConfigurationApi\Api\GetStockItemConfigurationInterface;
 use Magento\InventoryConfigurationApi\Model\IsSourceItemManagementAllowedForProductTypeInterface;
 
 /**
- * Class ShipmentFactory
- * @package Ess\M2ePro\Model\Magento\Order
+ * Class \Ess\M2ePro\Model\Magento\Order\ShipmentFactory
  */
 class ShipmentFactory
 {

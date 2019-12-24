@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer\Shipment;
 
 /**
- * Class Track
- * @package Ess\M2ePro\Observer\Shipment
+ * Class \Ess\M2ePro\Observer\Shipment\Track
  */
 class Track extends \Ess\M2ePro\Observer\AbstractModel
 {

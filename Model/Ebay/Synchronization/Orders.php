@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization;
 
 /**
- * Class Orders
- * @package Ess\M2ePro\Model\Ebay\Synchronization
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\Orders
  */
 class Orders extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
 {

@@ -11,8 +11,7 @@ use Magento\InventoryApi\Api\Data\SourceItemInterface;
 use Magento\Inventory\Model\ResourceModel\SourceItem;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command
+ * Class \Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command\Save
  */
 class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

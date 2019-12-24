@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Synchronization\Log;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Synchronization\Log
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Synchronization\Log\Grid
  */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
 {

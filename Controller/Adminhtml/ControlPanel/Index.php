@@ -12,8 +12,7 @@ use Ess\M2ePro\Helper\Module;
 use Magento\Backend\App\Action;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Index
  */
 class Index extends Main
 {

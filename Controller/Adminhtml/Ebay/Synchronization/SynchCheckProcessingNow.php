@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Settings;
 
 /**
- * Class SynchCheckProcessingNow
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization\SynchCheckProcessingNow
  */
 class SynchCheckProcessingNow extends Settings
 {

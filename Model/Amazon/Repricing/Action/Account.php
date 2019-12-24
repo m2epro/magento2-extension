@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Repricing\Action;
 
 /**
- * Class Account
- * @package Ess\M2ePro\Model\Amazon\Repricing\Action
+ * Class \Ess\M2ePro\Model\Amazon\Repricing\Action\Account
  */
 class Account extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
 {

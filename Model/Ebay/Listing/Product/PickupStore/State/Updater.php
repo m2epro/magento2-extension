@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\PickupStore\State;
 
 /**
- * Class Updater
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\PickupStore\State
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\PickupStore\State\Updater
  */
 class Updater extends \Ess\M2ePro\Model\AbstractModel
 {

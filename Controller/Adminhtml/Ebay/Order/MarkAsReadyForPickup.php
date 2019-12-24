@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
 /**
- * Class MarkAsReadyForPickup
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Order
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Order\MarkAsReadyForPickup
  */
 class MarkAsReadyForPickup extends Order
 {

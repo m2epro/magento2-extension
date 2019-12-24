@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore;
 
 /**
- * Class ProductsStepGrid
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore\ProductsStepGrid
  */
 class ProductsStepGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
 {

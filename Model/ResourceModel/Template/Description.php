@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Template;
 
 /**
- * Class Description
- * @package Ess\M2ePro\Model\ResourceModel\Template
+ * Class \Ess\M2ePro\Model\ResourceModel\Template\Description
  */
 class Description extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {

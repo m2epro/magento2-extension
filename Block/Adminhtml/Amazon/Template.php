@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon;
 use Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid;
 
 /**
- * Class Template
- * @package Ess\M2ePro\Block\Adminhtml\Amazon
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template
  */
 class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

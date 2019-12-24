@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Setup;
 use Ess\M2ePro\Model\AbstractModel;
 
 /**
- * Class PublicVersionsChecker
- * @package Ess\M2ePro\Model\Setup
+ * Class \Ess\M2ePro\Model\Setup\PublicVersionsChecker
  */
 class PublicVersionsChecker extends AbstractModel
 {

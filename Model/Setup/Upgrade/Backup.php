@@ -14,8 +14,7 @@ use Ess\M2ePro\Model\Setup\Database\Modifier\Table as TableModifier;
 use Magento\Framework\Module\Setup;
 
 /**
- * Class Backup
- * @package Ess\M2ePro\Model\Setup\Upgrade
+ * Class \Ess\M2ePro\Model\Setup\Upgrade\Backup
  */
 class Backup extends AbstractModel
 {

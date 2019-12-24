@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer\Order;
 
 /**
- * Class Quote
- * @package Ess\M2ePro\Observer\Order
+ * Class \Ess\M2ePro\Observer\Order\Quote
  */
 class Quote extends \Ess\M2ePro\Observer\AbstractModel
 {

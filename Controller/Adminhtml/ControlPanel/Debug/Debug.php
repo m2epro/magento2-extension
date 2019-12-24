@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Debug;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
 /**
- * Class Debug
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Debug
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Debug\Debug
  */
 class Debug extends Command
 {

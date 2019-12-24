@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Magento\Framework\Message\MessageInterface;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Preview
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Preview\Form
  */
 class Form extends AbstractForm
 {

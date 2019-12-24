@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator;
 
 /**
- * Class General
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\General
  */
 class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
 {
@@ -48,6 +47,7 @@ class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valid
             return false;
         }
 
+        //todo wrong?
         if (!$this->validateRegularPrice() || !$this->validateBusinessPrice()) {
             return false;
         }

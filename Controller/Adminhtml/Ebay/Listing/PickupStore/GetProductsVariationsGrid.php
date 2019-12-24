@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore;
 
 /**
- * Class GetProductsVariationsGrid
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore\GetProductsVariationsGrid
  */
 class GetProductsVariationsGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
 {

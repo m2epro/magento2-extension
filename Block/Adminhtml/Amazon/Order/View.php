@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
 /**
- * Class View
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Order
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Order\View
  */
 class View extends AbstractContainer
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Synchronization\Templates\Synchronization;
 use Ess\M2ePro\Model\Listing\Product\Action\Configurator;
 
 /**
- * Class Runner
- * @package Ess\M2ePro\Model\Synchronization\Templates\Synchronization
+ * Class \Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner
  */
 class Runner extends \Ess\M2ePro\Model\AbstractModel
 {

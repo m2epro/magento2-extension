@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Synchronization;
 
 /**
- * Class OperationHistory
- * @package Ess\M2ePro\Model\Synchronization
+ * Class \Ess\M2ePro\Model\Synchronization\OperationHistory
  */
 class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
 {

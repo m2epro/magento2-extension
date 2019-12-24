@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Magento;
 
 /**
- * Class Button
- * @package Ess\M2ePro\Block\Adminhtml\Magento
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Button
  */
 class Button extends \Magento\Backend\Block\Widget\Button
 {

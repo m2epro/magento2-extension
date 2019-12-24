@@ -16,8 +16,7 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 
 /**
- * Class InstallData
- * @package Ess\M2ePro\Setup
+ * Class \Ess\M2ePro\Setup\InstallData
  */
 class InstallData implements InstallDataInterface
 {
@@ -2222,6 +2221,7 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/walmart/configuration/', 'sku_modification_mode', '0', null);
         $moduleConfigModifier->insert('/walmart/configuration/', 'sku_modification_custom_value', null, null);
         $moduleConfigModifier->insert('/walmart/configuration/', 'generate_sku_mode', '0', null);
+        $moduleConfigModifier->insert('/walmart/configuration/', 'product_id_override_mode', '0', null);
         $moduleConfigModifier->insert('/walmart/configuration/', 'upc_mode', '0', null);
         $moduleConfigModifier->insert('/walmart/configuration/', 'upc_custom_attribute', null, null);
         $moduleConfigModifier->insert('/walmart/configuration/', 'ean_mode', '0', null);

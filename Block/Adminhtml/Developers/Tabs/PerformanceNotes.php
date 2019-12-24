@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class PerformanceNotes
- * @package Ess\M2ePro\Block\Adminhtml\Developers\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Developers\Tabs\PerformanceNotes
  */
 class PerformanceNotes extends AbstractBlock
 {

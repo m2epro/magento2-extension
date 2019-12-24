@@ -12,8 +12,7 @@ use \Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use \Ess\M2ePro\Model\Connector\Connection\Multiple\RequestContainer;
 
 /**
- * Class Multiple
- * @package Ess\M2ePro\Model\Connector\Connection
+ * Class \Ess\M2ePro\Model\Connector\Connection\Multiple
  */
 class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
 {

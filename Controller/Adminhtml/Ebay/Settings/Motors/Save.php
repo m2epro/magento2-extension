@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Settings;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors\Save
  */
 class Save extends Settings
 {

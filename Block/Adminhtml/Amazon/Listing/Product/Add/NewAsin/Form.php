@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Form
  */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

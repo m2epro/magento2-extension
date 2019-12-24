@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create;
 
 /**
- * Class Selling
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling
  */
 class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {

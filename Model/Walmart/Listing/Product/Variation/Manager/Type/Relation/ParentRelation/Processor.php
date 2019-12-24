@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relati
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\AbstractModel;
 
 /**
- * Class Processor
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor
  */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {

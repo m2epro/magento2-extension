@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Debug;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main;
 
 /**
- * Class EnableDevelopmentMode
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Debug
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Debug\EnableDevelopmentMode
  */
 class EnableDevelopmentMode extends Main
 {

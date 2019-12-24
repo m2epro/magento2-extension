@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders;
 
 /**
- * Class Update
- * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\Orders\Update
  */
 class Update extends AbstractModel
 {

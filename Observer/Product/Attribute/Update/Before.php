@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer\Product\Attribute\Update;
 
 /**
- * Class Before
- * @package Ess\M2ePro\Observer\Product\Attribute\Update
+ * Class \Ess\M2ePro\Observer\Product\Attribute\Update\Before
  */
 class Before extends \Ess\M2ePro\Observer\AbstractModel
 {

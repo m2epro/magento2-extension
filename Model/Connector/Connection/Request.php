@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Connector\Connection;
 
 /**
- * Class Request
- * @package Ess\M2ePro\Model\Connector\Connection
+ * Class \Ess\M2ePro\Model\Connector\Connection\Request
  */
 class Request extends \Ess\M2ePro\Model\AbstractModel
 {

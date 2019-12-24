@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Block\Adminhtml\StoreSwitcher;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\General
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\General\Form
  */
 class Form extends AbstractForm
 {

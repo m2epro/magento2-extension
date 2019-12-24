@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
 
 /**
- * Class SourceMode
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add\SourceMode
  */
 class SourceMode extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection;
 
 /**
- * Class Requirements
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\Requirements
  */
 class Requirements extends AbstractInspection
 {

@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
 /**
- * Class Editable
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\Renderer
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\Renderer\Editable
  */
 class Editable extends AbstractBlock implements \Magento\Framework\Data\Form\Element\Renderer\RendererInterface
 {

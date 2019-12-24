@@ -12,8 +12,7 @@ use Magento\Framework\Data\Form\Element\Note as OriginalNote;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
 /**
- * Class Note
- * @package Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Element
+ * Class \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Element\Note
  */
 class Note extends OriginalNote
 {

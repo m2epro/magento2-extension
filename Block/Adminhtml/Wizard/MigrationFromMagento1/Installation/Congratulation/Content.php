@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\C
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class Content
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Congratulation
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Congratulation\Content
  */
 class Content extends AbstractBlock
 {

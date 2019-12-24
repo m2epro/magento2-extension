@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Ebay\Template\SellingFormat;
 use Ess\M2ePro\Model\Listing\Product\Variation as ListingProductVariation;
 
 /**
- * Class PriceCalculator
- * @package Ess\M2ePro\Model\Ebay\Listing\Product
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculator
  */
 class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
 {

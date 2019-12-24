@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Magento\Product;
 
 /**
- * Class Rule
- * @package Ess\M2ePro\Model\Amazon\Magento\Product
+ * Class \Ess\M2ePro\Model\Amazon\Magento\Product\Rule
  */
 class Rule extends \Ess\M2ePro\Model\Magento\Product\Rule
 {

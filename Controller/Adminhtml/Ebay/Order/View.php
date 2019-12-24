@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
 /**
- * Class View
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Order
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Order\View
  */
 class View extends Order
 {

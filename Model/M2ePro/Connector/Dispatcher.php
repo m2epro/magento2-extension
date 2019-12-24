@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\M2ePro\Connector;
 
 /**
- * Class Dispatcher
- * @package Ess\M2ePro\Model\M2ePro\Connector
+ * Class \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher
  */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {

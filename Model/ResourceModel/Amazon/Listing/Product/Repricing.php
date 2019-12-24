@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product;
 use Ess\M2ePro\Model\Account;
 
 /**
- * Class Repricing
- * @package Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product
+ * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Repricing
  */
 class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

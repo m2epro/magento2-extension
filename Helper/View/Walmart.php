@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\View;
 
 /**
- * Class Walmart
- * @package Ess\M2ePro\Helper\View
+ * Class \Ess\M2ePro\Helper\View\Walmart
  */
 class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 {

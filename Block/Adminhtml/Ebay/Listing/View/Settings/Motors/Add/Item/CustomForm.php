@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item;
 
 /**
- * Class CustomForm
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\CustomForm
  */
 class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

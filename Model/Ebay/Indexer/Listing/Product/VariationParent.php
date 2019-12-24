@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Indexer\Listing\Product;
 
 /**
- * Class VariationParent
- * @package Ess\M2ePro\Model\Ebay\Indexer\Listing\Product
+ * Class \Ess\M2ePro\Model\Ebay\Indexer\Listing\Product\VariationParent
  */
 class VariationParent extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {

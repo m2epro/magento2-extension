@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts\Update;
 
 /**
- * Class ProcessingRunner
- * @package Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts\Update
+ * Class \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts\Update\ProcessingRunner
  */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Partial
 {

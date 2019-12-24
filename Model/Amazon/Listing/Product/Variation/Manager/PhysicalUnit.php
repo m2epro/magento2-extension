@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager;
 
 /**
- * Class PhysicalUnit
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\PhysicalUnit
  */
 class PhysicalUnit extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\AbstractModel
 {

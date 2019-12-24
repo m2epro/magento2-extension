@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper;
 
 /**
- * Class Factory
- * @package Ess\M2ePro\Helper
+ * Class \Ess\M2ePro\Helper\Factory
  */
 class Factory
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
 /**
- * Class GetRecent
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Category
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Category\GetRecent
  */
 class GetRecent extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {

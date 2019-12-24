@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Order\View;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
 /**
- * Class Item
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Order\View
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Order\View\Item
  */
 class Item extends AbstractGrid
 {
@@ -150,11 +149,7 @@ class Item extends AbstractGrid
         // ---------------------------------------
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
-        $collection->getSelect()->join(
-            ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
-            '(`l`.`id` = `main_table`.`listing_id`)',
-            '*'
-        );
+        $collection->joinListingTable();
 
         $collection->addFieldToFilter('sku', ['in' => $skus]);
         $collection->addFieldToFilter('l.account_id', $this->order->getAccountId());

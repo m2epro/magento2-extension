@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Product;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Model\Magento\Product
+ * Class \Ess\M2ePro\Model\Magento\Product\Index
  */
 class Index extends \Ess\M2ePro\Model\AbstractModel
 {

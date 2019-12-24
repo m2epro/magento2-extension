@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Repricing;
 
 /**
- * Class Updating
- * @package Ess\M2ePro\Model\Amazon\Repricing
+ * Class \Ess\M2ePro\Model\Amazon\Repricing\Updating
  */
 class Updating extends AbstractModel
 {

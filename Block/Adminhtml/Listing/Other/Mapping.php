@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Other;
 
 /**
- * Class Mapping
- * @package Ess\M2ePro\Block\Adminhtml\Listing\Other
+ * Class \Ess\M2ePro\Block\Adminhtml\Listing\Other\Mapping
  */
 class Mapping extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

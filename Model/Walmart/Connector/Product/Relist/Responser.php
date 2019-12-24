@@ -13,8 +13,7 @@
 namespace Ess\M2ePro\Model\Walmart\Connector\Product\Relist;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Walmart\Connector\Product\Relist
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Product\Relist\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
 {

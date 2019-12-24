@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model;
 
 /**
- * Class VersionsHistory
- * @package Ess\M2ePro\Model
+ * Class \Ess\M2ePro\Model\VersionsHistory
  */
 class VersionsHistory extends ActiveRecord\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
 /**
- * Class GetPath
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Category
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Category\GetPath
  */
 class GetPath extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {

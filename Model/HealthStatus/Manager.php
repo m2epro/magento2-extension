@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\InfoType;
 
 /**
- * Class Manager
- * @package Ess\M2ePro\Model\HealthStatus
+ * Class \Ess\M2ePro\Model\HealthStatus\Manager
  */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {

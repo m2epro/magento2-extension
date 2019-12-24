@@ -14,8 +14,7 @@ namespace Ess\M2ePro\Model\Ebay\Template;
 use Ess\M2ePro\Model\ActiveRecord\Factory;
 
 /**
- * Class Payment
- * @package Ess\M2ePro\Model\Ebay\Template
+ * Class \Ess\M2ePro\Model\Ebay\Template\Payment
  */
 class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {

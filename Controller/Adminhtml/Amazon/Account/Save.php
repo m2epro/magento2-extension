@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Account
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Account\Save
  */
 class Save extends Account
 {
@@ -175,6 +174,9 @@ class Save extends Account
         $prefixKeys = [
             'mode',
             'prefix',
+            'afn-prefix',
+            'prime-prefix',
+            'b2b-prefix',
         ];
         $tempSettings = !empty($tempSettings['prefix']) ? $tempSettings['prefix'] : [];
         foreach ($prefixKeys as $key) {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Servicing;
 
 /**
- * Class Dispatcher
- * @package Ess\M2ePro\Model\Servicing
+ * Class \Ess\M2ePro\Model\Servicing\Dispatcher
  */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {

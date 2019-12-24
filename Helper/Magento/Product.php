@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Exception;
 use \Ess\M2ePro\Model\Magento\Product as ProductModel;
 
 /**
- * Class Product
- * @package Ess\M2ePro\Helper\Magento
+ * Class \Ess\M2ePro\Helper\Magento\Product
  */
 class Product extends \Ess\M2ePro\Helper\AbstractHelper
 {

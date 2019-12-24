@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs;
 use Magento\Framework\Message\MessageInterface;
 
 /**
- * Class Dashboard
- * @package Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Dashboard
  */
 class Dashboard extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

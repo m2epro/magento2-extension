@@ -8,9 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type;
 
+use Ess\M2ePro\Helper\Component\Walmart\Configuration as ConfigurationHelper;
+
 /**
- * Class Validator
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Validator
  */
 abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 {
@@ -640,7 +641,9 @@ HTML;
         $isAtLeastOneSpecified = false;
 
         if ($gtin = $this->getGtin()) {
-            if (!$this->getHelper('Data')->isGTIN($gtin)) {
+            if (strtoupper($gtin) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
+                !$this->getHelper('Data')->isGTIN($gtin)
+            ) {
                 $this->addMessage(
                     $this->getHelper('Module\Log')->encodeDescription(
                         'The action cannot be completed because the product GTIN has incorrect format: "%id%".
@@ -656,7 +659,9 @@ HTML;
         }
 
         if ($upc = $this->getUpc()) {
-            if (!$this->getHelper('Data')->isUPC($upc)) {
+            if (strtoupper($upc) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
+                !$this->getHelper('Data')->isUpc($upc)
+            ) {
                 $this->addMessage(
                     $this->getHelper('Module\Log')->encodeDescription(
                         'The action cannot be completed because the product UPC has incorrect format: "%id%".
@@ -672,7 +677,9 @@ HTML;
         }
 
         if ($ean = $this->getEan()) {
-            if (!$this->getHelper('Data')->isEAN($ean)) {
+            if (strtoupper($ean) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
+                !$this->getHelper('Data')->isEAN($ean)
+            ) {
                 $this->addMessage(
                     $this->getHelper('Module\Log')->encodeDescription(
                         'The action cannot be completed because the product EAN has incorrect format: "%id%".
@@ -688,7 +695,9 @@ HTML;
         }
 
         if ($isbn = $this->getIsbn()) {
-            if (!$this->getHelper('Data')->isISBN($isbn)) {
+            if (strtoupper($isbn) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
+                !$this->getHelper('Data')->isISBN($isbn)
+            ) {
                 $this->addMessage(
                     $this->getHelper('Module\Log')->encodeDescription(
                         'The action cannot be completed because the product ISBN has incorrect format: "%id%".

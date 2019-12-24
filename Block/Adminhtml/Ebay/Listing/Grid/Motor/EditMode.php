@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Motor;
 
 /**
- * Class EditMode
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Motor
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Motor\EditMode
  */
 class EditMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category;
 
 /**
- * Class Tree
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree
  */
 class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
 {

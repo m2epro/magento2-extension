@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon;
 
 /**
- * Class Account
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
  */
 abstract class Account extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {

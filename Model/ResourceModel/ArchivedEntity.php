@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel;
 
 /**
- * Class ArchivedEntity
- * @package Ess\M2ePro\Model\ResourceModel
+ * Class \Ess\M2ePro\Model\ResourceModel\ArchivedEntity
  */
 class ArchivedEntity extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

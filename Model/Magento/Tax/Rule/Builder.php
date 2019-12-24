@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Tax\Rule;
 
 /**
- * Class Builder
- * @package Ess\M2ePro\Model\Magento\Tax\Rule
+ * Class \Ess\M2ePro\Model\Magento\Tax\Rule\Builder
  */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {

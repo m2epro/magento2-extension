@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Specific\Add;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Specific\Add
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Specific\Add\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
@@ -26,7 +25,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public $onlyDesired = false;
 
     public $selectedSpecifics = [];
-    public $renderedSpecifics = [];
+
+    public $allRenderedSpecifics = [];
+    public $blockRenderedSpecifics = [];
 
     //########################################
 
@@ -89,9 +90,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $queryStmt = $select->query();
         while ($row = $queryStmt->fetch()) {
-            if (in_array($row['xpath'], $this->renderedSpecifics) ||
-                in_array($row['xpath'], $this->selectedSpecifics)) {
+            if (in_array($row['xpath'], $this->selectedSpecifics, true)) {
                 continue;
+            }
+
+            if (in_array($row['xpath'], $this->allRenderedSpecifics, true)) {
+                // an already rendered specific can be added again only to parent container directly
+                if (str_replace($this->currentXpath . '/', '', $row['xpath']) !== $row['xml_tag']) {
+                    continue;
+                }
+
+                if (in_array($row['xpath'], $this->blockRenderedSpecifics, true)) {
+                    continue;
+                }
             }
 
             $row['data_definition'] = (array)$this->getHelper('Data')->jsonDecode($row['data_definition']);
@@ -229,9 +240,15 @@ HTML;
         return $this;
     }
 
-    public function setRenderedSpecifics(array $specifics)
+    public function setAllRenderedSpecifics(array $specifics)
     {
-        $this->renderedSpecifics = $this->replaceWithDictionaryXpathes($specifics);
+        $this->allRenderedSpecifics = $this->replaceWithDictionaryXpathes($specifics);
+        return $this;
+    }
+
+    public function setBlockRenderedSpecifics(array $specifics)
+    {
+        $this->blockRenderedSpecifics = $this->replaceWithDictionaryXpathes($specifics);
         return $this;
     }
 

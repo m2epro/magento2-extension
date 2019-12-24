@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Task\Ebay;
 
 /**
- * Class UpdateAccountsPreferences
- * @package Ess\M2ePro\Model\Cron\Task\Ebay
+ * Class \Ess\M2ePro\Model\Cron\Task\Ebay\UpdateAccountsPreferences
  */
 class UpdateAccountsPreferences extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {

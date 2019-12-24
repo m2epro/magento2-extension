@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Order\Item;
 use Ess\M2ePro\Model\AbstractModel;
 
 /**
- * Class Builder
- * @package Ess\M2ePro\Model\Amazon\Order\Item
+ * Class \Ess\M2ePro\Model\Amazon\Order\Item\Builder
  */
 class Builder extends AbstractModel
 {

@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
 /**
- * Class Action
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action
  */
 class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
 {

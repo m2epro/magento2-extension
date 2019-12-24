@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
 /**
- * Class Magento
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\Magento
  */
 class Magento extends Command
 {

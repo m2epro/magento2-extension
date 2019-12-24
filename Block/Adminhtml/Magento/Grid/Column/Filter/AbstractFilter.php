@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter;
 
 /**
- * Class AbstractFilter
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AbstractFilter
  */
 class AbstractFilter extends \Magento\Backend\Block\Widget\Grid\Column\Filter\AbstractFilter
 {

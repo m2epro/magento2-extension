@@ -15,8 +15,7 @@ use Ess\M2ePro\Helper\View\Walmart;
 use Ess\M2ePro\Helper\Module\Maintenance as Maintenance;
 
 /**
- * Class Config
- * @package Ess\M2ePro\Plugin\Menu\Magento\Backend\Model\Menu
+ * Class \Ess\M2ePro\Plugin\Menu\Magento\Backend\Model\Menu\Config
  */
 class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

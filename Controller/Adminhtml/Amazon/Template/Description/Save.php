@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\Amazon\Template\Description\Specific;
 use Ess\M2ePro\Helper\Component\Amazon;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description\Save
  */
 class Save extends Description
 {

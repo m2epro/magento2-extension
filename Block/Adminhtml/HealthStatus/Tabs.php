@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\InfoType;
 
 /**
- * Class Tabs
- * @package Ess\M2ePro\Block\Adminhtml\HealthStatus
+ * Class \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs
  */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 {

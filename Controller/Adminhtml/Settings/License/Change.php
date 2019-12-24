@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Settings\License;
 
 /**
- * Class Change
- * @package Ess\M2ePro\Controller\Adminhtml\Settings\License
+ * Class \Ess\M2ePro\Controller\Adminhtml\Settings\License\Change
  */
 class Change extends \Ess\M2ePro\Controller\Adminhtml\Base
 {

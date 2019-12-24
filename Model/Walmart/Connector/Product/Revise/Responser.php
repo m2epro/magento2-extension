@@ -13,8 +13,7 @@
 namespace Ess\M2ePro\Model\Walmart\Connector\Product\Revise;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Walmart\Connector\Product\Revise
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Product\Revise\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
 {

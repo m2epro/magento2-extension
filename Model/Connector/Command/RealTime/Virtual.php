@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Connector\Command\RealTime;
 
 /**
- * Class Virtual
- * @package Ess\M2ePro\Model\Connector\Command\RealTime
+ * Class \Ess\M2ePro\Model\Connector\Command\RealTime\Virtual
  */
 class Virtual extends \Ess\M2ePro\Model\Connector\Command\RealTime
 {

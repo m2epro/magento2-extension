@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing;
 
 /**
- * Class OpenManagement
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing\OpenManagement
  */
 class OpenManagement extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {

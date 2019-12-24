@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore;
 
 /**
- * Class Breadcrumb
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Breadcrumb
  */
 class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
 {

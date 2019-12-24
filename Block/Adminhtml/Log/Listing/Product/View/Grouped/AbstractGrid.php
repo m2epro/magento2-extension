@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\View\Grouped;
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\View;
 
 /**
- * Class AbstractGrid
- * @package Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\View\Grouped
+ * Class \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\View\Grouped\AbstractGrid
  */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid
 {

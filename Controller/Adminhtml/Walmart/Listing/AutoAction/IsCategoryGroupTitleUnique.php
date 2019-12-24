@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction;
 
 /**
- * Class IsCategoryGroupTitleUnique
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction\IsCategoryGroupTitleUnique
  */
 class IsCategoryGroupTitleUnique extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
 {

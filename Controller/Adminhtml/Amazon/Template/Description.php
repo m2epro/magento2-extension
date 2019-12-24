@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
 /**
- * Class Description
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description
  */
 abstract class Description extends Template
 {
@@ -34,13 +33,16 @@ abstract class Description extends Template
         $grid->setMarketplaceId($this->getRequest()->getParam('marketplace_id'));
         $grid->setProductDataNick($this->getRequest()->getParam('product_data_nick'));
         $grid->setCurrentXpath($this->getRequest()->getParam('current_indexed_xpath'));
-        $grid->setRenderedSpecifics(
-            (array)$this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('rendered_specifics'))
+        $grid->setAllRenderedSpecifics(
+            (array)$this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('all_rendered_specifics'))
+        );
+        $grid->setBlockRenderedSpecifics(
+            (array)$this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('block_rendered_specifics'))
         );
         $grid->setSelectedSpecifics(
             (array)$this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('selected_specifics'))
         );
-        $grid->setOnlyDesired($this->getRequest()->getParam('only_desired'), false);
+        $grid->setOnlyDesired((bool)$this->getRequest()->getParam('only_desired'));
         $grid->setSearchQuery($this->getRequest()->getParam('query'));
 
         return $grid;

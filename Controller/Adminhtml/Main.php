@@ -14,8 +14,7 @@ use Ess\M2ePro\Model\Servicing\Dispatcher;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
 /**
- * Class Main
- * @package Ess\M2ePro\Controller\Adminhtml
+ * Class \Ess\M2ePro\Controller\Adminhtml\Main
  */
 abstract class Main extends Base
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Order\Item;
 
 /**
- * Class Importer
- * @package Ess\M2ePro\Model\Ebay\Order\Item
+ * Class \Ess\M2ePro\Model\Ebay\Order\Item\Importer
  */
 class Importer extends \Ess\M2ePro\Model\AbstractModel
 {

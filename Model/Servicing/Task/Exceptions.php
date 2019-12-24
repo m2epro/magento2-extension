@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Servicing\Task;
 
 /**
- * Class Exceptions
- * @package Ess\M2ePro\Model\Servicing\Task
+ * Class \Ess\M2ePro\Model\Servicing\Task\Exceptions
  */
 class Exceptions extends \Ess\M2ePro\Model\Servicing\Task
 {

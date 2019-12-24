@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account;
 
 /**
- * Class Feedback
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Feedback
  */
 class Feedback extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

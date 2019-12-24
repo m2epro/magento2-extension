@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay\Installation;
 use Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay\Installation;
 
 /**
- * Class ListingTutorial
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay\Installation
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay\Installation\ListingTutorial
  */
 class ListingTutorial extends Installation
 {

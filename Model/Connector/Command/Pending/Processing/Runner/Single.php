@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner;
 
 /**
- * Class Single
- * @package Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner
+ * Class \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
  */
 class Single extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner
 {

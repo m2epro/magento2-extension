@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation;
 
 /**
- * Class Child
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child
  */
 class Child extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\PhysicalUnit
 {

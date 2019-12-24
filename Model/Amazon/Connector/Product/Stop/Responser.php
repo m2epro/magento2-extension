@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector\Product\Stop;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Amazon\Connector\Product\Stop
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Product\Stop\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 {

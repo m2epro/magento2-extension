@@ -10,8 +10,7 @@ namespace Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\StockSourceLink\Command;
 use Magento\InventoryApi\Api\Data\StockSourceLinkInterface;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\StockSourceLink\Command
+ * Class \Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\StockSourceLink\Command\Save
  */
 class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

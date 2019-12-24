@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Plugin\Config\Magento\Config\Model\Config\Structure;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
 
 /**
- * Class Data
- * @package Ess\M2ePro\Plugin\Config\Magento\Config\Model\Config\Structure
+ * Class \Ess\M2ePro\Plugin\Config\Magento\Config\Model\Config\Structure\Data
  */
 class Data extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

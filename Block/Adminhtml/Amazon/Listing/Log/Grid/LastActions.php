@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Log\Grid;
 
 /**
- * Class LastActions
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Log\Grid
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Log\Grid\LastActions
  */
 class LastActions extends \Ess\M2ePro\Block\Adminhtml\Listing\Log\Grid\LastActions
 {

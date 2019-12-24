@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
 /**
- * Class CreateMagentoOrder
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Order
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Order\CreateMagentoOrder
  */
 class CreateMagentoOrder extends Order
 {

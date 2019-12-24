@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other\Grid
  */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
 {

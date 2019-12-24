@@ -10,8 +10,7 @@ namespace Ess\M2ePro\Setup\Update\y19_m07;
 use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
 
 /**
- * Class WalmartSynchAdvancedConditions
- * @package Ess\M2ePro\Setup\Update\y19_m07
+ * Class \Ess\M2ePro\Setup\Update\y19\WalmartSynchAdvancedConditions_m07
  */
 class WalmartSynchAdvancedConditions extends AbstractFeature
 {

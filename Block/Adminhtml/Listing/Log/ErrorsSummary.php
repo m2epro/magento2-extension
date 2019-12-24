@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Listing\Log;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class ErrorsSummary
- * @package Ess\M2ePro\Block\Adminhtml\Listing\Log
+ * Class \Ess\M2ePro\Block\Adminhtml\Listing\Log\ErrorsSummary
  */
 class ErrorsSummary extends AbstractBlock
 {

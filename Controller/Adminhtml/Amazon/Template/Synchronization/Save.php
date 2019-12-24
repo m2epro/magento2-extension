@@ -13,8 +13,7 @@ use Ess\M2ePro\Helper\Component\Amazon;
 use Ess\M2ePro\Model\Amazon\Template\Synchronization as SynchronizationPolicy;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Synchronization
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Synchronization\Save
  */
 class Save extends Template
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter;
 
 /**
- * Class Range
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range
  */
 class Range extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Range
 {

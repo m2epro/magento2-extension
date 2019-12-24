@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request;
 
 /**
- * Class Price
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Price
  */
 class Price extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\AbstractModel
 {

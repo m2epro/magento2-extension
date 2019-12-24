@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\Templates;
 use Ess\M2ePro\Model\Synchronization\Templates\ProductChanges\Manager;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\Ebay\Synchronization\Templates
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\Templates\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
 {

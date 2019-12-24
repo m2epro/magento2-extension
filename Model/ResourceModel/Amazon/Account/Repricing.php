@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Account;
 
 /**
- * Class Repricing
- * @package Ess\M2ePro\Model\ResourceModel\Amazon\Account
+ * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Account\Repricing
  */
 class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

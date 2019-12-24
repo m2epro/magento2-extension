@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector\Account\Delete;
 
 /**
- * Class EntityRequester
- * @package Ess\M2ePro\Model\Amazon\Connector\Account\Delete
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Account\Delete\EntityRequester
  */
 class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {

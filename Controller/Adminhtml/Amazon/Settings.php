@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon;
 
 /**
- * Class Settings
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
  */
 abstract class Settings extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {

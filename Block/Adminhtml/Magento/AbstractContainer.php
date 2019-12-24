@@ -12,8 +12,7 @@ use Magento\Backend\Block\Widget\Container;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
 /**
- * Class AbstractContainer
- * @package Ess\M2ePro\Block\Adminhtml\Magento
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
  */
 abstract class AbstractContainer extends Container
 {

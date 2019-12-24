@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\OtherListings;
 use Ess\M2ePro\Model\Processing\Runner;
 
 /**
- * Class Update
- * @package Ess\M2ePro\Model\Amazon\Synchronization\OtherListings
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update
  */
 class Update extends AbstractModel
 {

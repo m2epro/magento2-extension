@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type;
 use \Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
 
 /**
- * Class Response
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response
  */
 abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 {

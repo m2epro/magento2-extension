@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Synchronization\Templates\ProductChanges;
 
 /**
- * Class Manager
- * @package Ess\M2ePro\Model\Synchronization\Templates\ProductChanges
+ * Class \Ess\M2ePro\Model\Synchronization\Templates\ProductChanges\Manager
  */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {

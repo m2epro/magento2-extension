@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization\OtherListings\Update;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Ebay\Synchronization\OtherListings\Update
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\OtherListings\Update\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResponser
 {

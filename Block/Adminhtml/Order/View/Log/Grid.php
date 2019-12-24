@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Order\View\Log;
 use Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Order\View\Log
+ * Class \Ess\M2ePro\Block\Adminhtml\Order\View\Log\Grid
  */
 class Grid extends AbstractGrid
 {

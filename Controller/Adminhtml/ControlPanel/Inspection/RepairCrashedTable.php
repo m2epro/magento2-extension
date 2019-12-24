@@ -13,8 +13,7 @@ use Ess\M2ePro\Helper\Module;
 use Magento\Backend\App\Action;
 
 /**
- * Class RepairCrashedTable
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Inspection
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Inspection\RepairCrashedTable
  */
 class RepairCrashedTable extends Main
 {

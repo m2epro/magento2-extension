@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher;
 
 /**
- * Class Option
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Option
  */
 class Option extends \Ess\M2ePro\Model\AbstractModel
 {

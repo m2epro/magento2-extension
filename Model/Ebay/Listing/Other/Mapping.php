@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Listing\Other;
 
 /**
- * Class Mapping
- * @package Ess\M2ePro\Model\Ebay\Listing\Other
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Other\Mapping
  */
 class Mapping extends \Ess\M2ePro\Model\AbstractModel
 {
@@ -123,12 +122,16 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
         foreach ($mappingSettings as $type) {
             $magentoProductId = null;
 
-            if ($type == 'sku') {
+            if ($type === 'sku') {
                 $magentoProductId = $this->getSkuMappedMagentoProductId($otherListing);
             }
 
-            if ($type == 'title') {
+            if ($type === 'title') {
                 $magentoProductId = $this->getTitleMappedMagentoProductId($otherListing);
+            }
+
+            if ($type === 'item_id') {
+                $magentoProductId = $this->getItemIdMappedMagentoProductId($otherListing);
             }
 
             if ($magentoProductId === null) {
@@ -268,6 +271,45 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
         if ($productObj && $productObj->getId() &&
             $this->isMagentoProductTypeAllowed($productObj->getTypeId())) {
+            return $productObj->getId();
+        }
+
+        return null;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Other $otherListing
+     * @return int|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function getItemIdMappedMagentoProductId(\Ess\M2ePro\Model\Listing\Other $otherListing)
+    {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Other $ebayListingOther */
+        $ebayListingOther = $otherListing->getChildObject();
+
+        $temp = $ebayListingOther->getItemId();
+
+        if (empty($temp)) {
+            return null;
+        }
+
+        $attributeCode = null;
+
+        if ($this->getAccount()->getChildObject()->isOtherListingsMappingItemIdModeCustomAttribute()) {
+            $attributeCode = $this->getAccount()->getChildObject()->getOtherListingsMappingItemIdAttribute();
+        }
+
+        if ($attributeCode === null) {
+            return null;
+        }
+
+        $storeId = $ebayListingOther->getRelatedStoreId();
+        $attributeValue = $ebayListingOther->getItemId();
+
+        $productObj = $this->productFactory->create()->setStoreId($storeId);
+        $productObj = $productObj->loadByAttribute($attributeCode, $attributeValue);
+
+        if ($productObj && $productObj->getId()) {
             return $productObj->getId();
         }
 

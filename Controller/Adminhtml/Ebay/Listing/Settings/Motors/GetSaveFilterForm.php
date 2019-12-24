@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
 /**
- * Class GetSaveFilterForm
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors\GetSaveFilterForm
  */
 class GetSaveFilterForm extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

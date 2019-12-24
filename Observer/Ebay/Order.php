@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer\Ebay;
 
 /**
- * Class Order
- * @package Ess\M2ePro\Observer\Ebay
+ * Class \Ess\M2ePro\Observer\Ebay\Order
  */
 class Order extends \Ess\M2ePro\Observer\AbstractModel
 {

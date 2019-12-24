@@ -12,14 +12,22 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
 /**
- * Class UnmapFromAsin
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\UnmapFromAsin
  */
 class UnmapFromAsin extends Main
 {
     public function execute()
     {
         $productsIds = $this->getRequest()->getParam('products_ids');
+        if (empty($productsIds)) {
+            /** @var \Ess\M2ePro\Model\Listing $listing */
+            $listing = $this->amazonFactory->getCachedObjectLoaded(
+                'Listing',
+                $this->getRequest()->getParam('listing_id')
+            );
+            $productsIds = $listing->getSetting('additional_data', 'adding_new_asin_listing_products_ids');
+            $productsIds = $this->getHelper('Component_Amazon_Variation')->filterLockedProducts($productsIds);
+        }
 
         if (empty($productsIds)) {
             $this->setAjaxContent('You should provide correct parameters.', false);

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Listing\Product;
 
 /**
- * Class PickupStore
- * @package Ess\M2ePro\Model\Ebay\Listing\Product
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\PickupStore
  */
 class PickupStore extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {

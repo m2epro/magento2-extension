@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode;
 
 /**
- * Class Category
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category
  */
 class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category
 {

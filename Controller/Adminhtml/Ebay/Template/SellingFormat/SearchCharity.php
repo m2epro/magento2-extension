@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 use \Magento\Backend\App\Action;
 
 /**
- * Class SearchCharity
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template\SellingFormat
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\SellingFormat\SearchCharity
  */
 class SearchCharity extends Template
 {

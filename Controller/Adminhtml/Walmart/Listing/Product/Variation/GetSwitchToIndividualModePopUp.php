@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
 /**
- * Class GetSwitchToIndividualModePopUp
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\GetSwitchToIndividualModePopUp
  */
 class GetSwitchToIndividualModePopUp extends Main
 {

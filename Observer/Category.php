@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer;
 
 /**
- * Class Category
- * @package Ess\M2ePro\Observer
+ * Class \Ess\M2ePro\Observer\Category
  */
 class Category extends AbstractModel
 {

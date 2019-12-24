@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\Templates;
 use Ess\M2ePro\Model\ProductChange;
 
 /**
- * Class Repricing
- * @package Ess\M2ePro\Model\Amazon\Synchronization\Templates
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Repricing
  */
 class Repricing extends AbstractModel
 {

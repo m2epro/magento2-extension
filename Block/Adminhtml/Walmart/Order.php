@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
 /**
- * Class Order
- * @package Ess\M2ePro\Block\Adminhtml\Walmart
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Order
  */
 class Order extends AbstractContainer
 {

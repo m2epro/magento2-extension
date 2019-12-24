@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace\Save
  */
 class Save extends Marketplace
 {

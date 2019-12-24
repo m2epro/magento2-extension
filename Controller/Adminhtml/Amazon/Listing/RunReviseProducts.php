@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
 /**
- * Class RunReviseProducts
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\RunReviseProducts
  */
 class RunReviseProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\ActionAbstract
 {

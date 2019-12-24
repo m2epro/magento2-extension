@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\HealthStatus\Task\Result;
 use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 
 /**
- * Class Factory
- * @package Ess\M2ePro\Model\HealthStatus\Task\Result
+ * Class \Ess\M2ePro\Model\HealthStatus\Task\Result\Factory
  */
 class Factory
 {

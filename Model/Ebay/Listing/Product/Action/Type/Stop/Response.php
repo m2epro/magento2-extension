@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Stop;
 
 /**
- * Class Response
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Stop
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Stop\Response
  */
 class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Helper\Client;
 use Ess\M2ePro\Helper\AbstractHelper;
 
 /**
- * Class Cache
- * @package Ess\M2ePro\Helper\Client
+ * Class \Ess\M2ePro\Helper\Client\Cache
  */
 class Cache extends AbstractHelper
 {

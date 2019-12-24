@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Developers;
 use Ess\M2ePro\Controller\Adminhtml\Developers;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Developers
+ * Class \Ess\M2ePro\Controller\Adminhtml\Developers\Index
  */
 class Index extends Developers
 {

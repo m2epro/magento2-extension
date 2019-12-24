@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise\Request as ReviseRequest;
 
 /**
- * Class Response
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise\Response
  */
 class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Response
 {

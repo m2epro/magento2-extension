@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Observer\Product\AddUpdate;
 use \Magento\Catalog\Model\Product\Attribute\Source\Status;
 
 /**
- * Class After
- * @package Ess\M2ePro\Observer\Product\AddUpdate
+ * Class \Ess\M2ePro\Observer\Product\AddUpdate\After
  */
 class After extends AbstractAddUpdate
 {

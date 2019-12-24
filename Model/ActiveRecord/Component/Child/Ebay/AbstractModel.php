@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay
+ * Class \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel
 {

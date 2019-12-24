@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Developers;
 
 /**
- * Class Tabs
- * @package Ess\M2ePro\Block\Adminhtml\Developers
+ * Class \Ess\M2ePro\Block\Adminhtml\Developers\Tabs
  */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 {

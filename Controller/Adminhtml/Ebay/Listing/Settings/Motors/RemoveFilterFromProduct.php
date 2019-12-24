@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
 /**
- * Class RemoveFilterFromProduct
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors\RemoveFilterFromProduct
  */
 class RemoveFilterFromProduct extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

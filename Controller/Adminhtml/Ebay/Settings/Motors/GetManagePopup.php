@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors;
 
 /**
- * Class GetManagePopup
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors\GetManagePopup
  */
 class GetManagePopup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 {

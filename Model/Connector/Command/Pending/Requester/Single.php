@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Connector\Command\Pending\Requester;
 
 /**
- * Class Single
- * @package Ess\M2ePro\Model\Connector\Command\Pending\Requester
+ * Class \Ess\M2ePro\Model\Connector\Command\Pending\Requester\Single
  */
 class Single extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {

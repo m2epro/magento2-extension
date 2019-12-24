@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Synchronization\Marketplaces;
 
 /**
- * Class Categories
- * @package Ess\M2ePro\Model\Walmart\Synchronization\Marketplaces
+ * Class \Ess\M2ePro\Model\Walmart\Synchronization\Marketplaces\Categories
  */
 class Categories extends AbstractModel
 {

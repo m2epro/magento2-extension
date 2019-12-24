@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Order;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
 /**
- * Class Debug
- * @package Ess\M2ePro\Block\Adminhtml\Order
+ * Class \Ess\M2ePro\Block\Adminhtml\Order\Debug
  */
 class Debug extends AbstractContainer
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Listing;
 
 /**
- * Class SaveListingAdditionalData
- * @package Ess\M2ePro\Controller\Adminhtml\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Listing\SaveListingAdditionalData
  */
 class SaveListingAdditionalData extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {

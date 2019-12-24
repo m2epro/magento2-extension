@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
 /**
- * Class Business
- * @package Ess\M2ePro\Helper\Component\Amazon
+ * Class \Ess\M2ePro\Helper\Component\Amazon\Business
  */
 class Business extends \Ess\M2ePro\Helper\AbstractHelper
 {

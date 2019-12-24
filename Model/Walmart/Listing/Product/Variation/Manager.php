@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation;
 
 /**
- * Class Manager
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager
  */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {

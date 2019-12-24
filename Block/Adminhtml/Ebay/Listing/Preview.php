@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 use Ess\M2ePro\Model\Ebay\Template\Description\Source as DescriptionSource;
 
 /**
- * Class Preview
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Preview
  */
 class Preview extends AbstractBlock
 {

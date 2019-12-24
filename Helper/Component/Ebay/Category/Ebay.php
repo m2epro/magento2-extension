@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Component\Ebay\Category;
 
 /**
- * Class Ebay
- * @package Ess\M2ePro\Helper\Component\Ebay\Category
+ * Class \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay
  */
 class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 {
@@ -173,7 +172,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
             $features = (array)$this->getHelper('Data')->jsonDecode($categoryRow['features']);
         }
 
-        $this->getHelper('Data_Cache_Permanent')->setValue($cacheKey, $features, [self::CACHE_TAG]);
+        $this->getHelper('Data_Cache_Permanent')->setValue($cacheKey, $features, [self::CACHE_TAG, 'marketplace']);
         return $features;
     }
 
@@ -209,7 +208,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (!$categoryRow['is_leaf']) {
-            $this->getHelper('Data_Cache_Permanent')->setValue($cacheKey, [], [self::CACHE_TAG]);
+            $this->getHelper('Data_Cache_Permanent')->setValue($cacheKey, [], [self::CACHE_TAG, 'marketplace']);
             return [];
         }
 
@@ -250,7 +249,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
             );
         }
 
-        $this->getHelper('Data_Cache_Permanent')->setValue($cacheKey, $specifics, [self::CACHE_TAG]);
+        $this->getHelper('Data_Cache_Permanent')->setValue($cacheKey, $specifics, [self::CACHE_TAG, 'marketplace']);
         return $specifics;
     }
 

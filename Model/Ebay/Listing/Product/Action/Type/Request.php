@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description;
 
 /**
- * Class Request
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
  */
 abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request
 {

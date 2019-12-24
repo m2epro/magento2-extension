@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing;
 
 /**
- * Class ValidateProductsBeforeAdd
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing\ValidateProductsBeforeAdd
  */
 class ValidateProductsBeforeAdd extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {

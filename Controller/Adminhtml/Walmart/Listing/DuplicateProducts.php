@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
 /**
- * Class DuplicateProducts
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\DuplicateProducts
  */
 class DuplicateProducts extends Main
 {

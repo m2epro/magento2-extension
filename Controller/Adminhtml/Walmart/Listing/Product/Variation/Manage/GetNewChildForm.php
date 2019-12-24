@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Mana
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
 /**
- * Class GetNewChildForm
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage\GetNewChildForm
  */
 class GetNewChildForm extends Main
 {

@@ -17,8 +17,7 @@ use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Par
 use Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion as Promotion;
 
 /**
- * Class Product
- * @package Ess\M2ePro\Model\Walmart\Listing
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product
  */
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {

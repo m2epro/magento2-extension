@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\ResourceModel\ActiveRecord;
 use Ess\M2ePro\Model\ActiveRecord\AbstractModel as ActiveRecordAbstract;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\ResourceModel\ActiveRecord
+ * Class \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
  */
 abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {

@@ -13,8 +13,7 @@ use Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs;
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 
 /**
- * Class LocationResolver
- * @package Ess\M2ePro\Model\HealthStatus\Task\Result
+ * Class \Ess\M2ePro\Model\HealthStatus\Task\Result\LocationResolver
  */
 class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
 {

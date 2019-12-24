@@ -9,14 +9,17 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
+use Ess\M2ePro\Helper\Component\Walmart;
+use Ess\M2ePro\Model\Walmart\Account as WalmartAccount;
 
 /**
- * Class General
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\General
  */
 class General extends AbstractForm
 {
-    protected $WalmartFactory;
+    protected $walmartFactory;
+
+    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $WalmartFactory,
@@ -25,10 +28,12 @@ class General extends AbstractForm
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        $this->WalmartFactory = $WalmartFactory;
+        $this->walmartFactory = $WalmartFactory;
 
         parent::__construct($context, $registry, $formFactory, $data);
     }
+
+    //########################################
 
     protected function _prepareForm()
     {
@@ -84,7 +89,7 @@ HTML
         $fieldset = $form->addFieldset(
             'general',
             [
-                'legend' => $this->__('General'),
+                'legend'      => $this->__('General'),
                 'collapsable' => false
             ]
         );
@@ -93,26 +98,29 @@ HTML
             'title',
             'text',
             [
-                'name' => 'title',
-                'class' => 'M2ePro-account-title',
-                'label' => $this->__('Title'),
+                'name'     => 'title',
+                'class'    => 'M2ePro-account-title',
+                'label'    => $this->__('Title'),
                 'required' => true,
-                'value' => $formData['title'],
-                'tooltip' => $this->__('Title or Identifier of Walmart Account for your internal use.')
+                'value'    => $formData['title'],
+                'tooltip'  => $this->__('Title or Identifier of Walmart Account for your internal use.')
             ]
         );
 
         $fieldset = $form->addFieldset(
             'access_details',
             [
-                'legend' => $this->__('Access Details'),
+                'legend'      => $this->__('Access Details'),
                 'collapsable' => false
             ]
         );
 
-        $preparedValues = [];
+        $marketplaceUS = Walmart::MARKETPLACE_US;
+        $marketplaceCA = Walmart::MARKETPLACE_CA;
+
+        $marketplacesValues = [];
         if (!$isEdit) {
-            $preparedValues[] = [
+            $marketplacesValues[] = [
                 'label' => '',
                 'value' => '',
                 'attrs' => [
@@ -121,17 +129,17 @@ HTML
             ];
         }
         foreach ($marketplaces as $marketplace) {
-            $preparedValues[$marketplace['id']] = $marketplace['title'];
+            $marketplacesValues[$marketplace['id']] = $marketplace['title'];
         }
 
         $fieldset->addField(
             'marketplace_id',
             self::SELECT,
             [
-                'name' => 'marketplace_id',
-                'label' => $this->__('Marketplace'),
-                'values' => $preparedValues,
-                'value' => $formData['marketplace_id'],
+                'name'     => 'marketplace_id',
+                'label'    => $this->__('Marketplace'),
+                'values'   => $marketplacesValues,
+                'value'    => $formData['marketplace_id'],
                 'disabled' => $isEdit,
                 'required' => true
             ]
@@ -142,7 +150,7 @@ HTML
                 'marketplace_id_hidden',
                 'hidden',
                 [
-                    'name' => 'marketplace_id',
+                    'name'  => 'marketplace_id',
                     'value' => $formData['marketplace_id'],
                 ]
             );
@@ -150,23 +158,34 @@ HTML
                 'consumer_id_hidden',
                 'hidden',
                 [
-                    'name' => 'consumer_id',
+                    'name'  => 'consumer_id',
                     'value' => $formData['consumer_id'],
                 ]
             );
         }
 
         $fieldset->addField(
-            'marketplaces_register_url',
+            'marketplaces_register_url_ca',
             'link',
             [
-                'container_id' => 'marketplaces_register_url_container',
                 'label'        => '',
-                'href'         => 'javascript: void(0);',
+                'href'         => $this->getHelper('Component\Walmart')->getRegisterUrl($marketplaceCA),
                 'target'       => '_blank',
                 'value'        => $this->__('Get Access Data'),
-                'class'        => 'external-link marketplaces_view_element',
-                'css_class'    => 'marketplace-required-field'
+                'class'        => "external-link",
+                'css_class'    => "marketplace-required-field marketplace-required-field-id{$marketplaceCA}",
+            ]
+        );
+        $fieldset->addField(
+            'marketplaces_register_url_us',
+            'link',
+            [
+                'label'     => '',
+                'href'      => $this->getHelper('Component\Walmart')->getRegisterUrl($marketplaceUS),
+                'target'    => '_blank',
+                'value'     => $this->__('Get Access Data'),
+                'class'     => "external-link",
+                'css_class' => "marketplace-required-field marketplace-required-field-id{$marketplaceUS}",
             ]
         );
 
@@ -175,17 +194,29 @@ HTML
             'text',
             [
                 'container_id' => 'marketplaces_consumer_id_container',
-                'name' => 'consumer_id',
-                'label' => $this->__('Consumer ID'),
-                'class' => 'M2ePro-marketplace-consumer-id M2ePro-required-when-visible',
-                'css_class' => 'marketplace-required-field marketplace-required-field-id-not-null',
-                'required' => true,
-                'value' => $isEdit ? $formData['consumer_id'] : '',
-                'display' => $isEdit,
-                'disabled' => $isEdit,
-                'tooltip' => $this->__('A unique seller identifier on the website.
-                                        <br><b>Note:</b> Your <i>Consumer ID</i>
-                                         must not be changed once it is obtain.')
+                'name'         => 'consumer_id',
+                'label'        => $this->__('Consumer ID / Partner ID'),
+                'class'        => 'M2ePro-marketplace-consumer-id',
+                'css_class'    => 'marketplace-required-field marketplace-required-field-id-not-null',
+                'required'     => true,
+                'value'        => $formData['consumer_id'],
+                'disabled'     => $isEdit,
+                'tooltip'      => $this->__(
+                    <<<HTML
+<span class="marketplace-required-field marketplace-required-field-id{$marketplaceCA}">
+    A unique seller identifier on the website.
+</span>
+<span class="marketplace-required-field marketplace-required-field-id{$marketplaceUS}">
+    A unique seller identifier on the website.<br>
+    <b>Note:</b> You can find the instruction on how to get the Consumer ID / Partner ID 
+    <a target="_blank" href="%url%">here</a>.
+</span>
+HTML
+                    ,
+                    $this->getHelper('Module_Support')->getSupportUrl(
+                        'how-to-guide/1570387-how-to-get-my-consumer-id-partner-id-to-auth-m2e-on-walmart-us'
+                    )
+                )
             ]
         );
 
@@ -194,16 +225,13 @@ HTML
             'textarea',
             [
                 'container_id' => 'marketplaces_old_private_key_container',
-                'name' => 'old_private_key',
-                'label' => $this->__('Private Key'),
-                'class' => 'M2ePro-required-when-visible marketplace-required-input marketplace-required-input-text-id'.
-                    \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA,
-                'css_class' => 'marketplace-required-field marketplace-required-field-id' .
-                    \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA,
-                'required' => true,
-                'value' => $isEdit ? $formData['old_private_key'] : '',
-                'display' => $isEdit,
-                'tooltip' => $this->__('Walmart Private Key generated from your Seller Center Account.')
+                'name'         => 'old_private_key',
+                'label'        => $this->__('Private Key'),
+                'class'        => "M2ePro-marketplace-merchant",
+                'css_class'    => "marketplace-required-field marketplace-required-field-id{$marketplaceCA}",
+                'required'     => true,
+                'value'        => $formData['old_private_key'],
+                'tooltip'      => $this->__('Walmart Private Key generated from your Seller Center Account.')
             ]
         );
 
@@ -212,15 +240,13 @@ HTML
             'text',
             [
                 'container_id' => 'marketplaces_client_id_container',
-                'name' => 'client_id',
-                'label' => $this->__('Client ID'),
-                'class' => 'M2ePro-marketplace-client-id M2ePro-required-when-visible',
-                'css_class' => 'marketplace-required-field marketplace-required-field-id' .
-                    \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US,
-                'required' => true,
-                'value' => $isEdit ? $formData['client_id'] : '',
-                'display' => $isEdit,
-                'tooltip' => $this->__('A unique API key retrieved to get an access token.')
+                'name'         => 'client_id',
+                'label'        => $this->__('Client ID'),
+                'class'        => '',
+                'css_class'    => "marketplace-required-field marketplace-required-field-id{$marketplaceUS}",
+                'required'     => true,
+                'value'        => $formData['client_id'],
+                'tooltip'      => $this->__('A Client ID retrieved to get an access token.')
             ]
         );
 
@@ -229,23 +255,18 @@ HTML
             'textarea',
             [
                 'container_id' => 'marketplaces_client_secret_container',
-                'name' => 'client_secret',
-                'label' => $this->__('Client Secret'),
-                'class' => 'M2ePro-required-when-visible marketplace-required-input marketplace-required-input-text-id'.
-                    \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US,
-                'css_class' => 'marketplace-required-field marketplace-required-field-id' .
-                    \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US,
-                'required' => true,
-                'value' => $isEdit ? $formData['client_secret'] : '',
-                'display' => $isEdit,
-                'tooltip' => $this->__('A unique API key retrieved to get an access token.')
+                'name'         => 'client_secret',
+                'label'        => $this->__('Client Secret'),
+                'class'        => 'M2ePro-marketplace-merchant',
+                'css_class'    => "marketplace-required-field marketplace-required-field-id{$marketplaceUS}",
+                'required'     => true,
+                'value'        => $formData['client_secret'],
+                'tooltip'      => $this->__('A Client Secret key retrieved to get an access token.')
             ]
         );
 
-        $this->jsPhp->addConstants($this->getHelper('Data')
-            ->getClassConstants(\Ess\M2ePro\Model\Walmart\Account::class));
-        $this->jsPhp->addConstants($this->getHelper('Data')
-            ->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class));
+        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(WalmartAccount::class));
+        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(Walmart::class));
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Account', ['_current' => true]));
         $this->jsUrl->addUrls([
@@ -275,7 +296,6 @@ HTML
             'The specified Title is already used for other Account. Account Title must be unique.' => $this->__(
                 'The specified Title is already used for other Account. Account Title must be unique.'
             ),
-            'You must choose Marketplace first.' => $this->__('You must choose Marketplace first.'),
             'M2E Pro was not able to get access to the Walmart Account' => $this->__(
                 'M2E Pro could not get access to your Walmart account. <br>
                  For Walmart CA, please check if you entered valid Consumer ID and Private Key. <br>
@@ -284,25 +304,22 @@ HTML
             ),
             'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%' => $this->__(
                 'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%'
+            ),
+            'Consumer ID' => 'Consumer ID',
+            'Consumer ID / Partner ID' => 'Consumer ID / Partner ID',
+            'The specified Consumer ID / Partner ID is not valid' => $this->__(
+                'The specified Consumer ID / Partner ID is not valid.
+                Please find the instruction on how to get it <a target="_blank" href="%url%">here</a>.',
+                $this->getHelper('Module_Support')->getSupportUrl(
+                    'how-to-guide/1570387-how-to-get-my-consumer-id-partner-id-to-auth-m2e-on-walmart-us'
+                )
             )
         ]);
 
-        $id = $this->getRequest()->getParam('id');
-        $this->js->add("M2ePro.formData.id = '$id';");
-
-        $marketplaceUS = \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US;
-        $marketplaceCA = \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA;
-
-        $usUrl = $this->getHelper('Component\Walmart')->getRegisterUrl($marketplaceUS);
-        $caUrl = $this->getHelper('Component\Walmart')->getRegisterUrl($marketplaceCA);
-
         $this->js->add(<<<JS
     require([
-        'M2ePro/Walmart/Account',
+        'M2ePro/Walmart/Account'
     ], function(){
-
-        M2ePro.customData['marketplace-{$marketplaceUS}-url'] = '$usUrl';
-        M2ePro.customData['marketplace-{$marketplaceCA}-url'] = '$caUrl';
 
         window.WalmartAccountObj = new WalmartAccount();
         WalmartAccountObj.initObservers();
@@ -310,11 +327,16 @@ HTML
 JS
         );
 
+        $id = $this->getRequest()->getParam('id');
         $title = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml($formData['title']));
+
+        $this->js->add("M2ePro.formData.id = '$id';");
         $this->js->add("M2ePro.formData.title = '$title';");
 
         $this->setForm($form);
 
         return parent::_prepareForm();
     }
+
+    //########################################
 }

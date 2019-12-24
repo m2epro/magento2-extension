@@ -11,8 +11,7 @@ namespace  Ess\M2ePro\Block\Adminhtml\Walmart;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
 /**
- * Class Marketplace
- * @package Ess\M2ePro\Block\Adminhtml\Walmart
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace
  */
 class Marketplace extends AbstractContainer
 {

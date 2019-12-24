@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Listing\Product;
 use Ess\M2ePro\Model\ResourceModel\MSI\Listing\Product\Variation\StockDataResolver as MSIStockDataResolver;
 
 /**
- * Class Variation
- * @package Ess\M2ePro\Model\ResourceModel\Listing\Product
+ * Class \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation
  */
 class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {

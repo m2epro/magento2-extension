@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote;
 
 /**
- * Class TotalsCollectorList
- * @package Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote
+ * Class \Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\TotalsCollectorList
  */
 class TotalsCollectorList extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

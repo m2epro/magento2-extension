@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Exception\Connection;
 
 /**
- * Class InvalidResponse
- * @package Ess\M2ePro\Model\Exception\Connection
+ * Class \Ess\M2ePro\Model\Exception\Connection\InvalidResponse
  */
 class InvalidResponse extends \Ess\M2ePro\Model\Exception\Connection
 {

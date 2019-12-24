@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account\Repricing;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
 /**
- * Class LinkOrRegister
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Account\Repricing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Account\Repricing\LinkOrRegister
  */
 class LinkOrRegister extends Account
 {

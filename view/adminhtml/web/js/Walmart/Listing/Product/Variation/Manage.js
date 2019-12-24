@@ -1366,14 +1366,6 @@ define([
                     $('walmartVariationProductManageTabs_settings_content').update(response.html);
                     self.initSettingsTab();
 
-                    var img = $('walmartVariationProductManageTabs_settings').down('img');
-
-                    img.hide();
-                    if (response.error_icon != '') {
-                        img.src = M2ePro.url.get('m2epro_skin_url') + '/images/' + response.error_icon + '.png';
-                        img.show();
-                    }
-
                     if (callback) {
                         callback.call();
                     }

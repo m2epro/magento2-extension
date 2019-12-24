@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs;
 
 /**
- * Class IssueGroup
- * @package Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\IssueGroup
  */
 class IssueGroup extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

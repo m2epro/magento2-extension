@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder;
 
 /**
- * Class Qty
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\Qty
  */
 class Qty extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\AbstractModel
 {

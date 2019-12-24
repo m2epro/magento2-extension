@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner;
 
 /**
- * Class Partial
- * @package Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner
+ * Class \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Partial
  */
 class Partial extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner
 {

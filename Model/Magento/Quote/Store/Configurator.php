@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Quote\Store;
 
 /**
- * Class Configurator
- * @package Ess\M2ePro\Model\Magento\Quote\Store
+ * Class \Ess\M2ePro\Model\Magento\Quote\Store\Configurator
  */
 class Configurator extends \Ess\M2ePro\Model\AbstractModel
 {

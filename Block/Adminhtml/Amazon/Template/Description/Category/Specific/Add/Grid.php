@@ -9,12 +9,11 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Specific\Add;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Specific\Add
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Specific\Add\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    protected $customCollectionFactory;
+    protected $collectionFactory;
     protected $resourceConnection;
 
     public $marketplaceId;
@@ -26,18 +25,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public $onlyDesired = false;
 
     public $selectedSpecifics = [];
-    public $renderedSpecifics = [];
+
+    public $allRenderedSpecifics = [];
+    public $blockRenderedSpecifics = [];
 
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
+        \Magento\Framework\Data\CollectionFactory $collectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->customCollectionFactory = $customCollectionFactory;
+        $this->collectionFactory = $collectionFactory;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -89,9 +90,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $queryStmt = $select->query();
         while ($row = $queryStmt->fetch()) {
-            if (in_array($row['xpath'], $this->renderedSpecifics) ||
-                in_array($row['xpath'], $this->selectedSpecifics)) {
+            if (in_array($row['xpath'], $this->selectedSpecifics, true)) {
                 continue;
+            }
+
+            if (in_array($row['xpath'], $this->allRenderedSpecifics, true)) {
+                // an already rendered specific can be added again only to parent container directly
+                if (str_replace($this->currentXpath . '/', '', $row['xpath']) !== $row['xml_tag']) {
+                    continue;
+                }
+
+                if (in_array($row['xpath'], $this->blockRenderedSpecifics, true)) {
+                    continue;
+                }
             }
 
             $row['data_definition'] = (array)$this->getHelper('Data')->jsonDecode($row['data_definition']);
@@ -117,7 +128,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             return $a['title'] == $b['title'] ? 0 : ($a['title'] > $b['title'] ? 1 : -1);
         });
 
-        $collection = $this->customCollectionFactory->create();
+        /** @var \Ess\M2ePro\Model\ResourceModel\Collection\Custom $collection */
+        $collection = $this->collectionFactory->create();
 
         foreach ($filteredResult as $item) {
             $collection->addItem(new \Magento\Framework\DataObject($item));
@@ -230,9 +242,15 @@ HTML;
         return $this;
     }
 
-    public function setRenderedSpecifics(array $specifics)
+    public function setAllRenderedSpecifics(array $specifics)
     {
-        $this->renderedSpecifics = $this->replaceWithDictionaryXpathes($specifics);
+        $this->allRenderedSpecifics = $this->replaceWithDictionaryXpathes($specifics);
+        return $this;
+    }
+
+    public function setBlockRenderedSpecifics(array $specifics)
+    {
+        $this->blockRenderedSpecifics = $this->replaceWithDictionaryXpathes($specifics);
         return $this;
     }
 

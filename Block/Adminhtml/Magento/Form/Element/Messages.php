@@ -15,8 +15,7 @@ use Magento\Framework\Escaper;
 use Magento\Framework\Message\MessageInterface;
 
 /**
- * Class Messages
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Form\Element
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Messages
  */
 class Messages extends AbstractElement
 {

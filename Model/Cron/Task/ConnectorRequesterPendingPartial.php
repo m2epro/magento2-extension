@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Cron\Task;
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 
 /**
- * Class ConnectorRequesterPendingPartial
- * @package Ess\M2ePro\Model\Cron\Task
+ * Class \Ess\M2ePro\Model\Cron\Task\ConnectorRequesterPendingPartial
  */
 class ConnectorRequesterPendingPartial extends AbstractModel
 {

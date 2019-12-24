@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction;
 
 /**
- * Class GetCategoryTemplatesList
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction\GetCategoryTemplatesList
  */
 class GetCategoryTemplatesList extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
 {

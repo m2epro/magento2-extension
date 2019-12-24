@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update;
 use Ess\M2ePro\Model\Processing\Runner;
 
 /**
- * Class Defected
- * @package Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Defected
  */
 class Defected extends \Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\AbstractModel
 {

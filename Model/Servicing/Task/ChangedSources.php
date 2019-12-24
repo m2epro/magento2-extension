@@ -13,8 +13,7 @@ use Magento\Framework\Component\ComponentRegistrar;
 use Ess\M2ePro\Helper\Module;
 
 /**
- * Class ChangedSources
- * @package Ess\M2ePro\Model\Servicing\Task
+ * Class \Ess\M2ePro\Model\Servicing\Task\ChangedSources
  */
 class ChangedSources extends \Ess\M2ePro\Model\Servicing\Task
 {

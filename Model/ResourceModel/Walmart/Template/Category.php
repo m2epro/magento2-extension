@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Template;
 
 /**
- * Class Category
- * @package Ess\M2ePro\Model\ResourceModel\Walmart\Template
+ * Class \Ess\M2ePro\Model\ResourceModel\Walmart\Template\Category
  */
 class Category extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

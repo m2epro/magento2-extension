@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Settings;
 
 /**
- * Class RunAllEnabledNow
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization\RunAllEnabledNow
  */
 class RunAllEnabledNow extends Settings
 {

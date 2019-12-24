@@ -14,8 +14,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product;
 
 /**
- * Class QtyCalculator
- * @package Ess\M2ePro\Model\Amazon\Listing\Product
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\QtyCalculator
  */
 class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
 {

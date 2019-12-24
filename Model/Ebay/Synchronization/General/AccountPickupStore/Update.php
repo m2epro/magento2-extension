@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General\AccountPickupStore;
 
 /**
- * Class Update
- * @package Ess\M2ePro\Model\Ebay\Synchronization\General\AccountPickupStore
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\General\AccountPickupStore\Update
  */
 class Update extends \Ess\M2ePro\Model\Ebay\Synchronization\General\AbstractModel
 {

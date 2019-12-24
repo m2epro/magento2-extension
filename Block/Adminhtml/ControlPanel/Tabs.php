@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs;
 use \Ess\M2ePro\Helper\View\ControlPanel as HelperControlPanel;
 
 /**
- * Class Tabs
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs
  */
 class Tabs extends AbstractHorizontalTabs
 {

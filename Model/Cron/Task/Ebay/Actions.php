@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Task\Ebay;
 
 /**
- * Class Actions
- * @package Ess\M2ePro\Model\Cron\Task\Ebay
+ * Class \Ess\M2ePro\Model\Cron\Task\Ebay\Actions
  */
 class Actions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Component\Walmart;
 
 /**
- * Class Configuration
- * @package Ess\M2ePro\Helper\Component\Walmart
+ * Class \Ess\M2ePro\Helper\Component\Walmart\Configuration
  */
 class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 {
@@ -25,6 +24,11 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     const GENERATE_SKU_MODE_NO  = 0;
     const GENERATE_SKU_MODE_YES = 1;
+
+    const PRODUCT_ID_OVERRIDE_MODE_NONE              = 0;
+    const PRODUCT_ID_OVERRIDE_MODE_ALL               = 1;
+    const PRODUCT_ID_OVERRIDE_MODE_SPECIFIC_PRODUCTS = 2;
+    const PRODUCT_ID_OVERRIDE_CUSTOM_CODE = 'CUSTOM';
 
     const UPC_MODE_NOT_SET          = 0;
     const UPC_MODE_CUSTOM_ATTRIBUTE = 1;
@@ -174,6 +178,33 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
     public function isGenerateSkuModeYes()
     {
         return $this->getGenerateSkuMode() == self::GENERATE_SKU_MODE_YES;
+    }
+
+    //########################################
+
+    public function setProductIdOverrideMode($mode)
+    {
+        $this->moduleConfig->setGroupValue(self::CONFIG_GROUP, 'product_id_override_mode', $mode);
+    }
+
+    public function getProductIdOverrideMode()
+    {
+        return (int)$this->moduleConfig->getGroupValue(self::CONFIG_GROUP, 'product_id_override_mode');
+    }
+
+    public function isProductIdOverrideModeNode()
+    {
+        return $this->getProductIdOverrideMode() == self::PRODUCT_ID_OVERRIDE_MODE_NONE;
+    }
+
+    public function isProductIdOverrideModeAll()
+    {
+        return $this->getProductIdOverrideMode() == self::PRODUCT_ID_OVERRIDE_MODE_ALL;
+    }
+
+    public function isProductIdOverrideModeSpecificProducts()
+    {
+        return $this->getProductIdOverrideMode() == self::PRODUCT_ID_OVERRIDE_MODE_SPECIFIC_PRODUCTS;
     }
 
     //########################################
@@ -377,6 +408,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
             'sku_modification_mode'         => $this->getSkuModificationMode(),
             'sku_modification_custom_value' => $this->getSkuModificationCustomValue(),
             'generate_sku_mode'             => $this->getGenerateSkuMode(),
+            'product_id_override_mode'      => $this->getProductIdOverrideMode(),
             'upc_mode'                      => $this->getUpcMode(),
             'upc_custom_attribute'          => $this->getUpcCustomAttribute(),
             'ean_mode'                      => $this->getEanMode(),
@@ -409,6 +441,10 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
         if (isset($values['generate_sku_mode'])) {
             $this->setGenerateSkuMode($values['generate_sku_mode']);
+        }
+
+        if (isset($values['product_id_override_mode'])) {
+            $this->setProductIdOverrideMode($values['product_id_override_mode']);
         }
 
         if (isset($values['upc_mode'])) {

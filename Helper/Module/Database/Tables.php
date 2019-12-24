@@ -14,8 +14,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ResourceConnection;
 
 /**
- * Class Tables
- * @package Ess\M2ePro\Helper\Module\Database
+ * Class \Ess\M2ePro\Helper\Module\Database\Tables
  */
 class Tables extends AbstractHelper
 {

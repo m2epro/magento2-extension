@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\ListingTutorial;
 
 /**
- * Class Content
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\ListingTutorial
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\ListingTutorial\Content
  */
 class Content extends \Ess\M2ePro\Block\Adminhtml\Wizard\Installation\ListingTutorial\Content
 {

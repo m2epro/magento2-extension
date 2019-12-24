@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing;
 
 /**
- * Class Create
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Create
  */
 class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {

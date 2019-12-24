@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update;
 use Ess\M2ePro\Model\Processing\Runner;
 
 /**
- * Class Blocked
- * @package Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Blocked
  */
 class Blocked extends \Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\AbstractModel
 {

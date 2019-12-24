@@ -14,8 +14,7 @@ use Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization\Inspector
 use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Walmart\Connector\Product
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
  */
 abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Responser
 {

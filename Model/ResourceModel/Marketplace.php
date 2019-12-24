@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel;
 
 /**
- * Class Marketplace
- * @package Ess\M2ePro\Model\ResourceModel
+ * Class \Ess\M2ePro\Model\ResourceModel\Marketplace
  */
 class Marketplace extends ActiveRecord\Component\Parent\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs;
 
 /**
- * Class Browse
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs\Browse
  */
 class Browse extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

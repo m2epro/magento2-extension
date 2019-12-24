@@ -15,8 +15,7 @@ use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Sales\Model\ResourceModel\Order\Shipment\Track\Collection as TrackCollection;
 
 /**
- * Class Handler
- * @package Ess\M2ePro\Model\Order\Shipment
+ * Class \Ess\M2ePro\Model\Order\Shipment\Handler
  */
 class Handler extends \Ess\M2ePro\Model\AbstractModel
 {

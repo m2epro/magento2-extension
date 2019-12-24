@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Account;
 
 /**
- * Class PickupStore
- * @package Ess\M2ePro\Model\ResourceModel\Ebay\Account
+ * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Account\PickupStore
  */
 class PickupStore extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

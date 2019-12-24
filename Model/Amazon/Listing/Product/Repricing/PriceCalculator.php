@@ -12,8 +12,7 @@ use \Ess\M2ePro\Model\Amazon\Account\Repricing as AccountRepricing;
 use Ess\M2ePro\Model\Listing\Product\Variation;
 
 /**
- * Class PriceCalculator
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Repricing
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing\PriceCalculator
  */
 class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
 {

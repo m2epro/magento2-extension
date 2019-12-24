@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart;
 
 /**
- * Class Account
- * @package Ess\M2ePro\Block\Adminhtml\Walmart
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Account
  */
 class Account extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

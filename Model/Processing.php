@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model;
 
 /**
- * Class Processing
- * @package Ess\M2ePro\Model
+ * Class \Ess\M2ePro\Model\Processing
  */
 class Processing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {

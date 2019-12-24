@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Cron;
 use Magento\Framework\App\Action\Context;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Cron
+ * Class \Ess\M2ePro\Controller\Cron\Index
  */
 class Index extends \Magento\Framework\App\Action\Action
 {

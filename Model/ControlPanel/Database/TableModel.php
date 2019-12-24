@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Exception;
 use \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel as ParentAbstractModel;
 
 /**
- * Class TableModel
- * @package Ess\M2ePro\Model\ControlPanel\Database
+ * Class \Ess\M2ePro\Model\ControlPanel\Database\TableModel
  */
 class TableModel extends \Magento\Framework\DataObject
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
 use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
 /**
- * Class StepTwoModeCategoryValidate
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings\StepTwoModeCategoryValidate
  */
 class StepTwoModeCategoryValidate extends Settings
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template;
 
 /**
- * Class Description
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description
  */
 class Description extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template
 {

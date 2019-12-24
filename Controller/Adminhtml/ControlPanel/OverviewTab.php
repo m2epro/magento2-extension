@@ -13,8 +13,7 @@ use Magento\Backend\App\Action;
 use Magento\Framework\App\ResponseInterface;
 
 /**
- * Class OverviewTab
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\OverviewTab
  */
 class OverviewTab extends Main
 {

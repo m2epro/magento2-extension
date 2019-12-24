@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create;
 
 /**
- * Class Search
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Search
  */
 class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {

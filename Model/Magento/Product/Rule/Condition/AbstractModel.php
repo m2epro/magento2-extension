@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Magento\Product\Rule\Condition;
 use Magento\Rule\Model\Condition\ConditionInterface;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\Magento\Product\Rule\Condition
+ * Class \Ess\M2ePro\Model\Magento\Product\Rule\Condition\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements ConditionInterface
 {

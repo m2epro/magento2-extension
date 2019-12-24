@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Requirements\Renderer;
 
 /**
- * Class AbstractRenderer
- * @package Ess\M2ePro\Model\Requirements\Renderer
+ * Class \Ess\M2ePro\Model\Requirements\Renderer\AbstractRenderer
  */
 abstract class AbstractRenderer extends \Ess\M2ePro\Model\AbstractModel
 {

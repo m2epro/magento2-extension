@@ -19,8 +19,7 @@ use Magento\InventorySalesApi\Api\Data\SalesEventInterface;
 use Ess\M2ePro\Model\MSI\Order\Reserve as MSIReserve;
 
 /**
- * Class SourceDeductionProcessor
- * @package Ess\M2ePro\Plugin\MSI\Magento\InventoryShipping\Observer
+ * Class \Ess\M2ePro\Plugin\MSI\Magento\InventoryShipping\Observer\SourceDeductionProcessor
  */
 class SourceDeductionProcessor extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

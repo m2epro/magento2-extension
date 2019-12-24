@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Connector\Account\Add;
 
 /**
- * Class EntityResponser
- * @package Ess\M2ePro\Model\Walmart\Connector\Account\Add
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Account\Add\EntityResponser
  */
 class EntityResponser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Responser
 {

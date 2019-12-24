@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Setup\Update;
 use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractConfig;
 
 /**
- * Class Config
- * @package Ess\M2ePro\Setup\Update
+ * Class \Ess\M2ePro\Setup\Update\Config
  */
 class Config extends AbstractConfig
 {
@@ -40,6 +39,10 @@ class Config extends AbstractConfig
             ],
             'y19_m07' => [
                 'WalmartSynchAdvancedConditions'
+            ],
+            'y19_m11' => [
+                'ProductsStatisticsImprovements',
+                'WalmartProductIdOverride'
             ]
         ];
     }

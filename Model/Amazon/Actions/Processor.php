@@ -16,8 +16,7 @@ use Ess\M2ePro\Model\Request\Pending\Single;
 use Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel as AbstractCollection;
 
 /**
- * Class Processor
- * @package Ess\M2ePro\Model\Amazon\Actions
+ * Class \Ess\M2ePro\Model\Amazon\Actions\Processor
  */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {

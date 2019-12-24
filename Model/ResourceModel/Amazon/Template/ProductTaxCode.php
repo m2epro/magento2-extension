@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Template;
 
 /**
- * Class ProductTaxCode
- * @package Ess\M2ePro\Model\ResourceModel\Amazon\Template
+ * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductTaxCode
  */
 class ProductTaxCode extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

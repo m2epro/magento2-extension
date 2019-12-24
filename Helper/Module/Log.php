@@ -8,8 +8,7 @@
 namespace Ess\M2ePro\Helper\Module;
 
 /**
- * Class Log
- * @package Ess\M2ePro\Helper\Module
+ * Class \Ess\M2ePro\Helper\Module\Log
  */
 class Log extends \Ess\M2ePro\Helper\AbstractHelper
 {

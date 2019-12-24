@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper;
 
 /**
- * Class Client
- * @package Ess\M2ePro\Helper
+ * Class \Ess\M2ePro\Helper\Client
  */
 class Client extends AbstractHelper
 {

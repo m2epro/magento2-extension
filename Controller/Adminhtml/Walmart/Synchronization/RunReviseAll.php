@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Walmart\Settings;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
- * Class RunReviseAll
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization\RunReviseAll
  */
 class RunReviseAll extends Settings
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Magento\Product;
 use Ess\M2ePro\Model\ResourceModel\MSI\Magento\Product\Collection as MSICollection;
 
 /**
- * Class CollectionFactory
- * @package Ess\M2ePro\Model\ResourceModel\Magento\Product
+ * Class \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory
  */
 class CollectionFactory
 {

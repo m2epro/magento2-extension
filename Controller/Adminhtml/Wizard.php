@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml;
 
 /**
- * Class Wizard
- * @package Ess\M2ePro\Controller\Adminhtml
+ * Class \Ess\M2ePro\Controller\Adminhtml\Wizard
  */
 abstract class Wizard extends Main
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Descri
 use \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description;
 
 /**
- * Class ValidateProductsForAssign
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description\ValidateProductsForAssign
  */
 class ValidateProductsForAssign extends Description
 {

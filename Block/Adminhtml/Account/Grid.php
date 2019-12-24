@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Account;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Account
+ * Class \Ess\M2ePro\Block\Adminhtml\Account\Grid
  */
 class Grid extends AbstractGrid
 {

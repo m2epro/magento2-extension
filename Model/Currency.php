@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model;
 use Magento\Store\Model\Store;
 
 /**
- * Class Currency
- * @package Ess\M2ePro\Model
+ * Class \Ess\M2ePro\Model\Currency
  */
 class Currency extends AbstractModel
 {

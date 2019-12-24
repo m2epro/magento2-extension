@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Log;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid as WidgetAbstractGrid;
 
 /**
- * Class AbstractGrid
- * @package Ess\M2ePro\Block\Adminhtml\Log
+ * Class \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
  */
 abstract class AbstractGrid extends WidgetAbstractGrid
 {

@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 use Ess\M2ePro\Model\Order;
 
 /**
- * Class Ebay
- * @package Ess\M2ePro\Model\HealthStatus\Task\Orders\MagentoCreationFailed
+ * Class \Ess\M2ePro\Model\HealthStatus\Task\Orders\MagentoCreationFailed\Ebay
  */
 class Ebay extends IssueType
 {

@@ -14,8 +14,7 @@ use Magento\InventoryIndexer\Model\StockIndexTableNameResolverInterface;
 use Magento\InventoryCatalogApi\Api\DefaultStockProviderInterface;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\MSI\Magento\Product
+ * Class \Ess\M2ePro\Model\ResourceModel\MSI\Magento\Product\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection
 {

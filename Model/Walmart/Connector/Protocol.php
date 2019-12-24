@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Connector;
 
 /**
- * Class Protocol
- * @package Ess\M2ePro\Model\Walmart\Connector
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Protocol
  */
 class Protocol extends \Ess\M2ePro\Model\Connector\Protocol
 {

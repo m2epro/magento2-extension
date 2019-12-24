@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Magento\Store;
 
 /**
- * Class Group
- * @package Ess\M2ePro\Helper\Magento\Store
+ * Class \Ess\M2ePro\Helper\Magento\Store\Group
  */
 class Group extends \Ess\M2ePro\Helper\AbstractHelper
 {

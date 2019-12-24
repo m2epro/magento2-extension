@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
 /**
- * Class CheckSearchResults
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add\CheckSearchResults
  */
 class CheckSearchResults extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {

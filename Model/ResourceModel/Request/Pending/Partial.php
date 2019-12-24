@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Request\Pending;
 
 /**
- * Class Partial
- * @package Ess\M2ePro\Model\ResourceModel\Request\Pending
+ * Class \Ess\M2ePro\Model\ResourceModel\Request\Pending\Partial
  */
 class Partial extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

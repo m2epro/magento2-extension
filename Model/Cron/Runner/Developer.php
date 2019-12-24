@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Runner;
 
 /**
- * Class Developer
- * @package Ess\M2ePro\Model\Cron\Runner
+ * Class \Ess\M2ePro\Model\Cron\Runner\Developer
  */
 class Developer extends AbstractModel
 {

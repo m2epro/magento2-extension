@@ -15,9 +15,7 @@ use Magento\InventorySalesApi\Api\StockResolverInterface;
 use Magento\InventorySalesApi\Model\GetStockItemDataInterface;
 
 /**
- * Class Inventory
- *
- * @package Ess\M2ePro\Model\MSI\Magento\Product
+ * Class \Ess\M2ePro\Model\MSI\Magento\Product\Inventory
  */
 class Inventory extends AbstractModel
 {

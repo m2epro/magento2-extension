@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Ebay;
 
 /**
- * Class Marketplace
- * @package Ess\M2ePro\Model\ResourceModel\Ebay
+ * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Marketplace
  */
 class Marketplace extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {

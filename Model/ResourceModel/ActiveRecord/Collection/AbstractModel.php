@@ -12,8 +12,7 @@ use Magento\Catalog\Api\Data\CategoryAttributeInterface;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
+ * Class \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
  */
 abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {

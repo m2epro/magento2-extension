@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization;
 
 /**
- * Class Revise
- * @package Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization\Revise
  */
 class Revise extends AbstractModel
 {

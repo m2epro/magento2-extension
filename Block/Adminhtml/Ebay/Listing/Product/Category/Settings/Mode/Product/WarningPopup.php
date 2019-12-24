@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Product;
 
 /**
- * Class WarningPopup
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Product
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Product\WarningPopup
  */
 class WarningPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

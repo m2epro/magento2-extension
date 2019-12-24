@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Module;
 
 /**
- * Class Logger
- * @package Ess\M2ePro\Helper\Module
+ * Class \Ess\M2ePro\Helper\Module\Logger
  */
 class Logger extends \Ess\M2ePro\Helper\AbstractHelper
 {

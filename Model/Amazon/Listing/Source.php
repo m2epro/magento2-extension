@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Amazon\Listing;
 use Ess\M2ePro\Model\Magento\Product\Image;
 
 /**
- * Class Source
- * @package Ess\M2ePro\Model\Amazon\Listing
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Source
  */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {

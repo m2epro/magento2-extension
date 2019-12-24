@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description;
 
 /**
- * Class Assign
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description\Assign
  */
 class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description
 {

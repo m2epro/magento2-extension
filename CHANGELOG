@@ -1,3 +1,27 @@
+* 1.4.3 (r3232) (20/12/2019)
+
+Common: [Fixed] JS error while adding a new child product in Manage Variations pop-up
+Common: [Fixed] "Tracking details were not imported. Reason: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails..."
+Common: [Fixed] Attribute dropdowns do not contain all appropriate Magento attributes
+Common: [Fixed] Cron service cannot find endpoint in some cases
+Common: [Fixed] Tooltips display problem on Magento 2.3.3
+Common: [Fixed] Various exceptions when trying to serialize/unserialize data
+Common: [Fixed] Fix for compact deploy mode
+Common: [Fixed] MSI Shipment creation fixes
+Common: [Fixed] Magento Order was not created. Reason: The password must have at least 7 characters. Leading or trailing spaces will be ignored.
+eBay: [Improved] Mapping option for 3rd Party Listing
+eBay: [Fixed] User ID is not displayed in the Orders grid
+Amazon: [Improved] Allow sending 250 characters in the Search Terms field (Amazon)
+Amazon: [Improved] Amazon order prefixes [prime|afn|b2b]
+Amazon: [Fixed] Do not download fulfillment details in some cases
+Walmart: [Added] Walmart Product ID (GTIN, EAN, UPC, ISBN) exemption
+Walmart: [Improved] Walmart Consumer ID field Validation (the US only)
+Walmart: [Fixed] Do not revise promotions if they are empty  in the Extension and the Channel
+Walmart: [Fixed] Exception for order view page if there are 2+ items from the same listing
+Walmart: [Fixed] Category policy is not assigned on Auto Add Rules
+Walmart: [Fixed] Order was not shipped. Reason: Request content is invalid. Unable to process this request.
+Walmart: [Fixed] Validation Failed. The Server response data is not valid
+
 * 1.4.2 (r3104) (24/09/2019)
 
 * Common: [Added] Migration from 6.5.6 to 1.4.2

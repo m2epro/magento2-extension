@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Moving;
 
 /**
- * Class TryToMoveToListing
- * @package Ess\M2ePro\Controller\Adminhtml\Listing\Moving
+ * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Moving\TryToMoveToListing
  */
 class TryToMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
 {

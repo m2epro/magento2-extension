@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Magento\Order;
 use Ess\M2ePro\Model\AbstractModel;
 
 /**
- * Class PaymentTransaction
- * @package Ess\M2ePro\Model\Magento\Order
+ * Class \Ess\M2ePro\Model\Magento\Order\PaymentTransaction
  */
 class PaymentTransaction extends AbstractModel
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relatio
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
 
 /**
- * Class Options
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\Options
  */
 class Options extends AbstractModel
 {

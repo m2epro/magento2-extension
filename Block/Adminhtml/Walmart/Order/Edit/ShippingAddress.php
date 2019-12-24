@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Order\Edit;
 
 /**
- * Class ShippingAddress
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Order\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Order\Edit\ShippingAddress
  */
 class ShippingAddress extends \Ess\M2ePro\Block\Adminhtml\Order\Edit\ShippingAddress
 {

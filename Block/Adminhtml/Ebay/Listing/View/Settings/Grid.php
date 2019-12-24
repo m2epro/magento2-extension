@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings;
 use Ess\M2ePro\Model\Ebay\Template\Manager;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {

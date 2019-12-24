@@ -13,8 +13,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Walmart\Account;
 
 /**
- * Class Order
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\Order
  */
 class Order extends AbstractForm
 {
@@ -325,7 +324,6 @@ HTML
             'text',
             [
                 'container_id' => 'magento_orders_number_prefix_container',
-                'class' => 'M2ePro-account-order-number-prefix',
                 'name' => 'magento_orders_settings[number][prefix][prefix]',
                 'label' => $this->__('Prefix'),
                 'value' => $formData['magento_orders_settings']['number']['prefix']['prefix'],
@@ -617,66 +615,7 @@ HTML
 
         $this->jsTranslator->addTranslations([
             'No Customer entry is found for specified ID.' => $this->__('No Customer entry is found for specified ID.'),
-            'Prefix length should not be greater than 5 characters.' =>
-                $this->__('Prefix length should not be greater than 5 characters.'),
         ]);
-
-        $formData['magento_orders_settings']['listing']['mode'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['listing']['mode']
-        );
-        $formData['magento_orders_settings']['listing']['store_mode'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['listing']['store_mode']
-        );
-        $formData['magento_orders_settings']['listing']['store_id'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['listing']['store_id']
-        );
-
-        $formData['magento_orders_settings']['listing_other']['mode'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['listing_other']['mode']
-        );
-        $formData['magento_orders_settings']['listing_other']['store_id'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['listing_other']['store_id']
-        );
-        $formData['magento_orders_settings']['listing_other']['product_mode'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['listing_other']['product_mode']
-        );
-
-        $formData['magento_orders_settings']['customer']['mode'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['customer']['mode']
-        );
-        $formData['magento_orders_settings']['customer']['id'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['customer']['id']
-        );
-        $formData['magento_orders_settings']['customer']['website_id'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['customer']['website_id']
-        );
-        $formData['magento_orders_settings']['customer']['group_id'] = $this->getHelper('Data')->escapeJs(
-            $formData['magento_orders_settings']['customer']['group_id']
-        );
-
-        $this->js->add(<<<JS
-
-    M2ePro.formData.magento_orders_listings_mode = "{$formData['magento_orders_settings']['listing']['mode']}";
-    M2ePro.formData.magento_orders_listings_store_mode
-                             = "{$formData['magento_orders_settings']['listing']['store_mode']}";
-    M2ePro.formData.magento_orders_listings_store_id = "{$formData['magento_orders_settings']['listing']['store_id']}";
-
-    M2ePro.formData.magento_orders_listings_other_mode
-                             = "{$formData['magento_orders_settings']['listing_other']['mode']}";
-    M2ePro.formData.magento_orders_listings_other_store_id
-                             = "{$formData['magento_orders_settings']['listing_other']['store_id']}";
-    M2ePro.formData.magento_orders_listings_other_product_mode
-                             = "{$formData['magento_orders_settings']['listing_other']['product_mode']}";
-
-    M2ePro.formData.magento_orders_customer_mode = "{$formData['magento_orders_settings']['customer']['mode']}";
-    M2ePro.formData.magento_orders_customer_id = "{$formData['magento_orders_settings']['customer']['id']}";
-    M2ePro.formData.magento_orders_customer_new_website_id
-                             = "{$formData['magento_orders_settings']['customer']['website_id']}";
-    M2ePro.formData.magento_orders_customer_new_group_id
-                             = "{$formData['magento_orders_settings']['customer']['group_id']}";
-
-JS
-        );
 
         return parent::_prepareForm();
     }

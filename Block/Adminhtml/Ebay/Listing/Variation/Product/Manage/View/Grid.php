@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\View;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\View
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\View\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {

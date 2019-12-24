@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model;
 
 /**
- * Class ProductChange
- * @package Ess\M2ePro\Model
+ * Class \Ess\M2ePro\Model\ProductChange
  */
 class ProductChange extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {

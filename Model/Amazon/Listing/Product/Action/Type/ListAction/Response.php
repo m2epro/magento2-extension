@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction;
 
 /**
- * Class Response
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Response
  */
 class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Listing;
 
 /**
- * Class Moving
- * @package Ess\M2ePro\Controller\Adminhtml\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
  */
 abstract class Moving extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {

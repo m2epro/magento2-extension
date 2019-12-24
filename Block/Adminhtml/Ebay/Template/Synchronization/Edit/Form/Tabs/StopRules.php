@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Ebay\Template\Synchronization;
 use Magento\Framework\Message\MessageInterface;
 
 /**
- * Class StopRules
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\StopRules
  */
 class StopRules extends AbstractTab
 {

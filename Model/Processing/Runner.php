@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Processing;
 
 /**
- * Class Runner
- * @package Ess\M2ePro\Model\Processing
+ * Class \Ess\M2ePro\Model\Processing\Runner
  */
 abstract class Runner extends \Ess\M2ePro\Model\AbstractModel
 {

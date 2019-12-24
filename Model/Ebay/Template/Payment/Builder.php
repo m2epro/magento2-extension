@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Template\Payment;
 
 /**
- * Class Builder
- * @package Ess\M2ePro\Model\Ebay\Template\Payment
+ * Class \Ess\M2ePro\Model\Ebay\Template\Payment\Builder
  */
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 {

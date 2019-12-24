@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Order\ShippingAddress;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Order\ShippingAddress
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Order\ShippingAddress\Edit
  */
 class Edit extends Order
 {

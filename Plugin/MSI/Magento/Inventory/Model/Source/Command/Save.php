@@ -8,8 +8,7 @@
 namespace Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\Source\Command;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\Source\Command\Save
+ * Class \Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\Source\Command\Save\Save
  */
 class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

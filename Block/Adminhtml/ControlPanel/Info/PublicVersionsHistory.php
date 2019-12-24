@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Info;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class PublicVersionsHistory
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Info
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\PublicVersionsHistory
  */
 class PublicVersionsHistory extends AbstractBlock
 {

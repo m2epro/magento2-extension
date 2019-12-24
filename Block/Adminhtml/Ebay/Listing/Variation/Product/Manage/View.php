@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
 /**
- * Class View
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\View
  */
 class View extends AbstractContainer
 {

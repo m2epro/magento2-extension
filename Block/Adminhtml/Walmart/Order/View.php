@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Order;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
 /**
- * Class View
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Order
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Order\View
  */
 class View extends AbstractContainer
 {

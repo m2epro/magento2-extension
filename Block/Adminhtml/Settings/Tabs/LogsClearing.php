@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs;
 use \Ess\M2ePro\Model\Log\Clearing as LogClearing;
 
 /**
- * Class LogsClearing
- * @package Ess\M2ePro\Block\Adminhtml\Settings\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\LogsClearing
  */
 class LogsClearing extends AbstractTab
 {

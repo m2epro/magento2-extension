@@ -14,8 +14,7 @@
 namespace Ess\M2ePro\Model\Walmart;
 
 /**
- * Class ThrottlingManager
- * @package Ess\M2ePro\Model\Walmart
+ * Class \Ess\M2ePro\Model\Walmart\ThrottlingManager
  */
 class ThrottlingManager extends \Ess\M2ePro\Model\AbstractModel
 {

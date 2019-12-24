@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Other;
 
 /**
- * Class Log
- * @package Ess\M2ePro\Model\ResourceModel\Listing\Other
+ * Class \Ess\M2ePro\Model\ResourceModel\Listing\Other\Log
  */
 class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
 {

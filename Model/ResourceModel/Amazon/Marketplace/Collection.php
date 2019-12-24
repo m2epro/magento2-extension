@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Marketplace;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Amazon\Marketplace
+ * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Marketplace\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Child\AbstractModel
 {

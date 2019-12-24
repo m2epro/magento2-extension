@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Module;
 
 /**
- * Class Exception
- * @package Ess\M2ePro\Helper\Module
+ * Class \Ess\M2ePro\Helper\Module\Exception
  */
 class Exception extends \Ess\M2ePro\Helper\AbstractHelper
 {

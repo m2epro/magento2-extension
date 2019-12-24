@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
 /**
- * Class Settings
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
  */
 abstract class Settings extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 {

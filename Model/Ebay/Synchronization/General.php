@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization;
 
 /**
- * Class General
- * @package Ess\M2ePro\Model\Ebay\Synchronization
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\General
  */
 class General extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
 {

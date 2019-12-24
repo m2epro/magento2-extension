@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Marketplaces;
 
 /**
- * Class MotorsEpids
- * @package Ess\M2ePro\Model\Ebay\Synchronization\Marketplaces
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\Marketplaces\MotorsEpids
  */
 class MotorsEpids extends AbstractModel
 {

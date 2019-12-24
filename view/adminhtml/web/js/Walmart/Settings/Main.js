@@ -13,6 +13,10 @@ define([
 
                 var result = false;
 
+                if ($('product_id_override_mode').value == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart_Configuration::PRODUCT_ID_OVERRIDE_MODE_ALL')) {
+                    return true;
+                }
+
                 $$('.M2ePro-walmart-required-identifier-setting').each(function(obj) {
                     if (obj.value > 0) {
                         result = true;

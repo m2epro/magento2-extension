@@ -76,7 +76,7 @@ define([
             specifics.each(function(specific) {
 
                 self.dictionaryHelper.isSpecificTypeContainer(specific) ? containers.push(specific)
-                    : rows.push(specific);
+                                                                        : rows.push(specific);
                 all.push(specific);
             });
 
@@ -235,6 +235,7 @@ define([
             var renderer = new AmazonTemplateDescriptionCategorySpecificBlockGridAddSpecificRenderer();
             renderer.setSpecificsHandler(this.specificHandler);
             renderer.setIndexedXpath(this.indexedXPath);
+            renderer.setBlockRenderer(this);
 
             renderer.childAllSpecifics  = this.childFilteredSpecifics.all;
             renderer.childRowsSpecifics = this.childFilteredSpecifics.rows;
@@ -290,6 +291,15 @@ define([
         {
             var deleteResult = $super(event);
             this.throwEventsToParent();
+
+            // Product data injection to Specifics. Empty block should be removed
+            var parentXpath = this.getParentIndexedXpath();
+            if (parentXpath &&
+                parentXpath === this.getRootIndexedXpath() + '/Product-1' &&
+                this.getRenderedSpecificsInBlock(parentXpath).length === 0
+            ) {
+                $(parentXpath + '_remove_button').click();
+            }
 
             return deleteResult;
         },

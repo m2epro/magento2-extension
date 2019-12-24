@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction;
 
 /**
- * Class GetCategorySpecificHtml
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction\GetCategorySpecificHtml
  */
 class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
 {

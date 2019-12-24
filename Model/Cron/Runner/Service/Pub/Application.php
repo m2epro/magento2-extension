@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Runner\Service\Pub;
 
 /**
- * Class Application
- * @package Ess\M2ePro\Model\Cron\Runner\Service\Pub
+ * Class \Ess\M2ePro\Model\Cron\Runner\Service\Pub\Application
  */
 class Application implements \Magento\Framework\AppInterface
 {

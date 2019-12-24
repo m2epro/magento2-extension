@@ -11,9 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Connector\Product;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator;
 
 /**
- * Class Requester
- *
- * @package Ess\M2ePro\Model\Walmart\Connector\Product
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
  */
 abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Requester
 {

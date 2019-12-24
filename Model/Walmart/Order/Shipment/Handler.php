@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Order\Shipment;
 use \Ess\M2ePro\Helper\Data as Helper;
 
 /**
- * Class Handler
- * @package Ess\M2ePro\Model\Walmart\Order\Shipment
+ * Class \Ess\M2ePro\Model\Walmart\Order\Shipment\Handler
  */
 class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
 {

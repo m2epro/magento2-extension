@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs;
 
 /**
- * Class Search
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs\Search
  */
 class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

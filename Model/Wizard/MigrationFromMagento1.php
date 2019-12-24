@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Wizard;
 use Ess\M2ePro\Model\Wizard;
 
 /**
- * Class MigrationFromMagento1
- * @package Ess\M2ePro\Model\Wizard
+ * Class \Ess\M2ePro\Model\Wizard\MigrationFromMagento1
  */
 class MigrationFromMagento1 extends Wizard
 {

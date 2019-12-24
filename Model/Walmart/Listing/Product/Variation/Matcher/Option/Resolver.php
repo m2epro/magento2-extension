@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Matcher\Option;
 
 /**
- * Class Resolver
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Matcher\Option
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Matcher\Option\Resolver
  */
 class Resolver extends \Ess\M2ePro\Model\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks;
 
 /**
- * Class Receive
- * @package Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks\Receive
  */
 class Receive extends AbstractModel
 {

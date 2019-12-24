@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Data\Cache;
 
 /**
- * Class Runtime
- * @package Ess\M2ePro\Helper\Data\Cache
+ * Class \Ess\M2ePro\Helper\Data\Cache\Runtime
  */
 class Runtime extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
 {

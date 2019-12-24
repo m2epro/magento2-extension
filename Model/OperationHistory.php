@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model;
 use \Ess\M2ePro\Helper\Data as Helper;
 
 /**
- * Class OperationHistory
- * @package Ess\M2ePro\Model
+ * Class \Ess\M2ePro\Model\OperationHistory
  */
 class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {

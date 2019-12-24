@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\HealthStatus;
 use Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\HealthStatus
+ * Class \Ess\M2ePro\Controller\Adminhtml\HealthStatus\Save
  */
 class Save extends HealthStatus
 {

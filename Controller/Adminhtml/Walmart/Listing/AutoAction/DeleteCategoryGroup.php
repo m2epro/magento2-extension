@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction;
 
 /**
- * Class DeleteCategoryGroup
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction\DeleteCategoryGroup
  */
 class DeleteCategoryGroup extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
 {

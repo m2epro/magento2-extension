@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Stop;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child;
 
 /**
- * Class Validator
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Stop
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Stop\Validator
  */
 class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Validator
 {

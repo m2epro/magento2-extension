@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
 /**
- * Class MerchantFulfillment
- * @package Ess\M2ePro\Helper\Component\Amazon
+ * Class \Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment
  */
 class MerchantFulfillment extends \Ess\M2ePro\Helper\AbstractHelper
 {

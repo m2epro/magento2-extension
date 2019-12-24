@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
 /**
- * Class NewAction
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\NewAction
  */
 class NewAction extends Template
 {

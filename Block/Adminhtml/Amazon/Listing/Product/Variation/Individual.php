@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation;
 
 /**
- * Class Individual
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Individual
  */
 abstract class Individual extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

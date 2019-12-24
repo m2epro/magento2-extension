@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts;
 use Ess\M2ePro\Model\Processing\Runner;
 
 /**
- * Class Update
- * @package Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts
+ * Class \Ess\M2ePro\Model\Walmart\Synchronization\ListingsProducts\Update
  */
 class Update extends AbstractModel
 {

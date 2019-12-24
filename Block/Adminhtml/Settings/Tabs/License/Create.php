@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License;
 
 /**
- * Class Create
- * @package Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License
+ * Class \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License\Create
  */
 class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

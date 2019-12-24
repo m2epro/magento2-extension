@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise;
 use \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Request as ListActionRequest;
 
 /**
- * Class Request
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise\Request
  */
 class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Request
 {

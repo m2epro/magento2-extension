@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Magento\Framework\Message\MessageInterface;
 
 /**
- * Class Repricing
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Repricing
  */
 class Repricing extends AbstractForm
 {

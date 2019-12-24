@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Requirements\Checks;
 
 /**
- * Class AbstractCheck
- * @package Ess\M2ePro\Model\Requirements\Checks
+ * Class \Ess\M2ePro\Model\Requirements\Checks\AbstractCheck
  */
 abstract class AbstractCheck extends \Ess\M2ePro\Model\AbstractModel
 {

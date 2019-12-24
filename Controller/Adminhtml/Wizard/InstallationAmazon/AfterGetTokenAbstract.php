@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 use Ess\M2ePro\Model\Amazon\Account as AccountModel;
 
 /**
- * Class AfterGetTokenAbstract
- * @package Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon
+ * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon\AfterGetTokenAbstract
  */
 abstract class AfterGetTokenAbstract extends InstallationAmazon
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model;
 
 /**
- * Class Exception
- * @package Ess\M2ePro\Model
+ * Class \Ess\M2ePro\Model\Exception
  */
 class Exception extends \Exception
 {

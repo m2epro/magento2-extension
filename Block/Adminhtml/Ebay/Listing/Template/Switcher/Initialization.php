@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher;
 
 /**
- * Class Initialization
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher\Initialization
  */
 class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

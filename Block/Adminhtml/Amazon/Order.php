@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
 /**
- * Class Order
- * @package Ess\M2ePro\Block\Adminhtml\Amazon
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Order
  */
 class Order extends AbstractContainer
 {

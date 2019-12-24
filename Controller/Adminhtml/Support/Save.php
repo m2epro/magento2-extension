@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Support;
 use Ess\M2ePro\Controller\Adminhtml\Support;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Support
+ * Class \Ess\M2ePro\Controller\Adminhtml\Support\Save
  */
 class Save extends Support
 {

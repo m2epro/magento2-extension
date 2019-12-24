@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Template;
 
 /**
- * Class Synchronization
- * @package Ess\M2ePro\Model\ResourceModel\Amazon\Template
+ * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Template\Synchronization
  */
 class Synchronization extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {

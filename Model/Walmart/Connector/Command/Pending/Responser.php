@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Connector\Command\Pending;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Walmart\Connector\Command\Pending
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Responser
  */
 abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {

@@ -11,8 +11,7 @@ use Magento\InventoryApi\Api\StockRepositoryInterface;
 use Magento\InventorySalesApi\Model\GetAssignedSalesChannelsForStockInterface;
 
 /**
- * Class ReplaceSalesChannelsDataForStock
- * @package Ess\M2ePro\Plugin\MSI\Magento\InventorySales\Model\ResourceModel
+ * Class \Ess\M2ePro\Plugin\MSI\Magento\InventorySales\Model\ResourceModel\ReplaceSalesChannelsDataForStock
  */
 class ReplaceSalesChannelsDataForStock extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

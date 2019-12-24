@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\Other;
 use \Ess\M2ePro\Model\Walmart\Listing\Product;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\Other
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\Other\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGrid
 {

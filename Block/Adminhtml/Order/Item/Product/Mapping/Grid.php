@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Mapping;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Mapping
+ * Class \Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Mapping\Grid
  */
 class Grid extends AbstractGrid
 {

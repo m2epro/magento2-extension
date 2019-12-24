@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml;
 
 /**
- * Class HealthStatus
- * @package Ess\M2ePro\Block\Adminhtml
+ * Class \Ess\M2ePro\Block\Adminhtml\HealthStatus
  */
 class HealthStatus extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {

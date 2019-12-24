@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer\Indexes;
 
 /**
- * Class Disable
- * @package Ess\M2ePro\Observer\Indexes
+ * Class \Ess\M2ePro\Observer\Indexes\Disable
  */
 class Disable extends \Ess\M2ePro\Observer\AbstractModel
 {

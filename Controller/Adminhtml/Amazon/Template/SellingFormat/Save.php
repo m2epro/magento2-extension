@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 use Ess\M2ePro\Helper\Component\Amazon;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat\Save
  */
 class Save extends Template
 {

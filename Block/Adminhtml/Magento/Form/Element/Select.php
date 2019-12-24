@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Form\Element;
 
 /**
- * Class Select
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Form\Element
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select
  */
 class Select extends \Magento\Framework\Data\Form\Element\Select
 {

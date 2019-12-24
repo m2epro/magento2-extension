@@ -13,8 +13,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ResourceConnection;
 
 /**
- * Class Maintenance
- * @package Ess\M2ePro\Helper\Module
+ * Class \Ess\M2ePro\Helper\Module\Maintenance
  */
 class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
 {

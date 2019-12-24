@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\Amazon\Order as AmazonOrder;
 use Ess\M2ePro\Model\Walmart\Order as WalmartOrder;
 
 /**
- * Class ProxyObject
- * @package Ess\M2ePro\Model\Order
+ * Class \Ess\M2ePro\Model\Order\ProxyObject
  */
 abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 {
@@ -24,11 +23,11 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
     protected $currency;
 
     /** @var EbayOrder|AmazonOrder|WalmartOrder */
-    protected $order ;
+    protected $order;
 
     protected $items;
 
-    /** @var $store \Magento\Store\Model\Store */
+    /** @var \Magento\Store\Model\Store */
     protected $store;
 
     protected $addressData = [];

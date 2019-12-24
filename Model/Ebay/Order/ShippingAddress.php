@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Order;
 
 /**
- * Class ShippingAddress
- * @package Ess\M2ePro\Model\Ebay\Order
+ * Class \Ess\M2ePro\Model\Ebay\Order\ShippingAddress
  */
 class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
 {

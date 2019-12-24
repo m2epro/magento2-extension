@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Log\Order;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Log\Order
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Log\Order\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractGrid
 {

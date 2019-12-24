@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Task;
 
 /**
- * Class ArchiveOrdersEntities
- * @package Ess\M2ePro\Model\Cron\Task
+ * Class \Ess\M2ePro\Model\Cron\Task\ArchiveOrdersEntities
  */
 class ArchiveOrdersEntities extends AbstractModel
 {

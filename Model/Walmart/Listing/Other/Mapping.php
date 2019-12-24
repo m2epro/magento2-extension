@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Other;
 
 /**
- * Class Mapping
- * @package Ess\M2ePro\Model\Walmart\Listing\Other
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Other\Mapping
  */
 class Mapping extends \Ess\M2ePro\Model\AbstractModel
 {

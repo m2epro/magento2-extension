@@ -17,8 +17,7 @@ use Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Walmart\Connector\Product\ListAction
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Product\ListAction\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
 {

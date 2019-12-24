@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping;
 
 /**
- * Class Service
- * @package Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping
+ * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping\Service
  */
 class Service extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Description;
 
 /**
- * Class Renderer
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\Description
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Description\Renderer
  */
 class Renderer extends \Ess\M2ePro\Model\AbstractModel
 {

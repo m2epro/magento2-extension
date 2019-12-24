@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Setup;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
- * Class LoggerFactory
- * @package Ess\M2ePro\Setup
+ * Class \Ess\M2ePro\Setup\LoggerFactory
  */
 class LoggerFactory
 {

@@ -95,9 +95,8 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 $this->getHelper('Module\Translation')->__(
-                    "This Item {$itemId} cannot be accessed on eBay, so the Relist action cannot be executed for it.
-                    M2E Pro has automatically detected this issue and run the List action to solve it basing
-                    on the List Rule of the Synchronization Policy."
+                    "This Item {$itemId} was not relisted as it cannot be accessed on eBay.
+                    Instead, M2E Pro will run the List action based on your Synchronization Rules"
                 ),
                 Message::TYPE_WARNING
             );

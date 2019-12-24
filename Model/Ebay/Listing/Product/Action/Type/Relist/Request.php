@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Relist;
 
 /**
- * Class Request
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Relist
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Relist\Request
  */
 class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 {

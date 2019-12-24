@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization\OtherListings;
 
 /**
- * Class Sku
- * @package Ess\M2ePro\Model\Ebay\Synchronization\OtherListings
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\OtherListings\Sku
  */
 class Sku extends AbstractModel
 {

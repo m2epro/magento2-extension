@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Sellercentral;
 use Ess\M2ePro\Model\Listing\Log;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Sellercentral
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Sellercentral\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {

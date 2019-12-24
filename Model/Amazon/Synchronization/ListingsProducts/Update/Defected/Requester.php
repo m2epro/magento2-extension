@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Defected;
 
 /**
- * Class Requester
- * @package Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Defected
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Defected\Requester
  */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defected\ItemsRequester
 {

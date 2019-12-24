@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Tabs;
 
 /**
- * Class AbstractHorizontalTabs
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs
  */
 abstract class AbstractHorizontalTabs extends AbstractTabs
 {

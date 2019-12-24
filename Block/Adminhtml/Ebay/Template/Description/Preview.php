@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class Preview
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Preview
  */
 class Preview extends AbstractBlock
 {

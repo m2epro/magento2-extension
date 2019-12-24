@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Helper\View;
 use Ess\M2ePro\Helper\Factory;
 
 /**
- * Class ControlPanel
- * @package Ess\M2ePro\Helper\View
+ * Class \Ess\M2ePro\Helper\View\ControlPanel
  */
 class ControlPanel extends \Ess\M2ePro\Helper\AbstractHelper
 {

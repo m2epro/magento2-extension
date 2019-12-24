@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General;
 
 /**
- * Class AccountPickupStore
- * @package Ess\M2ePro\Model\Ebay\Synchronization\General
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\General\AccountPickupStore
  */
 class AccountPickupStore extends AbstractModel
 {

@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\View\Grouped\AbstractGrid;
 use Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Product\GridTrait;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Product\View\Grouped
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Product\View\Grouped\Grid
  */
 class Grid extends AbstractGrid
 {

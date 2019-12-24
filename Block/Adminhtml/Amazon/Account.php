@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon;
 
 /**
- * Class Account
- * @package Ess\M2ePro\Block\Adminhtml\Amazon
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account
  */
 class Account extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

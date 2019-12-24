@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation;
 
 /**
- * Class ChildRelation
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation
  */
 class ChildRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\PhysicalUnit
 {

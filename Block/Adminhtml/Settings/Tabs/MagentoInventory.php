@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs;
 
 /**
- * Class MagentoInventory
- * @package Ess\M2ePro\Block\Adminhtml\Settings\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\MagentoInventory
  */
 class MagentoInventory extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {

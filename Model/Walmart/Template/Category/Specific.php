@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Template\Category;
 
 /**
- * Class Specific
- * @package Ess\M2ePro\Model\Walmart\Template\Category
+ * Class \Ess\M2ePro\Model\Walmart\Template\Category\Specific
  */
 class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {

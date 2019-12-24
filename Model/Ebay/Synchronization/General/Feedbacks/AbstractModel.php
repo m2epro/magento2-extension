@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Synchronization\General\AbstractModel
 {

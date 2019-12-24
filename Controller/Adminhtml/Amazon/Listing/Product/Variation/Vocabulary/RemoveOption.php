@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocab
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
- * Class RemoveOption
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocabulary
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocabulary\RemoveOption
  */
 class RemoveOption extends Main
 {

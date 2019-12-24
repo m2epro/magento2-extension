@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingOverride;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingOverride
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingOverride\Edit
  */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 {

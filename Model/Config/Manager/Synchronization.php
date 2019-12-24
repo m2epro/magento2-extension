@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Config\Manager;
 
 /**
- * Class Synchronization
- * @package Ess\M2ePro\Model\Config\Manager
+ * Class \Ess\M2ePro\Model\Config\Manager\Synchronization
  */
 class Synchronization extends AbstractModel
 {

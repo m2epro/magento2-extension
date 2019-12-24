@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 
 /**
- * Class AutoAction
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
  */
 abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 {

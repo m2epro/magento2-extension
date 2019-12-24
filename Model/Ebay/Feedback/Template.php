@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Feedback;
 
 /**
- * Class Template
- * @package Ess\M2ePro\Model\Ebay\Feedback
+ * Class \Ess\M2ePro\Model\Ebay\Feedback\Template
  */
 class Template extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {

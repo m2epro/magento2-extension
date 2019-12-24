@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin;
 
 /**
- * Class NewAsinPopup
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin\NewAsinPopup
  */
 class NewAsinPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

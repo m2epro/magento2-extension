@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping;
 
 /**
- * Class ViewGrid
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping\ViewGrid
  */
 class ViewGrid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
 {

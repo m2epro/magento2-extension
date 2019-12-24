@@ -10,8 +10,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Listing\Product;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
 /**
- * Class ShowOthersListingsProductsFilter
- * @package Ess\M2ePro\Block\Adminhtml\Listing\Product
+ * Class \Ess\M2ePro\Block\Adminhtml\Listing\Product\ShowOthersListingsProductsFilter
  */
 class ShowOthersListingsProductsFilter extends AbstractContainer
 {

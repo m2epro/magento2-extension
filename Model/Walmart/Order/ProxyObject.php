@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Order;
 
 /**
- * Class ProxyObject
- * @package Ess\M2ePro\Model\Walmart\Order
+ * Class \Ess\M2ePro\Model\Walmart\Order\ProxyObject
  */
 class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 {
@@ -93,7 +92,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             return '';
         }
 
-        return $this->order->getWalmartAccount()->getMagentoOrdersNumberPrefix();
+        return $this->order->getWalmartAccount()->getMagentoOrdersNumberRegularPrefix();
     }
 
     //########################################

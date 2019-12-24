@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Traits;
 
 /**
- * Trait BlockTrait
- * @package Ess\M2ePro\Block\Adminhtml\Traits
+ * Trait \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait
  */
 trait BlockTrait
 {

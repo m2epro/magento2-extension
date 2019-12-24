@@ -15,8 +15,7 @@ use Ess\M2ePro\Model\Setup\Upgrade\Entity\Factory;
 use Magento\Framework\Module\Setup;
 
 /**
- * Class Manager
- * @package Ess\M2ePro\Model\Setup\Upgrade
+ * Class \Ess\M2ePro\Model\Setup\Upgrade\Manager
  */
 class Manager extends AbstractModel
 {

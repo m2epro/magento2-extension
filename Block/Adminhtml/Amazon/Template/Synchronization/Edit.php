@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit
  */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 {

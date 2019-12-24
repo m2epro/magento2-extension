@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Template\SellingFormat;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit\Form
  */
 class Form extends AbstractForm
 {

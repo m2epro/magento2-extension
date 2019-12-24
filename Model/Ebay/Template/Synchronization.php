@@ -13,8 +13,7 @@
 namespace Ess\M2ePro\Model\Ebay\Template;
 
 /**
- * Class Synchronization
- * @package Ess\M2ePro\Model\Ebay\Template
+ * Class \Ess\M2ePro\Model\Ebay\Template\Synchronization
  */
 class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {

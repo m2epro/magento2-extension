@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Order\Edit;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class ShippingAddress
- * @package Ess\M2ePro\Block\Adminhtml\Order\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Order\Edit\ShippingAddress
  */
 abstract class ShippingAddress extends AbstractBlock
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace;
 
 /**
- * Class isExistDeletedCategories
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace\isExistDeletedCategories
  */
 class isExistDeletedCategories extends Marketplace
 {

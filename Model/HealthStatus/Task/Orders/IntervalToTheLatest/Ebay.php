@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 
 /**
- * Class Ebay
- * @package Ess\M2ePro\Model\HealthStatus\Task\Orders\IntervalToTheLatest
+ * Class \Ess\M2ePro\Model\HealthStatus\Task\Orders\IntervalToTheLatest\Ebay
  */
 class Ebay extends IssueType
 {

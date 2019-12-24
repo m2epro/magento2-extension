@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders;
 use Ess\M2ePro\Model\Order;
 
 /**
- * Class CreateFailed
- * @package Ess\M2ePro\Model\Amazon\Synchronization\Orders
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\Orders\CreateFailed
  */
 class CreateFailed extends AbstractModel
 {

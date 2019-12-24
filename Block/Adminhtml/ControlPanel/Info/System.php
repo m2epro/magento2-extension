@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Info;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class System
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Info
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\System
  */
 class System extends AbstractBlock
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Produc
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode;
 
 /**
- * Class ViewPopup
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode\ViewPopup
  */
 class ViewPopup extends ProductTaxCode
 {

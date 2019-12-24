@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product;
 
 /**
- * Class EditIdentifier
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\EditIdentifier
  */
 class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {

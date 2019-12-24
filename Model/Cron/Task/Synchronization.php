@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Task;
 
 /**
- * Class Synchronization
- * @package Ess\M2ePro\Model\Cron\Task
+ * Class \Ess\M2ePro\Model\Cron\Task\Synchronization
  */
 class Synchronization extends AbstractModel
 {

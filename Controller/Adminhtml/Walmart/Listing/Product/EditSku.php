@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator;
 
 /**
- * Class EditSku
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\EditSku
  */
 class EditSku extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {

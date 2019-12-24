@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Observer
+ * Class \Ess\M2ePro\Observer\AbstractModel
  */
 abstract class AbstractModel implements \Magento\Framework\Event\ObserverInterface
 {

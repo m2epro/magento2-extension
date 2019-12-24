@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors;
 
 /**
- * Class ClearAddedMotorsData
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors\ClearAddedMotorsData
  */
 class ClearAddedMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 {

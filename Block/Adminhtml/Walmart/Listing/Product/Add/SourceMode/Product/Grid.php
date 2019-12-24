@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Product;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Product
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Product\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {

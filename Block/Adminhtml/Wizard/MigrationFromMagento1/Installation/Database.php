@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation;
 use Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation;
 
 /**
- * Class Database
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Database
  */
 class Database extends Installation
 {

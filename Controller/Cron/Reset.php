@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Cron;
 use Magento\Framework\App\Action\Context;
 
 /**
- * Class Reset
- * @package Ess\M2ePro\Controller\Cron
+ * Class \Ess\M2ePro\Controller\Cron\Reset
  */
 class Reset extends \Magento\Framework\App\Action\Action
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Widget;
 
 /**
- * Class Breadcrumb
- * @package Ess\M2ePro\Block\Adminhtml\Widget
+ * Class \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
  */
 class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

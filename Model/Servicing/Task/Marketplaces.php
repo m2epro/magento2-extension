@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Servicing\Task;
 
 /**
- * Class Marketplaces
- * @package Ess\M2ePro\Model\Servicing\Task
+ * Class \Ess\M2ePro\Model\Servicing\Task\Marketplaces
  */
 class Marketplaces extends \Ess\M2ePro\Model\Servicing\Task
 {

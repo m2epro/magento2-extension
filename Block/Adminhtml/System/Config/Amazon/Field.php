@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\System\Config\Amazon;
 
 /**
- * Class Field
- * @package Ess\M2ePro\Block\Adminhtml\System\Config\Amazon
+ * Class \Ess\M2ePro\Block\Adminhtml\System\Config\Amazon\Field
  */
 class Field extends \Ess\M2ePro\Block\Adminhtml\System\Config\Integration
 {

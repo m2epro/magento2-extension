@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection;
 use Ess\M2ePro\Block\Adminhtml\Magento\Context\Template;
 
 /**
- * Class Installation
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\Installation
  */
 class Installation extends AbstractInspection
 {

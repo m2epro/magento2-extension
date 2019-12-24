@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks;
 
 /**
- * Class Response
- * @package Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks\Response
  */
 class Response extends \Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks\AbstractModel
 {

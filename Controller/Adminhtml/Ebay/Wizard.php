@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
- * Class Wizard
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Wizard
  */
 abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 {

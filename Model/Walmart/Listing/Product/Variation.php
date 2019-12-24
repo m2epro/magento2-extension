@@ -15,8 +15,7 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product;
 use Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion as Promotion;
 
 /**
- * Class Variation
- * @package Ess\M2ePro\Model\Walmart\Listing\Product
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
  */
 class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation;
 use Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation;
 
 /**
- * Class Settings
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\Settings
  */
 class Settings extends Installation
 {

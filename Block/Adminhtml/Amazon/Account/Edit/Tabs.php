@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit;
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 
 /**
- * Class Tabs
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs
  */
 class Tabs extends AbstractTabs
 {

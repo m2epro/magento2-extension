@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist;
 
 /**
- * Class Response
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist\Response
  */
 class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
 {

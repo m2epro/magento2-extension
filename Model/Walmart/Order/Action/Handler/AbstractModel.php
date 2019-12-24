@@ -9,24 +9,29 @@
 namespace Ess\M2ePro\Model\Walmart\Order\Action\Handler;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\Walmart\Order\Action\Handler
+ * Class \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Order $order */
     protected $order = null;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory */
+    protected $walmartFactory = null;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory */
     protected $activeRecordFactory = null;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
+        $this->walmartFactory = $walmartFactory;
         $this->activeRecordFactory = $activeRecordFactory;
 
         parent::__construct($helperFactory, $modelFactory, $data);

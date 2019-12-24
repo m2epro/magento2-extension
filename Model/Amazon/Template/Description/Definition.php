@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Template\Description;
 
 /**
- * Class Definition
- * @package Ess\M2ePro\Model\Amazon\Template\Description
+ * Class \Ess\M2ePro\Model\Amazon\Template\Description\Definition
  */
 class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
 /**
- * Class GetGlobalMessages
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\GetGlobalMessages
  */
 class GetGlobalMessages extends Main
 {

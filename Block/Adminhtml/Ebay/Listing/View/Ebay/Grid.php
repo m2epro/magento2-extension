@@ -10,8 +10,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay;
 use Ess\M2ePro\Model\Listing\Log;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {

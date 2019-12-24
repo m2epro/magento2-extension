@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 /**
- * Class GetVariationThemes
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description\GetVariationThemes
  */
 class GetVariationThemes extends Description
 {

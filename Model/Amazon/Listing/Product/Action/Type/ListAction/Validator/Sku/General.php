@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku;
 
 /**
- * Class General
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General
  */
 class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
 {

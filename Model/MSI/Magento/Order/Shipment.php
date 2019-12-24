@@ -18,8 +18,7 @@ use Magento\InventorySourceSelectionApi\Api\Data\InventoryRequestInterfaceFactor
 use Magento\InventoryConfigurationApi\Model\IsSourceItemManagementAllowedForProductTypeInterface as isSourceManagement;
 
 /**
- * Class Shipment
- * @package Ess\M2ePro\Model\Magento\Order
+ * Class \Ess\M2ePro\Model\Magento\Order\Shipment
  */
 class Shipment extends \Ess\M2ePro\Model\Magento\Order\Shipment
 {
@@ -63,8 +62,8 @@ class Shipment extends \Ess\M2ePro\Model\Magento\Order\Shipment
         $this->stockByWebsiteIdResolver = $objectManager->get(StockByWebsiteIdResolverInterface::class);
         $this->algorithm                = $objectManager->get(DefaultAlgorithm::class);
         $this->sourceSelectionService   = $objectManager->get(SourceSelectionServiceInterface::class);
-        $this->itemCreationFactory      = $objectManager->get(InventoryRequestInterfaceFactory::class);
-        $this->shipmentExtensionFactory = $objectManager->get(InventoryRequestInterfaceFactory::class);
+        $this->itemCreationFactory      = $objectManager->get(ShipmentItemCreationInterfaceFactory::class);
+        $this->shipmentExtensionFactory = $objectManager->get(ShipmentExtensionFactory::class);
         $this->isSourceItemManagement   = $objectManager->get(isSourceManagement::class);
     }
 
@@ -74,18 +73,24 @@ class Shipment extends \Ess\M2ePro\Model\Magento\Order\Shipment
     {
         $selectionRequestItems   = [];
         $orderItemIdsBySku       = [];
-        $orderItemsNotAllowedMSI = [];
 
         foreach ($this->magentoOrder->getAllItems() as $item) {
             $qtyToShip = $item->getQtyToShip();
-
             if ($qtyToShip == 0) {
                 continue;
             }
 
-            if (!$this->isSourceItemManagement->execute($item->getProductType())) {
-                $orderItemsNotAllowedMSI[] = $item;
-                continue;
+            /**
+             * Magento interface do not support situation when a bundle product
+             * with the parameter "Ship Bundle Items" == "Together" is in one order with products
+             * with more then 1 Source
+             */
+            if ($this->getHelper('Magento\Product')->isBundleType($item->getProductType()) &&
+                !$item->isShipSeparately()
+            ) {
+                throw new \Ess\M2ePro\Model\Exception\Logic(
+                    'Shipping Bundle items together is not supported by Magento in Multi Source mode.'
+                );
             }
 
             $selectionRequestItems[] = $this->itemRequestFactory->create([
@@ -94,6 +99,10 @@ class Shipment extends \Ess\M2ePro\Model\Magento\Order\Shipment
             ]);
 
             $orderItemIdsBySku[$item->getSku()] = $item->getItemId();
+        }
+
+        if (empty($selectionRequestItems) || empty($orderItemIdsBySku)) {
+            return;
         }
 
         $websiteId = (int)$this->magentoOrder->getStore()->getWebsiteId();
@@ -133,27 +142,6 @@ class Shipment extends \Ess\M2ePro\Model\Magento\Order\Shipment
 
             $this->shipments[] = $shipment;
         }
-
-        if (empty($orderItemsNotAllowedMSI)) {
-            return;
-        }
-
-        /**
-         * If bundle product which the parameter "Ship Bundle Items" = "Together" is in one order with
-         * products with more then 1 Source, we must create a separate shipment for it.
-         */
-        $shipmentItemsNotAllowedMSI = [];
-        foreach ($orderItemsNotAllowedMSI as $orderItem) {
-            $shipmentItem = $this->itemCreationFactory->create();
-            $shipmentItem->setQty($orderItem->getQtyOrdered());
-            $shipmentItem->setOrderItemId($orderItem->getItemId());
-            $shipmentItemsNotAllowedMSI[] = $shipmentItem;
-        }
-
-        $shipment = $this->shipmentDocumentFactory->create($this->magentoOrder, $shipmentItemsNotAllowedMSI);
-        $shipment->register();
-
-        $this->shipments[] = $shipment;
     }
 
     //########################################

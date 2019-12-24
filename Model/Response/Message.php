@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Response;
 
 /**
- * Class Message
- * @package Ess\M2ePro\Model\Response
+ * Class \Ess\M2ePro\Model\Response\Message
  */
 class Message extends \Ess\M2ePro\Model\AbstractModel
 {

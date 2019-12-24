@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode;
 
 /**
- * Class Breadcrumb
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Breadcrumb
  */
 class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
 {

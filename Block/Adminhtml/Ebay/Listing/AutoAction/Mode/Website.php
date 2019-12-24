@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode;
 
 /**
- * Class Website
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Website
  */
 class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Website
 {

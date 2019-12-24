@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Synchronization;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Settings;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Synchronization
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Synchronization\Index
  */
 class Index extends Settings
 {

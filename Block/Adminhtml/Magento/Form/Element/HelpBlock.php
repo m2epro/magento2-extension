@@ -14,8 +14,7 @@ use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Escaper;
 
 /**
- * Class HelpBlock
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Form\Element
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\HelpBlock
  */
 class HelpBlock extends AbstractElement
 {

@@ -13,9 +13,7 @@ use Ess\M2ePro\Model\MSI\Magento\Product\Inventory as MSIInventory;
 use Magento\InventoryConfigurationApi\Model\IsSourceItemManagementAllowedForProductTypeInterface;
 
 /**
- * Class Factory
- *
- * @package Ess\M2ePro\Model\Magento\Product\Inventory
+ * Class \Ess\M2ePro\Model\Magento\Product\Inventory\Factory
  */
 class Factory extends \Ess\M2ePro\Model\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Connector\Category\Get;
 
 /**
- * Class Suggested
- * @package Ess\M2ePro\Model\Ebay\Connector\Category\Get
+ * Class \Ess\M2ePro\Model\Ebay\Connector\Category\Get\Suggested
  */
 class Suggested extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 {

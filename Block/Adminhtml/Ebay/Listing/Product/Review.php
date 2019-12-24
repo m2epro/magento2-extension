@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product;
 
 /**
- * Class Review
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Review
  */
 class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {

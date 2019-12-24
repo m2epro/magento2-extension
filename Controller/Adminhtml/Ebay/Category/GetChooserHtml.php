@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
 /**
- * Class GetChooserHtml
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Category
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Category\GetChooserHtml
  */
 class GetChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {

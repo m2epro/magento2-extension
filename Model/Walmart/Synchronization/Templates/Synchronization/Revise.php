@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\ResourceModel\Walmart\Template as WalmartTemplate;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator;
 
 /**
- * Class Revise
- * @package Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization
+ * Class \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization\Revise
  */
 class Revise extends \Ess\M2ePro\Model\Walmart\Synchronization\Templates\Synchronization\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon;
 
 /**
- * Class GetGlobalMessages
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\GetGlobalMessages
  */
 class GetGlobalMessages extends Main
 {

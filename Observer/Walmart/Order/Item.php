@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer\Walmart\Order;
 
 /**
- * Class Item
- * @package Ess\M2ePro\Observer\Walmart\Order
+ * Class \Ess\M2ePro\Observer\Walmart\Order\Item
  */
 class Item extends \Ess\M2ePro\Observer\AbstractModel
 {

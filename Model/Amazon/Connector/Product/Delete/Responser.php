@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector\Product\Delete;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Amazon\Connector\Product\Delete
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Product\Delete\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 {

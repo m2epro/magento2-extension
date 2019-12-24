@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tab
 use Ess\M2ePro\Model\Ebay\Template\Synchronization;
 
 /**
- * Class ReviseRules
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\ReviseRules
  */
 class ReviseRules extends AbstractTab
 {

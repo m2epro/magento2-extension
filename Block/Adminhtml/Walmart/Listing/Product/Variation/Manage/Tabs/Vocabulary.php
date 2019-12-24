@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs;
 
 /**
- * Class Vocabulary
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Vocabulary
  */
 class Vocabulary extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

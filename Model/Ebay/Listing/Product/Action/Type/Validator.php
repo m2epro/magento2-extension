@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator;
 
 /**
- * Class Validator
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Validator
  */
 abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 {

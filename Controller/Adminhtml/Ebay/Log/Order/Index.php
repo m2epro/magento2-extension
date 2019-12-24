@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order\Index
  */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order
 {

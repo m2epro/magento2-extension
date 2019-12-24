@@ -12,8 +12,7 @@ use Ess\M2ePro\Helper\Factory;
 use Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface;
 
 /**
- * Class Datetime
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime
  */
 class Datetime extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Datetime
 {
@@ -50,6 +49,7 @@ class Datetime extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Datetime
         }
 
         try {
+            // todo this is not supported. Magento is always using \IntlDateFormatter::SHORT. parent::toHtml()
             // $format   = $this->getColumn()->getFormat()?: \IntlDateFormatter::SHORT;
             $format = \IntlDateFormatter::SHORT;
             $timezone = $this->getColumn()->getTimezone() !== false ? $this->_localeDate->getConfigTimezone()

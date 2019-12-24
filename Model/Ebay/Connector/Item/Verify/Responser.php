@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Connector\Item\Verify;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Ebay\Connector\Item\Verify
+ * Class \Ess\M2ePro\Model\Ebay\Connector\Item\Verify\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 {

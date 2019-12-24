@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing;
 
 /**
- * Class OpenRemoveProducts
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing\OpenRemoveProducts
  */
 class OpenRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {

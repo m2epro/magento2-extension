@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Magento;
 
 /**
- * Class AbstractHelper
- * @package Ess\M2ePro\Helper\Magento
+ * Class \Ess\M2ePro\Helper\Magento\AbstractHelper
  */
 abstract class AbstractHelper extends \Ess\M2ePro\Helper\AbstractHelper
 {

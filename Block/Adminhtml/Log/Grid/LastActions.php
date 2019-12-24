@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 use Ess\M2ePro\Model\Log\AbstractModel as LogModel;
 
 /**
- * Class LastActions
- * @package Ess\M2ePro\Block\Adminhtml\Log\Grid
+ * Class \Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions
  */
 abstract class LastActions extends AbstractBlock
 {

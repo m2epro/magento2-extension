@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Product\Rule\Condition;
 
 /**
- * Class Product
- * @package Ess\M2ePro\Model\Magento\Product\Rule\Condition
+ * Class \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
  */
 class Product extends AbstractModel
 {

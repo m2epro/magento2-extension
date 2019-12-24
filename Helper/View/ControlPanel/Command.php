@@ -12,8 +12,7 @@ use Ess\M2ePro\Helper\Factory;
 use Ess\M2ePro\Helper\Module;
 
 /**
- * Class Command
- * @package Ess\M2ePro\Helper\View\ControlPanel
+ * Class \Ess\M2ePro\Helper\View\ControlPanel\Command
  */
 class Command extends \Ess\M2ePro\Helper\AbstractHelper
 {

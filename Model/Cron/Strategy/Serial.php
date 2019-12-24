@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Strategy;
 
 /**
- * Class Serial
- * @package Ess\M2ePro\Model\Cron\Strategy
+ * Class \Ess\M2ePro\Model\Cron\Strategy\Serial
  */
 class Serial extends AbstractModel
 {

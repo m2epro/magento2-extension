@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Synchronization\GlobalTask;
 use Ess\M2ePro\Model\Processing\Runner;
 
 /**
- * Class Processing
- * @package Ess\M2ePro\Model\Synchronization\GlobalTask
+ * Class \Ess\M2ePro\Model\Synchronization\GlobalTask\Processing
  */
 class Processing extends AbstractModel
 {

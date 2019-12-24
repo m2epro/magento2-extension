@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs;
 
 /**
- * Class License
- * @package Ess\M2ePro\Block\Adminhtml\Settings\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License
  */
 class License extends AbstractTab
 {

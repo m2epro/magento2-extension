@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping;
 
 /**
- * Class Unassign
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping\Unassign
  */
 class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\Item;
 
 /**
- * Class ToOrderItem
- * @package Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\Item
+ * Class \Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\Item\ToOrderItem
  */
 class ToOrderItem extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

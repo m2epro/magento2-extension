@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Amazon\Listing;
 use Ess\M2ePro\Model\Account;
 
 /**
- * Class Other
- * @package Ess\M2ePro\Model\ResourceModel\Amazon\Listing
+ * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other
  */
 class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {

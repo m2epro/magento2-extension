@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
 /**
- * Class GetSaveAsGroupForm
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors\GetSaveAsGroupForm
  */
 class GetSaveAsGroupForm extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

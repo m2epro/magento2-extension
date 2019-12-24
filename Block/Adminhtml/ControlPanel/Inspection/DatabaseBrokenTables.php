@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection;
 
 /**
- * Class DatabaseBrokenTables
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\DatabaseBrokenTables
  */
 class DatabaseBrokenTables extends AbstractInspection
 {

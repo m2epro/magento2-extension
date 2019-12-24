@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Runner;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\Cron\Runner
+ * Class \Ess\M2ePro\Model\Cron\Runner\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {

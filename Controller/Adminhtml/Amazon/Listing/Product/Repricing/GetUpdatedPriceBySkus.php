@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
- * Class GetUpdatedPriceBySkus
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing\GetUpdatedPriceBySkus
  */
 class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {

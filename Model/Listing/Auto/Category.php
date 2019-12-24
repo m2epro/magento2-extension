@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Listing\Auto;
 
 /**
- * Class Category
- * @package Ess\M2ePro\Model\Listing\Auto
+ * Class \Ess\M2ePro\Model\Listing\Auto\Category
  */
 class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {

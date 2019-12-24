@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs;
 use Ess\M2ePro\Model\Amazon\Template\Description;
 
 /**
- * Class General
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs\General
  */
 class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

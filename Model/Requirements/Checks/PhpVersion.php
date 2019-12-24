@@ -13,8 +13,7 @@ use Composer\Semver\Constraint\ConstraintInterface;
 use Composer\Semver\Constraint\MultiConstraint;
 
 /**
- * Class PhpVersion
- * @package Ess\M2ePro\Model\Requirements\Checks
+ * Class \Ess\M2ePro\Model\Requirements\Checks\PhpVersion
  */
 class PhpVersion extends AbstractCheck
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Template\Synchronization;
 use Ess\M2ePro\Model\Ebay\Template\Synchronization as SynchronizationPolicy;
 
 /**
- * Class Builder
- * @package Ess\M2ePro\Model\Ebay\Template\Synchronization
+ * Class \Ess\M2ePro\Model\Ebay\Template\Synchronization\Builder
  */
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 {

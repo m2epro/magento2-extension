@@ -6,8 +6,7 @@
 namespace Ess\M2ePro\Model\ActiveRecord;
 
 /**
- * Class Factory
- * @package Ess\M2ePro\Model\ActiveRecord
+ * Class \Ess\M2ePro\Model\ActiveRecord\Factory
  */
 class Factory
 {

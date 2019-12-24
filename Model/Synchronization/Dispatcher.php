@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Synchronization;
 
 /**
- * Class Dispatcher
- * @package Ess\M2ePro\Model\Synchronization
+ * Class \Ess\M2ePro\Model\Synchronization\Dispatcher
  */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {

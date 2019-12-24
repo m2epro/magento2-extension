@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation;
 use Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation;
 
 /**
- * Class Congratulation
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Congratulation
  */
 class Congratulation extends Installation
 {

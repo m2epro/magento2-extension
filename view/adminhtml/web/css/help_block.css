@@ -144,6 +144,7 @@ div.m2epro-field-tooltip-right .admin__field-tooltip-content:after {
     list-style-type: none;
 }
 .m2epro-field-tooltip .admin__field-tooltip-content {
+    text-align: left;
     color: #000 !important;
     font-size: 14px;
     letter-spacing: normal;

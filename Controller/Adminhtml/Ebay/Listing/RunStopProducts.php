@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 /**
- * Class RunStopProducts
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\RunStopProducts
  */
 class RunStopProducts extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\ActionAbstract
 {

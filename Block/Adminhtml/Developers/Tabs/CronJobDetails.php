@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs;
 use \Ess\M2ePro\Helper\Module\Cron as CronHelper;
 
 /**
- * Class CronJobDetails
- * @package Ess\M2ePro\Block\Adminhtml\Developers\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Developers\Tabs\CronJobDetails
  */
 class CronJobDetails extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

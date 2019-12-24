@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction;
 
 /**
- * Class SkuResolver
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction\SkuResolver
  */
 class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
 {

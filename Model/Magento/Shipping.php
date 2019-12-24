@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Magento;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
 
 /**
- * Class Shipping
- * @package Ess\M2ePro\Model\Magento
+ * Class \Ess\M2ePro\Model\Magento\Shipping
  */
 class Shipping extends \Magento\Shipping\Model\Carrier\AbstractCarrier implements CarrierInterface
 {

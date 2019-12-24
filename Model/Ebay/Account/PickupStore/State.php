@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Account\PickupStore;
 
 /**
- * Class State
- * @package Ess\M2ePro\Model\Ebay\Account\PickupStore
+ * Class \Ess\M2ePro\Model\Ebay\Account\PickupStore\State
  */
 class State extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {

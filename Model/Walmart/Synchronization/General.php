@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Synchronization;
 
 /**
- * Class General
- * @package Ess\M2ePro\Model\Walmart\Synchronization
+ * Class \Ess\M2ePro\Model\Walmart\Synchronization\General
  */
 class General extends AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {

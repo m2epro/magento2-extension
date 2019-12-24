@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Order;
 use Ess\M2ePro\Model\AbstractModel;
 
 /**
- * Class Builder
- * @package Ess\M2ePro\Model\Ebay\Order
+ * Class \Ess\M2ePro\Model\Ebay\Order\Builder
  */
 class Builder extends AbstractModel
 {

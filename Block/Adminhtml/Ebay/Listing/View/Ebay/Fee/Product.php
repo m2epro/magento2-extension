@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee;
 
 /**
- * Class Product
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee\Product
  */
 class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

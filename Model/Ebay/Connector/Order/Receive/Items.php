@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Connector\Order\Receive;
 
 /**
- * Class Items
- * @package Ess\M2ePro\Model\Ebay\Connector\Order\Receive
+ * Class \Ess\M2ePro\Model\Ebay\Connector\Order\Receive\Items
  */
 class Items extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 {

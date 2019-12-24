@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked;
 
 /**
- * Class ItemsRequester
- * @package Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked\ItemsRequester
  */
 class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {

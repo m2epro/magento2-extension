@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Config;
 
 /**
- * Class Primary
- * @package Ess\M2ePro\Model\ResourceModel\Config
+ * Class \Ess\M2ePro\Model\ResourceModel\Config\Primary
  */
 class Primary extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

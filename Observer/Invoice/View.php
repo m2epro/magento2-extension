@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer\Invoice;
 
 /**
- * Class View
- * @package Ess\M2ePro\Observer\Invoice
+ * Class \Ess\M2ePro\Observer\Invoice\View
  */
 class View extends \Ess\M2ePro\Observer\AbstractModel
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Order;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Order
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Order\Grid
  */
 class Grid extends AbstractGrid
 {
@@ -513,7 +512,7 @@ HTML;
             $returnString .= '&lt;' . $buyerEmail  . '&gt;<br/>';
         }
 
-        $returnString .= $this->getHelper('Data')->escapeHtml($row->getData('buyer_user_id'));
+        $returnString .= $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('buyer_user_id'));
 
         return $returnString;
     }

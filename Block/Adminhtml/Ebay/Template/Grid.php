@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 use Magento\Framework\DB\Select;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Template
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Grid
  */
 class Grid extends AbstractGrid
 {

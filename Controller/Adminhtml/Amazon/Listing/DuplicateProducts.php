@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
- * Class DuplicateProducts
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\DuplicateProducts
  */
 class DuplicateProducts extends Main
 {

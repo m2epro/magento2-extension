@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product;
 use Ess\M2ePro\Model\Listing;
 
 /**
- * Class Add
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
  */
 abstract class Add extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

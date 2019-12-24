@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Template\Description;
 
 /**
- * Class Builder
- * @package Ess\M2ePro\Model\Ebay\Template\Description
+ * Class \Ess\M2ePro\Model\Ebay\Template\Description\Builder
  */
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 {

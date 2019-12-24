@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Search;
 
 /**
- * Class Settings
- * @package Ess\M2ePro\Model\Amazon\Search
+ * Class \Ess\M2ePro\Model\Amazon\Search\Settings
  */
 class Settings extends \Ess\M2ePro\Model\AbstractModel
 {

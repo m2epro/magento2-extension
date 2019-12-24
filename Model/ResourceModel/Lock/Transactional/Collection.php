@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Lock\Transactional;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Lock\Transactional
+ * Class \Ess\M2ePro\Model\ResourceModel\Lock\Transactional\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

@@ -11,9 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Listing\Moving;
 use Ess\M2ePro\Helper\Component\Walmart;
 
 /**
- * Class Grid
- *
- * @package Ess\M2ePro\Block\Adminhtml\Listing\Moving
+ * Class \Ess\M2ePro\Block\Adminhtml\Listing\Moving\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {

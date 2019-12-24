@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Category\Specific;
 
 /**
- * Class Wrapper
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Category\Specific
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Category\Specific\Wrapper
  */
 class Wrapper extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

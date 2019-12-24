@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
 /**
- * Class AccountGrid
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Account\AccountGrid
  */
 class AccountGrid extends Account
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
 use Ess\M2ePro\Model\Listing;
 
 /**
- * Class DeleteAll
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add\DeleteAll
  */
 class DeleteAll extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {

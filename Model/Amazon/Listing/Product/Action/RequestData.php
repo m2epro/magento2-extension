@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action;
 
 /**
- * Class RequestData
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData
  */
 class RequestData extends \Ess\M2ePro\Model\AbstractModel
 {

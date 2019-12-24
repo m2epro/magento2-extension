@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector;
 
 /**
- * Class Dispatcher
- * @package Ess\M2ePro\Model\Amazon\Connector
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Dispatcher
  */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {

@@ -12,8 +12,7 @@
 namespace Ess\M2ePro\Model\Amazon\Order;
 
 /**
- * Class Item
- * @package Ess\M2ePro\Model\Amazon\Order
+ * Class \Ess\M2ePro\Model\Amazon\Order\Item
  */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {

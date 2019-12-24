@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Cron\Runner;
 use \Ess\M2ePro\Helper\Module\Cron\Service as CronService;
 
 /**
- * Class Magento
- * @package Ess\M2ePro\Model\Cron\Runner
+ * Class \Ess\M2ePro\Model\Cron\Runner\Magento
  */
 class Magento extends AbstractModel
 {

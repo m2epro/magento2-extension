@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class Group
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group
  */
 class Group extends AbstractBlock
 {

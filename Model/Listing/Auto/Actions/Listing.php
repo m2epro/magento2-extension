@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Exception\Logic;
 use Ess\M2ePro\Model\Listing\Product;
 
 /**
- * Class Listing
- * @package Ess\M2ePro\Model\Listing\Auto\Actions
+ * Class \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
  */
 abstract class Listing extends \Ess\M2ePro\Model\AbstractModel
 {

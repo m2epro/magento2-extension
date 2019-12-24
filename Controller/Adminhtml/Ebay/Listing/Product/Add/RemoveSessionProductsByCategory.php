@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
 
 /**
- * Class RemoveSessionProductsByCategory
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add\RemoveSessionProductsByCategory
  */
 class RemoveSessionProductsByCategory extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {

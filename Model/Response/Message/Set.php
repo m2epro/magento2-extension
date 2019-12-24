@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Response\Message;
 
 /**
- * Class Set
- * @package Ess\M2ePro\Model\Response\Message
+ * Class \Ess\M2ePro\Model\Response\Message\Set
  */
 class Set extends \Ess\M2ePro\Model\AbstractModel
 {

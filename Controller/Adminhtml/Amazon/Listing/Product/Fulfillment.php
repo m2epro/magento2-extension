@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
- * Class Fulfillment
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Fulfillment
  */
 abstract class Fulfillment extends Main
 {

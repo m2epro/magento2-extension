@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon;
 
 /**
- * Class Settings
- * @package Ess\M2ePro\Block\Adminhtml\Amazon
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Settings
  */
 class Settings extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 use Ess\M2ePro\Model\Amazon\Account as AccountModel;
 
 /**
- * Class AfterGetToken
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Account
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Account\AfterGetToken
  */
 class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 {

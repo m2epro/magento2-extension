@@ -14,8 +14,7 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request;
 use \Ess\M2ePro\Model\Ebay\Template\Description\Source as DescriptionSource;
 
 /**
- * Class Variations
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Variations
  */
 class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\AbstractModel
 {

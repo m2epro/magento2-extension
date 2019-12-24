@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml;
 
 /**
- * Class HealthStatus
- * @package Ess\M2ePro\Controller\Adminhtml
+ * Class \Ess\M2ePro\Controller\Adminhtml\HealthStatus
  */
 abstract class HealthStatus extends \Ess\M2ePro\Controller\Adminhtml\Base
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Settings;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Settings;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings\Save
  */
 class Save extends Settings
 {

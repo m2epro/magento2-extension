@@ -14,8 +14,7 @@ use Ess\M2ePro\Helper\Component\Amazon as AmazonHelper;
 use Ess\M2ePro\Model\Amazon\Account;
 
 /**
- * Class Amazon
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration\Amazon
  */
 class Amazon extends Command
 {

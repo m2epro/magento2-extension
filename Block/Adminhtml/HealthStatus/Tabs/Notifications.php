@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\HealthStatus\Notification\Settings;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
 /**
- * Class Notifications
- * @package Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Notifications
  */
 class Notifications extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

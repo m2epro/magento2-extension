@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings;
 
 /**
- * Class Tabs
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Settings
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs
  */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 {

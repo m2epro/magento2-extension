@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Runner\Service;
 
 /**
- * Class Controller
- * @package Ess\M2ePro\Model\Cron\Runner\Service
+ * Class \Ess\M2ePro\Model\Cron\Runner\Service\Controller
  */
 class Controller extends AbstractModel
 {

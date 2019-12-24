@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 use Ess\M2ePro\Helper\View\ControlPanel\Command;
 
 /**
- * Class Tabs
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ToolsModule
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ToolsModule\Tabs
  */
 class Tabs extends AbstractTabs
 {

@@ -11,9 +11,7 @@ namespace Ess\M2ePro\Model\Magento\Product;
 use Ess\M2ePro\Model\Magento\Product\Inventory\AbstractModel;
 
 /**
- * Class Inventory
- *
- * @package Ess\M2ePro\Model\Magento\Product
+ * Class \Ess\M2ePro\Model\Magento\Product\Inventory
  */
 class Inventory extends AbstractModel
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Voca
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
 /**
- * Class AddAttributes
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Vocabulary
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Vocabulary\AddAttributes
  */
 class AddAttributes extends Main
 {

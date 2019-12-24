@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay;
 
 /**
- * Class Installation
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay\Installation
  */
 abstract class Installation extends \Ess\M2ePro\Block\Adminhtml\Wizard\Installation
 {

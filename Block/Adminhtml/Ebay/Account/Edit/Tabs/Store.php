@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Account;
 
 /**
- * Class Store
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Store
  */
 class Store extends AbstractForm
 {

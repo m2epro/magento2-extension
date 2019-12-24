@@ -30,14 +30,17 @@ define([
 
             if (this.specificHandler.isSpecificRendered(this.indexedXPath)) {
 
-                this.forceSelectAndDisable(this.getForceSetValue());
+                if (this.isValueForceSet()) {
 
-                this.hideButton($(this.indexedXPath + '_remove_button'));
+                    this.forceSelectAndDisable(this.getForceSetValue());
 
-                var myEvent = new CustomEvent('undeleteble-specific-appear');
-                $(this.getParentIndexedXpath()).dispatchEvent(myEvent);
+                    this.hideButton($(this.indexedXPath + '_remove_button'));
 
-                return '';
+                    var myEvent = new CustomEvent('undeleteble-specific-appear');
+                    $(this.getParentIndexedXpath()).dispatchEvent(myEvent);
+
+                    return '';
+                }
             }
 
             this.renderSelf();

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Connector\Order\Update;
 
 /**
- * Class Shipping
- * @package Ess\M2ePro\Model\Ebay\Connector\Order\Update
+ * Class \Ess\M2ePro\Model\Ebay\Connector\Order\Update\Shipping
  */
 class Shipping extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractModel
 {

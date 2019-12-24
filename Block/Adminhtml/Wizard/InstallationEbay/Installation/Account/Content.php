@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay\Installation\Accoun
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 /**
- * Class Content
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay\Installation\Account
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay\Installation\Account\Content
  */
 class Content extends AbstractForm
 {

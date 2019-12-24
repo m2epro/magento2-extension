@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Settings\License;
 
 /**
- * Class RefreshStatus
- * @package Ess\M2ePro\Controller\Adminhtml\Settings\License
+ * Class \Ess\M2ePro\Controller\Adminhtml\Settings\License\RefreshStatus
  */
 class RefreshStatus extends \Ess\M2ePro\Controller\Adminhtml\Base
 {

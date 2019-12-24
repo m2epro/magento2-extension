@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other;
 
 /**
- * Class ViewGrid
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other\ViewGrid
  */
 class ViewGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
 {

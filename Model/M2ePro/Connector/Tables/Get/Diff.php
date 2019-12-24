@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\M2ePro\Connector\Tables\Get;
 
 /**
- * Class Diff
- * @package Ess\M2ePro\Model\M2ePro\Connector\Tables\Get
+ * Class \Ess\M2ePro\Model\M2ePro\Connector\Tables\Get\Diff
  */
 class Diff extends \Ess\M2ePro\Model\Connector\Command\RealTime
 {

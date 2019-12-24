@@ -12,8 +12,7 @@ use Magento\Backend\Block\Widget\Grid\Extended;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
 /**
- * Class AbstractGrid
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Grid
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
  */
 abstract class AbstractGrid extends Extended
 {

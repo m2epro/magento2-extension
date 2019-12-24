@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
 /**
- * Class AfterGetToken
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Account
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Account\AfterGetToken
  */
 class AfterGetToken extends Account
 {

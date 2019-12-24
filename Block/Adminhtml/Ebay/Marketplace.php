@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
 /**
- * Class Marketplace
- * @package Ess\M2ePro\Block\Adminhtml\Ebay
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Marketplace
  */
 class Marketplace extends AbstractContainer
 {

@@ -20,8 +20,7 @@ use Ess\M2ePro\Model\Listing\Product\Variation;
 use Ess\M2ePro\Model\Template\SellingFormat;
 
 /**
- * Class PriceCalculator
- * @package Ess\M2ePro\Model\Listing\Product
+ * Class \Ess\M2ePro\Model\Listing\Product\PriceCalculator
  */
 abstract class PriceCalculator extends AbstractModel
 {

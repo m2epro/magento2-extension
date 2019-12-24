@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Log;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Log
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Log\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Order\CreditMemo;
 
 /**
- * Class Handler
- * @package Ess\M2ePro\Model\Walmart\Order\CreditMemo
+ * Class \Ess\M2ePro\Model\Walmart\Order\CreditMemo\Handler
  */
 class Handler extends \Ess\M2ePro\Model\AbstractModel
 {

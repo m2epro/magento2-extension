@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Order;
 
 /**
- * Class Item
- * @package Ess\M2ePro\Model\ResourceModel\Order
+ * Class \Ess\M2ePro\Model\ResourceModel\Order\Item
  */
 class Item extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {

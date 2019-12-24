@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Settings;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Settings;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Save
  */
 class Save extends Settings
 {

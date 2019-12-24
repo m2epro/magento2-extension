@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping;
 
 /**
- * Class ViewPopup
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping\ViewPopup
  */
 class ViewPopup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
 {

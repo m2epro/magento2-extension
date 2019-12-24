@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Order\Item\Product;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
 /**
- * Class Mapping
- * @package Ess\M2ePro\Block\Adminhtml\Order\Item\Product
+ * Class \Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Mapping
  */
 class Mapping extends AbstractContainer
 {

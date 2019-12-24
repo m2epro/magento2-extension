@@ -14,8 +14,7 @@ use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Config\ConfigOptionsListConstants;
 
 /**
- * Class Runner
- * @package Ess\M2ePro\Setup\MigrationFromMagento1
+ * Class \Ess\M2ePro\Setup\MigrationFromMagento1\Runner
  */
 class Runner
 {

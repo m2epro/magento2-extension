@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Listing\Edit;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Listing\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Listing\Edit\Form
  */
 class Form extends AbstractForm
 {

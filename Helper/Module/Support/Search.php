@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Module\Support;
 
 /**
- * Class Search
- * @package Ess\M2ePro\Helper\Module\Support
+ * Class \Ess\M2ePro\Helper\Module\Support\Search
  */
 class Search extends \Ess\M2ePro\Helper\AbstractHelper
 {
@@ -56,7 +55,7 @@ class Search extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $curlObject = curl_init();
 
-        $url = $this->getHelper('Module\Support')->getSupportUrl() . '/extension/search/';
+        $url = $this->getHelper('Module\Support')->getSupportUrl('extension/search');
         $url = $url . '?'.http_build_query($params, '', '&');
         curl_setopt($curlObject, CURLOPT_URL, $url);
 

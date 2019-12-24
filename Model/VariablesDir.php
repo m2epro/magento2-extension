@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model;
 
 /**
- * Class VariablesDir
- * @package Ess\M2ePro\Model
+ * Class \Ess\M2ePro\Model\VariablesDir
  */
 class VariablesDir extends AbstractModel
 {

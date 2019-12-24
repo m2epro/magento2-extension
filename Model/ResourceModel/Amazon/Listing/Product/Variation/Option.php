@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Variation;
 
 /**
- * Class Option
- * @package Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Variation
+ * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Variation\Option
  */
 class Option extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {

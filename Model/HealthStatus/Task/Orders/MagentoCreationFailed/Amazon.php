@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 use Ess\M2ePro\Model\Order;
 
 /**
- * Class Amazon
- * @package Ess\M2ePro\Model\HealthStatus\Task\Orders\MagentoCreationFailed
+ * Class \Ess\M2ePro\Model\HealthStatus\Task\Orders\MagentoCreationFailed\Amazon
  */
 class Amazon extends IssueType
 {

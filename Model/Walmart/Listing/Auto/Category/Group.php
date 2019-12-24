@@ -13,8 +13,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Auto\Category;
 
 /**
- * Class Group
- * @package Ess\M2ePro\Model\Walmart\Listing\Auto\Category
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Auto\Category\Group
  */
 class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {

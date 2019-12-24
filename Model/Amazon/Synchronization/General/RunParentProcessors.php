@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\General;
 use \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass;
 
 /**
- * Class RunParentProcessors
- * @package Ess\M2ePro\Model\Amazon\Synchronization\General
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\General\RunParentProcessors
  */
 class RunParentProcessors extends AbstractModel
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action;
 use Ess\M2ePro\Model\Exception\Logic;
 
 /**
- * Class Configurator
- * @package Ess\M2ePro\Model\Ebay\Listing\Product\Action
+ * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator
  */
 class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
 {

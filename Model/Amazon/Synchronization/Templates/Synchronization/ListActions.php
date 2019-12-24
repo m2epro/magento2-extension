@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization;
 use Ess\M2ePro\Model\Amazon\Template\Synchronization as SynchronizationPolicy;
 
 /**
- * Class ListActions
- * @package Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization\ListActions
  */
 class ListActions extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization\AbstractModel
 {

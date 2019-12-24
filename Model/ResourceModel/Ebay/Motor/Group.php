@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Motor;
 
 /**
- * Class Group
- * @package Ess\M2ePro\Model\ResourceModel\Ebay\Motor
+ * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Group
  */
 class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

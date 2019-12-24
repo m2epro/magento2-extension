@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager;
 
 /**
- * Class LogicalUnit
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\LogicalUnit
  */
 abstract class LogicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\AbstractModel
 {

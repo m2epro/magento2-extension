@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel as ParentActive
 use Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel as ChildActiveRecordAbstract;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent
+ * Class \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\AbstractModel
 {

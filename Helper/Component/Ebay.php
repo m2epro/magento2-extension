@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Helper\Component;
 use \Ess\M2ePro\Model\Listing\Product as ListingProduct;
 
 /**
- * Class Ebay
- * @package Ess\M2ePro\Helper\Component
+ * Class \Ess\M2ePro\Helper\Component\Ebay
  */
 class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 {

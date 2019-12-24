@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 use Ess\M2ePro\Model\Lock\Item\Manager;
 
 /**
- * Class RunResetProducts
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\RunResetProducts
  */
 class RunResetProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbstract
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model\Amazon\Synchronization
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent
 {

@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Amazon\Connector\Product
+ * Class \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
  */
 abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
 {

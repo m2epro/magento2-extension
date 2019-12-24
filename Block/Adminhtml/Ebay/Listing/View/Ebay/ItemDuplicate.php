@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 /**
- * Class ItemDuplicate
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\ItemDuplicate
  */
 class ItemDuplicate extends AbstractForm
 {

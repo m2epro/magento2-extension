@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Developers;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Developers
+ * Class \Ess\M2ePro\Controller\Adminhtml\Developers\Save
  */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Developers
 {

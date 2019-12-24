@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Order\Item;
 
 /**
- * Class OptionsFinder
- * @package Ess\M2ePro\Model\Order\Item
+ * Class \Ess\M2ePro\Model\Order\Item\OptionsFinder
  */
 class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
 {

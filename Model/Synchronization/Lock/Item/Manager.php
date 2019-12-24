@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Synchronization\Lock\Item;
 
 /**
- * Class Manager
- * @package Ess\M2ePro\Model\Synchronization\Lock\Item
+ * Class \Ess\M2ePro\Model\Synchronization\Lock\Item\Manager
  */
 class Manager extends \Ess\M2ePro\Model\Lock\Item\Manager
 {

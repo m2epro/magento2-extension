@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
- * Class GetSwitchToParentModePopUp
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\GetSwitchToParentModePopUp
  */
 class GetSwitchToParentModePopUp extends Main
 {

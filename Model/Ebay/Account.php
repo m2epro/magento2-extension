@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Ebay;
 use Ess\M2ePro\Model\Exception\Logic;
 
 /**
- * Class Account
- * @package Ess\M2ePro\Model\Ebay
+ * Class \Ess\M2ePro\Model\Ebay\Account
  */
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
@@ -44,8 +43,12 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     const OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID = 2;
     const OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE = 3;
 
+    const OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_NONE = 0;
+    const OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE = 1;
+
     const OTHER_LISTINGS_MAPPING_SKU_DEFAULT_PRIORITY = 1;
     const OTHER_LISTINGS_MAPPING_TITLE_DEFAULT_PRIORITY = 2;
+    const OTHER_LISTINGS_MAPPING_ITEM_ID_DEFAULT_PRIORITY = 3;
 
     const MAGENTO_ORDERS_LISTINGS_MODE_NO = 0;
     const MAGENTO_ORDERS_LISTINGS_MODE_YES = 1;
@@ -429,6 +432,43 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $setting;
     }
 
+    // ---------------------------------------
+
+    /**
+     * @return int
+     */
+    public function getOtherListingsMappingItemIdMode()
+    {
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['item_id', 'mode'],
+            self::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_NONE
+        );
+
+        return (int)$setting;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOtherListingsMappingItemIdPriority()
+    {
+        $setting = $this->getSetting(
+            'other_listings_mapping_settings',
+            ['item_id', 'priority'],
+            self::OTHER_LISTINGS_MAPPING_ITEM_ID_DEFAULT_PRIORITY
+        );
+
+        return (int)$setting;
+    }
+
+    public function getOtherListingsMappingItemIdAttribute()
+    {
+        $setting = $this->getSetting('other_listings_mapping_settings', ['item_id', 'attribute']);
+
+        return $setting;
+    }
+
     //########################################
 
     /**
@@ -505,6 +545,24 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isOtherListingsMappingTitleModeCustomAttribute()
     {
         return $this->getOtherListingsMappingTitleMode() == self::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isOtherListingsMappingItemIdModeNone()
+    {
+        return $this->getOtherListingsMappingItemIdMode() == self::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_NONE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOtherListingsMappingItemIdModeCustomAttribute()
+    {
+        return $this->getOtherListingsMappingItemIdMode() == self::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE;
     }
 
     //########################################
@@ -656,9 +714,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $setting == self::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_YES;
     }
 
-    public function getMagentoOrdersNumberPrefix()
+    public function getMagentoOrdersNumberRegularPrefix()
     {
-        return $this->getSetting('magento_orders_settings', ['number', 'prefix', 'prefix'], '');
+        $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
+        return isset($settings['prefix']) ? $settings['prefix'] : '';
     }
 
     // ---------------------------------------

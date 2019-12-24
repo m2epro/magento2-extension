@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Ebay;
 
 /**
- * Class Order
- * @package Ess\M2ePro\Model\ResourceModel\Ebay
+ * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Order
  */
 class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {

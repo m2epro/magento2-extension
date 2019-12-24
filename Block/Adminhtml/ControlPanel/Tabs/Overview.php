@@ -14,8 +14,7 @@ use Ess\M2ePro\Helper\Magento;
 use Ess\M2ePro\Helper\Module as ModuleHelper;
 
 /**
- * Class Overview
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Overview
  */
 class Overview extends AbstractForm
 {

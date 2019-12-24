@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
 /**
- * Class ResetCategoryTemplate
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\ResetCategoryTemplate
  */
 class ResetCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request;
 use \Ess\M2ePro\Model\Magento\Product as MagentoProduct;
 
 /**
- * Class Qty
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Qty
  */
 class Qty extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\AbstractModel
 {

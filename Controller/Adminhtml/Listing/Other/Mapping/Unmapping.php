@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
- * Class Unmapping
- * @package Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping
+ * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping\Unmapping
  */
 class Unmapping extends Listing
 {

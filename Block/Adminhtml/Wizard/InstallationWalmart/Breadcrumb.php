@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart;
 
 /**
- * Class Breadcrumb
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Breadcrumb
  */
 class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
 {

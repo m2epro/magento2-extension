@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit;
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 
 /**
- * Class Tabs
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs
  */
 class Tabs extends AbstractTabs
 {

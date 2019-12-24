@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Component\Ebay;
 
 /**
- * Class Motors
- * @package Ess\M2ePro\Helper\Component\Ebay
+ * Class \Ess\M2ePro\Helper\Component\Ebay\Motors
  */
 class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 {

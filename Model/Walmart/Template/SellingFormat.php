@@ -14,8 +14,7 @@
 namespace Ess\M2ePro\Model\Walmart\Template;
 
 /**
- * Class SellingFormat
- * @package Ess\M2ePro\Model\Walmart\Template
+ * Class \Ess\M2ePro\Model\Walmart\Template\SellingFormat
  */
 class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {

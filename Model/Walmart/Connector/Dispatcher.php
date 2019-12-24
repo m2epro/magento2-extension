@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Connector;
 
 /**
- * Class Dispatcher
- * @package Ess\M2ePro\Model\Walmart\Connector
+ * Class \Ess\M2ePro\Model\Walmart\Connector\Dispatcher
  */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {

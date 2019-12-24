@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Moving\FailedProducts;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Listing\Moving\FailedProducts
+ * Class \Ess\M2ePro\Block\Adminhtml\Listing\Moving\FailedProducts\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {

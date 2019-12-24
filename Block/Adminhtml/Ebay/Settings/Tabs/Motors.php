@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs;
 use \Ess\M2ePro\Helper\Component\Ebay as EbayHelper;
 
 /**
- * Class Motors
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Motors
  */
 class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category;
 
 /**
- * Class Tree
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category\Tree
  */
 class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
 {

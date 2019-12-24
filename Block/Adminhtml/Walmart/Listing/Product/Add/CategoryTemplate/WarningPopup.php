@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate;
 
 /**
- * Class WarningPopup
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\WarningPopup
  */
 class WarningPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

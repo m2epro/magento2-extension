@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 use Ess\M2ePro\Model\Ebay\Template\Manager;
 
 /**
- * Class Template
- * @package Ess\M2ePro\Block\Adminhtml\Ebay
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template
  */
 class Template extends AbstractContainer
 {

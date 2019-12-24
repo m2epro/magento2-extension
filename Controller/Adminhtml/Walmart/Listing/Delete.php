@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 
 /**
- * Class Delete
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Delete
  */
 class Delete extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 {

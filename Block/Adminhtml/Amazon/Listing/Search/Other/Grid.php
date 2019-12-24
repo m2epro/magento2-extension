@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\Other;
 use \Ess\M2ePro\Model\Amazon\Listing\Product;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\Other
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\Other\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGrid
 {

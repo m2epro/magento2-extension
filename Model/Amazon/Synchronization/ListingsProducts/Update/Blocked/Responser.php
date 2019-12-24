@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Blocked;
 
 /**
- * Class Responser
- * @package Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Blocked
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts\Update\Blocked\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked\ItemsResponser
 {

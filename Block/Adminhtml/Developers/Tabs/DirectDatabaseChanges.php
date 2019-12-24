@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 /**
- * Class DirectDatabaseChanges
- * @package Ess\M2ePro\Block\Adminhtml\Developers\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Developers\Tabs\DirectDatabaseChanges
  */
 class DirectDatabaseChanges extends AbstractForm
 {

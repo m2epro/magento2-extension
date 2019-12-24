@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
 
 /**
- * Class Installation
- * @package Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart
+ * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart\Installation
  */
 class Installation extends InstallationWalmart
 {

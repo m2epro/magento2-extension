@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
- * Class SuggestedAsinGrid
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search\SuggestedAsinGrid
  */
 class SuggestedAsinGrid extends Main
 {

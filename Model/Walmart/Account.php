@@ -13,8 +13,7 @@
 namespace Ess\M2ePro\Model\Walmart;
 
 /**
- * Class Account
- * @package Ess\M2ePro\Model\Walmart
+ * Class \Ess\M2ePro\Model\Walmart\Account
  */
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
@@ -705,9 +704,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return $setting == self::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_YES;
     }
 
-    public function getMagentoOrdersNumberPrefix()
+    public function getMagentoOrdersNumberRegularPrefix()
     {
-        return $this->getSetting('magento_orders_settings', ['number', 'prefix', 'prefix'], '');
+        $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
+        return isset($settings['prefix']) ? $settings['prefix'] : '';
     }
 
     // ---------------------------------------

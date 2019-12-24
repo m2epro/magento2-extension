@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat;
 
 /**
- * Class Edit
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit
  */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 {

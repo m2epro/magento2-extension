@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 use Ess\M2ePro\Model\Ebay\Account as AccountModel;
 
 /**
- * Class AfterToken
- * @package Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay
+ * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay\AfterToken
  */
 class AfterToken extends InstallationEbay
 {

@@ -11,8 +11,7 @@ namespace  Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter;
 use Ess\M2ePro\Model\Amazon\Listing\Product as AmazonListingProduct;
 
 /**
- * Class Qty
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty
  */
 class Qty extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range
 {

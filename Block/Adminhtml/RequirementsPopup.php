@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class RequirementsPopup
- * @package Ess\M2ePro\Block\Adminhtml
+ * Class \Ess\M2ePro\Block\Adminhtml\RequirementsPopup
  */
 class RequirementsPopup extends AbstractBlock
 {

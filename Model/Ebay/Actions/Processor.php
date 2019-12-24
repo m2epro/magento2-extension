@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Exception\Logic;
 
 /**
- * Class Processor
- * @package Ess\M2ePro\Model\Ebay\Actions
+ * Class \Ess\M2ePro\Model\Ebay\Actions\Processor
  */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {

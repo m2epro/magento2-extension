@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
 /**
- * Class RemoveItemFromProduct
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors\RemoveItemFromProduct
  */
 class RemoveItemFromProduct extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

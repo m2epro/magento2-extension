@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Component\Walmart;
 
 /**
- * Class Vocabulary
- * @package Ess\M2ePro\Helper\Component\Walmart
+ * Class \Ess\M2ePro\Helper\Component\Walmart\Vocabulary
  */
 class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 {

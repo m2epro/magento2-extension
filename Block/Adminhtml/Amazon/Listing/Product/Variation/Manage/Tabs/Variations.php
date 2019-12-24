@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs;
 
 /**
- * Class Variations
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Variations
  */
 class Variations extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
 use Magento\Framework\Module\Setup;
 
 /**
- * Class ChangeDevelopVersion
- * @package Ess\M2ePro\Setup\Update\y19_m01
+ * Class \Ess\M2ePro\Setup\Update\y19\ChangeDevelopVersion_m01
  */
 class ChangeDevelopVersion extends AbstractFeature
 {

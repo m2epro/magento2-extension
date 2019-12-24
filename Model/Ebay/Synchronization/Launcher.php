@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization;
 
 /**
- * Class Launcher
- * @package Ess\M2ePro\Model\Ebay\Synchronization
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\Launcher
  */
 class Launcher extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
 {

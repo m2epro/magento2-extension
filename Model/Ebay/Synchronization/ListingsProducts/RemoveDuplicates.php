@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization\ListingsProducts;
 
 /**
- * Class RemoveDuplicates
- * @package Ess\M2ePro\Model\Ebay\Synchronization\ListingsProducts
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\ListingsProducts\RemoveDuplicates
  */
 class RemoveDuplicates extends AbstractModel
 {

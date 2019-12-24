@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order\Edit;
 
 /**
- * Class ShippingAddress
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Order\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Order\Edit\ShippingAddress
  */
 class ShippingAddress extends \Ess\M2ePro\Block\Adminhtml\Order\Edit\ShippingAddress
 {

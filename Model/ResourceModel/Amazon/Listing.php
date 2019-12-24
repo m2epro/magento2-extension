@@ -13,8 +13,7 @@ use Ess\M2ePro\Model\Listing\Product;
 use Magento\Framework\DB\Select;
 
 /**
- * Class Listing
- * @package Ess\M2ePro\Model\ResourceModel\Amazon
+ * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Listing
  */
 class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {

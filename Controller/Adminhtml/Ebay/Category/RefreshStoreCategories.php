@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
 /**
- * Class RefreshStoreCategories
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Category
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Category\RefreshStoreCategories
  */
 class RefreshStoreCategories extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Order\Action\Handler;
 use Ess\M2ePro\Model\Walmart\Order\Item as OrderItem;
 
 /**
- * Class Acknowledge
- * @package Ess\M2ePro\Model\Walmart\Order\Action\Handler
+ * Class \Ess\M2ePro\Model\Walmart\Order\Action\Handler\Acknowledge
  */
 class Acknowledge extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractModel
 {

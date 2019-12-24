@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
 /**
- * Class AbstractRenderer
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Renderer
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Renderer\AbstractRenderer
  */
 abstract class AbstractRenderer
 {

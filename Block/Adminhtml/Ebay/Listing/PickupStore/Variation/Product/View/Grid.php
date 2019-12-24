@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Variation\Product\
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Variation\Product\View
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Variation\Product\View\Grid
  */
 class Grid extends AbstractGrid
 {

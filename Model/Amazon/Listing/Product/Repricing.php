@@ -17,8 +17,7 @@ use Ess\M2ePro\Model\Amazon\Account\Repricing as AccountRepricing;
 use Ess\M2ePro\Model\Amazon\Listing\Product as AmazonListingProduct;
 
 /**
- * Class Repricing
- * @package Ess\M2ePro\Model\Amazon\Listing\Product
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing
  */
 class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {

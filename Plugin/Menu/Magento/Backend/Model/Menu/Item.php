@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Plugin\Menu\Magento\Backend\Model\Menu;
 use Ess\M2ePro\Helper\View;
 
 /**
- * Class Item
- * @package Ess\M2ePro\Plugin\Menu\Magento\Backend\Model\Menu
+ * Class \Ess\M2ePro\Plugin\Menu\Magento\Backend\Model\Menu\Item
  */
 class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

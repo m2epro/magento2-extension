@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit;
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 
 /**
- * Class Tabs
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs
  */
 class Tabs extends AbstractTabs
 {

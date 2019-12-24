@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Order\ShippingAddress;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
 /**
- * Class Save
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Order\ShippingAddress
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Order\ShippingAddress\Save
  */
 class Save extends Order
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
 /**
- * Class AutoAction
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
  */
 abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 {

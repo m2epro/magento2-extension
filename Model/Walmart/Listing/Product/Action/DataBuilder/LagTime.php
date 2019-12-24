@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder;
 
 /**
- * Class LagTime
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\LagTime
  */
 class LagTime extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\AbstractModel
 {

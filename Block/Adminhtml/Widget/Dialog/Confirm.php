@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Widget\Dialog;
 
 /**
- * Class Confirm
- * @package Ess\M2ePro\Block\Adminhtml\Widget\Dialog
+ * Class \Ess\M2ePro\Block\Adminhtml\Widget\Dialog\Confirm
  */
 class Confirm extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

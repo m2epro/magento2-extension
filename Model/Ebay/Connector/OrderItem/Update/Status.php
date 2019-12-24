@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Connector\OrderItem\Update;
 use \Ess\M2ePro\Model\Order as Order;
 
 /**
- * Class Status
- * @package Ess\M2ePro\Model\Ebay\Connector\OrderItem\Update
+ * Class \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Update\Status
  */
 class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 {

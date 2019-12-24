@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Orders;
 
 /**
- * Class Receive
- * @package Ess\M2ePro\Model\Ebay\Synchronization\Orders
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\Orders\Receive
  */
 class Receive extends AbstractModel
 {

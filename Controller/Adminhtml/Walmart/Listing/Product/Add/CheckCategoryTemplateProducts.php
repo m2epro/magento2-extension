@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
 /**
- * Class CheckCategoryTemplateProducts
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\CheckCategoryTemplateProducts
  */
 class CheckCategoryTemplateProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {

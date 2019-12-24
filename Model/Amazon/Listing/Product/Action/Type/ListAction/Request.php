@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction;
 
 /**
- * Class Request
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Request
  */
 class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Request
 {

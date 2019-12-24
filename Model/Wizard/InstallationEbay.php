@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Wizard;
 use Ess\M2ePro\Model\Wizard;
 
 /**
- * Class InstallationEbay
- * @package Ess\M2ePro\Model\Wizard
+ * Class \Ess\M2ePro\Model\Wizard\InstallationEbay
  */
 class InstallationEbay extends Wizard
 {

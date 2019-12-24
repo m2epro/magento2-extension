@@ -13,8 +13,7 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
 
 /**
- * Class Complete
- * @package Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1
+ * Class \Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1\Complete
  */
 class Complete extends Base
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace\Edit;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace\Edit\Form
  */
 class Form extends AbstractForm
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
 /**
- * Class NewAction
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat\NewAction
  */
 class NewAction extends Template
 {

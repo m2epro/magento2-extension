@@ -91,29 +91,22 @@ define([
                 return;
             }
 
-            $('marketplaces_register_url_container').show();
-
-            $$('.marketplace-required-input').each(function(obj) {
-                if (obj.hasClassName('marketplace-required-input-text-id' + marketplaceId)) {
-                    obj.addClassName('M2ePro-marketplace-merchant');
-                } else {
-                    obj.removeClassName('M2ePro-marketplace-merchant');
-                }
-            });
+            $('consumer_id').removeClassName('M2ePro-validate-consumer-id');
+            $$('label[for="consumer_id"] > span').first().innerHTML = M2ePro.translator.translate('Consumer ID');
+            if (marketplaceId == M2ePro.php.constant('\\Ess\\M2ePro\\Helper\\Component\\Walmart::MARKETPLACE_US')) {
+                $('consumer_id').addClassName('M2ePro-validate-consumer-id');
+                $$('label[for="consumer_id"] > span').first().innerHTML = M2ePro.translator.translate('Consumer ID / Partner ID');
+            }
 
             $$('.marketplace-required-field-id' + marketplaceId, '.marketplace-required-field-id-not-null').each(function(obj) {
                 obj.show();
             });
         },
 
-        getAccessDataUrl: function(element) {
-            var marketplaceId = $('marketplace_id').value;
-            window.open(M2ePro.customData['marketplace-'+marketplaceId+'-url'], '_blank')
-        },
-
         // ---------------------------------------
 
-        synchronizeMarketplace: function (marketplaceId) {
+        synchronizeMarketplace: function (marketplaceId)
+        {
             var self = this;
 
             new Ajax.Request(M2ePro.url.get('wizard_installationWalmart/enableMarketplace'), {
@@ -138,7 +131,7 @@ define([
                     );
                 }
             });
-        },
+        }
 
         // ---------------------------------------
     });

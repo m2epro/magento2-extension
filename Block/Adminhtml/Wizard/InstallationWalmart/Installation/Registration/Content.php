@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\Registration;
 
 /**
- * Class Content
- * @package Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\Registration
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\Registration\Content
  */
 class Content extends \Ess\M2ePro\Block\Adminhtml\Wizard\Installation\Registration\Content
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation;
 use \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
 
 /**
- * Class Updater
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Variation
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Updater
  */
 class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 {

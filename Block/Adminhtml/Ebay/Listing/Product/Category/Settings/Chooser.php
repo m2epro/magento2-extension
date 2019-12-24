@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
 /**
- * Class Chooser
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser
  */
 class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

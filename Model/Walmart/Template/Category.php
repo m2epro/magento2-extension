@@ -13,8 +13,7 @@
 namespace Ess\M2ePro\Model\Walmart\Template;
 
 /**
- * Class Category
- * @package Ess\M2ePro\Model\Walmart\Template
+ * Class \Ess\M2ePro\Model\Walmart\Template\Category
  */
 class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {

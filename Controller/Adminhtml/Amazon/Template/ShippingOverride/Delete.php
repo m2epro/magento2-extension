@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ShippingOverride;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
 /**
- * Class Delete
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ShippingOverride
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ShippingOverride\Delete
  */
 class Delete extends Template
 {

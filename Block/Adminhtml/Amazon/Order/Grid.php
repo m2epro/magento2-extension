@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 use Ess\M2ePro\Model\Amazon\Listing\Product;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Order
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Order\Grid
  */
 class Grid extends AbstractGrid
 {

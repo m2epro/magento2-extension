@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\View;
 
 /**
- * Class Configuration
- * @package Ess\M2ePro\Helper\View
+ * Class \Ess\M2ePro\Helper\View\Configuration
  */
 class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 {

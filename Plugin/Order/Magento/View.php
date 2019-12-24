@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Plugin\Order\Magento;
 
 /**
- * Class View
- * @package Ess\M2ePro\Plugin\Order\Magento
+ * Class \Ess\M2ePro\Plugin\Order\Magento\View
  */
 class View extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\HealthStatus\Notification\Email;
 
 /**
- * Class Sender
- * @package Ess\M2ePro\Model\HealthStatus\Notification\Email
+ * Class \Ess\M2ePro\Model\HealthStatus\Notification\Email\Sender
  */
 class Sender extends \Ess\M2ePro\Model\AbstractModel
 {

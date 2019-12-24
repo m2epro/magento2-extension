@@ -14,8 +14,7 @@
 namespace Ess\M2ePro\Model\Walmart;
 
 /**
- * Class Listing
- * @package Ess\M2ePro\Model\Walmart
+ * Class \Ess\M2ePro\Model\Walmart\Listing
  */
 class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {

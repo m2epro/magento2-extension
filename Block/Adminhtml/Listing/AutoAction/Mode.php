@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Listing\AutoAction;
 
 /**
- * Class Mode
- * @package Ess\M2ePro\Block\Adminhtml\Listing\AutoAction
+ * Class \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode
  */
 class Mode extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

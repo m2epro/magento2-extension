@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer;
 
 /**
- * Class CreditMemo
- * @package Ess\M2ePro\Observer
+ * Class \Ess\M2ePro\Observer\CreditMemo
  */
 class CreditMemo extends AbstractModel
 {

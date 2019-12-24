@@ -12,8 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Listing;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
- * Class Map
- * @package Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping
+ * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping\Map
  */
 class Map extends Listing
 {

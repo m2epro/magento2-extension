@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductTaxCode\Edit;
 use Ess\M2ePro\Model\Amazon\Template\ProductTaxCode;
 
 /**
- * Class Form
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductTaxCode\Edit
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductTaxCode\Edit\Form
  */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

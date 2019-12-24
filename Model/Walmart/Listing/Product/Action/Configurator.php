@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action;
 
 /**
- * Class Configurator
- * @package Ess\M2ePro\Model\Walmart\Listing\Product\Action
+ * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator
  */
 class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
 {

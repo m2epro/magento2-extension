@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Product\Variation;
 
 /**
- * Class Cache
- * @package Ess\M2ePro\Model\Magento\Product\Variation
+ * Class \Ess\M2ePro\Model\Magento\Product\Variation\Cache
  */
 class Cache extends \Ess\M2ePro\Model\Magento\Product\Variation
 {

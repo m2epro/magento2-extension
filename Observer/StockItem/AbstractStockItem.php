@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer\StockItem;
 
 /**
- * Class AbstractStockItem
- * @package Ess\M2ePro\Observer\StockItem
+ * Class \Ess\M2ePro\Observer\StockItem\AbstractStockItem
  */
 abstract class AbstractStockItem extends \Ess\M2ePro\Observer\AbstractModel
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual;
 
 /**
- * Class SkipPopup
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual\SkipPopup
  */
 class SkipPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 /**
- * Class PreviewItems
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PreviewItems
  */
 class PreviewItems extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

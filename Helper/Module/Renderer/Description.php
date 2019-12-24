@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Module\Renderer;
 
 /**
- * Class Description
- * @package Ess\M2ePro\Helper\Module\Renderer
+ * Class \Ess\M2ePro\Helper\Module\Renderer\Description
  */
 class Description extends \Ess\M2ePro\Helper\AbstractHelper
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Ebay;
 use Magento\Framework\DB\Select;
 
 /**
- * Class Listing
- * @package Ess\M2ePro\Model\ResourceModel\Ebay
+ * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Listing
  */
 class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {

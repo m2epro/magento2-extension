@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Listing\View;
 
 /**
- * Class Header
- * @package Ess\M2ePro\Block\Adminhtml\Listing\View
+ * Class \Ess\M2ePro\Block\Adminhtml\Listing\View\Header
  */
 class Header extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

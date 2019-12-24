@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode;
 
 /**
- * Class Category
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category
  */
 class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {

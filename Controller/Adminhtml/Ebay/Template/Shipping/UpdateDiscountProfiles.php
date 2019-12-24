@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Shipping;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
 /**
- * Class UpdateDiscountProfiles
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Shipping
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Shipping\UpdateDiscountProfiles
  */
 class UpdateDiscountProfiles extends Template
 {

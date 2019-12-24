@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Context;
 use Magento\Backend\Block\Context;
 
 /**
- * Class Block
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Context
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Context\Block
  */
 class Block extends Context
 {

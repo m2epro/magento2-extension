@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add;
 
 /**
- * Class Review
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\Review
  */
 class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {

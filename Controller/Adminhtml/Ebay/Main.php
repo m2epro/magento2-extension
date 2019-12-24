@@ -13,8 +13,7 @@ use Ess\M2ePro\Helper\Module;
 use Magento\Backend\App\Action;
 
 /**
- * Class Main
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
  */
 abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
 {

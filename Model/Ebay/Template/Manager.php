@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Template;
 
 /**
- * Class Manager
- * @package Ess\M2ePro\Model\Ebay\Template
+ * Class \Ess\M2ePro\Model\Ebay\Template\Manager
  */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {

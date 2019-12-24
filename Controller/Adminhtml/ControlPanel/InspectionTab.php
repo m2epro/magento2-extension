@@ -12,8 +12,7 @@ use Ess\M2ePro\Helper\Module;
 use Magento\Backend\App\Action;
 
 /**
- * Class InspectionTab
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\InspectionTab
  */
 class InspectionTab extends Main
 {

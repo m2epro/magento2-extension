@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Log\Listing\Product;
 
 /**
- * Class AbstractGrid
- * @package Ess\M2ePro\Block\Adminhtml\Log\Listing\Product
+ * Class \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid
  */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\AbstractGrid
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer\Product\AddUpdate;
 
 /**
- * Class Before
- * @package Ess\M2ePro\Observer\Product\AddUpdate
+ * Class \Ess\M2ePro\Observer\Product\AddUpdate\Before
  */
 class Before extends AbstractAddUpdate
 {

@@ -78,3 +78,14 @@ a.amazon-listing-view-icon.amazon-listing-view-generalId-search:before {
 a.amazon-listing-view-icon.amazon-listing-view-generalId-remove:before {
     content: '\e632';
 }
+
+.listing-view-warning-icon > span::before {
+    background-image: url(../../../images/warning.png);
+    width: 15px;
+    height: 15px;
+    background-size: cover;
+    content: '';
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
+}

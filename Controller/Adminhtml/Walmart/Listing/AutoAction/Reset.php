@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction;
 
 /**
- * Class Reset
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction\Reset
  */
 class Reset extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
 {

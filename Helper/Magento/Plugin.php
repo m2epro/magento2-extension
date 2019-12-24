@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Helper\Magento;
 use \Magento\Framework\App\Area;
 
 /**
- * Class Plugin
- * @package Ess\M2ePro\Helper\Magento
+ * Class \Ess\M2ePro\Helper\Magento\Plugin
  */
 class Plugin extends \Ess\M2ePro\Helper\AbstractHelper
 {

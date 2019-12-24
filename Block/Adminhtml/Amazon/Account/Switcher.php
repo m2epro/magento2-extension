@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account;
 
 /**
- * Class Switcher
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Account
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Switcher
  */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Account\Switcher
 {

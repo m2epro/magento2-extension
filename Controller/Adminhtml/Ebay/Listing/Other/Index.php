@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other;
 
 /**
- * Class Index
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other\Index
  */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
 {

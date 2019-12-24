@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
 /**
- * Class Mode
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode
  */
 class Mode extends AbstractContainer
 {

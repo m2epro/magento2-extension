@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\HealthStatus\Task;
 
 /**
- * Class InfoType
- * @package Ess\M2ePro\Model\HealthStatus\Task
+ * Class \Ess\M2ePro\Model\HealthStatus\Task\InfoType
  */
 abstract class InfoType extends AbstractModel
 {

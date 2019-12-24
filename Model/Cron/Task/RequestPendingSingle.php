@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Request\Pending\Single;
 
 /**
- * Class RequestPendingSingle
- * @package Ess\M2ePro\Model\Cron\Task
+ * Class \Ess\M2ePro\Model\Cron\Task\RequestPendingSingle
  */
 class RequestPendingSingle extends AbstractModel
 {

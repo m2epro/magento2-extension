@@ -13,8 +13,7 @@ use Composer\Semver\Constraint\ConstraintInterface;
 use Composer\Semver\Constraint\MultiConstraint;
 
 /**
- * Class MagentoVersion
- * @package Ess\M2ePro\Model\Requirements\Checks
+ * Class \Ess\M2ePro\Model\Requirements\Checks\MagentoVersion
  */
 class MagentoVersion extends AbstractCheck
 {

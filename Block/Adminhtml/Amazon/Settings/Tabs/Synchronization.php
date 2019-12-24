@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
 use Magento\Framework\Message\MessageInterface;
 
 /**
- * Class Synchronization
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\Synchronization
  */
 class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {

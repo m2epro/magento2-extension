@@ -32,8 +32,7 @@
 namespace Ess\M2ePro\PublicServices\Product;
 
 /**
- * Class SqlChange
- * @package Ess\M2ePro\PublicServices\Product
+ * Class \Ess\M2ePro\PublicServices\Product\SqlChange
  */
 class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 {

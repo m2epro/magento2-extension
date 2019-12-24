@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Produc
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode;
 
 /**
- * Class Assign
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode\Assign
  */
 class Assign extends ProductTaxCode
 {

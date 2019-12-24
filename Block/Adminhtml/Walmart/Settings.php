@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart;
 
 /**
- * Class Settings
- * @package Ess\M2ePro\Block\Adminhtml\Walmart
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Settings
  */
 class Settings extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Translation\Connector\Product\Add;
 
 /**
- * Class MultipleResponser
- * @package Ess\M2ePro\Model\Translation\Connector\Product\Add
+ * Class \Ess\M2ePro\Model\Translation\Connector\Product\Add\MultipleResponser
  */
 class MultipleResponser extends \Ess\M2ePro\Model\Translation\Connector\Command\Pending\Responser
 {

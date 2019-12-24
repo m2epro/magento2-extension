@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping;
 
 /**
- * Class Calculated
- * @package Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping
+ * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping\Calculated
  */
 class Calculated extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {

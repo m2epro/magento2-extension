@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Order;
 
 /**
- * Class Invoice
- * @package Ess\M2ePro\Model\Magento\Order
+ * Class \Ess\M2ePro\Model\Magento\Order\Invoice
  */
 class Invoice extends \Ess\M2ePro\Model\AbstractModel
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Magento\Tax;
 use Ess\M2ePro\Model\Magento\Tax\Rule\Builder;
 
 /**
- * Class Helper
- * @package Ess\M2ePro\Model\Magento\Tax
+ * Class \Ess\M2ePro\Model\Magento\Tax\Helper
  */
 class Helper extends \Ess\M2ePro\Model\AbstractModel
 {

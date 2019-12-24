@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Helper\Component\Ebay;
 use Ess\M2ePro\Model\Magento\Product\Image;
 
 /**
- * Class Images
- * @package Ess\M2ePro\Helper\Component\Ebay
+ * Class \Ess\M2ePro\Helper\Component\Ebay\Images
  */
 class Images extends \Ess\M2ePro\Helper\AbstractHelper
 {

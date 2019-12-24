@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SynchronizationLog;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SynchronizationLog
+ * Class \Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SynchronizationLog\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Stores;
 
 /**
- * Class Wrapper
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Stores
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Stores\Wrapper
  */
 class Wrapper extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

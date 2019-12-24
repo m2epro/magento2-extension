@@ -12,8 +12,7 @@ use Magento\Backend\Block\Widget\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
 /**
- * Class AbstractTabs
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
  */
 abstract class AbstractTabs extends Tabs
 {

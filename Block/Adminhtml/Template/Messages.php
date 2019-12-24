@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Template;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
- * Class Messages
- * @package Ess\M2ePro\Block\Adminhtml\Template
+ * Class \Ess\M2ePro\Block\Adminhtml\Template\Messages
  */
 class Messages extends AbstractBlock
 {

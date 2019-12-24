@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Requirements;
 
 /**
- * Class Manager
- * @package Ess\M2ePro\Model\Requirements
+ * Class \Ess\M2ePro\Model\Requirements\Manager
  */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {

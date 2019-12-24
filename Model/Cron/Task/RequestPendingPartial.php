@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Request\Pending\Partial;
 
 /**
- * Class RequestPendingPartial
- * @package Ess\M2ePro\Model\Cron\Task
+ * Class \Ess\M2ePro\Model\Cron\Task\RequestPendingPartial
  */
 class RequestPendingPartial extends AbstractModel
 {

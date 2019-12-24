@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update\Blocked;
 
 /**
- * Class ProcessingRunner
- * @package Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update\Blocked
+ * Class \Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update\Blocked\ProcessingRunner
  */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {

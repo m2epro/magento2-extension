@@ -10,8 +10,7 @@ namespace Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\StockSourceLink\Command;
 use Magento\InventoryApi\Api\Data\StockSourceLinkInterface;
 
 /**
- * Class Delete
- * @package Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\StockSourceLink\Command
+ * Class \Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\StockSourceLink\Command\Delete
  */
 class Delete extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

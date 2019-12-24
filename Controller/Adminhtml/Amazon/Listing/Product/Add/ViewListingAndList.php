@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
 /**
- * Class ViewListingAndList
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add\ViewListingAndList
  */
 class ViewListingAndList extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {

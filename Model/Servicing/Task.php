@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Servicing;
 
 /**
- * Class Task
- * @package Ess\M2ePro\Model\Servicing
+ * Class \Ess\M2ePro\Model\Servicing\Task
  */
 abstract class Task extends \Ess\M2ePro\Model\AbstractModel
 {

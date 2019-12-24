@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Product;
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractView;
 
 /**
- * Class View
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Product
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Product\View
  */
 class View extends AbstractView
 {

@@ -45,15 +45,6 @@ define([
             return checkResult;
         }, M2ePro.translator.translate('No Customer entry is found for specified ID.'));
 
-        jQuery.validator.addMethod('M2ePro-account-order-number-prefix', function(value) {
-
-            if ($('magento_orders_number_prefix_mode').value == 0) {
-                return true;
-            }
-
-            return value.length <= 5;
-        }, M2ePro.translator.translate('Prefix length should not be greater than 5 characters.'));
-
         jQuery.validator.addMethod('M2ePro-account-feedback-templates', function(value) {
 
             if (value == 0) {
@@ -112,6 +103,9 @@ define([
             .simulate('change');
         $('mapping_title_mode')
             .observe('change', this.mapping_title_mode_change)
+            .simulate('change');
+        $('mapping_item_id_mode')
+            .observe('change', this.mapping_item_id_mode_change)
             .simulate('change');
 
         //$('ebayAccountEditTabs_listingOther').removeClassName('changed');
@@ -676,7 +670,23 @@ define([
         if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE')) {
             self.updateHiddenValue(this, attributeEl);
         }
-    }
+    },
+
+    mapping_item_id_mode_change: function()
+    {
+        var self        = EbayAccountObj,
+            attributeEl = $('mapping_item_id_attribute');
+
+        $('mapping_item_id_priority').hide();
+        if (this.value != M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Account::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_NONE')) {
+            $('mapping_item_id_priority').show();
+        }
+
+        attributeEl.value = '';
+        if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Account::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE')) {
+            self.updateHiddenValue(this, attributeEl);
+        }
+    },
 
     // ---------------------------------------
     });

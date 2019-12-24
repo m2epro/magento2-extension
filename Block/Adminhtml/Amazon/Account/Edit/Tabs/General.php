@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 /**
- * Class General
- * @package Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\General
  */
 class General extends AbstractForm
 {
@@ -318,7 +317,6 @@ JS
             'The specified Title is already used for other Account. Account Title must be unique.' => $this->__(
                 'The specified Title is already used for other Account. Account Title must be unique.'
             ),
-            'You must choose Marketplace first.' => $this->__('You must choose Marketplace first.'),
             'M2E Pro was not able to get access to the Amazon Account. Please, make sure, that you choose correct ' .
              'Option on MWS Authorization Page and enter correct Merchant ID.' => $this->__(
                  'M2E Pro was not able to get access to the Amazon Account.' .

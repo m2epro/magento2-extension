@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 /**
- * Class GoToEbay
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\GoToEbay
  */
 class GoToEbay extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {

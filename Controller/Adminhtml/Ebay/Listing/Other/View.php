@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other;
 
 /**
- * Class View
- * @package Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
+ * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other\View
  */
 class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
 {

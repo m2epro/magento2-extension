@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request;
 
 /**
- * Class Images
- * @package Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request
+ * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Images
  */
 class Images extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\AbstractModel
 {

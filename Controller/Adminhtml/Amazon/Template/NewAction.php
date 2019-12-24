@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
 /**
- * Class NewAction
- * @package Ess\M2ePro\Controller\Adminhtml\Amazon\Template
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\NewAction
  */
 class NewAction extends Template
 {

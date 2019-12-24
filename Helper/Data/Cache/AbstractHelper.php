@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Helper\Data\Cache;
 
 /**
- * Class AbstractHelper
- * @package Ess\M2ePro\Helper\Data\Cache
+ * Class \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
  */
 abstract class AbstractHelper extends \Ess\M2ePro\Helper\AbstractHelper
 {

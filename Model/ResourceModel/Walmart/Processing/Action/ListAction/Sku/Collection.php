@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Processing\Action\ListAction\Sku;
 
 /**
- * Class Collection
- * @package Ess\M2ePro\Model\ResourceModel\Walmart\Processing\Action\ListAction\Sku
+ * Class \Ess\M2ePro\Model\ResourceModel\Walmart\Processing\Action\ListAction\Sku\Collection
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

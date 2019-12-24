@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model;
 use Magento\Framework\DataObject;
 
 /**
- * Class AbstractModel
- * @package Ess\M2ePro\Model
+ * Class \Ess\M2ePro\Model\AbstractModel
  */
 abstract class AbstractModel extends DataObject
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Synchronization\Orders;
 
 /**
- * Class Acknowledge
- * @package Ess\M2ePro\Model\Walmart\Synchronization\Orders
+ * Class \Ess\M2ePro\Model\Walmart\Synchronization\Orders\Acknowledge
  */
 class Acknowledge extends AbstractModel
 {

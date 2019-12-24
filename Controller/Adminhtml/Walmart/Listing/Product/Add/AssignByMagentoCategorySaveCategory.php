@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
 /**
- * Class AssignByMagentoCategorySaveCategory
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\AssignByMagentoCategorySaveCategory
  */
 class AssignByMagentoCategorySaveCategory extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {

@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add;
 
 /**
- * Class NoteForm
- * @package Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add
+ * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\NoteForm
  */
 class NoteForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

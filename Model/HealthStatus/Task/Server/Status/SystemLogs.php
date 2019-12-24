@@ -12,8 +12,7 @@ use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 
 /**
- * Class SystemLogs
- * @package Ess\M2ePro\Model\HealthStatus\Task\Server\Status
+ * Class \Ess\M2ePro\Model\HealthStatus\Task\Server\Status\SystemLogs
  */
 class SystemLogs extends IssueType
 {

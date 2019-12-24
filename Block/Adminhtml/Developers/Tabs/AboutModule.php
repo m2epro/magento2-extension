@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs;
 
 /**
- * Class AboutModule
- * @package Ess\M2ePro\Block\Adminhtml\Developers\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Developers\Tabs\AboutModule
  */
 class AboutModule extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {

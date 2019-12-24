@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Plugin\StockItem\Magento\CatalogInventory\Model\Stock;
 
 /**
- * Class Item
- * @package Ess\M2ePro\Plugin\StockItem\Magento\CatalogInventory\Model\Stock
+ * Class \Ess\M2ePro\Plugin\StockItem\Magento\CatalogInventory\Model\Stock\Item
  */
 class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

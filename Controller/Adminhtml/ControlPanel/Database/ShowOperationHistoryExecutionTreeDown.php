@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database;
 
 /**
- * Class ShowOperationHistoryExecutionTreeDown
- * @package Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database
+ * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database\ShowOperationHistoryExecutionTreeDown
  */
 class ShowOperationHistoryExecutionTreeDown extends Table
 {

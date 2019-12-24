@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General\AccountPickupStore;
 
 /**
- * Class Process
- * @package Ess\M2ePro\Model\Ebay\Synchronization\General\AccountPickupStore
+ * Class \Ess\M2ePro\Model\Ebay\Synchronization\General\AccountPickupStore\Process
  */
 class Process extends \Ess\M2ePro\Model\Ebay\Synchronization\General\AbstractModel
 {

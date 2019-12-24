@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database;
 use Ess\M2ePro\Model\ResourceModel\Collection\Custom;
 
 /**
- * Class Grid
- * @package Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database
+ * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {

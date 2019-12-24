@@ -12,8 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Walmart\Template\Synchronization;
 
 /**
- * Class StopRules
- * @package Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs
+ * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs\StopRules
  */
 class StopRules extends AbstractForm
 {

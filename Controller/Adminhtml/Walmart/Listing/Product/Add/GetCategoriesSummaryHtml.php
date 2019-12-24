@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
 /**
- * Class GetCategoriesSummaryHtml
- * @package Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+ * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\GetCategoriesSummaryHtml
  */
 class GetCategoriesSummaryHtml extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {

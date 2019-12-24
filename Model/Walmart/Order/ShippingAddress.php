@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Order;
 
 /**
- * Class ShippingAddress
- * @package Ess\M2ePro\Model\Walmart\Order
+ * Class \Ess\M2ePro\Model\Walmart\Order\ShippingAddress
  */
 class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
 {

@@ -14,8 +14,7 @@ use Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
 use \Ess\M2ePro\Helper\Factory as HelperFactory;
 
 /**
- * Class Base
- * @package Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1
+ * Class \Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1\Base
  */
 abstract class Base extends Action
 {

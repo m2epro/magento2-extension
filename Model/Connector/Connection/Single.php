@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Model\Connector\Connection;
 
 /**
- * Class Single
- * @package Ess\M2ePro\Model\Connector\Connection
+ * Class \Ess\M2ePro\Model\Connector\Connection\Single
  */
 class Single extends \Ess\M2ePro\Model\Connector\AbstractModel
 {

@@ -11,8 +11,7 @@ namespace Ess\M2ePro\Model\Cron\Task;
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 
 /**
- * Class HealthStatus
- * @package Ess\M2ePro\Model\Cron\Task
+ * Class \Ess\M2ePro\Model\Cron\Task\HealthStatus
  */
 class HealthStatus extends AbstractModel
 {

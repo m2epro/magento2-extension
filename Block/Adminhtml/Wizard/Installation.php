@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Wizard;
 
 /**
- * Class Installation
- * @package Ess\M2ePro\Block\Adminhtml\Wizard
+ * Class \Ess\M2ePro\Block\Adminhtml\Wizard\Installation
  */
 abstract class Installation extends AbstractWizard
 {

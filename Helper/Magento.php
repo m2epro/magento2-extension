@@ -8,9 +8,10 @@
 
 namespace Ess\M2ePro\Helper;
 
+use \Magento\Deploy\Package\Package;
+
 /**
- * Class Magento
- * @package Ess\M2ePro\Helper
+ * Class \Ess\M2ePro\Helper\Magento
  */
 class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 {
@@ -303,14 +304,16 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
             \Magento\Framework\App\Filesystem\DirectoryList::STATIC_VIEW
         );
 
-        $basePath = $this->getThemePath() . DIRECTORY_SEPARATOR
-                    . $this->getLocale() . DIRECTORY_SEPARATOR;
+        $basePath = $this->getThemePath() .DIRECTORY_SEPARATOR. $this->getLocale() .DIRECTORY_SEPARATOR . $path;
+        $exist = $directoryReader->isExist($basePath);
 
-        if ($path !== null) {
-            $basePath .= $path;
+        if (!$exist) {
+            $basePath = $this->themeResolver->get()->getArea() .DIRECTORY_SEPARATOR.
+                        Package::BASE_THEME .DIRECTORY_SEPARATOR. Package::BASE_LOCALE .DIRECTORY_SEPARATOR . $path;
+
+            $exist = $directoryReader->isExist($basePath);
         }
-
-        return $directoryReader->isExist($basePath);
+        return $exist;
     }
 
     public function getLastStaticContentDeployDate()

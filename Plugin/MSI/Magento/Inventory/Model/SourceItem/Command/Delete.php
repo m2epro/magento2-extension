@@ -8,8 +8,7 @@
 namespace Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command;
 
 /**
- * Class Delete
- * @package Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command
+ * Class \Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command\Delete
  */
 class Delete extends \Ess\M2ePro\Plugin\AbstractPlugin
 {

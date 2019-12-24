@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Observer\Product\AddUpdate;
 
 /**
- * Class AbstractAddUpdate
- * @package Ess\M2ePro\Observer\Product\AddUpdate
+ * Class \Ess\M2ePro\Observer\Product\AddUpdate\AbstractAddUpdate
  */
 abstract class AbstractAddUpdate extends \Ess\M2ePro\Observer\Product\AbstractProduct
 {

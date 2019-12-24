@@ -9,8 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid;
 
 /**
- * Class Massaction
- * @package Ess\M2ePro\Block\Adminhtml\Magento\Grid
+ * Class \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Massaction
  */
 class Massaction extends \Magento\Backend\Block\Widget\Grid\Massaction\Extended
 {
