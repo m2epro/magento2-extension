@@ -89,7 +89,7 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
         }
 
         /** @var \Magento\Sales\Model\Order\Shipment\Track $track */
-        $track  = reset($tracks);
+        $track  = is_array($tracks) ? reset($tracks) : $tracks->getItems(){0};
         $number = trim($track->getData('track_number'));
 
         if (empty($number)) {
