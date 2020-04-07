@@ -7,7 +7,7 @@
     "keywords": ["ebay", "amazon", "walmart", "magento"],
     "homepage": "https://www.m2epro.com/",
     "require": {
-        "php": "~5.5.0|~5.6.0|~7.0.0|~7.1.0|~7.2.0"
+        "php": "~5.5.0|~5.6.0|~7.0.0|~7.1.0|~7.2.0|~7.3.0"
     },
     "autoload": {
         "files": [
