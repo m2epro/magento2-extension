@@ -1,0 +1,49 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\OtherIssues $block */
+
+?>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <?php if ($block->isGdLibraryUnAvailable()) : ?>
+        <tr>
+            <td class="label">
+                <label><?php echo $block->__('PHP GD Library'); ?>: </label>
+            </td>
+            <td class="value">
+                <span style="color: red"><b>Not Installed</b></span>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if ($block->isZendOpcacheAvailable()) : ?>
+        <tr>
+            <td class="label">
+                <label><?php echo $block->__('Zend Opcache'); ?>: </label>
+            </td>
+            <td class="value">
+                <span style="color: red"><b>Enabled</b></span>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if ($block->isSystemLogNotEmpty()) : ?>
+            <tr>
+                <td class="label">
+                    <label><?php echo $block->__('System Log'); ?>: </label>
+                </td>
+                <td class="value">
+                    <a style="margin-left: 10px;" href="<?php echo $block->getUrl('*/controlPanel_database/manageTable', ['table' => 'm2epro_system_log']); ?>">Show</a>
+                </td>
+            </tr>
+    <?php endif; ?>
+
+</table>

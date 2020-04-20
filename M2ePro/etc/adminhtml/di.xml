@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- menu -->
+
+    <type name="Magento\Backend\Model\Menu\Config">
+        <plugin name="m2epro_plugin_menu_magento_backend_model_menu_config"
+                type="Ess\M2ePro\Plugin\Menu\Magento\Backend\Model\Menu\Config" />
+    </type>
+    <type name="Magento\Backend\Model\Menu\Item">
+        <plugin name="m2epro_plugin_menu_magento_backend_model_menu_item"
+                type="Ess\M2ePro\Plugin\Menu\Magento\Backend\Model\Menu\Item" />
+    </type>
+
+    <!-- config -->
+
+    <type name="Magento\Config\Controller\Adminhtml\System\Config\Edit">
+        <plugin name="m2epro_plugin_config_magento_config_controller_adminhtml_system_config_edit"
+                type="Ess\M2ePro\Plugin\Config\Magento\Config\Controller\Adminhtml\System\Config\Edit" />
+    </type>
+    <type name="Magento\Config\Model\Config">
+        <plugin name="m2epro_plugin_config_magento_config_model_config"
+                type="Ess\M2ePro\Plugin\Config\Magento\Config\Model\Config" />
+    </type>
+    <type name="Magento\Config\Model\Config\Structure\Data">
+        <plugin name="m2epro_plugin_config_magento_config_model_config_structure_data"
+                type="Ess\M2ePro\Plugin\Config\Magento\Config\Model\Config\Structure\Data" />
+    </type>
+
+    <!-- session messages -->
+
+    <type name="Magento\Framework\View\Element\Message\MessageConfigurationsPool">
+        <arguments>
+            <argument name="configurationsMap" xsi:type="array">
+                <item name="m2epro_messages" xsi:type="array">
+                    <item name="renderer" xsi:type="const">\Magento\Framework\View\Element\Message\Renderer\BlockRenderer::CODE</item>
+                    <item name="data" xsi:type="array">
+                        <item name="template" xsi:type="string">Ess_M2ePro::messages.phtml</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- func_get_args() fix - see detailed explanation into the Plugin -->
+
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_abstractBlock"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_abstractContainer"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Category\AbstractCategory">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_category_abstractCategory"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_form_abstractContainer"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_form_abstractForm"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_grid_abstractContainer"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_grid_abstractGrid"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AbstractFilter">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_grid_column_filter_abstractFilter"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_grid_column_filter_range"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_tabs_abstractTabs"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+
+    <!-- Health Status System Notification -->
+
+    <type name="Magento\Framework\Notification\MessageList">
+        <arguments>
+            <argument name="messages" xsi:type="array">
+                <item name="m2epro_healthStatus_notification_magento_system_message" xsi:type="string">Ess\M2ePro\Model\HealthStatus\Notification\Magento\System\Message</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Health Status Magento Front Controller Notification -->
+
+    <type name="Magento\Framework\App\FrontControllerInterface">
+        <plugin name="m2epro_plugin_heathStatus_magento_framework_app_frontController"
+                type="Ess\M2ePro\Plugin\HealthStatus\Magento\Framework\App\FrontController"
+                sortOrder="999" />
+    </type>
+
+    <!-- View Component Order Button -->
+
+    <type name="Magento\Sales\Block\Adminhtml\Order\View">
+        <plugin name="m2epro_plugin_order_magento_view"
+                type="Ess\M2ePro\Plugin\Order\Magento\View" />
+    </type>
+
+</config>

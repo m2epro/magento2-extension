@@ -1,0 +1,65 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\StoreSwitcher $block */
+
+?>
+
+<?php if ($websites = $block->getWebsites()) : ?>
+    <select
+        id="<?php echo $block->getStoreSelectId(); ?>"
+        name="<?php echo $block->getStoreSelectName(); ?>"
+        style="width: 250px;"
+        class="select admin__control-select <?php echo $block->getClass(); ?> <?php if ($block->isRequiredOption()) :
+            ?> M2ePro-store-switcher-validation<?php
+                                            endif; ?>"
+    >
+
+        <?php if ($block->hasEmptyOption()) : ?>
+            <option value="-1"></option>
+        <?php endif; ?>
+
+        <?php if ($block->hasDefaultOption() && $block->isDisplayDefaultStoreModeUp()) : ?>
+            <option value="<?php echo $block->getDefaultStoreId(); ?>"<?php if ($block->getStoreId() == $block->getDefaultStoreId()) :
+                ?> selected="selected"<?php
+                           endif; ?>><?php echo $block->getDefaultStoreName(); ?></option>
+        <?php endif; ?>
+
+        <?php foreach ($websites as $website) : ?>
+            <?php $showWebsite=false; ?>
+            <?php foreach ($website->getGroups() as $group) : ?>
+                <?php $showGroup=false; ?>
+                <?php foreach ($block->getStores($group) as $store) : ?>
+                    <?php if ($showWebsite == false) : ?>
+                        <?php $showWebsite = true; ?>
+                        <optgroup label="<?php echo $website->getName(); ?>"></optgroup>
+                    <?php endif; ?>
+                    <?php if ($showGroup == false) : ?>
+                        <?php $showGroup = true; ?>
+                        <optgroup label="&nbsp;&nbsp;&nbsp;<?php echo $group->getName(); ?>">
+                    <?php endif; ?>
+                    <option value="<?php echo $store->getId(); ?>"<?php if ($block->getStoreId() == $store->getId()) :
+                        ?> selected="selected"<?php
+                                   endif; ?>>&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $store->getName(); ?></option>
+                <?php endforeach; ?>
+                <?php if ($showGroup) : ?>
+                    </optgroup>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        <?php endforeach; ?>
+
+        <?php if ($block->hasDefaultOption() && $block->isDisplayDefaultStoreModeDown()) : ?>
+            <option value="<?php echo $block->getDefaultStoreId(); ?>"<?php if ($block->getStoreId() == $block->getDefaultStoreId()) :
+                ?> selected="selected"<?php
+                           endif; ?>><?php echo $block->getDefaultStoreName(); ?></option>
+        <?php endif; ?>
+
+    </select>
+
+<?php endif; ?>

@@ -1,0 +1,45 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+?>
+
+<?php if ($block->getData('is_migration')) : ?>
+    <p>The Module interface is unavailable and the background tasks stop running. Service can be put under maintenance automatically due to the following reasons:</p>
+
+    <ul style="margin-left: 30px; max-width: 800px;">
+        <li>
+            <p>Module awaits for importing of M2E Pro table dump from Magento v1.x.
+               Please import the created dump into MySQL database of Magento v2.x. After that,
+               go to <strong>Stores > Configuration > Multi Channels > Advanced Settings</strong>,
+               click <strong>Open Migration Wizard</strong>. At the 2nd Wizard Step, click Continue to proceed.</p>
+        </li>
+        <li>
+            <p>Import of M2E Pro table dump from Magento v1.x failed.
+               To resolve the issue, please try to import the dump again.
+               After that, go to <strong>Stores > Configuration > Multi Channels > Advanced Settings</strong>,
+               click Open Migration Wizard. At the 2nd Wizard Step, click Continue to proceed.</p>
+        </li>
+    </ul>
+
+    <p>If the issue persists, please contact <a href="mailto:support@m2epro.com">M2E Pro Support Team.</a></p>
+
+<?php else : ?>
+    <p>The Module interface is unavailable and the background tasks stop running. Service can be put under maintenance automatically due to the following reasons:</p>
+
+    <ul style="margin-left: 30px; max-width: 800px;">
+        <li>
+            <p>Module installation failed, e.g. due to the incorrect installation via Magento Component Manager, incompatibility of Magento and its Modules or other related technical issues.</p>
+        </li>
+        <li>
+            <p>Module upgrade failed, e.g. due to the improper M2E Pro tables updating or php %magento2_installation_dir%/bin/magento setup:upgrade command running.</p>
+        </li>
+    </ul>
+
+    <p>Please contact <a href="mailto:support@m2epro.com">M2E Pro Support Team</a> to resolve the issue.</p>
+
+<?php endif; ?>

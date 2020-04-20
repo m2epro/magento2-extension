@@ -1,0 +1,48 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<?php foreach ($block->commands as $index => $command) : ?>
+    <?php
+        $components = [];
+    if ($command['components']) {
+        $components = $command['components'] === true ? $block->enabledComponents : $command['components'];
+    }
+    ?>
+
+    <table class="controlPanel-reflection-container">
+        <tr>
+            <td class="group_number_td"><b><?php echo $index + 1; ?>.</b></td>
+            <td class="group_separator">|</td>
+            <td>
+                <?php echo $block->getCommandLauncherHtml($command); ?>
+
+                <?php if (count($components) > 1) : ?>
+                    <?php foreach ($block->enabledComponents as $key => $component) : ?>
+                        <?php echo $key == 0 ? '(' : ''; ?>
+                        <?php echo $block->getCommandLauncherHtml($command, $component); ?>
+                        <?php echo isset($block->enabledComponents[$key + 1]) ? ', ' : ')'; ?>
+
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </td>
+        </tr>
+
+        <?php if ($command['new_line']) : ?>
+            <tr>
+                <td colspan="3">
+                    <hr/>
+                </td>
+            </tr>
+        <?php endif; ?>
+
+    </table>
+
+<?php endforeach; ?>

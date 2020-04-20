@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+
+    <system>
+
+        <!-- main tab -->
+
+        <tab id="m2epro" translate="label" sortOrder="450" class="m2e-tab">
+            <label>Multi Channels</label>
+        </tab>
+
+        <!-- ebay integration tab -->
+
+        <section id="m2epro_ebay_integration" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>eBay Integration</label>
+            <tab>m2epro</tab>
+            <resource>Ess_M2ePro::system_configuration</resource>
+            <group id="ebay_mode" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <fieldset_css>m2epro-system-config-fieldset</fieldset_css>
+                <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\General\Fieldset</frontend_model>
+                <field id="ebay_mode_field" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Mode</label>
+                    <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\Ebay\Field</frontend_model>
+                </field>
+            </group>
+        </section>
+
+        <!-- amazon integration tab -->
+
+        <section id="m2epro_amazon_integration" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Amazon Integration</label>
+            <tab>m2epro</tab>
+            <resource>Ess_M2ePro::system_configuration</resource>
+            <group id="amazon_mode" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <fieldset_css>m2epro-system-config-fieldset</fieldset_css>
+                <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\General\Fieldset</frontend_model>
+                <field id="amazon_mode_field" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Mode</label>
+                    <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\Amazon\Field</frontend_model>
+                </field>
+            </group>
+        </section>
+
+        <!-- walmart integration tab -->
+
+        <section id="m2epro_walmart_integration" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Walmart Integration</label>
+            <tab>m2epro</tab>
+            <resource>Ess_M2ePro::system_configuration</resource>
+            <group id="walmart_mode" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <fieldset_css>m2epro-system-config-fieldset</fieldset_css>
+                <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\General\Fieldset</frontend_model>
+                <field id="walmart_mode_field" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Mode</label>
+                    <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\Walmart\Field</frontend_model>
+                </field>
+            </group>
+        </section>
+
+        <!-- advanced settings tab -->
+
+        <section id="m2epro_advanced_settings" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Advanced Settings</label>
+            <tab>m2epro</tab>
+            <resource>Ess_M2ePro::system_configuration</resource>
+            <group id="module_mode" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Disable/Enable Module</label>
+                <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\General\Fieldset</frontend_model>
+                <field id="module_mode_field" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Module Mode</label>
+                    <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\Module\Mode\Field</frontend_model>
+                </field>
+            </group>
+            <group id="migration_from_magento1" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Migration from Magento v1.x</label>
+                <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\Module\Fieldset</frontend_model>
+                <field id="migration_field" translate="label" type="button" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\Module\Migration\Field</frontend_model>
+                </field>
+            </group>
+        </section>
+
+        <!-- migration wizard tab -->
+
+        <section id="m2epro_migration_wizard" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Migration from Magento v1.x</label>
+            <tab>m2epro</tab>
+            <resource>Ess_M2ePro::system_configuration</resource>
+            <group id="migration_wizard" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <frontend_model>Magento\Config\Block\System\Config\Form\Fieldset</frontend_model>
+                <field id="migration_wizard_field" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Redirect to migration</label>
+                    <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\MigrationWizard\Field</frontend_model>
+                </field>
+            </group>
+        </section>
+
+        <!-- payment method -->
+
+        <section id="payment">
+            <group id="m2epropayment" translate="label" type="text" sortOrder="400" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>M2E Pro Payment</label>
+                <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="title" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Title</label>
+                </field>
+            </group>
+        </section>
+
+        <!-- shipping method -->
+
+        <section id="carriers">
+            <group id="m2eproshipping" translate="label" type="text" sortOrder="400" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>M2E Pro Shipping</label>
+                <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="title" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Title</label>
+                </field>
+            </group>
+        </section>
+
+    </system>
+
+</config>

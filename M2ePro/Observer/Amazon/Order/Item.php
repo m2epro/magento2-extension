@@ -1,0 +1,72 @@
+<?php
+
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+namespace Ess\M2ePro\Observer\Amazon\Order;
+
+/**
+ * Class \Ess\M2ePro\Observer\Amazon\Order\Item
+ */
+class Item extends \Ess\M2ePro\Observer\AbstractModel
+{
+    protected $amazonFactory;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory
+    ) {
+        $this->amazonFactory = $amazonFactory;
+        parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
+    }
+
+    //########################################
+
+    public function process()
+    {
+        /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
+        $orderItem  = $this->getEvent()->getData('order_item');
+
+        /** @var \Ess\M2ePro\Model\Amazon\Order\Item $amazonOrderItem */
+        $amazonOrderItem = $orderItem->getChildObject();
+
+        /** @var \Magento\Catalog\Model\Product $product */
+        $product = $this->getEvent()->getData('product');
+
+        $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
+        $listingOtherCollection->addFieldToFilter('account_id', $orderItem->getOrder()->getAccountId());
+        $listingOtherCollection->addFieldToFilter('second_table.sku', $amazonOrderItem->getSku());
+
+        $otherListings = $listingOtherCollection->getItems();
+
+        if (!empty($otherListings)) {
+            /** @var \Ess\M2ePro\Model\Listing\Other $otherListing */
+            $otherListing = reset($otherListings);
+
+            if ($otherListing->getProductId() !== null) {
+                return;
+            }
+
+            $otherListing->mapProduct($product->getId());
+        } else {
+            $dataForAdd = [
+                'account_id'     => $orderItem->getOrder()->getAccountId(),
+                'marketplace_id' => $orderItem->getOrder()->getMarketplaceId(),
+                'sku'            => $amazonOrderItem->getSku(),
+                'product_id'     => $product->getId(),
+                'store_id'       => $amazonOrderItem->getAmazonOrder()->getAssociatedStoreId(),
+            ];
+
+            $this->activeRecordFactory->getObject('Amazon\Item')->setData($dataForAdd)->save();
+        }
+    }
+
+    //########################################
+}

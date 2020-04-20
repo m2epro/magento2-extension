@@ -1,0 +1,48 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <?php foreach ($block->emptyTables as $table) :?>
+        <tr>
+            <td class="label">
+                <?php echo $table?>
+            </td>
+            <td class="value">
+                <span style="color: red">no records found</span>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+
+    <?php foreach ($block->notInstalledTables as $table) :?>
+        <tr>
+            <td class="label">
+                <?php echo $table?>
+            </td>
+            <td class="value">
+                <span style="color: red">table not installed</span>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+
+    <?php foreach ($block->crashedTables as $table) :?>
+        <tr>
+            <td class="label">
+                <?php echo $table?>
+            </td>
+            <td class="value">
+                <span style="color: red;">table is crashed</span>
+                <a style="margin-left: 10px;" href="<?php echo $block->getUrl('*/controlPanel_inspection/repairCrashedTable', ['table_name' => $table]); ?>">Repair</a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+
+</table>

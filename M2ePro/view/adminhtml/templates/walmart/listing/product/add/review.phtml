@@ -1,0 +1,48 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\Review $block */
+
+$block->css->add("
+    .block_notices {
+        margin-bottom: 15px;
+    }
+
+    .decorated-list li{
+        margin-bottom: .5em;
+    }
+");
+?>
+
+<?php echo $block->getChildHtml('view_header'); ?>
+
+<div class="block_notices_module" title="" subtitle="" collapseable="no" hideblock="no" always_show="yes">
+
+    <?php
+        $helpBlockContent = $block->__(
+            'Products were successfully added to M2E Pro Listing.<br>
+            You can Review Your Products prior to listing them on Walmart or List Added Products Now.
+            <br/><br/>
+            <div>%1% &nbsp; or &nbsp; %2%</div>
+            ',
+            $block->getChildHtml('review'),
+            ($block->getSource() === \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_OTHER)
+                ? $block->getChildHtml('back_to_listing_other')
+                : $block->getChildHtml('list')
+        );
+
+        echo $block->createBlock('HelpBlock')->addData([
+            'no_collapse' => true,
+            'always_show' => true,
+            'no_hide' => true,
+            'content' => $helpBlockContent
+        ])->toHtml();
+
+        ?>
+</div>

@@ -1,0 +1,26 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee\Product $block */
+
+$feeDetailsId = uniqid('fee-details-');
+
+$title = $block->getHelper('Data')->escapeHtml($block->__('Estimated Fee Details For Product: "%title%"', $block->getData('product_name')));
+?>
+
+<div id="<?php echo $feeDetailsId ?>" style="display: none;">
+    <?php echo $block->getChildHtml('details'); ?>
+</div>
+<span>
+    <?php echo $block->getTotalFee() ?>&nbsp;<a
+        href="javascript:void(0);"
+        class="ebay-fee"
+        onclick="EbayListingViewEbayGridObj.openFeePopUp($('<?php echo $feeDetailsId ?>').innerHTML, '<?php echo $title ?>');"
+    ><?php echo $block->__('details') ?></a>
+</span>

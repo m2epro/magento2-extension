@@ -1,0 +1,18 @@
+.m2epro-system-config-fieldset .entry-edit-head {
+    display: none;
+}
+.config-nav-block.m2e-tab strong {
+    display: flex;
+    align-items: center;
+}
+
+.config-nav-block.m2e-tab strong:before {
+    background: url(../../images/logo-multi-channels.svg) no-repeat;
+    width: 20px;
+    height: 20px;
+    background-size: cover;
+    content: '';
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
+}

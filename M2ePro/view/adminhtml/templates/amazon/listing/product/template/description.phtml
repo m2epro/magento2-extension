@@ -1,0 +1,29 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description $block */
+
+?>
+
+<div id="template_description_pop_up_content">
+    <div>
+
+        <?php if (!empty($block->getMessages())) : ?>
+            <div id="template_description_error_block">
+                <?php echo $block->getWarnings(); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php echo $block->getChildHtml('help_block'); ?>
+
+        <div id="template_description_grid">
+        </div>
+
+    </div>
+</div>

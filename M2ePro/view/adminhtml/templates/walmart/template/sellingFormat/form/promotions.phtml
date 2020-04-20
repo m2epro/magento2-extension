@@ -1,0 +1,127 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form\Promotions $block */
+
+?>
+
+<table id="promotions_table"
+       class="border data-grid data-grid-not-hovered"
+       cellpadding="0"
+       cellspacing="0">
+    <thead>
+    <tr class="headings">
+        <th class="data-grid-th">
+            <?php echo $block->__('From Date'); ?>
+            <span class="required">*</span>
+        </th>
+        <th class="data-grid-th">
+            <?php echo $block->__('To Date'); ?>
+            <span class="required">*</span>
+        </th>
+        <th class="data-grid-th"><?php echo $block->__('Price'); ?></th>
+        <th class="data-grid-th"><?php echo $block->__('Comparison Price'); ?></th>
+        <th class="data-grid-th"><?php echo $block->__('Type'); ?></th>
+        <th style="width: 35px;" class="type-butt last data-grid-th">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody id="promotions_table_tbody"></tbody>
+    <tfoot>
+    <tr>
+        <td colspan="20" class="a-right">
+            <?php echo $block->getData('add_promotion_price_button')->setData('label', $block->__('Add'))->toHtml(); ?>
+        </td>
+    </tr>
+    </tfoot>
+</table>
+
+<table id="promotions_table_main_screen" class="border" cellpadding="0" cellspacing="0">
+    <thead></thead><tbody></tbody>
+    <tfoot>
+    <tr>
+        <td colspan="20" class="a-center"><?php echo $block->getData('add_promotion_price_button')
+                ->setData('label', $block->__('Add Promotions'))
+                ->setData('id', 'promotions_table_main_screen_button')
+                ->toHtml(); ?></td>
+    </tr>
+    </tfoot>
+</table>
+
+<input type="text" id="promotions_validator" class="M2ePro-validate-promotions" style="display: none;" />
+
+<table id="promotions_table_row_template" style="display: none;">
+    <tbody>
+    <tr id="promotions_%i%_tr" class="promotions">
+        <td>
+
+            <?php echo $block->getData('promotions_from_date_custom_attribute')->toHtml(); ?>
+
+            <div class="promotions_date_mode">
+                <?php echo $block->getData('promotions_from_date_mode')->toHtml(); ?>
+            </div>
+
+            <div class="promotions_date_value">
+                <?php echo $block->getData('promotions_from_date_value')->toHtml(); ?>
+            </div>
+
+        </td>
+        <td>
+
+            <?php echo $block->getData('promotions_to_date_custom_attribute')->toHtml(); ?>
+
+            <div class="promotions_date_mode">
+                <?php echo $block->getData('promotions_to_date_mode')->toHtml(); ?>
+            </div>
+
+            <div class="promotions_date_value">
+                <?php echo $block->getData('promotions_to_date_value')->toHtml(); ?>
+            </div>
+
+        </td>
+        <td style="text-align: center;">
+
+            <?php echo $block->getData('promotions_price_custom_attribute')->toHtml(); ?>
+
+            <div class="promotions_price_mode_block">
+                <?php echo $block->getData('promotions_price_mode')->toHtml(); ?>
+            </div>
+
+            <div class="promotions_price_coefficient_block">
+                <?php echo $block->getData('promotions_price_coefficient')->toHtml(); ?>
+            </div>
+
+        </td>
+        <td style="text-align: center;">
+
+            <?php echo $block->getData('promotions_comparison_price_custom_attribute')->toHtml(); ?>
+
+            <div class="promotions_price_mode_block">
+                <?php echo $block->getData('promotions_comparison_price_mode')->toHtml(); ?>
+            </div>
+
+            <div class="promotions_price_coefficient_block">
+                <?php echo $block->getData('promotions_comparison_price_coefficient')->toHtml(); ?>
+            </div>
+
+        </td>
+        <td style="text-align: center;">
+
+            <div class="promotions_type">
+                <?php echo $block->getData('promotions_type')->toHtml(); ?>
+            </div>
+
+        </td>
+        <td style="text-align: center;">
+
+            <?php echo $block->getData('remove_promotion_price_button')->toHtml(); ?>
+
+        </td>
+    </tr>
+    </tbody>
+</table>

@@ -1,0 +1,58 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+use Ess\M2ePro\Controller\Adminhtml\SetupManagement\Index;
+
+?>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Latest Available Public Version'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo !empty($block->publicLatestVersion) ? $block->publicLatestVersion : '--' ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Latest Available Build Version'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo !empty($block->buildLatestVersion) ? $block->buildLatestVersion : '--' ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Last Upgrade'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo !empty($block->lastUpgradeDate) ? $block->lastUpgradeDate : '--' ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Setup Management Tool'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php
+                $url = $block->getUrl(
+                    '*/setupManagement/index',
+                    [Index::AUTHORIZATION_COOKIE_NAME => Index::AUTHORIZATION_COOKIE_VALUE]
+                );
+                ?>
+            <a target="_blank" href="<?php echo $url; ?>"><?php echo $block->__('manage'); ?></a>
+        </td>
+    </tr>
+
+</table>

@@ -1,0 +1,34 @@
+#healthStatus_tab_container div[role="tabpanel"] {
+    padding-top: 0;
+}
+#healthStatus_notifications_content {
+    padding-top: 2rem !important;
+}
+
+#healthStatus_tab_container .field-submit_button_container > div {
+    margin-left: 35% !important;
+}
+
+#healthStatus .health-status-tab-critical {
+    color: orangered;
+    background-image: url(../images/health_status/error-16-icon.png);
+    background-repeat: no-repeat;
+    background-position: 95% 50%;
+}
+#healthStatus .health-status-tab-warning {
+    color: darkorange;
+    background-image: url(../images/health_status/warning-16-icon.png);
+    background-repeat: no-repeat;
+    background-position: 95% 50%;
+}
+#healthStatus .health-status-tab-notice {
+    color: darkgrey;
+    background-image: url(../images/health_status/notice-16-icon.png);
+    background-repeat: no-repeat;
+    background-position: 95% 50%;
+}
+
+#healthStatus_tab_container .health-status-message-critical-mark { color: orangered;}
+#healthStatus_tab_container .health-status-message-warning-mark { color: darkorange;}
+#healthStatus_tab_container .health-status-message-notice-mark { color: darkgrey;}
+#healthStatus_tab_container .health-status-message-success-mark { color: green;}

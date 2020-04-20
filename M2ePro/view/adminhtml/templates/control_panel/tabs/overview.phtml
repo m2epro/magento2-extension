@@ -1,0 +1,117 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<div class="col-m-4 controlPanel__block_container">
+    <div class="fieldset-wrapper" id="magento_block_control_panel_info_module">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <h4><?php echo $block->__('Main'); ?></h4>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div class="hor-scroll">
+
+                <?php echo $block->getChildHtml('actual_info') ?>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="fieldset-wrapper" id="magento_block_control_panel_info_location">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <h4><?php echo $block->__('Location'); ?></h4>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div class="hor-scroll">
+
+                <?php echo $block->getChildHtml('location_info') ?>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="fieldset-wrapper" id="magento_block_control_panel_info_additional">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <h4><?php echo $block->__('Additional'); ?></h4>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div class="hor-scroll">
+
+                <table class="form-list">
+                    <tbody>
+                        <tr>
+                            <td class="label">
+                                <?php echo $block->__('PHP Info') ?>
+                            </td>
+                            <td class="value">
+                                <a target="_blank" href="<?php echo $block->getUrl('*/controlPanel_inspection/phpInfo') ?>"><?php echo $block->__('Show') ?></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <?php echo $block->__('System Log') ?>
+                            </td>
+                            <td class="value">
+                                <a target="_blank" href="<?php echo $block->getUrl('*/controlPanel_database/manageTable', ['table' => 'm2epro_system_log']) ?>"><?php echo $block->__('Show') ?></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="col-m-4 controlPanel__block_container">
+    <div class="fieldset-wrapper" id="magento_block_control_panel_database_module">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <h4><?php echo $block->__('Database (Module)'); ?></h4>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div class="hor-scroll">
+
+                <?php echo $block->getChildHtml('database_module') ?>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="col-m-4 controlPanel__block_container">
+
+    <div class="fieldset-wrapper" id="magento_block_control_panel_database_integration">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <h4><?php echo $block->__('Database (Integration)'); ?></h4>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div class="hor-scroll">
+
+                <?php echo $block->getChildHtml('database_integration') ?>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

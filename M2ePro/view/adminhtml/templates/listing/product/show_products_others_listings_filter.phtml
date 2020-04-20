@@ -1,0 +1,57 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Listing\Product\HideOthersListingsProductsFilter $block */
+
+?>
+
+<style type="text/css">
+
+    div.switcher {
+        margin-bottom: 30px;
+        padding: 1.5em;
+    }
+
+    div.switcher span.label {
+        font-weight: bold;
+    }
+
+    div.switcher span.value {
+        color: #8e9393;
+    }
+
+    .tips_show_products_others_listings_filter {
+        display: inline-block;
+    }
+
+    .tips_show_products_others_listings_filter > .m2epro-field-tooltip {
+        margin-top: 0;
+    }
+
+</style>
+
+<div class="switcher m2epro-box-style">
+    <input
+        id="switcher_show_products_others_listings_filter"
+        type="checkbox"
+        class="admin__control-checkbox"
+        <?php if ($block->isChecked()) :
+            ?>checked="checked"<?php
+        endif; ?>
+        onclick="setLocation('<?php echo $block->getFilterUrl(); ?>');"
+    >
+    <label for="switcher_not_created_filter" class="admin__field-label">
+        <span><?php echo $block->__('Show Products presented in other M2E Pro Listings'); ?></span>
+    </label>
+
+    <div class="tips_show_products_others_listings_filter"><?php echo $block->getTooltipHtml($block->__(
+        'Display Products presented in the existing M2E Pro Listings including the current one.'
+    ), true); ?>
+    </div>
+</div>

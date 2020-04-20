@@ -1,0 +1,71 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Switcher $block */
+
+?>
+
+<?php if ($items = $block->getItems()) : ?>
+
+    <div class="switcher">
+
+        <label for="<?php echo $block->getParamName(); ?>_switcher"><?php echo $block->getLabel(); ?></label>
+
+        <select
+            id="<?php echo $block->getParamName(); ?>_switcher"
+            name="<?php echo $block->getParamName(); ?>_switcher"
+            onchange="<?php echo $block->getSwitchCallbackName() ?>.call(this);"
+            class="admin__control-select"
+            <?php if ($block->hasIsDisabled()) :
+                ?>disabled="disabled"<?php
+            endif; ?>
+        >
+            <?php if ($block->hasDefaultOption()) : ?>
+                <option value="<?php echo $block->getDefaultOptionValue(); ?>"><?php echo $block->getHelper('Data')->escapeHtml($block->getDefaultOptionName()); ?></option>
+            <?php endif; ?>
+
+            <?php foreach ($items as $item) : ?>
+
+                <?php if (count($items) > 1) : ?>
+                    <optgroup label="<?php echo $item['label'] ?>">
+                <?php endif; ?>
+
+                <?php foreach ($item['value'] as $nestedItem) : ?>
+                    <option
+                        value="<?php echo $nestedItem['value'] ?>"
+                        <?php if ($block->getSelectedParam() == $nestedItem['value']) {
+                            echo ' selected="selected"';
+                        } ?>
+                    >
+                        <?php echo $nestedItem['label'] ?>
+                    </option>
+                <?php endforeach; ?>
+
+                <?php if (count($items) > 1) : ?>
+                    </optgroup>
+                <?php endif; ?>
+
+            <?php endforeach; ?>
+        </select>
+
+        <?php if ($block->getTooltip()) : ?>
+            <?php echo $block->getTooltipHtml($block->getTooltip()); ?>
+        <?php endif; ?>
+    </div>
+
+    <script type="text/javascript">
+
+        <?php echo $block->getSwitchCallbackName() ?> = function()
+        {
+            <?php echo $block->getSwitchCallback() ?>
+        }
+
+    </script>
+
+<?php endif; ?>

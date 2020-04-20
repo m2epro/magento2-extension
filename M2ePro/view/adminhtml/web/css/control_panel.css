@@ -1,0 +1,100 @@
+table.form-list td.label {
+    width: 275px;
+}
+
+table.form-list .label{
+    vertical-align: baseline;
+}
+
+table.form-list tr{
+    line-height: 35px;
+}
+
+.col-m-6:nth-child(even)
+{
+    padding-left: 5px;
+}
+
+.col-m-6:nth-child(odd)
+{
+    padding-right: 5px;
+}
+
+.col-m-4:nth-child(even)
+{
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.col-m-4:nth-child(odd)
+{
+    padding-right: 5px;
+}
+
+.debug-test-commands
+{
+    margin-bottom: 10px;
+}
+
+.debug-mode-switcher
+{
+    width: 500px;
+    background-color: #f8f8f8 !important;
+    border-top: 1px solid #e3e3e3 !important;
+    border-bottom: 1px solid #e3e3e3 !important;
+    font-size: 1.3rem;
+    padding: 1.5rem 2.5rem;
+    margin-bottom: 20px;
+}
+
+/* Buttons */
+/* ================================================ */
+.page-actions-buttons .action-warning {
+    background-color: #fddaad !important;
+}
+.page-actions-buttons .action-success {
+    background-color: #efffcc !important;
+}
+.page-actions-buttons .action-error {
+    background-color: #ffcccc !important;
+}
+
+/* Blocks Headers */
+/* ================================================ */
+.controlPanel__block_container {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.controlPanel__block_container .fieldset-wrapper-title {
+    background-color: #f8f8f8;
+    padding-bottom: 0;
+    padding-left: 10px;
+}
+.controlPanel__block_container .fieldset-wrapper-title > h4 {
+    margin-bottom: 12px;
+}
+.controlPanel__block_container .fieldset-wrapper-content {
+    padding-left: 10px;
+    margin-bottom: 15px;
+}
+
+/* Reflection Blocks */
+/* ================================================ */
+.controlPanel-reflection-container tr {
+    height: 15px;
+}
+.controlPanel-reflection-container tr td hr {
+    width: 400px;
+    margin-top: 8px;
+}
+.controlPanel-reflection-container tr td.group_number_td {
+    width: 20px;
+}
+.controlPanel-reflection-container tr td.group_separator {
+    width: 15px;
+}
+
+/* ================================================ */
+table td a {
+    text-decoration: none !important;
+}

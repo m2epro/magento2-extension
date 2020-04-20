@@ -1,0 +1,99 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var $block \Ess\M2ePro\Block\Adminhtml\Magento\Payment\Info */
+
+?>
+
+<table>
+    <?php if ($block->getPaymentMethod() != '') { ?>
+        <tr>
+            <td style="width: 200px;">
+                <label><?php echo $block->getHelper('Module\Translation')->__('Payment Method'); ?>:</label>
+            </td>
+            <td>
+                <strong><?php echo $block->escapeHtml($block->getPaymentMethod()); ?></strong>
+            </td>
+        </tr>
+    <?php } ?>
+    <?php if ($block->getChannelOrderId() != '') { ?>
+        <tr>
+            <?php
+                $message = $block->getHelper('Module\Translation')->__('%channel_title% Order ID', $block->getChannelTitle());
+            ?>
+            <td style="width: 200px;"><?php echo $block->getHelper('Module\Translation')->__($message) ?>:</td>
+            <td>
+                <?php if ($block->getChannelOrderUrl() != '') { ?>
+                    <a href="<?php echo $block->getChannelOrderUrl() ?>" target="_blank"><?php echo $block->escapeHtml($block->getChannelOrderId()); ?></a>
+                <?php } else { ?>
+                    <strong><?php echo $block->escapeHtml($block->getChannelOrderId()); ?></strong>
+                <?php } ?>
+            </td>
+        </tr>
+    <?php } ?>
+    <?php if ($block->getChannelFinalFee() > 0) { ?>
+        <tr>
+            <?php
+                $message = $block->getHelper('Module\Translation')->__('%channel_title% Final Fee', $block->getChannelTitle());
+            ?>
+            <td style="width: 200px;"><?php echo $block->getHelper('Module\Translation')->__($message) ?>:</td>
+            <td><strong><?php echo $block->getOrder() !== null ? $block->getOrder()->formatPrice($block->getChannelFinalFee()) : $block->getChannelFinalFee(); ?></strong></td>
+        </tr>
+    <?php } ?>
+    <?php if ($block->getCashOnDeliveryCost() > 0) { ?>
+        <tr>
+            <?php
+                $message = $block->getHelper('Module\Translation')->__('Cash On Delivery Cost');
+            ?>
+            <td style="width: 200px;"><?php echo $block->getHelper('Module\Translation')->__($message) ?>:</td>
+            <td><strong><?php echo $block->getOrder() !== null ? $block->getOrder()->formatPrice($block->getCashOnDeliveryCost()) : $block->getCashOnDeliveryCost(); ?></strong></td>
+        </tr>
+    <?php } ?>
+    <?php if ($block->getTaxId() != '') : ?>
+        <tr>
+            <?php $message = $block->getHelper('Module\Translation')->__('Buyer Tax ID'); ?>
+            <td style="width: 200px;"><?php echo $block->getHelper('Module\Translation')->__($message) ?>:</td>
+            <td><strong><?php echo $block->getTaxId(); ?></strong></td>
+        </tr>
+    <?php endif; ?>
+    <?php $transactions = $block->getTransactions(); if (!empty($transactions)) { ?>
+        <tr>
+            <td class="grid" colspan="2">
+                <br/>
+                <h4><?php echo $block->getHelper('Module\Translation')->__('Transactions'); ?></h4>
+                <table class="data" cellpadding="0" cellspacing="0">
+                    <thead>
+                        <tr class="headings">
+                            <th><?php echo $block->getHelper('Module\Translation')->__('Transaction #'); ?></th>
+                            <th><?php echo $block->getHelper('Module\Translation')->__('Fee'); ?></th>
+                            <th><?php echo $block->getHelper('Module\Translation')->__('Amount'); ?></th>
+                            <th><?php echo $block->getHelper('Module\Translation')->__('Date'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($transactions as $key => $transaction) { ?>
+                            <tr class="<?php echo $key % 2 ? 'odd' : 'even' ?>">
+                                <td>
+                                    <?php if (strtolower($block->getPaymentMethod()) == 'paypal') { ?>
+                                        <a href="<?php echo $block->getUrl('m2epro/ebay_order/goToPaypal', ['transaction_id' => $transaction['transaction_id']]); ?>" target="_blank"><?php echo $transaction['transaction_id']; ?></a>
+                                    <?php } else { ?>
+                                        <?php echo $transaction['transaction_id']; ?>
+                                    <?php } ?>
+                                </td>
+                                <td><?php echo $block->getOrder() !== null ? $block->getOrder()->formatPrice($transaction['fee']) : $transaction['fee']; ?></td>
+                                <td><?php echo $block->getOrder() !== null ? $block->getOrder()->formatPrice($transaction['sum']) : $transaction['sum']; ?></td>
+                                <td><?php echo $block->formatDate(str_replace('Z', '', $transaction['transaction_date']), \IntlDateFormatter::MEDIUM, true); ?></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    <?php } ?>
+</table>

@@ -1,0 +1,48 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\SwitchToIndividualPopup $block */
+
+?>
+
+<div id="switch_to_individual_popup">
+    <style>
+        .list {
+            margin: 10px 0px !important;
+            padding-left: 30px !important;
+            list-style: disc outside;
+        }
+    </style>
+
+    <?php echo $block->createBlock('HelpBlock')->setData([
+        'no_collapse' => true,
+        'no_hide' => true,
+        'always_show' => true,
+        'style' => 'margin-bottom: 0px',
+        'content' => $block->__(
+            'You can sell Magento Variational Product on Walmart in two different ways:
+            <ul class="list">
+                <li>as Walmart Variant Group using Parent/Child Mode;</li>
+                <li>as Walmart Individual Items using Individual Mode.</li>
+            </ul>
+            Find more details <a href="%url%" target="_blank" class="external-link">here</a>. <br/>
+            This Product is currently managed under <strong>Parent/Child Mode</strong>. Do you want to switch it to 
+            <strong>Individual Mode</strong>? <br/>',
+            $block->getHelper('Module\Support')->getDocumentationArticleUrl('x/NwBhAQ')
+        )
+    ])->toHtml(); ?>
+
+    <div class="admin__field admin__field-option" style="position: absolute; margin-left: 10px; margin-top: 30px;">
+        <input class="admin__control-checkbox" type="checkbox" id="switch_to_individual_remember_checkbox" name="switch_to_individual_remember_checkbox">&nbsp;
+        <label for="switch_to_individual_remember_checkbox" class="admin__field-label">
+            <span><?php echo $block->__('Remember my choice') ?></span>
+        </label>
+    </div>
+
+</div>

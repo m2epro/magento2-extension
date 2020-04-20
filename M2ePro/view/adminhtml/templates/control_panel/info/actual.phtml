@@ -1,0 +1,123 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Magento'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->magentoInfo ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Module [Public]'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->publicVersion ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Module [Setup]'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->setupVersion ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Module Environment'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->moduleEnvironment ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('PHP'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->phpVersion ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Server API'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo$block->phpApi ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Memory Limit'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->memoryLimit . ' Mb'?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Max Execution Time'); ?>: </label>
+        </td>
+        <td class="value">
+                <?php echo $block->maxExecutionTime == 0 ? $block->__('Unlimited') : $block->maxExecutionTime . ' sec'; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('MySQL'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->mySqlVersion ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Database'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->mySqlDatabaseName ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Cron'); ?> (<?php echo $block->cronCurrentRunner; ?>): </label>
+        </td>
+        <?php
+            $style = '';
+        if ($block->cronIsNotWorking) {
+            $style = ' style="color: red"';
+        }
+        ?>
+        <td class="value">
+            <span<?php echo $style; ?>><?php echo $block->cronLastRunTime; ?></span>
+            <?php
+            if ($block->cronIsNotWorking) {
+                echo ' (' . $block->__('not working') . ')';
+            }
+            ?>
+        </td>
+    </tr>
+</table>

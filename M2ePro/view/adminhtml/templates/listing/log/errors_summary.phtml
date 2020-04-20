@@ -1,0 +1,40 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Listing\Log\ErrorsSummary $block */
+
+?>
+
+<div class="errors_summary_title">
+    <?php echo $block->__('Errors Summary'); ?>
+    <a href="javascript:void(0);" onclick="$('listing_container_errors_summary').hide();" title="<?php echo $block->__('Close'); ?>">
+        <span class="errors_summary_close icon-close"></span>
+    </a>
+</div>
+
+<div class="errors_summary_content">
+
+    <?php foreach ($block->errors as $error) { ?>
+        <div class="errors_summary_line">
+            <div class="errors_summary_type">
+                <?php if ((int)$error['count_products'] == 0) { ?>
+                    <?php echo $block->__('Global'); ?>
+                <?php } else { ?>
+                    <?php echo (int)$error['count_products']; ?>
+                    <?php echo $block->__('Product(s)'); ?>
+                <?php } ?>
+            </div>
+            <div class="errors_summary_text">
+                <?php echo $error['description']; ?>
+            </div>
+        </div>
+
+    <?php } ?>
+
+</div>

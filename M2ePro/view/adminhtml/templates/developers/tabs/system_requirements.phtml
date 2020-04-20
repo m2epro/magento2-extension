@@ -1,0 +1,41 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SystemRequirements $block */
+
+?>
+
+<div id="system-requirements">
+    <table class="admin__table-primary">
+        <thead>
+        <tr>
+            <th><span><?php echo $block->__('Properties'); ?></span></th>
+            <th><span><?php echo $block->__('Minimum / Recommended Value'); ?></span></th>
+            <th><span><?php echo $block->__('Current Value'); ?></span></th>
+        </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($block->getManager()->getChecks() as $check) { ?>
+                <tr>
+                    <td class="label">
+                        <label><?php echo $check->getRenderer()->getTitle(); ?></label>
+                    </td>
+                    <td class="value">
+                        <?php echo $check->getRenderer()->getMin(); ?>
+                    </td>
+                    <td class="value">
+                        <?php echo $check->getRenderer()->getReal(); ?>
+                    </td>
+                </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+</div>
+
+<?php echo $block->additionalInfo->toHtml();?>

@@ -1,0 +1,44 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs\Search $block */
+
+?>
+
+<div id="chooser_search_input_container">
+    <input id="query" type="text" class="admin__control-text" placeholder="<?php echo $block->__('Enter keyword(s) or browsenode ID...'); ?>" onkeypress="AmazonTemplateDescriptionCategoryChooserObj.keyPressQuery(event)">
+    <button class="primary" onclick="AmazonTemplateDescriptionCategoryChooserObj.search()"><?php echo $block->__('Search'); ?></button>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <a onclick="AmazonTemplateDescriptionCategoryChooserObj.searchReset()"><?php echo $block->__('Reset'); ?></a>
+</div>
+
+<div id="chooser_search_results">
+    <table id="search_results_table" >
+
+        <tr id="search_results_no_results_tr" style="display: none;">
+            <td colspan="2" style="text-align: center;">
+                <strong><?php echo $block->__('No Results'); ?></strong>
+            </td>
+        </tr>
+
+        <tr id="search_results_update_sites_data_tr" style="display: none;">
+            <?php if (!$block->isWizardActive()) : ?>
+            <td colspan="2" style="text-align: center;">
+                <?php echo $block->__('Try to <a href="javascript:void(0)" onclick="AmazonTemplateDescriptionCategoryChooserObj.refreshAmazonCategories()">Update Amazon Marketplaces data</a> and repeate the Search.'); ?>
+            </td>
+            <?php endif; ?>
+        </tr>
+
+        <!--  Placeholder  -->
+        <tr class="search_results_results_tr">
+
+        </tr>
+
+    </table>
+</div>

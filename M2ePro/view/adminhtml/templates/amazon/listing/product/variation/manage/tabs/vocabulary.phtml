@@ -1,0 +1,149 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var $block \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Vocabulary */
+
+$data = $block->prepareData();
+$localVocabulary = $data['local_vocabulary'];
+$fixedAttributes = $data['fixed_attributes'];
+?>
+
+<?php echo $block->createBlock('HelpBlock')->setData([
+    'content' => $block->__('In this section you can find <strong>Advanced Settings</strong> which will help you manage associations between Magento Variational Attributes and Product Options.<br/>
+        After the correspondence between an Attribute and Option is set up, it can be saved and automatically used by M2E Pro at further stages.<br/>
+        There are two blocks available:
+        <ul class="list">
+        <li><strong>Saving manual Attribute-Option associations</strong> — if this Option is set up, you will be asked a question whether or not you wish the selected associations to be saved.<br/>
+        Please, note that the selected Value is a Global Setting for all of the Products. Thus, the Option will be applied to all of the Products.</li>
+        <li><strong>Saved Attributes and Options</strong> — this Setting will allow browsing/removing saved Attributes and Options.<br/>
+        Please, note that the list of the saved Attributes and Options contains all of the ever saved associations related to the combination of the particular Magento Variational Attributes and Amazon Variational Attributes.</li>
+        </ul>')
+])->toHtml() ?>
+
+<form id="auto_action_settings_form" action="javascript:void(0);">
+    <?php echo $block->getChildHtml('variation_Vocabulary_form');?>
+</form>
+
+<?php if (!empty($localVocabulary)) { ?>
+
+<style>
+    #amazon_variation_manager_vocabulary_attributes_options.fieldset-wrapper .admin__collapsible-title:before {
+        content: '';
+    }
+
+    #amazon_variation_manager_vocabulary_attributes_options .admin__fieldset-wrapper-title {
+        border-bottom: none;
+        padding: 0;
+    }
+
+    #amazon_variation_manager_vocabulary_attributes_options .data-grid tr:not(.data-grid-editable-row):last-child td {
+        border-bottom: none;
+    }
+
+    #amazon_variation_manager_vocabulary_attributes_options a.amazon-listing-view-icon.amazon-listing-view-generalId-remove:before {
+        content: '\e632';
+        font-size: 11px;
+        vertical-align: top;
+    }
+</style>
+
+<div class="fieldset-wrapper" id="amazon_variation_manager_vocabulary_attributes_options" collapsible="no">
+
+    <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+        <strong class="admin__collapsible-title">
+            <span><?php echo $block->__('Saved Attributes & Options');?></span>
+        </strong>
+        <div class="form-buttons"></div>
+    </div>
+
+    <div class="fieldset">
+
+        <table class="data-grid data-grid-not-hovered" cellspacing="0" cellpadding="0">
+            <thead>
+            <tr>
+                <td class="label" style="width: 25%;
+                                         font-weight: bold;
+                                         border-bottom: 1px solid #D6D6D6 !important;
+                                         border-right: 1px solid #D6D6D6 !important;">
+                    <?php echo $block->__('Magento') ?>
+                </td>
+                <td class="value" style="font-weight: bold; border-bottom: 1px solid #D6D6D6 !important;">
+                    <?php echo $block->__('Amazon') ?>
+                </td>
+            </tr>
+            </thead>
+
+        <?php
+        foreach ($localVocabulary as $magentoAttribute => $amazonAttributes) {
+            foreach ($amazonAttributes as $amazonAttribute => $magentoOptions) {
+                ?>
+
+            <tr class="matched-attributes-pair">
+                <td class="label" style="padding: 1rem 0 0 1rem !important; border-right: 1px solid #D6D6D6 !important;">
+                <?php echo $magentoAttribute ?>
+                </td>
+                <td class="value" style="padding: 1rem 0 0 1rem !important;">
+                    <div class="magento-attribute-name" style="display: none;"><?php echo $magentoAttribute; ?></div>
+                    <div class="channel-attribute-name" style="display: none;"><?php echo $amazonAttribute; ?></div>
+                    <span><?php echo $amazonAttribute ?></span>&nbsp;
+                <?php if (empty($fixedAttributes[$magentoAttribute]) || !in_array($amazonAttribute, $fixedAttributes[$magentoAttribute])) { ?>
+                    <a title="<?php echo $block->__('Remove') ?>"
+                       href="javascript:void(0)"
+                       class="amazon-listing-view-icon amazon-listing-view-generalId-remove"
+                       onclick="ListingGridHandlerObj.variationProductManageHandler.removeAttributeFromVocabulary(this);">
+                    </a>
+                <?php } ?>
+                </td>
+            </tr>
+
+                <?php foreach ($magentoOptions as $magentoOption => $amazonOptions) { ?>
+
+            <tr class="magento-attribute-options">
+                <td class="label" style="padding: 1rem 0 0 1rem !important; border-right: 1px solid #D6D6D6 !important;">
+                    <label style="padding-left: 25px;"><?php echo $magentoOption ?></label>
+                </td>
+                <td class="value" style="padding: 0 0 0 1rem !important;">
+                    <ul class="product-options-groups" style="list-style: none; margin: 5px 0px; padding-left: 25px;">
+
+                        <?php foreach ($amazonOptions as $amazonOptionsGroup) { ?>
+
+                        <li class="channel-attribute-options-group" style="margin: 0;">
+                            <div class="product-option" style="display: none;"><?php echo $magentoOption ?></div>
+                            <div class="product-options-group" style="display: none;"><?php echo $block->getHelper('Data')->escapeHtml($block->getHelper('Data')->jsonEncode($amazonOptionsGroup)) ?></div>
+                            <div class="channel-attribute-name" style="display: none;"><?php echo $amazonAttribute ?></div>
+                            <?php
+                            if (($key = array_search($magentoOption, $amazonOptionsGroup)) !== false) {
+                                unset($amazonOptionsGroup[$key]);
+                            }
+                            ?>
+                            <span><?php echo implode(', ', $amazonOptionsGroup) ?></span>&nbsp;
+                            <a title="<?php echo $block->__('Remove') ?>"
+                               href="javascript:void(0)"
+                               class="amazon-listing-view-icon amazon-listing-view-generalId-remove"
+                               onclick="ListingGridHandlerObj.variationProductManageHandler.removeOptionFromVocabulary(this);">
+                            </a>
+                        </li>
+
+                        <?php } ?>
+
+                    </ul>
+                </td>
+            </tr>
+
+                    <?php
+                }
+            }
+        }
+        ?>
+        </table>
+
+    </div>
+</div>
+
+<?php } ?>

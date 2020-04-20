@@ -1,0 +1,108 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form\ShippingOverrideRules $block */
+
+?>
+
+<table id="shipping_override_rule_table"
+       class="border data-grid data-grid-not-hovered"
+       cellpadding="0"
+       cellspacing="0">
+    <thead>
+    <tr class="headings">
+        <th class="data-grid-th">
+            <?php echo $block->__('Service'); ?>
+            <span class="required">*</span>
+        </th>
+        <th class="data-grid-th">
+            <?php echo $block->__('Locale'); ?>
+            <span class="required">*</span>
+        </th>
+        <th class="data-grid-th">
+            <?php echo $block->__('Action'); ?>
+            <span class="required">*</span>
+        </th>
+        <th class="data-grid-th">
+            <?php echo $block->__('Mode'); ?>
+            <span class="required">*</span>
+        </th>
+        <th class="data-grid-th">
+            <?php echo $block->__('Cost'); ?>
+            <span class="required">*</span>
+        </th>
+        <th class="data-grid-th">
+            <?php echo $block->__('Currency'); ?>
+        </th>
+        <th style="width: 35px;" class="type-butt last data-grid-th">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody id="shipping_override_rules_table_tbody">
+    <!-- #shipping_override_rule_table_row_template inserts here -->
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="20" class="a-right">
+            <?php echo $block->getData('add_shipping_override_rule_button')
+                            ->setData('label', $block->__('Add'))
+                            ->toHtml();?>
+        </td>
+    </tr>
+    </tfoot>
+</table>
+
+<table id="shipping_override_rule_table_main_screen" class="border" cellpadding="0" cellspacing="0">
+    <thead></thead><tbody></tbody>
+    <tfoot>
+    <tr>
+        <td colspan="20" class="a-center">
+            <?php echo $block->getData('add_shipping_override_rule_button')
+                            ->setData('label', $block->__('Add Shipping Override Service'))
+                            ->setData('id', 'shipping_override_rule_table_main_screen_button')
+                            ->toHtml(); ?>
+        </td>
+    </tr>
+    </tfoot>
+</table>
+
+<input type="text" id="shipping_override_rule_validator" class="M2ePro-validate-shipping-override-rules" style="display: none;" />
+
+<table id="shipping_override_rule_table_row_template" style="display: none;">
+    <tbody>
+    <tr id="shipping_override_rule_%i%_tr" class="shipping-override-rule">
+        <td style="text-align: center;">
+            <?php echo $block->getData('shipping_override_rule_service')->toHtml(); ?>
+        </td>
+        <td style="text-align: center;">
+            <?php echo $block->getData('shipping_override_rule_location')->toHtml(); ?>
+        </td>
+        <td style="text-align: center;">
+            <?php echo $block->getData('shipping_override_rule_action')->toHtml(); ?>
+        </td>
+        <td style="text-align: center;">
+            <?php echo $block->getData('shipping_override_rule_cost_mode')->toHtml(); ?>
+        </td>
+        <td style="text-align: center;">
+            <?php echo $block->getData('shipping_override_rule_cost_value')->toHtml(); ?>
+
+            <?php echo $block->getData('shipping_override_rule_cost_attribute')->toHtml(); ?>
+        </td>
+        <td style="text-align: center;">
+            <?php foreach ($block->getData('marketplaces') as $marketplace) { ?>
+                <span class="shipping-override-rule-currency-<?php echo $marketplace->getId(); ?>" style="display: none;">
+                    <?php echo $marketplace->getChildObject()->getData('default_currency'); ?>
+                </span>
+            <?php } ?>
+        </td>
+        <td style="text-align: center;">
+            <?php echo $block->getData('remove_shipping_override_rule_button')->toHtml(); ?>
+        </td>
+    </tr>
+    </tbody>
+</table>

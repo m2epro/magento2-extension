@@ -1,0 +1,24 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Filter $block */
+
+?>
+
+<?php echo $block->createBlock('HelpBlock')->setData([
+    'content' => $block->__('
+        In this Block you can see the list of the saved Filters which are used to select
+        the Compatible Vehicles. In case you do not want some of them to be used, you can
+        Choose the appropriate Option from the mass actions bulk to Remove the Filters.
+    ')
+])->toHtml() ?>
+
+<div id="motors">
+    <?php echo $block->getChildHtml('view_filter_grid'); ?>
+</div>

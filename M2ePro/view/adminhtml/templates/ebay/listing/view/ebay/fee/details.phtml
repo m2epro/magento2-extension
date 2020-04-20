@@ -1,0 +1,60 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee\Details $block */
+
+$fees = $block->getFees();
+?>
+
+<style type="text/css">
+    #fees-table {
+        border: 1px solid #D6D6D6 !important;
+        display: table;
+    }
+    #fees-table .row {
+        display: table-row;
+    }
+    #fees-table .cell {
+        padding: 10px;
+        display: table-cell;
+    }
+    #fees-table .th {
+        font-weight: bold;
+    }
+    #fees-table .th .cell {
+        border-bottom: 1px solid #D6D6D6 !important;
+    }
+    #fees-table .total {
+        font-weight: bold;
+    }
+    #fees-buttons {
+        padding: 10px 0 !important;
+        text-align: right;
+    }
+</style>
+<div class="entry-edit" style="padding-top: 10px;">
+    <div id="fees-table" cellspacing="0" class="form-list" style="width: 100%;">
+        <div class="row th">
+            <div class="cell"><?php echo $block->__('Name') ?></div>
+            <div class="cell"><?php echo $block->__('Fee') ?></div>
+        </div>
+        <?php foreach ($fees as $feeCode => $fee) : ?>
+            <?php if ($feeCode != 'listing_fee') : ?>
+                <div class="row">
+                    <div class="cell label"><?php echo $block->__($block->getHelper('Data')->escapeHtml($fee['label'])) ?>:</div>
+                    <div class="cell value"><?php echo $block->getHelper('Data')->escapeHtml($fee['value']) ?></div>
+                </div>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        <div class="row">
+            <div class="cell label total"><?php echo $block->__('Total') ?>:</div>
+            <div class="cell value total"><?php echo $fees['listing_fee']['value'] ?></div>
+        </div>
+    </div>
+</div>

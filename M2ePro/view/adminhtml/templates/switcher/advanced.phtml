@@ -1,0 +1,77 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Switcher $block */
+
+$controllerName = $block->getData('controller_name') ? $block->getData('controller_name') : '*';
+?>
+
+<?php if ($items = $block->getItems()) : ?>
+
+    <div class="switcher store-switcher">
+        <span class="store-switcher-label"><?php echo $block->getLabel(); ?>:</span>
+        <div class="actions dropdown closable">
+            <button
+                type="button"
+                class="admin__action-dropdown"
+                data-mage-init='{"dropdown":{}}'
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                id="<?php echo $block->getParamName(); ?>_switcher"
+            >
+                <?php if ($block->getSelectedParam() === null && $block->hasDefaultOption()) : ?>
+                    <?php echo $block->getDefaultOptionName(); ?>
+                <?php else : ?>
+                    <?php foreach ($items as $item) : ?>
+                        <?php foreach ($item['value'] as $nestedItem) : ?>
+                            <?php if ($block->getSelectedParam() == $nestedItem['value']) : ?>
+                                <?php echo $nestedItem['label'] ?>
+                                <?php break 2; ?>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </button>
+            <ul class="dropdown-menu">
+                <?php if ($block->getSelectedParam() !== null && $block->hasDefaultOption()) : ?>
+                    <li class="store-switcher-all">
+                        <a
+                            href="<?php echo $block->getUrl(
+                                "*/{$controllerName}/*",
+                                ['_current' => true, $block->getParamName() => null]
+                            ); ?>"
+                        >
+                            <?php echo $block->getDefaultOptionName() ?>
+                        </a>
+                    </li>
+                <?php endif; ?>
+                <?php foreach ($items as $item) : ?>
+                    <?php foreach ($item['value'] as $nestedItem) : ?>
+                        <?php if ($block->getSelectedParam() != $nestedItem['value']) : ?>
+                            <li class="store-switcher-all">
+                                <a
+                                    href="<?php echo $block->getUrl(
+                                        "*/{$controllerName}/*",
+                                        ['_current' => true, $block->getParamName() => $nestedItem['value']]
+                                          ); ?>"
+                                >
+                                    <?php echo $nestedItem['label'] ?>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <?php if ($block->getTooltip()) : ?>
+            <?php echo $block->getTooltipHtml($block->getTooltip()); ?>
+        <?php endif; ?>
+    </div>
+
+<?php endif; ?>

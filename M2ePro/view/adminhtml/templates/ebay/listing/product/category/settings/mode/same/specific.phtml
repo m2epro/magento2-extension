@@ -1,0 +1,23 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Same\Specific $block */
+
+?>
+
+<?php echo $block->getChildHtml('view_header'); ?>
+
+<?php if ($block->_selectedCategoryPath !== null) : ?>
+    <div class="m2epro-box-style listing-view-header">
+        <span style="font-size: 1em; font-weight: bold;"><?php echo $block->__('eBay Category'); ?>:</span>&nbsp;&nbsp;&nbsp;
+        <span style="font-size: 1.1em"><?php echo $block->_selectedCategoryPath; ?></span>
+    </div>
+<?php endif; ?>
+
+<?php echo $block->getChildHtml('category_specific'); ?>

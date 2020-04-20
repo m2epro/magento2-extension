@@ -1,0 +1,26 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\WarningPopup $block */
+
+?>
+
+<div id="category_template_warning_popup_content">
+
+    <div style="margin-top: 10px;">
+        <?php echo $block->__(
+            'You have not assigned the Category Policy to <strong><span class="failed_count"></span></strong> of <strong><span class="total_count"></span></strong> Product(s).<br/><br/>
+
+            Products without Category Policy will not be added to M2E Pro Listing as they cannot be listed on the Channel. Walmart requires submitting full Category data when listing a new Item.<br/><br/>
+
+            To set Category Policy to <strong><span class="failed_count"></span></strong> Products now, click <i>Cancel</i> and complete the configurations. Otherwise, click <i>Continue</i>. You will be able to add these Products later using the Add Products button on the View Listing page.'
+        ); ?>
+    </div>
+
+</div>

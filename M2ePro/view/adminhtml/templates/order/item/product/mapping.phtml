@@ -1,0 +1,19 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Mapping $block */
+
+?>
+
+<div id="mapping_pop_up_content">
+    <?php echo $block->getChildHtml('product_mapping_help_block'); ?>
+    <div id="help_grid" style="margin: 0 auto; padding-top: 10px;">
+        <?php echo $block->getChildHtml('product_mapping_grid') ?>
+    </div>
+</div>

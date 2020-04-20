@@ -1,0 +1,157 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Renderer\Description\Gallery $block */
+
+$data = $block->getData();
+?>
+
+<?php if ($block->isModeGallery()) : ?>
+    <style>
+
+        #m2e-gallery-<?php echo $block->getGalleryId(); ?> {
+            display: block;
+            text-align: center;
+        <?php if ($data['width'] != '') :
+            echo "width: {$data['width']}px;";
+        endif; ?>
+        <?php if ($data['height'] != '') :
+            echo "height: {$data['height']}px;";
+        endif; ?>
+        }
+
+        #m2e-gallery-<?php echo $block->getGalleryId(); ?> .full-image {
+        <?php if ($data['width'] != '') :
+            echo "width: {$data['width']}px;";
+        endif; ?>
+        <?php if ($data['height'] != '') :
+            echo "height: {$data['height']}px;";
+        endif; ?>
+            display: none;
+        }
+
+        .m2e-gallery .hint {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .m2e-gallery .preview {
+            display: inline-block;
+            margin: 5px;
+            height: 72px;
+        }
+        .m2e-gallery .preview > img {
+            width: 68px;
+            height: 68px;
+        }
+        .m2e-gallery .preview:hover > img {
+            cursor: pointer;
+            opacity: 0.3;
+        }
+        #m2e-gallery-<?php echo $block->getGalleryId(); ?> .current > input:checked + img {
+            display: inline-block;
+        }
+        .m2e-gallery .current {
+            margin-bottom: 20px;
+        }
+        .m2e-gallery .current > input {
+            visibility: hidden;
+            position: absolute;
+        }
+
+        .m2e-gallery .current.vertical {
+            float: right;
+            width: 78%;
+            text-align: left;
+        }
+        .m2e-gallery .preview-container.vertical {
+            float: left;
+            width: 20%;
+            text-align: right;
+        }
+        .m2e-gallery .preview-container.vertical label {
+            display: block;
+        }
+        .m2e-gallery .current.vertical .hint {
+            text-align: left;
+        }
+
+    </style>
+
+    <?php $galleryClass = $block->isLayoutColumnMode() ? 'vertical' : ''; ?>
+
+    <div class="m2e-gallery" id="m2e-gallery-<?php echo $block->getGalleryId(); ?>">
+
+        <div class="current <?php echo $galleryClass; ?>">
+
+            <?php foreach ($block->getGalleryImages() as $imageIndex => $imageUrl) : ?>
+                <input type="radio"
+                       name="image-gallery-<?php echo $block->getGalleryId(); ?>"
+                    <?php $imageIndex == 0 && print ' checked="checked" '; ?>
+                       id="image-gallery-<?php echo $block->getGalleryId(); ?>-<?php echo $imageIndex; ?>"
+                />
+                <img class="full-image" src="<?php echo $imageUrl; ?>" <?php if ($data['watermark'] != 0) :
+                    echo ' m2e_watermark="1"';
+                                             endif; ?> />
+            <?php endforeach; ?>
+
+            <div class="hint">
+                <span>
+                    <?php echo $block->getHelper('Data')->escapeHtml($data['gallery_hint']); ?>
+                </span>
+            </div>
+
+        </div>
+
+        <div class="preview-container <?php echo $galleryClass; ?>">
+            <?php foreach ($block->getGalleryImages() as $imageIndex => $imageUrl) : ?>
+                <label class="preview" for="image-gallery-<?php echo $block->getGalleryId(); ?>-<?php echo $imageIndex; ?>">
+                    <img src="<?php echo $imageUrl; ?>" />
+                </label>
+            <?php endforeach; ?>
+        </div>
+
+    </div>
+
+    <div style="clear: both;"></div>
+
+<?php else : ?>
+    <style>
+
+        #m2e-gallery-list-<?php echo $block->getGalleryId(); ?> img {
+        <?php if ($data['width'] != '') :
+            echo "width: {$data['width']}px;";
+        endif; ?>
+        <?php if ($data['height'] != '') :
+            echo "height: {$data['height']}px;";
+        endif; ?>
+        <?php if ($data['margin'] != '') :
+            echo "margin-bottom: {$data['margin']}px; margin-right: {$data['margin']}px;";
+        endif; ?>
+        }
+
+    </style>
+
+    <div class="m2e-gallery-list" id="m2e-gallery-list-<?php echo $block->getGalleryId(); ?>">
+
+        <?php foreach ($block->getGalleryImages() as $imageIndex => $imageUrl) : ?>
+            <img src="<?php echo $imageUrl; ?>" class="m2e-gallery-list" <?php if ($data['watermark'] != 0) :
+                echo ' m2e_watermark="1"';
+                      endif; ?> />
+
+            <?php if ($block->isLayoutColumnMode()) : ?>
+                <br/>
+            <?php endif; ?>
+
+        <?php endforeach; ?>
+
+    </div>
+
+<?php endif; ?>

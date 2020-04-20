@@ -1,0 +1,24 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Item $block */
+
+?>
+
+<?php echo $block->createBlock('HelpBlock')->setData([
+    'content' => $block->__('
+        In this Block you can see the list of the selected ePID(s)/kType(s).
+        In case you do not need some of them, you can Choose the appropriate
+        Option from the mass actions bulk to Remove the ePID(s)/kType(s).
+    ')
+])->toHtml() ?>
+
+<div id="motors">
+    <?php echo $block->getChildHtml('view_item_grid'); ?>
+</div>

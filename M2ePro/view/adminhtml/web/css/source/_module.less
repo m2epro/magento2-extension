@@ -1,0 +1,42 @@
+@m2epro-icons-admin__font-name-path: 'Ess_M2ePro::fonts/m2epro-icons';
+@m2epro-icons-admin__font-name : 'M2ePro';
+
+.lib-font-face(
+  @family-name: @m2epro-icons-admin__font-name,
+  @font-path: @m2epro-icons-admin__font-name-path,
+  @font-weight: normal,
+  @font-style: normal
+);
+
+.admin__menu .item-m2epro-maintenance.parent.level-0 > a:before,
+.admin__menu .item-m2epro-maintenance.level-0 > a:before {
+  font-family: @m2epro-icons-admin__font-name;
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+  content: "\e900";
+}
+
+.admin__menu .item-ebay.parent.level-0 > a:before,
+.admin__menu .item-ebay.level-0 > a:before {
+  font-family: @m2epro-icons-admin__font-name;
+  font-size: 3.2rem;
+  margin-bottom: 1rem;
+  line-height: 25px;
+  content: "\e901";
+}
+
+.admin__menu .item-amazon.parent.level-0 > a:before,
+.admin__menu .item-amazon.level-0 > a:before {
+  font-family: @m2epro-icons-admin__font-name;
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+  content: "\e902";
+}
+
+.admin__menu .item-walmart.parent.level-0 > a:before,
+.admin__menu .item-walmart.level-0 > a:before {
+  font-family: @m2epro-icons-admin__font-name;
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+  content: "\e903";
+}

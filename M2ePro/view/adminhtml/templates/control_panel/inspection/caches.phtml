@@ -1,0 +1,25 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <?php if ($block->getHelper('Client\Cache')->isApcAvailable()) : ?>
+        <tr>
+            <td class="label">
+                <label><?php echo $block->__('APC'); ?>: </label>
+            </td>
+            <td class="value">
+                <span><?php echo $block->__('Installed'); ?></span>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+</table>

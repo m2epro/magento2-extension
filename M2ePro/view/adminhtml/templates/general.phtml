@@ -1,0 +1,91 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\General $block */
+
+?>
+
+<script type="text/javascript">
+
+    <?php if ($block->getIsAjax()) : ?>
+    BlockNoticeObj.init(true);
+
+        <?php echo
+        $block->jsPhp->render()
+        . $block->jsTranslator->render()
+        . $block->jsUrl->render()
+        . $block->js->render();
+        ?>
+
+    initializationCustomAttributeInputs();
+    initCollapsable();
+
+    <?php else : ?>
+    var BLOCK_NOTICES_SHOW = <?php echo $block->block_notices_show ? 'true' : 'false'; ?>;
+    var BLOCK_NOTICES_DISABLE_COLLAPSE = <?php echo $block->block_notices_disable_collapse; ?>;
+
+    var IS_VIEW_EBAY = <?php echo json_encode($block->getHelper('View')->isCurrentViewEbay()); ?>;
+    var IS_VIEW_AMAZON = <?php echo json_encode($block->getHelper('View')->isCurrentViewAmazon()); ?>;
+    var IS_VIEW_WALMART = <?php echo json_encode($block->getHelper('View')->isCurrentViewWalmart()); ?>;
+    var IS_VIEW_CONFIGURATION = <?php echo json_encode($block->getHelper('View')->isCurrentViewConfiguration()); ?>;
+
+    var M2ePro = {};
+
+    require(['M2ePro/M2ePro', 'M2ePro/Plugin/Magento/AttributeCreator'], function(_M2ePro) {
+        M2ePro = _M2ePro;
+
+        // backward compatibility
+        M2ePro.text       = {};
+        M2ePro.formData   = {};
+        M2ePro.customData = {};
+
+        <?php echo $block->jsPhp->render(); ?>
+        <?php echo $block->jsTranslator->render(); ?>
+        <?php echo $block->jsUrl->render(); ?>
+
+        window.CommonObj = new window.Common();
+        CommonObj.initCommonValidators();
+
+        window.BlockNoticeObj = new BlockNotice();
+        BlockNoticeObj.init();
+
+        <?php echo $block->js->render(); ?>
+
+        window.initializationCustomAttributeInputs = function()
+        {
+            $$('select.M2ePro-custom-attribute-can-be-created').each(function(selectObj){
+
+                var handlerObj = new AttributeCreator(selectObj.id);
+                handlerObj.setSelectObj(selectObj);
+
+                if (handlerObj.alreadyHaveAddedOption()) {
+                    return true;
+                }
+
+                handlerObj.injectAddOption();
+            });
+        };
+
+        initializationCustomAttributeInputs();
+        initCollapsable();
+    });
+
+    require(['M2ePro/ControlPanel'], function(controlPanel) {
+
+        window.ControlPanelObj = new ControlPanel();
+        window.ControlPanelObj.setControlPanelUrl('<?php echo $block->getUrl('*/controlPanel'); ?>')
+    });
+
+    <?php endif; ?>
+
+</script>
+
+<style type="text/css">
+    <?php echo $block->css->render(); ?>
+</style>

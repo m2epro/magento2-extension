@@ -1,0 +1,228 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs\BusinessHours\SpecialHours $block */
+
+$formData = $block->getData('form_data');
+
+?>
+
+<div id="special_hours_wrapper">
+    <table id="special_hours_grid" class="border" cellpadding="0" cellspacing="0">
+
+        <tr style="margin-top: 10px;">
+
+            <td colspan="2">
+
+                <table id="special_hours_grid_rows" class="border bBottom data-grid data-grid-not-hovered" cellpadding="0" cellspacing="0">
+
+                    <thead>
+                    <tr class="headings">
+                        <th  class="data-grid-th" style="width: 33%"><?php echo $block->__('Date'); ?>: <span class="required">*</span></th>
+                        <th  class="data-grid-th" style="width: 28%"><?php echo $block->__('Open'); ?>: </th>
+                        <th  class="data-grid-th" style="width: 28%"><?php echo $block->__('Close'); ?>: </th>
+                        <th  class="data-grid-th" style="width: 10%"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+
+                    $dateSetting = [];
+
+                    if (!empty($formData['special_hours']['date_settings'])) {
+                        $dateSetting = $formData['special_hours']['date_settings'];
+                    }
+
+                    $index = 0;
+                    ?>
+
+                    <?php foreach ($dateSetting as $date => $time) : ?>
+                        <tr>
+                            <td class="table_td">
+                                <input id="date<?php echo $index == 0 ? '' : '-' . $index; ?>"
+                                       name="date<?php echo $index == 0 ? '' : '-' . $index; ?>"
+                                       value="<?php echo $date == '0000-00-00' ? '' : $date; ?>" type="text"
+                                       class="input-text date-field M2ePro-required-when-visible M2ePro-validate-must-arrive-date"
+                                       data-mage-init='{"calendar": {"showTime": false, "dateFormat": "yy-mm-dd", "showButtonPanel": false}}'
+                                       onchange="EbayPickupStoreObj.dateOnChange(this)"/>
+                            </td>
+
+                            <td class="table_td">
+                                <div id="date_container_from">
+
+                                    <select id="date_from_hours" class="date_time_select">
+                                        <option style="display: none;"></option>
+                                        <?php for ($i = 1; $i < 25; $i++) { ?>
+                                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>" <?php if (isset($time['from_hours']) && $time['from_hours'] == $i) :
+                                                echo ' selected="selected"';
+                                                           endif; ?>><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                    <span style="display: inline-block; width: 4px; text-align: center;">:</span>
+                                    <select id="date_from_minutes" class="date_time_select">
+                                        <option style="display: none;"></option>
+                                        <?php for ($i = 0; $i < 60; $i += 15) { ?>
+                                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>" <?php if (isset($time['from_minutes']) && $time['from_minutes'] == $i) :
+                                                echo ' selected="selected"';
+                                                           endif; ?>><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
+                                        <?php } ?>
+                                    </select>
+
+                                    <br/>
+
+                                    <input id="date_validator_from"
+                                           name="date_validator_from_<?php echo $i;?>"
+                                           type="text"
+                                           class="M2ePro-validate-selected-schedule-time hidden-validation">
+
+                                </div>
+                            </td>
+
+                            <td class="table_td">
+                                <div id="date_container_to">
+
+                                    <select id="date_to_hours" class="date_time_select">
+                                        <option style="display: none;"></option>
+                                        <?php for ($i = 1; $i < 25; $i++) { ?>
+                                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>" <?php if (isset($time['to_hours']) && $time['to_hours'] == $i) :
+                                                echo ' selected="selected"';
+                                                           endif; ?>><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                    <span style="display: inline-block; width: 4px; text-align: center;">:</span>
+                                    <select id="date_to_minutes" class="date_time_select">
+                                        <option style="display: none;"></option>
+                                        <?php for ($i = 0; $i < 60; $i += 15) { ?>
+                                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>" <?php if (isset($time['to_minutes']) && $time['to_minutes'] == $i) :
+                                                echo ' selected="selected"';
+                                                           endif; ?>><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
+                                        <?php } ?>
+                                    </select>
+
+                                    <br/>
+
+                                    <input id="date_validator_to"
+                                           name="date_validator_to_<?php echo $i;?>"
+                                           type="text"
+                                           class="M2ePro-validate-selected-schedule-time M2ePro-validate-schedule-wrong-interval-time hidden-validation">
+
+                                </div>
+                            </td>
+
+                            <td class="table_td table_td_last">
+                                <input id="date_from" name="special_hours[date_settings][<?php echo $date; ?>][open]" type="hidden">
+                                <input id="date_to" name="special_hours[date_settings][<?php echo $date; ?>][close]" type="hidden">
+
+                                <?php echo $block->createBlock('Magento\Button')->setData([
+                                    'label' => $block->__('Remove'),
+                                    'class' => 'scalable delete icon-btn remove_date'
+                                ])->toHtml(); ?>
+                            </td>
+
+                        </tr>
+
+                        <?php $index++; ?>
+                    <?php endforeach; ?>
+
+                    </tbody>
+
+                    <tfoot>
+                    </tfoot>
+
+                </table>
+
+            </td>
+
+        </tr>
+
+    </table>
+
+    <div class="add_btn_wrapper">
+        <?php echo $block->createBlock('Magento\Button')->setData([
+            'label' => $block->__('Add New'),
+            'style' => 'width: 12.5%',
+            'class' => 'primary add_date right',
+        ])->toHtml(); ?>
+    </div>
+
+    <script type="M2ePro-template" id="special_hours_template">
+        <tr>
+            <td class="table_td">
+                <input id="date"
+                       name="date"
+                       value="" type="text"
+                       class="input-text date-field M2ePro-required-when-visible M2ePro-validate-must-arrive-date"/>
+            </td>
+
+            <td class="table_td">
+                <div id="date_container_from">
+
+                    <select id="date_from_hours" class="date_time_select">
+                        <option style="display: none;"></option>
+                        <?php for ($i = 1; $i < 25; $i++) { ?>
+                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>"><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
+                        <?php } ?>
+                    </select>
+                    <span style="display: inline-block; width: 4px; text-align: center;">:</span>
+                    <select id="date_from_minutes" class="date_time_select">
+                        <option style="display: none;"></option>
+                        <?php for ($i = 0; $i < 60; $i += 15) { ?>
+                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>"><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
+                        <?php } ?>
+                    </select>
+
+                    <br/>
+
+                    <input name="date_validator_from_0"
+                           type="text"
+                           class="M2ePro-validate-selected-schedule-time hidden-validation">
+
+                </div>
+            </td>
+
+            <td class="table_td">
+                <div id="date_container_to">
+
+                    <select id="date_to_hours" class="date_time_select">
+                        <option style="display: none;"></option>
+                        <?php for ($i = 1; $i < 25; $i++) { ?>
+                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>"><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
+                        <?php } ?>
+                    </select>
+                    <span style="display: inline-block; width: 4px; text-align: center;">:</span>
+                    <select id="date_to_minutes" class="date_time_select">
+                        <option style="display: none;"></option>
+                        <?php for ($i = 0; $i < 60; $i += 15) { ?>
+                            <option value="<?php echo ($i < 10) ? '0' . $i : $i; ?>"><?php echo ($i < 10) ? '0' . $i : $i; ?></option>
+                        <?php } ?>
+                    </select>
+
+                    <br/>
+
+                    <input id="date_validator_to"
+                           name="date_validator_to_0"
+                           type="text"
+                           class="M2ePro-validate-selected-schedule-time M2ePro-validate-schedule-wrong-interval-time hidden-validation">
+
+                </div>
+            </td>
+
+            <td class="table_td table_td_last">
+                <input id="date_from" name="special_hours[date_settings][0000-00-00][open]" type="hidden">
+                <input id="date_to" name="special_hours[date_settings][0000-00-00][close]" type="hidden">
+
+                <?php echo $block->createBlock('Magento\Button')->setData([
+                    'label' => $block->__('Remove'),
+                    'class' => 'scalable delete icon-btn remove_date'
+                ])->toHtml(); ?>
+            </td>
+
+        </tr>
+    </script>
+</div>

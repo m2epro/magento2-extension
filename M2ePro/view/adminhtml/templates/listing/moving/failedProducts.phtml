@@ -1,0 +1,34 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Listing\Moving\FailedProducts $block */
+
+?>
+
+<div id="pop_up_content">
+
+    <div class="messages m2epro-messages">
+        <div class="message message-warning error">
+            <div>
+                <?php echo $block->__(
+                    'The Products below will not be Moved into the chosen Listing. <br/>
+                    <div style="font-weight: normal;">
+                        <strong>Possible reason:</strong>
+                        The Products are already present in the chosen Listing.<br/>
+                    </div>'
+                ); ?>
+            </div>
+        </div>
+    </div>
+
+    <div id="help_grid" style="margin: 0 auto; padding-top: 10px;">
+        <?php echo $block->getChildHtml('failedProducts_grid') ?>
+    </div>
+
+</div>

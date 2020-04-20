@@ -1,0 +1,44 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+?>
+
+<div id="chooser_search_input_container">
+    <input id="query" type="text" class="admin__control-text" placeholder="<?php echo $block->__('Enter keyword(s) or browsenode ID...'); ?>" onkeypress="WalmartTemplateCategoryCategoriesChooserObj.keyPressQuery(event)">
+    <button class="primary" onclick="WalmartTemplateCategoryCategoriesChooserObj.search()"><?php echo $block->__('Search'); ?></button>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <a onclick="WalmartTemplateCategoryCategoriesChooserObj.searchReset()"><?php echo $block->__('Reset'); ?></a>
+</div>
+
+<div id="chooser_search_results">
+    <table id="search_results_table" style="display: inline-block; " >
+
+        <tr>
+            <td width="740px"></td>
+            <td width="60px"></td>
+        </tr>
+
+        <tr id="search_results_no_results_tr" style="display: none;">
+            <td colspan="2" style="text-align: center;">
+                <strong><?php echo $block->__('No Results'); ?></strong>
+            </td>
+        </tr>
+
+        <tr id="search_results_update_sites_data_tr" style="display: none;">
+            <td colspan="2" style="text-align: center;">
+                <?php echo $block->__('Try to <a href="javascript:void(0)" onclick="WalmartTemplateCategoryCategoriesChooserObj.refreshWalmartCategories()">Update Walmart Marketplaces data</a> and repeate the Search.'); ?>
+            </td>
+        </tr>
+
+        <!--  Placeholder  -->
+        <tr class="search_results_results_tr">
+
+        </tr>
+
+    </table>
+</div>

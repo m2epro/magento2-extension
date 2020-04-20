@@ -1,0 +1,37 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Renderer\Description\Image $block */
+
+$data = $block->getData();
+?>
+
+<style>
+
+    #m2e-description-image-<?php echo $block->getImageId(); ?> {
+        <?php if ($data['width'] != 0) :
+            echo "width: {$data['width']}px;";
+        endif; ?>
+        <?php if ($data['height'] != 0) :
+            echo "height: {$data['height']}px;";
+        endif; ?>
+        <?php if ($data['margin'] != 0) :
+            echo "margin-bottom: {$data['margin']}px; margin-right: {$data['margin']}px;";
+        endif; ?>
+    }
+
+</style>
+
+<img src="<?php echo $data['src']; ?>"
+     border="0"
+        <?php if ($data['watermark'] != 0) :
+            echo ' m2e_watermark="1"';
+        endif; ?>
+     id="m2e-description-image-<?php echo $block->getImageId(); ?>"
+/>

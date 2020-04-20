@@ -1,0 +1,69 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Version'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->mySqlVersion; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Server API'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->mySqlApi; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Database Name'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->mySqlDatabaseName; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Tables Prefix'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->mySqlPrefix != '' ? '<span style="color: red;">'.$block->mySqlPrefix.'</span>'
+                                                : $block->__('Disabled'); ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Connection Timeout'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->mySqlSettings['connect_timeout']; ?> <?php echo $block->__('sec'); ?>.
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Wait Timeout'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->mySqlSettings['wait_timeout']; ?> <?php echo $block->__('sec'); ?>.
+        </td>
+    </tr>
+
+</table>

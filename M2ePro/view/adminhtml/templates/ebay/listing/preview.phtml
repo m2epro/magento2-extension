@@ -1,0 +1,647 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Preview $block */
+
+$images = $block->getImages();
+$variations = $block->getVariations();
+
+?>
+
+<?php echo $block->createBlock('HelpBlock')->setData([
+    'title' => $block->__('eBay Item Preview'),
+    'content' => $block->__('
+        This Page is a <strong>stylized Template</strong> of the prospective eBay Page.<br/><br/>
+        The Template displays <strong>eBay Item information</strong> which will be sent on eBay during the List/ Relist/ Revise
+        Actions. The information presented on this Page is <strong>not available on eBay</strong> yet. The Template just gives
+        you a chance to <strong>Preview</strong> how the Product will be Shown on eBay.<br/><br/>
+        You can have a preliminary <strong>Overview</strong> of the Product Title, eBay Category, Item Condition, Quantity,
+        Price, all of the available Product Variations and more other.<br/><br/>
+        There are tabs under which the main Item Specifics, Description, Shipping, Payment and Return data can be found.
+        The available information <strong>does not contain all of the details</strong>, only the Key Points.
+    '),
+    'no_hide' => true
+])->toHtml(); ?>
+
+<div class="pagination_container page-main-actions">
+    <div class="page-actions">
+        <div class="page-actions-inner">
+            <div class="page-actions-buttons">
+                <?php
+
+                $previousProduct = $block->getProductShortInfo(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Preview::PREVIOUS);
+                if ($previousProduct !== null) :
+                    ?>
+                    <?php
+                    echo $block->createBlock('Magento\Button')->setData([
+                        'onclick' => "setLocation('{$previousProduct['url']}')",
+                        'label' => "{$block->truncate($previousProduct['title'], 30)} (ID: {$previousProduct['id']})",
+                        'class' => 'action-default back',
+                        'title' => $previousProduct['title']
+                    ])->toHtml()
+                    ?>
+                <?php endif; ?>
+
+                <?php
+                $nextProduct = $block->getProductShortInfo(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Preview::NEXT);
+                if ($nextProduct !== null) : ?>
+                    <?php
+                    echo $block->createBlock('Magento\Button')->setData([
+                        'onclick' => "setLocation('{$nextProduct['url']}')",
+                        'label' => "{$block->truncate($nextProduct['title'], 30)} (ID: {$nextProduct['id']})",
+                        'class' => 'action-default forward',
+                        'title' => $nextProduct['title']
+                    ])->toHtml()
+                    ?>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <?php $currentProduct = $block->getProductShortInfo(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Preview::CURRENT); ?>
+    <div class="current_product_title">
+        <h2 title="<?php echo $currentProduct['title']; ?>">
+            <?php echo "{$block->truncate($currentProduct['title'], 40)} (ID: {$currentProduct['id']})"; ?>
+        </h2>
+    </div>
+</div>
+
+<div class="preview_container">
+    <div class="image_container">
+        <?php
+        $imageGallery = $images['gallery'];
+
+        if (!empty($images['variations'])) {
+            foreach ($images['variations']['images'] as $variationImage) {
+                $imageGallery = array_merge($imageGallery, $variationImage);
+            }
+        }
+
+        if (empty($imageGallery)) {
+            echo "<img id='product_image' src='{$block->getViewFileUrl('Ess_M2ePro::images/preview_no_images.png')}'>";
+        } else {
+            echo "<img id='product_image' src='{$imageGallery[0]}'>";
+            echo '<div class="gallery_container">';
+
+            if (count($imageGallery) > 1) {
+                foreach ($imageGallery as $image) {
+                    echo "<img src='{$image}' onclick='EbayListingPreviewItemsObj.onClickGalleryImage(this)'>";
+                }
+            }
+
+            echo '</div>';
+        }
+        ?>
+    </div>
+
+    <div class="info_container">
+        <div class="category_breadcrumbs">
+            <?php echo $block->getCategory(); ?>
+        </div>
+        <div class="product_title">
+            <?php echo $block->getTitle(); ?>
+        </div>
+        <div class="product_subtitle">
+            <?php echo $block->getSubtitle(); ?>
+        </div>
+
+        <hr class="title_separator"/>
+
+        <table class="variation_table">
+            <tr>
+                <td class="field_title">
+                    <?php echo $block->__('Item Condition'); ?>:
+                </td>
+                <td>
+                    <?php echo $block->getCondition(); ?>
+                </td>
+            </tr>
+
+            <?php
+            $conditionNote = $block->getConditionNote();
+
+            if ($conditionNote) :
+                ?>
+            <tr>
+                <td class="field_title">
+                    <?php echo $block->__('Seller Note'); ?>:
+                </td>
+                <td>
+                    <?php echo $conditionNote; ?>
+                </td>
+            </tr>
+            <?php endif; ?>
+
+            <?php
+            $qty = $block->getQty();
+
+            if (!empty($variations) && $qty) :
+                ?>
+                <?php foreach ($variations['variation_sets'] as $attribute => $data) : ?>
+                <tr>
+                    <td class='field_title'><?php echo $attribute; ?>:</td>
+                    <td>
+                        <select class='variation_select admin__control-select' name='<?php echo $block->getHelper('Data')->escapeHtml($attribute, null, ENT_QUOTES); ?>'
+                                onchange='EbayListingPreviewItemsObj.onChangeVariationSelect(this)'>
+                            <option value="">- <?php echo $block->__('Select'); ?> -</option>
+                            <?php foreach ($data as $option) : ?>
+                                <option value='<?php echo $block->getHelper('Data')->escapeHtml($option, null, ENT_QUOTES); ?>'>
+                                    <?php echo $block->getHelper('Data')->escapeHtml($option, null, ENT_QUOTES); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+            <tr>
+                <td class="field_title">
+                    <?php echo $block->__('Quantity'); ?>:
+                </td>
+                <td>
+                    <?php if ($qty) : ?>
+                    <span id="product_qty">
+                        <?php echo $qty; ?>
+                    </span> <?php echo $block->__('available'); ?>
+                    <?php else : ?>
+                        <span id="product_qty">
+                            <?php echo $block->__('N/A'); ?>
+                        </span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <?php
+
+    $currency = "{$block->getCurrency()} {$block->getCurrencySymbol()}";
+    $price = $block->getPrice($variations);
+
+    if ($price['price'] !== null && $qty) :
+
+        ?>
+
+    <div class="price_container">
+        <table>
+            <tr>
+                <td>
+                    <div id="product_discount_stp" class="price_discount" <?php if (!isset($price['price_stp'])) :
+                        ?>style="display: none"<?php
+                                                                          endif;?>>
+                        <?php echo $currency; ?><span id='product_price_stp'><?php if (isset($price['price_stp']) && $price['price_stp'] > $price['price']) {
+                            echo $price['price_stp'];
+                        } ?></span>
+                    </div>
+                    <div id="product_discount_map" class="price_discount" <?php if (!isset($price['price_map'])) :
+                        ?>style="display: none"<?php
+                                                                          endif;?>>
+                        <?php echo $currency; ?><span id='product_price_map'><?php if (isset($price['price_map']) && $price['price_map'] > $price['price']) {
+                            echo $price['price_map'];
+                        } ?></span>
+                    </div>
+                    <div class='price_currency'>
+                        <?php echo $currency; ?><span id='product_price'><?php echo $price['price']; ?></span>
+                    </div>
+                </td>
+                <td class="price_container_td">
+                    <button class='buy_it_now' type='button'>
+                        <?php echo $block->__('Buy it now'); ?>
+                    </button>
+                    <br/>
+                    <button class='add_to_cart' type='button'>
+                        <?php echo $block->__('Add to cart'); ?>
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <?php endif; ?>
+
+    <?php
+
+    $description = $block->getDescription();
+    $specifics = $block->getSpecifics();
+    $return = $block->getReturnPolicy();
+    $otherCategories = $block->getOtherCategories();
+
+    ?>
+
+    <ul class="tabs-horiz">
+        <?php if (!empty($specifics)) : ?>
+        <li data-tab="specifics" onclick="EbayListingPreviewItemsObj.onTabClick(this);">
+            <?php echo $block->__('Item Specifics'); ?>
+        </li>
+        <?php endif; ?>
+        <?php if ($description) : ?>
+        <li data-tab="description" onclick="EbayListingPreviewItemsObj.onTabClick(this);">
+            <?php echo $block->__('Description'); ?>
+        </li>
+        <?php endif; ?>
+        <li data-tab="shipping" onclick="EbayListingPreviewItemsObj.onTabClick(this);">
+            <?php echo $block->__('Shipping'); ?>
+        </li>
+        <li data-tab="payment" onclick="EbayListingPreviewItemsObj.onTabClick(this);">
+            <?php echo $block->__('Payment'); ?>
+        </li>
+        <?php if (!empty($return)) : ?>
+        <li data-tab="return" onclick="EbayListingPreviewItemsObj.onTabClick(this);">
+            <?php echo $block->__('Return'); ?>
+        </li>
+        <?php endif; ?>
+        <?php if (!empty($otherCategories)) : ?>
+        <li data-tab="other" onclick="EbayListingPreviewItemsObj.onTabClick(this);">
+            <?php echo $block->__('Other'); ?>
+        </li>
+        <?php endif; ?>
+    </ul>
+
+    <div class="description_container tab_container">
+        <?php if ($description) : ?>
+            <div>
+                <?php echo $description; ?>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <div class="specifics_container tab_container">
+
+        <?php if (!empty($specifics)) : ?>
+            <table class="field_table field_table_specifics">
+                <thead>
+                <tr>
+                    <td><?php echo $block->__('Name'); ?></td>
+                    <td><?php echo $block->__('Value'); ?></td>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($specifics as $specific) : ?>
+                 <tr>
+                     <td><?php echo $specific['name']; ?></td>
+                     <td><?php echo implode(', ', $specific['value']); ?></td>
+                 </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
+    </div>
+    <div class="shipping_container tab_container">
+        <div>
+            <span class="field_title"><?php echo $block->__('Item Location'); ?>:</span>
+            <?php echo $block->getItemLocation(); ?>
+        </div>
+        <div class="field_group"><?php echo $block->__('Domestic Shipping'); ?></div>
+        <div>
+            <span class="field_title"><?php echo $block->__('Type'); ?>:</span>
+            <?php echo $block->getShippingLocalType(); ?>
+        </div>
+
+        <?php
+        $shippingLocalServices = $block->getShippingLocalServices();
+
+        if (!empty($shippingLocalServices)) :
+            ?>
+
+            <div>
+                <table class="field_table">
+                    <thead>
+                    <tr>
+                        <td class="field_table_service"><?php echo $block->__('Service'); ?></td>
+                        <td class="field_table_cost"><?php echo $block->__('Cost'); ?></td>
+                        <?php if (!$block->isLocalShippingCalculated()) : ?>
+                            <td class="field_table_additional_cost"><?php echo $block->__('Additional Cost'); ?></td>
+                        <?php endif; ?>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($shippingLocalServices as $shippingLocalService) : ?>
+                        <tr>
+                            <td><?php echo $shippingLocalService['service']; ?></td>
+                            <td>
+                                <?php
+                                if (isset($shippingLocalService['cost'])) {
+                                    if ($shippingLocalService['cost'] == 0) {
+                                        echo $block->__('Free');
+                                    } else {
+                                        echo $currency . $shippingLocalService['cost'];
+                                    }
+                                }
+                                if (isset($shippingLocalService['is_free'])) {
+                                    if ($shippingLocalService['is_free']) {
+                                        echo $block->__('Free');
+                                    } else {
+                                        echo $block->__('Calculated');
+                                    }
+                                }
+                                ?>
+                            </td>
+                        <?php if (!$block->isLocalShippingCalculated()) : ?>
+                            <td>
+                                <?php
+                                if (isset($shippingLocalService['cost_additional'])) {
+                                    if ($shippingLocalService['cost_additional'] == 0) {
+                                        echo $block->__('Free');
+                                    } else {
+                                        echo $currency . $shippingLocalService['cost_additional'];
+                                    }
+                                }
+                                ?>
+                            </td>
+                        <?php endif; ?>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+
+        <?php
+        $dispatchTime = $block->getShippingDispatchTime();
+
+        if ($dispatchTime !== null) :
+            ?>
+            <div>
+                <span class="field_title"><?php echo $block->__('Dispatch Time'); ?>:</span>
+                <?php echo $dispatchTime; ?>
+            </div>
+        <?php endif; ?>
+
+        <?php
+
+        $shippingLocalHandlingCost = $block->getShippingLocalHandlingCost();
+
+        if ($shippingLocalHandlingCost) :
+            ?>
+            <div>
+                <span class="field_title"><?php echo $block->__('Handling Cost'); ?>:</span>
+                <?php echo $currency . $shippingLocalHandlingCost; ?>
+            </div>
+        <?php endif; ?>
+
+        <?php
+
+        $shippingInternationalType = $block->getShippingInternationalType();
+
+        if ($shippingInternationalType) : ?>
+
+            <div class="field_group"><?php echo $block->__('International Shipping'); ?></div>
+
+            <?php if ($block->getShippingInternationalGlobalOffer()) : ?>
+            <div>
+                <span class="field_title">
+                    <?php echo $block->__('Offer Global Shipping Program'); ?>:
+                </span>
+                <?php echo $block->__('Yes'); ?>
+            </div>
+            <?php endif; ?>
+
+            <div>
+                <span class="field_title"><?php echo $block->__('Type'); ?>:</span>
+                <?php echo $shippingInternationalType ?>
+            </div>
+
+            <?php
+
+            $shippingInternationalServices = $block->getShippingInternationalServices();
+
+            if (!empty($shippingInternationalServices)) :
+
+                ?>
+                <div>
+                    <table class="field_table">
+                        <thead>
+                        <tr>
+                            <td class="field_table_service"><?php echo $block->__('Service'); ?></td>
+                            <td class="field_table_cost"><?php echo $block->__('Cost'); ?></td>
+                            <?php if (!$block->isInternationalShippingCalculated()) : ?>
+                                <td class="field_table_additional_cost"><?php echo $block->__('Additional Cost'); ?></td>
+                            <?php endif; ?>
+                            <td class="field_table_locations"><?php echo $block->__('Locations'); ?></td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($shippingInternationalServices as $shippingInternationalService) : ?>
+                            <tr>
+                                <td>
+                                    <?php
+                                    if ($shippingInternationalService['service']) {
+                                        echo $shippingInternationalService['service'];
+                                    } else {
+                                        echo $block->__('Buyer Should Contact Seller');
+                                    }
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    if (isset($shippingInternationalService['cost'])) {
+                                        if ($shippingInternationalService['cost'] == 0) {
+                                            echo $block->__('Free');
+                                        } else {
+                                            echo $currency . $shippingInternationalService['cost'];
+                                        }
+                                    } else {
+                                        echo $block->__('Calculated');
+                                    }
+
+                                    ?>
+                                </td>
+                                <?php if (!$block->isInternationalShippingCalculated()) : ?>
+                                    <td>
+                                        <?php
+                                        if (isset($shippingInternationalService['cost_additional'])) {
+                                            if ($shippingInternationalService['cost_additional'] == 0) {
+                                                echo $block->__('Free');
+                                            } else {
+                                                echo $currency . $shippingInternationalService['cost_additional'];
+                                            }
+                                        }
+                                        ?>
+                                    </td>
+                                <?php endif; ?>
+                                    <td><?php echo $shippingInternationalService['locations']; ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <?php
+
+        $shippingInternationalHandlingCost = $block->getShippingInternationalHandlingCost();
+
+        if ($shippingInternationalHandlingCost) :
+            ?>
+            <div>
+                <span class="field_title"><?php echo $block->__('Handling Cost'); ?>:</span>
+                <?php echo $currency . $shippingInternationalHandlingCost; ?>
+            </div>
+        <?php endif; ?>
+
+        <?php
+
+        $excludedLocations = $block->getShippingExcludedLocations();
+
+        if ($excludedLocations) :
+            ?>
+
+            <div class="field_group"><?php echo $block->__('Excluded Locations'); ?></div>
+
+            <div>
+                <span class="field_title"><?php echo $block->__('Locations'); ?>:</span>
+                <?php echo $excludedLocations; ?>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <div class="payment_container tab_container">
+        <?php
+        $payment = $block->getPayment();
+
+        if (isset($payment['paypal'])) {
+            echo "<img src='{$block->getViewFileUrl('Ess_M2ePro::images/img_echeck.png')}'>";
+        }
+        ?>
+
+        <?php if (!empty($payment['paymentMethods'])) : ?>
+            <table>
+                <tr>
+                    <td class="field_title"><?php echo $block->__('Payment Methods'); ?>:&nbsp;</td>
+                    <td>
+                        <?php foreach ($payment['paymentMethods'] as $paymentMethod) : ?>
+                            <div><?php echo $paymentMethod; ?></div>
+                        <?php endforeach; ?>
+                    </td>
+                </tr>
+            </table>
+        <?php endif; ?>
+    </div>
+
+    <div class="return_container tab_container">
+        <?php if (!empty($return)) : ?>
+
+            <div class="field_group"><?php echo $block->__('Domestic Returns'); ?></div>
+
+            <?php if (!empty($return['returns_accepted'])): ?>
+                <div>
+                    <span class="field_title"><?php echo $block->__('Return Policy'); ?>:</span>
+                    <?php echo $return['returns_accepted']; ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($this->isDomesticReturnsAccepted()) : ?>
+
+                <?php if (!empty($return['refund'])): ?>
+                    <div>
+                        <span class="field_title"><?php echo $block->__('Refund Will Be Given As'); ?>:</span>
+                        <?php echo $return['refund']; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($return['returns_within'])): ?>
+                    <div>
+                        <span class="field_title"><?php echo $block->__('Item Must Be Returned Within'); ?>:</span>
+                        <?php echo $return['returns_within']; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($return['shipping_cost_paid_by'])): ?>
+                    <div>
+                        <span class="field_title"><?php echo $block->__('Return Shipping Will Be Paid By'); ?>:</span>
+                        <?php echo $return['shipping_cost_paid_by']; ?>
+                    </div>
+                <?php endif; ?>
+
+            <?php endif; ?>
+
+            <?php if ($this->isDomesticReturnsAccepted()) : ?>
+
+                <div class="field_group"><?php echo $block->__('International Returns'); ?></div>
+
+                <?php if (!empty($return['international_returns_accepted'])): ?>
+                    <div>
+                        <span class="field_title"><?php echo $block->__('Return  Policy'); ?>:</span>
+                        <?php echo $return['international_returns_accepted']; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($this->isInternationalReturnsAccepted()) : ?>
+
+                    <?php if (!empty($return['international_refund'])): ?>
+                        <div>
+                            <span class="field_title"><?php echo $block->__('Refund Will Be Given As'); ?>:</span>
+                            <?php echo $return['international_refund']; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($return['international_returns_within'])): ?>
+                        <div>
+                            <span class="field_title"><?php echo $block->__('Item Must Be Returned Within'); ?>:</span>
+                            <?php echo $return['international_returns_within']; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($return['international_shipping_cost_paid_by'])): ?>
+                        <div>
+                            <span class="field_title"><?php echo $block->__('Return Shipping Will Be Paid By'); ?>:</span>
+                            <?php echo $return['international_shipping_cost_paid_by']; ?>
+                        </div>
+                    <?php endif; ?>
+
+                <?php endif; ?>
+
+                <?php if(!empty($return['description'])): ?>
+
+                    <div class="field_group"><?php echo $block->__('Additional'); ?></div>
+
+                    <div>
+                        <span class="field_title"><?php echo $block->__('Description'); ?>:</span>
+                        <?php echo $return['description']; ?>
+                    </div>
+
+                <?php endif; ?>
+
+            <?php endif; ?>
+
+        <?php endif; ?>
+
+    </div>
+
+    <div class="other_container tab_container">
+        <?php if (isset($otherCategories['secondary'])) : ?>
+            <div class="field_group"><?php echo $block->__('eBay Catalog Categories'); ?></div>
+            <div>
+                <span class="field_title"><?php echo $block->__('Secondary Category'); ?>:</span>
+                <span class="category_breadcrumbs_black">
+                    <?php echo $otherCategories['secondary']; ?>
+                </span>
+            </div>
+        <?php endif; ?>
+        <?php if (isset($otherCategories['primary_store']) || isset($otherCategories['secondary_store'])) : ?>
+            <div class="field_group"><?php echo $block->__('Store Catalog'); ?></div>
+        <?php endif; ?>
+        <?php if (isset($otherCategories['primary_store'])) : ?>
+            <div>
+                <span class="field_title"><?php echo $block->__('Primary Category'); ?>:</span>
+                <span class="category_breadcrumbs_black">
+                    <?php echo $otherCategories['primary_store']; ?>
+                </span>
+            </div>
+        <?php endif; ?>
+        <?php if (isset($otherCategories['secondary_store'])) : ?>
+            <div>
+                <span class="field_title"><?php echo $block->__('Secondary Category'); ?>:</span>
+                <span class="category_breadcrumbs_black">
+                    <?php echo $otherCategories['secondary_store']; ?>
+                </span>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

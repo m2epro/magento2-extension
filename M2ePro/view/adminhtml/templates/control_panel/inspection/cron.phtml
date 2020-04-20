@@ -1,0 +1,130 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Type'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->cronCurrentRunner; ?>
+        </td>
+    </tr>
+
+    <?php if ($block->getHelper('Module\Cron')->isRunnerService() && !$block->getData('is_support_mode')) : ?>
+        <tr>
+            <td class="label">
+                <label><?php echo $block->__('Service Auth Key'); ?>: </label>
+            </td>
+            <td class="value">
+                <?php echo $block->cronServiceAuthKey; ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Last Run'); ?>: </label>
+        </td>
+        <?php
+        $style = '';
+        if ($block->cronIsNotWorking) {
+            $style = ' style="color: red"';
+        }
+        ?>
+        <td class="value">
+            <span<?php echo $style; ?>><?php echo $block->cronLastRunTime ?></span>
+            <?php
+            if ($block->cronIsNotWorking) {
+                echo ' (' . $block->__('not working') . ')';
+            }
+            ?>
+        </td>
+    </tr>
+
+    <?php if (!$block->getData('is_support_mode') && $block->isControllerCronDisabled) : ?>
+        <tr>
+            <td class="label">
+                <label><?php echo $block->__('Service Controller Cron State'); ?>: </label>
+            </td>
+            <td class="value" style="color: red;">
+                <?php echo $block->__('Disabled by Developer'); ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if (!$block->getData('is_support_mode') && $block->isPubCronDisabled) : ?>
+        <tr>
+            <td class="label">
+                <label><?php echo $block->__('Service Pub Cron State'); ?>: </label>
+            </td>
+            <td class="value" style="color: red;">
+                <?php echo $block->__('Disabled by Developer'); ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if (!$block->getData('is_support_mode') && $block->isMagentoCronDisabled) : ?>
+        <tr>
+            <td class="label">
+                <label><?php echo $block->__('Magento Cron State'); ?>: </label>
+            </td>
+            <td class="value" style="color: red;">
+                <?php echo $block->__('Disabled by Developer'); ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if ($block->isShownRecommendationsMessage()) : ?>
+        <tr>
+            <td class="label" colspan="2" style="width: 600px">
+                <strong><?php echo $block->__('We recommend to set up your Cron Job to be run every 1 minute (e.g. * * * * *).'); ?></strong>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="label">
+                <label><?php echo $block->__('PHP Command'); ?>: </label>
+            </td>
+            <td class="value">
+                <?php echo $block->cronPhp; ?>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="label">
+                <label><?php echo $block->__('GET Command'); ?>: </label>
+            </td>
+            <td class="value">
+                <?php echo $block->cronGet; ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if ($block->isShownServiceDescriptionMessage()) : ?>
+        <tr>
+            <td class="label" colspan="2" style="width: 600px">
+                <strong><?php echo $block->__('What is the Cron Type Service?'); ?></strong>
+            </td>
+        </tr>
+        <tr>
+            <td class="label" colspan="2" style="width: 600px">
+                <?php echo $block->__(
+                    'It is M2E Pro Cron System where you were registered automatically during the Extension Installation.
+                    No additional Settings are required. Our Service does HTTP calls to your Magento from IPs addresses: <b>%server_ips%</b>.',
+                    $block->cronServiceIps
+                ); ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+</table>

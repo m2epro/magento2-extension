@@ -1,0 +1,41 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Edition'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->platformMode; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Version'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->platformVersion; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Add Secret Key to URLs'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->platformIsSecretKey ? $block->__('Enabled') : $block->__('Disabled'); ?>
+        </td>
+    </tr>
+
+</table>

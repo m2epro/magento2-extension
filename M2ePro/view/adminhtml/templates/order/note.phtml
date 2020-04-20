@@ -1,0 +1,24 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Order\Note\Popup $block */
+
+?>
+<form id="order_note_popup" action="javascript:void(0);" method="post">
+    <?php if ($noteId = $block->getRequest()->getParam('note_id')) : ?>
+        <input type="hidden" name="note_id" value="<?php echo $noteId; ?>" />
+    <?php endif; ?>
+
+    <?php if ($orderId = $block->getRequest()->getParam('order_id')) : ?>
+        <input type="hidden" name="order_id" value="<?php echo $orderId; ?>" />
+    <?php endif; ?>
+
+    <div style="float: right; margin-top: 20px; margin-bottom: 12px;">
+        <label for="note"><?php echo $block->__('Description') ?><span class="required">*</span></label><br />
+        <textarea id="note" name="note" class="textarea required-entry" style="resize: none; width: 535px; height: 100px;"><?php echo $block->getNoteModel()->getNote();?></textarea>
+    </div>
+</form>

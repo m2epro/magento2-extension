@@ -1,0 +1,126 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs\BusinessHours\WorkHours $block */
+
+$formData = $block->getData('form_data');
+
+?>
+
+<table class="border data-grid data-grid-not-hovered" cellpadding="0" cellspacing="0">
+    <thead>
+        <tr class="headings">
+            <th class="data-grid-th" style="width: 5%"></th>
+            <th class="data-grid-th" style="width: 25%"><?php echo $block->__('Day of Week'); ?></th>
+            <th class="data-grid-th" style="width: 30%"><?php echo $block->__('Open'); ?>: <span class="required" style="display: inline">*</span></th>
+            <th class="data-grid-th" style="width: 30%"><?php echo $block->__('Close'); ?>: <span class="required" style="display: inline">*</span></th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php
+
+    $weekDays = [
+        'monday'    => $block->__('Monday'),
+        'tuesday'   => $block->__('Tuesday'),
+        'wednesday' => $block->__('Wednesday'),
+        'thursday'  => $block->__('Thursday'),
+        'friday'    => $block->__('Friday'),
+        'saturday'  => $block->__('Saturday'),
+        'sunday'    => $block->__('Sunday')
+    ];
+
+    foreach ($weekDays as $weekDay => $weekDayTitle) : ?>
+        <tr style="border-bottom: 1px solid #d6d6d6;">
+
+            <td class="table_td" style="text-align: center;">
+                <input id="week_day_<?php echo $weekDay; ?>_from" name="business_hours[week_settings][<?php echo $weekDay; ?>][open]" type="hidden">
+                <input id="week_day_<?php echo $weekDay; ?>_to" name="business_hours[week_settings][<?php echo $weekDay; ?>][close]" type="hidden">
+
+                <input id="week_day_<?php echo $weekDay; ?>_mode" name="business_hours[week_days][]" value="<?php echo $weekDay; ?>" type="checkbox" <?php if ($isDayExist = $block->isDayExistInWeekSettingsArray($weekDay, $formData['business_hours']['week_days'])) :
+                    ?>checked="checked"<?php
+                                    endif; ?> class="week_day_mode"/>
+            </td>
+
+            <td class="table_td">
+                <label><?php echo $block->__($weekDayTitle); ?></label>
+            </td>
+
+            <td class="table_td">
+                <div id="week_day_<?php echo $weekDay; ?>_container_from">
+
+                    <select id="week_day_<?php echo $weekDay; ?>_from_hours" class="week_time_select">
+                        <option style="display: none;"></option>
+                        <?php for ($i = 1; $i < 25; $i++) { ?>
+                            <option value="<?php echo ($i < 10) ? '0' . $i : $i;?>" <?php if ($isDayExist && $formData['business_hours']['week_settings'][$weekDay]['from_hours'] == $i) :
+                                echo ' selected="selected"';
+                                           endif; ?>><?php echo ($i < 10) ? '0' . $i : $i;?></option>
+                        <?php } ?>
+                    </select>
+                    <span style="display: inline-block; width: 4px; text-align: center;">:</span>
+                    <select id="week_day_<?php echo $weekDay; ?>_from_minutes" class="week_time_select">
+                        <option style="display: none;"></option>
+                        <?php for ($i = 0; $i < 60; $i+=15) { ?>
+                            <option value="<?php echo ($i < 10) ? '0' . $i : $i;?>" <?php if ($isDayExist && $formData['business_hours']['week_settings'][$weekDay]['from_minutes'] == $i) :
+                                echo ' selected="selected"';
+                                           endif; ?>><?php echo ($i < 10) ? '0' . $i : $i;?></option>
+                        <?php } ?>
+                    </select>
+
+                    <br/>
+
+                    <input id="week_day_<?php echo $weekDay; ?>_validator_from"
+                           name="week_day_<?php echo $weekDay; ?>_validator_from"
+                           type="text"
+                           class="M2ePro-validate-selected-schedule-time hidden-validation">
+
+                </div>
+            </td>
+
+            <td class="table_td">
+                <div id="week_day_<?php echo $weekDay; ?>_container_to">
+
+                    <select id="week_day_<?php echo $weekDay; ?>_to_hours" class="week_time_select">
+                        <option style="display: none;"></option>
+                        <?php for ($i = 1; $i < 25; $i++) { ?>
+                            <option value="<?php echo ($i < 10) ? '0' . $i : $i;?>" <?php if ($isDayExist && $formData['business_hours']['week_settings'][$weekDay]['to_hours'] == $i) :
+                                echo ' selected="selected"';
+                                           endif; ?>><?php echo ($i < 10) ? '0' . $i : $i;?></option>
+                        <?php } ?>
+                    </select>
+                    <span style="display: inline-block; width: 4px; text-align: center;">:</span>
+                    <select id="week_day_<?php echo $weekDay; ?>_to_minutes" class="week_time_select">
+                        <option style="display: none;"></option>
+                        <?php for ($i = 0; $i < 60; $i+=15) { ?>
+                            <option value="<?php echo ($i < 10) ? '0' . $i : $i;?>" <?php if ($isDayExist && $formData['business_hours']['week_settings'][$weekDay]['to_minutes'] == $i) :
+                                echo ' selected="selected"';
+                                           endif; ?>><?php echo ($i < 10) ? '0' . $i : $i;?></option>
+                        <?php } ?>
+                    </select>
+
+                    <br/>
+
+                    <input id="week_day_<?php echo $weekDay; ?>_validator_to"
+                           name="week_day_<?php echo $weekDay; ?>_validator_to"
+                           type="text"
+                           class="M2ePro-validate-selected-schedule-time M2ePro-validate-schedule-wrong-interval-time hidden-validation">
+
+                </div>
+            </td>
+
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+    <tfoot>
+    </tfoot>
+</table>
+
+<input id="schedule_week_days_validator"
+       name="schedule_week_days_validator"
+       type="text"
+       class="M2ePro-validate-schedule-week-days hidden-validation">

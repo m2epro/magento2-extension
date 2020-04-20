@@ -1,0 +1,93 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity $block */
+
+$block->css->add("
+
+    #charity_table select {
+        width: 100%;
+    }
+
+    #charity_not_set_table {
+        background-color: #EFEFEF;
+        padding: 1em;
+        margin: 0 auto;
+    }
+
+    #charity_not_set_table > table {
+        margin-left: calc(50% - 115px);
+    }
+
+    .charity-row {
+        border-width: 0 1px 1px 1px !important;
+        border-color: #dadfe0 !important;
+        border-style: solid !important;
+    }
+
+");
+?>
+
+<div id="charity_not_set_table">
+
+    <table style="border: none" cellpadding="0" cellspacing="0">
+        <tfoot>
+        <tr>
+            <td valign="middle" align="center" style="vertical-align: middle; height: 40px">
+                <?php echo $block->getChildHtml('add_charity_button') ?>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+
+</div>
+<table id="charity_table" class="data-grid data-grid-not-hovered" cellpadding="0" cellspacing="0" style="display: none">
+    <thead>
+    <tr class="headings">
+        <th class="data-grid-th" style="width: 30%"><?php echo $block->__('Marketplace') ?><span class="required"> *</span></th>
+        <th class="data-grid-th" style="width: 30%"><?php echo $block->__('Organization') ?><span class="required"> *</span></th>
+        <th class="data-grid-th" style="width: 30%"><?php echo $block->__('Percentage') ?><span class="required"> *</span></th>
+        <th class="data-grid-th type-butt last" style="width: 10%;">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody id="charity_table_tbody">
+    <!-- #charity_row_template inserts here -->
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="7" style="text-align: right"><?php echo $block->getChildHtml('add_charity_button') ?></td>
+    </tr>
+    </tfoot>
+</table>
+
+<table id="charity_row_template" style="display: none;">
+    <tbody>
+    <tr id="charity_row_%i%_tr" class="charity-row">
+        <td>
+            <select name="selling_format[charity][marketplace_id][%i%]" class="admin__control-select required-entry charity-marketplace_id" onchange="EbayTemplateSellingFormatObj.charityMarketplaceChange(this)">
+                <option class="empty"></option>
+                <?php foreach ($block->getEnabledMarketplaces() as $marketplace) : ?>
+                    <option value="<?php echo $marketplace->getId() ?>"><?php echo $block->getHelper('Data')->escapeHtml($marketplace->getTitle()) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </td>
+        <td>
+            <select name="selling_format[charity][organization_id][%i%]" class="admin__control-select required-entry charity-organization" disabled="disabled" style="display: none" onchange="EbayTemplateSellingFormatObj.charityOrganizationChange(this)"></select>
+            <input type="hidden" class="organization_name" name="selling_format[charity][organization_name][%i%]">
+            <input type="hidden" class="organization_custom" name="selling_format[charity][organization_custom][%i%]" value="0">
+        </td>
+        <td>
+            <select name="selling_format[charity][percentage][%i%]" class="admin__control-select required-entry charity-percentage" disabled="disabled" style="display: none" ></select>
+        </td>
+        <td>
+            <?php echo $block->getChildHtml('remove_charity_button'); ?>
+        </td>
+    </tr>
+    </tbody>
+</table>

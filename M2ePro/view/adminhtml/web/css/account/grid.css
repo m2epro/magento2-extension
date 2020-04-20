@@ -1,0 +1,11 @@
+.grid-listing-column-id {
+    width: 100px;
+}
+
+.grid-listing-column-title {
+    width: 600px;
+}
+
+#container .account-delete-btn {
+    text-decoration: none;
+}

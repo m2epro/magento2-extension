@@ -1,0 +1,38 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<div id="chooser_recent">
+    <table id="chooser_recent_table">
+
+        <?php if (count($block->getCategories()) <= 0) : ?>
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <strong><?php echo $block->__('No recently used Categories'); ?></strong>
+                </td>
+            </tr>
+        <?php endif; ?>
+
+        <?php foreach ($block->getCategories() as $category) : ?>
+            <?php $nodeId       = $block->escapeJs($block->escapeHtml($category['browsenode_id'])); ?>
+            <?php $categoryPath = $block->escapeJs($block->escapeHtml($category['path'])); ?>
+
+            <tr>
+                <td width="730px">
+                    <?php echo $category['path'] .' ('.$category['browsenode_id'].')'; ?>
+                </td>
+                <td width="68px">
+                    <a href="javascript:void(0)" onclick="WalmartTemplateCategoryCategoriesChooserObj.recentClickCategory('<?php echo $nodeId; ?>','<?php echo $categoryPath; ?>');"><?php echo $block->__('Select'); ?></a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+
+    </table>
+</div>

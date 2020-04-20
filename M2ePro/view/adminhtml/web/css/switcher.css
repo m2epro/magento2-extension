@@ -1,0 +1,50 @@
+.filter_block {
+    min-height: 45px;
+}
+
+.filter_block .m2epro-field-tooltip {
+    margin-top: 0 !important;
+}
+
+.page-main-actions._hidden .filter_block {
+    display: none;
+}
+
+.filter_block .switcher, .filter_block .static-switcher {
+    float: none !important;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.filter_block .switcher {
+    margin-top: 7px;
+}
+
+.filter_block .switcher-separator {
+    display: inline-block;
+    border-right: 1px solid #e3e3e3;
+    height: 35px;
+    margin-bottom: -13px;
+    margin-left: 30px;
+}
+
+.filter_block .switcher:not(:first-child),
+.filter_block .static-switcher:not(:first-child) {
+    margin-left: 40px;
+}
+
+.filter_block select {
+    margin-left: 10px;
+}
+
+.static-switcher-block {
+    float: right;
+    margin-top: 7px;
+}
+.static-switcher {
+    line-height: 31px;
+}
+.static-switcher span:last-child{
+    margin-left: 5px;
+    color: #878787;
+}

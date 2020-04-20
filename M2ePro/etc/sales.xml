@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Sales:etc/sales.xsd">
+
+    <section name="quote">
+        <group name="totals">
+            <item name="waste_recycling_fee" instance="Ess\M2ePro\Model\Magento\Quote\Total\WasteRecyclingFee" sort_order="225"/>
+        </group>
+    </section>
+
+</config>

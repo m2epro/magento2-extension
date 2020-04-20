@@ -1,0 +1,38 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity\Search $block */
+
+?>
+
+<div id="charitySearch_pop_up_content" style="display: none;">
+    <div class="hor-scroll" style="margin-bottom: 0;">
+
+        <div id="searchCharity_error_block" style="display:none; margin-bottom: 10px;"></div>
+
+        <div id="searchCharity_form" style="float:none; margin-bottom:30px;">
+            <label for="query"><?php echo $block->__('Enter the organization name or ID')?></label>
+            <input id="query" type="text" name="query" class="input-text admin__control-text" style="margin: 0 10px 0 10px; width: 280px">
+            <input id="charitySearch_marketplace_id" type="hidden" name="marketplace_id" value="<?php echo $block->getData('marketplace_id') ?>">
+            <select id="selectCharitySearch" class="select admin__control-select" style="width: 100px">
+                <option value="title"><?php echo $block->__('Name')?></option>
+                <option value="id"><?php echo $block->__('ID')?></option>
+            </select>&nbsp;&nbsp;
+            <?php echo $block->getChildHtml('submit_button');?>&nbsp;
+            <a href="javascript:void(0)" id="searchCharity_reset"><?php echo $block->__('Reset'); ?></a>
+        </div>
+
+        <div id="searchCharity_warning_block" style="display:none;">
+            <?php echo $block->getChildHtml('search_charity_warning');?>
+        </div>
+
+        <div id="searchCharity_grid" style="overflow-y: hidden; overflow-x: hidden; display: none;">
+        </div>
+    </div>
+</div>

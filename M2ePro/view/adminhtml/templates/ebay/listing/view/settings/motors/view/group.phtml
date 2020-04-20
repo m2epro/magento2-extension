@@ -1,0 +1,24 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group $block */
+
+?>
+
+<?php echo $block->createBlock('HelpBlock')->setData([
+    'content' => $block->__('
+        In this Block you can see the list of the saved Groups of ePID(s)/kType(s) or
+        Filter(s). In case you do not want some of these Groups to be Used, they can be
+        Removed by selecting the appropriate Option from the mass actions bulk.
+    ')
+])->toHtml() ?>
+
+<div id="motors">
+    <?php echo $block->getChildHtml('view_group_grid'); ?>
+</div>

@@ -1,0 +1,41 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Total Tables'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->mySqlTotal['magento_tables']; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Total Module Tables'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->mySqlTotal['module_tables']; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Total Module Records'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->mySqlTotal['module_records']; ?>
+        </td>
+    </tr>
+
+</table>

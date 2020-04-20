@@ -1,0 +1,26 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin\NewAsinPopup $block */
+
+?>
+<div id="search_asin_new_asin_popup">
+    <?php echo $block->getChildHtml('popup_help_block'); ?>
+
+    <div class="admin__field admin__field-option" style="position: absolute; margin-top: 30px;">
+        <input class="admin__control-checkbox" type="checkbox" id="asin_search_new_asin_remember_checkbox" name="asin_search_new_asin_remember_checkbox">&nbsp;
+        <label for="asin_search_new_asin_remember_checkbox" class="admin__field-label">
+            <span><?php echo $block->__('Remember my choice') ?></span>
+        </label>
+    </div>
+
+    <div id="new_asin_title_help_tips" style="display: none; width: 50px; position: absolute; top: 2em; left: 22em;">
+        <?php echo $block->getTitleHelpTipsHtml(); ?>
+    </div>
+</div>

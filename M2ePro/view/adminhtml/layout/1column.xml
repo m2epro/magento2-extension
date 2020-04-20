@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="notifications">
+            <block class="Ess\M2ePro\Block\Adminhtml\Messages" after="-" />
+        </referenceContainer>
+        <referenceContainer name="header">
+            <referenceBlock name="global.search" remove="true" />
+        </referenceContainer>
+    </body>
+</page>

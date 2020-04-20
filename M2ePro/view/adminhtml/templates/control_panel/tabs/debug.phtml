@@ -1,0 +1,32 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<div id="magento_block_control_panel_debug_commands" class="debug-test-commands">
+
+    <table class="simple_commands_list">
+
+        <tr>
+            <td>
+                <a href="<?php echo $block->getUrl('*/controlPanel_debug/debug', ['action' => 'firstTest']) ?>" target="_blank">First Test</a>
+                <p>Command for quick development</p>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <a href="<?php echo $block->getUrl('*/controlPanel_debug/debug', ['action' => 'secondTest']) ?>" target="_blank">Second Test</a>
+                <p>Command for quick development</p>
+            </td>
+        </tr>
+
+    </table>
+
+</div>

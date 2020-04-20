@@ -1,0 +1,36 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\DisableModule\Content $block */
+
+?>
+
+<div class="wizard_block">
+
+    <p>
+        <?php echo $block->__('Prior to migrating M2E Pro data, you need to disable the Module on both Magento v1.x and Magento v2.x. It will provide the safety of M2E Pro database during the migration.'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('To disable the Module on Magento v1.x., please navigate to <i>System > Configuration > M2E Pro > Advanced > Migration to Magento v2.x</i> and click <strong>Proceed</strong>. It will stop the dynamic Cron tasks, put M2E Pro under maintenance and prepare its database for the migration. Please wait for at least 15 minutes until the process is fully completed.'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('<strong>Note</strong>: Once you confirm the migration running, the process cannot be rolled back.'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('After M2E Pro on Magento v1.x is prepared for the migration, you need to disable the Module on Magento v2.x. To do it, please click <strong>Continue</strong> at the 1st Migration Wizard step. It will stop the dynamic Cron tasks, put M2E Pro under maintenance and clear its database before the migration. When the process is completed, you will be redirected to the 2nd Migration Wizard step.'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('<strong>Note</strong>: Once you confirm the migration running, the process cannot be rolled back.'); ?>
+    </p>
+
+</div>

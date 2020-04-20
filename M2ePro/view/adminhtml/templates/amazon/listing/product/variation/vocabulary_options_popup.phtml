@@ -1,0 +1,37 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\VocabularyOptionsPopup $block */
+
+?>
+
+<div id="vocabulary_options_pupup" style="display: none;">
+    <div style="margin-top: 10px;">
+        <?php echo $block->__('
+        You have just specified an accordance between <strong>Magento Variational Option</strong> and
+        <strong>Amazon Variational Option</strong> that was not defined earlier. M2E Pro can remember Options match
+        below and use them in future automatically for that Attribute.<br/><br/>
+
+        %options%<br/>
+
+        Do you want M2E Pro to <strong>remember</strong> this match and use it <strong>automatically</strong> in future?<br/><br/>
+        '); ?>
+
+        <input type="hidden" id="vocabulary_options_data" value="">
+
+        <div class="admin__field admin__field-option" style="position: absolute; margin-top: 30px;">
+            <input class="admin__control-checkbox" type="checkbox" id="vocabulary_options_remember_checkbox">
+            &nbsp;&nbsp;
+            <label for="vocabulary_options_remember_checkbox" class="admin__field-label">
+                <span><?php echo $block->__('Remember my choice') ?></span>
+            </label>
+        </div>
+    </div>
+
+</div>

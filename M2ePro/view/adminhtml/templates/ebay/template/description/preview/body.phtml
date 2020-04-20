@@ -1,0 +1,17 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+?>
+
+<?php if (($title = $block->getData('title'))) { ?>
+    <div class="entry-edit" id="magento_block_ebay_template_description_preview" style="padding: 5px;">
+        <h2 style="color: maroon; margin-bottom: 5px;"><?php echo $block->getHelper('Data')->escapeHtml($title); ?></h2>
+        <hr /><?php echo $block->getData('description'); ?>
+    </div>
+
+<?php } ?>

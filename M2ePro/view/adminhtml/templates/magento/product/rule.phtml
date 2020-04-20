@@ -1,0 +1,55 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Magento\Backend\Block\Widget\Form\Renderer\Fieldset $block */
+
+$_element = $block->getElement();
+?>
+
+<style>
+    .rule-tree .ui-datepicker-trigger:after {
+        font-size: 1.5rem;
+        margin-top: -5px;
+        margin-left: 7px;
+    }
+</style>
+
+<div class="rule-tree">
+    <div id="<?php echo $_element->getHtmlId(); ?>">
+        <?php echo $_element->getChildrenHtml() ?>
+    </div>
+</div>
+<script>
+    require([
+        "Magento_Rule/rules",
+        "mage/apply/main",
+        "prototype"
+    ], function(VarienRulesForm, mage){
+
+        VarienRulesForm.prototype.onAddNewChildComplete = function(new_elem) {
+            if (this.readOnly) {
+                return false;
+            }
+
+            $(new_elem).removeClassName('rule-param-wait');
+            var elems = new_elem.getElementsByClassName('rule-param');
+            for (var i=0; i<elems.length; i++) {
+                this.initParam(elems[i]);
+            }
+
+            mage.apply();
+        };
+
+        window.<?php echo $_element->getHtmlId() ?> = new VarienRulesForm('<?php echo $_element->getHtmlId() ?>', '<?php /* @escapeNotVerified */ echo $block->getNewChildUrl() ?>');
+        <?php if ($_element->getReadonly()) : ?>
+            <?php echo $_element->getHtmlId() ?>.setReadonly(true);
+        <?php endif; ?>
+
+    });
+</script>

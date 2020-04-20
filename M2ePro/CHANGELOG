@@ -1,0 +1,576 @@
+* 1.5.1 (r3631) (20/04/2020) [beta]
+
+Common: [Fixed] License is not created if more than 50 symbols used
+Common: [Fixed] Tracking number is not sent to Channels on some Magento versions <= 2.2.7
+Common: [Fixed] Incorrect initiator on manual Order actions
+Common: [Fixed] Product isn't stopped on Channel after it is removed from Magento
+Common: [Fixed] renameTable() failing on second upgrade run
+Common: [Fixed] Stop rules get disabled after upgrade
+Core: [Fixed] Fatal error: Call to undefined function forceRemove() during process processing results
+Core: [Fixed] Base table or view not found: 1146 Table 'm2ePro_ebay_order_item' doesn't exist
+Core: [Improved] Generate more detailed instructions during upgrade to new synchronization
+eBay: [Improved] New eBay Orders IDs
+eBay: [Improved] Generate external transaction id if it is empty
+eBay: [Fixed] Revise doesn't work if Lot Size selected from Attribute
+eBay: [Fixed] Images, Categories/Specifics, Payment, Shipping, Return are Revised without reason
+eBay: [Fixed] Incorrect values are displayed in some fields in Shipping Policy
+eBay: [Fixed] Incorrect last order synchronization date was used
+Amazon: [Added] B2B feature for France, Spain, and Italy Marketplaces
+Amazon: [Fixed] OrdersUpdateAcknowledgement processing was not added after Credit Memo was created in Magento Order
+Walmart: [Fixed] Product link is not correct on Canada marketplace
+Walmart: [Fixed] Error log: "Internal Server Error (s) [Items was not updated.]" in some cases on stop action
+Walmart: [Fixed] Error message: "Class Ess\M2ePro\Model\Walmart\Connector\Product\List\Responser does not exist" on list action
+Walmart: [Fixed] Fatal Error: Call to undefined method Ess\M2ePro\Helper\Data::__() on list action
+
+* 1.5.0 (r3484) (10/03/2020)
+
+Common: [Added] Ability to add custom notes in Order
+Common: [Added] Migration from M2E Pro v6.5.8 Magento v.1 to M2E Pro v1.5.0 Magento v.2
+Common: [Added] Mapped filter for 3rd party listings
+Common: [Added] Track Magento Product Websites updates
+Common: [Fixed] Escape data in the License form
+Common: [Fixed] Inventory Synchronization worked after the upgrade if it was disabled beforehand
+Common: [Fixed] Send last tracking number to Channel instead of the first one
+Common: [Fixed] Cron runner is not switching in some cases
+Common: [Fixed] Do not make an unnecessary update to Magento orders
+Common: [Improved] Add support for Magento Stock Sources import
+Common: [Improved] PHP Compatibility — code standard fixes (now compatible with PHP 7.4)
+Common: [Improved] Enhancements to Synchronization
+Common: [Removed] Support for Magento 2.1.x and lower
+eBay: [Added] eBay Lot Size functionality
+eBay: [Fixed] "Please enter a valid price for your item (e.g. the US $0.99)" on Revise when Child product was deleted in Magento
+eBay: [Improved] GTC listing duration review
+eBay: [Improved] Support for new eBay Order IDs
+eBay: [Removed] "Immediate" / "Checkout is Completed, Payment is Received" Magento Orders Creation options
+Amazon: [Added] Ability to revise a Parent Product
+Amazon: [Added] Ability to use Magento Order number as “Your Seller Order ID” in Amazon Order
+Amazon: [Fixed] Do not send gift data on List action if it is not specified
+Amazon: [Fixed] JS error occurs if Vocabulary was used
+Amazon: [Improved] Token update — automatic save
+Amazon: [Improved] Import Fulfillment Center ID for each Order Item
+Walmart: [Added] Add Details option to Revise Rules
+Walmart: [Improved] Add ability to Reset Child products
+Walmart: [Fixed] Order ID filter in Order logs does not work
+Walmart: [Fixed] Undefined index: item_id in Model/Walmart/Order/Action/Handler/Shipping.php
+
+* 1.4.3 (r3232) (20/12/2019)
+
+Common: [Fixed] JS error while adding a new child product in Manage Variations pop-up
+Common: [Fixed] "Tracking details were not imported. Reason: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails..."
+Common: [Fixed] Attribute dropdowns do not contain all appropriate Magento attributes
+Common: [Fixed] Cron service cannot find endpoint in some cases
+Common: [Fixed] Tooltips display problem on Magento 2.3.3
+Common: [Fixed] Various exceptions when trying to serialize/unserialize data
+Common: [Fixed] Fix for compact deploy mode
+Common: [Fixed] MSI Shipment creation fixes
+Common: [Fixed] Magento Order was not created. Reason: The password must have at least 7 characters. Leading or trailing spaces will be ignored.
+eBay: [Improved] Mapping option for 3rd Party Listing
+eBay: [Fixed] User ID is not displayed in the Orders grid
+Amazon: [Improved] Allow sending 250 characters in the Search Terms field (Amazon)
+Amazon: [Improved] Amazon order prefixes [prime|afn|b2b]
+Amazon: [Fixed] Do not download fulfillment details in some cases
+Walmart: [Added] Walmart Product ID (GTIN, EAN, UPC, ISBN) exemption
+Walmart: [Improved] Walmart Consumer ID field Validation (the US only)
+Walmart: [Fixed] Do not revise promotions if they are empty  in the Extension and the Channel
+Walmart: [Fixed] Exception for order view page if there are 2+ items from the same listing
+Walmart: [Fixed] Category policy is not assigned on Auto Add Rules
+Walmart: [Fixed] Order was not shipped. Reason: Request content is invalid. Unable to process this request.
+Walmart: [Fixed] Validation Failed. The Server response data is not valid
+
+* 1.4.2 (r3104) (24/09/2019)
+
+* Common: [Added] Migration from 6.5.6 to 1.4.2
+* Common: [Fixed] Error while saving shipment with a tracking number on 2.2.8
+* Common: [Fixed] Attributes dropdown does not contain all appropriate Magento attributes
+* Common: [Fixed] Magento Order was not created. Reason: Notice: Array to string conversion in magento/framework/Model/AbstractModel.php
+* Common: [Fixed] Changes for Variational Products (child) are not tracked if new Source was added or so on (MSI)
+* Common: [Fixed] Incorrect supported serialize "Additional Data" after 2.2.0-RC1.1 version
+* Common: [Fixed] Magento MSI issues
+* Common: [Fixed] Shipment was not created. Reason: Source item not found by source code: default and sku: %sku%
+* Common: [Fixed] SQLSTATE[42S22]: Column not found: 1054 Unknown column 'min_online_price' in 'having clause'
+* Common: [Fixed] Incorrect behavior when trying to Add New Listing on Move product
+* Common: [Fixed] Skipped manual Revise of Simple Product
+* Common: [Fixed] Channel order URL does not work in the payment information of Magento order
+* eBay: [Fixed] Errors are not displayed when trying to link an eBay account on Wizard
+* Amazon: [Fixed] It is possible to Assign Description Policy when it should be disabled
+* Amazon: [Fixed] Error message "Warning: Invalid argument supplied for foreach() in Model/Listing/Product/PriceCalculator.php on any action in some cases.
+* Amazon: [Fixed] Notice: Undefined index: county in Order/Edit/ShippingAddress/Form.php
+* Amazon  [Fixed] Selected specifics are not saved in the Description policy
+* Walmart: [Fixed] Partially shipped order
+* Walmart: [Fixed] "Create a New One Attribute" does not work for Promotions (Selling Policy)
+* Walmart: [Fixed] Add Advanced Conditions to List, Relist and Stop Rules in Synchronization Policy
+* Walmart: [Fixed] Channel changes are not tracked (listing product synchronization)
+* Walmart: [Fixed] All products change status to "Inactive (Blocked)" on unauthorized error
+* Walmart: [Fixed] Could not update account credentials
+* Walmart: [Fixed] Filter works incorrectly (add filter by consumer_id)
+* Walmart: [Fixed] Customer ID for Predefined Customer is not displayed before saving an account
+* Walmart: [Fixed] Fatal error "Table walmart_indexer_listing_product_variation_parent is not found"
+* Walmart: [Fixed] Fatal Error: Undefined constant 'Ess\M2ePro\Helper\Component\Walmart'
+* Walmart: [Fixed]  "Inactive Blocked" item cannot be reset
+* Walmart: [Fixed] Walmart orders are not imported after migration
+* Walmart: [Fixed] Walmart item is not created on List action
+* Walmart: [Fixed] Notice: Undefined index: county in Order/Edit/ShippingAddress/Form.php
+* Walmart: [Fixed] Description Policy can't be changed on Edit Settings page
+* Walmart  [Fixed] It is possible to set a Selling Policy with for US marketplace in CA listing
+* Walmart: [Improved] Receiving order updates
+* Walmart: [Improved] SKU is not updated on Revise Сhannel item
+* Walmart: [Improved] Ability to send lag time in the separate feed for the US Marketplace
+
+* 1.4.1 (r2954) (10/06/2019)
+
+* Common: [Added] Migration from 6.5.5 to 1.4.1
+* Common: [Improved] Implement Multi-Source Inventory compatibility
+* Common: [Fixed] Incorrect Memory Limit value is shown in System Requirements
+* Common: [Fixed] Compatibility fixes for Magento version ~2.1 + php ~5.6
+* Common: [Fixed] JS error on Update All Now in Marketplaces
+* Common: [Fixed] List of Interface problems
+* Common: [Fixed] "Back" button works incorrectly after creation an account
+* Amazon: [Fixed] "The quantities you provided for order id (%order_id%) were larger than the quantities that could be fulfilled." error on Order status update in some cases.
+* eBay: [Fixed] Order receiving stuck in some cases.
+* eBay: [Fixed] Selected Attribute is skipped after Policy was saved
+* Walmart: [Fixed] Category is not required field
+* Walmart: [Fixed] Route "walmart_listing_product/variationReset" not found on click "Manage Variations"
+* Walmart: [Fixed] Missing "component_mode" column in walmart_indexer_listing_product_variation_parent table after update
+* Walmart: [Fixed] Exception when try to create New Listing during Move action
+* Walmart: [Fixed] Impossibly fix Inactive Blocked item
+* Walmart: [Fixed] Impossibly add New Child to Parent/Child Product
+* Walmart: [Fixed] Exception when try to use Advanced Filter by Walmart Values
+* Walmart: [Fixed] Impossibly performs the Stop on Channel / Remove from Listing Action for Not Listed item (both Simple and Child)
+* Walmart: [Fixed] Extra button when creating a new listing on Moving eBay Items
+* Walmart: [Fixed] Extra block is shown on Amazon Listing Search Settings
+
+* 1.4.0 (r2890) (07/05/2019)
+
+* Common: [Added] Implement Multi-Source Inventory compatibility
+* Common: [Added] Walmart integration
+* Common: [Added] New Cron Endpoint which are going to run synchronization process under CRONTAB area (instead of FRONTEND)
+* Common: [Added] Ability to observe products who added from csv file import
+* Common: [Improved] Magento options finder does not work correctly.
+* Common: [Improved] Memory usage on listing view has been optimized.
+* Common: [Fixed] Exception after Payment was received and Magento Order was created
+* Common: [Fixed] Extra block is shown on Creation of New Magento Attribute
+* Common: [Fixed] "The requested qty is not available" message error on create magento order in Magento 2.2.7
+* Common: [Fixed] "Some of the products are out of stock." message error on magento order creation in Magento 2.2.7
+* Common: [Fixed] "Uncaught ReferenceError: createNodeByConfig is not defined" when adding products from categories to listing
+* Common: [Fixed] Recoverable Error: Object of class Magento\Framework\Profiler\Driver\Standard\Stat could not be converted to string in Helper/Client.php
+* Common: [Fixed] "Warning: max/min(): Array must contain at least one element" around the project.
+* Common: [Fixed] "Integration > Settings > Magento Inventory > Quantity" setting does not work.
+* Common: [Fixed] Exception "Instance is not exists" if a marketplace ID or account ID is not provided correctly (3rd Party)
+* Common: [Fixed] Attribute dropdowns do not contain all appropriate Magento attributes.
+* Common: [Fixed] Advanced filter does not working for Stock Availability is Out of Stock.
+* Common: [Fixed] Adding Gift Message in Magento order.
+* Common: [Fixed] Status changer field was not filled up correctly by Orders Sync.
+* Common: [Fixed] Order change data may be lost in some cases.
+* Amazon: [Improved] General id matcher improvements.
+* Amazon: [Fixed] "Notice: Array to string conversion in vendor/magento/framework/DB/Adapter/Pdo/Mysql.php on line 2939" error on Magento order creation.
+* Amazon: [Fixed] Does not work redirect to seller central for prime or amazon-business order in orders grid.
+* Amazon: [Fixed] Stop action for deleted child Magento products does not run
+* Amazon: [Fixed] Redirect to Dashboard after clicking "Move Item(s) to Listing" when eBay component is disabled.
+* Amazon: [Fixed] Uncaught Error: Call to a member function getChildObject() on boolean in app/code/Ess/M2ePro/Model/Amazon/Listing/Product.php
+* Amazon: [Fixed] Increase stability of variation processors.
+* Amazon: [Fixed] Missing some default values in Account Edit form. (orders/ qty reservation)
+* Amazon: [Fixed] Repricer error messages after product adding failed are not shown
+* Amazon: [Fixed] Unable to edit an Account if there are many products on Repricing for it
+* eBay: [Improved] Avoid channel data loss during synchronization when error occurs.
+* eBay: [Fixed] Variation specific replacement does not work on revise action.
+* eBay: [Fixed] Missing currency symbol in M2ePro Attributes.
+* eBay: [Fixed] The PickupStore grid of the selected account now shows items of this account only
+* eBay: [Fixed] Extra block is shown on Custom Settings editing step (remove unnecessary buttons)
+* eBay: [Fixed] JS error on eBay Description policy creation step (wysiwyg)
+* eBay: [Fixed] Notice: Undefined index: accepted in Ess/M2ePro/Model/Ebay/Template/ReturnPolicy/Builder.php on save
+* eBay: [Fixed] Orders can't be downloaded due to exception
+* eBay: [Fixed] Status change for pickup store orders does not work.
+
+* 1.3.5 (r2678) (05/07/2018)
+
+* Common: [Added] New Cron Task which will try to create a Magento Order again after some time if initial creation was failed
+* Common: [Added] Ability to make M2e Pro compatible with the multi-stock QTY management
+* Common: [Added] Ability to create Credit Memo in Magento Invoice
+* Common: [Improved] Magento Order can be created even if Channel Order Item has zero price
+* Common: [Improved] Reserve the Order quantity if Magento Order creation was failed
+* Common: [Improved] Update Billing/Shipping addresses to a Magento Customer (during order creation)
+* Common: [Improved] Significant improvements in the performance of 3rd Party Listings grids
+* Common: [Improved] Send Magento location (cloud/personal) in Statistic data
+* Common: [Improved] Implement usage of \Magento\CatalogInventory\Api\Data\StockItemInterface instead of \Magento\CatalogInventory\Model\Stock\Item
+* Common: [Fixed] Exception when Variation Product becomes Simple in Magento
+* Common: [Fixed] Filters by date are not working for specific locales (Grids)
+* Common: [Fixed] Notice: "A non well formed numeric value encountered" appeared in the system logs (on the latest php versions)
+* Common: [Fixed] "Notice: Undefined variable: prefix" if another extension uses Plugin for one of low-level Magento classes
+* Common: [Fixed] Errors during processing were not logged to the system log
+* Common: [Fixed] "Headers are already sent" message which appears during work of Cron Service
+* Common: [Fixed] 'Middlename' field is not being filled during customer creating
+* Common: [Fixed] The "Show Component Order" button is not being displayed (at the View Magento Order Page)
+* Common: [Fixed] Tracking numbers for particular order items are not being sent to the channel
+* Common: [Fixed] A newest logs records were not displayed in the Latest Actions widget (due sorting issues) if a not default user locale was set
+* Common: [Fixed] Mistaken records in the listing log: "QTY was changed from 0 to -1" for configurable products (sometimes during orders creation)
+* Common: [Fixed] "'m2epro_order_place_failure' is not a valid value of the atomic type 'eventName'" error if someone observes this event
+* Common: [Fixed] "Translation not found: Another Synchronization Is Already Running." during a new listing creation process in some cases
+* Common: [Fixed] MySQL Error "Duplicate column name 'price'" in the Grid of Adding Products (when filtering and sorting by price is used)
+* Common: [Fixed] Removing Variation Product from Magento Catalog cause errors in some cases
+* Common: [Fixed] Shipment was not created. Reason: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails in some cases
+* Common: [Fixed] Incorrect working of QTY reservation feature in some cases
+* Common: [Fixed] "Unable to serialize value" on saving an Account or a Policy (when "Add Secret Key to URLs" setting is enabled)
+* Common: [Fixed] "No Such Entity With Cart ID xx" during Order creation (on Magento 2.1.x branch)
+* Common: [Fixed] Thumbnails are not displaying (in some cases)
+* Common: [Fixed] Attribute value is being used incorrectly (is escaped) when it contains HTML entities
+* Common: [Fixed] Column not found: 1054 Unknown column 'count' in 'having clause' on editing some setting if Magento Version is 2.2.4
+* Common: [Fixed] 'Magento Order was not created' error even if Magento Order was actually created in some cases
+* Common: [Fixed] "Magento Order was not created: This product is out of stock." in some cases, if Magento version >= 2.2.0
+* Common: [Fixed] Updating of Region ID of customer did not work during Order creation process
+* Common: [Fixed] Different problems during quote building
+* Common: [Fixed] Fatal error is occured when Reservation QTY was not canceled
+* Common: [Fixed] Impossible to select all items in grid (just a current page)
+* Common: [Removed] Support Magento Commerce and Open Source versions lower than 2.1.0
+* eBay: [Improved] Ability to return Product Image URLs based on a configuration (http / https)
+* eBay: [Improved] Try to get changes from eBay step by step, increasing the sinceDate, in order to prevent losing changes
+* eBay: [Improved] Ignore spaces for Variation Attributes values
+* eBay: [Improved] Write an additional log message when Order Items count have been modified on the channel (but Magento order is already created)
+* eBay: [Improved] Ability to specify ProductReferenceID for each variation
+* eBay: [Improved] Save online VariationDetails after a successful action to the channel
+* eBay: [Fixed] Channel errors related to MPN for Variation Items
+* eBay: [Fixed] The recognizing of the already listed item by a UUID does not work (due to change of the error message format)
+* eBay: [Fixed] Error message "Variation specific %value% used for pictures does not exist in variation specific set." occurred on Revise action in some cases
+* eBay: [Fixed] Media gallery from eBay description policy is not sent to channel on auto-actions
+* eBay: [Fixed] Specifics for recent eBay category don't load automatically in Settings view mode
+* eBay: [Fixed] Wrong currency symbol is displayed on eBay order page in some cases
+* eBay: [Fixed] Tracking numbers are not being sent to Channel in some cases
+* eBay: [Fixed] "Notice: Undefined variable: onlineCurrentStr" on Listing View grid (in some cases)
+* eBay: [Removed] Ability to open a gallery image in a new browser tab (custom description)
+* Amazon: [Added] Added 'MSRP / RRP' field to Definition tab of Description template
+* Amazon: [Added] Ability to edit the "Recipient Name" field for Shipping Address in Order page
+* Amazon: [Improved] Significant improvements of the performance of Repricing synchronization
+* Amazon: [Improved] Log errors during repricing actions
+* Amazon: [Improved] Ability to sort and filter Policies in "Assign policy grids" (Product Tax Code, Shipping, Description)
+* Amazon: [Fixed] The Count of Repricing Products for an Account is getting equal zero (mistakenly) sometimes
+* Amazon: [Fixed] Carrier Code and Shipping Method were not sent during updating Tracking Information for Orders
+* Amazon: [Fixed] Some Products marked as 'creator of ASIN/ISBN' after List Action mistakenly
+* Amazon: [Fixed] Unable to save restock date for specific locales (DateTime::__construct(): Failed to parse time string)
+* Amazon: [Fixed] Settings on Repricing tab of Account settings did not work in some cases
+* Amazon: [Fixed] An order log message that a tracking number has been sent to the channel was not being recorded
+* Amazon: [Fixed] "We can't save the address: Email has a wrong format" error on Magento Order creating
+* Amazon: [Fixed] Removing Policies did not work
+* Amazon: [Fixed] It is not possible to select a Description Policy for a Simple Product (with no required custom option)
+* Amazon: [Fixed] Notice during manual ASIN search if the server connection is failed
+* Amazon: [Fixed] Listings Log grid was not displayed in some cases
+* Amazon: [Fixed] Javascript exception "ReferenceError Calendar is not defined" on editing Amazon Description Policy (if DateTime Specifics are used)
+
+* 1.3.4 (r2539) (24/05/2018)
+
+* Common: [Added] Compliance with the General Data Protection Regulation (GDPR)
+
+* 1.3.3 (r2494) (20/03/2018)
+
+* Common: [Fixed] 'Magento Order was not created' error even if Magento Order was actually created in some cases
+* Common: [Fixed] The "Resend Shipping Information" button is not being displayed
+* Common: [Fixed] "Product that you are trying to add is not available" exception on Magento versions >= 2.1.8. (on new product creating or changing product stock status by QTY reservation during Magento Order creating)
+* Common: [Fixed] "Cannot create an empty shipment" on Magento version >= 2.2.0
+* Common: [Fixed] "Magento Order was not created: This product is out of stock." in some cases on Magento version >= 2.2.0
+* Common: [Fixed] "StockItem event doesn't have correct StockItem instance" (on Magento versions >= 2.2.0)
+* Common: [Fixed] "Unable to save Stock Item" error during product creating on Magento version >= 2.2.0
+* Common: [Fixed] "Invalid value of "1" provided for the regionId field." during orders creation (on Magento version >= 2.2.3)
+* Common: [Fixed] Broken content of some Tooltips (on Magento version >= 2.2.3)
+* Common: [Fixed] PHP memory_limit setting was overridden by lower value during Synchronization in some cases
+* Common: [Fixed] Do the forcibly setting of an Adminhtml area for the payment info block
+* Common: [Fixed] 'Class "InterceptorResponser" does not exist' error in some cases
+* Common: [Fixed] A second line of a street is being imploded with a first one for Magento orders (should be stored separately)
+* Common: [Fixed] Capital letters for attributes placeholders in a custom description template may cause unexpected errors
+* Common: [Fixed] "Warning: A non-numeric value encountered in ..." during price calculation (for a Product which is configured to take the price from a Magento Attribute but has no value)
+* Common: [Fixed] The error message "Invalid attribute name: entity_id" (a space at the start of attribute name) appeared in Listing View
+* Common: [Fixed] "QTY was changed from [1] to []" instead of correct integer value
+* Common: [Fixed] "Logs clearing" task does not run
+* eBay: [Fixed] "Uncaught ReferenceError: wysiwygdescription_template is not defined" (in some cases) when JS Merge is enabled
+* eBay: [Fixed] "Waring: Invalid argument supplied for foreach() in Model/Ebay/Listing/Product/Action/Type/Request.php" when variation was not allowed by configurator during a Revise Action
+
+* 1.3.2 (r2356) (23/09/2017)
+
+* Common: [Added] Compatibility with Magento Marketplace (marketplace.magento.com)
+* Amazon: [Added] Support of Australia and Mexico marketplaces
+* Amazon: [Fixed] B2B Price displayed as '0' in Listings Products search grid for variation products even if B2B was disabled
+
+* 1.3.1 (r2297) (15/09/2017)
+
+* Common: [Fixed] "Base table or view not found" error in some cases (if database prefixes is used)
+* Common: [Fixed] Synchronization became in stuck (locks did not removed correctly)
+* Common: [Fixed] Fatal error: Class %class_name% may not inherit from final class, when interceptors for some Plugins were created
+* Common: [Fixed] "Cannot modify header information - headers already sent" on Cron Service
+* Common: [Fixed] Upgrade to v1.3.0 failed if database was migrated from M2E Pro for Magento v1.x.x
+* eBay: [Fixed] List/Relist/Revise/Stop actions were not processed due to Cron mechanism issue
+
+* 1.3.0 (r2257) (11/09/2017)
+
+* Common: [Added] Support of Magento Downloadable Product type
+* Common: [Added] Health Status Tool which can inform you about M2E Pro issues, warnings, etc.
+* Common: [Added] Automatic Price Currency Conversion for Magento Attributes with Price input type
+* Common: [Improved] Logic of calculating Variation Price for Bundle Magento Product, if Special Price Attribute selected, now is similar to Special Price calculation logic
+* Common: [Improved] All remembered choices made by user additionally to help blocks state can be cleared
+* Common: [Improved] Much more stability of Products background Synchronization
+* Common: [Improved] Some sort of new protection to prevent Magento Orders to be duplicated
+* Common: [Improved] Ignore channel orders that were created earlier than M2E Pro Account
+* Common: [Improved] Channel Orders will be archived if they were created more than 180 days ago (in order to speed up the Order grid)
+* Common: [Improved] Increasing stability of locking mechanism for prevention parallel cron running
+* Common: [Fixed] A simple with Custom Options product is considered to be a Variational by mistake (in some cases)
+* Common: [Fixed] "Call to a member function setStockItem() on null" for Orders which had the QTY reserved and then the Product was unmapped manually
+* Common: [Fixed] Improved Email validation at any place where it is needed
+* Common: [Fixed] Incorrect generation of Attribute Code when you use "Create Attribute on Fly" feature
+* Common: [Fixed] Duplicated Order Item row in a Magento Order (even if an Order is being created directly in Magento)
+* Common: [Fixed] Issue, when Magento Product is removed from Magento and M2E, updates the Channel data based on it at the same time
+* Common: [Fixed] "Call to a member function getLastItem() on array" / "Call to a member function addTrack() on array"
+* Common: [Fixed] "Magento Order was not created. Reason: Warning: Illegal offset type in isset or empty in App/Config/ScopeCodeResolver"
+* Common: [Fixed] Warning "Compilation failed: regular expression is too large at offset" when Advanced Grid Filter is used
+* Common: [Fixed] "Uncaught Reference Error: md5 is not defined." when javascript merge option and minification is enabled
+* Common: [Fixed] A Unicode string may be cut in a wrong place (on the border of two bytes of one Unicode character)
+* Common: [Fixed] "Item was successfully Added" message has missed "Initiator" field in Logs table
+* Common: [Fixed] Log record about sending tracking number to channel was written twice mistakenly in some cases
+* Common: [Fixed] "Fatal error occurred: "Policy nick is out of knowledge range" in some cases
+* Common: [Fixed] Some products could be mistakenly blocked by Channel Actions ('in progress' label)
+* Common: [Fixed] Magento Order for Configurable Products was not created (the limited set of cases)
+* Common: [Fixed] Empty exception message sending to server because of incorrect code area settings for Service and Magento Cron runners
+* Common: [Fixed] The 'M2E Pro Payment / Shipping' configuration tabs were not displayed
+* Common: [Fixed] A newly created customer did not have a correct filled address
+* Common: [Fixed] Products grids can work now with Products which have more than one Stock ID (for different websites)
+* Common: [Fixed] Orders Taxes were calculated incorrectly (on Magento greater than 2.1.2)
+* Common: [Fixed] Attributes display in some drop-downs was incorrect
+* Common: [Fixed] Exception when Variation Product becomes Simple in Magento
+* Common: [Fixed] The store attribute label was being returning for incorrect store view (for a configurable product)
+* Common: [Removed] Action "Remove from Listing" from Listing grid
+* eBay: [Added] Ability to use Parts Compatibility feature (kTypes, ePIDs)
+* eBay: [Added] Ability to receive Waste Recycling Fee from Channel and transfer it to Magento Order
+* eBay: [Added] Ability to receiving Cash On Delivery Cost and display it in Order page
+* eBay: [Added] eBay User ID is shown on Magento Order and Magento Customer pages
+* eBay: [Improved] Updating Payment and Shipping status for Orders will be perform not in Shipment and Invoice observers (like Amazon Integration)
+* eBay: [Fixed] Online Price of Variational Items displayed incorrectly in Listing Grid if it was changed directly on Channel
+* eBay: [Fixed] Automatic cancellation of immediately created orders, that were not paid, did not work
+* eBay: [Fixed] "Reserve/BuyItNow price must be greater than 0.99" even the BuyItNow/Reserve Prices are not used
+* eBay: [Fixed] Address line1 and line2 were being merged in Magento Order without need
+* eBay: [Fixed] Order Variation Options were not mapped automatically for Grouped Products in some cases
+* eBay: [Fixed] Order Variation Options were not mapped automatically if some Options were added after List the Item action on Channel
+* eBay: [Fixed] Incorrect message could be shown: "The specified UUID has already been used"
+* eBay: [Fixed] Too many Images for Variation product if "Change Images for Attributes" is enabled (in some cases)
+* eBay: [Fixed] Incorrect Status of Listing Product displayed in Listing Grid, if Out Of Stock Control enabled (Sold instead of Stopped) in some cases
+* eBay: [Fixed] Price in Listing Product grid could be displayed incorrectly if "Ignore Variations" option is enabled
+* eBay: [Fixed] Automatic revise did not work, if Base Image was changed in Magento in some cases
+* eBay: [Fixed] Unnecessary log records about Online Price changes could happen if Listed Product becomes not variational in Magento
+* eBay: [Fixed] Not paid orders could be automatically canceled earlier than allowed period was ended
+* eBay: [Fixed] Listing Product Variations were not being updated by changes from the channel (if Variational Attribute Label was changed during List)
+* eBay: [Fixed] Order Variation Options were not mapped automatically if some Options were added after List Item on Channel
+* eBay: [Fixed] Category Specifics edit page was crashed in some cases
+* eBay: [Fixed] Watermarks are not being added to the images into custom description
+* eBay: [Fixed] The Validator for Variations of a Listing Product may validate inappropriate Variation data (if they were changed not in a Magento Product directly)
+* eBay: [Fixed] Prevent sending duplicated variation images (Change Images for Attributes)
+* eBay: [Fixed] Status "Listed" for Item displayed in 3rd Party Listings grid, when "Listed (Hidden)" must be instead
+* eBay: [Removed] Integration with Terapeak service
+* eBay: [Removed] Ability to use USD currency for Canada Site (eBay does not support it)
+* Amazon: [Added] Integration with Amazon B2B (Business Price, Quantity Discounts, VAT Calculation Service)
+* Amazon: [Added] Ability to select "Template Name" from Magento Attribute in Shipping Policy
+* Amazon: [Added] Ability to use Business features
+* Amazon: [Improved] Update Order Fulfillment Status action performance improvements
+* Amazon: [Improved] Condition Note can be filled only if Condition is different than "New"
+* Amazon: [Improved] Added ability to repeat updating Order Status on Channel up to 3 times on fails
+* Amazon: [Improved] New way of checking Sku duplicates during List Action
+* Amazon: [Improved] Readable error message, about impossible Order Refund, if Credit Memo created without Items (Amazon restriction)
+* Amazon: [Improved] Sending Shipping Settings disabled for FBA Products
+* Amazon: [Improved] Changes of Attributes that were assigned in Restock Date and Production Time values are tracked
+* Amazon: [Fixed] Error, when new Variational Product was added to the Listing because it was not considered as Parent-Child Amazon Product
+* Amazon: [Fixed] Repricing synchronization was crashed if there are lot of Products on Repricing Service
+* Amazon: [Fixed] Repricing Synchronization overwrites correct Online Product Price if it is disabled on Repricing
+* Amazon: [Fixed] Variation Vocabulary Option can not be removed if it contains a comma
+* Amazon: [Fixed] Error when new Variational Product was added to the Listing because it was not considered as Parent-Child Amazon Product
+* Amazon: [Fixed] Repricing synchronization was crashed, if there are lot of Products on Repricing Service
+* Amazon: [Fixed] Repricing Synchronization overwrites correct Online Product Price, if it is disabled on Repricing
+* Amazon: [Fixed] Magento Order was not created if Buyer Email Address was not received from channel and Buyer Name contains special symbols
+* Amazon: [Fixed] Unable to revise AFN Variation Child Products by running Revise action for Parent Product
+* Amazon: [Fixed] Some QTY amount was not returned back for AFN Orders if Magento Product QTY was lower or equal to zero
+* Amazon: [Fixed] Invalid variations matching for Bundle Product in some cases (the limited set of cases)
+* Amazon: [Fixed] Fatal error when trying to Add New Child Products to the Parent in the popup
+* Amazon: [Fixed] Error message "General ID "%id%" is invalid" for a valid ISBN10 in some cases
+* Amazon: [Fixed] The Product linking did not work
+* Amazon: [Fixed] Downloading Product titles for 3rd Party Listings did not work
+* Amazon: [Fixed] "Instance does not exist." exception, during removing Variation Product, that presented in Listing, from Magento
+* Amazon: [Fixed] Exception happened, if Attribute title was changed in Magento and Virtual Attributes exist
+* Amazon: [Fixed] Carrier Name of Tracking Number, sent as "DHL (Deprecated)" to Channel in some cases
+* Amazon: [Fixed] Shipping Template did not set for child products
+* Amazon: [Fixed] Taxes were counted incorrect if shipping tax rate and product tax rate were different
+* Amazon: [Fixed] Unable to open a Description Policy for editing (mysql syntax error) in some cases
+* Amazon: [Fixed] Full Revise did not work, when Shipping Template was assigned or Synchronization Policy was changed
+
+* 1.2.1 (r1821) (06/02/2017)
+
+* Common: [Added] Ability to migrate from Magento1 module v6.5.0.9
+* Common: [Added] Ability to filter Magento Products by Product Type through Advanced Filter
+* Common: [Improved] Full Compatibility with Magento v2.0.*
+* Common: [Improved] More log records are stored for 3rd Party Listigs Management process
+* Common: [Improved] Unuseful Magento Attributes are hidden for 3rd Party Mapping Settings of Account Configuration
+* Common: [Fixed] Incorrect Magento Order Tax Calculation, if Buyer Country different than Magento base Country
+* Common: [Fixed] Magento Order was not created due to "Out of Stock" reason if Product Quantity was reserved earlier
+* Common: [Fixed] Fatal error occured during Magento Product creation, if "Auto Add/Remove Rules" are configured for Listing
+* Common: [Fixed] "Unknown Product type." exception, during synchronization, if Variation Magento Product was removed directly from database
+* Common: [Fixed] Advanced Filter did not work correctly when "is not" condition was selected for any Param
+* Common: [Fixed] Wrong message during Magento Order creation, if it is disabled in Account Settings
+* Common: [Removed] Ability to Migrate from Magento1 module v6.5.0.8
+* eBay: [Fixed] Incorrect Buyer Email was shown on Magento Order Details Page
+* eBay: [Fixed] Orders were not being downloaded (if there are many Orders which should be downloaded)
+* eBay: [Fixed] Filter by Channel Order ID did not work correctly, if In-Store Pickup feature is enabled
+* eBay: [Fixed] Incorrect Currency can be shown for "Online Price" column in 3rd Party Listings Grid
+* eBay: [Fixed] Incorrect Value can be shown for "Available QTY" column in 3rd Party Listings Grid
+* eBay: [Fixed] "Call to a member function process() on null" in Ess/M2ePro/Model/Ebay/Connector/Item/Single/Responser.php
+* eBay: [Fixed] "Call to undefined method DateTime::toString()" in Ess/M2ePro/Helper/View/Ebay/Controller.php
+* eBay: [Fixed] "Undefined index: variations" during Synchronization if the Product initially was listed as Simple and then was changed to Variational
+* Amazon: [Improved] Now you can use "Yes/No" filters in Grids for "Fulfilment" and "On Repricing" options
+* Amazon: [Fixed] Specifics data of Description Policy were not stored if "Save and Close" was clicked
+* Amazon: [Fixed] If some Products are managed by Repricing Tool, their prices can have wrong values in the grids
+* Amazon: [Fixed] If some Products are added to the Repricing Tool but they are in the disabled state, their prices can have wrong values in the grids
+* Amazon: [Fixed] If Magento Product becomes Variational, some associated Listing Products may be broken as a result
+* Amazon: [Fixed] Listing Products were not removed from Listings, if associated Magento Product was deleted
+* Amazon: [Fixed] Incorrect Status was shown for all Variation Products in Search Grid
+* Amazon: [Fixed] "Duplicate entry for key 'PRIMARY'" error during Synchronization process
+* Amazon: [Fixed] Warning "Illegal string offset 'product_price'" during Synchronization process
+* Amazon: [Fixed] You were unable to add new Child Product for Parent Product in Variations popup
+
+* 1.2.0 (r1731) (29/12/2016)
+
+* Common: [Added] Wizard for module Migration from Magento v1.x
+* Common: [Added] Ability to Migrate from Magento1 module v6.5.0.8
+* Common: [Added] Compatibility with Magento Enterprise version (Staging modules)
+* Common: [Improved] Orders could not be downloaded if there were a lot of Orders updates in one second on channel
+* Common: [Improved] There was Orders downloading delay if many List/Relist/Revise/Stop actions are processed at that time
+* Common: [Improved] Grids Performance were increased if there are more than 10000+ Products
+* Common: [Improved] Using own jsonEncode method in order to prevent issues with a broken sequence of bytes for an UTF symbols
+* Common: [Fixed] Upgrade was failed, due to Zend Framework bug, if module migrated from Magento v1 (Many fixes during Setup / Upgrade)
+* Common: [Fixed] Magento order was not created by "Out of Stock" reason if this Product Quantity was reserved earlier
+* Common: [Fixed] Quantity could be calculated incorrectly in some special cases (high limited range of cases)
+* Common: [Fixed] Some Magento Product changes were lost, if it exists in several M2E Pro listings with different Store Views
+* Common: [Fixed] Customer tax classes instead of Product tax classes were displayed in Account Settings
+* Common: [Fixed] Missed records in Listings Log during Magento Orders creation for products with negative QTY
+* Common: [Fixed] Wrong message during Magento Order creation, if it is disabled in Account Settings
+* Common: [Fixed] Method __() returns an empty string (with specific environment configuration - if there are some Plugins for Magento Blocks)
+* Common: [Fixed] "Undefined index: interceptor in Ess/M2ePro/Helper/Module/Wizard.php" in some cases (related to Magento Plugins)
+* Common: [Fixed] Some 404 error could happen during Wizard setup
+* Common: [Removed] Ability to Migrate from Magento1 module v6.5.0.7
+* eBay: [Added] Ability to use M2E Pro images URLs in Item Description
+* eBay: [Added] Tool for prevention and resolving Item Duplicates issues
+* eBay: [Improved] M2E Pro Images Gallery uses CSS instead of JS (eBay active content deprecation announcement)
+* eBay: [Improved] Price will be sent to the eBay each time during Relist action (together with QTY and Variations Data)
+* eBay: [Improved] Now you cannot List the Variational Product if their Attributes/Options have space at start or end
+* eBay: [Improved] Another URL is generated to link the Item on channel
+* eBay: [Fixed] Items with price 0.99 and less could not be Listed and Revised
+* eBay: [Fixed] 3rd Party Listings were not imported if client have a big inventory on eBay
+* eBay: [Fixed] Wrong QTY could be set for Item after Relist action for items with "Listed (Hidden)" status
+* eBay: [Fixed] Incorrect message about changed price of variation product, that has variations with "Listed (Hidden)" status, appears in Listings Logs
+* eBay: [Fixed] Price and Quantity changes of individual variations, that performed directly on eBay, were lost in some cases
+* eBay: [Fixed] Orders Synchronization could not work correctly sometimes if there are a lot of changes on eBay side
+* eBay: [Fixed] Error "The Product was Listed as a Simple Product as it has limitation for Multi-Variation Items" during list item even if requirements are met
+* eBay: [Fixed] Some Variational Items may receive errors each time when they are revised/relisted (additional solution to prevent such issue)
+* eBay: [Fixed] "Instance does not exist." during removing a Simple Product of Variation Product from Magento
+* eBay: [Fixed] The item with "Listed (Hidden)" status can not be listed again if eBay removed it earlier (60 days inactivity reason)
+* eBay: [Fixed] Items were stopped even if option "Out of Stock Control" is enabled in some cases
+* eBay: [Fixed] Gallery Images were displayed incorrectly in Description on Channel
+* Amazon: [Added] Ability to use Shipping Templates features
+* Amazon: [Added] Fulfillment Center ID is shown for FBA Orders
+* Amazon: [Added] Ability to create new ASIN/ISBN in Canada Marketplace using Description Policy
+* Amazon: [Added] Ability to remember relations of Amazon and Magento Attributes/Options for variational Products
+* Amazon: [Improved] Many Performance improvements during synchronization with Repricing Service
+* Amazon: [Improved] There was Orders statuses updating delay if many List/Relist/Revise/Stop actions are processed at that time
+* Amazon: [Improved] Prices will be updated every hour instead of one time a day for Products which are processed by Repricing Service
+* Amazon: [Fixed] Products marked as repriced even if account was not linked to M2E Pro Repricing Service
+* Amazon: [Fixed] Some products becomes "Inactive (Blocked)" even if them are "Active"
+* Amazon: [Fixed] Adding a lot of Products to the Repricing Service from Listing Grid did not work correctly
+* Amazon: [Fixed] Full revise by Description Policy did not work, if change was performed on Definition tab
+* Amazon: [Fixed] Synchronization was broken due to error "Call to a member function getOptions() on a non-object"
+* Amazon: [Fixed] Repricing data was not synchronized correctly if product has numeric SKU
+* Amazon: [Fixed] Repriced Products, moved from 3rd Party Listing, were not marked as on Repricing Service
+* Amazon: [Fixed] Refund Orders on Channel did not work in some cases
+
+* 1.1.3 (r1627) (07/12/2016)
+
+* Common: [Added] Ability to Migrate from Magento1 module v6.5.0.7
+* Common: [Added] Advanced conditions in Synchronization Policy based on Magento Product Attribute
+* Common: [Added] Ability to show Logs records in Grouped mode (records are grouped by action)
+* Common: [Added] Ability to filter Logs and Products in Search Products section by Account and Marketplace
+* Common: [Improved] Setup / Upgrade processes become more Stable
+* Common: [Improved] Now you can filter records in grids not only by Date but Time as well
+* Common: [Fixed] Unable to save Min\Max Quantity in a Synchronization Policy
+* Common: [Fixed] Many major/minor improvements of UI
+* Common: [Fixed] Many fixes of Magento Order creation process
+* Common: [Fixed] Advanced filter in Grids didn't work correctly
+* Common: [Fixed] Magento Product Change Events were not triggered if they were executed out of Admin Panel
+* Common: [Fixed] Notice: Undefined index: name in app/code/Ess/M2ePro/Helper/Module/Support/Form.php
+* Common: [Fixed] "Uncaught Error: Call to a member function getOrigData() on null" in app/code/Ess/M2ePro/Observer/StockItem/Save/After.php (Singleton issue)
+* Common: [Fixed] Custom "Order Status Mapping" did not work
+* Common: [Fixed] error "Headers are already sent" if Varnish is configured and Controller\Cron\Index.php executed
+* Common: [Removed] Ability to Migrate from Magento1 module v6.5.0.6
+* eBay: [Added] Ability to use In-Store Pickup Shipping feature
+* eBay: [Added] Automatically Revise Shipping Cost if associated Magento Product Attribute value was changed
+* eBay: [Added] Automatically Revise Item Specifics if associated Magento Product Attribute value was changed
+* eBay: [Added] Ability to use Donation feature in Price, Quantity and Format Policy
+* eBay: [Added] Ability to use extended Magento Product Types [for developers]
+* eBay: [Fixed] Unable to save Package Size in a Shipping Policy
+* eBay: [Fixed] Many fixes related to downloading Buyer's Feedback and respond on them
+* eBay: [Fixed] PHP Fatal Error: Call to a member function format() on null [vendor/magento/framework/Stdlib/DateTime/Timezone.php]
+* Amazon: [Added] Ability to use Repricing Service without the need to contact support of M2E Pro
+* Amazon: [Fixed] "Auto Add/Remove Rules" in Listings did not work correctly
+
+* 1.1.2 (r1200) (21/09/2016)
+
+* Common: [Added] Ability to Migrate from Magento1 module v6.5.0.6
+* Common: [Removed] Ability to migrate from Magento1 module v6.5.0.5
+
+* 1.1.1 (r1199) (12/09/2016)
+
+* Common: [Improved] Different versions values will be used for Marketing and Setup purposes
+* Common: [Improved] Just upgrades will be executed if there are module MySQL tables of previous version
+* Common: [Improved] New composer package name "ebay-amazon-rakuten-sears-magento-integration-order-import-and-stock-level-synchronization"
+* Common: [Fixed] Some errors that happens during setup:di:compile and setup:di:compile-multi-tenant
+* Common: [Fixed] Much stability of Installation/Upgrade (module sets maintenance and doesn't break setup:upgrade process)
+* Common: [Fixed] Redefinition of parameter $helperFactory in Ess/M2ePro/Model/Setup/Database/Modifier/AbstractModifier.php on line 29
+
+* 1.1.0 (r1171) (07/09/2016)
+
+* Common: [Added] Ability to create Magento Attributes "On the Fly"
+* Common: [Added] Advanced Filter for Magento Products / Listings Views Grids
+* Common: [Added] Ability to filter Products presented in other Listings
+* Common: [Added] Ability to use customized Magento Order Number
+* Common: [Added] UI languages translations (DE,ES,EN,FR,IT)
+* Common: [Added] Clearing the Module Data when it will be uninstalled
+* Common: [Added] Error / Warning notification when there is issue with module static content (Production Mode only)
+* Common: [Improved] Compatibility with Magento 2.1.0 version and higher
+* Common: [Improved] Ability to filter rows in grids by specified Time (not only Date)
+* Common: [Improved] Additional icon was added for module external Links
+* Common: [Fixed] Many admin panel interface fixes (100+ changes/fixes/improvements)
+* Common: [Fixed] Unable to install the module through the Component Manager for Magento v2.1+
+* Common: [Fixed] Errors that happens during setup:di:compile and setup:di:compile-multi-tenant
+* Common: [Fixed] Some Products Synchronizations could not work correctly
+* Common: [Fixed] Some sort of issues of Magento Order creation process
+* Common: [Fixed] Product Thumbnail was not shown correctly in Listings Grids
+* Common: [Fixed] Many fixes/improvements related to the PublicServices Models
+* Common: [Fixed] M2E Pro Global Notification Messages were not shown
+* Common: [Fixed] Subscription Error Messages were not shown for Accounts
+* eBay: [Added] Ability to override Listing Settings for each Product separately
+* eBay: [Added] Preview Tool to show, before the list action, which data will be sent to the Channel
+* eBay: [Added] Ability to download Buyers Feedback with possibility respond on them automatically
+* eBay: [Added] Ability to estimate eBay Fee before the List action, show the fee when Item is Listed
+* eBay: [Added] Preview feature for Description in Description Policy
+* eBay: [Added] Ability to apply Watermark on Main / Gallery / Description images
+* eBay: [Added] WYSIWYG editor which allows change Description in "like in Browser" manner
+* eBay: [Added] Ability to insert Magento Attributes/Images/Gallery/M2E Pro Attributes in Description
+* eBay: [Added] Integration with Terapeak service to provide Item optimization possibilities
+* eBay: [Improved] Variation Options label can be renamed now without further errors from eBay Trading API
+* eBay: [Improved] Preventing the eBay Trading API errors if Magento Child Product will be unassigned from Parent
+* eBay: [Fixed] Items duplicates because User could List Items with "Listed (Hidden)" status manually
+* eBay: [Fixed] An error "There is another Item with the same eBay User ID, Product ID and eBay Site" during automatic List
+* eBay: [Fixed] Images were not Imported when Magento Product had been created during Magento Order creation process
+* eBay: [Fixed] 3rd Party Listings were downloaded on the "Full" basis constantly (instead of using events)
+* eBay: [Fixed] Tax Categories were not shown in the Selling Format Policy
+* eBay: [Fixed] Payment Policy could not be changes if PayPal business account was configured
+* eBay: [Removed] List/Relist Scheduling was removed from Synchronization Policy
+* Amazon: [Added] Integration with M2E Pro Repricing SaaS Service
+* Amazon: [Added] Ability to use Shipping Overrides feature for Products
+* Amazon: [Improved] Display the Channel Gift Message(s) as comment on Magento Order page
+* Amazon: [Fixed] Some sort of bugs in Automatic Search ASIN tool
+* Amazon: [Fixed] Issue during the removing process of Variation Parent Product
+* Amazon: [Fixed] Parent Product ASIN was shown for Child Products instead of Child ASIN in Search ASIN tool
+* Amazon: [Fixed] Some sort of issues when Products have being adding to the Listing (during wizard interface)
+* Amazon: [Fixed] Incorrect behavior during adding Virtual Attributes to active Variation Products
+
+* 1.0.0 (r752) (04/07/2016)
+
+* Initial version for Magento v2.*

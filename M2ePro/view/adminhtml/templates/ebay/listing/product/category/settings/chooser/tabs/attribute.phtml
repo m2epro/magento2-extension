@@ -1,0 +1,27 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser\Tabs\Attribute $block */
+
+$helpBlock = $block->createBlock('HelpBlock');
+$helpBlock->setData([
+    'no_collapse' => true,
+    'content' => $block->__('The only common (presented in all Attribute sets) "Text Field" or "Dropdown" Attributes available for selection.')
+]);
+echo $helpBlock->toHtml();
+?>
+
+<div id="chooser_attributes">
+    <table id="chooser_attributes_table">
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>

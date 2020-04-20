@@ -1,0 +1,59 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Version'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->phpVersion; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Server API'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->phpApi; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Memory Limit'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->phpSettings['memory_limit'] == -1 ? $block->__('Unlimited') : $block->phpSettings['memory_limit'] . ' Mb'; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Max Execution Time'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $block->phpSettings['max_execution_time'] == 0 ? $block->__('Unlimited') : $block->phpSettings['max_execution_time'] . ' sec'; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('PHP Info'); ?>: </label>
+        </td>
+        <td class="value">
+            <a href="<?php echo $block->getUrl('*/controlPanel_inspection/phpInfo'); ?>" target="_blank">Show</a>
+        </td>
+    </tr>
+
+</table>

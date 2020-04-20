@@ -1,0 +1,62 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var $block \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order\PrefixesTable  */
+$formData = $block->getData('form_data');
+?>
+
+<style>
+    div.admin__field.field-magento_orders_number_prefix_container.m2epro-fieldset-table,
+    div.field-magento_orders_number_prefix_container div.admin__field-control {
+        margin: 0 !important;
+    }
+    #magento_orders_number_prefix_container table div.note span {
+        font-weight: bold;
+    }
+    #magento_orders_number_prefix_container table input {
+        width: 230px !important;
+        margin-right: 5px;
+    }
+</style>
+
+<div class="admin__control-table-wrapper">
+
+    <input type="hidden" id="sample_magento_order_id" value="<?php echo $block->getHelper('Magento')->getNextMagentoOrderId(); ?>" />
+    <input type="hidden" id="sample_amazon_order_id" value="141-4423723-6495633" />
+
+    <table class="admin__control-table">
+        <thead>
+        <tr>
+            <th><?php echo __('General'); ?></th>
+            <th><?php echo __('FBA'); ?></th>
+            <th ><?php echo __('Prime'); ?></th>
+            <th><?php echo __('B2B'); ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <input id="magento_orders_number_prefix_prefix" class="input-text" type="text" name="magento_orders_settings[number][prefix][prefix]" value="<?php echo $block->escapeHtml(!empty($formData['magento_orders_settings']['number']['prefix']['prefix']) ? $formData['magento_orders_settings']['number']['prefix']['prefix'] : ''); ?>" maxlength="5" />
+                <div class="note admin__field-note">e.g. <span id="order_number_example_container_regular"></span></div>
+            </td>
+            <td>
+                <input id="magento_orders_number_prefix_afn" class="input-text" type="text" name="magento_orders_settings[number][prefix][afn-prefix]" value="<?php echo $block->escapeHtml(!empty($formData['magento_orders_settings']['number']['prefix']['afn-prefix']) ? $formData['magento_orders_settings']['number']['prefix']['afn-prefix'] : ''); ?>" maxlength="5" />
+                <div class="note admin__field-note">e.g. <span id="order_number_example_container_afn"></span></div>
+            </td>
+            <td>
+                <input id="magento_orders_number_prefix_prime" class="input-text" type="text" name="magento_orders_settings[number][prefix][prime-prefix]" value="<?php echo $block->escapeHtml(!empty($formData['magento_orders_settings']['number']['prefix']['prime-prefix']) ? $formData['magento_orders_settings']['number']['prefix']['prime-prefix'] : ''); ?>" maxlength="5" />
+                <div class="note admin__field-note">e.g. <span id="order_number_example_container_prime"></span></div>
+            </td>
+            <td>
+                <input id="magento_orders_number_prefix_b2b" class="input-text" type="text" name="magento_orders_settings[number][prefix][b2b-prefix]" value="<?php echo $block->escapeHtml(!empty($formData['magento_orders_settings']['number']['prefix']['b2b-prefix']) ? $formData['magento_orders_settings']['number']['prefix']['b2b-prefix'] : ''); ?>" maxlength="5" />
+                <div class="note admin__field-note">e.g. <span id="order_number_example_container_b2b"></span></div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

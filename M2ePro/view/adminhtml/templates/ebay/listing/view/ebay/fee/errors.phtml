@@ -1,0 +1,35 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee\Errors $block */
+
+$errors = $block->getErrors();
+
+/** @var \Magento\Framework\View\Element\Messages $messages */
+$messages = $block->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class);
+
+foreach ($errors as $error) {
+    if ($error['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING) {
+        $messages->addWarning($block->getHelper('Data')->escapeHtml($error['text']));
+    }
+
+    if ($error['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR) {
+        $messages->addError($block->getHelper('Data')->escapeHtml($error['text']));
+    }
+}
+?>
+
+<div class="entry-edit" style="padding-top: 10px;">
+
+    <div><?php echo $block->__('Fee cannot be estimated because of next error(s)') ?>:</div>
+
+    <div style="padding-top: 10px;">
+        <?php echo $messages->toHtml(); ?>
+    </div>
+</div>

@@ -1,0 +1,651 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Order\View\Form $block */
+
+echo $block->getChildHtml('item_edit');
+?>
+
+<div class="col-m-6">
+    <div class="fieldset-wrapper" id="magento_block_ebay_orders_general">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <strong class="admin__collapsible-title">
+                <span>
+                    <?php echo $block->__('eBay Order');?> # <?php echo $block->order->getChildObject()->getEbayOrderId(); ?>
+                    <?php if ((int)$block->order->getChildObject()->getSellingManagerId() > 0) { ?>
+                        [ <?php echo $block->__('Selling Manager') . ': # ' . $block->order->getChildObject()->getSellingManagerId() ?> ]
+                    <?php } ?>
+                </span>
+            </strong>
+            <div class="form-buttons"></div>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div class="hor-scroll">
+
+                <table class="order-info form-list">
+                    <tbody>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Magento Order #');?></td>
+                            <td class="value">
+                                <strong>
+                                    <?php if ($block->realMagentoOrderId !== null) { ?>
+
+                                        <?php if ($block->realMagentoOrderId !== null) { ?>
+                                            <a href="<?php echo $block->getUrl('sales/order/view/', ['order_id' => $block->order->getData('magento_order_id')]); ?>" target="_blank"><?php echo $block->realMagentoOrderId; ?></a>
+                                        <?php } else { ?>
+                                            <?php echo $block->order->getData('magento_order_id'); ?>
+                                        <?php } ?>
+
+                                    <?php } else { ?>
+
+                                        <?php echo $block->__('N/A'); ?>
+
+                                    <?php } ?>
+                                </strong>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Sale Time');?></td>
+                            <td class="value"><strong><?php echo $block->formatDate($block->order->getChildObject()->getPurchaseCreateDate(), \IntlDateFormatter::MEDIUM, true); ?></strong></td>
+                        </tr>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Update Time');?></td>
+                            <td class="value"><strong><?php echo $block->formatDate($block->order->getChildObject()->getPurchaseUpdateDate(), \IntlDateFormatter::MEDIUM, true); ?></strong></td>
+                        </tr>
+
+                        <?php if ($block->order->getData('reservation_start_date') !== null) : ?>
+                        <tr>
+                                <td class="label"><?php echo $block->__('Reservation Time') ?></td>
+                                <td class="value"><strong><?php echo $block->formatDate($block->order->getData('reservation_start_date'), \IntlDateFormatter::MEDIUM, true); ?></strong></td>
+                            </tr>
+                        <?php endif; ?>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Order Status'); ?></td>
+                            <td class="value">
+                                <strong>
+
+                                    <b><?php echo $block->__('Checkout'); ?>: </b>
+
+                                    <?php if ($block->order->getChildObject()->isCheckoutCompleted()) { ?>
+                                        <span style="color: green;"><?php echo $block->__('Completed'); ?></span>
+                                    <?php } else {
+                                        echo $block->__('Incomplete');
+                                    } ?>
+
+                                    <br/>
+
+                                    <b><?php echo $block->__('Payment'); ?>: </b>
+
+                                    <?php if ($block->order->getChildObject()->isPaymentCompleted()) { ?>
+                                        <span style="color: green;"><?php echo $block->__('Paid'); ?></span>
+
+                                    <?php } elseif ($block->order->getChildObject()->isPaymentStatusUnknown()) { ?>
+                                        <?php echo $block->__('Unknown Error'); ?>
+
+                                    <?php } else { ?>
+                                        <?php echo $block->__('Waiting'); ?>
+                                    <?php } ?>
+
+                                    <br/>
+
+                                    <b><?php echo $block->__('Shipping'); ?>: </b>
+
+                                    <?php if ($block->order->getChildObject()->isShippingCompleted()) { ?>
+                                        <span style="color: green;"><?php echo $block->__('Shipped'); ?></span>
+
+                                    <?php } elseif ($block->order->getChildObject()->isShippingInProcess()) { ?>
+                                        <?php echo $block->__('Not Shipped'); ?>
+
+                                    <?php } elseif ($block->order->getChildObject()->isShippingMethodNotSelected()) { ?>
+                                        <?php echo $block->__('Waiting'); ?>
+
+                                    <?php } else { ?>
+                                        <?php echo $block->__('Unknown Error'); ?>
+                                    <?php } ?>
+
+                                </strong>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Account');?></td>
+                            <td class="value">
+                                <strong>
+
+                                    <?php if (!$block->order->getAccount()->getId()) { ?>
+                                        <span style="color: red;"><?php echo $block->__('Deleted'); ?></span>
+
+                                    <?php } else { ?>
+
+                                        <a href="<?php echo $block->getUrl('*/ebay_account/edit', ['id' => $block->order->getAccount()->getId()]); ?>" target="_blank"><?php echo $block->getHelper('Data')->escapeHtml($block->order->getAccount()->getTitle()); ?></a>
+
+                                        <?php echo '(' . ($block->order->getAccount()->getChildObject()->isModeProduction() ? $block->__('Production') : $block->__('Sandbox')) . ')'; ?>
+
+                                    <?php }?>
+
+                                </strong>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="col-m-6">
+    <div class="fieldset-wrapper" id="magento_block_ebay_orders_buyer" style="min-height: 330px">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <strong class="admin__collapsible-title"><?php echo $block->__('Buyer Information');?></strong>
+            <?php if (!$block->order->getChildObject()->isUseClickAndCollect() && !$block->order->getChildObject()->isUseInStorePickup()) : ?>
+            <div style="float: right; margin-bottom: -15px; margin-top: -5px;">
+                <?php echo $block->getChildHtml('edit_shipping_info'); ?>
+            </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div id="shipping_address_container" class="hor-scroll">
+                <?php echo $block->getChildHtml('shipping_address'); ?>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="col-m-6" style="margin-top: 30px">
+    <div class="fieldset-wrapper" id="magento_block_ebay_orders_payment">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <strong class="icon-head head-edit-form fieldset-legend">
+                <span>
+                    <?php echo $block->__('Payment Information');?>
+                </span>
+            </strong>
+            <div class="form-buttons"></div>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div class="hor-scroll">
+
+                <table class="order-info form-list">
+                    <tbody>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Order Currency');?></td>
+                            <td class="value">
+                                <strong>
+                                    <?php echo $block->getHelper('Data')->escapeHtml($block->order->getChildObject()->getCurrency()); ?>
+                                </strong>
+
+                                <?php
+                                if (!$block->isCurrencyAllowed()) {
+                                    echo '<br/><b>' . $block->__('Attention!') . '</b> ' . $block->__('Order Currency is not enabled in Magento.<br/>Please, enable it in System > Configuration > Currency Setup.');
+                                } elseif (!$block->hasCurrencyConversionRate()) {
+                                    echo '<br/><b>' . $block->__('Attention!') . '</b> ' . $block->__('There\'s no rate for Order Currency in Magento.<br/>Please, add Currency convert rate in System > Manage Currency > Rates.');
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><?php echo $block->__('Payment Date');?></td>
+                            <td class="value"><strong><?php echo $block->order->getChildObject()->getPaymentDate() ? $block->formatDate($block->order->getChildObject()->getPaymentDate(), \IntlDateFormatter::MEDIUM, true) : $block->__('N/A'); ?></strong></td>
+                        </tr>
+                        <tr>
+                            <td class="label"><?php echo $block->__('Payment Method');?></td>
+                            <td class="value"><strong><?php echo $block->getHelper('Data')->escapeHtml($block->order->getChildObject()->getPaymentMethod()); ?></strong></td>
+                        </tr>
+                        <tr>
+                            <td class="label"><?php echo $block->__('eBay User ID'); ?></td>
+                            <td class="value"><strong><?php echo $block->getHelper('Data')->escapeHtml($block->order->getChildObject()->getBuyerUserId()); ?></strong></td>
+                        </tr>
+                        <tr>
+                            <td class="label"><?php echo $block->__('eBay Final Fee');?></td>
+                            <td class="value">
+                                <strong>
+                                    <?php if ($block->order->getChildObject()->getFinalFee() <= 0) { ?>
+                                        <?php echo $block->__('N/A'); ?>
+                                    <?php } else { ?>
+                                        <?php echo $block->formatPrice($block->order->getChildObject()->getCurrency(), round($block->order->getChildObject()->getFinalFee(), 2)); ?>
+                                    <?php } ?>
+                                </strong>
+                            </td>
+                        </tr>
+
+                        <?php if ($block->order->getChildObject()->getCashOnDeliveryCost() > 0) : ?>
+                            <tr>
+                                <td class="label"><?php echo $block->__('Cash On Delivery Cost');?>:</td>
+                                <td class="value">
+                                    <strong>
+                                        <?php echo $block->formatPrice($block->order->getChildObject()->getCurrency(), round($block->order->getChildObject()->getCashOnDeliveryCost(), 2)); ?>
+                                    </strong>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+
+                    </tbody>
+                </table>
+
+                <?php if ($block->order->getChildObject()->hasExternalTransactions()) { ?>
+                    <br/>
+                    <table class="order-info form-list">
+                        <tbody>
+                            <tr>
+                                <td colspan="2" class="label" style="width: 100%">
+                                    <h4 style="margin-bottom: -20px;"><?php echo $block->__('External Transactions'); ?></h4>
+                                    <?php echo $block->getChildHtml('external_transaction'); ?>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                <?php } ?>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="col-m-6" style="margin-top: 30px">
+    <div class="fieldset-wrapper" id="magento_block_ebay_orders_shipping">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <strong class="icon-head head-edit-form fieldset-legend">
+                <span>
+                    <?php echo $block->__('Shipping & Handling Information');?>
+                </span>
+            </strong>
+            <div class="form-buttons"></div>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div class="hor-scroll">
+
+                <table class="order-info form-list">
+                    <tbody>
+
+                        <?php if ($block->order->getChildObject()->isUseClickAndCollect() || $block->order->getChildObject()->isUseInStorePickup()) : ?>
+                            <tr>
+                                <td class="label"><?php echo $block->__('Shipping Method');?></td>
+                                <td class="value">
+                                    <strong>
+                                        <?php if ($block->order->getChildObject()->isUseClickAndCollect()) { ?>
+                                            <?php echo $block->__('Click And Collect'); ?>
+                                        <?php } else { ?>
+                                            <?php echo $block->__('In Store Pickup'); ?>
+                                        <?php } ?>
+                                    </strong>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Shipping Service');?></td>
+                            <td class="value">
+                                <strong>
+                                    <?php if ($block->order->getChildObject()->getShippingService() == '') { ?>
+                                        <?php echo $block->__('N/A'); ?>
+                                    <?php } else { ?>
+                                        <?php echo $block->getHelper('Data')->escapeHtml($block->order->getChildObject()->getShippingService()); ?>
+                                        <?php if ($block->order->getChildObject()->isUseGlobalShippingProgram()) : ?>
+                                            <span style="font-weight: normal; color: grey;"> (<?php echo $block->__('Global Shipping Program'); ?>)</span>
+                                        <?php endif; ?>
+                                    <?php } ?>
+                                </strong>
+                            </td>
+                        </tr>
+
+                        <?php if (!$block->order->getChildObject()->isUseGlobalShippingProgram()) : ?>
+                            <tr>
+                                <td class="label"><?php echo $block->__('Shipping Cost');?></td>
+                                <td class="value">
+                                    <strong>
+                                        <?php if ($block->order->getChildObject()->getShippingPrice() <= 0) { ?>
+                                            <?php echo 0; ?>
+                                        <?php } else { ?>
+                                            <?php echo $block->formatPrice($block->order->getChildObject()->getCurrency(), $block->order->getChildObject()->getShippingPrice()); ?>
+                                        <?php } ?>
+                                    </strong>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+
+                        <?php if ($block->order->getChildObject()->getShippingDate() != '') { ?>
+                            <tr>
+                                <td class="label"><?php echo $block->__('Shipping Time');?></td>
+                                <td class="value"><strong><?php echo $block->formatDate($block->order->getChildObject()->getShippingDate(), \IntlDateFormatter::MEDIUM, true); ?></strong></td>
+                            </tr>
+                        <?php } ?>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Shipping Address'); ?></td>
+                            <td class="value">
+                                <strong>
+
+                                    <?php echo $block->getHelper('Data')->escapeHtml($block->order->getChildObject()->getBuyerName()) ?>
+
+                                    <?php if (!empty($block->shippingAddress)) : ?>
+
+                                        <?php if (!empty($block->shippingAddress['street'][0])) : ?>
+                                            <br/><?php echo $block->getHelper('Data')->escapeHtml($block->shippingAddress['street'][0]); ?>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($block->shippingAddress['street'][1])) : ?>
+                                            <br/><?php echo $block->getHelper('Data')->escapeHtml($block->shippingAddress['street'][1]); ?>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($block->shippingAddress['city'])) : ?>
+                                            <br/><?php echo $block->getHelper('Data')->escapeHtml(implode(', ', [$block->shippingAddress['city'], $block->shippingAddress['state'], $block->shippingAddress['postal_code']])) ?>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($block->shippingAddress['country_name'])) : ?>
+                                            <br/>
+                                            <?php
+                                            if (!empty($block->shippingAddress['country_name'])) {
+                                                echo $block->getHelper('Data')->escapeHtml($block->shippingAddress['country_name']);
+                                            } else {
+                                                echo $block->getHelper('Data')->escapeHtml($block->shippingAddress['country_code']);
+                                            }
+                                            ?>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($block->shippingAddress['phone']) && stripos($block->shippingAddress['phone'], 'Invalid Request') === false) : ?>
+                                            <br/><?php echo 'T: ' . $block->getHelper('Data')->escapeHtml($block->shippingAddress['phone']); ?>
+                                        <?php endif; ?>
+
+                                    <?php endif; ?>
+
+                                </strong>
+                            </td>
+                        </tr>
+
+                        <?php if (count($block->order->getChildObject()->getShippingTrackingDetails())) { ?>
+
+                            <tr>
+                                <td class="grid" colspan="2">
+                                    <br/>
+                                    <h4><?php echo $block->__('Tracking Details'); ?></h4>
+                                    <table class="data" cellpadding="0" cellspacing="0">
+                                        <thead>
+                                            <tr class="headings">
+                                                <th><?php echo $block->__('Carrier'); ?></th>
+                                                <th><?php echo $block->__('Number'); ?></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            <?php foreach ($block->order->getChildObject()->getShippingTrackingDetails() as $key => $trackingDetail) { ?>
+                                                <tr class="<?php echo $key%2 ? 'odd' : 'even'?>">
+                                                    <td><?php echo $trackingDetail['title']; ?></td>
+                                                    <td><?php echo $trackingDetail['number']; ?></td>
+                                                </tr>
+                                            <?php } ?>
+
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+
+                        <?php } ?>
+
+                        <?php if ($block->order->getChildObject()->isUseGlobalShippingProgram()) : ?>
+                            <tr>
+                                <td colspan="2">
+                                    <br/>
+                                    <h4><?php echo $block->__('Global Shipping Details'); ?></h4>
+                                </td>
+                            </tr>
+
+                            <?php if (!empty($block->ebayWarehouseAddress['reference_id'])) : ?>
+
+                                <tr>
+                                    <td class="label"><?php echo $block->__('Reference ID'); ?></td>
+                                    <td class="value">
+                                        <strong><?php echo $block->ebayWarehouseAddress['reference_id']; ?></strong>
+                                    </td>
+                                </tr>
+
+                            <?php endif; ?>
+
+                            <tr>
+                                <td class="label"><?php echo $block->__('eBay Warehouse Address'); ?></td>
+                                <td class="value">
+                                    <strong>
+
+                                        <?php if (!empty($block->ebayWarehouseAddress['street'][0])) : ?>
+                                            <?php echo $block->getHelper('Data')->escapeHtml($block->ebayWarehouseAddress['street'][0]); ?>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($block->ebayWarehouseAddress['street'][1])) : ?>
+                                            <br/><?php echo $block->getHelper('Data')->escapeHtml($block->ebayWarehouseAddress['street'][1]); ?>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($block->ebayWarehouseAddress['city'])) : ?>
+                                            <br/><?php echo $block->getHelper('Data')->escapeHtml(implode(', ', [$block->ebayWarehouseAddress['city'], $block->ebayWarehouseAddress['state'], $block->ebayWarehouseAddress['postal_code']])) ?>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($block->ebayWarehouseAddress['country_name'])) : ?>
+                                            <br/>
+                                            <?php
+                                            if (!empty($block->ebayWarehouseAddress['country_name'])) {
+                                                echo $block->getHelper('Data')->escapeHtml($block->ebayWarehouseAddress['country_name']);
+                                            } else {
+                                                echo $block->getHelper('Data')->escapeHtml($block->ebayWarehouseAddress['country_code']);
+                                            }
+                                            ?>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($block->ebayWarehouseAddress['phone']) && stripos($block->ebayWarehouseAddress['phone'], 'Invalid Request') === false) : ?>
+                                            <br/><?php echo 'T: ' . $block->getHelper('Data')->escapeHtml($block->ebayWarehouseAddress['phone']); ?>
+                                        <?php endif; ?>
+
+                                    </strong>
+                                </td>
+                            </tr>
+
+                            <?php if (!empty($block->globalShippingServiceDetails)) : ?>
+
+                                <tr>
+                                    <td class="label"><?php echo $block->__('Shipping Service');?></td>
+                                    <td class="value">
+                                        <strong>
+                                            <?php echo $block->getHelper('Data')->escapeHtml($block->globalShippingServiceDetails['service']); ?>
+                                        </strong>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="label"><?php echo $block->__('Shipping Cost');?></td>
+                                    <td class="value">
+                                        <strong>
+                                            <?php echo $block->formatPrice($block->order->getChildObject()->getCurrency(), $block->globalShippingServiceDetails['price']); ?>
+                                        </strong>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="label"><?php echo $block->__('International Shipping Cost');?></td>
+                                    <td class="value">
+                                            <?php echo $block->formatPrice($block->order->getChildObject()->getCurrency(), $block->order->getChildObject()->getShippingPrice()); ?>
+                                    </td>
+                                </tr>
+
+                            <?php endif; ?>
+
+                        <?php endif; ?>
+
+                        <?php if ($childHtml = $block->getChildHtml('resubmit_shipping_info')) : ?>
+                            <tr>
+                                <td></td>
+                                <td class="value" style="padding-top: 10px;">
+                                    <?php echo $childHtml; ?>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="col-m-12">
+    <div class="fieldset-wrapper" id="magento_block_ebay_orders_transaction" collapseable="no">
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title" style="margin-bottom: 0">
+            <strong class="admin__collapsible-title"><span><?php echo $block->__('Transaction Item(s)'); ?></span></strong>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content grid np">
+            <?php echo $block->getChildHtml('item'); ?>
+        </div>
+    </div>
+</div>
+<div></div>
+
+<div class="col-m-6">
+
+    <div class="fieldset-wrapper" id="magento_block_ebay_orders_history" collapseable="no">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <strong class="admin__collapsible-title"><span><?php echo $block->__('Custom Notes');?></span></strong>
+            <div class="form-buttons"></div>
+        </div>
+
+        <a name="order_log"></a>
+
+        <div class="fieldset">
+            <?php echo $block->getChildHtml('order_note_grid'); ?>
+            <?php echo $block->getChildHtml('add_note_button'); ?>
+        </div>
+
+    </div>
+
+    <?php $checkoutMessage = $block->order->getChildObject()->getBuyerMessage() ?>
+
+    <?php if (!empty($checkoutMessage)) : ?>
+        <div class="fieldset-wrapper" id="magento_block_ebay_orders_message" collapseable="no">
+            <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+                <strong class="admin__collapsible-title">
+                    <span>
+                        <?php echo $block->__('Checkout Message From Buyer');?>
+                    </span>
+                </strong>
+                <div class="form-buttons"></div>
+            </div>
+
+            <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+                <?php echo $block->getHelper('Data')->escapeHtml($checkoutMessage); ?>
+            </div>
+
+        </div>
+    <?php endif; ?>
+
+    <div class="fieldset-wrapper" id="magento_block_ebay_orders_history" collapseable="no">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <strong class="admin__collapsible-title"><span><?php echo $block->__('Order Log');?></span></strong>
+            <div class="form-buttons"></div>
+        </div>
+
+        <a name="order_log"></a>
+
+        <div class="fieldset">
+            <?php echo $block->getChildHtml('log'); ?>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="col-m-6 fieldset-wrapper">
+
+    <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+        <strong><span><?php echo $block->__('Order Totals');?></span></strong>
+    </div>
+
+    <div class="m2epro-order-totals">
+        <table class="order-info form-list">
+            <tbody>
+
+                <tr>
+                    <td class="label">
+                        <?php
+                            echo $block->__('Subtotal');
+                        if ($block->order->getChildObject()->hasTax()) {
+                            echo ' (' . $block->__('Excl. Tax') . ')';
+                        }
+                        ?>
+                    </td>
+                    <td><span class="price"><?php echo $block->formatPrice($block->order->getChildObject()->getCurrency(), $block->getSubtotalPrice());?></span></td>
+                </tr>
+
+                <tr>
+                    <td class="label">
+                        <?php
+                            echo $block->__('Shipping & Handling');
+                        if ($block->order->getChildObject()->hasTax()) {
+                            echo ' (' . $block->__('Excl. Tax') . ')';
+                        }
+                        ?>
+                    </td>
+                    <td><span class="price"><?php echo $block->formatPrice($block->order->getChildObject()->getCurrency(), $block->getShippingPrice());?></span></td>
+                </tr>
+
+                <tr>
+                    <td class="label"><?php echo $block->__('Tax') ?></td>
+                    <td><span class="price"><?php echo $block->formatPrice($block->order->getChildObject()->getCurrency(), $block->getTaxAmount());?></span></td>
+                </tr>
+
+                <?php if ($block->order->getChildObject()->getWasteRecyclingFee()) : ?>
+                    <tr>
+                        <td class="label"><?php echo $block->__('Waste Recycling Fee') ?></td>
+                        <td><span class="price"><?php echo $block->formatPrice($block->order->getChildObject()->getCurrency(), $block->order->getChildObject()->getWasteRecyclingFee());?></span></td>
+                    </tr>
+                <?php endif; ?>
+
+            </tbody>
+
+            <tfoot>
+
+                <tr>
+                    <td class="label">
+                        <strong><big><?php echo $block->__('Grand Total');?></big></strong>
+                    </td>
+                    <td class="emph"><big><strong><span class="price"><?php echo $block->formatPrice($block->order->getChildObject()->getCurrency(), $block->order->getChildObject()->getGrandTotalPrice());?></span></strong></big></td>
+                </tr>
+
+                <tr>
+                    <td class="label"><small><?php echo $block->__('Amount Paid'); ?></small></td>
+                    <td><span class="price"><small><?php echo $block->formatPrice($block->order->getChildObject()->getCurrency(), $block->order->getChildObject()->getPaidAmount());?></small></span></td>
+                </tr>
+
+                <tr>
+                    <td class="label"><small><?php echo $block->__('Amount Saved'); ?></small></td>
+                    <td><span class="price"><small><?php echo $block->formatPrice($block->order->getChildObject()->getCurrency(), $block->order->getChildObject()->getSavedAmount());?></small></span></td>
+                </tr>
+
+            </tfoot>
+        </table>
+
+    </div>
+</div>

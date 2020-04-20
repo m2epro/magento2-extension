@@ -1,0 +1,56 @@
+.wizard_block {
+    margin-top: 30px;
+}
+.wizard_block ul.list {
+    list-style: decimal;
+    padding-left: 40px;
+}
+.wizard_block ul.list li {
+    line-height: 1.5;
+}
+.create-first-listing {
+    width: 300px;
+    height: 45px;
+}
+.block_notices {
+    margin-top: 30px;
+}
+
+/* Account */
+
+.account-mode-choose .admin__field-option:last-child {
+    display: none;
+}
+
+/* Migration Notes */
+.migration-notes {
+    width: 800px;
+}
+ol.migration-notes {
+    margin-left: 30px;
+}
+ol.migration-notes li {
+    margin-bottom: 20px;
+    padding-left: 5px;
+}
+ul.migration-notes {
+    margin-left: 35px;
+}
+ul.migration-notes li {
+    margin-top: 20px;
+    list-style-type: square;
+}
+
+/* Marketplaces Data Synchronization */
+.progress_bar_container {
+    margin-top: 30px;
+}
+.marketplaces ul {
+    margin-left: 35px;
+}
+.marketplaces li {
+    margin-bottom: 20px;
+    list-style-type: square;
+}
+
+/* Congratulation */

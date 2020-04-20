@@ -1,0 +1,228 @@
+.current_product_title {
+    position: relative;
+    top: 10px;
+    left: 10px;
+}
+.current_product_title, .current_product_title h2 {
+    display: inline-block;
+}
+
+.variation_select {
+    width: 200px;
+}
+
+.field_title{
+    color: grey;
+    text-align: right;
+}
+
+.field_group{
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 2px;
+}
+
+.field_table{
+    border-spacing: 5px;
+    margin-bottom: 5px;
+}
+
+.field_table td{
+    padding: 5px;
+}
+
+.field_table thead{
+    color: grey;
+}
+
+.field_table_specifics thead td{
+    width: 200px;
+}
+
+.field_table_service{
+    width: 350px;
+}
+
+.field_table_cost,
+.field_table_additional_cost{
+    width: 110px;
+}
+
+.field_table thead td, .field_table tr:last-child td{
+    border-bottom: solid 1px #EFEFEF;
+}
+
+.preview_container {
+    margin-top: 30px;
+}
+
+.image_container {
+    float: left;
+    text-align: center;
+    width: 400px;
+    min-height: 100px;
+    padding: 5px;
+}
+
+.image_container img:first-child {
+    max-width: 400px;
+    max-height: 200px;
+}
+
+.info_container td {
+    padding: 5px;
+}
+
+.gallery_container {
+    width: 390px;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.gallery_container img {
+    width: 80px;
+    margin: 5px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.category_breadcrumbs {
+    margin-bottom: 5px;
+}
+
+.category_breadcrumbs a, .category_breadcrumbs_black a {
+    cursor: default !important;
+    text-decoration: none !important;
+}
+
+.category_breadcrumbs a {
+    color: #00498C;
+}
+
+.category_breadcrumbs_black a{
+    color: #000;
+}
+
+.product_title {
+    font-size: 21px;
+    font-weight: bold;
+}
+
+.product_subtitle {
+    margin: 3px 0;
+}
+
+.title_separator {
+    border: solid 1px #EFEFEF;
+    margin: 10px 0;
+}
+
+.info_container, .price_container {
+    margin-left: 420px;
+}
+
+.price_container {
+    background: #EFEFEF;
+    font-size: 20px;
+    padding: 20px;
+}
+
+.price_container td {
+    vertical-align: top;
+}
+
+.price_currency {
+    font-weight: bold;
+    min-width: 130px;
+}
+
+.price_discount{
+    text-decoration: line-through;
+    font-weight: normal;
+    font-size: 14px;
+    color: #555555;
+}
+
+.add_to_cart, .buy_it_now {
+    color: #fff !important;
+    width: 150px;
+    height: 35px;
+    border: none;
+    border-radius: 2px;
+    margin-left: 20px;
+}
+
+.add_to_cart {
+    background: #3890CE !important;
+}
+
+.buy_it_now {
+    background: #00498C !important;
+    margin-bottom: 10px;
+}
+
+.variation_table {
+    margin: 10px 0;
+}
+
+.variation_table td:first-child {
+    min-width: 90px;
+}
+
+.tab_container {
+    display: none;
+    padding: 10px;
+}
+
+.tab_container .field_title {
+    vertical-align: baseline;
+}
+
+.tab_container ul {
+    list-style-position: inside;
+}
+
+.specific_container td:first-child {
+    text-align: right;
+}
+
+.specific_container td {
+    padding: 0 5px;
+}
+
+/* Overriding Magento styles */
+
+ul.tabs-horiz li.active {
+    border: none;
+    background: #EFEFEF;
+}
+
+ul.tabs-horiz li{
+    border: none;
+    background: #FFF;
+    padding: 5px;
+    margin: 0 5px;
+    cursor: pointer;
+    float: left;
+}
+
+ul.tabs-horiz{
+    list-style: none;
+    background: none;
+    border-bottom: 2px solid #EFEFEF;
+    clear: left;
+    padding-top: 30px;
+}
+
+.middle {
+    padding: 0;
+    background: none;
+}
+
+.footer {
+    display: none;
+}
+
+body {
+    background: none;
+}

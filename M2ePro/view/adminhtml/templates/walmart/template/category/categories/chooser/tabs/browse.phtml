@@ -1,0 +1,29 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<style>
+    .category-children-block {
+        display: inline-block;
+        margin-left: 10px;
+    }
+</style>
+
+<script type="text/javascript">
+
+    WalmartTemplateCategoryCategoriesChooserObj.renderTopLevelCategories('chooser_browser');
+
+</script>
+
+<div id="block_notice_walmart_template_description_category_chooser_browser_refresh" class="block_notices_module" title="" subtitle="" collapseable="no" hideblock="no" always_show="yes">
+    <?php echo $block->__('If you cannot find necessary Category, try to <a href="javascript:void(0)" onclick="WalmartTemplateCategoryCategoriesChooserObj.refreshWalmartCategories()">Update Walmart Marketplaces data</a>.') ?>
+</div>
+
+<div id="chooser_browser"></div>

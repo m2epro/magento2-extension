@@ -1,0 +1,47 @@
+div#support_input_query_container {
+    width: 100%;
+    text-align: center;
+    border: 1px solid grey;
+    border-radius: 4px;
+    padding: 20px 0;
+    margin-bottom: 15px;
+}
+
+div#support_input_query_container input {
+    width: 400px;
+    border: 1px solid grey;
+    border-radius: 3px;
+    padding-left: 2px;
+}
+
+div#support_input_query_container button {
+    margin-left: 10px;
+}
+
+#support_tab_container {
+    padding-top: 10px;
+}
+
+.ui-tabs-panel {
+    margin-top: 0;
+}
+
+.entry-edit-head {
+    margin-bottom: 20px;
+}
+
+.block_title {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.table_container {
+    padding: 10px;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+}
+
+.table_container table tr {
+    line-height: 25px;
+    border-bottom: 1px solid #e3e3e3;
+}

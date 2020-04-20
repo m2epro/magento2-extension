@@ -1,0 +1,142 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<!-- ########################################################################################### -->
+
+<style>
+
+    span.red {
+        color: red;
+    }
+
+</style>
+
+<!-- ########################################################################################### -->
+
+<div class="col-m-6 controlPanel__block_container">
+
+    <?php if ($block->getChildBlock('requirements')->isShown()) { ?>
+        <div class="fieldset-wrapper" id="magento_block_control_panel_inspection_requirements">
+
+            <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+                <h4><?php echo $block->__('System Requirements'); ?></h4>
+            </div>
+
+            <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+                <div class="hor-scroll">
+
+                    <?php echo $block->getChildHtml('requirements') ?>
+
+                </div>
+            </div>
+
+        </div>
+    <?php } ?>
+
+    <?php if ($block->getChildBlock('caches')->isShown()) { ?>
+        <div class="fieldset-wrapper" id="magento_block_control_panel_inspection_caches">
+
+            <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+                <h4><?php echo $block->__('Caches / Configs'); ?></h4>
+            </div>
+
+            <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+                <div class="hor-scroll">
+
+                    <?php echo $block->getChildHtml('caches') ?>
+
+                </div>
+            </div>
+
+        </div>
+    <?php } ?>
+
+</div>
+
+<!-- ########################################################################################### -->
+
+<div class="col-m-6 controlPanel__block_container">
+
+    <?php if ($block->getChildBlock('cron')->isShown()) { ?>
+        <div class="fieldset-wrapper" id="magento_block_control_panel_inspection_cron">
+
+            <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+                <h4><?php echo $block->__('Cron'); ?></h4>
+            </div>
+
+            <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+                <div class="hor-scroll">
+
+                    <?php echo $block->getChildHtml('cron') ?>
+
+                </div>
+            </div>
+
+        </div>
+    <?php } ?>
+
+    <?php if ($block->getChildBlock('conflicted_modules')->isShown()) { ?>
+        <div class="fieldset-wrapper" id="magento_block_control_panel_inspection_conflicted_modules">
+
+            <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+                <h4><?php echo $block->__('Conflicted Modules'); ?></h4>
+            </div>
+
+            <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+                <div class="hor-scroll">
+
+                    <?php echo $block->getChildHtml('conflicted_modules') ?>
+
+                </div>
+            </div>
+
+        </div>
+    <?php } ?>
+
+    <?php if ($block->getChildBlock('database_broken')->isShown()) { ?>
+        <div class="fieldset-wrapper" id="magento_block_control_panel_inspection_database_broken">
+
+            <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+                <h4><?php echo $block->__('Database Broken Tables'); ?></h4>
+            </div>
+
+            <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+                <div class="hor-scroll">
+
+                    <?php echo $block->getChildHtml('database_broken') ?>
+
+                </div>
+            </div>
+
+        </div>
+    <?php }?>
+
+    <?php if ($block->getChildBlock('other_issues')->isShown()) { ?>
+        <div class="fieldset-wrapper" id="magento_block_control_panel_inspection_other_issues">
+
+            <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+                <h4><?php echo $block->__('Other Issues'); ?></h4>
+            </div>
+
+            <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+                <div class="hor-scroll">
+
+                    <?php echo $block->getChildHtml('other_issues') ?>
+
+                </div>
+            </div>
+
+        </div>
+    <?php } ?>
+
+</div>
+
+<!-- ########################################################################################### -->

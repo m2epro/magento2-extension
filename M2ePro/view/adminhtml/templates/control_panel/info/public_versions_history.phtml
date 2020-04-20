@@ -1,0 +1,41 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<table class="data-grid">
+    <thead>
+    <tr style="border-top: 0.1rem solid #d6d6d6;">
+        <td>
+            <?php echo $block->__('From Version') ?>
+        </td>
+        <td>
+            <?php echo $block->__('To Version') ?>
+        </td>
+        <td>
+            <?php echo $block->__('Date') ?>
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($block->versionsData as $versionRow) : ?>
+        <tr>
+            <td>
+                <?php echo $versionRow['version_from'] ?>
+            </td>
+            <td>
+                <?php echo $versionRow['version_to'] ?>
+            </td>
+            <td>
+                <?php echo $versionRow['create_date'] ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

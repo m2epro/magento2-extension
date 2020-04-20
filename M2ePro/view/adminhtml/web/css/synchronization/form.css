@@ -1,0 +1,15 @@
+#tabs_container .page-form-actions {
+    margin: 10px;
+    height: 40px;
+}
+
+#tabs_container .page-form-actions button {
+    float: right;
+    margin-left: 5px;
+}
+
+.field-info_container .admin__field-control {
+    width: auto !important;
+    padding: 15px;
+    background-color: #fffbbb;
+}

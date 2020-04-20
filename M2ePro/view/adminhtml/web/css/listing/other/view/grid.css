@@ -1,0 +1,24 @@
+#ebayListingOtherViewGrid_table .grid-listing-column-title,
+#amazonListingOtherGrid_table .grid-listing-column-title {
+    width: 30%;
+}
+
+#ebayListingOtherViewGrid_table .grid-listing-column-online_price {
+    width: 80px;
+}
+
+#ebayListingOtherViewGrid_table .grid-listing-column-end_date {
+    width: 150px;
+}
+
+#listingOtherMappingGrid_table .grid-listing-column-product_id {
+    width: 150px;
+}
+
+#ebayListingOtherViewGrid_table .grid-listing-column-online_qty {
+    width: 130px;
+}
+
+#ebayListingOtherViewGrid_table .grid-listing-column-online_qty_sold {
+    width: 100px;
+}

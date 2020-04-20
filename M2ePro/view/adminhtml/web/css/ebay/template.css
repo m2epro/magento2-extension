@@ -1,0 +1,240 @@
+/* Shipping Policy Styles */
+
+#shipping_local_table,
+#shipping_international_table {
+    margin: 0 auto;
+    table-layout: fixed;
+}
+
+#shipping_local_table th,
+#shipping_local_table td,
+#shipping_international_table th,
+#shipping_international_table td {
+    overflow: hidden;
+    width: 100%;
+}
+
+.type-butt  {
+    width:33px;
+}
+
+#add_local_shipping_method_button,
+#add_international_shipping_method_button {
+    background-color: #EFEFEF;
+    padding: 1em;
+    margin: 0 auto;
+}
+
+#local_shipping_discount_profile_table select,
+#international_shipping_discount_profile_table select {
+    width: 90%;
+}
+
+#add_local_shipping_method_button > table,
+#add_international_shipping_method_button > table {
+    margin-left: calc(50% - 115px);
+}
+
+.shipping-cost-ca select,
+.shipping-cost-additional-ca select {
+    width: 155px;
+}
+
+#domestic_shipping_fieldset > .field-account_combined_shipping_profile_local > .admin__field-control,
+#magento_block_ebay_template_shipping_form_data_international > .field-account_international_shipping_profile_international > .admin__field-control,
+#magento_block_ebay_template_shipping_form_data_international > .field-account_combined_shipping_profile_international > .admin__field-control {
+    width: calc( 100% - 30px );
+}
+
+#local_shipping_discount_profile_table,
+#international_shipping_discount_profile_table {
+    width: 55%;
+    margin-left: 53px;
+}
+
+#magento_block_ebay_template_shipping_form_data_exclude_locations_popup_content h4 {
+    text-decoration: underline;
+    margin-top: 10px;
+    margin-bottom: 3px;
+}
+#excluded_locations_international_regions
+{
+    float: left;
+    width: 300px;
+}
+#excluded_locations_international_countries_container
+{
+    float: left;
+    overflow-y: scroll;
+    width: 300px;
+    height: 300px;
+    background: #e7efef;
+}
+.checkbox_container {
+    display: inline-block;
+    padding: 2px 10px;
+}
+.checkbox_container label {
+    margin-left: 2px;
+}
+.excluded_location_region_title_container,
+.excluded_location_region_title_container label {
+    cursor: pointer;
+}
+#excluded_locations_international_regions .selected_region {
+    background: #e7efef;
+}
+#excluded_locations_international_regions .have_selected_locations span {
+    display: inline-block !important;
+    font-style: italic;
+    color: grey;
+    font-size: 11px;
+}
+
+.dimension-custom-input {
+    width: 125px !important;
+}
+
+/* Shipping Policy Styles */
+
+/* Payment Policy Styles */
+
+/*#magento_block_ebay_template_payment_form_data_paypal .admin__field-control,*/
+/*#pay_pal_immediate_payment_container > .admin__field-control {*/
+    /*margin-top: 9px;*/
+/*}*/
+
+.addafter[for="pay_pal_mode"],
+.addafter[for="pay_pal_immediate_payment"]:before {
+    margin-top: 9px;
+}
+
+/* Payment Policy Styles */
+
+/* Selling Policy Styles */
+
+#price_table_container {
+    padding-top: 0.5em !important;
+}
+
+select.disabled {
+    pointer-events: none;
+    background: rgba(0,0,0,0.1);
+}
+
+table#price_table {
+    position: relative;
+}
+
+table#price_table tr#price_discount_map_exposure_tr:last-child td {
+    border-bottom: none !important;
+}
+
+table#price_table:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 0.1em;
+    background: #d6d6d6;
+}
+
+.price_change_container,
+.price_change_container div,
+.inline_block,
+.price_coefficient_container div {
+    display: inline-block;
+}
+.price_coefficient_container {
+    position: absolute;
+    left: 250px;
+    top: 0;
+}
+.coef {
+    text-align: right;
+    width: 70px !important;
+    margin: 0 5px;
+}
+.price_unvalidated {
+    border-color: #D40707 !important;
+}
+#price_table td.value,
+#best_offer_respond_table td.value {
+    border-width: 0 1px 1px 1px !important;
+    border-color: #dadfe0 !important;
+    border-style: solid !important;
+}
+#price_table td.bottom_border_disabled {
+    border-width: 0 1px 0 1px!important;
+}
+tr#price_discount_stp_tr, tr#price_discount_map_tr {
+    border-top: #d6d6d6 solid 1px;
+}
+
+/* Description Policy Styles */
+
+#description_template {
+    width: 60%;
+    height: 500px;
+}
+label.mage-error[for="description_template"] {
+    top: 500px;
+}
+#description_template_tbl {
+    float: left;
+}
+#description_template_tbl iframe {
+    height: 370px !important;
+}
+#description_template_buttons {
+    width: 155px;
+    float: left;
+}
+.custom_inserts_images_input {
+    width: 80px !important;
+}
+#custom_inserts_open_popup {
+    margin-left: 20px;
+    margin-top: 10px;
+}
+#description_template_show_hide_wysiwyg {
+    margin-left: 20px;
+}
+#buttonsdescription_template {
+    display: none;
+}
+#description_template_tr .admin__field-control {
+    width: 64% !important;
+}
+
+#description_template_tr #description_template {
+    width: 100% !important;
+}
+
+.admin__field-control .admin__field .admin__control-wysiwig {
+    display: inline-block !important;
+    float: left !important;
+    width: 64% !important;
+}
+
+/* Description Policy Styles */
+
+/* Description Preview Styles */
+
+.product_title {
+    position: relative;
+    top: 10px;
+    left: 10px;
+}
+.description_container ul {
+    list-style-position: inside;
+}
+.description_container a {
+    color: #000 !important;
+    text-decoration: none !important;
+}
+.description-preview-watermark-info {
+    font-size: 12px;
+    font-weight: bold;
+}
+/* Description Preview Styles */
