@@ -227,6 +227,20 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
         if ($this->getMagentoProduct()->isGroupedType()) {
             $attributeLabels = [\Ess\M2ePro\Model\Magento\Product\Variation::GROUPED_PRODUCT_ATTRIBUTE_LABEL];
         }
+        
+        if ($this->getMagentoProduct()->isBundleType()) {   
+		   foreach ($this->getListingProduct()->getVariations(true) as $variation) {
+				if ($variation->getChildObject()->isDelete() || !$variation->getChildObject()->getQty()) {
+					continue;
+				}
+				foreach ($variation->getOptions(true) as $option) {
+					/** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+					$attributeLabels [] = trim($option->getAttribute());
+				}
+			}
+		   
+        }
+
 
         if (count($attributeLabels) <= 0) {
             return [];
