@@ -458,6 +458,18 @@ JS
             if ($this->ebayListingProduct->getMagentoProduct()->isGroupedType()) {
                 $attributeLabels = [\Ess\M2ePro\Model\Magento\Product\Variation::GROUPED_PRODUCT_ATTRIBUTE_LABEL];
             }
+            
+            if ($this->ebayListingProduct->getMagentoProduct()->isBundleType()) {				
+			   foreach ($this->ebayListingProduct->getVariations(true) as $variation) {
+					if ($variation->getChildObject()->isDelete() || !$variation->getChildObject()->getQty()) {
+						continue;
+					}
+					foreach ($variation->getOptions(true) as $option) {
+						$attributeLabels [] = trim($option->getAttribute());
+					}
+				}				
+            }
+            
 
             if (!empty($attributeLabels)) {
                 $images['variations'] = $this->getImagesDataByAttributeLabels($attributeLabels);
