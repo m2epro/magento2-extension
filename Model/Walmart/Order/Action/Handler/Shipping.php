@@ -77,7 +77,7 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
             $orderItem = $this->walmartFactory->getObject('Order_Item')
                 ->getCollection()
                 ->addFieldToFilter('order_id', $this->getOrder()->getId())
-                ->addFieldToFilter('walmart_order_item_id', $itemData['item_id'])
+                ->addFieldToFilter('walmart_order_item_id', $itemData['walmart_order_item_id'])
                 ->getFirstItem();
 
             /**
@@ -85,7 +85,7 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
              * So walmart_order_item_id of real OrderItem and walmart_order_item_id in request may be different.
              * Real walmart_order_item_id will match with the ID in request when the last item will be shipped.
              */
-            if ($orderItem !== null) {
+            if ($orderItem->getId()) {
                 $orderItem->getChildObject()->setData('status', OrderItem::STATUS_SHIPPED)->save();
                 $itemsStatuses[$itemData['walmart_order_item_id']] = OrderItem::STATUS_SHIPPED;
             } else {
@@ -118,6 +118,7 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
     protected function processError(array $messages = [])
     {
         if (empty($messages)) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 $this->helperFactory->getObject('Module\Translation')->__(

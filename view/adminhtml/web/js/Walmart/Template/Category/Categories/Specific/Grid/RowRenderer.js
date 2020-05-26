@@ -14,10 +14,6 @@ define([
 
         process: function()
         {
-            if (this.specificHandler.isSpecificRendered(this.indexedXPath) && !this.isValueForceSet()) {
-                return '';
-            }
-
             if (!this.load()) {
                 return '';
             }
@@ -30,20 +26,29 @@ define([
 
             if (this.specificHandler.isSpecificRendered(this.indexedXPath)) {
 
-                    this.forceSelectAndDisable(this.getForceSetValue());
+                if (this.isValueForceSet()) {
+
+                    if (!this.specificHandler.isMarkedAsSelected(this.indexedXPath) &&
+                        !this.specificHandler.isInFormData(this.indexedXPath)
+                    ) {
+                        this.forceSelect(this.getForceSetValue());
+                    } else {
+                        this.checkSelection();
+                    }
 
                     this.hideButton($(this.indexedXPath + '_remove_button'));
 
                     var myEvent = new CustomEvent('undeleteble-specific-appear');
                     $(this.getParentIndexedXpath()).dispatchEvent(myEvent);
 
-                return '';
+                    return '';
+                }
             }
 
             this.renderSelf();
 
             if (this.isValueForceSet()) {
-                this.forceSelectAndDisable(this.getForceSetValue());
+                this.forceSelect(this.getForceSetValue());
             }
 
             this.observeToolTips(this.indexedXPath);
@@ -498,15 +503,25 @@ define([
                 return;
             }
 
+            this.forceSelect(value);
+
+            $(this.indexedXPath + '_mode').setAttribute('disabled','disabled');
+            $(this.indexedXPath +'_'+ this.MODE_CUSTOM_VALUE).setAttribute('disabled', 'disabled');
+        },
+
+        forceSelect: function(value)
+        {
+            if (!value) {
+                return;
+            }
+
             var modeSelect = $(this.indexedXPath + '_mode');
             modeSelect.value = this.MODE_CUSTOM_VALUE;
             this.simulateAction(modeSelect, 'change');
-            modeSelect.setAttribute('disabled','disabled');
 
             var valueObj = $(this.indexedXPath +'_'+ this.MODE_CUSTOM_VALUE);
             valueObj.value = value;
             this.simulateAction(valueObj, 'change');
-            valueObj.setAttribute('disabled', 'disabled');
         },
 
         //########################################

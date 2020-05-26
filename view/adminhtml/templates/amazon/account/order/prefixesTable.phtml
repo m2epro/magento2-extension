@@ -22,20 +22,30 @@ $formData = $block->getData('form_data');
         width: 230px !important;
         margin-right: 5px;
     }
+    .prefix-label {
+        clear: both;
+        color: #303030;
+        display: block;
+        font-size: 1.7rem;
+        font-weight: 600;
+        letter-spacing: .025em;
+        padding: 1.9rem 2.8rem 1.9rem 0;
+        position: relative;
+    }
 </style>
 
 <div class="admin__control-table-wrapper">
 
     <input type="hidden" id="sample_magento_order_id" value="<?php echo $block->getHelper('Magento')->getNextMagentoOrderId(); ?>" />
     <input type="hidden" id="sample_amazon_order_id" value="141-4423723-6495633" />
-
+    <span class="prefix-label"><?php echo $block->__('Prefix for magento order number'); ?></span>
     <table class="admin__control-table">
         <thead>
         <tr>
-            <th><?php echo __('General'); ?></th>
-            <th><?php echo __('FBA'); ?></th>
-            <th ><?php echo __('Prime'); ?></th>
-            <th><?php echo __('B2B'); ?></th>
+            <th><?php echo $block->__('General'); ?></th>
+            <th><?php echo $block->__('FBA'); ?></th>
+            <th><?php echo $block->__('Prime'); ?></th>
+            <th><?php echo $block->__('B2B'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -60,3 +70,4 @@ $formData = $block->getData('form_data');
         </tbody>
     </table>
 </div>
+</br>

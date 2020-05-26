@@ -38,7 +38,7 @@ class CrashedTables extends IssueType
         $helper = $this->helperFactory->getObject('Module_Database_Structure');
 
         $crashedTables = [];
-        foreach ($helper->getMySqlTables() as $tableName) {
+        foreach ($helper->getModuleTables() as $tableName) {
             if (!$helper->isTableStatusOk($tableName)) {
                 $crashedTables[] = $tableName;
             }

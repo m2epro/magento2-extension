@@ -38,10 +38,7 @@ class StockSettings extends AbstractForm
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
 
-        $attributes = $magentoAttributeHelper->getGeneralFromAttributeSets(
-            $this->getHelper('Magento\AttributeSet')->getAll(\Ess\M2ePro\Helper\Magento\AbstractHelper::RETURN_TYPE_IDS)
-        );
-
+        $attributes = $magentoAttributeHelper->getAll();
         $attributesByInputTypes = ['text' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text']),];
 
         $form->addField(

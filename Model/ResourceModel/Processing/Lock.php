@@ -13,12 +13,12 @@ namespace Ess\M2ePro\Model\ResourceModel\Processing;
  */
 class Lock extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
-    // ########################################
+    //########################################
 
     public function _construct()
     {
         $this->_init('m2epro_processing_lock', 'id');
     }
 
-    // ########################################
+    //########################################
 }

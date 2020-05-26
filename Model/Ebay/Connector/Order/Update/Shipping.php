@@ -13,16 +13,15 @@ namespace Ess\M2ePro\Model\Ebay\Connector\Order\Update;
  */
 class Shipping extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractModel
 {
-    // M2ePro\TRANSLATIONS
-    // Shipping Status for eBay Order was not updated. Reason: eBay Failure.
-    // Tracking number "%num%" for "%code%" has been sent to eBay.
-    // Shipping Status for eBay Order was updated to Shipped.
-
     private $carrierCode = null;
     private $trackingNumber = null;
 
-    // ########################################
+    //########################################
 
+    /**
+     * @param $action
+     * @return $this|AbstractModel
+     */
     public function setAction($action)
     {
         parent::setAction($action);
@@ -31,10 +30,16 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractMod
             $this->carrierCode    = $this->params['carrier_code'];
             $this->trackingNumber = $this->params['tracking_number'];
         }
+
+        return $this;
     }
 
-    // ########################################
+    //########################################
 
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function isNeedSendRequest()
     {
         if (!$this->order->getChildObject()->canUpdateShippingStatus($this->params)) {
@@ -44,8 +49,12 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractMod
         return parent::isNeedSendRequest();
     }
 
-    // ########################################
+    //########################################
 
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function getRequestData()
     {
         $requestData = parent::getRequestData();
@@ -58,13 +67,20 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractMod
         return $requestData;
     }
 
-    // ########################################
+    //########################################
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function prepareResponseData()
     {
         if ($this->getResponse()->isResultError()) {
             return;
         }
+
+        /** @var \Ess\M2ePro\Model\Order\Change $orderChange */
+        $orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($this->getOrderChangeId());
+        $this->order->getLog()->setInitiator($orderChange->getCreatorType());
 
         $responseData = $this->getResponse()->getResponseData();
 
@@ -92,13 +108,8 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractMod
             );
         }
 
-        if ($this->getOrderChangeId() !== null) {
-            $this->activeRecordFactory
-                ->getObject('Order\Change')
-                ->getResource()
-                ->deleteByIds([$this->getOrderChangeId()]);
-        }
+        $orderChange->delete();
     }
 
-    // ########################################
+    //########################################
 }

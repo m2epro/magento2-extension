@@ -19,21 +19,21 @@ class Items extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 
     protected $cacheConfig;
 
-    // ########################################
+    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
-        \Ess\M2ePro\Model\Marketplace $marketplace,
-        \Ess\M2ePro\Model\Account $account,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\Marketplace $marketplace = null,
+        \Ess\M2ePro\Model\Account $account = null,
         array $params = []
     ) {
         $this->cacheConfig = $cacheConfig;
-        parent::__construct($marketplace, $account, $helperFactory, $modelFactory, $params);
+        parent::__construct($helperFactory, $modelFactory, $marketplace, $account, $params);
     }
 
-    // ########################################
+    //########################################
 
     protected function getCommand()
     {
@@ -54,7 +54,7 @@ class Items extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
         return $data;
     }
 
-    // ########################################
+    //########################################
 
     public function process()
     {
@@ -92,7 +92,7 @@ class Items extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
         return $connection;
     }
 
-    // ########################################
+    //########################################
 
     protected function getRequestTimeOut()
     {
@@ -104,5 +104,5 @@ class Items extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
         return 300 + $rise;
     }
 
-    // ########################################
+    //########################################
 }

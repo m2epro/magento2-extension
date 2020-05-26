@@ -13,26 +13,23 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Product\ListAction;
  */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 {
-    private $generalValidatorObject = null;
+    protected $generalValidatorObject = null;
 
-    private $skuGeneralValidatorObject = null;
+    protected $skuGeneralValidatorObject = null;
 
-    private $skuSearchValidatorObject = null;
+    protected $skuSearchValidatorObject = null;
 
-    private $skuExistenceValidatorObject = null;
+    protected $skuExistenceValidatorObject = null;
 
-    private $listTypeValidatorObject = null;
+    protected $listTypeValidatorObject = null;
 
-    private $validatorsData = [];
+    protected $validatorsData = [];
 
-    // ########################################
+    //########################################
 
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
         parent::setListingProduct($listingProduct);
-
-        $this->listingProduct->setData('synch_status', \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_OK);
-        $this->listingProduct->setData('synch_reasons', null);
 
         $additionalData = $listingProduct->getAdditionalData();
         unset($additionalData['synch_template_list_rules_note']);
@@ -43,21 +40,21 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         return $this;
     }
 
-    // ########################################
+    //########################################
 
     protected function getProcessingRunnerModelName()
     {
         return 'Amazon_Connector_Product_ListAction_ProcessingRunner';
     }
 
-    // ########################################
+    //########################################
 
     public function getCommand()
     {
-        return ['product','add','entities'];
+        return ['product', 'add', 'entities'];
     }
 
-    // ########################################
+    //########################################
 
     protected function getActionType()
     {
@@ -69,7 +66,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         return \Ess\M2ePro\Model\Listing\Log::ACTION_LIST_PRODUCT_ON_COMPONENT;
     }
 
-    // ########################################
+    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingProducts
@@ -90,7 +87,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         return $resultListingProducts;
     }
 
-    // ########################################
+    //########################################
 
     protected function validateListingProduct()
     {
@@ -101,23 +98,20 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
             && $this->validateListTypeRequirements();
     }
 
-    // ########################################
+    //########################################
 
-    private function validateGeneralRequirements()
+    protected function validateGeneralRequirements()
     {
         $validator = $this->getGeneralValidatorObject();
 
         $validationResult = $validator->validate();
 
         foreach ($validator->getMessages() as $messageData) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData($messageData['text'], $messageData['type']);
 
-            $this->getLogger()->logListingProductMessage(
-                $this->listingProduct,
-                $message,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
-            );
+            $this->storeLogMessage($message);
         }
 
         if ($validationResult) {
@@ -128,21 +122,18 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         return false;
     }
 
-    private function validateSkuGeneralRequirements()
+    protected function validateSkuGeneralRequirements()
     {
         $validator = $this->getSkuGeneralValidatorObject();
 
         $validationResult = $validator->validate();
 
         foreach ($validator->getMessages() as $messageData) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData($messageData['text'], $messageData['type']);
 
-            $this->getLogger()->logListingProductMessage(
-                $this->listingProduct,
-                $message,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
-            );
+            $this->storeLogMessage($message);
         }
 
         if ($validationResult) {
@@ -153,21 +144,18 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         return false;
     }
 
-    private function validateSkuSearchRequirements()
+    protected function validateSkuSearchRequirements()
     {
         $validator = $this->getSkuSearchValidatorObject();
 
         $validationResult = $validator->validate();
 
         foreach ($validator->getMessages() as $messageData) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData($messageData['text'], $messageData['type']);
 
-            $this->getLogger()->logListingProductMessage(
-                $this->listingProduct,
-                $message,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
-            );
+            $this->storeLogMessage($message);
         }
 
         if ($validationResult) {
@@ -178,7 +166,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         return false;
     }
 
-    private function validateSkuExistenceRequirements()
+    protected function validateSkuExistenceRequirements()
     {
         $sku = $this->getValidatorsData('sku');
 
@@ -194,9 +182,11 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
                     'product',
                     'search',
                     'asinBySkus',
-                    ['include_info' => true,
-                                                                              'only_realtime' => true,
-                                                                              'items' => [$sku]],
+                    [
+                        'include_info' => true,
+                        'only_realtime' => true,
+                        'items' => [$sku]
+                    ],
                     'items',
                     $this->account->getId()
                 );
@@ -211,23 +201,22 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
             } while ($response === null && ++$countTriedTemp <= 3);
 
             if ($response === null) {
-                throw new \Ess\M2ePro\Model\Exception('Searching of SKU in your inventory on Amazon is not
-                                                       available now. Please repeat the action later.');
+                throw new \Ess\M2ePro\Model\Exception(
+                    'Searching of SKU in your inventory on Amazon is not
+                    available now. Please repeat the action later.'
+                );
             }
         } catch (\Exception $exception) {
             $this->getHelper('Module\Exception')->process($exception);
 
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 $this->getHelper('Module\Translation')->__($exception->getMessage()),
                 \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
             );
 
-            $this->getLogger()->logListingProductMessage(
-                $this->listingProduct,
-                $message,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
-            );
+            $this->storeLogMessage($message);
 
             return false;
         }
@@ -240,14 +229,11 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         $validationResult = $validator->validate();
 
         foreach ($validator->getMessages() as $messageData) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData($messageData['text'], $messageData['type']);
 
-            $this->getLogger()->logListingProductMessage(
-                $this->listingProduct,
-                $message,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
-            );
+            $this->storeLogMessage($message);
         }
 
         if ($validationResult) {
@@ -258,21 +244,18 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         return false;
     }
 
-    private function validateListTypeRequirements()
+    protected function validateListTypeRequirements()
     {
         $validator = $this->getListTypeValidatorObject();
 
         $validationResult = $validator->validate();
 
         foreach ($validator->getMessages() as $messageData) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData($messageData['text'], $messageData['type']);
 
-            $this->getLogger()->logListingProductMessage(
-                $this->listingProduct,
-                $message,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
-            );
+            $this->storeLogMessage($message);
         }
 
         if ($validationResult) {
@@ -283,9 +266,9 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         return false;
     }
 
-    // ########################################
+    //########################################
 
-    private function getValidatorsData($key = null)
+    protected function getValidatorsData($key = null)
     {
         if ($key === null) {
             return $this->validatorsData;
@@ -294,17 +277,18 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         return isset($this->validatorsData[$key]) ? $this->validatorsData[$key] : null;
     }
 
-    private function addValidatorsData(array $data)
+    protected function addValidatorsData(array $data)
     {
         $this->validatorsData = array_merge($this->validatorsData, $data);
     }
 
-    // ########################################
+    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\General
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    private function getGeneralValidatorObject()
+    protected function getGeneralValidatorObject()
     {
         if ($this->generalValidatorObject === null) {
 
@@ -326,8 +310,9 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
     /**
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    private function getSkuGeneralValidatorObject()
+    protected function getSkuGeneralValidatorObject()
     {
         if ($this->skuGeneralValidatorObject === null) {
 
@@ -349,8 +334,9 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
     /**
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\Search
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    private function getSkuSearchValidatorObject()
+    protected function getSkuSearchValidatorObject()
     {
         if ($this->skuSearchValidatorObject === null) {
 
@@ -372,10 +358,14 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
     /**
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\Existence
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    private function getSkuExistenceValidatorObject()
+    protected function getSkuExistenceValidatorObject()
     {
         if ($this->skuExistenceValidatorObject === null) {
+            /**
+             * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\Existence $validator
+             */
             $validator = $this->modelFactory->getObject(
                 'Amazon_Listing_Product_Action_Type_ListAction_Validator_Sku_Existence'
             );
@@ -393,8 +383,9 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
     /**
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\ListType
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    private function getListTypeValidatorObject()
+    protected function getListTypeValidatorObject()
     {
         if ($this->listTypeValidatorObject === null) {
 
@@ -414,10 +405,11 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         return $this->listTypeValidatorObject;
     }
 
-    // ########################################
+    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Request
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getRequestObject()
     {
@@ -430,7 +422,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
             $request->setParams($this->params);
             $request->setListingProduct($this->listingProduct);
             $request->setConfigurator($this->listingProduct->getActionConfigurator());
-            $request->setValidatorsData($this->getValidatorsData());
+            $request->setCachedData($this->getValidatorsData());
 
             $this->requestObject = $request;
         }
@@ -438,5 +430,5 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         return $this->requestObject;
     }
 
-    // ########################################
+    //########################################
 }

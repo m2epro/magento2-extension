@@ -14,11 +14,6 @@ class MovingSynchProductLimitToConfig extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['synchronization_config'];
-    }
-
     public function execute()
     {
         $configModifier = $this->getConfigModifier('synchronization');

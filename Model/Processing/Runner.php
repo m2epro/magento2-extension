@@ -17,12 +17,11 @@ abstract class Runner extends \Ess\M2ePro\Model\AbstractModel
 
     /** @var \Ess\M2ePro\Model\Processing $processingObject */
     protected $processingObject = null;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
-    protected $activeRecordFactory = null;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory */
-    protected $parentFactory = null;
 
     protected $params = [];
+
+    protected $parentFactory = null;
+    protected $activeRecordFactory = null;
 
     //####################################
 
@@ -60,6 +59,8 @@ abstract class Runner extends \Ess\M2ePro\Model\AbstractModel
     {
         return $this->params;
     }
+
+    abstract public function getType();
 
     //####################################
 
@@ -111,16 +112,18 @@ abstract class Runner extends \Ess\M2ePro\Model\AbstractModel
     {
         $processingObject = $this->activeRecordFactory->getObject('Processing');
 
-        $processingObject->setData(
-            'model',
-            str_replace('Ess\M2ePro\Model\\', '', $this->getHelper('Client')->getClassName($this))
-        );
+        $modelName = str_replace('Ess\M2ePro\Model\\', '', $this->getHelper('Client')->getClassName($this));
 
+        $processingObject->setData('model', $modelName);
+        $processingObject->setData('type', $this->getType());
         $processingObject->setSettings('params', $this->getParams());
 
-        $processingObject->setData('expiration_date', $this->helperFactory->getObject('Data')->getDate(
-            $this->helperFactory->getObject('Data')->getCurrentGmtDate(true)+static::MAX_LIFETIME
-        ));
+        $processingObject->setData(
+            'expiration_date',
+            $this->helperFactory->getObject('Data')->getDate(
+                $this->helperFactory->getObject('Data')->getCurrentGmtDate(true) + static::MAX_LIFETIME
+            )
+        );
 
         $processingObject->save();
 

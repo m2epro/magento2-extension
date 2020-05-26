@@ -17,15 +17,6 @@ define([
 
         // ---------------------------------------
 
-        options: {},
-
-        setOptions: function (options) {
-            this.options = Object.extend(this.options, options);
-            return this;
-        },
-
-        // ---------------------------------------
-
         mapToTemplateDescription: function (el, templateId, mapToGeneralId) {
             var self = this;
 

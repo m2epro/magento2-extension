@@ -176,6 +176,18 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
         $this->setConfigValue('last_executed_slow_task', $taskNick);
     }
 
+    //----------------------------------------
+
+    public function getLastExecutedTaskGroup()
+    {
+        return $this->getConfigValue('last_executed_task_group');
+    }
+
+    public function setLastExecutedTaskGroup($groupNick)
+    {
+        $this->setConfigValue('last_executed_task_group', $groupNick);
+    }
+
     //########################################
 
     private function getConfigValue($key)

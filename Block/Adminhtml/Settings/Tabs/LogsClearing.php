@@ -155,62 +155,6 @@ HTML
         );
 
         $fieldSet = $form->addFieldset(
-            'magento_block_configuration_logs_clearing_listings_other',
-            [
-                'legend' => $this->__('3rd Party Listings Logs & Events Clearing'),
-                'collapsable' => false
-            ]
-        );
-
-        $mode = isset($this->modes[LogClearing::LOG_OTHER_LISTINGS])
-            ? $this->modes[LogClearing::LOG_OTHER_LISTINGS] : 1;
-        $tooltip = $this->getTooltipHtml(
-            $this->__('Enables automatic clearing of Log data. Can help reduce Database size.')
-        );
-        $logsType = LogClearing::LOG_OTHER_LISTINGS;
-
-        $fieldSet->addField(
-            LogClearing::LOG_OTHER_LISTINGS . '_log_mode',
-            self::SELECT,
-            [
-                'name' => LogClearing::LOG_OTHER_LISTINGS . '_log_mode',
-                'label' => $this->__('Enabled'),
-                'title' => $this->__('Enabled'),
-                'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
-                ],
-                'value' => $mode,
-                'style' => 'margin-right: 1.5rem',
-                'onchange' => "LogClearingObj.changeModeLog('".LogClearing::LOG_OTHER_LISTINGS."')",
-                'field_extra_attributes' => 'id="'.LogClearing::LOG_OTHER_LISTINGS . '_log_mode_container"',
-                'after_element_html' => <<<HTML
-                    {$tooltip}
-                    <span id="{$logsType}_log_button_clear_all_container">
-                        {$this->getChildHtml('clear_all_'.LogClearing::LOG_OTHER_LISTINGS)}
-                    </span>
-HTML
-            ]
-        );
-
-        $fieldSet->addField(
-            LogClearing::LOG_OTHER_LISTINGS . '_log_days',
-            'text',
-            [
-                'name' => LogClearing::LOG_OTHER_LISTINGS . '_log_days',
-                'label' => $this->__('Keep For (days)'),
-                'title' => $this->__('Keep For (days)'),
-                'value' => $this->days[LogClearing::LOG_OTHER_LISTINGS],
-                'class' => 'M2ePro-logs-clearing-interval',
-                'required' => true,
-                'field_extra_attributes' => 'id="'.LogClearing::LOG_OTHER_LISTINGS . '_log_days_container"',
-                'tooltip' => $this->__(
-                    'Specify for how long you want to keep Log data before it is automatically cleared.'
-                )
-            ]
-        );
-
-        $fieldSet = $form->addFieldset(
             'magento_block_configuration_logs_clearing_synch',
             [
                 'legend' => $this->__('Synchronization Logs & Events Clearing'),
@@ -337,7 +281,6 @@ HTML
         $config = $this->getHelper('Module')->getConfig();
         $tasks = [
             LogClearing::LOG_LISTINGS,
-            LogClearing::LOG_OTHER_LISTINGS,
             LogClearing::LOG_SYNCHRONIZATIONS,
             LogClearing::LOG_ORDERS
         ];
@@ -397,7 +340,6 @@ HTML
 
         $logData = [
             LogClearing::LOG_LISTINGS,
-            LogClearing::LOG_OTHER_LISTINGS,
             LogClearing::LOG_SYNCHRONIZATIONS,
             LogClearing::LOG_ORDERS,
             LogClearing::LOG_EBAY_PICKUP_STORE
@@ -405,7 +347,7 @@ HTML
 
         $pickupStoreJs = '';
         if ($this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
-            $pickupStoreJs = "LogClearingObj.changeModeLog('{$logData[4]}');";
+            $pickupStoreJs = "LogClearingObj.changeModeLog('{$logData[3]}');";
         }
 
         $this->js->addRequireJs([
@@ -416,7 +358,6 @@ HTML
         LogClearingObj.changeModeLog('{$logData[0]}');
         LogClearingObj.changeModeLog('{$logData[1]}');
         LogClearingObj.changeModeLog('{$logData[2]}');
-        LogClearingObj.changeModeLog('{$logData[3]}');
         {$pickupStoreJs}
 JS
         );

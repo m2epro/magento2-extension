@@ -32,6 +32,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
             $this->isEbayApplicationErrorAppeared($responseMessages)) {
             $this->markAsPotentialDuplicate();
 
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 'An error occurred while Listing the Item. The Item has been blocked.
@@ -51,39 +52,6 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         }
 
         parent::eventAfterExecuting();
-    }
-
-    protected function inspectProduct()
-    {
-        if ($this->isSuccess) {
-            parent::inspectProduct();
-            return;
-        }
-
-        /**
-         * Flag 'need_synch_rules_check' can be set by Reslit synch,
-         * when List action from Stop status (can be initiated only manually) in progress.
-         * If original List action was skipped or performed with error, we need initiate it again with new data.
-         */
-        if (!$this->listingProduct->needSynchRulesCheck()) {
-            return;
-        }
-
-        $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
-
-        $responseData = $this->getPreparedResponseData();
-        if (empty($responseData['request_time']) && !empty($responseData['start_processing_date'])) {
-            $configurator->setParams(['start_processing_date' => $responseData['start_processing_date']]);
-        }
-
-        $this->processAdditionalAction(
-            \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
-            $configurator,
-            [
-                'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH,
-                'skip_check_the_same_product_already_listed_ids' => [$this->listingProduct->getId()]
-            ]
-        );
     }
 
     //########################################

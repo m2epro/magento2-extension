@@ -15,10 +15,8 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
  */
 class Messages extends AbstractBlock
 {
-    const TYPE_ATTRIBUTES_AVAILABILITY = 'attributes_availability';
-
-    protected $templateNick = null;
-    protected $componentMode = null;
+    protected $templateNick;
+    protected $componentMode;
 
     //########################################
 
@@ -26,21 +24,14 @@ class Messages extends AbstractBlock
     {
         $block = $this;
 
-        switch ($templateNick) {
-            case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING:
-                $isPriceConvertEnabled = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/magento/attribute/',
-                    'price_type_converting'
-                );
+        if ($templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING &&
+            $componentMode == \Ess\M2ePro\Helper\Component\Ebay::NICK
+        ) {
+            $block = $this->createBlock('Ebay_Template_Shipping_Messages');
+        }
 
-                if ($isPriceConvertEnabled && $componentMode == \Ess\M2ePro\Helper\Component\Ebay::NICK) {
-                    $block = $this->createBlock('Ebay_Template_Shipping_Messages');
-                }
-                break;
-
-            case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT:
-                $block = $this->createBlock('Template_SellingFormat_Messages');
-                break;
+        if ($templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT) {
+            $block = $this->createBlock('Template_SellingFormat_Messages');
         }
 
         $block->setComponentMode($componentMode);
@@ -53,17 +44,7 @@ class Messages extends AbstractBlock
 
     public function getMessages()
     {
-        $messages = [];
-
-        // ---------------------------------------
-        $message = $this->getAttributesAvailabilityMessage();
-
-        if ($message !== null) {
-            $messages[self::TYPE_ATTRIBUTES_AVAILABILITY] = $message;
-        }
-        // ---------------------------------------
-
-        return $messages;
+        return [];
     }
 
     //########################################
@@ -96,34 +77,6 @@ HTML;
         }
 
         return $messagesBlock->toHtml();
-    }
-
-    //########################################
-
-    public function getAttributesAvailabilityMessage()
-    {
-        if (!$this->canDisplayAttributesAvailabilityMessage()) {
-            return null;
-        }
-
-        $productIds = $this->activeRecordFactory->getObject('Listing\Product')->getResource()
-            ->getProductIds($this->getListingProductIds());
-        $attributeSets = $this->getHelper('Magento\Attribute')
-            ->getSetsFromProductsWhichLacksAttributes($this->getUsedAttributes(), $productIds);
-
-        if (count($attributeSets) == 0) {
-            return null;
-        }
-
-        $attributeSetsNames = $this->getHelper('Magento\AttributeSet')->getNames($attributeSets);
-
-        return
-            $this->__(
-                'Some Attributes which are used in this Policy were not found in Products Settings.'
-                . ' Please, check if all of them are in [%set_name%] Attribute Set(s)'
-                . ' as it can cause List, Revise or Relist issues.',
-                implode('", "', $attributeSetsNames)
-            );
     }
 
     //########################################
@@ -201,13 +154,6 @@ HTML;
         }
 
         return $this->_data['template_data'];
-    }
-
-    //########################################
-
-    protected function getUsedAttributes()
-    {
-        return isset($this->_data['used_attributes']) ? $this->_data['used_attributes'] : [];
     }
 
     //########################################

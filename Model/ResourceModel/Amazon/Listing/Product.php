@@ -42,138 +42,6 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     //########################################
 
-    public function getChangedItems(
-        array $attributes,
-        $withStoreFilter = false
-    ) {
-        return $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getChangedItems(
-            $attributes,
-            \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            $withStoreFilter
-        );
-    }
-
-    public function getChangedItemsByListingProduct(
-        array $attributes,
-        $withStoreFilter = false
-    ) {
-        return $this->activeRecordFactory->getObject('Listing\Product')
-            ->getResource()->getChangedItemsByListingProduct(
-                $attributes,
-                \Ess\M2ePro\Helper\Component\Amazon::NICK,
-                $withStoreFilter
-            );
-    }
-
-    public function getChangedItemsByVariationOption(
-        array $attributes,
-        $withStoreFilter = false
-    ) {
-        return $this->activeRecordFactory->getObject('Listing\Product')
-            ->getResource()->getChangedItemsByVariationOption(
-                $attributes,
-                \Ess\M2ePro\Helper\Component\Amazon::NICK,
-                $withStoreFilter
-            );
-    }
-
-    //########################################
-
-    public function setSynchStatusNeedByDescriptionTemplate($newData, $oldData, $listingProduct)
-    {
-        $newTemplateData = [];
-        if ($newData['template_description_id']) {
-            $template = $this->amazonFactory->getCachedObjectLoaded(
-                'Template\Description',
-                $newData['template_description_id'],
-                null,
-                false
-            );
-            $template !== null && $newTemplateData = $template->getDataSnapshot();
-        }
-
-        $oldTemplateData = [];
-        if ($oldData['template_description_id']) {
-            $template = $this->amazonFactory->getCachedObjectLoaded(
-                'Template\Description',
-                $oldData['template_description_id'],
-                null,
-                false
-            );
-            $template !== null && $oldTemplateData = $template->getDataSnapshot();
-        }
-
-        $this->activeRecordFactory->getObject('Amazon_Template_Description')->getResource()->setSynchStatusNeed(
-            $newTemplateData,
-            $oldTemplateData,
-            [$listingProduct]
-        );
-    }
-
-    public function setSynchStatusNeedByShippingTemplate($newData, $oldData, $listingProduct, $modelName, $fieldName)
-    {
-        $newTemplateData = [];
-        if (!empty($newData[$fieldName])) {
-            $template = $this->activeRecordFactory->getCachedObjectLoaded(
-                $modelName,
-                $newData[$fieldName],
-                null,
-                false
-            );
-            $template !== null && $newTemplateData = $template->getDataSnapshot();
-        }
-
-        $oldTemplateData = [];
-        if (!empty($oldData[$fieldName])) {
-            $template = $this->activeRecordFactory->getCachedObjectLoaded(
-                $modelName,
-                $oldData[$fieldName],
-                null,
-                false
-            );
-            $template !== null && $oldTemplateData = $template->getDataSnapshot();
-        }
-
-        $this->activeRecordFactory->getObject($modelName)->getResource()->setSynchStatusNeed(
-            $newTemplateData,
-            $oldTemplateData,
-            [$listingProduct]
-        );
-    }
-
-    public function setSynchStatusNeedByProductTaxCodeTemplate($newData, $oldData, $listingProduct)
-    {
-        $newTemplateData = [];
-        if ($newData['template_product_tax_code_id']) {
-            $template = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Amazon_Template_ProductTaxCode',
-                $newData['template_product_tax_code_id'],
-                null,
-                ['template']
-            );
-            $template && $newTemplateData = $template->getDataSnapshot();
-        }
-
-        $oldTemplateData = [];
-        if ($oldData['template_product_tax_code_id']) {
-            $template = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Amazon_Template_ProductTaxCode',
-                $oldData['template_product_tax_code_id'],
-                null,
-                ['template']
-            );
-            $template && $oldTemplateData = $template->getDataSnapshot();
-        }
-
-        $this->activeRecordFactory->getObject('Amazon_Template_ProductTaxCode')->getResource()->setSynchStatusNeed(
-            $newTemplateData,
-            $oldTemplateData,
-            [$listingProduct]
-        );
-    }
-
-    //########################################
-
     public function getProductsDataBySkus(
         array $skus = [],
         array $filters = [],
@@ -224,6 +92,53 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         }
 
         return $result;
+    }
+
+    //########################################
+
+    public function moveChildrenToListing(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    {
+        $connection = $this->getConnection();
+
+        // Get child products ids
+        // ---------------------------------------
+        $dbSelect = $connection->select()
+            ->from(
+                $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable(),
+                ['listing_product_id', 'sku']
+            )
+            ->where('`variation_parent_id` = ?', $listingProduct->getId());
+        $products = $connection->fetchPairs($dbSelect);
+
+        if (!empty($products)) {
+            $connection->update(
+                $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable(),
+                [
+                    'listing_id' => $listingProduct->getListing()->getId()
+                ],
+                '`id` IN (' . implode(',', array_keys($products)) . ')'
+            );
+        }
+
+        $dbSelect = $connection->select()
+            ->from(
+                $this->activeRecordFactory->getObject('Amazon\Item')->getResource()->getMainTable(),
+                ['id']
+            )
+            ->where('`account_id` = ?', $listingProduct->getListing()->getAccountId())
+            ->where('`marketplace_id` = ?', $listingProduct->getListing()->getMarketplaceId())
+            ->where('`sku` IN (?)', implode(',', array_values($products)));
+        $items = $connection->fetchCol($dbSelect);
+
+        if (!empty($items)) {
+            $connection->update(
+                $this->activeRecordFactory->getObject('Amazon\Item')->getResource()->getMainTable(),
+                [
+                    'store_id' => $listingProduct->getListing()->getStoreId()
+                ],
+                '`id` IN ('.implode(',', $items).')'
+            );
+        }
     }
 
     //########################################

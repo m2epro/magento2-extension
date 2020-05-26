@@ -17,6 +17,8 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const NICK  = 'amazon';
 
+    const MARKETPLACE_SYNCHRONIZATION_LOCK_ITEM_NICK = 'amazon_marketplace_synchronization';
+
     const MARKETPLACE_CA = 24;
     const MARKETPLACE_DE = 25;
     const MARKETPLACE_US = 29;

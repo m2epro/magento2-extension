@@ -49,7 +49,10 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
             return $this->_redirect('*/walmart_listing/index');
         }
 
-        $oldData = array_merge($listing->getDataSnapshot(), $listing->getChildObject()->getDataSnapshot());
+        $snapshotBuilder = $this->modelFactory->getObject('Walmart_Listing_SnapshotBuilder');
+        $snapshotBuilder->setModel($listing);
+
+        $oldData = $snapshotBuilder->getSnapshot();
 
         // Base prepare
         // ---------------------------------------
@@ -93,13 +96,144 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
         $listing->getChildObject()->addData($templateData);
         $listing->save();
 
-        $newData = array_merge($listing->getDataSnapshot(), $listing->getChildObject()->getDataSnapshot());
+        $snapshotBuilder = $this->modelFactory->getObject('Walmart_Listing_SnapshotBuilder');
+        $snapshotBuilder->setModel($listing);
 
-        $listing->getChildObject()->setSynchStatusNeed($newData, $oldData);
+        $newData = $snapshotBuilder->getSnapshot();
+
+        $affectedListingsProducts = $this->modelFactory->getObject('Walmart_Listing_AffectedListingsProducts');
+        $affectedListingsProducts->setModel($listing);
+
+        $affectedListingsProductsData = $affectedListingsProducts->getObjectsData(
+            ['id', 'status'],
+            ['only_physical_units' => true]
+        );
+
+        $this->processDescriptionTemplateChange($oldData, $newData, $affectedListingsProductsData);
+        $this->processSellingFormatTemplateChange($oldData, $newData, $affectedListingsProductsData);
+        $this->processSynchronizationTemplateChange($oldData, $newData, $affectedListingsProductsData);
 
         $this->getMessageManager()->addSuccess($this->__('The Listing was successfully saved.'));
 
         return $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], ['edit'=>['id'=>$id]]));
+    }
+
+    //########################################
+
+    protected function processDescriptionTemplateChange(
+        array $oldData,
+        array $newData,
+        array $affectedListingsProductsData
+    ) {
+        if (empty($affectedListingsProductsData) ||
+            empty($oldData['template_description_id']) || empty($newData['template_description_id'])) {
+            return;
+        }
+
+        $oldTemplate = $this->walmartFactory->getObjectLoaded(
+            'Template_Description',
+            $oldData['template_description_id'],
+            null,
+            false
+        );
+
+        $snapshotBuilder = $this->modelFactory->getObject('Walmart_Template_Description_SnapshotBuilder');
+        $snapshotBuilder->setModel($oldTemplate);
+        $oldSnapshot = $snapshotBuilder->getSnapshot();
+
+        $newTemplate = $this->walmartFactory->getObjectLoaded(
+            'Template_Description',
+            $newData['template_description_id'],
+            null,
+            false
+        );
+
+        $snapshotBuilder = $this->modelFactory->getObject('Walmart_Template_Description_SnapshotBuilder');
+        $snapshotBuilder->setModel($newTemplate);
+        $newSnapshot = $snapshotBuilder->getSnapshot();
+
+        $diff = $this->modelFactory->getObject('Walmart_Template_Description_Diff');
+        $diff->setNewSnapshot($newSnapshot);
+        $diff->setOldSnapshot($oldSnapshot);
+
+        $changeProcessor = $this->modelFactory->getObject('Walmart_Template_Description_ChangeProcessor');
+        $changeProcessor->process($diff, $affectedListingsProductsData);
+    }
+
+    protected function processSellingFormatTemplateChange(
+        array $oldData,
+        array $newData,
+        array $affectedListingsProductsData
+    ) {
+        if (empty($affectedListingsProductsData) ||
+            empty($oldData['template_selling_format_id']) || empty($newData['template_selling_format_id'])) {
+            return;
+        }
+
+        $oldTemplate = $this->walmartFactory->getObjectLoaded(
+            'Template_SellingFormat',
+            $oldData['template_selling_format_id'],
+            null,
+            false
+        );
+        $snapshotBuilder = $this->modelFactory->getObject('Walmart_Template_SellingFormat_SnapshotBuilder');
+        $snapshotBuilder->setModel($oldTemplate);
+        $oldSnapshot = $snapshotBuilder->getSnapshot();
+
+        $newTemplate = $this->walmartFactory->getObjectLoaded(
+            'Template_SellingFormat',
+            $newData['template_selling_format_id'],
+            null,
+            false
+        );
+        $snapshotBuilder = $this->modelFactory->getObject('Walmart_Template_SellingFormat_SnapshotBuilder');
+        $snapshotBuilder->setModel($newTemplate);
+        $newSnapshot = $snapshotBuilder->getSnapshot();
+
+        $diff = $this->modelFactory->getObject('Walmart_Template_SellingFormat_Diff');
+        $diff->setNewSnapshot($newSnapshot);
+        $diff->setOldSnapshot($oldSnapshot);
+
+        $changeProcessor = $this->modelFactory->getObject('Walmart_Template_SellingFormat_ChangeProcessor');
+        $changeProcessor->process($diff, $affectedListingsProductsData);
+    }
+
+    protected function processSynchronizationTemplateChange(
+        array $oldData,
+        array $newData,
+        array $affectedListingsProductsData
+    ) {
+        if (empty($affectedListingsProductsData) ||
+            empty($oldData['template_synchronization_id']) || empty($newData['template_synchronization_id'])) {
+            return;
+        }
+
+        $oldTemplate = $this->walmartFactory->getObjectLoaded(
+            'Template_Synchronization',
+            $oldData['template_synchronization_id'],
+            null,
+            false
+        );
+        $snapshotBuilder = $this->modelFactory->getObject('Walmart_Template_Synchronization_SnapshotBuilder');
+        $snapshotBuilder->setModel($oldTemplate);
+        $oldSnapshot = $snapshotBuilder->getSnapshot();
+
+        $newTemplate = $this->walmartFactory->getObjectLoaded(
+            'Template_Synchronization',
+            $newData['template_synchronization_id'],
+            null,
+            false
+        );
+        $snapshotBuilder = $this->modelFactory->getObject('Walmart_Template_Synchronization_SnapshotBuilder');
+        $snapshotBuilder->setModel($newTemplate);
+        $newSnapshot = $snapshotBuilder->getSnapshot();
+
+        $diff = $this->modelFactory->getObject('Walmart_Template_Synchronization_Diff');
+        $diff->setNewSnapshot($newSnapshot);
+        $diff->setOldSnapshot($oldSnapshot);
+
+        $changeProcessor = $this->modelFactory->getObject('Walmart_Template_Synchronization_ChangeProcessor');
+        $changeProcessor->process($diff, $affectedListingsProductsData);
     }
 
     //########################################

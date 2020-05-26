@@ -15,18 +15,6 @@ class AmazonBusiness extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return [
-            'module_config',
-            'amazon_marketplace',
-            'amazon_account',
-            'amazon_listing_product',
-            'amazon_template_selling_format',
-            'amazon_template_synchronization'
-        ];
-    }
-
     public function execute()
     {
         $this->getConfigModifier('module')->insert('/amazon/business/', 'mode', '0', '0 - disable, \r\n1 - enable');

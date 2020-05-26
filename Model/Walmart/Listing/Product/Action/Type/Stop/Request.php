@@ -21,14 +21,31 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
             [
                 'sku'  => $this->getWalmartListingProduct()->getSku(),
                 'wpid' => $this->getWalmartListingProduct()->getWpid(),
-                'qty' => 0
+                'qty'  => 0
             ],
-            // Only for CA marketplace
             $this->getLagTimeData()
         );
 
         return $data;
     }
+
+    //########################################
+
+    /**
+     * LagTime and Qty always should be sent together for Canada(ONLY) Marketplace
+     * @return array
+     */
+    public function getLagTimeData()
+    {
+        if ($this->getMarketplace()->getCode() !== 'CA') {
+            return [];
+        }
+
+        $this->getConfigurator()->allowLagTime();
+
+        return parent::getLagTimeData();
+    }
+
 
     //########################################
 }

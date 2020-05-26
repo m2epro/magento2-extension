@@ -270,13 +270,6 @@ class PickupStore extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     //########################################
 
-    public function getTrackingAttributes()
-    {
-        return $this->getQtyAttributes();
-    }
-
-    //########################################
-
     public function isCacheEnabled()
     {
         return true;

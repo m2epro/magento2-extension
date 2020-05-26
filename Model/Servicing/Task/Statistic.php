@@ -42,8 +42,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     protected $moduleManager;
 
-    protected $synchronizationConfig;
-
     protected $objectManager;
 
     //########################################
@@ -61,7 +59,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         \Magento\Framework\Module\Manager $moduleManager,
         \Magento\Eav\Model\Config $config,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Ess\M2ePro\Model\Config\Manager\Synchronization $synchronizationConfig,
         \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -80,7 +77,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $this->attributeCollection = $attributeCollection;
         $this->moduleList = $moduleList;
         $this->moduleManager = $moduleManager;
-        $this->synchronizationConfig = $synchronizationConfig;
         $this->objectManager = $objectManager;
         parent::__construct(
             $config,
@@ -501,7 +497,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $helper = $this->getHelper('Module_Database_Structure');
         $data['info']['tables'] = [];
 
-        foreach ($helper->getMySqlTables() as $tableName) {
+        foreach ($helper->getModuleTables() as $tableName) {
             $data['info']['tables'][$tableName] = [
                 'size'   => $helper->getDataLength($tableName),
                 'amount' => $helper->getCountOfRecords($tableName),
@@ -511,10 +507,11 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     private function appendExtensionSettingsInfo(&$data)
     {
+        /** @var \Ess\M2ePro\Model\Config\Manager\Module $config */
         $config = $this->getHelper('Module')->getConfig();
 
-        $data['settings']['track_direct'] = $this->synchronizationConfig->getGroupValue(
-            '/global/magento_products/inspector/',
+        $data['settings']['track_direct'] = (int)$config->getGroupValue(
+            '/listing/product/inspector/',
             'mode'
         );
         $data['settings']['manage_stock_backorders'] = false;
@@ -527,10 +524,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
             $tempInfo = [];
 
             $tempInfo['enabled'] = $config->getGroupValue('/component/'.$componentNick.'/', 'mode');
-
-            if ($componentNick == \Ess\M2ePro\Helper\Component\Ebay::NICK) {
-                $tempInfo['mode'] = $config->getGroupValue('/view/ebay/', 'mode');
-            }
 
             $data['settings']['channels'][$componentNick] = $tempInfo;
         }
@@ -1062,7 +1055,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $data = $this->_appendLogsInfoByType('listings', 'm2epro_listing_log', $data);
         $data = $this->_appendLogsInfoByType('synchronization', 'm2epro_synchronization_log', $data);
         $data = $this->_appendLogsInfoByType('orders', 'm2epro_order_log', $data);
-        $data = $this->_appendLogsInfoByType('other_listings', 'm2epro_listing_other_log', $data);
     }
 
     //########################################

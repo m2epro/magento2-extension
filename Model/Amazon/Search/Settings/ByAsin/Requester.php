@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Amazon\Search\Settings\ByAsin;
  */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByAsin\ItemsRequester
 {
-    // ########################################
+    //########################################
 
     protected function getProcessingRunnerModelName()
     {
@@ -28,7 +28,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByAsin\ItemsRe
         );
     }
 
-    // ########################################
+    //########################################
 
     protected function getQuery()
     {
@@ -40,5 +40,5 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByAsin\ItemsRe
         return $this->params['variation_bad_parent_modify_child_to_simple'];
     }
 
-    // ########################################
+    //########################################
 }

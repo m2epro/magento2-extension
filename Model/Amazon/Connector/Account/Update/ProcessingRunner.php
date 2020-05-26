@@ -11,9 +11,9 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Account\Update;
 /**
  * Class \Ess\M2ePro\Model\Amazon\Connector\Account\Update\ProcessingRunner
  */
-class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
+class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Single\Runner
 {
-    // ########################################
+    //########################################
 
     protected function setLocks()
     {
@@ -51,5 +51,5 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $account->deleteProcessingLocks('adding_to_server', $this->getProcessingObject()->getId());
     }
 
-    // ########################################
+    //########################################
 }

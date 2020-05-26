@@ -52,6 +52,27 @@ class Data extends AbstractForm
         $default = $this->getDefault();
         $formData = array_merge($default, $formData);
 
+        if ($this->getMarketplace() !== null) {
+            $availableMarketplaces = [$this->getMarketplace()];
+        } else {
+            $collection = $this->activeRecordFactory->getObject('Marketplace')->getCollection();
+            $collection->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Ebay::NICK);
+            $collection->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
+            $collection->setOrder('sorder', 'ASC');
+
+            $availableMarketplaces = $collection->getItems();
+        }
+
+        $charity = $this->getHelper('Data')->jsonDecode($formData['charity']);
+
+        $availableCharity = [];
+        foreach ($availableMarketplaces as $marketplace) {
+            if (isset($charity[$marketplace->getId()])) {
+                $availableCharity[$marketplace->getId()] = $charity[$marketplace->getId()];
+            }
+        }
+        $formData['charity'] = $availableCharity;
+
         $taxCategories = $this->getTaxCategoriesInfo();
 
         $form = $this->_formFactory->create();
@@ -141,15 +162,17 @@ class Data extends AbstractForm
                     ? $formData['listing_type'] : '',
                 'create_magento_attribute' => true,
                 'tooltip' => $this->__(
-                    'Choose whether Products Listed with this Policy on eBay Auction-style or Fixed Price.<br/>
-                     Auction-style Listings are best if you are unsure of the value of your Item,
-                     eg because it is unique. Fixed Price Listings are good if you know the
-                     Price you want to get for your Item.
-                     <br/><br/>Alternatively, you can specify a Magento Attribute to set the
-                     Listing type depending on the Attribute Value set for each Product.<br/>
-                     For Fixed Price Listings, set the Attribute Value to <b>FixedPriceItem</b>;
-                     for Auction-style Listings, set the Attribute Value to <b>Chinese</b>.<br/>
-                     An empty or wrong value in Attribute will be considered as Fixed Price Listing Type.'
+                    '<b>Auction</b> - your listings will have a starting price and last for the selected listing 
+                    duration or until you accept a buyer bid.
+                    To set Auction listing type via Magento Attribute, 
+                    fill Magento Product Attribute with value "Chinese".<br/>
+                    <b>Fixed Price</b> - your listings will have a set price and last for the entire listing duration 
+                    or until you run out of stock.
+                    To set Fixed Price listing type via Magento Attribute, fill Magento Product Attribute 
+                    with value "FixedPriceItem".<br/><br/>
+
+                    <b>Note:</b> If selected Magento Attribute has a wrong or empty value, your items 
+                    will be listed as Fixed Price listings.'
                 )
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
@@ -219,24 +242,26 @@ class Data extends AbstractForm
         $preparedAttributes = [];
         foreach ($this->getHelper('Component\Ebay')->getAvailableDurations() as $id => $label) {
             $preparedAttributes[] = [
-                'attrs' => ['id' => "durationId$id"],
+                'attrs' => ['class' => 'durationId', 'id' => "durationId$id"],
                 'value' => $id,
-                'label' => $label
+                'label' => $label,
+
             ];
         }
 
-        $durationTooltip = $this->__(
-            'The length of time your eBay Listing will be active. You can have it last 1, 3, 5, 7, 10, 30 days or
-                Good \'Til Cancelled.
-                <br/>Good \'Til Cancelled Listings renew automatically every 30 days unless all of the Items sell,
-                you end the Listing, or the Listing breaches an eBay Policy.'
-        )
-            . '<span id="duration_attribute_note">'
-            . $this->__(
-                '<br/>Attribute must contain a whole number. If you choose "Good Till Cancelled"
-                the Attribute must contain 100.'
-            )
-            . '</span>';
+        $durationTooltip = '<span class="duration_note duration_auction_note" style="display: none;">'
+                            . $this->__('A length of time your auction-style listings will show on eBay.')
+                            . '</span><span class="duration_note duration_fixed_note" style="display: none;">' .
+                            $this->__('Your fixed-price listings will renew automatically every 30 days until the items
+                            sell out or you end the listings.<br><br>
+                            <b>Note:</b> By using eBay out-of-stock feature, your item with zero quantity stays active 
+                            but is hidden from search results until you increase the quantity.
+                            Read more <a href="%url%" target="_blank">here</a>.',
+                            $this->getHelper('Module\Support')->getKnowledgebaseArticleUrl('332094'))
+                            . '</span><span class="duration_note duration_attribute_note" style="display: none;">'
+                            . $this->__('Attribute must contain a whole number. If you choose "Good Till Cancelled" 
+                            the Attribute must contain 100.')
+                            . '</span>';
 
         $fieldset->addField(
             'duration_mode',
@@ -311,29 +336,6 @@ class Data extends AbstractForm
             [
                 'name' => 'selling_format[duration_attribute]',
                 'value' => $formData['duration_attribute']
-            ]
-        );
-
-        $fieldset->addField(
-            'out_of_stock_control_mode',
-            self::SELECT,
-            [
-                'name' => 'selling_format[out_of_stock_control]',
-                'container_id' => 'out_of_stock_control_tr',
-                'label' => $this->__('Out Of Stock Control'),
-                'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
-                ],
-                'value' => $formData['out_of_stock_control'],
-                'tooltip' => $this->__(
-                    'This is useful if you have run Out Of Stock of an Item that you have Listed on eBay.
-                    If you choose <b>Yes</b>, the eBay Listing is hidden temporarily instead of being ended completely.
-                    When new Stock for the Item arrives, you can use automatic or manual Revise Rules to
-                    update the Inventory and the eBay Listing will appear again.<br/><br/>
-                    <b>Note:</b> Once you list a Product with this option it cannot be changed.
-                    To cancel it you should end the eBay Listing before Listing the Item again.'
-                )
             ]
         );
 
@@ -505,6 +507,70 @@ class Data extends AbstractForm
                     'Set a maximum number to sell on eBay, e.g. if you have 10 Items in Stock but want
                     to keep 2 Items back, set a Maximum Quantity of 8.'
                 )
+            ]
+        );
+
+        $preparedAttributes = [];
+        foreach ($attributesByInputTypes['text'] as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if ($formData['lot_size_mode'] == SellingFormat::LOT_SIZE_MODE_ATTRIBUTE
+                && $formData['lot_size_attribute'] == $attribute['code']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => SellingFormat::LOT_SIZE_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'lot_size_mode',
+            self::SELECT,
+            [
+                'container_id' => 'lot_size_mode_tr',
+                'label'        => $this->__('Specify Lot Size'),
+                'name'         => 'selling_format[lot_size_mode]',
+                'values'       => [
+                    SellingFormat::LOT_SIZE_MODE_DISABLED     => $this->__('No'),
+                    SellingFormat::LOT_SIZE_MODE_CUSTOM_VALUE => $this->__('Custom Value'),
+                    [
+                        'label' => $this->__('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                            'new_option_value'     => SellingFormat::LOT_SIZE_MODE_ATTRIBUTE
+                        ]
+                    ]
+                ],
+                'value' => $formData['lot_size_mode'] != SellingFormat::LOT_SIZE_MODE_ATTRIBUTE
+                    ? $formData['lot_size_mode'] : '',
+                'tooltip'      => $this->__(
+                    'Select <b>Custom Value</b> to specify the number
+                    of identical Items you are selling together as Lot.'
+                )
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text');
+
+        $fieldset->addField(
+            'lot_size_attribute',
+            'hidden',
+            [
+                'name' => 'selling_format[lot_size_attribute]',
+            ]
+        );
+
+        $fieldset->addField(
+            'lot_size_custom_value',
+            'text',
+            [
+                'container_id' => 'lot_size_cv_tr',
+                'label'        => $this->__('Items in Lot'),
+                'name'         => 'selling_format[lot_size_custom_value]',
+                'value'        => $formData['lot_size_custom_value'],
+                'class'        => 'M2ePro-lot-size',
+                'required'     => true
             ]
         );
 
@@ -722,180 +788,19 @@ class Data extends AbstractForm
             ]
         );
 
-        if ($this->getMarketplace()) {
+        $charityBlock =  $this->createBlock('Ebay_Template_SellingFormat_Edit_Form_Charity')->addData([
+            'form_data'   => $formData,
+            'marketplace' => $this->getMarketplace()
+        ]);
 
-            $fieldset->addClass('charity-row');
-
-            $charityData = $this->getHelper('Data')->jsonDecode($formData['charity']);
-
-            if (!empty($charityData[$this->getMarketplaceId()])) {
-                $charityData = $charityData[$this->getMarketplaceId()];
-            } else {
-                $charityData = null;
-            }
-
-            $charityDictionary = $this->getCharityDictionary();
-
-            $featuredCharities = [];
-            $selectedCharityExist = false;
-
-            foreach ($charityDictionary[$this->getMarketplaceId()]['charities'] as $charity) {
-                $attrs = [];
-                if (!empty($charityData) &&
-                    $charityData['organization_id'] == $charity['id']) {
-
-                    $selectedCharityExist = true;
-                    $attrs['selected'] = 'selected';
-                }
-                $featuredCharities[] = [
-                    'attrs' => $attrs,
-                    'value' => $charity['id'],
-                    'label' => $charity['name'],
-                ];
-            }
-
-            $customCharities = [];
-            if (!empty($charityData) && !$selectedCharityExist) {
-                $customCharities[] = [
-                    'attrs' => ['selected' => 'selected'],
-                    'value' => $charityData['organization_id'],
-                    'label' => $charityData['organization_name'],
-                ];
-            }
-
-            $values = [
-                [
-                    'label' => $this->__('None'),
-                    'value' => '',
-                ],
-                [
-                    'label' => $this->__('Search for Charity Organization'),
-                    'value' => '0',
-                    'attrs' => ['class' => 'searchNewCharity'],
-                ]
-            ];
-
-            if (!empty($customCharities)) {
-                $values[] = [
-                    'label' => $this->__('Custom'),
-                    'value' => $customCharities,
-                    'attrs' => ['class' => 'customCharity']
-                ];
-            }
-
-            if (!empty($featuredCharities)) {
-                $values[] = [
-                    'label' => $this->__('Featured'),
-                    'value' => $featuredCharities,
-                    'attrs' => ['class' => 'featuredCharity']
-                ];
-            }
-
-            $fieldset->addField(
-                'charity_organization',
-                self::SELECT,
-                [
-                    'label' => $this->__('Organization'),
-                    'name' => 'selling_format[charity][organization_id][0]',
-                    'class' => 'charity-organization',
-                    'onchange' => 'EbayTemplateSellingFormatObj.charityOrganizationCustomModeChange(this)',
-                    'value' => empty($charityData['organization_id']) ?
-                        '' : $charityData['organization_id'],
-                    'values' => $values,
-                    'tooltip' => $this->__(
-                        'Choose whether to donate a percentage of your eBay sales to a non-profit/charity.'
-                    )
-                ]
-            );
-
-            $fieldset->addField(
-                'organization_name',
-                'hidden',
-                [
-                    'name' => 'selling_format[charity][organization_name][0]',
-                    'class' => 'organization_name',
-                    'value' => empty($charityData['organization_name']) ?
-                        '' : $charityData['organization_name'],
-                ]
-            );
-
-            $fieldset->addField(
-                'organization_custom',
-                'hidden',
-                [
-                    'name' => 'selling_format[charity][organization_custom][0]',
-                    'class' => 'organization_custom',
-                    'value' => empty($charityData['organization_name']) ?
-                        0 : $charityData['organization_name'],
-
-                ]
-            );
-
-            $fieldset->addField(
-                'charity_marketplace_id',
-                'hidden',
-                [
-                    'id' => 'charity_marketplace_id',
-                    'name' => 'selling_format[charity][marketplace_id][0]',
-                    'class' => 'charity-marketplace_id',
-                    'value' => $this->getMarketplace()->getId()
-                ]
-            );
-
-            $percentageValues = [[
-                'label' => '',
-                'value' => '',
-                'attrs' => ['class' => 'empty']
-            ]]            ;
-
-            if ($this->getMarketplaceId() == \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_MOTORS) {
-                $percentageValues[] = [
-                    'label' => '1%',
-                    'value' => 1,
-                ];
-                $percentageValues[] = [
-                    'label' => '5%',
-                    'value' => '5'
-                ];
-            }
-
-            for ($i = 2; $i < 21; $i++) {
-                $percentageValues[] = [
-                    'value' => $i*5,
-                    'label' => $i*5 . '%',
-                ];
-            }
-
-            $style = empty($charityData['percentage']) ? 'style="display: none;"' : '';
-
-            $fieldset->addField(
-                'charity_percentage',
-                self::SELECT,
-                [
-                    'label' => $this->__('Donation Percentage'),
-                    'name' => 'selling_format[charity][percentage][0]',
-                    'class' => 'charity-percentage M2ePro-required-when-visible',
-                    'values' => $percentageValues,
-                    'value' => empty($charityData['percentage']) ?
-                        '' : $charityData['percentage'],
-                    'field_extra_attributes' => 'id="charity_percentage" ' . $style
-                ]
-            );
-
-        } else {
-            $charityBlock =  $this->createBlock('Ebay_Template_SellingFormat_Edit_Form_Charity')->addData([
-                'form_data' => $formData
-            ]);
-
-            $fieldset->addField(
-                'charity_table_container',
-                self::CUSTOM_CONTAINER,
-                [
-                    'text' => $charityBlock->toHtml(),
-                    'css_class' => 'm2epro-fieldset-table'
-                ]
-            );
-        }
+        $fieldset->addField(
+            'charity_table_container',
+            self::CUSTOM_CONTAINER,
+            [
+                'text' => $charityBlock->toHtml(),
+                'css_class' => 'm2epro-fieldset-table'
+            ]
+        );
 
         $fieldset = $form->addFieldset(
             'magento_block_ebay_template_selling_format_edit_form_best_offer',
@@ -1144,14 +1049,16 @@ class Data extends AbstractForm
 
             '% of Price' => $this->__('% of Price'),
             '% of Fixed Price' => $this->__('% of Fixed Price'),
-            'Search for Charity Organization' => $this->__('Search for Charity Organization')
+            'Search for Charity Organization' => $this->__('Search for Charity Organization'),
+            'Wrong value. Lot Size must be from 2 to 100000 Items.' => $this->__(
+                'Wrong value. Lot Size must be from 2 to 100000 Items.'
+            ),
         ]);
 
         $this->js->add("M2ePro.formData.isStpEnabled = Boolean({$this->isStpAvailable()});");
         $this->js->add("M2ePro.formData.isStpAdvancedEnabled = Boolean({$this->isStpAdvancedAvailable()});");
         $this->js->add("M2ePro.formData.isMapEnabled = Boolean({$this->isMapAvailable()});");
 
-        $this->js->add("M2ePro.formData.outOfStockControl = {$formData['out_of_stock_control']};");
         $this->js->add("M2ePro.formData.duration_mode
             = {$this->getHelper('Data')->escapeJs($formData['duration_mode'])};");
         $this->js->add("M2ePro.formData.qty_mode = {$this->getHelper('Data')->escapeJs($formData['qty_mode'])};");
@@ -1164,22 +1071,16 @@ class Data extends AbstractForm
             $this->js->add("M2ePro.formData.currency = '{$this->currency->getCurrency($currency)->getSymbol()}';");
         }
 
-        $charityRenderJs = '';
-
-        if (!$this->getMarketplaceId()) {
-            $charityDictionary = $this->getHelper('Data')->jsonEncode($charityBlock->getCharityDictionary());
-            if (empty($formData['charity'])) {
-
-                $charityRenderJs = <<<JS
+        $charityDictionary = $this->getHelper('Data')->jsonEncode($charityBlock->getCharityDictionary());
+        if (empty($formData['charity'])) {
+            $charityRenderJs = <<<JS
     EbayTemplateSellingFormatObj.charityDictionary = {$charityDictionary};
 JS;
-            } else {
-
-                $charityRenderJs = <<<JS
+        } else {
+            $charityRenderJs = <<<JS
     EbayTemplateSellingFormatObj.charityDictionary = {$charityDictionary};
-    EbayTemplateSellingFormatObj.renderCharities({$formData['charity']});
+    EbayTemplateSellingFormatObj.renderCharities({$this->getHelper('Data')->jsonEncode($formData['charity'])});
 JS;
-            }
         }
 
         $this->js->add(<<<JS
@@ -1268,31 +1169,26 @@ JS
     {
         $marketplace = $this->getHelper('Data\GlobalData')->getValue('ebay_marketplace');
         $store = $this->getHelper('Data\GlobalData')->getValue('ebay_store');
+        /** @var \Ess\M2ePro\Model\Ebay\Template\SellingFormat $template */
         $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_selling_format');
 
         if ($template === null || $template->getId() === null) {
             $templateData = $this->getDefault();
             $templateData['component_mode'] = \Ess\M2ePro\Helper\Component\Ebay::NICK;
-            $usedAttributes = [];
         } else {
             $templateData = $template->getData();
-            $usedAttributes = $template->getUsedAttributes();
         }
 
-        $messagesBlock = $this
-            ->createBlock('Template\Messages')
-            ->getResultBlock(
-                \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT,
-                \Ess\M2ePro\Helper\Component\Ebay::NICK
-            );
+        /** @var \Ess\M2ePro\Block\Adminhtml\Template\SellingFormat\Messages $messagesBlock */
+        $messagesBlock = $this->createBlock('Template_SellingFormat_Messages');
+        $messagesBlock->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
+        $messagesBlock->setTemplateNick(\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT);
 
         $messagesBlock->setData('template_data', $templateData);
-        $messagesBlock->setData('used_attributes', $usedAttributes);
         $messagesBlock->setData('marketplace_id', $marketplace ? $marketplace->getId() : null);
         $messagesBlock->setData('store_id', $store ? $store->getId() : null);
 
         $messages = $messagesBlock->getMessages();
-
         if (empty($messages)) {
             return '';
         }
@@ -1305,13 +1201,7 @@ JS
      **/
     public function getMarketplace()
     {
-        $marketplace = $this->getHelper('Data\GlobalData')->getValue('ebay_marketplace');
-
-        if ($marketplace === null) {
-            return null;
-        }
-
-        return $marketplace;
+        return $this->getHelper('Data\GlobalData')->getValue('ebay_marketplace');
     }
 
     public function getMarketplaceId()

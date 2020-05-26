@@ -99,7 +99,6 @@ define([
                 nick = 'selling_format',
                 storeId = AmazonListingSettingsObj.storeId,
                 marketplaceId = AmazonListingSettingsObj.marketplaceId,
-                checkAttributesAvailability = false,
                 container = 'template_selling_format_messages',
                 callback = function () {
                     var refresh = $(container).down('a.refresh-messages');
@@ -116,7 +115,6 @@ define([
                 '',
                 storeId,
                 marketplaceId,
-                checkAttributesAvailability,
                 container,
                 callback
             );

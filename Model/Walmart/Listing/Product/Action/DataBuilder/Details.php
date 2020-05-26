@@ -17,7 +17,7 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
 {
     //########################################
 
-    public function getRequestData()
+    public function getBuilderData()
     {
         $sellingFormatTemplateSource = $this->getWalmartListingProduct()->getSellingFormatTemplateSource();
 

@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs;
 
 use Ess\M2ePro\Model\Ebay\Template\Synchronization;
+use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
 use Magento\Framework\Message\MessageInterface;
 
 /**
@@ -64,8 +65,8 @@ HTML
                 'label' => $this->__('Relist Action'),
                 'value' => $formData['relist_mode'],
                 'values' => [
-                    Synchronization::RELIST_MODE_NONE => $this->__('Disabled'),
-                    Synchronization::RELIST_MODE_YES => $this->__('Enabled'),
+                    0 => $this->__('Disabled'),
+                    1 => $this->__('Enabled'),
                 ],
                 'tooltip' => $this->__(
                     'Choose whether you want to Relist Items covered by M2E Pro Listings using this
@@ -83,33 +84,12 @@ HTML
                 'label' => $this->__('Relist When Stopped Manually'),
                 'value' => $formData['relist_filter_user_lock'],
                 'values' => [
-                    Synchronization::RELIST_FILTER_USER_LOCK_YES => $this->__('No'),
-                    Synchronization::RELIST_FILTER_USER_LOCK_NONE => $this->__('Yes'),
+                    1 => $this->__('No'),
+                    0 => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
                     'Choose whether you want the Automatic Relist Rules to Relist Items even
                     if they\'ve been Stopped manually.'
-                )
-            ]
-        );
-
-        $fieldset->addField(
-            'relist_send_data',
-            self::SELECT,
-            [
-                'container_id' => 'relist_send_data_tr_container',
-                'name' => 'synchronization[relist_send_data]',
-                'label' => $this->__('Synchronize Data'),
-                'value' => $formData['relist_send_data'],
-                'values' => [
-                    Synchronization::RELIST_SEND_DATA_NONE => $this->__('No'),
-                    Synchronization::RELIST_SEND_DATA_YES => $this->__('Yes'),
-                ],
-                'tooltip' => $this->__(
-                    '<p><strong>No:</strong> Items are Relisted on eBay as per previously Listed Information
-                    and Settings, ignoring any changes that have been made in Magento. (Recommended)</p>
-                    <p><strong>Yes:</strong> Any changes made to Items in Magento will be Reflected
-                    on the eBay Listings after they are Relisted.</p>'
                 )
             ]
         );
@@ -148,8 +128,8 @@ HTML
                 'label' => $this->__('Product Status'),
                 'value' => $formData['relist_status_enabled'],
                 'values' => [
-                    Synchronization::RELIST_STATUS_ENABLED_NONE => $this->__('Any'),
-                    Synchronization::RELIST_STATUS_ENABLED_YES => $this->__('Enabled'),
+                    0 => $this->__('Any'),
+                    1 => $this->__('Enabled'),
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-product-status',
                 'tooltip' => $this->__(
@@ -169,8 +149,8 @@ HTML
                 'label' => $this->__('Stock Availability'),
                 'value' => $formData['relist_is_in_stock'],
                 'values' => [
-                    Synchronization::RELIST_IS_IN_STOCK_NONE => $this->__('Any'),
-                    Synchronization::RELIST_IS_IN_STOCK_YES => $this->__('In Stock'),
+                    0 => $this->__('Any'),
+                    1 => $this->__('In Stock'),
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-stock-availability',
                 'tooltip' => $this->__(
@@ -189,9 +169,9 @@ HTML
                 'label' => $this->__('Magento Quantity'),
                 'value' => $formData['relist_qty_magento'],
                 'values' => [
-                    Synchronization::RELIST_QTY_NONE => $this->__('Any'),
-                    Synchronization::RELIST_QTY_MORE => $this->__('More or Equal'),
-                    Synchronization::RELIST_QTY_BETWEEN => $this->__('Between'),
+                    TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
+                    TemplateSynchronization::QTY_MODE_MORE => $this->__('More or Equal'),
+                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-item-qty',
                 'tooltip' => $this->__(
@@ -238,9 +218,9 @@ HTML
                 'label' => $this->__('Calculated Quantity'),
                 'value' => $formData['relist_qty_calculated'],
                 'values' => [
-                    Synchronization::RELIST_QTY_NONE => $this->__('Any'),
-                    Synchronization::RELIST_QTY_MORE => $this->__('More or Equal'),
-                    Synchronization::RELIST_QTY_BETWEEN => $this->__('Between'),
+                    TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
+                    TemplateSynchronization::QTY_MODE_MORE => $this->__('More or Equal'),
+                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-item-qty',
                 'tooltip' => $this->__(
@@ -315,8 +295,8 @@ HTML
                 'label' => $this->__('Mode'),
                 'value' => $formData['relist_advanced_rules_mode'],
                 'values' => [
-                    Synchronization::ADVANCED_RULES_MODE_NONE => $this->__('Disabled'),
-                    Synchronization::ADVANCED_RULES_MODE_YES  => $this->__('Enabled'),
+                    0 => $this->__('Disabled'),
+                    1  => $this->__('Enabled'),
                 ],
             ]
         );

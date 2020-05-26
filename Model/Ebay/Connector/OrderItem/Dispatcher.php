@@ -13,16 +13,13 @@ namespace Ess\M2ePro\Model\Ebay\Connector\OrderItem;
  */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
-    // M2ePro\TRANSLATIONS
-    // Action was not completed (Item: %item_id%, Transaction: %trn_id%). Reason: %msg%
-
     const ACTION_ADD_DISPUTE   = 1;
     const ACTION_UPDATE_STATUS = 2;
     const ACTION_UPDATE_TRACK  = 3;
 
     protected $ebayFactory;
 
-    // ########################################
+    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -38,7 +35,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         );
     }
 
-    // ########################################
+    //########################################
 
     public function process($action, $items, array $params = [])
     {
@@ -62,7 +59,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return $this->processItems($items, $connector, $params);
     }
 
-    // ########################################
+    //########################################
 
     protected function processItems(array $items, $connectorName, array $params = [])
     {
@@ -98,7 +95,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return true;
     }
 
-    // ########################################
+    //########################################
 
     private function prepareItems($items)
     {
@@ -117,5 +114,5 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return $preparedItems;
     }
 
-    // ########################################
+    //########################################
 }

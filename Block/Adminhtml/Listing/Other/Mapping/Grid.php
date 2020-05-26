@@ -200,7 +200,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnActions($value, $row, $column, $isExport)
     {
         $return = '&nbsp;<a href="javascript:void(0);" ';
-        $return .= 'onclick="$(\'product_id\').setValue(\''.$row->getId().'\'); ';
+        $return .= 'onclick="$(\'mapped_product_id\').setValue(\''.$row->getId().'\'); ';
         $return .= '$(\'sku\').setValue(\'\'); ';
         $return .= '$$(\'.mapping_submit_button\')[0].click(); ">';
         $return .= $this->__('Map To This Product');

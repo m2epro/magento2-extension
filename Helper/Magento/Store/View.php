@@ -121,8 +121,6 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
             $error = $this->getHelper('Module\Translation')->__('Store with %code% already exists.', $code);
             throw new \Ess\M2ePro\Model\Exception($error);
         } catch (\Exception $e) {
-            // M2ePro_TRANSLATIONS
-            // Group with id %group_id% doesn't belongs to website with %site_id%.
             if ($groupId) {
                 if (!$this->getHelper('Magento_Store_Group')->isChildOfWebsite($groupId, $websiteId)) {
                     $error = $this->getHelper('Module\Translation')->__('Group with id %group_id% doesn\'t belong to'.

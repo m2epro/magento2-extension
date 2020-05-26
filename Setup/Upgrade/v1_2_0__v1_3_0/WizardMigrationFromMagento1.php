@@ -14,11 +14,6 @@ class WizardMigrationFromMagento1 extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['wizard'];
-    }
-
     public function execute()
     {
         $this->getConnection()->update(

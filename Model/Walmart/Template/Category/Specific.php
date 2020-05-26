@@ -61,7 +61,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     /**
      * @return \Ess\M2ePro\Model\Walmart\Template\Category
-     * @throws Exception
+     * @throws \Exception
      */
     public function getCategoryTemplate()
     {
@@ -85,7 +85,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     /**
      * @return \Ess\M2ePro\Model\Walmart\Template\Category
-     * @throws Exception
+     * @throws \Exception
      */
     public function getWalmartCategoryTemplate()
     {
@@ -219,30 +219,6 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function isTypeDateTime()
     {
         return $this->getType() == self::TYPE_DATETIME;
-    }
-
-    //########################################
-
-    /**
-     * @return array
-     */
-    public function getTrackingAttributes()
-    {
-        return $this->getUsedAttributes();
-    }
-
-    /**
-     * @return array
-     */
-    public function getUsedAttributes()
-    {
-        $attribute = $this->getCustomAttribute();
-
-        if (empty($attribute)) {
-            return [];
-        }
-
-        return [$attribute];
     }
 
     //########################################

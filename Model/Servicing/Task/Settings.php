@@ -105,8 +105,8 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
                     'check',
                     'state',
                     [
-                                                                    'base_url' => $change['baseurl'].'index.php',
-                                                                    'hostname' => $change['hostname'],
+                        'base_url' => $change['baseurl'].'index.php',
+                        'hostname' => $change['hostname'],
                     ]
                 );
                 $dispatcherObject->process($connectorObj);

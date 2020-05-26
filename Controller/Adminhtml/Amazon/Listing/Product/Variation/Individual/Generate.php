@@ -65,7 +65,7 @@ class Generate extends Main
             }
 
             $variations = $listingProduct->getVariations(true);
-            if (count($variations) <= 0) {
+            if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception(
                     'There are no variations for a variation product.',
                     [

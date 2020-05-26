@@ -500,8 +500,6 @@ HTML;
     public function callbackColumnActions($value, $row, $column, $isExport)
     {
         $assignText = $this->__('Assign');
-        $iconWarningPath = $this->getSkinUrl('M2ePro/images/warning.png');
-        $iconHelpPath = $this->getSkinUrl('M2ePro/images/i_notice.gif');
 
         if (!$this->listingProduct->getChildObject()->getVariationManager()->isVariationProduct()
             || $this->listingProduct->getChildObject()->getVariationManager()->isIndividualType()) {

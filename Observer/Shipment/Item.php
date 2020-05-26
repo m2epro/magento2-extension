@@ -8,32 +8,13 @@
 
 namespace Ess\M2ePro\Observer\Shipment;
 
-/**
- * This event was added for temporary fix in walmart integration,
- *  because sales_order_shipment_save_after providing ShipmentItem before it was saved, so it doesn't have ID.
- * TODO - make all integrations work with this event
- */
 class Item extends \Ess\M2ePro\Observer\AbstractModel
 {
-    protected $messageManager;
-    protected $urlBuilder;
-
     //########################################
 
-    public function __construct(
-        \Magento\Framework\Message\Manager $messageManager,
-        \Magento\Framework\UrlInterface $urlBuilder,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
-    ) {
-        $this->messageManager = $messageManager;
-        $this->urlBuilder = $urlBuilder;
-        parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
-    }
-
-    //########################################
-
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function process()
     {
         if ($this->getHelper('Data\GlobalData')->getValue('skip_shipment_observer')) {
@@ -43,6 +24,16 @@ class Item extends \Ess\M2ePro\Observer\AbstractModel
         /** @var $shipmentItem \Magento\Sales\Model\Order\Shipment\Item */
         $shipmentItem = $this->getEvent()->getShipmentItem();
         $shipment = $shipmentItem->getShipment();
+
+        /**
+         * We can catch two the same events: save of \Magento\Sales\Model\Order\Shipment\Item and
+         * \Magento\Sales\Model\Order\Shipment\Track. So we must skip a duplicated one.
+         */
+        $objectHash = spl_object_hash($shipment->getTracksCollection()->getLastItem());
+        $eventKey = 'skip_' . $shipment->getId() .'##'. $objectHash;
+        if (!$this->getHelper('Data_GlobalData')->getValue($eventKey)) {
+            $this->getHelper('Data_GlobalData')->setValue($eventKey, true);
+        }
 
         $magentoOrderId = $shipment->getOrderId();
 
@@ -61,19 +52,12 @@ class Item extends \Ess\M2ePro\Observer\AbstractModel
             return;
         }
 
-        /**
-         * fix for walmart integration
-         */
-        if ($order->getComponentMode() != \Ess\M2ePro\Helper\Component\Walmart::NICK) {
-            return;
-        }
-
         $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
 
         /** @var $shipmentHandler \Ess\M2ePro\Model\Order\Shipment\Handler */
-        $shipmentHandler = $this->modelFactory->getObject('Order_Shipment_Handler')
-                                              ->factory($order->getComponentMode());
-        $shipmentHandler->handle($order, $shipment);
+        $componentMode = ucfirst($order->getComponentMode());
+        $shipmentHandler = $this->modelFactory->getObject("{$componentMode}_Order_Shipment_Handler");
+        $shipmentHandler->handleItem($order, $shipmentItem);
     }
 
     //########################################

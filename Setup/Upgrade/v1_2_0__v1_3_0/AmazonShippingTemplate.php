@@ -15,11 +15,6 @@ class AmazonShippingTemplate extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['amazon_listing_product', 'amazon_account', 'amazon_template_synchronization', 'listing_product'];
-    }
-
     public function execute()
     {
         $this->getTableModifier('amazon_listing_product')

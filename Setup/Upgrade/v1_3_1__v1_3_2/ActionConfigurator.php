@@ -14,11 +14,6 @@ class ActionConfigurator extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['processing'];
-    }
-
     public function execute()
     {
         $processingTable = $this->getFullTableName('processing');

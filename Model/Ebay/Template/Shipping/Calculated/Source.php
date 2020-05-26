@@ -133,7 +133,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                     $minor = ($minor / pow(10, strlen($minor))) * 16;
                     $minor = ceil($minor);
                     if ($minor == 16) {
-                        $major += 1;
+                        ++$major;
                         $minor = 0;
                     }
                 }
@@ -142,7 +142,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                     $minor = ($minor / pow(10, strlen($minor))) * 1000;
                     $minor = ceil($minor);
                     if ($minor == 1000) {
-                        $major += 1;
+                        ++$major;
                         $minor = 0;
                     }
                 }

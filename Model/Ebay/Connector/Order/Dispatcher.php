@@ -19,7 +19,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     protected $ebayFactory;
 
-    // ########################################
+    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -30,7 +30,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         parent::__construct($helperFactory, $modelFactory);
     }
 
-    // ########################################
+    //########################################
 
     public function process($action, $orders, array $params = [])
     {
@@ -56,7 +56,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                 );
                 break;
 
-            default;
+            default:
                 $result = false;
                 break;
         }
@@ -64,11 +64,11 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return $result;
     }
 
-    // ########################################
+    //########################################
 
     protected function processOrders(array $orders, $action, $connectorName, array $params = [])
     {
-        if (count($orders) == 0) {
+        if (empty($orders)) {
             return false;
         }
 
@@ -102,7 +102,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return true;
     }
 
-    // ########################################
+    //########################################
 
     protected function prepareOrders($orders)
     {
@@ -121,5 +121,5 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return $preparedOrders;
     }
 
-    // ########################################
+    //########################################
 }

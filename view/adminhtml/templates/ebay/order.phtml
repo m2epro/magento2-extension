@@ -524,6 +524,22 @@ echo $block->getChildHtml('item_edit');
 
 <div class="col-m-6">
 
+    <div class="fieldset-wrapper" id="magento_block_ebay_orders_history" collapseable="no">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <strong class="admin__collapsible-title"><span><?php echo $block->__('Custom Notes');?></span></strong>
+            <div class="form-buttons"></div>
+        </div>
+
+        <a name="order_log"></a>
+
+        <div class="fieldset">
+            <?php echo $block->getChildHtml('order_note_grid'); ?>
+            <?php echo $block->getChildHtml('add_note_button'); ?>
+        </div>
+
+    </div>
+
     <?php $checkoutMessage = $block->order->getChildObject()->getBuyerMessage() ?>
 
     <?php if (!empty($checkoutMessage)) : ?>
@@ -547,7 +563,7 @@ echo $block->getChildHtml('item_edit');
     <div class="fieldset-wrapper" id="magento_block_ebay_orders_history" collapseable="no">
 
         <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
-            <strong class="dmin__collapsible-title"><span><?php echo $block->__('Order Log');?></span></strong>
+            <strong class="admin__collapsible-title"><span><?php echo $block->__('Order Log');?></span></strong>
             <div class="form-buttons"></div>
         </div>
 

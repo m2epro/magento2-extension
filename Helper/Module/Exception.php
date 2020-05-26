@@ -157,6 +157,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
         $log->setType($type);
         $log->setDescription($message);
 
+        // @codingStandardsIgnoreLine
         $trace = debug_backtrace();
         $file = isset($trace[1]['file']) ? $trace[1]['file'] : 'not set';
         ;

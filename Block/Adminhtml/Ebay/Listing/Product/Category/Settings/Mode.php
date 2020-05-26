@@ -17,6 +17,11 @@ class Mode extends AbstractContainer
 {
 //    protected $_template = 'Ess_M2ePro::ebay/listing/category/mode.phtml';
 
+    const MODE_SAME     = 'same';
+    const MODE_CATEGORY = 'category';
+    const MODE_MANUALLY = 'manually';
+    const MODE_PRODUCT  = 'product';
+
     //########################################
 
     public function _construct()

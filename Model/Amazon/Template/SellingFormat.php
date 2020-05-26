@@ -75,19 +75,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
     /**
      * @param bool $asObjects
      * @param array $filters
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function getListings($asObjects = false, array $filters = [])
-    {
-        return $this->getRelatedComponentItems('Listing', 'template_selling_format_id', $asObjects, $filters);
-    }
-
-    //########################################
-
-    /**
-     * @param bool $asObjects
-     * @param array $filters
      * @return array|\Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -864,108 +851,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
         }
 
         return false;
-    }
-
-    //########################################
-
-    /**
-     * @return array
-     */
-    public function getTrackingAttributes()
-    {
-        return $this->getUsedAttributes();
-    }
-
-    /**
-     * @return array
-     */
-    public function getUsedAttributes()
-    {
-        $attributes = array_merge(
-            $this->getQtyAttributes(),
-            $this->getRegularPriceAttributes(),
-            $this->getRegularMapPriceAttributes(),
-            $this->getRegularSalePriceAttributes(),
-            $this->getRegularSalePriceStartDateAttributes(),
-            $this->getRegularSalePriceEndDateAttributes(),
-            $this->getBusinessPriceAttributes()
-        );
-
-        $businessDiscounts = $this->getBusinessDiscounts(true);
-        foreach ($businessDiscounts as $businessDiscount) {
-            $attributes = array_merge($attributes, $businessDiscount->getUsedAttributes());
-        }
-
-        return array_unique($attributes);
-    }
-
-    //########################################
-
-    /**
-     * @return array
-     */
-    public function getDataSnapshot()
-    {
-        $data = parent::getDataSnapshot();
-
-        $data['business_discounts'] = $this->getBusinessDiscounts();
-
-        foreach ($data['business_discounts'] as &$businessDiscount) {
-            foreach ($businessDiscount as &$value) {
-                $value !== null && !is_array($value) && $value = (string)$value;
-            }
-        }
-        unset($value);
-
-        return $data;
-    }
-
-    //########################################
-
-    /**
-     * @param bool $asArrays
-     * @param string|array $columns
-     * @param bool $onlyPhysicalUnits
-     * @return array
-     */
-    public function getAffectedListingsProducts($asArrays = true, $columns = '*', $onlyPhysicalUnits = false)
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Collection $listingCollection */
-        $listingCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'Listing'
-        )->getCollection();
-        $listingCollection->addFieldToFilter('template_selling_format_id', $this->getId());
-        $listingCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-        $listingCollection->getSelect()->columns('id');
-
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
-        $listingProductCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'Listing\Product'
-        )->getCollection();
-        $listingProductCollection->addFieldToFilter('listing_id', ['in' => $listingCollection->getSelect()]);
-
-        if ($onlyPhysicalUnits) {
-            $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
-        }
-
-        if (is_array($columns) && !empty($columns)) {
-            $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $listingProductCollection->getSelect()->columns($columns);
-        }
-
-        return $asArrays ? (array)$listingProductCollection->getData() : (array)$listingProductCollection->getItems();
-    }
-
-    public function setSynchStatusNeed($newData, $oldData)
-    {
-        $listingsProducts = $this->getAffectedListingsProducts(true, ['id'], true);
-        if (empty($listingsProducts)) {
-            return;
-        }
-
-        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

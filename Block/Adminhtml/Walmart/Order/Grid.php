@@ -16,7 +16,11 @@ use Ess\M2ePro\Model\Walmart\Listing\Product;
  */
 class Grid extends AbstractGrid
 {
+    /** @var $itemsCollection \Ess\M2ePro\Model\ResourceModel\Order\Item\Collection */
     private $itemsCollection = null;
+
+    /** @var $notesCollection \Ess\M2ePro\Model\ResourceModel\Order\Note\Collection */
+    protected $notesCollection = null;
 
     protected $resourceConnection;
     protected $walmartFactory;
@@ -92,6 +96,10 @@ class Grid extends AbstractGrid
     protected function _afterLoadCollection()
     {
         $this->itemsCollection = $this->walmartFactory->getObject('Order\Item')
+            ->getCollection()
+            ->addFieldToFilter('order_id', ['in' => $this->getCollection()->getColumnValues('id')]);
+
+        $this->notesCollection = $this->activeRecordFactory->getObject('Order\Note')
             ->getCollection()
             ->addFieldToFilter('order_id', ['in' => $this->getCollection()->getColumnValues('id')]);
 
@@ -198,6 +206,12 @@ class Grid extends AbstractGrid
             'url'      => $this->getUrl('*/order/resubmitShippingInfo'),
             'confirm'  => $this->__('Are you sure?')
         ]);
+
+        $this->getMassactionBlock()->addItem('create_order', [
+            'label'    => $this->__('Create Magento Order'),
+            'url'      => $this->getUrl('*/walmart_order/createMagentoOrder'),
+            'confirm'  => $this->__('Are you sure?')
+        ]);
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -216,12 +230,29 @@ class Grid extends AbstractGrid
 
     public function callbackColumnWalmartOrderId($value, $row, $column, $isExport)
     {
-        $orderId = $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('walmart_order_id'));
-        $url = $this->getHelper('Component\Walmart')->getOrderUrl($orderId, $row->getData('marketplace_id'));
+        $returnString = $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('walmart_order_id'));
 
-        return <<<HTML
-<a href="{$url}" target="_blank">{$orderId}</a>
+        /** @var $notes \Ess\M2ePro\Model\Order\Note[] */
+        $notes = $this->notesCollection->getItemsByColumnValue('order_id', $row->getData('id'));
+
+        if ($notes) {
+            $htmlNotesCount = $this->__(
+                'You have a custom note for the order. It can be reviewed on the order detail page.'
+            );
+
+            $returnString .= <<<HTML
+<div class="note_icon admin__field-tooltip">
+    <a class="admin__field-tooltip-note-action" href="javascript://"></a>
+    <div class="admin__field-tooltip-content" style="right: -4.4rem">
+        <div class="ebay-identifiers">
+           {$htmlNotesCount}
+        </div>
+    </div>
+</div>
 HTML;
+        }
+
+        return $returnString;
     }
 
     public function callbackColumnMagentoOrder($value, $row, $column, $isExport)

@@ -31,32 +31,4 @@ class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
     }
 
     //########################################
-
-    public function process()
-    {
-        $this->initOutOfStockControlLogic();
-        parent::process();
-    }
-
-    //########################################
-
-    protected function initOutOfStockControlLogic()
-    {
-        $ebayListingProduct = $this->listingProduct->getChildObject();
-
-        $outOfStockControlCurrentState = $ebayListingProduct->getOutOfStockControl();
-        $outOfStockControlTemplateState = $ebayListingProduct->getEbaySellingFormatTemplate()
-            ->getOutOfStockControl();
-
-        if (!$outOfStockControlCurrentState && $outOfStockControlTemplateState) {
-            $outOfStockControlCurrentState = true;
-        }
-
-        $this->params['out_of_stock_control_current_state'] = $outOfStockControlCurrentState;
-        $this->params['out_of_stock_control_result'] = $outOfStockControlCurrentState
-            || $ebayListingProduct->getEbayAccount()
-                ->getOutOfStockControl();
-    }
-
-    //########################################
 }

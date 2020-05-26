@@ -72,6 +72,8 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $this->setRuleData('ebay_rule_view_listing');
         // ---------------------------------------
 
+        $this->setPageHelpLink('x/7gEtAQ');
+
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('M2E Pro Listing "%listing_title%"', $listing->getTitle())
         );

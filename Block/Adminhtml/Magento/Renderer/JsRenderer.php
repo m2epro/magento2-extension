@@ -31,8 +31,8 @@ class JsRenderer extends AbstractRenderer
         $parameters = array_keys($dependencies);
         $modules = array_values($dependencies);
 
-        $preparedParameters = implode($parameters, ',');
-        $preparedModules = implode($modules, '","');
+        $preparedParameters = implode(',', $parameters);
+        $preparedModules = implode('","', $modules);
 
         $this->js[] = /** @lang JavaScript */ <<<JS
 require(["{$preparedModules}"], function({$preparedParameters}){
@@ -69,6 +69,6 @@ JS;
             return '';
         }
 
-        return implode($this->js, ';');
+        return implode(';', $this->js);
     }
 }

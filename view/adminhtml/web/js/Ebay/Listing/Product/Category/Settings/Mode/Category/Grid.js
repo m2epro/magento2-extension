@@ -85,30 +85,27 @@ define([
 
         // ---------------------------------------
 
-        validate: function () {
-            MagentoMessageObj.clear();
-
-            new Ajax.Request(M2ePro.url.get('ebay_listing_product_category_settings/stepTwoModeCategoryValidate'), {
-                method: 'post',
-                onSuccess: function (transport) {
-
-                    var response = transport.responseText.evalJSON();
-
-                    if (response.validation == true) {
-                        setLocation(M2ePro.url.get('ebay_listing_product_category_settings'));
-                    } else {
-                        MagentoMessageObj.addErrorMessage(response.message);
-                    }
-
-                }.bind(this)
-            });
+        confirm: function (config) {
+            if (config.actions && config.actions.confirm) {
+                config.actions.confirm();
+            }
         },
 
         // ---------------------------------------
 
-        confirm: function (config) {
-            if (config.actions && config.actions.confirm) {
-                config.actions.confirm();
+        validateCategories: function (isAlLeasOneCategorySelected, showErrorMessage) {
+
+            var button = $('ebay_listing_category_continue_btn');
+            if (parseInt(isAlLeasOneCategorySelected)) {
+                button.addClassName('disabled');
+                button.disable();
+                if (showErrorMessage) {
+                    MagentoMessageObj.addErrorMessage(M2ePro.translator.translate('select_relevant_category'));
+                }
+            } else {
+                button.removeClassName('disabled');
+                button.enable();
+                MagentoMessageObj.clear();
             }
         }
 

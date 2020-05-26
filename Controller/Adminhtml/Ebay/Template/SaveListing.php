@@ -28,17 +28,93 @@ class SaveListing extends Template
 
         $id = $this->getRequest()->getParam('id');
         $listing = $this->ebayFactory->getObjectLoaded('Listing', $id);
-        ;
 
         // ---------------------------------------
-        $oldData = $listing->getChildObject()->getDataSnapshot();
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\SnapshotBuilder $snapshotBuilder */
+        $snapshotBuilder = $this->modelFactory->getObject('Ebay_Listing_SnapshotBuilder');
+        $snapshotBuilder->setModel($listing);
+
+        $oldData = $snapshotBuilder->getSnapshot();
         // ---------------------------------------
         $data = $this->getPostedTemplatesData();
         $listing->getChildObject()->addData($data);
         $listing->save();
         // ---------------------------------------
-        $newData = $listing->getChildObject()->getDataSnapshot();
-        $listing->getChildObject()->setSynchStatusNeed($newData, $oldData);
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\SnapshotBuilder $snapshotBuilder */
+        $snapshotBuilder = $this->modelFactory->getObject('Ebay_Listing_SnapshotBuilder');
+        $snapshotBuilder->setModel($listing);
+
+        $newData = $snapshotBuilder->getSnapshot();
+
+        $templateManager = $this->templateManager;
+
+        $newTemplates = $templateManager->getTemplatesFromData($newData);
+        $oldTemplates = $templateManager->getTemplatesFromData($oldData);
+
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\AffectedListingsProducts $affectedListingsProducts */
+        $affectedListingsProducts = $this->modelFactory->getObject('Ebay_Listing_AffectedListingsProducts');
+        $affectedListingsProducts->setModel($listing);
+
+        foreach ($templateManager->getAllTemplates() as $template) {
+            $templateManager->setTemplate($template);
+
+            /** @var \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel $snapshotBuilder */
+            if ($templateManager->isHorizontalTemplate()) {
+                $snapshotBuilder = $this->modelFactory->getObject(
+                    'Ebay_'.$templateManager->getTemplateModelName().'_SnapshotBuilder'
+                );
+            } else {
+                $snapshotBuilder = $this->modelFactory->getObject(
+                    $templateManager->getTemplateModelName().'_SnapshotBuilder'
+                );
+            }
+
+            $snapshotBuilder->setModel($newTemplates[$template]);
+
+            $newTemplateData = $snapshotBuilder->getSnapshot();
+
+            /** @var \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel $snapshotBuilder */
+            if ($templateManager->isHorizontalTemplate()) {
+                $snapshotBuilder = $this->modelFactory->getObject(
+                    'Ebay_'.$templateManager->getTemplateModelName().'_SnapshotBuilder'
+                );
+            } else {
+                $snapshotBuilder = $this->modelFactory->getObject(
+                    $templateManager->getTemplateModelName().'_SnapshotBuilder'
+                );
+            }
+
+            $snapshotBuilder->setModel($oldTemplates[$template]);
+
+            $oldTemplateData = $snapshotBuilder->getSnapshot();
+
+            /** @var \Ess\M2ePro\Model\Template\Diff\AbstractModel $diff */
+            if ($templateManager->isHorizontalTemplate()) {
+                $diff = $this->modelFactory->getObject('Ebay_'.$templateManager->getTemplateModelName().'_Diff');
+            } else {
+                $diff = $this->modelFactory->getObject($templateManager->getTemplateModelName().'_Diff');
+            }
+
+            $diff->setNewSnapshot($newTemplateData);
+            $diff->setOldSnapshot($oldTemplateData);
+
+            /** @var \Ess\M2ePro\Model\Template\ChangeProcessor\AbstractModel $changeProcessor */
+            if ($templateManager->isHorizontalTemplate()) {
+                $changeProcessor = $this->modelFactory->getObject(
+                    'Ebay_'.$templateManager->getTemplateModelName().'_ChangeProcessor'
+                );
+            } else {
+                $changeProcessor = $this->modelFactory->getObject(
+                    $templateManager->getTemplateModelName().'_ChangeProcessor'
+                );
+            }
+
+            $changeProcessor->process(
+                $diff,
+                $affectedListingsProducts->getObjectsData(['id', 'status'], ['template' => $template])
+            );
+        }
+
         // ---------------------------------------
 
         $this->messageManager->addSuccess($this->__('The Listing was successfully saved.'));
@@ -50,9 +126,7 @@ class SaveListing extends Template
             ]
         ];
 
-        $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], $extendedParams));
-
-        return $this->getResult();
+        return $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], $extendedParams));
     }
 
     //########################################

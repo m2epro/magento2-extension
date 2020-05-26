@@ -25,10 +25,6 @@ class Data extends AbstractBlock
 .field-advanced_filter ul.rule-param-children {
     margin-top: 1em;
 }
-.field-advanced_filter .rule-param {
-    vertical-align: top;
-    display: inline-block;
-}
 .field-advanced_filter .rule-param .label {
     font-size: 14px;
     font-weight: 600;

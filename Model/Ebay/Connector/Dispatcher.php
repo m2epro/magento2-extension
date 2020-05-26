@@ -41,25 +41,26 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
         $className = $this->nameBuilder->buildClassName($classParts);
 
-        $connectorObjectData = ['params' => $params];
         if (is_int($marketplace) || is_string($marketplace)) {
-            $connectorObjectData['marketplace'] = $this->ebayFactory->getCachedObjectLoaded(
+            $marketplace = $this->ebayFactory->getCachedObjectLoaded(
                 'Marketplace',
                 (int)$marketplace
             );
         }
 
-        if ($account instanceof \Ess\M2ePro\Model\Account) {
-            $connectorObjectData['account'] = $account;
-        } elseif (is_int($account) || is_string($account)) {
-            $connectorObjectData['account'] = $this->ebayFactory->getCachedObjectLoaded(
+        if (is_int($account) || is_string($account)) {
+            $account = $this->ebayFactory->getCachedObjectLoaded(
                 'Account',
                 (int)$account
             );
         }
 
         /** @var \Ess\M2ePro\Model\Connector\Command\AbstractModel $connectorObject */
-        $connectorObject = $this->modelFactory->getObject($className, $connectorObjectData);
+        $connectorObject = $this->modelFactory->getObject($className, [
+            'params'      => $params,
+            'marketplace' => $marketplace,
+            'account'     => $account
+        ]);
         $connectorObject->setProtocol($this->getProtocol());
 
         return $connectorObject;
@@ -67,25 +68,20 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     public function getCustomConnector($modelName, array $params = [], $marketplace = null, $account = null)
     {
-        $connectorObjectData = ['params' => $params];
         if (is_int($marketplace) || is_string($marketplace)) {
-            $connectorObjectData['marketplace'] = $this->ebayFactory->getCachedObjectLoaded(
-                'Marketplace',
-                (int)$marketplace
-            );
+            $marketplace = $this->ebayFactory->getCachedObjectLoaded('Marketplace', (int)$marketplace);
         }
 
-        if ($account instanceof \Ess\M2ePro\Model\Account) {
-            $connectorObjectData['account'] = $account;
-        } elseif (is_int($account) || is_string($account)) {
-            $connectorObjectData['account'] = $this->ebayFactory->getCachedObjectLoaded(
-                'Account',
-                (int)$account
-            );
+        if (is_int($account) || is_string($account)) {
+            $account = $this->ebayFactory->getCachedObjectLoaded('Account', (int)$account);
         }
 
         /** @var \Ess\M2ePro\Model\Connector\Command\AbstractModel $connectorObject */
-        $connectorObject = $this->modelFactory->getObject($modelName, $connectorObjectData);
+        $connectorObject = $this->modelFactory->getObject($modelName, [
+            'params'      => $params,
+            'marketplace' => $marketplace,
+            'account'     => $account
+        ]);
         $connectorObject->setProtocol($this->getProtocol());
 
         return $connectorObject;

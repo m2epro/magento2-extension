@@ -24,10 +24,10 @@ class ListingOther extends AbstractForm
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
 
-        $generalAttributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
+        $allAttributes = $magentoAttributeHelper->getAll();
 
         $attributes = $magentoAttributeHelper->filterByInputTypes(
-            $generalAttributes,
+            $allAttributes,
             [
                 'text', 'textarea', 'select'
             ]
@@ -43,23 +43,12 @@ class ListingOther extends AbstractForm
             );
         }
 
-        if (isset($formData['other_listings_move_settings'])) {
-            $formData['other_listings_move_settings'] = (array)$this->getHelper('Data')->jsonDecode(
-                $formData['other_listings_move_settings']
-            );
-            if (isset($formData['other_listings_move_settings']['synch'])) {
-                $formData['other_listings_move_synch'] = $formData['other_listings_move_settings']['synch'];
-            }
-        }
-
         $defaults = [
             'related_store_id' => 0,
 
-            'other_listings_synchronization' => Account::OTHER_LISTINGS_SYNCHRONIZATION_YES,
-            'other_listings_mapping_mode' => Account::OTHER_LISTINGS_MAPPING_MODE_YES,
-            'other_listings_mapping_settings' => [],
-            'other_listings_move_mode' => Account::OTHER_LISTINGS_MOVE_TO_LISTINGS_DISABLED,
-            'other_listings_move_synch' => Account::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_NONE
+            'other_listings_synchronization' => 1,
+            'other_listings_mapping_mode' => 1,
+            'other_listings_mapping_settings' => []
         ];
 
         $formData = array_merge($defaults, $formData);
@@ -97,8 +86,8 @@ HTML
                 'name' => 'other_listings_synchronization',
                 'label' => $this->__('Import 3rd Party Listings'),
                 'values' => [
-                    Account::OTHER_LISTINGS_SYNCHRONIZATION_YES => $this->__('Yes'),
-                    Account::OTHER_LISTINGS_SYNCHRONIZATION_NO => $this->__('No'),
+                    1 => $this->__('Yes'),
+                    0 => $this->__('No'),
                 ],
                 'value' => $formData['other_listings_synchronization'],
                 'tooltip' => $this->__('Allows importing 3rd Party Listings.')
@@ -128,8 +117,8 @@ HTML
                 'class' => 'M2ePro-require-select-attribute',
                 'label' => $this->__('Product Mapping'),
                 'values' => [
-                    Account::OTHER_LISTINGS_MAPPING_MODE_YES => $this->__('Yes'),
-                    Account::OTHER_LISTINGS_MAPPING_MODE_NO => $this->__('No'),
+                    1 => $this->__('Yes'),
+                    0 => $this->__('No'),
                 ],
                 'value' => $formData['other_listings_mapping_mode'],
                 'tooltip' => $this->__(
@@ -342,54 +331,6 @@ HTML
             [
                 'name' => 'mapping_title_attribute',
                 'value' => isset($mappingSettings['title']['attribute']) ? $mappingSettings['title']['attribute'] : '',
-            ]
-        );
-
-        $fieldset = $form->addFieldset(
-            'magento_block_amazon_accounts_other_listings_move_mode',
-            [
-                'legend' => $this->__('Auto Moving Mapped Amazon Items To M2E Pro Listings'),
-                'collapsable' => false
-            ]
-        );
-
-        $fieldset->addField(
-            'other_listings_move_mode',
-            'select',
-            [
-                'name' => 'other_listings_move_mode',
-                'label' => $this->__('Move Mapped Amazon Items'),
-                'values' => [
-                    Account::OTHER_LISTINGS_MOVE_TO_LISTINGS_ENABLED => $this->__('Yes'),
-                    Account::OTHER_LISTINGS_MOVE_TO_LISTINGS_DISABLED => $this->__('No'),
-                ],
-                'value' => $formData['other_listings_move_mode'],
-                'tooltip' => $this->__(
-                    '<p>Enable this option if you would like Amazon Items which have already been Mapped to
-                    Magento Products to be automatically Moved from the 3rd Party Listings to M2E Pro
-                    Listings for further management.</p><br>
-                    <p><strong>Note:</strong> Auto Map and Move Actions are performed only during the
-                    first 3rd Party Listing Synchronization. Afterwards, it can be performed manually on
-                    the 3rd Party Listings Page.</p>'
-                )
-            ]
-        );
-
-        $fieldset->addField(
-            'other_listings_move_synch',
-            'select',
-            [
-                'container_id' => 'other_listings_move_synch_tr',
-                'name' => 'other_listings_move_synch',
-                'label' => $this->__('Immediate Synchronization'),
-                'values' => [
-                    Account::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_NONE => $this->__('None'),
-                    Account::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_ALL => $this->__('Price and QTY'),
-                    Account::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_PRICE => $this->__('Price Only'),
-                    Account::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_QTY => $this->__('QTY Only'),
-                ],
-                'value' => $formData['other_listings_move_synch'],
-                'tooltip' => $this->__('Updates Price and / or Quantity of Amazon Listing with Magento values.')
             ]
         );
 

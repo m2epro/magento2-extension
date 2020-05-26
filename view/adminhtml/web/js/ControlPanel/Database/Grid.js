@@ -7,6 +7,7 @@ define([
     window.ControlPanelDatabaseGrid = Class.create(Grid, {
 
         mergeModeCookieKey: null,
+        mergeModeCookieTime: 31536000e3, // 1 year in milliseconds
 
         // ---------------------------------------
 
@@ -39,7 +40,7 @@ define([
 
         setMergeMode: function(value)
         {
-            setCookie(this.mergeModeCookieKey, value, 3*365, '/');
+            setCookie(this.mergeModeCookieKey, value, this.mergeModeCookieTime, '/');
         },
 
         mergeParentTable: function(component)

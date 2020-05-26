@@ -78,7 +78,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
                 'ean'                          => new \Zend_Db_Expr('NULL'),
                 'isbn'                         => new \Zend_Db_Expr('NULL'),
                 'wpid'                         => 'second_table.wpid',
-                'channel_url'                  => 'second_table.channel_url',
                 'item_id'                      => 'second_table.item_id',
                 'online_title'                 => new \Zend_Db_Expr('NULL'),
                 'online_qty'                   => 'second_table.online_qty',

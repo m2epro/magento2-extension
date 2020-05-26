@@ -378,7 +378,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 
         $select = $connection->select();
         $select->from(['pl' => $table], ['object_id'])
-            ->where('model_name = "Listing\Product"')
+            ->where('model_name = "Listing_Product"')
             ->where('object_id IN (?)', $productsIds)
             ->where('tag = "in_action"');
 

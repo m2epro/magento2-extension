@@ -22,17 +22,21 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     private $childListingsProducts = null;
 
     protected $walmartFactory;
+    protected $activeRecordFactory;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
-        $this->walmartFactory = $walmartFactory;
         parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->walmartFactory = $walmartFactory;
+        $this->activeRecordFactory = $activeRecordFactory;
     }
 
     //########################################
@@ -631,6 +635,19 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
         /** @var \Ess\M2ePro\Model\Listing\Product $childListingProduct */
         $childListingProduct = $this->walmartFactory->getObject('Listing\Product')->setData($data);
         $childListingProduct->save();
+
+        $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
+        $instruction->setData(
+            [
+                'listing_product_id' => $childListingProduct->getId(),
+                'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                'type'               => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_ADDED,
+                'initiator'          => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_ADDING_PRODUCT,
+                'priority'           => 70,
+
+            ]
+        );
+        $instruction->save();
 
         if ($this->isCacheEnabled()) {
             $this->childListingsProducts[$childListingProduct->getId()] = $childListingProduct;

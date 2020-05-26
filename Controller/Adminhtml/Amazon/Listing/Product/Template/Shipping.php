@@ -30,7 +30,7 @@ abstract class Shipping extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
 
     //########################################
 
-    protected function setShippingTemplateForProducts($productsIds, $templateId, $shippingMode)
+    protected function setShippingTemplateForProducts($productsIds, $templateId)
     {
         if (empty($productsIds)) {
             return;
@@ -46,43 +46,76 @@ abstract class Shipping extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
 
         /** @var \Magento\Framework\DB\Transaction $transaction */
         $transaction = $this->transactionFactory->create();
-        $oldSnapshots = [];
+        $oldTemplateIds = [];
 
         try {
+            /**@var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             foreach ($collection->getItems() as $listingProduct) {
-                /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-
-                $oldSnapshots[$listingProduct->getId()] = array_merge(
-                    $listingProduct->getDataSnapshot(),
-                    $listingProduct->getChildObject()->getDataSnapshot()
-                );
-
-                $field = $shippingMode == \Ess\M2ePro\Model\Amazon\Account::SHIPPING_MODE_OVERRIDE
-                    ? 'template_shipping_override_id'
-                    : 'template_shipping_template_id';
-
-                $listingProduct->getChildObject()->setData($field, $templateId);
+                $oldTemplateIds[$listingProduct->getId()] = $listingProduct->getChildObject()
+                    ->getData('template_shipping_id');
+                $listingProduct->getChildObject()->setData('template_shipping_id', $templateId);
                 $transaction->addObject($listingProduct);
             }
 
             $transaction->save();
         } catch (\Exception $e) {
-            $oldSnapshots = false;
+            $oldTemplateIds = false;
+            $transaction->rollback();
         }
 
-        if (!$oldSnapshots) {
+        if (!$oldTemplateIds) {
             return;
         }
 
-        foreach ($collection->getItems() as $listingProduct) {
-            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Shipping $newTemplate */
+        $newTemplate = $this->activeRecordFactory->getObjectLoaded(
+            'Amazon_Template_Shipping',
+            $templateId,
+            null,
+            false
+        );
 
-            $listingProduct->getChildObject()->setSynchStatusNeed(
-                array_merge(
-                    $listingProduct->getDataSnapshot(),
-                    $listingProduct->getChildObject()->getDataSnapshot()
-                ),
-                $oldSnapshots[$listingProduct->getId()]
+        if ($newTemplate !== null && $newTemplate->getId()) {
+            /** @var \Ess\M2ePro\Model\Amazon\Template\Shipping\SnapshotBuilder $snapshotBuilder */
+            $snapshotBuilder = $this->modelFactory->getObject('Amazon_Template_Shipping_SnapshotBuilder');
+            $snapshotBuilder->setModel($newTemplate);
+            $newSnapshot = $snapshotBuilder->getSnapshot();
+        } else {
+            $newSnapshot = [];
+        }
+
+        /**@var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+        foreach ($collection->getItems() as $listingProduct) {
+            /** @var \Ess\M2ePro\Model\Amazon\Template\Shipping $oldTemplate */
+            $oldTemplate = $this->activeRecordFactory->getObjectLoaded(
+                'Amazon_Template_Shipping',
+                $oldTemplateIds[$listingProduct->getId()],
+                null,
+                false
+            );
+
+            if ($oldTemplate !== null && $oldTemplate->getId()) {
+                $snapshotBuilder = $this->modelFactory->getObject('Amazon_Template_Shipping_SnapshotBuilder');
+                $snapshotBuilder->setModel($oldTemplate);
+                $oldSnapshot = $snapshotBuilder->getSnapshot();
+            } else {
+                $oldSnapshot = [];
+            }
+
+            if (empty($newSnapshot) && empty($oldSnapshot)) {
+                continue;
+            }
+
+            /** @var \Ess\M2ePro\Model\Amazon\Template\Shipping\Diff $diff */
+            $diff = $this->modelFactory->getObject('Amazon_Template_Shipping_Diff');
+            $diff->setOldSnapshot($oldSnapshot);
+            $diff->setNewSnapshot($newSnapshot);
+
+            /** @var \Ess\M2ePro\Model\Amazon\Template\Shipping\ChangeProcessor $changeProcessor */
+            $changeProcessor = $this->modelFactory->getObject('Amazon_Template_Shipping_ChangeProcessor');
+            $changeProcessor->process(
+                $diff,
+                [['id' => $listingProduct->getId(), 'status' => $listingProduct->getStatus()]]
             );
         }
     }

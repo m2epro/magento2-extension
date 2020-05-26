@@ -18,7 +18,7 @@ class Promotions extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBu
     /**
      * @return array
      */
-    public function getRequestData()
+    public function getBuilderData()
     {
         $data = [];
 

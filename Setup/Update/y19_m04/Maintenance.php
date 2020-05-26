@@ -14,11 +14,6 @@ use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
  */
 class Maintenance extends AbstractFeature
 {
-    public function getBackupTables()
-    {
-        return ['synchronization_config'];
-    }
-
     public function execute()
     {
         $select = $this->getConnection()

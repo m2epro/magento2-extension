@@ -15,8 +15,8 @@ class RunStopProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Ac
 {
     public function execute()
     {
-        $this->setJsonContent($this->processConnector(\Ess\M2ePro\Model\Listing\Product::ACTION_STOP));
-
-        return $this->getResult();
+        return $this->scheduleAction(
+            \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+        );
     }
 }

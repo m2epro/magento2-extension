@@ -66,12 +66,12 @@ class Order extends AbstractForm
         $defaults = [
             'magento_orders_settings' => [
                 'listing' => [
-                    'mode' => Account::MAGENTO_ORDERS_LISTINGS_MODE_YES,
+                    'mode' => 1,
                     'store_mode' => Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
                     'store_id' => null
                 ],
                 'listing_other' => [
-                    'mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES,
+                    'mode' => 1,
                     'product_mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
                     'store_id' => $this->getHelper('Magento\Store')->getDefaultStoreId(),
@@ -79,7 +79,6 @@ class Order extends AbstractForm
                 'number' => [
                     'source' => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
                     'prefix' => [
-                        'mode'   => Account::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_NO,
                         'prefix' => '',
                     ],
                 ],
@@ -88,7 +87,7 @@ class Order extends AbstractForm
                     'id' => null,
                     'website_id' => null,
                     'group_id' => null,
-//                'subscription_mode' => Account::MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_NO,
+//                'subscription_mode' => 0,
                     'notifications' => [
 //                    'customer_created' => false,
                         'invoice_created' => false,
@@ -97,7 +96,6 @@ class Order extends AbstractForm
                 ],
                 'creation' => [
                     'mode' => Account::MAGENTO_ORDERS_CREATE_CHECKOUT_AND_PAID,
-                    'reservation_days' => 0
                 ],
                 'tax' => [
                     'mode' => Account::MAGENTO_ORDERS_TAX_MODE_MIXED
@@ -116,8 +114,8 @@ class Order extends AbstractForm
                 'qty_reservation' => [
                     'days' => 1
                 ],
-                'invoice_mode' => Account::MAGENTO_ORDERS_INVOICE_MODE_YES,
-                'shipment_mode' => Account::MAGENTO_ORDERS_SHIPMENT_MODE_YES
+                'invoice_mode' => 1,
+                'shipment_mode' => 1
             ]
         ];
 
@@ -161,8 +159,8 @@ HTML
                 'name' => 'magento_orders_settings[listing][mode]',
                 'label' => $this->__('Create Order in Magento'),
                 'values' => [
-                    Account::MAGENTO_ORDERS_LISTINGS_MODE_YES => $this->__('Yes'),
-                    Account::MAGENTO_ORDERS_LISTINGS_MODE_NO => $this->__('No'),
+                    1 => $this->__('Yes'),
+                    0 => $this->__('No'),
                 ],
                 'value' => $formData['magento_orders_settings']['listing']['mode'],
                 'tooltip' => $this->__(
@@ -221,8 +219,8 @@ HTML
                 'name' => 'magento_orders_settings[listing_other][mode]',
                 'label' => $this->__('Create Order in Magento'),
                 'values' => [
-                    Account::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_NO => $this->__('No'),
-                    Account::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES => $this->__('Yes'),
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
                 ],
                 'value' => $formData['magento_orders_settings']['listing_other']['mode'],
                 'tooltip' => $this->__(
@@ -318,21 +316,6 @@ HTML
         );
 
         $fieldset->addField(
-            'magento_orders_number_prefix_mode',
-            'select',
-            [
-                'name' => 'magento_orders_settings[number][prefix][mode]',
-                'label' => $this->__('Use Prefix'),
-                'values' => [
-                    Account::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_NO => $this->__('No'),
-                    Account::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_YES => $this->__('Yes'),
-                ],
-                'value' => $formData['magento_orders_settings']['number']['prefix']['mode'],
-                'tooltip' => $this->__('Choose to set prefix before Magento Order number.')
-            ]
-        );
-
-        $fieldset->addField(
             'magento_orders_number_prefix_prefix',
             'text',
             [
@@ -340,7 +323,6 @@ HTML
                 'name' => 'magento_orders_settings[number][prefix][prefix]',
                 'label' => $this->__('Prefix'),
                 'value' => $formData['magento_orders_settings']['number']['prefix']['prefix'],
-                'required' => true,
                 'maxlength' => 5
             ]
         );
@@ -510,42 +492,12 @@ HTML
                 'name' => 'magento_orders_settings[creation][mode]',
                 'label' => $this->__('Create Magento Order When'),
                 'values' => [
-                    Account::MAGENTO_ORDERS_CREATE_IMMEDIATELY => $this->__('Immediately'),
                     Account::MAGENTO_ORDERS_CREATE_CHECKOUT => $this->__('Checkout Is Completed'),
-                    Account::MAGENTO_ORDERS_CREATE_PAID => $this->__('Payment Is Received'),
-                    Account::MAGENTO_ORDERS_CREATE_CHECKOUT_AND_PAID => $this->__(
-                        'Checkout Is Completed & Payment Received'
-                    ),
+                    Account::MAGENTO_ORDERS_CREATE_CHECKOUT_AND_PAID => $this->__('Payment Is Received'),
                 ],
                 'value' => $formData['magento_orders_settings']['creation']['mode'],
                 'tooltip' => $this->__(
-                    'Choose the stage of the eBay Order process at which the Magento Order should be created.
-                     You can also choose for how long to reserve Stock as soon as an eBay Order is received,
-                     to ensure you can fulfil the eBay Order in case there is a delay between the Order being made
-                     and the Magento Order being created.'
-                )
-            ]
-        );
-
-        $values = [
-            0 => $this->__('Never')
-        ];
-        for ($day = 7; $day <= 10; $day++) {
-            $values[$day] = $this->__('In %d% days', $day);
-        }
-
-        $fieldset->addField(
-            'magento_orders_creation_reservation_days',
-            'select',
-            [
-                'container_id' => 'magento_orders_creation_reservation_days_container',
-                'name' => 'magento_orders_settings[creation][reservation_days]',
-                'label' => $this->__('Automatic Cancellation'),
-                'values' => $values,
-                'value' => $formData['magento_orders_settings']['creation']['reservation_days'],
-                'tooltip' => $this->__(
-                    'Magento Orders, which were not paid in a definite time interval,
-                    will be cancelled. Unpaid Item Process will be launched for such Orders on eBay.'
+                    'Choose at which stage of eBay Order processing a Magento Order should be created.'
                 )
             ]
         );
@@ -569,8 +521,8 @@ HTML
                 'values' => $values,
                 'value' => $formData['magento_orders_settings']['qty_reservation']['days'],
                 'tooltip' => $this->__(
-                    'Choose how long to set Stock aside after an eBay Order is made,
-                    to allow time for the eBay process to reach the point at which a Magento Order is created.'
+                    'Choose for how long M2E Pro should reserve Magento Product quantity per eBay Order until 
+                    Magento Order is created.'
                 )
             ]
         );
@@ -647,8 +599,8 @@ HTML
             $formData['magento_orders_settings']['status_mapping']['shipped']
                 = Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED;
 
-            $formData['magento_orders_settings']['invoice_mode'] = Account::MAGENTO_ORDERS_INVOICE_MODE_YES;
-            $formData['magento_orders_settings']['shipment_mode'] = Account::MAGENTO_ORDERS_SHIPMENT_MODE_YES;
+            $formData['magento_orders_settings']['invoice_mode'] = 1;
+            $formData['magento_orders_settings']['shipment_mode'] = 1;
         }
 
         $statusList = $this->orderConfig->getStatuses();
@@ -668,8 +620,7 @@ HTML
         $invoiceModeDisabled = $isDisabledStatus ? 'disabled="disabled"' : '';
         $invoiceModeChecked = $formData['magento_orders_settings']['status_mapping']['mode']
                 == Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT
-        || $formData['magento_orders_settings']['invoice_mode'] == Account::MAGENTO_ORDERS_INVOICE_MODE_YES
-            ? 'checked="checked"' : '';
+        || $formData['magento_orders_settings']['invoice_mode'] == 1 ? 'checked="checked"' : '';
 
         $fieldset->addField(
             'magento_orders_status_mapping_paid',
@@ -693,8 +644,7 @@ HTML
         $shipmentModeDisabled = $isDisabledStatus ? 'disabled="disabled"' : '';
         $shipmentModeChecked = $formData['magento_orders_settings']['status_mapping']['mode']
                 == Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT
-        || $formData['magento_orders_settings']['shipment_mode'] == Account::MAGENTO_ORDERS_SHIPMENT_MODE_YES
-            ? 'checked="checked"' : '';
+        || $formData['magento_orders_settings']['shipment_mode'] == 1 ? 'checked="checked"' : '';
 
         $fieldset->addField(
             'magento_orders_status_mapping_shipped',

@@ -86,7 +86,7 @@ class View extends AbstractContainer
             ]
         );
         $this->addButton('view_log', [
-            'label'   => $this->__('View Log'),
+            'label'   => $this->__('Logs & Events'),
             'onclick' => 'window.open(\'' . $url . '\',\'_blank\')',
         ]);
         // ---------------------------------------
@@ -186,38 +186,15 @@ class View extends AbstractContainer
             'You must select at least 1 Category.' => $this->__('You must select at least 1 Category.'),
             'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
             'Compatibility Attribute' => $this->__('Compatibility Attribute'),
-            'Sell on Another Marketplace' => $this->__('Sell on Another Marketplace'),
             'Product' => $this->__('Product'),
-            'Translation Service' => $this->__('Translation Service'),
             'You must select at least 1 Listing.' => $this->__('You must select at least 1 Listing.'),
-            'Data migration.' => $this->__('Data migration...'),
-            'Creating Policies in process. Please wait...' =>
-                $this->__('Creating Policies in process. Please wait...'),
-            'Creating Translation Account in process. Please wait...' =>
-                $this->__('Creating Translation Account in process. Please wait...'),
             'Creating Listing in process. Please wait...' =>
                 $this->__('Creating Listing in process. Please wait...'),
             'Adding Products in process. Please wait...' =>
                 $this->__('Adding Products in process. Please wait...'),
-            'Products failed to add' => $this->__('Failed Products'),
-            'Migration success.' => $this->__('The Products have been successfully added into Destination Listing.'),
-            'Migration error.' => $this->__('The Products have not been added into Destination Listing'
-                .' because Products with the same Magento Product IDs already exist there.'),
             'Some Products Categories Settings are not set or Attributes for Title or Description are empty.' =>
                 $this->__('Some Products Categories Settings are not set'
                     .' or Attributes for Title or Description are empty.'),
-            'Another Synchronization Is Already Running.' => $this->__('Another Synchronization Is Already Running.'),
-            'Getting information. Please wait ...' => $this->__('Getting information. Please wait ...'),
-            'Preparing to start. Please wait ...' => $this->__('Preparing to start. Please wait ...'),
-            'Synchronization has successfully ended.' => $this->__('Synchronization has successfully ended.'),
-            'Synchronization ended with warnings. <a target="_blank" href="%url%">View Log</a> for details.' =>
-                $this->__(
-                    'Synchronization ended with warnings. <a target="_blank" href="%url%">View Log</a> for details.'
-                ),
-            'Synchronization ended with errors. <a target="_blank" href="%url%">View Log</a> for details.' =>
-                $this->__(
-                    'Synchronization ended with errors. <a target="_blank" href="%url%">View Log</a> for details.'
-                )
         ]);
         // ---------------------------------------
 

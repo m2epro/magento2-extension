@@ -51,20 +51,25 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             }
 
             try {
-                if ($deletingMode == \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP) {
-                    $listingProduct->isStoppable() &&
-                    $this->activeRecordFactory->getObject('StopQueue')->add($listingProduct);
-                }
+                $instructionType = self::INSTRUCTION_TYPE_STOP;
 
                 if ($deletingMode == \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE) {
-                    $listingProduct->isStoppable() &&
-                    $this->activeRecordFactory->getObject('StopQueue')->add($listingProduct);
-                    $listingProduct->addData([
-                        'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED
-                    ])->save();
-                    $listingProduct->delete();
+                    $instructionType = self::INSTRUCTION_TYPE_STOP_AND_REMOVE;
                 }
+
+                $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
+                $instruction->setData(
+                    [
+                        'listing_product_id' => $listingProduct->getId(),
+                        'component'          => $listingProduct->getComponentMode(),
+                        'type'               => $instructionType,
+                        'initiator'          => self::INSTRUCTION_INITIATOR,
+                        'priority'           => $listingProduct->isStoppable() ? 60 : 0,
+                    ]
+                );
+                $instruction->save();
             } catch (\Exception $exception) {
+                $this->getHelper('Module\Exception')->process($exception);
             }
         }
 

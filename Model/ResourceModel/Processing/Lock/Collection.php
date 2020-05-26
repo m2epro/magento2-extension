@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Processing\Lock;
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
-    // ########################################
+    //########################################
 
     public function _construct()
     {
@@ -24,5 +24,5 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         );
     }
 
-    // ########################################
+    //########################################
 }

@@ -32,11 +32,11 @@ class Repricing extends AbstractForm
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
 
-        $generalAttributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
+        $allAttributes = $magentoAttributeHelper->getAll();
 
         $attributesByInputTypes = [
-            'text_price' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, ['text', 'price']),
-            'boolean' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, ['boolean']),
+            'text_price' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'price']),
+            'boolean' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['boolean']),
         ];
 
         $form = $this->_formFactory->create();

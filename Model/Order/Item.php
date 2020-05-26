@@ -17,11 +17,6 @@ use \Ess\M2ePro\Model\Walmart\Order\Item as WalmartItem;
  */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
-    // M2ePro\TRANSLATIONS
-    // Product does not exist.
-    // Product is disabled.
-    // Order Import does not support product type: %type%.
-
     /** @var \Ess\M2ePro\Model\Order */
     private $order;
 

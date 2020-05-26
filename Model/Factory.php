@@ -59,5 +59,14 @@ class Factory
         return $model;
     }
 
+    /**
+     * @param string $modelName
+     * @return bool
+     */
+    public function canCreateObject($modelName)
+    {
+        return class_exists('Ess\M2ePro\Model\\' . str_replace('_', '\\', $modelName));
+    }
+
     //########################################
 }

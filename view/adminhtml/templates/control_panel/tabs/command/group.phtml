@@ -18,9 +18,7 @@
     ?>
 
     <table class="controlPanel-reflection-container">
-        <tr <?php if ($command['non_production'] && $block->getHelper('Module')->isProductionEnvironment()) :
-            echo 'style="display: none;"';
-            endif; ?>>
+        <tr>
             <td class="group_number_td"><b><?php echo $index + 1; ?>.</b></td>
             <td class="group_separator">|</td>
             <td>

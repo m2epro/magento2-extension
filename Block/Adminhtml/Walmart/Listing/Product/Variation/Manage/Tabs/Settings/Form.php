@@ -477,41 +477,41 @@ HTML;
                     'css_class' => 'm2epro-custom-container-full-width'
                 ]
             );
-        }
 
-        $fieldset = $form->addFieldset(
-            'swatch_images__fieldset',
-            [
-                'legend' => $this->__('Swatch Variant Attribute'),
-                'collapsable' => true,
-                'direction_class' => 'to-right',
-                'tooltip' => $this->__(
-                    'Select Swatch Variant Attribute by which the Swatch Images will be shown on your Walmart
+            $fieldset = $form->addFieldset(
+                'swatch_images__fieldset',
+                [
+                    'legend' => $this->__('Swatch Variant Attribute'),
+                    'collapsable' => true,
+                    'direction_class' => 'to-right',
+                    'tooltip' => $this->__(
+                        'Select Swatch Variant Attribute by which the Swatch Images will be shown on your Walmart
                      Item page.<br><br>
                      <strong>Note:</strong> In Description Policy, you may select Magento source where the Images for
                      Walmart Item Variations will be taken from.'
-                )
-            ]
-        );
+                    )
+                ]
+            );
 
-        $button = $this->createBlock('Magento\Button')->addData([
-            'label' => $this->__('Change'),
-            'onclick' => 'ListingGridHandlerObj.variationProductManageHandler.setSwatchImagesAttribute()',
-            'class' => 'action-primary',
-            'style' => 'margin-left: 70px;'
-        ]);
+            $button = $this->createBlock('Magento\Button')->addData([
+                'label' => $this->__('Change'),
+                'onclick' => 'ListingGridHandlerObj.variationProductManageHandler.setSwatchImagesAttribute()',
+                'class' => 'action-primary',
+                'style' => 'margin-left: 70px;'
+            ]);
 
-        $fieldset->addField(
-            'swatch_images_attributes',
-            'select',
-            [
-                'label' => $this->__('Swatch Variant Attribute'),
-                'name' => 'swatch_images',
-                'values' => $possibleAttributes,
-                'value' => $this->getSwatchImagesAttribute(),
-                'after_element_html' => $button->toHtml()
-            ]
-        );
+            $fieldset->addField(
+                'swatch_images_attributes',
+                'select',
+                [
+                    'label' => $this->__('Swatch Variant Attribute'),
+                    'name' => 'swatch_images',
+                    'values' => $possibleAttributes,
+                    'value' => $this->getSwatchImagesAttribute(),
+                    'after_element_html' => $button->toHtml()
+                ]
+            );
+        }
 
         $this->css->add(
             <<<CSS
@@ -711,6 +711,10 @@ CSS
 
     public function getPossibleAttributes()
     {
+        if (!$this->getListingProduct()->getChildObject()->isExistCategoryTemplate()) {
+            return [];
+        }
+
         $possibleAttributes = $this->modelFactory->getObject('Walmart_Marketplace_Details')
             ->setMarketplaceId($this->getListingProduct()->getMarketplace()->getId())
             ->getVariationAttributes(

@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Variation;
 
-use \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description as RequestDescription;
+use \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General as DataBuilderGeneral;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Resolver
@@ -281,7 +281,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
                 }
 
                 if ($ebayDescriptionTemplate->isProductDetailsModeDoesNotApply('brand')) {
-                    $tempVariation['details'][$tempType] = RequestDescription::PRODUCT_DETAILS_DOES_NOT_APPLY;
+                    $tempVariation['details'][$tempType] = DataBuilderGeneral::PRODUCT_DETAILS_DOES_NOT_APPLY;
                     continue;
                 }
             }
@@ -291,7 +291,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
             }
 
             if ($ebayDescriptionTemplate->isProductDetailsModeDoesNotApply($tempType)) {
-                $tempVariation['details'][$tempType] = RequestDescription::PRODUCT_DETAILS_DOES_NOT_APPLY;
+                $tempVariation['details'][$tempType] = DataBuilderGeneral::PRODUCT_DETAILS_DOES_NOT_APPLY;
                 continue;
             }
 

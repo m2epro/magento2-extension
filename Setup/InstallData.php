@@ -26,6 +26,9 @@ class InstallData implements InstallDataInterface
     /** @var \Ess\M2ePro\Model\Factory $modelFactory */
     private $modelFactory;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory */
+    private $activeRecordFactory;
+
     /** @var ModuleListInterface $moduleList */
     private $moduleList;
 
@@ -43,12 +46,14 @@ class InstallData implements InstallDataInterface
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         ModuleListInterface $moduleList,
         \Ess\M2ePro\Setup\LoggerFactory $loggerFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $dbContext
     ) {
         $this->helperFactory = $helperFactory;
         $this->modelFactory = $modelFactory;
+        $this->activeRecordFactory = $activeRecordFactory;
         $this->moduleList = $moduleList;
         $this->moduleResource = new \Magento\Framework\Module\ModuleResource($dbContext);
 
@@ -85,20 +90,32 @@ class InstallData implements InstallDataInterface
         $this->installer->startSetup();
 
         try {
+
+            $setupObject = $this->getCurrentSetupObject();
+
             $this->installGeneral();
             $this->installEbay();
             $this->installAmazon();
             $this->installWalmart();
+
         } catch (\Exception $exception) {
             $this->logger->error($exception, ['source' => 'InstallData']);
             $this->helperFactory->getObject('Data\GlobalData')->setValue('is_setup_failed', true);
+
+            if (isset($setupObject)) {
+                $setupObject->setData('profiler_data', $exception->__toString());
+                $setupObject->save();
+            }
 
             $this->installer->endSetup();
             return;
         }
 
-        $this->setModuleSetupCompleted();
-        $this->setMagentoResourceVersion($this->getConfigVersion());
+        $setupObject->setData('is_completed', 1);
+        $setupObject->save();
+
+        $this->moduleResource->setDbVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $this->getConfigVersion());
+        $this->moduleResource->setDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $this->getConfigVersion());
 
         $this->helperFactory->getObject('Module\Maintenance')->disable();
         $this->installer->endSetup();
@@ -108,489 +125,89 @@ class InstallData implements InstallDataInterface
 
     private function installGeneral()
     {
-        $installationKey = sha1(microtime(1));
+        $magentoMarketplaceUrl = 'https://marketplace.magento.com/m2e-ebay-amazon-magento2.html';
         $servicingInterval = rand(43200, 86400);
-        $magentoMarketplaceUrl = 'https://marketplace.magento.com/'
-            . 'm2epro-ebay-amazon-rakuten-sears-magento-integration-order-import-and-stock-level-synchronization.html';
 
-        $primaryConfigModifier = $this->getConfigModifier('primary');
+        $primaryConfig = $this->getConfigModifier('primary');
 
-        $primaryConfigModifier->insert('/license/', 'key', null, 'License Key');
-        $primaryConfigModifier->insert('/license/', 'status', 1, null);
-        $primaryConfigModifier->insert('/license/', 'domain', null, 'Valid domain');
-        $primaryConfigModifier->insert('/license/', 'ip', null, 'Valid ip');
-        $primaryConfigModifier->insert('/license/info/', 'email', null, 'Associated Email');
-        $primaryConfigModifier->insert('/license/valid/', 'domain', null, '0 - Not valid\r\n1 - Valid');
-        $primaryConfigModifier->insert('/license/valid/', 'ip', null, '0 - Not valid\r\n1 - Valid');
-        $primaryConfigModifier->insert(
-            '/server/',
-            'application_key',
-            '02edcc129b6128f5fa52d4ad1202b427996122b6',
-            null
-        );
-        $primaryConfigModifier->insert(
-            '/server/',
-            'installation_key',
-            $installationKey,
-            'Unique identifier of M2E instance'
-        );
-        $primaryConfigModifier->insert(
-            '/server/location/1/',
-            'baseurl',
-            'https://s1.m2epro.com/',
-            'Support server base url'
-        );
-        $primaryConfigModifier->insert('/server/location/', 'default_index', 1, null);
+        $primaryConfig->insert('/license/', 'key', null);
+        $primaryConfig->insert('/license/', 'status', 1);
+        $primaryConfig->insert('/license/', 'domain', null);
+        $primaryConfig->insert('/license/', 'ip', null);
+        $primaryConfig->insert('/license/info/', 'email', null);
+        $primaryConfig->insert('/license/valid/', 'domain', null);
+        $primaryConfig->insert('/license/valid/', 'ip', null);
+        $primaryConfig->insert('/server/', 'application_key', '02edcc129b6128f5fa52d4ad1202b427996122b6');
+        $primaryConfig->insert('/server/', 'installation_key', sha1(microtime(1)));
+        $primaryConfig->insert('/server/location/1/', 'baseurl', 'https://s1.m2epro.com/');
+        $primaryConfig->insert('/server/location/', 'default_index', 1);
 
-        $moduleConfigModifier = $this->getConfigModifier('module');
+        $moduleConfig = $this->getConfigModifier('module');
 
-        $moduleConfigModifier->insert(null, 'is_disabled', '0', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/cron/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/cron/', 'runner', 'magento', null);
-        $moduleConfigModifier->insert('/cron/', 'last_access', null, 'Time of last cron synchronization');
-        $moduleConfigModifier->insert('/cron/', 'last_runner_change', null, 'Time of last change cron runner');
-        $moduleConfigModifier->insert('/cron/', 'last_executed_slow_task', null, '');
-        $moduleConfigModifier->insert('/cron/checker/task/repair_crashed_tables/', 'interval', '3600', 'in seconds');
-        $moduleConfigModifier->insert('/cron/service/', 'auth_key', null, null);
-        $moduleConfigModifier->insert('/cron/service/', 'hostname_1', 'cron.m2epro.com', null);
-        $moduleConfigModifier->insert('/cron/service_controller/', 'disabled', '0', null);
-        $moduleConfigModifier->insert('/cron/service_pub/', 'disabled', '0', null);
-        $moduleConfigModifier->insert('/cron/magento/', 'disabled', '0', null);
-        $moduleConfigModifier->insert('/cron/task/logs_clearing/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/cron/task/logs_clearing/', 'interval', '86400', 'in seconds');
-        $moduleConfigModifier->insert('/cron/task/logs_clearing/', 'last_access', null, 'date of last access');
-        $moduleConfigModifier->insert('/cron/task/logs_clearing/', 'last_run', null, 'date of last run');
-        $moduleConfigModifier->insert('/cron/task/request_pending_single/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/cron/task/request_pending_single/', 'interval', '60', 'in seconds');
-        $moduleConfigModifier->insert('/cron/task/request_pending_single/', 'last_access', null, 'date of last access');
-        $moduleConfigModifier->insert('/cron/task/request_pending_single/', 'last_run', null, 'date of last run');
-        $moduleConfigModifier->insert(
-            '/cron/task/request_pending_partial/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $moduleConfigModifier->insert('/cron/task/request_pending_partial/', 'interval', '60', 'in seconds');
-        $moduleConfigModifier->insert(
-            '/cron/task/request_pending_partial/',
-            'last_access',
-            null,
-            'date of last access'
-        );
-        $moduleConfigModifier->insert('/cron/task/request_pending_partial/', 'last_run', null, 'date of last run');
-        $moduleConfigModifier->insert(
-            '/cron/task/connector_requester_pending_single/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $moduleConfigModifier->insert('/cron/task/connector_requester_pending_single/', 'interval', '60', 'in seconds');
-        $moduleConfigModifier->insert(
-            '/cron/task/connector_requester_pending_single/',
-            'last_access',
-            null,
-            'date of last access'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/connector_requester_pending_single/',
-            'last_run',
-            null,
-            'date of last run'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/connector_requester_pending_partial/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/connector_requester_pending_partial/',
-            'interval',
-            '60',
-            'in seconds'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/connector_requester_pending_partial/',
-            'last_access',
-            null,
-            'date of last access'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/connector_requester_pending_partial/',
-            'last_run',
-            null,
-            'date of last run'
-        );
-        $moduleConfigModifier->insert('/cron/task/amazon/actions/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/cron/task/amazon/actions/', 'interval', '60', 'in seconds');
-        $moduleConfigModifier->insert('/cron/task/amazon/actions/', 'last_access', null, 'date of last access');
-        $moduleConfigModifier->insert('/cron/task/amazon/actions/', 'last_run', null, 'date of last run');
-        $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_update_settings/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $moduleConfigModifier->insert('/cron/task/amazon/repricing_update_settings/', 'interval', '180', 'in seconds');
-        $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_update_settings/',
-            'last_access',
-            null,
-            'date of last access'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_update_settings/',
-            'last_run',
-            null,
-            'date of last run'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_synchronization_actual_price/',
-            'mode',
-            1,
-            '0 - disable,\r\n1 - enable'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_synchronization_actual_price/',
-            'interval',
-            3600,
-            'in seconds'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_synchronization_actual_price/',
-            'last_run',
-            null,
-            'date of last access'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_synchronization_general/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_synchronization_general/',
-            'interval',
-            '86400',
-            'in seconds'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_synchronization_general/',
-            'last_access',
-            null,
-            'date of last access'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_synchronization_general/',
-            'last_run',
-            null,
-            'date of last run'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_inspect_products/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_inspect_products/',
-            'interval',
-            '3600',
-            'in seconds'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_inspect_products/',
-            'last_access',
-            null,
-            'date of last access'
-        );
-        $moduleConfigModifier->insert(
-            '/cron/task/amazon/repricing_inspect_products/',
-            'last_run',
-            null,
-            'date of last run'
-        );
-
-        $moduleConfigModifier->insert('/cron/task/walmart/actions/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/cron/task/walmart/actions/', 'interval', '3600', 'in seconds');
-        $moduleConfigModifier->insert('/cron/task/walmart/actions/', 'last_access', null, 'date of last access');
-        $moduleConfigModifier->insert('/cron/task/walmart/actions/', 'last_run', null, 'date of last run');
-
-        $moduleConfigModifier->insert('/cron/task/synchronization/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/cron/task/synchronization/', 'interval', '300', 'in seconds');
-        $moduleConfigModifier->insert('/cron/task/synchronization/', 'last_access', null, 'date of last access');
-        $moduleConfigModifier->insert('/cron/task/synchronization/', 'last_run', null, 'date of last run');
-        $moduleConfigModifier->insert('/cron/task/servicing/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/cron/task/servicing/', 'interval', $servicingInterval, 'in seconds');
-        $moduleConfigModifier->insert('/cron/task/servicing/', 'last_access', null, 'date of last access');
-        $moduleConfigModifier->insert('/cron/task/servicing/', 'last_run', null, 'date of last run');
-        $moduleConfigModifier->insert('/cron/task/health_status/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/cron/task/health_status/', 'interval', '3600', 'in seconds');
-        $moduleConfigModifier->insert('/cron/task/health_status/', 'last_access', null, 'date of last access');
-        $moduleConfigModifier->insert('/cron/task/health_status/', 'last_run', null, 'date of last run');
-        $moduleConfigModifier->insert(
-            '/cron/task/archive_orders_entities/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $moduleConfigModifier->insert('/cron/task/archive_orders_entities/', 'interval', '3600', 'in seconds');
-        $moduleConfigModifier->insert(
-            '/cron/task/archive_orders_entities/',
-            'last_access',
-            null,
-            'date of last access'
-        );
-        $moduleConfigModifier->insert('/cron/task/archive_orders_entities/', 'last_run', null, 'date of last run');
-        $moduleConfigModifier->insert('/cron/task/issues_resolver/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/cron/task/issues_resolver/', 'interval', '3600', 'in seconds');
-        $moduleConfigModifier->insert('/cron/task/issues_resolver/', 'last_access', null, 'date of last access');
-        $moduleConfigModifier->insert('/cron/task/issues_resolver/', 'last_run', null, 'date of last run');
-        $moduleConfigModifier->insert('/logs/clearing/listings/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/logs/clearing/listings/', 'days', '30', 'in days');
-        $moduleConfigModifier->insert('/logs/clearing/other_listings/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/logs/clearing/other_listings/', 'days', '30', 'in days');
-        $moduleConfigModifier->insert('/logs/clearing/synchronizations/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/logs/clearing/synchronizations/', 'days', '30', 'in days');
-        $moduleConfigModifier->insert('/logs/clearing/orders/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/logs/clearing/orders/', 'days', '90', 'in days');
-        $moduleConfigModifier->insert('/logs/clearing/ebay_pickup_store/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/logs/clearing/ebay_pickup_store/', 'days', '30', 'in days');
-        $moduleConfigModifier->insert('/logs/listings/', 'last_action_id', '0', null);
-        $moduleConfigModifier->insert('/logs/other_listings/', 'last_action_id', '0', null);
-        $moduleConfigModifier->insert('/logs/ebay_pickup_store/', 'last_action_id', '0', null);
-        $moduleConfigModifier->insert('/logs/view/grouped/', 'max_last_handled_records_count', '100000', null);
-        $moduleConfigModifier->insert('/support/', 'documentation_url', 'https://docs.m2epro.com/', null);
-        $moduleConfigModifier->insert('/support/', 'clients_portal_url', 'https://clients.m2epro.com/', null);
-        $moduleConfigModifier->insert('/support/', 'website_url', 'https://m2epro.com/', null);
-        $moduleConfigModifier->insert('/support/', 'support_url', 'https://support.m2epro.com/', null);
-        $moduleConfigModifier->insert('/support/', 'forum_url', 'https://community.m2epro.com/');
-        $moduleConfigModifier->insert('/support/', 'magento_marketplace_url', $magentoMarketplaceUrl, null);
-        $moduleConfigModifier->insert('/support/', 'contact_email', 'support@m2epro.com', null);
-        $moduleConfigModifier->insert('/view/', 'show_block_notices', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/view/', 'show_products_thumbnails', '1', 'Visibility thumbnails into grid');
-        $moduleConfigModifier->insert(
-            '/magento/attribute/',
-            'price_type_converting',
-            '0',
-            '0 - disable, \r\n1 - enable'
-        );
-        $moduleConfigModifier->insert(
-            '/view/products_grid/',
-            'use_alternative_mysql_select',
-            '0',
-            '0 - disable, \r\n1 - enable'
-        );
-        $moduleConfigModifier->insert(
-            '/view/synchronization/revise_total/',
-            'show',
-            '0',
-            '0 - disable, \r\n1 - enable'
-        );
-        $moduleConfigModifier->insert('/view/ebay/notice/', 'disable_collapse', '0', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert(
-            '/view/ebay/template/selling_format/',
-            'show_tax_category',
-            '0',
-            '0 - disable, \r\n1 - enable'
-        );
-        $moduleConfigModifier->insert('/view/ebay/feedbacks/notification/', 'mode', '0', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert(
-            '/view/ebay/feedbacks/notification/',
-            'last_check',
-            null,
-            'Date last check new buyers feedbacks'
-        );
-        $moduleConfigModifier->insert('/view/ebay/advanced/autoaction_popup/', 'shown', '0', null);
-        $moduleConfigModifier->insert('/view/ebay/motors_epids_attribute/', 'listing_notification_shown', '0', null);
-        $moduleConfigModifier->insert('/view/ebay/multi_currency_marketplace_2/', 'notification_shown', '0', null);
-        $moduleConfigModifier->insert('/view/ebay/multi_currency_marketplace_19/', 'notification_shown', '0', null);
-        $moduleConfigModifier->insert('/debug/exceptions/', 'send_to_server', '1', '0 - disable,\r\n1 - enable');
-        $moduleConfigModifier->insert('/debug/exceptions/', 'filters_mode', '0', '0 - disable,\r\n1 - enable');
-        $moduleConfigModifier->insert('/debug/fatal_error/', 'send_to_server', '1', '0 - disable,\r\n1 - enable');
-        $moduleConfigModifier->insert('/debug/logging/', 'send_to_server', 1, '0 - disable,\r\n1 - enable');
-        $moduleConfigModifier->insert('/renderer/description/', 'convert_linebreaks', '1', '0 - No\r\n1 - Yes');
-        $moduleConfigModifier->insert('/other/paypal/', 'url', 'paypal.com/cgi-bin/webscr/', 'PayPal url');
-        $moduleConfigModifier->insert('/product/index/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/product/force_qty/', 'mode', '0', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/product/force_qty/', 'value', '10', 'min qty value');
-        $moduleConfigModifier->insert('/qty/percentage/', 'rounding_greater', '0', null);
-        $moduleConfigModifier->insert(
+        $moduleConfig->insert('/', 'is_disabled', '0');
+        $moduleConfig->insert('/', 'environment', 'production');
+        $moduleConfig->insert('/cron/', 'mode', '1');
+        $moduleConfig->insert('/cron/', 'runner', 'magento');
+        $moduleConfig->insert('/cron/', 'last_access', null);
+        $moduleConfig->insert('/cron/', 'last_runner_change', null);
+        $moduleConfig->insert('/cron/', 'last_executed_slow_task', null);
+        $moduleConfig->insert('/cron/', 'last_executed_task_group', null);
+        $moduleConfig->insert('/cron/service/', 'auth_key', null);
+        $moduleConfig->insert('/cron/service/', 'hostname_1', 'cron.m2epro.com');
+        $moduleConfig->insert('/cron/service_controller/', 'disabled', '0');
+        $moduleConfig->insert('/cron/service_pub/', 'disabled', '0');
+        $moduleConfig->insert('/cron/magento/', 'disabled', '0');
+        $moduleConfig->insert('/cron/task/system/servicing/synchronize/', 'interval', $servicingInterval);
+        $moduleConfig->insert('/logs/clearing/listings/', 'mode', '1');
+        $moduleConfig->insert('/logs/clearing/listings/', 'days', '30');
+        $moduleConfig->insert('/logs/clearing/synchronizations/', 'mode', '1');
+        $moduleConfig->insert('/logs/clearing/synchronizations/', 'days', '30');
+        $moduleConfig->insert('/logs/clearing/orders/', 'mode', '1');
+        $moduleConfig->insert('/logs/clearing/orders/', 'days', '90');
+        $moduleConfig->insert('/logs/clearing/ebay_pickup_store/', 'mode', '1');
+        $moduleConfig->insert('/logs/clearing/ebay_pickup_store/', 'days', '30');
+        $moduleConfig->insert('/logs/listings/', 'last_action_id', '0');
+        $moduleConfig->insert('/logs/ebay_pickup_store/', 'last_action_id', '0');
+        $moduleConfig->insert('/logs/grouped/', 'max_records_count', '100000');
+        $moduleConfig->insert('/support/', 'documentation_url', 'https://docs.m2epro.com/');
+        $moduleConfig->insert('/support/', 'clients_portal_url', 'https://clients.m2epro.com/');
+        $moduleConfig->insert('/support/', 'website_url', 'https://m2epro.com/');
+        $moduleConfig->insert('/support/', 'support_url', 'https://support.m2epro.com/');
+        $moduleConfig->insert('/support/', 'forum_url', 'https://community.m2epro.com/');
+        $moduleConfig->insert('/support/', 'magento_marketplace_url', $magentoMarketplaceUrl);
+        $moduleConfig->insert('/support/', 'contact_email', 'support@m2epro.com');
+        $moduleConfig->insert('/view/', 'show_block_notices', '1');
+        $moduleConfig->insert('/view/', 'show_products_thumbnails', '1');
+        $moduleConfig->insert('/magento/attribute/', 'price_type_converting', '0');
+        $moduleConfig->insert('/view/products_grid/', 'use_alternative_mysql_select', '0');
+        $moduleConfig->insert('/view/ebay/notice/', 'disable_collapse', '0');
+        $moduleConfig->insert('/view/ebay/template/selling_format/', 'show_tax_category', '0');
+        $moduleConfig->insert('/view/ebay/feedbacks/notification/', 'mode', '0');
+        $moduleConfig->insert('/view/ebay/feedbacks/notification/', 'last_check', null);
+        $moduleConfig->insert('/debug/exceptions/', 'send_to_server', '1');
+        $moduleConfig->insert('/debug/exceptions/', 'filters_mode', '0');
+        $moduleConfig->insert('/debug/fatal_error/', 'send_to_server', '1');
+        $moduleConfig->insert('/debug/logging/', 'send_to_server', 1);
+        $moduleConfig->insert('/renderer/description/', 'convert_linebreaks', '1');
+        $moduleConfig->insert('/other/paypal/', 'url', 'paypal.com/cgi-bin/webscr/');
+        $moduleConfig->insert('/product/index/', 'mode', '1');
+        $moduleConfig->insert('/product/force_qty/', 'mode', '0');
+        $moduleConfig->insert('/product/force_qty/', 'value', '10');
+        $moduleConfig->insert('/qty/percentage/', 'rounding_greater', '0');
+        $moduleConfig->insert(
             '/order/magento/settings/',
             'create_with_first_product_options_when_variation_unavailable',
-            '1',
-            '0 - disable, \r\n1 - enabled'
+            '1'
         );
-        $moduleConfigModifier->insert(
-            '/magento/product/simple_type/',
-            'custom_types',
-            '',
-            'Magento product custom types'
-        );
-        $moduleConfigModifier->insert(
-            '/magento/product/downloadable_type/',
-            'custom_types',
-            '',
-            'Magento product custom types'
-        );
-        $moduleConfigModifier->insert(
-            '/magento/product/configurable_type/',
-            'custom_types',
-            '',
-            'Magento product custom types'
-        );
-        $moduleConfigModifier->insert(
-            '/magento/product/bundle_type/',
-            'custom_types',
-            '',
-            'Magento product custom types'
-        );
-        $moduleConfigModifier->insert(
-            '/magento/product/grouped_type/',
-            'custom_types',
-            '',
-            'Magento product custom types'
-        );
-        $moduleConfigModifier->insert('/health_status/notification/', 'mode', 1);
-        $moduleConfigModifier->insert('/health_status/notification/', 'email', '');
-        $moduleConfigModifier->insert('/health_status/notification/', 'level', 40);
-
-        $synchronizationConfigModifier = $this->getConfigModifier('synchronization');
-
-        $synchronizationConfigModifier->insert(null, 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(null, 'last_access', null, null);
-        $synchronizationConfigModifier->insert(null, 'last_run', null, null);
-        $synchronizationConfigModifier->insert('/settings/product_change/', 'max_count_per_one_time', '500', null);
-        $synchronizationConfigModifier->insert('/settings/product_change/', 'max_lifetime', '172800', 'in seconds');
-        $synchronizationConfigModifier->insert('/global/', 'mode', '1', null);
-        $synchronizationConfigModifier->insert('/global/magento_products/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/global/magento_products/deleted_products/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/global/magento_products/deleted_products/',
-            'interval',
-            '3600',
-            'in seconds'
-        );
-        $synchronizationConfigModifier->insert(
-            '/global/magento_products/deleted_products/',
-            'last_time',
-            null,
-            'Last check time'
-        );
-        $synchronizationConfigModifier->insert(
-            '/global/magento_products/added_products/',
-            'last_magento_product_id',
-            null,
-            null
-        );
-        $synchronizationConfigModifier->insert(
-            '/global/magento_products/inspector/',
-            'mode',
-            '0',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/global/magento_products/inspector/',
-            'last_listing_product_id',
-            null,
-            null
-        );
-        $synchronizationConfigModifier->insert(
-            '/global/magento_products/inspector/',
-            'min_interval_between_circles',
-            '3600',
-            'in seconds'
-        );
-        $synchronizationConfigModifier->insert(
-            '/global/magento_products/inspector/',
-            'max_count_times_for_full_circle',
-            '50',
-            null
-        );
-        $synchronizationConfigModifier->insert(
-            '/global/magento_products/inspector/',
-            'min_count_items_per_one_time',
-            '100',
-            null
-        );
-        $synchronizationConfigModifier->insert(
-            '/global/magento_products/inspector/',
-            'max_count_items_per_one_time',
-            '500',
-            null
-        );
-        $synchronizationConfigModifier->insert(
-            '/global/magento_products/inspector/',
-            'last_time_start_circle',
-            null,
-            null
-        );
-        $synchronizationConfigModifier->insert('/global/processing/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert('/global/stop_queue/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert('/global/stop_queue/', 'interval', '3600', 'in seconds');
-        $synchronizationConfigModifier->insert('/global/stop_queue/', 'last_time', null, 'Last check time');
-
-        $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/list/immediately_not_checked/',
-            'items_limit',
-            '200',
-            null
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/revise/total/',
-            'items_limit',
-            '200',
-            null
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/revise/need_synch/',
-            'items_limit',
-            '200',
-            null
-        );
-
-        $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/list/immediately_not_checked/',
-            'items_limit',
-            '200',
-            null
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/revise/total/',
-            'items_limit',
-            '200',
-            null
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/revise/need_synch/',
-            'items_limit',
-            '200',
-            null
-        );
-
-        $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/list/immediately_not_checked/',
-            'items_limit',
-            '200',
-            null
-        );
-        $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/revise/total/',
-            'items_limit',
-            '200',
-            null
-        );
-        $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/revise/need_synch/',
-            'items_limit',
-            '200',
-            null
-        );
+        $moduleConfig->insert('/magento/product/simple_type/', 'custom_types', '');
+        $moduleConfig->insert('/magento/product/downloadable_type/', 'custom_types', '');
+        $moduleConfig->insert('/magento/product/configurable_type/', 'custom_types', '');
+        $moduleConfig->insert('/magento/product/bundle_type/', 'custom_types', '');
+        $moduleConfig->insert('/magento/product/grouped_type/', 'custom_types', '');
+        $moduleConfig->insert('/health_status/notification/', 'mode', 1);
+        $moduleConfig->insert('/health_status/notification/', 'email', '');
+        $moduleConfig->insert('/health_status/notification/', 'level', 40);
+        $moduleConfig->insert('/listing/product/inspector/', 'mode', '0', '0 - disable, \r\n1 - enable');
 
         $this->getConnection()->insertMultiple($this->getFullTableName('wizard'), [
             [
@@ -630,234 +247,25 @@ class InstallData implements InstallDataInterface
 
     private function installEbay()
     {
-        $moduleConfigModifier = $this->getConfigModifier('module');
+        $moduleConfig = $this->getConfigModifier('module');
 
-        $moduleConfigModifier->insert('/component/ebay/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert(
-            '/ebay/order/settings/marketplace_8/',
-            'use_first_street_line_as_company',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $moduleConfigModifier->insert('/ebay/connector/listing/', 'check_the_same_product_already_listed', '1', null);
-        $moduleConfigModifier->insert('/component/ebay/variation/', 'mpn_can_be_changed', '0', null);
-        $moduleConfigModifier->insert(
-            '/view/ebay/template/category/',
-            'use_last_specifics',
-            '0',
-            '0 - false, \r\n1 - true'
-        );
-        $moduleConfigModifier->insert('/ebay/motors/', 'epids_motor_attribute', null, null);
-        $moduleConfigModifier->insert('/ebay/motors/', 'epids_uk_attribute', null, null);
-        $moduleConfigModifier->insert('/ebay/motors/', 'epids_de_attribute', null, null);
-        $moduleConfigModifier->insert('/ebay/motors/', 'ktypes_attribute', null, null);
-        $moduleConfigModifier->insert('/ebay/sell_on_another_marketplace/', 'tutorial_shown', '0', null);
-        $moduleConfigModifier->insert('/ebay/translation_services/gold/', 'avg_cost', '7.21', null);
-        $moduleConfigModifier->insert('/ebay/translation_services/silver/', 'avg_cost', '1.21', null);
-        $moduleConfigModifier->insert('/ebay/translation_services/platinum/', 'avg_cost', '17.51', null);
-        $moduleConfigModifier->insert('/ebay/description/', 'upload_images_mode', 2, null);
-        $moduleConfigModifier->insert('/ebay/description/', 'should_be_ulrs_secure', 0, '0 - No, \r\n1 - Yes');
-        $moduleConfigModifier->insert('/cron/task/ebay/actions/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/cron/task/ebay/actions/', 'interval', '60', 'in seconds');
-        $moduleConfigModifier->insert('/cron/task/ebay/actions/', 'last_access', null, 'date of last access');
-        $moduleConfigModifier->insert('/cron/task/ebay/actions/', 'last_run', null, 'date of last run');
-        $moduleConfigModifier->insert(
-            '/cron/task/ebay/update_accounts_preferences/',
-            'mode',
-            1,
-            '0 - disable,\r\n1 - enable'
-        );
-        $moduleConfigModifier->insert('/cron/task/ebay/update_accounts_preferences/', 'interval', 86400, 'in seconds');
-        $moduleConfigModifier->insert(
-            '/cron/task/ebay/update_accounts_preferences/',
-            'last_run',
-            null,
-            'date of last run'
-        );
-        $moduleConfigModifier->insert('/ebay/in_store_pickup/', 'mode', 0, '0 - disable,\r\n1 - enable');
-
-        $synchronizationConfigModifier = $this->getConfigModifier('synchronization');
-
-        $synchronizationConfigModifier->insert('/ebay/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert('/ebay/general/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/ebay/general/account_pickup_store/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/general/account_pickup_store/process/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/general/account_pickup_store/update/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/ebay/general/feedbacks/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/ebay/general/feedbacks/receive/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/ebay/general/feedbacks/receive/', 'interval', '10800', 'in seconds');
-        $synchronizationConfigModifier->insert(
-            '/ebay/general/feedbacks/receive/',
-            'last_time',
-            null,
-            'date of last access'
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/general/feedbacks/response/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/ebay/general/feedbacks/response/', 'interval', '10800', 'in seconds');
-        $synchronizationConfigModifier->insert(
-            '/ebay/general/feedbacks/response/',
-            'last_time',
-            null,
-            'date of last access'
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/general/feedbacks/response/',
-            'attempt_interval',
-            '86400',
-            'in seconds'
-        );
-        $synchronizationConfigModifier->insert('/ebay/listings_products/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/ebay/listings_products/remove_duplicates/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/listings_products/update/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/ebay/marketplaces/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/ebay/marketplaces/categories/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/marketplaces/details/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/marketplaces/motors_epids/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/marketplaces/motors_ktypes/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/ebay/orders/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert('/ebay/orders/receive/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert('/ebay/orders/update/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/ebay/orders/cancellation/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/ebay/orders/cancellation/', 'interval', '86400', 'in seconds');
-        $synchronizationConfigModifier->insert('/ebay/orders/cancellation/', 'last_time', null, 'date of last access');
-        $synchronizationConfigModifier->insert('/ebay/orders/cancellation/', 'start_date', null, 'date of first run');
-        $synchronizationConfigModifier->insert('/ebay/orders/reserve_cancellation/', 'mode', '1', 'in seconds');
-        $synchronizationConfigModifier->insert('/ebay/orders/reserve_cancellation/', 'interval', '3600', 'in seconds');
-        $synchronizationConfigModifier->insert(
-            '/ebay/orders/reserve_cancellation/',
-            'last_time',
-            null,
-            'Last check time'
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/orders/create_failed/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/ebay/orders/create_failed/', 'interval', '300', 'in seconds');
-        $synchronizationConfigModifier->insert('/ebay/orders/create_failed/', 'last_time', null, 'Last check time');
-        $synchronizationConfigModifier->insert('/ebay/other_listings/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/ebay/other_listings/update/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/ebay/other_listings/update/', 'interval', '3600', 'in seconds');
-        $synchronizationConfigModifier->insert('/ebay/other_listings/sku/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert('/ebay/templates/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/list/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/relist/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/revise/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/revise/total/',
-            'last_listing_product_id',
-            null,
-            null
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/revise/total/',
-            'start_date',
-            null,
-            null
-        );
-        $synchronizationConfigModifier->insert('/ebay/templates/synchronization/revise/total/', 'end_date', null, null);
-        $synchronizationConfigModifier->insert(
-            '/ebay/templates/synchronization/stop/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/ebay/templates/remove_unused/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/ebay/templates/remove_unused/', 'interval', '86400', 'in seconds');
-        $synchronizationConfigModifier->insert('/ebay/templates/remove_unused/', 'last_time', null, 'Last check time');
+        $moduleConfig->insert('/component/ebay/', 'mode', '1');
+        $moduleConfig->insert('/cron/task/ebay/listing/product/process_instructions/', 'mode', '1');
+        $moduleConfig->insert('/listing/product/inspector/ebay/', 'max_allowed_instructions_count', '2000');
+        $moduleConfig->insert('/ebay/order/settings/marketplace_8/', 'use_first_street_line_as_company', '1');
+        $moduleConfig->insert('/ebay/connector/listing/', 'check_the_same_product_already_listed', '1');
+        $moduleConfig->insert('/component/ebay/variation/', 'mpn_can_be_changed', '0');
+        $moduleConfig->insert('/view/ebay/template/category/', 'use_last_specifics', '0');
+        $moduleConfig->insert('/ebay/motors/', 'epids_motor_attribute', null);
+        $moduleConfig->insert('/ebay/motors/', 'epids_uk_attribute', null);
+        $moduleConfig->insert('/ebay/motors/', 'epids_de_attribute', null);
+        $moduleConfig->insert('/ebay/motors/', 'epids_au_attribute', null);
+        $moduleConfig->insert('/ebay/motors/', 'ktypes_attribute', null);
+        $moduleConfig->insert('/ebay/sell_on_another_marketplace/', 'tutorial_shown', '0');
+        $moduleConfig->insert('/ebay/description/', 'upload_images_mode', 2);
+        $moduleConfig->insert('/ebay/description/', 'should_be_ulrs_secure', 0);
+        $moduleConfig->insert('/ebay/listing/product/instructions/cron/', 'listings_products_per_one_time', '1000');
+        $moduleConfig->insert('/ebay/listing/product/scheduled_actions/', 'max_prepared_actions_count', '3000');
 
         $this->getConnection()->insertMultiple($this->getFullTableName('marketplace'), [
             [
@@ -907,7 +315,7 @@ class InstallData implements InstallDataInterface
                 'url'            => 'ebay.com.au',
                 'status'         => 0,
                 'sorder'         => 4,
-                'group_title'    => 'Asia / Pacific',
+                'group_title'    => 'Australia Region',
                 'component_mode' => 'ebay',
                 'update_date'    => '2013-05-08 00:00:00',
                 'create_date'    => '2013-05-08 00:00:00'
@@ -1154,7 +562,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'USD',
                 'origin_country'                       => 'us',
                 'language_code'                        => 'en_US',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 1,
                 'is_calculated_shipping'               => 1,
@@ -1172,7 +579,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 1,
-                'is_holiday_return'                    => 1,
+                'is_return_description'                => 0,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 0
             ],
@@ -1181,7 +588,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'CAD',
                 'origin_country'                       => 'ca',
                 'language_code'                        => 'en_CA',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 1,
                 'is_calculated_shipping'               => 1,
@@ -1199,7 +605,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 1,
+                'is_return_description'                => 0,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 0
             ],
@@ -1208,7 +614,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'GBP',
                 'origin_country'                       => 'gb',
                 'language_code'                        => 'en_GB',
-                'translation_service_mode'             => 3,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 1,
                 'is_calculated_shipping'               => 0,
@@ -1226,7 +631,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 1,
                 'is_in_store_pickup'                   => 1,
-                'is_holiday_return'                    => 1,
+                'is_return_description'                => 0,
                 'is_epid'                              => 1,
                 'is_ktype'                             => 1
             ],
@@ -1235,7 +640,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'AUD',
                 'origin_country'                       => 'au',
                 'language_code'                        => 'en_AU',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 1,
                 'is_calculated_shipping'               => 1,
@@ -1253,8 +657,8 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 1,
                 'is_in_store_pickup'                   => 1,
-                'is_holiday_return'                    => 1,
-                'is_epid'                              => 0,
+                'is_return_description'                => 0,
+                'is_epid'                              => 1,
                 'is_ktype'                             => 1
             ],
             [
@@ -1262,7 +666,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'EUR',
                 'origin_country'                       => 'at',
                 'language_code'                        => 'de_AT',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1280,7 +683,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0,
+                'is_return_description'                => 1,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 0
             ],
@@ -1289,7 +692,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'EUR',
                 'origin_country'                       => 'be',
                 'language_code'                        => 'nl_BE',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 0,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1307,7 +709,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0,
+                'is_return_description'                => 0,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 0
             ],
@@ -1316,7 +718,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'EUR',
                 'origin_country'                       => 'fr',
                 'language_code'                        => 'fr_FR',
-                'translation_service_mode'             => 1,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1334,7 +735,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0,
+                'is_return_description'                => 1,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 1
             ],
@@ -1343,7 +744,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'EUR',
                 'origin_country'                       => 'de',
                 'language_code'                        => 'de_DE',
-                'translation_service_mode'             => 3,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1361,7 +761,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 1,
+                'is_return_description'                => 1,
                 'is_epid'                              => 1,
                 'is_ktype'                             => 1
             ],
@@ -1370,7 +770,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'USD',
                 'origin_country'                       => 'us',
                 'language_code'                        => 'en_US',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 1,
@@ -1388,7 +787,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 1,
+                'is_return_description'                => 0,
                 'is_epid'                              => 1,
                 'is_ktype'                             => 0
             ],
@@ -1397,7 +796,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'EUR',
                 'origin_country'                       => 'it',
                 'language_code'                        => 'it_IT',
-                'translation_service_mode'             => 1,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1415,7 +813,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0,
+                'is_return_description'                => 1,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 1
             ],
@@ -1424,7 +822,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'EUR',
                 'origin_country'                       => 'be',
                 'language_code'                        => 'fr_BE',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 0,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1442,7 +839,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0,
+                'is_return_description'                => 0,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 0
             ],
@@ -1451,7 +848,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'EUR',
                 'origin_country'                       => 'nl',
                 'language_code'                        => 'nl_NL',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1469,7 +865,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0,
+                'is_return_description'                => 0,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 0
             ],
@@ -1478,7 +874,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'EUR',
                 'origin_country'                       => 'es',
                 'language_code'                        => 'es_ES',
-                'translation_service_mode'             => 1,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1496,7 +891,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0,
+                'is_return_description'                => 1,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 1
             ],
@@ -1505,7 +900,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'CHF',
                 'origin_country'                       => 'ch',
                 'language_code'                        => 'fr_CH',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1523,7 +917,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0,
+                'is_return_description'                => 0,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 0
             ],
@@ -1532,7 +926,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'HKD',
                 'origin_country'                       => 'hk',
                 'language_code'                        => 'zh_HK',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 0,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1550,7 +943,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0,
+                'is_return_description'                => 0,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 0
             ],
@@ -1559,7 +952,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'INR',
                 'origin_country'                       => 'in',
                 'language_code'                        => 'hi_IN',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1577,7 +969,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0,
+                'is_return_description'                => 0,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 0
             ],
@@ -1586,7 +978,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'EUR',
                 'origin_country'                       => 'ie',
                 'language_code'                        => 'en_IE',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1604,7 +995,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0,
+                'is_return_description'                => 0,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 0
             ],
@@ -1613,7 +1004,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'MYR',
                 'origin_country'                       => 'my',
                 'language_code'                        => 'ms_MY',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1631,7 +1021,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0,
+                'is_return_description'                => 0,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 0
             ],
@@ -1640,7 +1030,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'CAD',
                 'origin_country'                       => 'ca',
                 'language_code'                        => 'fr_CA',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 0,
                 'is_freight_shipping'                  => 1,
                 'is_calculated_shipping'               => 1,
@@ -1658,7 +1047,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 1,
+                'is_return_description'                => 0,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 0
             ],
@@ -1667,7 +1056,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'PHP',
                 'origin_country'                       => 'ph',
                 'language_code'                        => 'fil_PH',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1685,7 +1073,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0,
+                'is_return_description'                => 0,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 0
             ],
@@ -1694,7 +1082,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'PLN',
                 'origin_country'                       => 'pl',
                 'language_code'                        => 'pl_PL',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 0,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1712,7 +1099,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0,
+                'is_return_description'                => 0,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 0
             ],
@@ -1721,7 +1108,6 @@ class InstallData implements InstallDataInterface
                 'currency'                             => 'SGD',
                 'origin_country'                       => 'sg',
                 'language_code'                        => 'zh_SG',
-                'translation_service_mode'             => 0,
                 'is_multivariation'                    => 0,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1739,7 +1125,7 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0,
+                'is_return_description'                => 0,
                 'is_epid'                              => 0,
                 'is_ktype'                             => 0
             ]
@@ -1748,241 +1134,30 @@ class InstallData implements InstallDataInterface
 
     private function installAmazon()
     {
-        $moduleConfigModifier = $this->getConfigModifier('module');
+        $moduleConfig = $this->getConfigModifier('module');
 
-        $moduleConfigModifier->insert('/amazon/', 'application_name', 'M2ePro - Amazon Magento Integration', null);
-        $moduleConfigModifier->insert('/component/amazon/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert(
-            '/amazon/order/settings/marketplace_25/',
-            'use_first_street_line_as_company',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $moduleConfigModifier->insert('/amazon/repricing/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert(
-            '/amazon/repricing/',
-            'base_url',
-            'https://repricer.m2epro.com/connector/m2epro/',
-            'Repricing Tool base url'
-        );
-
-        $moduleConfigModifier->insert('/amazon/business/', 'mode', '0', '0 - disable, \r\n1 - enable');
-
-        $synchronizationConfigModifier = $this->getConfigModifier('synchronization');
-
-        $synchronizationConfigModifier->insert('/amazon/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert('/amazon/general/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/amazon/general/run_parent_processors/',
-            'interval',
-            '300',
-            'in seconds'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/general/run_parent_processors/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/general/run_parent_processors/',
-            'last_time',
-            null,
-            'Last check time'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/amazon/listings_products/update/', 'interval', '86400', 'in seconds');
-        $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/',
-            'last_time',
-            null,
-            'Last check time'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/defected/',
-            'interval',
-            '259200',
-            'in seconds'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/defected/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/defected/',
-            'last_time',
-            null,
-            'Last check time'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/blocked/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/blocked/',
-            'interval',
-            '3600',
-            'in seconds'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/listings_products/update/blocked/',
-            'last_time',
-            null,
-            'Last check time'
-        );
-        $synchronizationConfigModifier->insert('/amazon/marketplaces/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/amazon/marketplaces/categories/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/marketplaces/details/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/marketplaces/specifics/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/amazon/orders/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert('/amazon/orders/reserve_cancellation/', 'mode', '1', 'in seconds');
-        $synchronizationConfigModifier->insert(
-            '/amazon/orders/reserve_cancellation/',
-            'interval',
-            '3600',
-            'in seconds'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/orders/reserve_cancellation/',
-            'last_time',
-            null,
-            'Last check time'
-        );
-        $synchronizationConfigModifier->insert('/amazon/orders/update/', 'mode', '1', 'in seconds');
-        $synchronizationConfigModifier->insert('/amazon/orders/update/', 'interval', 1800, 'in seconds');
-        $synchronizationConfigModifier->insert(
-            '/amazon/orders/receive_details/',
-            'mode',
-            0,
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/amazon/orders/receive_details/', 'interval', 7200, 'in seconds');
-        $synchronizationConfigModifier->insert('/amazon/orders/receive_details/', 'last_time', null, 'Last check time');
-        $synchronizationConfigModifier->insert(
-            '/amazon/orders/create_failed/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/amazon/orders/create_failed/', 'interval', 300, 'in seconds');
-        $synchronizationConfigModifier->insert('/amazon/orders/create_failed/', 'last_time', null, 'Last check time');
-        $synchronizationConfigModifier->insert('/amazon/other_listings/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/amazon/other_listings/update/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/amazon/other_listings/update/', 'interval', '86400', 'in seconds');
-        $synchronizationConfigModifier->insert('/amazon/other_listings/update/', 'last_time', null, 'Last check time');
-        $synchronizationConfigModifier->insert(
-            '/amazon/other_listings/title/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/other_listings/update/blocked/',
-            'last_time',
-            null,
-            'Last check time'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/other_listings/update/blocked/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/other_listings/update/blocked/',
-            'interval',
-            '3600',
-            'in seconds'
-        );
-        $synchronizationConfigModifier->insert('/amazon/templates/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/amazon/templates/repricing/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/list/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/relist/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/revise/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/revise/total/',
-            'last_listing_product_id',
-            null,
-            null
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/revise/total/',
-            'start_date',
-            null,
-            null
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/revise/total/',
-            'end_date',
-            null,
-            null
-        );
-        $synchronizationConfigModifier->insert(
-            '/amazon/templates/synchronization/stop/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
+        $moduleConfig->insert('/amazon/', 'application_name', 'M2ePro - Amazon Magento Integration');
+        $moduleConfig->insert('/component/amazon/', 'mode', '1');
+        $moduleConfig->insert('/cron/task/amazon/listing/product/process_instructions/', 'mode', '1');
+        $moduleConfig->insert('/amazon/listing/product/action/scheduled_data/', 'limit', '20000');
+        $moduleConfig->insert('/listing/product/inspector/amazon/', 'max_allowed_instructions_count', '2000');
+        $moduleConfig->insert('/amazon/order/settings/marketplace_25/', 'use_first_street_line_as_company', '1');
+        $moduleConfig->insert('/amazon/repricing/', 'mode', '1');
+        $moduleConfig->insert('/amazon/repricing/', 'base_url', 'https://repricer.m2epro.com/connector/m2epro/');
+        $moduleConfig->insert('/amazon/business/', 'mode', '0');
+        $moduleConfig->insert('/amazon/listing/product/instructions/cron/', 'listings_products_per_one_time', '1000');
+        $moduleConfig->insert('/amazon/listing/product/action/list/', 'min_allowed_wait_interval', '3600');
+        $moduleConfig->insert('/amazon/listing/product/action/relist/', 'min_allowed_wait_interval', '1800');
+        $moduleConfig->insert('/amazon/listing/product/action/revise_qty/', 'min_allowed_wait_interval', '900');
+        $moduleConfig->insert('/amazon/listing/product/action/revise_price/', 'min_allowed_wait_interval', '1800');
+        $moduleConfig->insert('/amazon/listing/product/action/revise_details/', 'min_allowed_wait_interval', '7200');
+        $moduleConfig->insert('/amazon/listing/product/action/revise_images/', 'min_allowed_wait_interval', '7200');
+        $moduleConfig->insert('/amazon/listing/product/action/stop/', 'min_allowed_wait_interval', '600');
+        $moduleConfig->insert('/amazon/listing/product/action/delete/', 'min_allowed_wait_interval', '600');
+        $moduleConfig->insert(
+            '/amazon/listing/product/action/processing/prepare/',
+            'max_listings_products_count',
+            '2000'
         );
 
         $this->getConnection()->insertMultiple($this->getFullTableName('marketplace'), [
@@ -2098,10 +1273,23 @@ class InstallData implements InstallDataInterface
                 'url'            => 'amazon.com.au',
                 'status'         => 0,
                 'sorder'         => 1,
-                'group_title'    => 'Asia / Pacific',
+                'group_title'    => 'Australia Region',
                 'component_mode' => 'amazon',
                 'update_date'    => '2017-10-17 00:00:00',
                 'create_date'    => '2017-10-17 00:00:00'
+            ],
+            [
+                'id'             => 39,
+                'native_id'      => 11,
+                'title'          => 'Netherlands',
+                'code'           => 'NL',
+                'url'            => 'amazon.nl',
+                'status'         => 0,
+                'sorder'         => 12,
+                'group_title'    => 'Europe',
+                'component_mode' => 'amazon',
+                'update_date'    => '2020-03-26 00:00:00',
+                'create_date'    => '2020-03-26 00:00:00'
             ]
         ]);
 
@@ -2116,6 +1304,7 @@ class InstallData implements InstallDataInterface
                 'is_vat_calculation_service_available'    => 0,
                 'is_product_tax_code_policy_available'    => 0,
                 'is_automatic_token_retrieving_available' => 1,
+                'is_upload_invoices_available'            => 0,
             ],
             [
                 'marketplace_id'                          => 25,
@@ -2127,6 +1316,7 @@ class InstallData implements InstallDataInterface
                 'is_vat_calculation_service_available'    => 1,
                 'is_product_tax_code_policy_available'    => 1,
                 'is_automatic_token_retrieving_available' => 1,
+                'is_upload_invoices_available'            => 1,
             ],
             [
                 'marketplace_id'                          => 26,
@@ -2134,10 +1324,11 @@ class InstallData implements InstallDataInterface
                 'default_currency'                        => 'EUR',
                 'is_new_asin_available'                   => 1,
                 'is_merchant_fulfillment_available'       => 0,
-                'is_business_available'                   => 0,
+                'is_business_available'                   => 1,
                 'is_vat_calculation_service_available'    => 1,
-                'is_product_tax_code_policy_available'    => 0,
+                'is_product_tax_code_policy_available'    => 1,
                 'is_automatic_token_retrieving_available' => 1,
+                'is_upload_invoices_available'            => 1,
             ],
             [
                 'marketplace_id'                          => 28,
@@ -2149,6 +1340,7 @@ class InstallData implements InstallDataInterface
                 'is_vat_calculation_service_available'    => 1,
                 'is_product_tax_code_policy_available'    => 1,
                 'is_automatic_token_retrieving_available' => 1,
+                'is_upload_invoices_available'            => 1,
             ],
             [
                 'marketplace_id'                          => 29,
@@ -2160,6 +1352,7 @@ class InstallData implements InstallDataInterface
                 'is_vat_calculation_service_available'    => 0,
                 'is_product_tax_code_policy_available'    => 0,
                 'is_automatic_token_retrieving_available' => 1,
+                'is_upload_invoices_available'            => 0,
             ],
             [
                 'marketplace_id'                          => 30,
@@ -2167,10 +1360,11 @@ class InstallData implements InstallDataInterface
                 'default_currency'                        => 'EUR',
                 'is_new_asin_available'                   => 1,
                 'is_merchant_fulfillment_available'       => 0,
-                'is_business_available'                   => 0,
+                'is_business_available'                   => 1,
                 'is_vat_calculation_service_available'    => 1,
-                'is_product_tax_code_policy_available'    => 0,
+                'is_product_tax_code_policy_available'    => 1,
                 'is_automatic_token_retrieving_available' => 1,
+                'is_upload_invoices_available'            => 1,
             ],
             [
                 'marketplace_id'                          => 31,
@@ -2178,21 +1372,23 @@ class InstallData implements InstallDataInterface
                 'default_currency'                        => 'EUR',
                 'is_new_asin_available'                   => 1,
                 'is_merchant_fulfillment_available'       => 0,
-                'is_business_available'                   => 0,
+                'is_business_available'                   => 1,
                 'is_vat_calculation_service_available'    => 1,
-                'is_product_tax_code_policy_available'    => 0,
+                'is_product_tax_code_policy_available'    => 1,
                 'is_automatic_token_retrieving_available' => 1,
+                'is_upload_invoices_available'            => 1,
             ],
             [
                 'marketplace_id'                          => 34,
                 'developer_key'                           => '8636-1433-4377',
                 'default_currency'                        => 'MXN',
-                'is_new_asin_available'                   => 0,
+                'is_new_asin_available'                   => 1,
                 'is_merchant_fulfillment_available'       => 0,
                 'is_business_available'                   => 0,
                 'is_vat_calculation_service_available'    => 0,
                 'is_product_tax_code_policy_available'    => 0,
                 'is_automatic_token_retrieving_available' => 1,
+                'is_upload_invoices_available'            => 0,
             ],
             [
                 'marketplace_id'                          => 35,
@@ -2203,185 +1399,67 @@ class InstallData implements InstallDataInterface
                 'is_business_available'                   => 0,
                 'is_vat_calculation_service_available'    => 0,
                 'is_product_tax_code_policy_available'    => 0,
-                'is_automatic_token_retrieving_available' => 0,
+                'is_automatic_token_retrieving_available' => 1,
+                'is_upload_invoices_available'            => 0,
+            ],
+            [
+                'marketplace_id'                          => 39,
+                'developer_key'                           => '7078-7205-1944',
+                'default_currency'                        => 'EUR',
+                'is_new_asin_available'                   => 1,
+                'is_merchant_fulfillment_available'       => 1,
+                'is_business_available'                   => 1,
+                'is_vat_calculation_service_available'    => 1,
+                'is_product_tax_code_policy_available'    => 1,
+                'is_automatic_token_retrieving_available' => 1,
+                'is_upload_invoices_available'            => 0,
             ]
         ]);
     }
 
     private function installWalmart()
     {
-        $moduleConfigModifier = $this->getConfigModifier('module');
+        $moduleConfig = $this->getConfigModifier('module');
 
-        $moduleConfigModifier->insert('/walmart/', 'application_name', 'M2ePro - Walmart Magento Integration', null);
-
-        $moduleConfigModifier->insert('/component/walmart/', 'mode', '1', '0 - disable, \r\n1 - enable');
-
-        $moduleConfigModifier->insert('/walmart/configuration/', 'sku_mode', '1', null);
-        $moduleConfigModifier->insert('/walmart/configuration/', 'sku_custom_attribute', null, null);
-        $moduleConfigModifier->insert('/walmart/configuration/', 'sku_modification_mode', '0', null);
-        $moduleConfigModifier->insert('/walmart/configuration/', 'sku_modification_custom_value', null, null);
-        $moduleConfigModifier->insert('/walmart/configuration/', 'generate_sku_mode', '0', null);
-        $moduleConfigModifier->insert('/walmart/configuration/', 'product_id_override_mode', '0', null);
-        $moduleConfigModifier->insert('/walmart/configuration/', 'upc_mode', '0', null);
-        $moduleConfigModifier->insert('/walmart/configuration/', 'upc_custom_attribute', null, null);
-        $moduleConfigModifier->insert('/walmart/configuration/', 'ean_mode', '0', null);
-        $moduleConfigModifier->insert('/walmart/configuration/', 'ean_custom_attribute', null, null);
-        $moduleConfigModifier->insert('/walmart/configuration/', 'gtin_mode', '0', null);
-        $moduleConfigModifier->insert('/walmart/configuration/', 'gtin_custom_attribute', null, null);
-        $moduleConfigModifier->insert('/walmart/configuration/', 'isbn_mode', '0', null);
-        $moduleConfigModifier->insert('/walmart/configuration/', 'isbn_custom_attribute', null, null);
-        $moduleConfigModifier->insert('/walmart/configuration/', 'option_images_url_mode', '0', null);
-
-        $moduleConfigModifier->insert(
-            '/walmart/order/settings/marketplace_25/',
-            'use_first_street_line_as_company',
-            '1',
-            '0 - disable, \r\n1 - enable'
+        $moduleConfig->insert('/walmart/', 'application_name', 'M2ePro - Walmart Magento Integration');
+        $moduleConfig->insert('/component/walmart/', 'mode', '1');
+        $moduleConfig->insert('/cron/task/walmart/listing/product/process_instructions/', 'mode', '1');
+        $moduleConfig->insert('/listing/product/inspector/walmart/', 'max_allowed_instructions_count', '2000');
+        $moduleConfig->insert('/walmart/configuration/', 'sku_mode', '1');
+        $moduleConfig->insert('/walmart/configuration/', 'sku_custom_attribute', null);
+        $moduleConfig->insert('/walmart/configuration/', 'sku_modification_mode', '0');
+        $moduleConfig->insert('/walmart/configuration/', 'sku_modification_custom_value', null);
+        $moduleConfig->insert('/walmart/configuration/', 'generate_sku_mode', '0');
+        $moduleConfig->insert('/walmart/configuration/', 'product_id_override_mode', '0', null);
+        $moduleConfig->insert('/walmart/configuration/', 'upc_mode', '0');
+        $moduleConfig->insert('/walmart/configuration/', 'upc_custom_attribute', null);
+        $moduleConfig->insert('/walmart/configuration/', 'ean_mode', '0');
+        $moduleConfig->insert('/walmart/configuration/', 'ean_custom_attribute', null);
+        $moduleConfig->insert('/walmart/configuration/', 'gtin_mode', '0');
+        $moduleConfig->insert('/walmart/configuration/', 'gtin_custom_attribute', null);
+        $moduleConfig->insert('/walmart/configuration/', 'isbn_mode', '0');
+        $moduleConfig->insert('/walmart/configuration/', 'isbn_custom_attribute', null);
+        $moduleConfig->insert('/walmart/configuration/', 'option_images_url_mode', '0');
+        $moduleConfig->insert('/walmart/order/settings/marketplace_25/', 'use_first_street_line_as_company', '1');
+        $moduleConfig->insert('/walmart/listing/product/action/scheduled_data/', 'limit', '20000');
+        $moduleConfig->insert('/walmart/listing/product/instructions/cron/', 'listings_products_per_one_time', '1000');
+        $moduleConfig->insert('/walmart/listing/product/action/list/', 'min_allowed_wait_interval', '3600');
+        $moduleConfig->insert('/walmart/listing/product/action/relist/', 'min_allowed_wait_interval', '1800');
+        $moduleConfig->insert('/walmart/listing/product/action/revise_qty/', 'min_allowed_wait_interval', '900');
+        $moduleConfig->insert('/walmart/listing/product/action/revise_price/', 'min_allowed_wait_interval', '1800');
+        $moduleConfig->insert('/walmart/listing/product/action/revise_details/', 'min_allowed_wait_interval', '7200');
+        $moduleConfig->insert('/walmart/listing/product/action/revise_lag_time/', 'min_allowed_wait_interval', '7200');
+        $moduleConfig->insert('/walmart/listing/product/action/stop/', 'min_allowed_wait_interval', '600');
+        $moduleConfig->insert('/walmart/listing/product/action/delete/', 'min_allowed_wait_interval', '600');
+        $moduleConfig->insert(
+            '/walmart/listing/product/action/processing/prepare/',
+            'max_listings_products_count',
+            '2000'
         );
-
-        $synchronizationConfigModifier = $this->getConfigModifier('synchronization');
-
-        $synchronizationConfigModifier->insert('/walmart/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert('/walmart/general/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/walmart/general/run_parent_processors/',
-            'interval',
-            '60',
-            'in seconds'
-        );
-        $synchronizationConfigModifier->insert(
-            '/walmart/general/run_parent_processors/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/walmart/general/run_parent_processors/',
-            'last_time',
-            null,
-            'Last check time'
-        );
-
-        $synchronizationConfigModifier->insert(
-            '/walmart/listings_products/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/walmart/listings_products/update/', 'interval', '86400', 'in seconds');
-        $synchronizationConfigModifier->insert(
-            '/walmart/listings_products/update/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/walmart/listings_products/update/',
-            'last_time',
-            null,
-            'Last check time'
-        );
-
-        $synchronizationConfigModifier->insert(
-            '/walmart/listings_products/update/blocked/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/walmart/listings_products/update/blocked/',
-            'interval',
-            '86400',
-            'in seconds'
-        );
-        $synchronizationConfigModifier->insert(
-            '/walmart/listings_products/update/blocked/',
-            'last_time',
-            null,
-            'Last check time'
-        );
-
-        $synchronizationConfigModifier->insert('/walmart/marketplaces/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/walmart/marketplaces/categories/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/walmart/marketplaces/details/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/walmart/marketplaces/specifics/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-
-        $synchronizationConfigModifier->insert('/walmart/orders/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert('/walmart/orders/acknowledge/', 'mode', '1', 'in seconds');
-        $synchronizationConfigModifier->insert('/walmart/orders/acknowledge/', 'interval', '60', 'in seconds');
-        $synchronizationConfigModifier->insert('/walmart/orders/acknowledge/', 'last_time', null, 'Last check time');
-
-        $synchronizationConfigModifier->insert('/walmart/orders/cancel/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert('/walmart/orders/cancel/', 'interval', '60', 'in seconds');
-        $synchronizationConfigModifier->insert('/walmart/orders/cancel/', 'last_time', null, 'Last check time');
-
-        $synchronizationConfigModifier->insert('/walmart/orders/receive/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert('/walmart/orders/receive/', 'interval', '60', 'in seconds');
-        $synchronizationConfigModifier->insert('/walmart/orders/receive/', 'last_time', null, 'Last check time');
-
-        $synchronizationConfigModifier->insert('/walmart/orders/refund/', 'mode', '1', 'in seconds');
-        $synchronizationConfigModifier->insert('/walmart/orders/refund/', 'interval', '60', 'in seconds');
-        $synchronizationConfigModifier->insert('/walmart/orders/refund/', 'last_time', null, 'Last check time');
-
-        $synchronizationConfigModifier->insert('/walmart/orders/shipping/', 'mode', '1', 'in seconds');
-        $synchronizationConfigModifier->insert('/walmart/orders/shipping/', 'interval', '60', 'in seconds');
-        $synchronizationConfigModifier->insert('/walmart/orders/shipping/', 'last_time', null, 'Last check time');
-
-        $synchronizationConfigModifier->insert('/walmart/other_listings/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/walmart/other_listings/update/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert('/walmart/other_listings/update/', 'interval', '60', 'in seconds');
-        $synchronizationConfigModifier->insert('/walmart/other_listings/update/', 'last_time', null, 'Last check time');
-
-        $synchronizationConfigModifier->insert('/walmart/templates/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/list/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/relist/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/revise/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
-        );
-        $synchronizationConfigModifier->insert(
-            '/walmart/templates/synchronization/stop/',
-            'mode',
-            '1',
-            '0 - disable, \r\n1 - enable'
+        $moduleConfig->insert(
+            '/walmart/listing/product/action/revise_promotions/',
+            'min_allowed_wait_interval',
+            '7200'
         );
 
         $this->getConnection()->insertMultiple($this->getFullTableName('marketplace'), [
@@ -2445,34 +1523,22 @@ class InstallData implements InstallDataInterface
         return $setupRow !== false;
     }
 
-    // ---------------------------------------
+    /**
+     * @return \Ess\M2ePro\Model\Setup
+     */
+    private function getCurrentSetupObject()
+    {
+        return $this->activeRecordFactory->getObject('Setup')->getResource()->initCurrentSetupObject(
+            null,
+            $this->getConfigVersion()
+        );
+    }
+
+    //########################################
 
     private function getConfigVersion()
     {
         return $this->moduleList->getOne(Module::IDENTIFIER)['setup_version'];
-    }
-
-    // ---------------------------------------
-
-    private function setModuleSetupCompleted()
-    {
-        $this->getConnection()->update(
-            $this->getFullTableName('setup'),
-            [
-                'is_completed' => 1,
-                'update_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
-            ],
-            [
-                'version_from IS NULL',
-                'version_to = ?' => $this->getConfigVersion()
-            ]
-        );
-    }
-
-    private function setMagentoResourceVersion($version)
-    {
-        $this->moduleResource->setDbVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
-        $this->moduleResource->setDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
     }
 
     //########################################

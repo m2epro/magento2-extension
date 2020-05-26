@@ -28,11 +28,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
                 $post['listings_log_days']
             );
             $this->modelFactory->getObject('Log\Clearing')->saveSettings(
-                \Ess\M2ePro\Model\Log\Clearing::LOG_OTHER_LISTINGS,
-                $post['other_listings_log_mode'],
-                $post['other_listings_log_days']
-            );
-            $this->modelFactory->getObject('Log\Clearing')->saveSettings(
                 \Ess\M2ePro\Model\Log\Clearing::LOG_SYNCHRONIZATIONS,
                 $post['synchronizations_log_mode'],
                 $post['synchronizations_log_days']

@@ -606,7 +606,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     }
 
     /**
-     * @return Ess_M2ePro_Model_Magento_Product_Image[]
+     * @return \Ess\M2ePro\Model\Magento\Product\Image[]
      */
     public function getGalleryImages()
     {

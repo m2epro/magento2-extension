@@ -13,9 +13,6 @@ namespace Ess\M2ePro\Helper\View;
  */
 class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    // M2ePro_TRANSLATIONS
-    // Sell On eBay
-
     const NICK  = 'ebay';
 
     const WIZARD_INSTALLATION_NICK = 'installationEbay';
@@ -76,41 +73,10 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getMode()
-    {
-        return $this->cacheConfig->getGroupValue('/view/ebay/', 'mode');
-    }
-
-    public function setMode($mode)
-    {
-        $mode = strtolower($mode);
-        if (!in_array($mode, [self::MODE_SIMPLE,self::MODE_ADVANCED])) {
-            return;
-        }
-        $this->cacheConfig->setGroupValue('/view/ebay/', 'mode', $mode);
-    }
-
-    // ---------------------------------------
-
-    public function isSimpleMode()
-    {
-        return $this->getMode() == self::MODE_SIMPLE;
-    }
-
-    public function isAdvancedMode()
-    {
-        return $this->getMode() == self::MODE_ADVANCED;
-    }
-
-    //########################################
-
     public function isFeedbacksShouldBeShown($accountId = null)
     {
         $accountCollection = $this->modelFactory->getObject('Ebay\Account')->getCollection();
-        $accountCollection->addFieldToFilter(
-            'feedbacks_receive',
-            \Ess\M2ePro\Model\Ebay\Account::FEEDBACKS_RECEIVE_YES
-        );
+        $accountCollection->addFieldToFilter('feedbacks_receive', 1);
 
         $feedbackCollection = $this->activeRecordFactory->getObject('Ebay\Feedback')->getCollection();
 

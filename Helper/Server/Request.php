@@ -22,6 +22,13 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
         $tryToResendOnError = true,
         $tryToSwitchEndpointOnError = true
     ) {
+        if ($this->getHelper('Server_Maintenance')->isInRealRange()) {
+            throw new \Ess\M2ePro\Model\Exception\Connection(
+                'The action is temporarily unavailable. M2E Pro server is currently under the planned maintenance.
+                Please try again later.'
+            );
+        }
+
         !$serverBaseUrl && $serverBaseUrl  = $this->getServerHelper()->getEndpoint();
         !$serverHostName && $serverHostName = $this->getServerHelper()->getCurrentHostName();
 
@@ -93,6 +100,13 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
         $tryToSwitchEndpointOnError = true,
         $asynchronous = false
     ) {
+        if ($this->getHelper('Server_Maintenance')->isInRealRange()) {
+            throw new \Ess\M2ePro\Model\Exception\Connection(
+                'The action is temporarily unavailable. M2E Pro server is currently under the planned maintenance.
+                Please try again later.'
+            );
+        }
+
         if (empty($packages)) {
             throw new \Ess\M2ePro\Model\Exception\Logic("Packages is empty.");
         }
@@ -226,6 +240,14 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
             $timeout = (int) $package['timeout'];
         }
 
+        $sslVerifyPeer = true;
+        $sslVerifyHost = 2;
+
+        if (preg_match('/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/', $serverBaseUrl)) {
+            $sslVerifyPeer = false;
+            $sslVerifyHost = false;
+        }
+
         curl_setopt_array(
             $curlObject,
             [
@@ -233,8 +255,8 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
                 CURLOPT_URL => $serverBaseUrl,
 
                 // stop CURL from verifying the peer's certificate
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_SSL_VERIFYHOST => false,
+                CURLOPT_SSL_VERIFYPEER => $sslVerifyPeer,
+                CURLOPT_SSL_VERIFYHOST => $sslVerifyHost,
 
                 // disable http headers
                 CURLOPT_HEADER => false,

@@ -197,7 +197,7 @@ define([
                     }
 
                     if (response['message']) {
-                        MessageObj.clearAll();
+                        MessageObj.clear();
                         return MessageObj.addErrorMessage(response['message']);
                     }
 

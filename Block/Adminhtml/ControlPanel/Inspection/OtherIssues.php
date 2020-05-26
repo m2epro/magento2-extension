@@ -46,17 +46,11 @@ class OtherIssues extends AbstractInspection
 
     public function isShown()
     {
-        return $this->isMagicQuotesEnabled() ||
-               $this->isGdLibraryUnAvailable() ||
+        return $this->isGdLibraryUnAvailable() ||
                $this->isZendOpcacheAvailable();
     }
 
     //########################################
-
-    public function isMagicQuotesEnabled()
-    {
-        return (bool)ini_get('magic_quotes_gpc');
-    }
 
     public function isGdLibraryUnAvailable()
     {

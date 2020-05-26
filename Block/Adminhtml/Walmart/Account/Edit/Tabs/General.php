@@ -69,20 +69,37 @@ class General extends AbstractForm
 
         $form = $this->_formFactory->create();
 
-        $form->addField(
-            'walmart_accounts_general',
-            self::HELP_BLOCK,
-            [
-                'content' =>  $this->__(
-                    <<<HTML
+        if ($isEdit) {
+            $content = $this->__(
+                <<<HTML
 <div>
     Under this section, you can link your Walmart account to M2E Pro.
     Read how to <a href="%url%" target="_blank">get the API credentials</a>.
 </div>
 HTML
-                    ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XgBhAQ')
-                )
+                ,
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XgBhAQ')
+            );
+        } else {
+            $content = $this->__(
+                <<<HTML
+<div>
+    Under this section, you can link your Walmart account to M2E Pro.
+    Read how to <a href="%url%" target="_blank">get the API credentials</a> or register on 
+    <a href="https://marketplace-apply.walmart.com/apply?id=00161000012XSxe" target="_blank">Walmart US</a> / 
+    <a href="https://marketplace.walmart.ca/apply?q=ca" target="_blank">Walmart CA</a>.
+</div>
+HTML
+                ,
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XgBhAQ')
+            );
+        }
+
+        $form->addField(
+            'walmart_accounts_general',
+            self::HELP_BLOCK,
+            [
+                'content' => $content
             ]
         );
 

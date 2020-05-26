@@ -265,37 +265,6 @@ class OtherCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
 
     //########################################
 
-    /**
-     * @param bool $asArrays
-     * @param string|array $columns
-     * @return array
-     */
-    public function getAffectedListingsProducts($asArrays = true, $columns = '*')
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
-        $collection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
-        $collection->addFieldToFilter('template_other_category_id', $this->getId());
-
-        if (is_array($columns) && !empty($columns)) {
-            $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $collection->getSelect()->columns($columns);
-        }
-
-        return $asArrays ? (array)$collection->getData() : (array)$collection->getItems();
-    }
-
-    public function setSynchStatusNeed($newData, $oldData)
-    {
-        $listingsProducts = $this->getAffectedListingsProducts(true, ['id']);
-        if (empty($listingsProducts)) {
-            return;
-        }
-
-        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
-    }
-
-    //########################################
-
     public function getCacheGroupTags()
     {
         return array_merge(parent::getCacheGroupTags(), ['template']);

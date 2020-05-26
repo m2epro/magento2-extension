@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Walmart\Template\Synchronization;
+use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs\RelistRules
@@ -23,25 +24,23 @@ class RelistRules extends AbstractForm
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
         $defaults = [
-            'relist_mode' => Synchronization::RELIST_MODE_YES,
-            'relist_filter_user_lock' => Synchronization::RELIST_FILTER_USER_LOCK_YES,
-            'relist_status_enabled' => Synchronization::RELIST_STATUS_ENABLED_YES,
-            'relist_is_in_stock' => Synchronization::RELIST_IS_IN_STOCK_YES,
+            'relist_mode' => 1,
+            'relist_filter_user_lock' => 1,
+            'relist_status_enabled' => 1,
+            'relist_is_in_stock' => 1,
 
-            'relist_qty_magento'           => Synchronization::RELIST_QTY_NONE,
+            'relist_qty_magento'           => TemplateSynchronization::QTY_MODE_NONE,
             'relist_qty_magento_value'     => '1',
             'relist_qty_magento_value_max' => '10',
 
-            'relist_qty_calculated'           => Synchronization::RELIST_QTY_NONE,
+            'relist_qty_calculated'           => TemplateSynchronization::QTY_MODE_NONE,
             'relist_qty_calculated_value'     => '1',
             'relist_qty_calculated_value_max' => '10',
 
-            'relist_advanced_rules_mode'    => Synchronization::ADVANCED_RULES_MODE_NONE,
+            'relist_advanced_rules_mode'    => 0,
             'relist_advanced_rules_filters' => null
         ];
         $formData = array_merge($defaults, $formData);
-
-        $isEdit = !!$this->getRequest()->getParam('id');
 
         $form = $this->_formFactory->create();
 
@@ -77,8 +76,8 @@ HTML
                 'label' => $this->__('Relist Action'),
                 'value' => $formData['relist_mode'],
                 'values' => [
-                    Synchronization::RELIST_MODE_NONE => $this->__('Disabled'),
-                    Synchronization::RELIST_MODE_YES => $this->__('Enabled'),
+                    0 => $this->__('Disabled'),
+                    1 => $this->__('Enabled'),
                 ],
                 'tooltip' => $this->__(
                     'Enable to automatically relist the Not Listed Item(s) when the Relist Conditions are met.'
@@ -95,8 +94,8 @@ HTML
                 'label' => $this->__('Relist When Stopped Manually'),
                 'value' => $formData['relist_filter_user_lock'],
                 'values' => [
-                    Synchronization::RELIST_FILTER_USER_LOCK_YES => $this->__('No'),
-                    Synchronization::RELIST_FILTER_USER_LOCK_NONE => $this->__('Yes'),
+                    1 => $this->__('No'),
+                    0 => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
                     'Enable if you want to relist the Items that were stopped manually.'
@@ -120,8 +119,8 @@ HTML
                 'label' => $this->__('Product Status'),
                 'value' => $formData['relist_status_enabled'],
                 'values' => [
-                    Synchronization::RELIST_STATUS_ENABLED_NONE => $this->__('Any'),
-                    Synchronization::RELIST_STATUS_ENABLED_YES => $this->__('Enabled'),
+                    0 => $this->__('Any'),
+                    1 => $this->__('Enabled'),
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-product-status',
                 'tooltip' => $this->__(
@@ -138,8 +137,8 @@ HTML
                 'label' => $this->__('Stock Availability'),
                 'value' => $formData['relist_is_in_stock'],
                 'values' => [
-                    Synchronization::RELIST_IS_IN_STOCK_NONE => $this->__('Any'),
-                    Synchronization::RELIST_IS_IN_STOCK_YES => $this->__('In Stock'),
+                    0 => $this->__('Any'),
+                    1 => $this->__('In Stock'),
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-stock-availability',
                 'tooltip' => $this->__(
@@ -156,9 +155,9 @@ HTML
                 'label' => $this->__('Magento Quantity'),
                 'value' => $formData['relist_qty_magento'],
                 'values' => [
-                    Synchronization::RELIST_QTY_NONE => $this->__('Any'),
-                    Synchronization::RELIST_QTY_MORE => $this->__('More or Equal'),
-                    Synchronization::RELIST_QTY_BETWEEN => $this->__('Between'),
+                    TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
+                    TemplateSynchronization::QTY_MODE_MORE => $this->__('More or Equal'),
+                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-item-qty',
                 'tooltip' => $this->__(
@@ -201,9 +200,9 @@ HTML
                 'label' => $this->__('Calculated Quantity'),
                 'value' => $formData['relist_qty_calculated'],
                 'values' => [
-                    Synchronization::RELIST_QTY_NONE => $this->__('Any'),
-                    Synchronization::RELIST_QTY_MORE => $this->__('More or Equal'),
-                    Synchronization::RELIST_QTY_BETWEEN => $this->__('Between'),
+                    TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
+                    TemplateSynchronization::QTY_MODE_MORE => $this->__('More or Equal'),
+                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-item-qty',
                 'tooltip' => $this->__(
@@ -277,8 +276,8 @@ HTML
                 'label' => $this->__('Mode'),
                 'value' => $formData['relist_advanced_rules_mode'],
                 'values' => [
-                    Synchronization::ADVANCED_RULES_MODE_NONE => $this->__('Disabled'),
-                    Synchronization::ADVANCED_RULES_MODE_YES  => $this->__('Enabled'),
+                    0 => $this->__('Disabled'),
+                    1  => $this->__('Enabled'),
                 ],
             ]
         );

@@ -14,11 +14,6 @@ class CharityMigration extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['ebay_template_selling_format'];
-    }
-
     public function execute()
     {
         $this->getTableModifier('ebay_template_selling_format')

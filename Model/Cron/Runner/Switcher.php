@@ -59,7 +59,7 @@ class Switcher extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    private function getRunnerPriority($nick)
+    protected function getRunnerPriority($nick)
     {
         return isset($this->runnerPriority[$nick]) ? $this->runnerPriority[$nick] : -1;
     }

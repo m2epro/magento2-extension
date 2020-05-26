@@ -323,6 +323,33 @@ HTML;
 
     protected function _toHtml()
     {
+        $errorMessage = $this
+            ->__(
+                "To proceed, the category data must be specified.
+                 Please select a relevant Description Policy for at least one product."
+            );
+        $isNotExistProductsWithDescriptionTemplate = (int)$this->isNotExistProductsWithDescriptionTemplate();
+
+        $this->js->add(
+            <<<JS
+    require([
+        'M2ePro/Plugin/Messages'
+    ],function(MessageObj) {
+        
+        var button = $('amazon_listing_category_continue_btn');
+        if ({$isNotExistProductsWithDescriptionTemplate}) {
+            button.addClassName('disabled');
+            button.disable();
+            MessageObj.addErrorMessage(`{$errorMessage}`);
+        } else {
+            button.removeClassName('disabled');
+            button.enable();
+            MessageObj.clear();
+        }
+    });
+JS
+        );
+
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
                 <<<JS
@@ -332,6 +359,24 @@ JS
         }
 
         return parent::_toHtml();
+    }
+
+    //########################################
+
+    protected function isNotExistProductsWithDescriptionTemplate()
+    {
+        /** @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection $collection */
+        $collection = $this->getCollection();
+        $countSelect = clone $collection->getSelect();
+        $countSelect->reset(\Zend_Db_Select::ORDER);
+        $countSelect->reset(\Zend_Db_Select::LIMIT_COUNT);
+        $countSelect->reset(\Zend_Db_Select::LIMIT_OFFSET);
+        $countSelect->reset(\Zend_Db_Select::COLUMNS);
+
+        $countSelect->columns('COUNT(*)');
+        $countSelect->where('alp.template_description_id > 0');
+
+        return !$collection->getConnection()->fetchOne($countSelect);
     }
 
     //########################################

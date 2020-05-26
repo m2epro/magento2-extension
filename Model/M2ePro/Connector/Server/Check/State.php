@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\M2ePro\Connector\Server\Check;
  */
 class State extends \Ess\M2ePro\Model\Connector\Command\RealTime
 {
-    // ########################################
+    //########################################
 
     protected function getCommand()
     {
@@ -30,7 +30,7 @@ class State extends \Ess\M2ePro\Model\Connector\Command\RealTime
         return true;
     }
 
-    // ########################################
+    //########################################
 
     protected function buildConnectionInstance()
     {
@@ -44,5 +44,5 @@ class State extends \Ess\M2ePro\Model\Connector\Command\RealTime
         return $connection;
     }
 
-    // ########################################
+    //########################################
 }

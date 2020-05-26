@@ -27,14 +27,13 @@ class Grid extends AccountGrid
         parent::__construct($context, $backendHelper, $data);
     }
 
+    //########################################
+
     protected function _prepareCollection()
     {
-        // Get collection of accounts
         $collection = $this->ebayFactory->getObject('Account')->getCollection();
 
-        // Set collection to grid
         $this->setCollection($collection);
-
         return parent::_prepareCollection();
     }
 
@@ -91,6 +90,7 @@ class Grid extends AccountGrid
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
+        /** @var \Ess\M2ePro\Model\Account $row */
         $userIdLabel = $this->__('eBay User ID');
         $userId = $row->getChildObject()->getData('user_id');
 
@@ -104,8 +104,9 @@ HTML;
         }
 
         $environmentLabel = $this->__('Environment');
-        $environment = (int)$row->getChildObject()->getData('mode') == \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX ?
-            'Sandbox (Test)' : 'Production (Live)';
+        $environment = (int)$row->getChildObject()->getData('mode') == \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX
+            ? 'Sandbox (Test)'
+            : 'Production (Live)';
         $environment = $this->__($environment);
 
         $value = <<<HTML

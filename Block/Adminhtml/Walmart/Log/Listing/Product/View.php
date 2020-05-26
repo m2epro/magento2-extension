@@ -42,8 +42,7 @@ class View extends AbstractView
     {
         $helpBlock = $this->createBlock('HelpBlock')->setData([
             'content' => $this->__(
-                'The Log contains information about the actions applied to M2E Pro Listings,
-                3rd Party Listings, and related Items.'
+                'The Log contains information about the actions applied to M2E Pro Listings and related Items.'
             )
         ]);
 

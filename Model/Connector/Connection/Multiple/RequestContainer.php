@@ -16,7 +16,7 @@ class RequestContainer extends \Ess\M2ePro\Model\AbstractModel
     private $request = null;
     private $timeout = null;
 
-    // ########################################
+    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Connector\Connection\Request|null
@@ -36,7 +36,7 @@ class RequestContainer extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    // ########################################
+    //########################################
 
     /**
      * @return null
@@ -56,5 +56,5 @@ class RequestContainer extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    // ########################################
+    //########################################
 }

@@ -11,46 +11,15 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Fulfillment;
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Fulfillment\SwitchToMFN
  */
-class SwitchToMFN extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Fulfillment
+class SwitchToMFN extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\RunReviseProducts
 {
     public function execute()
     {
-        $productsIds = $this->getRequest()->getParam('products_ids');
-
-        if (empty($productsIds)) {
-            return $this->getResponse()->setBody('ERROR: Empty Product ID!');
-        }
-
-        if (!is_array($productsIds)) {
-            $productsIds = explode(',', $productsIds);
-        }
-
-        $listingProducts = [];
-        foreach ($productsIds as $listingProductId) {
-
-            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-            $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $listingProductId);
-
-            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator */
-            $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
-            $configurator->reset();
-            $configurator->allowQty();
-
-            $listingProduct->setActionConfigurator($configurator);
-            $listingProducts[] = $listingProduct;
-        }
-
-        $params['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER;
-        $params['switch_to'] = \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Qty::FULFILLMENT_MODE_MFN;
-        $action = \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE;
-
-        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Product_Dispatcher');
-        $result = (int)$dispatcherObject->process($action, $listingProducts, $params);
-
-        $this->setJsonContent([
-            'messages' => [$this->getSwitchFulfillmentResultMessage($result)]
-        ]);
-
-        return $this->getResult();
+        return $this->scheduleAction(
+            \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+            [
+                'switch_to' => \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty::FULFILLMENT_MODE_MFN,
+            ]
+        );
     }
 }

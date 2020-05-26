@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Walmart\Connector;
  */
 class Protocol extends \Ess\M2ePro\Model\Connector\Protocol
 {
-    // ########################################
+    //########################################
 
     public function getComponent()
     {
@@ -25,5 +25,5 @@ class Protocol extends \Ess\M2ePro\Model\Connector\Protocol
         return 2;
     }
 
-    // ########################################
+    //########################################
 }

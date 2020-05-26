@@ -82,6 +82,10 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             'close_on_save' => $this->getRequest()->getParam('close_on_save'),
         ]);
 
+        $saveAndBackUrl = $this->getUrl('*/ebay_template/save', [
+            'back' => $this->getHelper('Data')->makeBackUrlParam('list')
+        ]);
+
         if ($isSaveAndClose) {
             $this->removeButton('back');
 
@@ -90,7 +94,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 'label' => $this->__('Save And Close'),
                 'class' => 'add',
                 'button_class' => '',
-                'onclick' => "EbayTemplateEditObj.saveAndCloseClick('{$url}', '{$saveConfirmation}')",
+                'onclick' => "EbayTemplateEditObj.saveClick('{$saveAndBackUrl}', '{$saveConfirmation}')",
                 'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
                 'options' => [
                     'save' => [
@@ -101,9 +105,6 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 ],
             ];
         } else {
-            $saveAndBackUrl = $this->getUrl('*/ebay_template/save', [
-                'back' => $this->getHelper('Data')->makeBackUrlParam('list')
-            ]);
 
             $saveButtons = [
                 'id' => 'save_and_continue',

@@ -1,9 +1,7 @@
-
 define([
     'Magento_Ui/js/modal/modal',
     'M2ePro/Common'
 ], function(modal){
-
     window.EbaySettingsMotors = Class.create(Common, {
 
         // ---------------------------------------
@@ -54,6 +52,8 @@ define([
                         spanStatEpids.innerHTML = $('epids_uk_custom_count').innerHTML;
                     } else if (motorsType == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Ebay_Motors::TYPE_EPID_DE')) {
                         spanStatEpids.innerHTML = $('epids_de_custom_count').innerHTML;
+                    } else if (motorsType == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Ebay_Motors::TYPE_EPID_AU')) {
+                        spanStatEpids.innerHTML = $('epids_au_custom_count').innerHTML;
                     } else {
                         spanStatEpids.innerHTML = $('ktypes_custom_count').innerHTML;
                     }

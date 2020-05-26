@@ -13,11 +13,12 @@ namespace Ess\M2ePro\Model\Amazon\Order;
  */
 class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 {
+    /** @var \Ess\M2ePro\Model\Amazon\Order\Item\ProxyObject[] */
+    protected $removedProxyItems = [];
+
     protected $payment;
-
     protected $customerFactory;
-
-    private $customerRepository;
+    protected $customerRepository;
 
     //########################################
 
@@ -78,14 +79,11 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getOrderNumberPrefix()
     {
         $amazonAccount = $this->order->getAmazonAccount();
-        if (!$amazonAccount->isMagentoOrdersNumberPrefixEnable()) {
-            return '';
-        }
 
         $prefix = $amazonAccount->getMagentoOrdersNumberRegularPrefix();
 
@@ -173,16 +171,16 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         $customerNameParts = $this->getNameParts($this->order->getBuyerName());
 
         return [
-            'firstname'  => $customerNameParts['firstname'],
+            'firstname' => $customerNameParts['firstname'],
             'middlename' => $customerNameParts['middlename'],
-            'lastname'   => $customerNameParts['lastname'],
+            'lastname' => $customerNameParts['lastname'],
             'country_id' => '',
-            'region'     => '',
-            'region_id'  => '',
-            'city'       => 'Amazon does not supply the complete billing Buyer information.',
-            'postcode'   => '',
-            'street'     => '',
-            'company'    => ''
+            'region' => '',
+            'region_id' => '',
+            'city' => 'Amazon does not supply the complete billing Buyer information.',
+            'postcode' => '',
+            'street' => '',
+            'company' => ''
         ];
     }
 
@@ -217,13 +215,13 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     public function getPaymentData()
     {
         $paymentData = [
-            'method'                => $this->payment->getCode(),
-            'component_mode'        =>\Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'payment_method'        => '',
-            'channel_order_id'      => $this->order->getAmazonOrderId(),
-            'channel_final_fee'     => 0,
+            'method' => $this->payment->getCode(),
+            'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'payment_method' => '',
+            'channel_order_id' => $this->order->getAmazonOrderId(),
+            'channel_final_fee' => 0,
             'cash_on_delivery_cost' => 0,
-            'transactions'          => []
+            'transactions' => []
         ];
 
         return $paymentData;
@@ -238,8 +236,8 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     {
         $shippingData = [
             'shipping_method' => $this->order->getShippingService(),
-            'shipping_price'  => $this->getBaseShippingPrice(),
-            'carrier_title'   => $this->getHelper('Module\Translation')->__('Amazon Shipping')
+            'shipping_price' => $this->getBaseShippingPrice(),
+            'carrier_title' => $this->getHelper('Module\Translation')->__('Amazon Shipping')
         ];
 
         if ($this->order->isPrime()) {
@@ -257,17 +255,17 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
             if (!empty($merchantFulfillmentInfo['shipping_service']['carrier_name'])) {
                 $carrier = $merchantFulfillmentInfo['shipping_service']['carrier_name'];
-                $shippingData['shipping_method'] .= ' | Carrier: '.$carrier;
+                $shippingData['shipping_method'] .= ' | Carrier: ' . $carrier;
             }
 
             if (!empty($merchantFulfillmentInfo['shipping_service']['name'])) {
                 $service = $merchantFulfillmentInfo['shipping_service']['name'];
-                $shippingData['shipping_method'] .= ' | Service: '.$service;
+                $shippingData['shipping_method'] .= ' | Service: ' . $service;
             }
 
             if (!empty($merchantFulfillmentInfo['shipping_service']['date']['estimated_delivery']['latest'])) {
                 $deliveryDate = $merchantFulfillmentInfo['shipping_service']['date']['estimated_delivery']['latest'];
-                $shippingData['shipping_method'] .= ' | Delivery Date: '.$deliveryDate;
+                $shippingData['shipping_method'] .= ' | Delivery Date: ' . $deliveryDate;
             }
         }
 
@@ -291,79 +289,160 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     //########################################
 
     /**
-     * @return array
+     * @return string[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getChannelComments()
     {
-        $translator = $this->getHelper('Module\Translation');
+        return array_merge(
+            $this->getDiscountComments(),
+            $this->getGiftWrappedComments(),
+            $this->getRemovedOrderItemsComments(),
+            $this->getAFNWarehouseComments()
+        );
+    }
 
+    /**
+     * @return string[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getDiscountComments()
+    {
+        $translation = $this->getHelper('Module_Translation');
         $comments = [];
 
         if ($this->order->getPromotionDiscountAmount() > 0) {
-            $discount = $this->currency->formatPrice($this->getCurrency(), $this->order->getPromotionDiscountAmount());
+            $discount = $this->currency->formatPrice(
+                $this->getCurrency(),
+                $this->order->getPromotionDiscountAmount()
+            );
 
-            $comment = $translator->__(
+            $comments[] =  $translation->__(
                 '%value% promotion discount amount was subtracted from the total amount.',
                 $discount
             );
-            $comment .= '<br/>';
-
-            $comments[] = $comment;
         }
 
         if ($this->order->getShippingDiscountAmount() > 0) {
-            $discount = $this->currency->formatPrice($this->getCurrency(), $this->order->getShippingDiscountAmount());
+            $discount = $this->currency->formatPrice(
+                $this->getCurrency(),
+                $this->order->getShippingDiscountAmount()
+            );
 
-            $comment = $translator->__(
+            $comments[] = $translation->__(
                 '%value% discount amount was subtracted from the shipping Price.',
                 $discount
             );
-            $comment .= '<br/>';
-
-            $comments[] = $comment;
         }
 
-        // Gift Wrapped Items
-        // ---------------------------------------
-        $itemsGiftPrices = [];
+        return $comments;
+    }
 
-        /** @var \Ess\M2ePro\Model\Order\Item[] $items */
-        $items = $this->order->getParentObject()->getItemsCollection();
-        foreach ($items as $item) {
+    /**
+     * @return string[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getGiftWrappedComments()
+    {
+        $itemsGiftPrices = [];
+        foreach ($this->order->getParentObject()->getItemsCollection() as $item) {
+            /** @var \Ess\M2ePro\Model\Order\Item $item */
+
             $giftPrice = $item->getChildObject()->getGiftPrice();
             if (empty($giftPrice)) {
                 continue;
             }
 
-            $itemsGiftPrices[] = [
-                'name'    => $item->getMagentoProduct()->getName(),
-                'type'    => $item->getChildObject()->getGiftType(),
-                'price'   => $giftPrice,
-                'message' => $item->getChildObject()->getGiftMessage(),
-            ];
+            if ($item->getMagentoProduct()) {
+                $itemsGiftPrices[] = [
+                    'name'  => $item->getMagentoProduct()->getName(),
+                    'type'  => $item->getChildObject()->getGiftType(),
+                    'price' => $giftPrice
+                ];
+            }
         }
 
-        if (!empty($itemsGiftPrices)) {
-            $comment = '<u>'.$translator->__('The following Items are purchased with gift wraps').':</u><br/>';
+        if (empty($itemsGiftPrices)) {
+            return [];
+        }
 
-            foreach ($itemsGiftPrices as $productInfo) {
-                $formattedCurrency = $this->currency->formatPrice(
-                    $this->getCurrency(),
-                    $productInfo['price']
-                );
+        $comment = '<u>'.
+            $this->getHelper('Module_Translation')->__('The following Items are purchased with gift wraps') .
+            ':</u><br/>';
 
-                $comment .= '<b>'.$productInfo['name'].'</b> > '.$productInfo['type'].' ('.$formattedCurrency.')<br />';
+        foreach ($itemsGiftPrices as $productInfo) {
+            $formattedCurrency = $this->currency->formatPrice(
+                $this->getCurrency(),
+                $productInfo['price']
+            );
 
-                if (!empty($productInfo['message'])) {
-                    $comment .= '<i>'.$translator->__('Message').':</i> '.$productInfo['message'].'<br />';
-                }
+            $comment .= "<b>{$productInfo['name']}</b> > {$productInfo['type']} ({$formattedCurrency})<br/>";
+        }
+
+        return [$comment];
+    }
+
+    /**
+     * @return string[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getRemovedOrderItemsComments()
+    {
+        if (empty($this->removedProxyItems)) {
+            return [];
+        }
+
+        $comment = '<u>'.
+            $this->getHelper('Module_Translation')->__(
+                'The following SKUs have zero price and can not be included in Magento order line items'
+            ).
+            ':</u><br/>';
+
+        foreach ($this->removedProxyItems as $item) {
+            if ($item->getMagentoProduct()) {
+                $comment .= "<b>{$item->getMagentoProduct()->getSku()}</b>: {$item->getQty()} QTY<br/>";
+            }
+        }
+
+        return [$comment];
+    }
+
+    /**
+     * @return string[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getAFNWarehouseComments()
+    {
+        if (!$this->order->isFulfilledByAmazon()) {
+            return [];
+        }
+
+        $comment = '';
+        $helper = $this->getHelper('Data');
+        $translation = $this->getHelper('Module_Translation');
+
+        foreach ($this->order->getParentObject()->getItemsCollection() as $item) {
+            /** @var \Ess\M2ePro\Model\Order\Item $item */
+
+            $centerId = $item->getChildObject()->getFulfillmentCenterId();
+            if (empty($centerId)) {
+                return [];
             }
 
-            $comments[] = $comment;
-        }
-        // ---------------------------------------
+            if ($item->getMagentoProduct()) {
+                $sku = $item->getMagentoProduct()->getSku();
+                $comment .= "<b>{$translation->__('SKU')}:</b> {$helper->escapeHtml($sku)}&nbsp;&nbsp;&nbsp;";
+            }
 
-        return $comments;
+            if ($generalId = $item->getChildObject()->getGeneralId()) {
+                $general = $item->getChildObject()->getIsIsbnGeneralId() ? 'ISBN' : 'ASIN';
+                $comment .= "<b>{$translation->__($general)}:</b> {$helper->escapeHtml($generalId)}&nbsp;&nbsp;&nbsp;";
+            }
+
+            $comment .= "<b>{$translation->__('AFN Warehouse')}:</b> {$helper->escapeHtml($centerId)}<br/><br/>";
+        }
+
+        return empty($comment) ? [] : [$comment];
     }
 
     //########################################

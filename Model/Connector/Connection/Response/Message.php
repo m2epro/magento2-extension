@@ -19,8 +19,6 @@ class Message extends \Ess\M2ePro\Model\Response\Message
     const SENDER_SYSTEM    = 'system';
     const SENDER_COMPONENT = 'component';
 
-    //########################################
-
     protected $sender = null;
     protected $code   = null;
 
@@ -50,13 +48,6 @@ class Message extends \Ess\M2ePro\Model\Response\Message
             self::SENDER_KEY => $this->sender,
             self::CODE_KEY   => $this->code,
         ]);
-    }
-
-    //########################################
-
-    public function getText()
-    {
-        return $this->text;
     }
 
     //########################################

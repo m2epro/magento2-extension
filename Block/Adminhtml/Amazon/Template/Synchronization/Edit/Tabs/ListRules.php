@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Template\Synchronization;
+use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs\ListRules
@@ -24,24 +25,22 @@ class ListRules extends AbstractForm
 
         $defaults = [
             'title'               => '',
-            'list_mode'           => Synchronization::LIST_MODE_YES,
-            'list_status_enabled' => Synchronization::LIST_STATUS_ENABLED_YES,
-            'list_is_in_stock'    => Synchronization::LIST_IS_IN_STOCK_YES,
+            'list_mode'           => 1,
+            'list_status_enabled' => 1,
+            'list_is_in_stock'    => 1,
 
-            'list_qty_magento'           => Synchronization::LIST_QTY_NONE,
+            'list_qty_magento'           => TemplateSynchronization::QTY_MODE_NONE,
             'list_qty_magento_value'     => '1',
             'list_qty_magento_value_max' => '10',
 
-            'list_qty_calculated'           => Synchronization::LIST_QTY_NONE,
+            'list_qty_calculated'           => TemplateSynchronization::QTY_MODE_NONE,
             'list_qty_calculated_value'     => '1',
             'list_qty_calculated_value_max' => '10',
 
-            'list_advanced_rules_mode'    => Synchronization::ADVANCED_RULES_MODE_NONE,
+            'list_advanced_rules_mode'    => 0,
             'list_advanced_rules_filters' => null
         ];
         $formData = array_merge($defaults, $formData);
-
-        $isEdit = !!$this->getRequest()->getParam('id');
 
         $form = $this->_formFactory->create();
 
@@ -82,8 +81,8 @@ HTML
                 'label' => $this->__('List Action'),
                 'value' => $formData['list_mode'],
                 'values' => [
-                    Synchronization::LIST_MODE_NONE => $this->__('Disabled'),
-                    Synchronization::LIST_MODE_YES => $this->__('Enabled'),
+                    0 => $this->__('Disabled'),
+                    1 => $this->__('Enabled'),
                 ],
                 'tooltip' => $this->__(
                     'Enables / disables automatic Listing of <i>Not Listed</i> Items,
@@ -108,8 +107,8 @@ HTML
                 'label' => $this->__('Product Status'),
                 'value' => $formData['list_status_enabled'],
                 'values' => [
-                    Synchronization::LIST_STATUS_ENABLED_NONE => $this->__('Any'),
-                    Synchronization::LIST_STATUS_ENABLED_YES => $this->__('Enabled'),
+                    0 => $this->__('Any'),
+                    1 => $this->__('Enabled'),
                 ],
                 'tooltip' => $this->__(
                     '<p><strong>Enabled:</strong> List Items on Amazon automatically if they have status
@@ -127,8 +126,8 @@ HTML
                 'label' => $this->__('Stock Availability'),
                 'value' => $formData['list_is_in_stock'],
                 'values' => [
-                    Synchronization::LIST_IS_IN_STOCK_NONE => $this->__('Any'),
-                    Synchronization::LIST_IS_IN_STOCK_YES => $this->__('In Stock'),
+                    0 => $this->__('Any'),
+                    1 => $this->__('In Stock'),
                 ],
                 'tooltip' => $this->__(
                     '<p><strong>In Stock:</strong> List Items automatically if Products are
@@ -146,9 +145,9 @@ HTML
                 'label' => $this->__('Magento Quantity'),
                 'value' => $formData['list_qty_magento'],
                 'values' => [
-                    Synchronization::LIST_QTY_NONE => $this->__('Any'),
-                    Synchronization::LIST_QTY_MORE => $this->__('More or Equal'),
-                    Synchronization::LIST_QTY_BETWEEN => $this->__('Between'),
+                    TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
+                    TemplateSynchronization::QTY_MODE_MORE => $this->__('More or Equal'),
+                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
                 ],
                 'tooltip' => $this->__(
                     '<p><strong>Any:</strong> List Items automatically with any Quantity available.</p>
@@ -194,9 +193,9 @@ HTML
                 'label' => $this->__('Calculated Quantity'),
                 'value' => $formData['list_qty_calculated'],
                 'values' => [
-                    Synchronization::LIST_QTY_NONE => $this->__('Any'),
-                    Synchronization::LIST_QTY_MORE => $this->__('More or Equal'),
-                    Synchronization::LIST_QTY_BETWEEN => $this->__('Between'),
+                    TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
+                    TemplateSynchronization::QTY_MODE_MORE => $this->__('More or Equal'),
+                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
                 ],
                 'tooltip' => $this->__(
                     '<p><strong>Any:</strong> List Items automatically with any Quantity available.</p>
@@ -270,8 +269,8 @@ HTML
                 'label' => $this->__('Mode'),
                 'value' => $formData['list_advanced_rules_mode'],
                 'values' => [
-                    Synchronization::ADVANCED_RULES_MODE_NONE => $this->__('Disabled'),
-                    Synchronization::ADVANCED_RULES_MODE_YES  => $this->__('Enabled'),
+                    0 => $this->__('Disabled'),
+                    1  => $this->__('Enabled'),
                 ],
             ]
         );
@@ -296,6 +295,9 @@ HTML
             ]
         );
 
+        $this->jsPhp->addConstants(
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Template\Synchronization::class)
+        );
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\Synchronization::class)
         );

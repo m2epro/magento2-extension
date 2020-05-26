@@ -49,8 +49,8 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         $content = $this->__(
             '
             In this Section you can Create, Edit and Delete the Selling Policy,
-            Synchronization Policy, Description Policy, Shipping Template Policy,
-            Shipping Override Policy, Product Tax Code Policy.<br/><br/>
+            Synchronization Policy, Description Policy, Shipping Policy,
+            Product Tax Code Policy.<br/><br/>
 
             <strong>Selling Policy</strong> is used to work with values related
             to the formation of your Channel Offers such as Price, Quantity, etc.<br/><br/>
@@ -61,11 +61,8 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             <strong>Description Policy</strong> is used to provide necessary settings for Creating new ASIN/ISBN in
             Amazon Catalog or Update the Product Information of the existing Amazon Item.<br/><br/>
 
-            <strong>Shipping Template Policy</strong> is used to apply the Amazon Shipping Templates to your
+            <strong>Shipping Policy</strong> is used to apply the Amazon Shipping to your
             Products within M2E Pro Listings.<br/><br/>
-
-            <strong>Shipping Override Policy</strong> is used to specify settings for Shipping Services,
-            Locale and Shipping Cost.<br/><br/>
 
             <strong>Product Tax Code Policy</strong> allows applying the Amazon Tax Codes to your
             Products within M2E Pro Listings.<br/><br/>
@@ -109,13 +106,9 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
                 'label' => $this->__('Synchronization'),
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SYNCHRONIZATION) . "')",
             ],
-            Grid::TEMPLATE_SHIPPING_TEMPLATE => [
-                'label' => $this->__('Shipping Template'),
-                'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SHIPPING_TEMPLATE) . "')",
-            ],
-            Grid::TEMPLATE_SHIPPING_OVERRIDE => [
-                'label' => $this->__('Shipping Override'),
-                'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SHIPPING_OVERRIDE) . "')",
+            Grid::TEMPLATE_SHIPPING => [
+                'label' => $this->__('Shipping'),
+                'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SHIPPING) . "')",
             ],
             Grid::TEMPLATE_PRODUCT_TAX_CODE => [
                 'label' => $this->__('Product Tax Code'),

@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise;
 
+use \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty as QtyBuilder;
+
 /**
  * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise\Validator
  */
@@ -24,19 +26,13 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
             return false;
         }
 
-        if ($this->getVariationManager()->isRelationParentType() && !$this->validateParentListingProductFlags()) {
-            return false;
-        }
-
-        if (!$this->validatePhysicalUnitAndSimple()) {
+        if ($this->getVariationManager()->isRelationParentType() && !$this->validateParentListingProduct()) {
             return false;
         }
 
         $params = $this->getParams();
 
         if (!empty($params['switch_to']) && !$this->getConfigurator()->isQtyAllowed()) {
-            // M2ePro\TRANSLATIONS
-            // Fulfillment mode can not be switched if QTY feed is not allowed.
             $this->addMessage('Fulfillment mode can not be switched if QTY feed is not allowed.');
             return false;
         }
@@ -54,49 +50,26 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                         \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING
                     );
                 } else {
-                    $afn = \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Qty::FULFILLMENT_MODE_AFN;
-
-                    if ($params['switch_to'] === $afn) {
-                        // M2ePro\TRANSLATIONS
-                        // You cannot switch Fulfillment because it is applied now.
+                    if ($params['switch_to'] === QtyBuilder::FULFILLMENT_MODE_AFN) {
                         $this->addMessage('You cannot switch Fulfillment because it is applied now.');
                         return false;
                     }
                 }
             } else {
-                $mfn = \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Qty::FULFILLMENT_MODE_MFN;
-
-                if (!empty($params['switch_to']) && $params['switch_to'] === $mfn) {
-                    // M2ePro\TRANSLATIONS
-                    // You cannot switch Fulfillment because it is applied now.
+                if (!empty($params['switch_to']) && $params['switch_to'] === QtyBuilder::FULFILLMENT_MODE_MFN) {
                     $this->addMessage('You cannot switch Fulfillment because it is applied now.');
                     return false;
                 }
             }
         }
 
-        if ($this->getAmazonListingProduct()->isAfnChannel()) {
-            if ($this->getConfigurator()->isShippingOverrideAllowed() &&
-                $this->getAmazonAccount()->isShippingModeOverride() &&
-                $this->getAmazonListingProduct()->isExistShippingOverrideTemplate()) {
-                $this->getConfigurator()->disallowShippingOverride();
-
-                $this->addMessage(
-                    'The Shipping Override Settings will not be sent for this Product because it is an FBA Item.
-                    Amazon will handle the delivery of the Order.',
-                    \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING
-                );
-            } elseif ($this->getConfigurator()->isShippingTemplateAllowed() &&
-                $this->getAmazonAccount()->isShippingModeTemplate() &&
-                $this->getAmazonListingProduct()->isExistShippingTemplateTemplate()) {
-                $this->getConfigurator()->disallowShippingTemplate();
-
-                $this->addMessage(
-                    'The Shipping Template Settings will not be sent for this Product because it is an FBA Item.
-                    Amazon will handle the delivery of the Order.',
-                    \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING
-                );
-            }
+        if ($this->getAmazonListingProduct()->isAfnChannel() &&
+            $this->getAmazonListingProduct()->isExistShippingTemplate()) {
+            $this->addMessage(
+                'The Shipping Settings will not be sent for this Product because it is an FBA Item.
+                Amazon will handle the delivery of the Order.',
+                \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING
+            );
         }
 
         if ($this->getVariationManager()->isPhysicalUnit() && !$this->validatePhysicalUnitMatching()) {
@@ -110,10 +83,7 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
         if (!$this->getAmazonListingProduct()->isAfnChannel() &&
             (!$this->getListingProduct()->isListed() || !$this->getListingProduct()->isRevisable())
         ) {
-            // M2ePro\TRANSLATIONS
-            // Item is not Listed or not available
             $this->addMessage('Item is not Listed or not available');
-
             return false;
         }
 
@@ -122,6 +92,20 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
         }
 
         if (!$this->validateRegularPrice() || !$this->validateBusinessPrice()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    //########################################
+
+    protected function validateParentListingProduct()
+    {
+        if ((!$this->getConfigurator()->isDetailsAllowed() && !$this->getConfigurator()->isImagesAllowed()) ||
+             !$this->getAmazonListingProduct()->isExistDescriptionTemplate()
+        ) {
+            $this->addMessage('There was no need for this action. It was skipped.');
             return false;
         }
 

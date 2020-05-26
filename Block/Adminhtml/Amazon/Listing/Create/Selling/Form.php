@@ -60,7 +60,7 @@ class Form extends AbstractForm
                 ['boolean']
             ),
             'text' => $magentoAttributeHelper->filterByInputTypes(
-                $this->getData('general_attributes'),
+                $this->getData('all_attributes'),
                 ['text']
             ),
             'text_textarea' => $magentoAttributeHelper->filterByInputTypes(
@@ -68,15 +68,15 @@ class Form extends AbstractForm
                 ['text', 'textarea']
             ),
             'text_date' => $magentoAttributeHelper->filterByInputTypes(
-                $this->getData('general_attributes'),
+                $this->getData('all_attributes'),
                 ['text', 'date', 'datetime']
             ),
             'text_select' => $magentoAttributeHelper->filterByInputTypes(
-                $this->getData('general_attributes'),
+                $this->getData('all_attributes'),
                 ['text', 'select']
             ),
             'text_images' => $magentoAttributeHelper->filterByInputTypes(
-                $this->getData('general_attributes'),
+                $this->getData('all_attributes'),
                 ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
             )
         ];
@@ -1180,11 +1180,6 @@ JS
     {
         // ---------------------------------------
         $data = $this->getListingData();
-
-        $this->setData(
-            'general_attributes',
-            $this->getHelper('Magento\Attribute')->getGeneralFromAllAttributeSets()
-        );
 
         $this->setData(
             'all_attributes',

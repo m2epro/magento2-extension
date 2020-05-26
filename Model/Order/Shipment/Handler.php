@@ -11,13 +11,12 @@
  */
 namespace Ess\M2ePro\Model\Order\Shipment;
 
-use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Sales\Model\ResourceModel\Order\Shipment\Track\Collection as TrackCollection;
 
 /**
  * Class \Ess\M2ePro\Model\Order\Shipment\Handler
  */
-class Handler extends \Ess\M2ePro\Model\AbstractModel
+abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
 {
     const HANDLE_RESULT_FAILED    = -1;
     const HANDLE_RESULT_SKIPPED   = 0;
@@ -45,51 +44,95 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function factory($component)
-    {
-        $handler = null;
-
-        switch ($component) {
-            case \Ess\M2ePro\Helper\Component\Amazon::NICK:
-                $handler = $this->modelFactory->getObject('Amazon_Order_Shipment_Handler');
-                break;
-            case \Ess\M2ePro\Helper\Component\Ebay::NICK:
-                $handler = $this->modelFactory->getObject('Ebay_Order_Shipment_Handler');
-                break;
-            case \Ess\M2ePro\Helper\Component\Walmart::NICK:
-                $handler = $this->modelFactory->getObject('Walmart_Order_Shipment_Handler');
-                break;
-        }
-
-        if (!$handler) {
-            throw new \Ess\M2ePro\Model\Exception\Logic('Shipment handler not found.');
-        }
-
-        return $handler;
-    }
-
+    /**
+     * @param \Ess\M2ePro\Model\Order $order
+     * @param \Magento\Sales\Model\Order\Shipment $shipment
+     * @return int
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function handle(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Shipment $shipment)
     {
         $trackingDetails = $this->getTrackingDetails($order, $shipment);
-
-        if (!$order->getChildObject()->canUpdateShippingStatus($trackingDetails)) {
+        if (!$this->isNeedToHandle($order, $trackingDetails)) {
             return self::HANDLE_RESULT_SKIPPED;
         }
 
-        return $order->getChildObject()->updateShippingStatus($trackingDetails)
+        return $this->processStatusUpdates($order, $trackingDetails, $this->getItemsToShip($order, $shipment))
             ? self::HANDLE_RESULT_SUCCEEDED
             : self::HANDLE_RESULT_FAILED;
     }
 
+    /**
+     * @param \Ess\M2ePro\Model\Order $order
+     * @param \Magento\Sales\Model\Order\Shipment\Item $shipmentItem
+     * @return int
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function handleItem(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Shipment\Item $shipmentItem)
+    {
+        $trackingDetails = $this->getTrackingDetails($order, $shipmentItem->getShipment());
+        if (!$this->isNeedToHandle($order, $trackingDetails)) {
+            return self::HANDLE_RESULT_SKIPPED;
+        }
+
+        $items = $this->getItemsToShipForShipmentItem($order, $shipmentItem);
+        return $this->processStatusUpdates($order, $trackingDetails, $items)
+            ? self::HANDLE_RESULT_SUCCEEDED
+            : self::HANDLE_RESULT_FAILED;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Order $order
+     * @param \Magento\Sales\Model\Order\Shipment $shipment
+     * @return array
+     */
+    protected function getItemsToShip(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Shipment $shipment)
+    {
+        $itemsToShip = [];
+
+        foreach ($shipment->getAllItems() as $shipmentItem) {
+            /** @var \Magento\Sales\Model\Order\Shipment\Item $shipmentItem */
+            $itemsToShip = array_merge($itemsToShip, $this->getItemsToShipForShipmentItem($order, $shipmentItem));
+        }
+
+        return $itemsToShip;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Order $order
+     * @param array $trackingDetails
+     * @param array $items
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function processStatusUpdates(\Ess\M2ePro\Model\Order $order, array $trackingDetails, array $items)
+    {
+        return $order->getChildObject()->updateShippingStatus($trackingDetails, $items);
+    }
+
+    abstract protected function getComponentMode();
+    abstract protected function getItemsToShipForShipmentItem(
+        \Ess\M2ePro\Model\Order $order,
+        \Magento\Sales\Model\Order\Shipment\Item $shipmentItem
+    );
+
+    //########################################
+
+    /**
+     * @param \Ess\M2ePro\Model\Order $order
+     * @param \Magento\Sales\Model\Order\Shipment $shipment
+     * @return array
+     */
     protected function getTrackingDetails(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Shipment $shipment)
     {
         $tracks = $shipment->getTracks();
-        if (empty($tracks)) {
-            return [];
-        }
+        empty($tracks) && $tracks = $shipment->getTracksCollection();
 
         /** @var \Magento\Sales\Model\Order\Shipment\Track $track */
-        $track  = reset($tracks);
+        $track = $tracks instanceof TrackCollection ?
+                 $tracks->getLastItem() :
+                 end($tracks);
+
         $number = trim($track->getData('track_number'));
 
         if (empty($number)) {
@@ -102,11 +145,26 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
         $carrier && $carrierTitle = $carrier->getConfigData('title');
 
         return [
-            'carrier_code'    => $carrierCode,
-            'carrier_title'   => $carrierTitle,
-            'shipping_method' => trim($track->getData('title')),
-            'tracking_number' => $number
+            'carrier_code'     => $carrierCode,
+            'carrier_title'    => $carrierTitle,
+            'shipping_method'  => trim($track->getData('title')),
+            'tracking_number'  => $number
         ];
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Order $order
+     * @param array $trackingDetails
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function isNeedToHandle(\Ess\M2ePro\Model\Order $order, array $trackingDetails)
+    {
+        if ($order->getComponentMode() !== $this->getComponentMode()) {
+            throw new \InvalidArgumentException('Invalid component mode.');
+        }
+
+        return $order->getChildObject()->canUpdateShippingStatus($trackingDetails);
     }
 
     //########################################

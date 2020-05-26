@@ -18,7 +18,7 @@ use Magento\Framework\Config\ConfigOptionsListConstants;
  */
 class Runner
 {
-    const SUPPORTED_MIGRATION_VERSION = '1.0.0';
+    const SUPPORTED_MIGRATION_VERSION = '1.2.0';
 
     private $mapper;
     private $helperFactory;
@@ -117,13 +117,10 @@ class Runner
         if ($sourceParams['/migrationtomagento2/source/']['version'] != self::SUPPORTED_MIGRATION_VERSION) {
             throw new \Exception(
                 $this->helperFactory->getObject('Module\Translation')->translate([
-                    'M2E pro tables dump for Magento v1.x cannot be migrated to Magento v2.x as your current
-                    version %v% of M2E Pro for Magento v1.x does not support the ability to migrate.
-                    Please, upgrade your M2E Pro to %v2% version, then prepare data by pressing
-                    Proceed button in System > Configuration > M2E Pro > Advanced section, create a dump of M2E Pro
-                    tables from Magento v1.x database and transfer it to Magento v2.x.',
+                    'Your current Module version <b>%v%</b> for Magento v1.x does not support Data Migration. 
+                    Please read our <a href="%url%" target="_blank">Migration Guide</a> for more details.',
                     $sourceParams['/migrationtomagento2/source/m2epro/']['version'],
-                    self::SUPPORTED_MIGRATION_VERSION
+                    $this->helperFactory->getObject('Module\Support')->getDocumentationArticleUrl('x/EgA9AQ')
                 ])
             );
         }
@@ -153,7 +150,7 @@ class Runner
     //########################################
 
     /**
-     * @return IModifier
+     * @return IdModifierInterface
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     private function getDbModifierObject()
@@ -170,13 +167,13 @@ class Runner
             );
         }
 
-        /** @var \Ess\M2ePro\Setup\MigrationFromMagento1\IModifier $dbModifier */
+        /** @var \Ess\M2ePro\Setup\MigrationFromMagento1\IdModifierInterface $dbModifier */
         $dbModifier = $this->objectManager->create($className);
 
-        if (!$dbModifier instanceof \Ess\M2ePro\Setup\MigrationFromMagento1\IModifier) {
+        if (!$dbModifier instanceof \Ess\M2ePro\Setup\MigrationFromMagento1\IdModifierInterface) {
             throw new \Exception(
                 $this->helperFactory->getObject('Module\Translation')->translate([
-                    'Migration modifier object must implement IModifier interface.'
+                    'Migration modifier object must implement IdModifierInterface.'
                 ])
             );
         }

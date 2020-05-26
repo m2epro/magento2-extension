@@ -13,10 +13,11 @@
 
     <div>
         <?php echo $block->__(
-            '<b>Warning:</b> There are <span id="failed_count"></span> Product(s) of <span id="total_count"></span> which have no eBay Catalog Primary Category specified.<br/><br/>
-            To add eBay Catalog Primary Categories now, click <b>Cancel</b> then choose the Edit Category Action for the Products which need them.<br/><br/>
-            If you\'re not ready to add eBay Catalog Primary Categories yet or are not sure which Category to choose, click <b>Continue</b>.
-            You will have a chance to add Categories later in the M2E Pro Listing Settings.'
+            'You have not assigned Primary eBay Category to <strong><span class="failed_count"></span></strong> of <strong><span class="total_count"></span></strong> Product(s).<br><br>
+
+            Products without Primary eBay Category will not be added to M2E Pro Listing as they cannot be listed on the Channel. eBay requires submitting full Category data when listing a new Item.<br><br>
+
+            To set Primary eBay Category to <strong><span class="failed_count"></span></strong> Product(s) now, click <i>Cancel</i> and complete the configurations. Otherwise, click <i>Continue</i>. You will be able to add these Products later using the Add Products button on the View Listing page.'
         ); ?>
     </div>
 

@@ -13,14 +13,14 @@ namespace Ess\M2ePro\Model\Walmart\Connector\Product\Revise;
  */
 class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
 {
-    // ########################################
+    //########################################
 
     public function getCommand()
     {
         return ['product', 'update', 'entities'];
     }
 
-    // ########################################
+    //########################################
 
     protected function getActionType()
     {
@@ -32,7 +32,7 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
         return \Ess\M2ePro\Model\Listing\Log::ACTION_REVISE_PRODUCT_ON_COMPONENT;
     }
 
-    // ########################################
+    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingProducts
@@ -57,5 +57,5 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
         return $resultListingProducts;
     }
 
-    // ########################################
+    //########################################
 }

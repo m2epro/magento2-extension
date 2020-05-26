@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize;
 /**
  * Class \Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize\ProcessingRunner
  */
-class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
+class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Single\Runner
 {
     //########################################
 

@@ -185,35 +185,6 @@ define([
                     }
                 }
             });
-        },
-
-        // ---------------------------------------
-
-        showMotorsNotificationPopUp: function(message)
-        {
-            var content = '<div style="padding: 10px 0;">'+message+'</div>' +
-                          '<div style="float: right;">' +
-                            '<button onclick="Windows.getFocusedWindow().close()">' +
-                              '<span>OK</span>' +
-                            '</button>' +
-                          '</div> ';
-            var config = {
-                draggable: true,
-                resizable: true,
-                closable: true,
-                className: "magento",
-                windowClassName: "popup-window",
-                title: M2ePro.translator.translate('Compatibility Attribute'),
-                top: 250,
-                height: 85,
-                width: 420,
-                zIndex: 100,
-                recenterAuto: true,
-                hideEffect: Element.hide,
-                showEffect: Element.show
-            };
-
-            Dialog.info(content, config);
         }
 
         // ---------------------------------------

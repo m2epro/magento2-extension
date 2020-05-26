@@ -744,7 +744,7 @@ HTML;
 
             if (empty($html)) {
                 $html = <<<HTML
-<span style="float:right;">
+<span style="float:right; position: relative; right: 40px;">
     {$this->getTooltipHtml($synchNote, 'map_link_error_icon_'.$row->getId())}
 </span>
 HTML;
@@ -771,6 +771,74 @@ HTML;
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
                 $html .= '<span style="color: orange; font-weight: bold;">'.$value.'</span>';
+                break;
+
+            default:
+                break;
+        }
+
+        /**
+         * @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $scheduledActionsCollection
+         */
+        $scheduledActionsCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
+            ->getCollection();
+        $scheduledActionsCollection->addFieldToFilter('listing_product_id', $row->getData('id'));
+
+        /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction */
+        $scheduledAction = $scheduledActionsCollection->getFirstItem();
+
+        switch ($scheduledAction->getActionType()) {
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_LIST:
+                $html .= '<br/><span style="color: #605fff">[List is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST:
+                $html .= '<br/><span style="color: #605fff">[Relist is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE:
+
+                $reviseParts = [];
+
+                $additionalData = $scheduledAction->getAdditionalData();
+                if (!empty($additionalData['configurator'])) {
+                    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator */
+                    $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
+                    $configurator->setUnserializedData($additionalData['configurator']);
+
+                    if ($configurator->isIncludingMode()) {
+                        if ($configurator->isQtyAllowed()) {
+                            $reviseParts[] = 'QTY';
+                        }
+
+                        if ($configurator->isRegularPriceAllowed() || $configurator->isBusinessPriceAllowed()) {
+                            $reviseParts[] = 'Price';
+                        }
+
+                        if ($configurator->isDetailsAllowed()) {
+                            $reviseParts[] = 'Details';
+                        }
+
+                        if ($configurator->isImagesAllowed()) {
+                            $reviseParts[] = 'Images';
+                        }
+                    }
+                }
+
+                if (!empty($reviseParts)) {
+                    $html .= '<br/><span style="color: #605fff">[Revise of '.implode(', ', $reviseParts)
+                        .' is Scheduled...]</span>';
+                } else {
+                    $html .= '<br/><span style="color: #605fff">[Revise is Scheduled...]</span>';
+                }
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_STOP:
+                $html .= '<br/><span style="color: #605fff">[Stop is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_DELETE:
+                $html .= '<br/><span style="color: #605fff">[Delete is Scheduled...]</span>';
                 break;
 
             default:
@@ -1054,7 +1122,7 @@ HTML;
                     var_export(!$this->hasUnusedChannelVariations(), true) .
                     ', ' . $this->getListingProduct()->getId() . ')',
                 'class'   => 'action primary',
-                'style'   => 'position: absolute; margin-top: -32px;right: 27px;',
+                'style'   => 'float: right;',
                 'id'      => 'add_new_child_button'
             ];
             $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
@@ -1201,6 +1269,12 @@ HTML;
 
     protected function _toHtml()
     {
+        $this->css->add(
+            <<<CSS
+div.admin__filter-actions { width: 100%; }
+CSS
+        );
+
         $this->js->add(
             <<<JS
     require([

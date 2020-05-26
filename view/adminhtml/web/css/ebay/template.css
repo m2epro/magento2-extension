@@ -57,16 +57,17 @@
     margin-top: 10px;
     margin-bottom: 3px;
 }
-#exclude_locations_international_regions
+#excluded_locations_international_regions
 {
     float: left;
     width: 300px;
 }
-#exclude_locations_international_locations
+#excluded_locations_international_countries_container
 {
     float: left;
     overflow-y: scroll;
     width: 300px;
+    height: 300px;
     background: #e7efef;
 }
 .checkbox_container {
@@ -76,14 +77,14 @@
 .checkbox_container label {
     margin-left: 2px;
 }
-.shipping_excluded_location_region_link,
-.shipping_excluded_location_region_link label{
+.excluded_location_region_title_container,
+.excluded_location_region_title_container label {
     cursor: pointer;
 }
-#exclude_locations_international_regions .selected_region {
+#excluded_locations_international_regions .selected_region {
     background: #e7efef;
 }
-#exclude_locations_international_regions .have_selected_locations > span{
+#excluded_locations_international_regions .have_selected_locations span {
     display: inline-block !important;
     font-style: italic;
     color: grey;
@@ -114,6 +115,11 @@
 
 #price_table_container {
     padding-top: 0.5em !important;
+}
+
+select.disabled {
+    pointer-events: none;
+    background: rgba(0,0,0,0.1);
 }
 
 table#price_table {

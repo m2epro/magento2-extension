@@ -8,13 +8,25 @@
 
 namespace Ess\M2ePro\Model\Listing;
 
+use \Ess\M2ePro\Model\Amazon\Listing\Product as AmazonListingProduct;
+use \Ess\M2ePro\Model\Ebay\Listing\Product as EbayListingProduct;
+use \Ess\M2ePro\Model\Walmart\Listing\Product as WalmartListingProduct;
+
+use \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Processing as AmazonActionProcessing;
+use \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Processing as EbayActionProcessing;
+use \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing as WalmartActionProcessing;
+
 /**
- * @method \Ess\M2ePro\Model\ResourceModel\Listing\Product getResource()
- * @method \Ess\M2ePro\Model\Ebay\Listing\Product|\Ess\M2ePro\Model\Amazon\Listing\Product|
- *         \Ess\M2ePro\Model\Walmart\Listing\Product getChildObject()
- * @method \Ess\M2ePro\Model\Listing\Product\Action\Configurator|NULL getActionConfigurator()
+ * Class \Ess\M2ePro\Model\Listing\Product\Product
  *
+ * @method \Ess\M2ePro\Model\ResourceModel\Listing\Product getResource()
+ * @method AmazonListingProduct|EbayListingProduct|WalmartListingProduct getChildObject()
+ *
+ * @method \Ess\M2ePro\Model\Listing\Product\Action\Configurator getActionConfigurator()
  * @method setActionConfigurator(\Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator)
+ *
+ * @method AmazonActionProcessing|EbayActionProcessing|WalmartActionProcessing getProcessingAction()
+ * @method setProcessingAction(AmazonActionProcessing|EbayActionProcessing|WalmartActionProcessing $action)
  */
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
@@ -39,11 +51,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     const STATUS_CHANGER_COMPONENT = 3;
     const STATUS_CHANGER_OBSERVER = 4;
 
-    const SYNCH_STATUS_OK    = 0;
-    const SYNCH_STATUS_NEED  = 1;
-    const SYNCH_STATUS_SKIP  = 2;
+    const MOVING_LISTING_OTHER_SOURCE_KEY = 'moved_from_listing_other_id';
 
-    //########################################
+    /**
+     * It allows to delete an object without checking if it is isLocked()
+     * @var bool
+     */
+    protected $canBeForceDeleted = false;
 
     /**
      * @var \Ess\M2ePro\Model\Listing
@@ -65,12 +79,36 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     //########################################
 
+    public function afterSave()
+    {
+        $this->_eventManager->dispatch('ess_listing_product_save_after', [
+            'object' => $this,
+        ]);
+
+        return parent::afterSave();
+    }
+
+    public function beforeDelete()
+    {
+        $this->_eventManager->dispatch('ess_listing_product_delete_before', [
+            'object' => $this,
+        ]);
+
+        return parent::beforeDelete();
+    }
+
+    //########################################
+
     /**
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function isLocked()
     {
+        if ($this->canBeForceDeleted()) {
+            return false;
+        }
+
         if ($this->isComponentModeEbay() && $this->getAccount()->getChildObject()->isModeSandbox()) {
             return false;
         }
@@ -97,6 +135,22 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             $variation->delete();
         }
 
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $scheduledActions */
+        $scheduledActions = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
+        $scheduledActions->addFieldToFilter('listing_product_id', $this->getId());
+        foreach ($scheduledActions->getItems() as $item) {
+            /**@var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $item */
+            $item->delete();
+        }
+
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction\Collection $instructionCollection */
+        $instructionCollection = $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getCollection();
+        $instructionCollection->addFieldToFilter('listing_product_id', $this->getId());
+        foreach ($instructionCollection->getItems() as $item) {
+            /**@var \Ess\M2ePro\Model\Listing\Product\Instruction $item */
+            $item->delete();
+        }
+
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
         $tempLog->setComponentMode($this->getComponentMode());
         $tempLog->addProductMessage(
@@ -106,9 +160,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_LISTING,
-            // M2ePro\TRANSLATIONS
-                                    // Product was successfully Deleted
-                                    'Product was successfully Deleted',
+            'Product was successfully Deleted',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
         );
@@ -258,14 +310,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         return (int)$this->getData('product_id');
     }
 
-    /**
-     * @return bool
-     */
-    public function isTriedToList()
-    {
-        return (bool)$this->getData('tried_to_list');
-    }
-
     // ---------------------------------------
 
     /**
@@ -293,63 +337,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     public function getAdditionalData()
     {
         return $this->getSettings('additional_data');
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return bool
-     */
-    public function needSynchRulesCheck()
-    {
-        return (bool)$this->getData('need_synch_rules_check');
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return int
-     */
-    public function getSynchStatus()
-    {
-        return (int)$this->getData('synch_status');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSynchStatusOk()
-    {
-        return $this->getSynchStatus() == self::SYNCH_STATUS_OK;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSynchStatusNeed()
-    {
-        return $this->getSynchStatus() == self::SYNCH_STATUS_NEED;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSynchStatusSkip()
-    {
-        return $this->getSynchStatus() == self::SYNCH_STATUS_SKIP;
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return array
-     */
-    public function getSynchReasons()
-    {
-        $reasons = $this->getData('synch_reasons');
-        $reasons = explode(',', $reasons);
-
-        return array_unique(array_filter($reasons));
     }
 
     //########################################
@@ -463,75 +450,14 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     //########################################
 
-    public function listAction(array $params = [])
+    public function canBeForceDeleted($value = null)
     {
-        return $this->getChildObject()->listAction($params);
-    }
-
-    public function relistAction(array $params = [])
-    {
-        return $this->getChildObject()->relistAction($params);
-    }
-
-    public function reviseAction(array $params = [])
-    {
-        return $this->getChildObject()->reviseAction($params);
-    }
-
-    public function stopAction(array $params = [])
-    {
-        return $this->getChildObject()->stopAction($params);
-    }
-
-    public function deleteAction(array $params = [])
-    {
-        return $this->getChildObject()->deleteAction($params);
-    }
-
-    //########################################
-
-    public function getTrackingAttributes()
-    {
-        return $this->getChildObject()->getTrackingAttributes();
-    }
-
-    //########################################
-
-    public function afterSave()
-    {
-        if ($this->isComponentModeEbay()) {
-            $this->processEbayItemUUID();
+        if ($value === null) {
+            return $this->canBeForceDeleted;
         }
 
-        return parent::afterSave();
-    }
-
-    // ---------------------------------------
-
-    private function processEbayItemUUID()
-    {
-        if ($this->isObjectCreatingState()) {
-            return;
-        }
-
-        $oldStatus = (int)$this->getOrigData('status');
-        $newStatus = (int)$this->getData('status');
-
-        $trackedStatuses = [
-            \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD,
-        ];
-
-        if ($oldStatus == $newStatus || !in_array($newStatus, $trackedStatuses)) {
-            return;
-        }
-
-        // the child object will be saved on parent side, so we just set needed data
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $this->getChildObject();
-        $ebayListingProduct->setData('item_uuid', $ebayListingProduct->generateItemUUID());
+        $this->canBeForceDeleted = $value;
+        return $this;
     }
 
     //########################################

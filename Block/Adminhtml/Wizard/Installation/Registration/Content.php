@@ -102,7 +102,7 @@ HTML
                 'name' => 'email',
                 'label' => $this->__('Email'),
                 'value' => $this->getUserInfoValue('email'),
-                'class' => 'M2ePro-validate-email',
+                'class' => 'M2ePro-validate-email validate-length maximum-length-80',
                 'required' => true,
                 'disabled' => $this->getData('isLicenseStepFinished')
             ]
@@ -115,6 +115,7 @@ HTML
                 'name' => 'firstname',
                 'label' => $this->__('First Name'),
                 'value' => $this->getUserInfoValue('firstname'),
+                'class' => 'validate-length maximum-length-40',
                 'required' => true,
                 'disabled' => $this->getData('isLicenseStepFinished')
             ]
@@ -127,6 +128,7 @@ HTML
                 'name' => 'lastname',
                 'label' => $this->__('Last Name'),
                 'value' => $this->getUserInfoValue('lastname'),
+                'class' => 'validate-length maximum-length-40',
                 'required' => true,
                 'disabled' => $this->getData('isLicenseStepFinished')
             ]
@@ -139,6 +141,7 @@ HTML
                 'name' => 'phone',
                 'label' => $this->__('Phone'),
                 'value' => $this->getUserInfoValue('phone'),
+                'class' => 'validate-length maximum-length-40',
                 'required' => true,
                 'disabled' => $this->getData('isLicenseStepFinished')
             ]
@@ -151,6 +154,7 @@ HTML
                 'name' => 'country',
                 'label' => $this->__('Country'),
                 'value' => $this->getUserInfoValue('country'),
+                'class' => 'validate-length maximum-length-40',
                 'values' => $this->getData('available_countries'),
                 'required' => true,
                 'disabled' => $this->getData('isLicenseStepFinished')
@@ -164,6 +168,7 @@ HTML
                 'name' => 'city',
                 'label' => $this->__('City'),
                 'value' => $this->getUserInfoValue('city'),
+                'class' => 'validate-length maximum-length-40',
                 'required' => true,
                 'disabled' => $this->getData('isLicenseStepFinished')
             ]
@@ -176,6 +181,7 @@ HTML
                 'name' => 'postal_code',
                 'label' => $this->__('Postal Code'),
                 'value' => $this->getUserInfoValue('postal_code'),
+                'class' => 'validate-length maximum-length-40',
                 'required' => true,
                 'disabled' => $this->getData('isLicenseStepFinished')
             ]

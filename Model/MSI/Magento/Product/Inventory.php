@@ -43,8 +43,7 @@ class Inventory extends AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->getStockItemData = $objectManager->get(GetStockItemDataInterface::class);
         $this->salableQtyResolver = $objectManager->get(GetProductSalableQtyInterface::class);
         $this->stockResolver = $objectManager->get(StockResolverInterface::class);
@@ -63,7 +62,8 @@ class Inventory extends AbstractModel
     public function isInStock()
     {
         $stockItemData = $this->getStockItemData->execute(
-            $this->getProduct()->getSku(), $this->getStock()->getStockId()
+            $this->getProduct()->getSku(),
+            $this->getStock()->getStockId()
         );
         return $stockItemData === null ? 0 : $stockItemData[GetStockItemDataInterface::IS_SALABLE];
     }

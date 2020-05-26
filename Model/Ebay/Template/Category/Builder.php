@@ -103,11 +103,13 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             foreach ($currentSpecifics as &$specific) {
                 unset($specific['id'], $specific['template_category_id']);
             }
+
             unset($specific);
 
             foreach ($postSpecifics as &$specific) {
                 unset($specific['id'], $specific['template_category_id']);
             }
+
             unset($specific);
 
             if ($currentSpecifics == $postSpecifics) {

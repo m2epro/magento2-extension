@@ -38,10 +38,10 @@ class VariablesDir extends AbstractModel
         $this->_pathVariablesDirBase = $varDir->getAbsolutePath() . self::BASE_NAME;
 
         if ($data['child_folder'] !== null) {
-            if ($data['child_folder']{0} != DIRECTORY_SEPARATOR) {
+            if ($data['child_folder'][0] != DIRECTORY_SEPARATOR) {
                 $data['child_folder'] = DIRECTORY_SEPARATOR.$data['child_folder'];
             }
-            if ($data['child_folder']{strlen($data['child_folder'])-1} != DIRECTORY_SEPARATOR) {
+            if ($data['child_folder'][strlen($data['child_folder'])-1] != DIRECTORY_SEPARATOR) {
                 $data['child_folder'] .= DIRECTORY_SEPARATOR;
             }
 

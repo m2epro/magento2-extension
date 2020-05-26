@@ -197,13 +197,13 @@ class Data extends AbstractHelper
                     $allowed = implode('|', $allowedTags);
 
                     $pattern = '/<([\/\s\r\n]*)(' . $allowed . ')'.
-                        '((\s+\w+="[\w\s\%\?=&#\/\.,;:_\-\(\)]*")*[\/\s\r\n]*)>/si';
+                        '((\s+\w+=["\'][\w\s\%\?=\&#\/\.,;:_\-\(\)]*["\'])*[\/\s\r\n]*)>/si';
                     $result = preg_replace($pattern, '##$1$2$3##', $data);
 
                     $result = htmlspecialchars($result, $flags);
 
                     $pattern = '/##([\/\s\r\n]*)(' . $allowed . ')'.
-                        '((\s+\w+="[\w\s\%\?=&#\/\.,;:_\-\(\)]*")*[\/\s\r\n]*)##/si';
+                        '((\s+\w+=["\'][\w\s\%\?=\&#\/\.,;:_\-\(\)]*["\'])*[\/\s\r\n]*)##/si';
                     $result = preg_replace($pattern, '<$1$2$3>', $result);
                 } else {
                     $result = htmlspecialchars($data, $flags);
@@ -340,6 +340,35 @@ class Data extends AbstractHelper
         return $string;
     }
 
+    public function arrayReplaceRecursive($base, $replacements)
+    {
+        $args = func_get_args();
+        foreach (array_slice($args, 1) as $replacements) {
+            $bref_stack = [&$base];
+            $head_stack = [$replacements];
+
+            do {
+                end($bref_stack);
+
+                $bref = &$bref_stack[key($bref_stack)];
+                $head = array_pop($head_stack);
+
+                unset($bref_stack[key($bref_stack)]);
+
+                foreach (array_keys($head) as $key) {
+                    if (isset($key, $bref, $bref[$key]) && is_array($bref[$key]) && is_array($head[$key])) {
+                        $bref_stack[] = &$bref[$key];
+                        $head_stack[] = $head[$key];
+                    } else {
+                        $bref[$key] = $head[$key];
+                    }
+                }
+            } while (count($head_stack));
+        }
+
+        return $base;
+    }
+
     /**
      * @param array $data
      * @return array
@@ -367,6 +396,26 @@ class Data extends AbstractHelper
     //########################################
 
     /**
+     * @param $string
+     * @param null $prefix
+     * @param string $hashFunction (md5, sh1)
+     *
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception
+     */
+    public function hashString($string, $hashFunction, $prefix = null)
+    {
+        if (!is_callable($hashFunction)) {
+            throw new \Ess\M2ePro\Model\Exception\Logic('Hash function can not be called');
+        }
+
+        $hash = call_user_func($hashFunction, $string);
+        return !empty($prefix) ? $prefix.$hash : $hash;
+    }
+
+    //########################################
+
+    /**
      * It prevents situations when json_encode() returns FALSE due to some broken bytes sequence.
      * Normally normalizeToUtfEncoding() fixes that
      *
@@ -385,12 +434,6 @@ class Data extends AbstractHelper
         if ($encoded !== false) {
             return $encoded;
         }
-
-        $this->helperFactory->getObject('Module\Logger')->process(
-            ['source' => $this->serialize($data)],
-            'json_encode() failed',
-            false
-        );
 
         $encoded = json_encode($this->normalizeToUtfEncoding($data));
         if ($encoded !== false) {
@@ -435,12 +478,6 @@ class Data extends AbstractHelper
         if ($decoded !== null) {
             return $decoded;
         }
-
-        $this->helperFactory->getObject('Module\Logger')->process(
-            ['source' => $this->serialize($data)],
-            'json_decode() failed',
-            false
-        );
 
         try {
             $previousValue = \Zend_Json::$useBuiltinEncoderDecoder;
@@ -546,7 +583,7 @@ class Data extends AbstractHelper
 
             if (!empty($temp)) {
                 $action = $temp[0];
-                $action{0} = strtolower($action{0});
+                $action[0] = strtolower($action[0]);
 
                 $actions[] = $classRoute . '/' . $action;
             }

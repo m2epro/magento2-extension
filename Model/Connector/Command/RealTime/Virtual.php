@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Connector\Command\RealTime;
  */
 class Virtual extends \Ess\M2ePro\Model\Connector\Command\RealTime
 {
-    // ########################################
+    //########################################
 
     private $command = null;
 
@@ -23,7 +23,7 @@ class Virtual extends \Ess\M2ePro\Model\Connector\Command\RealTime
 
     private $requestTimeOut = null;
 
-    // ########################################
+    //########################################
 
     public function setCommand(array $command)
     {
@@ -49,7 +49,7 @@ class Virtual extends \Ess\M2ePro\Model\Connector\Command\RealTime
         return $this;
     }
 
-    // ########################################
+    //########################################
 
     protected function getCommand()
     {
@@ -65,7 +65,7 @@ class Virtual extends \Ess\M2ePro\Model\Connector\Command\RealTime
         return $this->requestData;
     }
 
-    // ########################################
+    //########################################
 
     protected function getConnection()
     {
@@ -79,7 +79,7 @@ class Virtual extends \Ess\M2ePro\Model\Connector\Command\RealTime
         return $connection;
     }
 
-    // ########################################
+    //########################################
 
     protected function prepareResponseData()
     {
@@ -97,5 +97,5 @@ class Virtual extends \Ess\M2ePro\Model\Connector\Command\RealTime
         $this->responseData = $responseData[$this->responseDataKey];
     }
 
-    // ########################################
+    //########################################
 }

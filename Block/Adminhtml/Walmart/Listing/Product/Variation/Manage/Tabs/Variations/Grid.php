@@ -225,13 +225,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_condition_callback' => [$this, 'callbackFilterStatus']
         ];
 
-        if ($this->getHelper('View\Walmart')->isResetFilterShouldBeShown(
-            $this->getListingProduct()->getListingId(),
-            true
-        )
-        ) {
-            $statusColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter\Status';
-        }
+        $isShouldBeShown = $this->getHelper('View_Walmart')->isResetFilterShouldBeShown(
+            'variation_parent_id',
+            $this->getListingProduct()->getId()
+        );
+
+        $isShouldBeShown && $statusColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter\Status';
 
         $this->addColumn('status', $statusColumn);
 
@@ -283,6 +282,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
         ]);
+
+        $this->getMassactionBlock()->addItem('resetProducts', [
+            'label'    => $this->__('Reset Inactive (Blocked) Item(s)'),
+            'url'      => '',
+            'confirm'  => $this->__('Are you sure?')
+        ], 'other');
 
         // ---------------------------------------
 
@@ -413,9 +418,11 @@ HTML;
         $html = '<div class="m2ePro-variation-attributes" style="color: grey; margin-left: 7px">';
 
         if (!empty($gtin) && !empty($itemId)) {
-            $url = $this->getHelper('Component\Walmart')->getItemUrl(
-                $itemId,
-                $this->getListingProduct()->getListing()->getMarketplaceId()
+            $walmartHelper = $this->getHelper('Component\Walmart');
+            $marketplaceId = $this->getListingProduct()->getListing()->getMarketplaceId();
+            $url = $walmartHelper->getItemUrl(
+                $walmartListingProduct->getData($walmartHelper->getIdentifierForItemUrl($marketplaceId)),
+                $marketplaceId
             );
 
             $html .= '<a href="' . $url . '" target="_blank" title="' . $gtin . '" >';
@@ -465,25 +472,12 @@ HTML;
 HTML;
         }
 
-        if ($row->getData('is_details_data_changed') || $row->getData('is_online_price_invalid')) {
-            $msg = '';
-
-            if ($row->getData('is_details_data_changed')) {
-                $message = <<<HTML
-Item Details, e.g. Product Tax Code, Lag Time, Shipping, Description, Image, Category, etc. settings, need to be
-updated on Walmart.<br>
-To submit new Item Details, apply the Revise action.
-HTML;
-                $msg .= '<p>'.$this->__($message).'</p>';
-            }
-
-            if ($row->getData('is_online_price_invalid')) {
-                $message = <<<HTML
+        if ($row->getData('is_online_price_invalid')) {
+            $message = <<<HTML
 Item Price violates Walmart pricing rules. Please adjust the Item Price to comply with the Walmart requirements.<br>
 Once the changes are applied, Walmart Item will become Active automatically.
 HTML;
-                $msg .= '<p>'.$this->__($message).'</p>';
-            }
+            $msg = '<p>'.$this->__($message).'</p>';
 
             if (empty($msg)) {
                 return $value;
@@ -508,7 +502,13 @@ HTML;
 
         $productId = $row->getData('id');
         $gtinHtml = $this->getHelper('Data')->escapeHtml($gtin);
-        $channelUrl = $row->getData('channel_url');
+
+        $walmartHelper = $this->getHelper('Component\Walmart');
+        $marketplaceId = $this->getListingProduct()->getListing()->getMarketplaceId();
+        $channelUrl = $walmartHelper->getItemUrl(
+            $row->getChildObject()->getData($walmartHelper->getIdentifierForItemUrl($marketplaceId)),
+            $marketplaceId
+        );
 
         if (!empty($channelUrl)) {
             $gtinHtml = <<<HTML
@@ -637,7 +637,7 @@ HTML;
 
             if (empty($html)) {
                 $html = <<<HTML
-<span style="float:right;">
+<span style="float:right; position: relative; right: 40px;">
     {$this->getTooltipHtml($synchNote, 'map_link_error_icon_'.$row->getId())}
 </span>
 HTML;
@@ -648,30 +648,25 @@ HTML;
             }
         }
 
-        $isListAction = $listingProduct->getSetting('additional_data', 'is_list_action');
-        if (!empty($isListAction)) {
-            $html .= '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
-        } else {
-            switch ($row->getData('status')) {
-                case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
-                    $html .= '<span style="color: gray;">' . $value . '</span>';
-                    break;
+        switch ($row->getData('status')) {
+            case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
+                $html .= '<span style="color: gray;">' . $value . '</span>';
+                break;
 
-                case \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED:
-                    $html .= '<span style="color: green;">' . $value . '</span>';
-                    break;
+            case \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED:
+                $html .= '<span style="color: green;">' . $value . '</span>';
+                break;
 
-                case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
-                    $html .= '<span style="color: red;">'.$value.'</span>';
-                    break;
+            case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
+                $html .= '<span style="color: red;">' . $value . '</span>';
+                break;
 
-                case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
-                    $html .= '<span style="color: orange; font-weight: bold;">'.$value.'</span>';
-                    break;
+            case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
+                $html .= '<span style="color: orange; font-weight: bold;">' . $value . '</span>';
+                break;
 
-                default:
-                    break;
-            }
+            default:
+                break;
         }
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -689,41 +684,133 @@ HTML;
 HTML;
         }
 
+        return $html
+               . $this->getScheduledTag($row)
+               . $this->getLockedTag($row);
+    }
+
+    private function getScheduledTag($row)
+    {
+        $html = '';
+
+        /**
+         * @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $scheduledActionsCollection
+         */
+        $scheduledActionsCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
+            ->getCollection();
+        $scheduledActionsCollection->addFieldToFilter('listing_product_id', $row['id']);
+
+        /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction */
+        $scheduledAction = $scheduledActionsCollection->getFirstItem();
+        if (!$scheduledAction->getId()) {
+            return $html;
+        }
+
+        switch ($scheduledAction->getActionType()) {
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_LIST:
+                $html .= '<br/><span style="color: #605fff">[List is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST:
+                $html .= '<br/><span style="color: #605fff">[Relist is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE:
+                $reviseParts = [];
+
+                $additionalData = $scheduledAction->getAdditionalData();
+                if (!empty($additionalData['configurator'])) {
+                    /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator $configurator */
+                    $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
+                    $configurator->setUnserializedData($additionalData['configurator']);
+
+                    if ($configurator->isIncludingMode()) {
+                        if ($configurator->isQtyAllowed()) {
+                            $reviseParts[] = 'QTY';
+                        }
+
+                        if ($configurator->isPriceAllowed()) {
+                            $reviseParts[] = 'Price';
+                        }
+
+                        if ($configurator->isPromotionsAllowed()) {
+                            $reviseParts[] = 'Promotions';
+                        }
+
+                        if ($configurator->isDetailsAllowed()) {
+                            $params = $additionalData['params'];
+
+                            if (isset($params['changed_sku'])) {
+                                $reviseParts[] = 'SKU';
+                            }
+
+                            if (isset($params['changed_identifier'])) {
+                                $reviseParts[] = strtoupper($params['changed_identifier']['type']);
+                            }
+
+                            $reviseParts[] = 'Details';
+                        }
+                    }
+                }
+
+                if (!empty($reviseParts)) {
+                    $html .= '<br/><span style="color: #605fff">[Revise of '.
+                        implode(', ', $reviseParts).' is Scheduled...]</span>';
+                } else {
+                    $html .= '<br/><span style="color: #605fff">[Revise is Scheduled...]</span>';
+                }
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_STOP:
+                $html .= '<br/><span style="color: #605fff">[Stop is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_DELETE:
+                $html .= '<br/><span style="color: #605fff">[Retire is Scheduled...]</span>';
+                break;
+
+            default:
+                break;
+        }
+
+        return $html;
+    }
+
+    private function getLockedTag($row)
+    {
+        $html = '';
+
         $tempLocks = $this->getLockedData($row);
         $tempLocks = $tempLocks['object_locks'];
 
-        if (!empty($isListAction)) {
-            $html .= '<br/><span style="color: #605fff">[Listing...]</span>';
-        } else {
-            foreach ($tempLocks as $lock) {
-                switch ($lock->getTag()) {
-                    case 'list_action':
-                        $html .= '<br/><span style="color: #605fff">[Listing...]</span>';
-                        break;
+        foreach ($tempLocks as $lock) {
+            switch ($lock->getTag()) {
+                case 'list_action':
+                    $html .= '<br/><span style="color: #605fff">[Listing...]</span>';
+                    break;
 
-                    case 'relist_action':
-                        $html .= '<br/><span style="color: #605fff">[Relisting...]</span>';
-                        break;
+                case 'relist_action':
+                    $html .= '<br/><span style="color: #605fff">[Relisting...]</span>';
+                    break;
 
-                    case 'revise_action':
-                        $html .= '<br/><span style="color: #605fff">[Revising...]</span>';
-                        break;
+                case 'revise_action':
+                    $html .= '<br/><span style="color: #605fff">[Revising...]</span>';
+                    break;
 
-                    case 'stop_action':
-                        $html .= '<br/><span style="color: #605fff">[Stopping...]</span>';
-                        break;
+                case 'stop_action':
+                    $html .= '<br/><span style="color: #605fff">[Stopping...]</span>';
+                    break;
 
-                    case 'stop_and_remove_action':
-                        $html .= '<br/><span style="color: #605fff">[Stopping...]</span>';
-                        break;
+                case 'stop_and_remove_action':
+                    $html .= '<br/><span style="color: #605fff">[Stopping...]</span>';
+                    break;
 
-                    case 'delete_and_remove_action':
-                        $html .= '<br/><span style="color: #605fff">[Removing...]</span>';
-                        break;
+                case 'delete_and_remove_action':
+                    $html .= '<br/><span style="color: #605fff">[Removing...]</span>';
+                    break;
 
-                    default:
-                        break;
-                }
+                default:
+                    break;
             }
         }
 
@@ -931,7 +1018,7 @@ HTML;
                 'onclick' => 'ListingProductVariationManageVariationsGridObj.showNewChildForm('
                              . $this->getListingProduct()->getId() . ')',
                 'class'   => 'action primary',
-                'style'   => 'position: absolute; margin-top: -32px;right: 27px;',
+                'style'   => 'float: right;',
                 'id'      => 'add_new_child_button'
             ];
             $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
@@ -1036,6 +1123,12 @@ HTML;
 
     protected function _toHtml()
     {
+        $this->css->add(
+            <<<CSS
+div.admin__filter-actions { width: 100%; }
+CSS
+        );
+
         $this->js->add(
             <<<JS
     require([

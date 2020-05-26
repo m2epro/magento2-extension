@@ -13,6 +13,8 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\Product;
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGrid
 {
+    private $parentAndChildReviseScheduledCache = [];
+
     //########################################
 
     public function _construct()
@@ -75,7 +77,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
                 'ean'                          => 'ean',
                 'isbn'                         => 'isbn',
                 'wpid'                         => 'wpid',
-                'channel_url'                  => 'channel_url',
                 'item_id'                      => 'item_id',
                 'online_qty'                   => 'online_qty',
                 'online_price'                 => 'online_price',
@@ -108,6 +109,36 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
+    }
+
+    protected function _afterLoadCollection()
+    {
+        $collection = $this->walmartFactory->getObject('Listing_Product')->getCollection();
+        $collection->getSelect()->join(
+            ['lps' => $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
+                ->getResource()->getMainTable()],
+            'lps.listing_product_id=main_table.id',
+            []
+        );
+
+        $collection->addFieldToFilter('is_variation_parent', 0);
+        $collection->addFieldToFilter('variation_parent_id', ['in' => $this->getCollection()->getColumnValues('id')]);
+        $collection->addFieldToFilter('lps.action_type', \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE);
+
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->columns(
+            [
+                'variation_parent_id' => 'second_table.variation_parent_id',
+                'count'               => new \Zend_Db_Expr('COUNT(lps.id)')
+            ]
+        );
+        $collection->getSelect()->group('variation_parent_id');
+
+        foreach ($collection->getItems() as $item) {
+            $this->parentAndChildReviseScheduledCache[$item->getData('variation_parent_id')] = true;
+        }
+
+        return parent::_afterLoadCollection();
     }
 
     //########################################
@@ -228,8 +259,9 @@ HTML;
 
         if (!$variationManager->isVariationParent()) {
             $statusChangeReasons = $listingProduct->getChildObject()->getStatusChangeReasons();
-            return $value . $this->getStatusChangeReasons($statusChangeReasons) .
-                            $this->getLockedTag($row);
+            return $value . $this->getStatusChangeReasons($statusChangeReasons)
+                          . $this->getScheduledTag($row)
+                          . $this->getLockedTag($row);
         }
 
         $html = '';
@@ -242,8 +274,9 @@ HTML;
         $variationsStatuses = $row->getData('variation_child_statuses');
 
         if (empty($variationsStatuses)) {
-            return $this->getProductStatus($row->getData('status')) .
-                   $this->getLockedTag($row);
+            return $this->getProductStatus($row->getData('status'))
+                   . $this->getScheduledTag($row)
+                   . $this->getLockedTag($row);
         }
 
         $sortedStatuses     = [];
@@ -263,7 +296,8 @@ HTML;
             $html .= $this->getProductStatus($status) . '&nbsp;'. $productsCount . '<br/>';
         }
 
-        return $html . $this->getLockedTag($row);
+        return $html . $this->getScheduledTag($row)
+                     . $this->getLockedTag($row);
     }
 
     public function callbackColumnActions($value, $row, $column, $isExport)
@@ -309,19 +343,14 @@ HTML;
             ->getDefaultCurrency();
 
         if ($row->getData('is_variation_parent')) {
-            $iconHelpPath    = $this->getSkinUrl('M2ePro/images/i_logo.png');
-            $toolTipIconPath = $this->getSkinUrl('M2ePro/images/i_icon.png');
-
             $noticeText = $this->__('The value is calculated as minimum price of all Child Products.');
-
             $priceHtml = <<<HTML
-<img class="tool-tip-image" style="vertical-align: middle;" src="{$toolTipIconPath}"
-    >&nbsp;<span class="tool-tip-message" style="display:none; text-align: left; width: 110px; background: #E3E3E3;">
-    <img src="{$iconHelpPath}">
-    <span style="color:gray;">
+<div class="m2epro-field-tooltip admin__field-tooltip" style="display: inline;">
+    <a class="admin__field-tooltip-action" href="javascript://"></a>
+    <div class="admin__field-tooltip-content">
         {$noticeText}
-    </span>
-</span>
+    </div>
+</div>
 HTML;
 
             if (!empty($currentOnlinePrice)) {
@@ -404,6 +433,96 @@ HTML;
 
         if ($childCount > 0) {
             $html .= '<br/><span style="color: #605fff">[' . $this->__('Child(s) in Action') . '...]</span>';
+        }
+
+        return $html;
+    }
+
+    // ---------------------------------------
+
+    private function getScheduledTag($row)
+    {
+        $html = '';
+
+        /**
+         * @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $scheduledActionsCollection
+         */
+        $scheduledActionsCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
+            ->getCollection();
+        $scheduledActionsCollection->addFieldToFilter('listing_product_id', $row['id']);
+
+        /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction */
+        $scheduledAction = $scheduledActionsCollection->getFirstItem();
+        if (!$scheduledAction->getId()) {
+            return $html;
+        }
+
+        switch ($scheduledAction->getActionType()) {
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_LIST:
+                $html .= '<br/><span style="color: #605fff">[List is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST:
+                $html .= '<br/><span style="color: #605fff">[Relist is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE:
+                $reviseParts = [];
+
+                $additionalData = $scheduledAction->getAdditionalData();
+                if (!empty($additionalData['configurator']) &&
+                    !isset($this->parentAndChildReviseScheduledCache[$row->getData('id')])) {
+                    /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator $configurator */
+                    $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
+                    $configurator->setUnserializedData($additionalData['configurator']);
+
+                    if ($configurator->isIncludingMode()) {
+                        if ($configurator->isQtyAllowed()) {
+                            $reviseParts[] = 'QTY';
+                        }
+
+                        if ($configurator->isPriceAllowed()) {
+                            $reviseParts[] = 'Price';
+                        }
+
+                        if ($configurator->isPromotionsAllowed()) {
+                            $reviseParts[] = 'Promotions';
+                        }
+
+                        if ($configurator->isDetailsAllowed()) {
+                            $params = $additionalData['params'];
+
+                            if (isset($params['changed_sku'])) {
+                                $reviseParts[] = 'SKU';
+                            }
+
+                            if (isset($params['changed_identifier'])) {
+                                $reviseParts[] = strtoupper($params['changed_identifier']['type']);
+                            }
+
+                            $reviseParts[] = 'Details';
+                        }
+                    }
+                }
+
+                if (!empty($reviseParts)) {
+                    $reviseParts = implode(', ', $reviseParts);
+                    $html .= '<br/><span style="color: #605fff">[Revise of '.$reviseParts.' is Scheduled...]</span>';
+                } else {
+                    $html .= '<br/><span style="color: #605fff">[Revise is Scheduled...]</span>';
+                }
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_STOP:
+                $html .= '<br/><span style="color: #605fff">[Stop is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_DELETE:
+                $html .= '<br/><span style="color: #605fff">[Retire is Scheduled...]</span>';
+                break;
+
+            default:
+                break;
         }
 
         return $html;

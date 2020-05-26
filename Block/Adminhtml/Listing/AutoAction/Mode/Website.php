@@ -57,11 +57,10 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'title' => $this->__('Product Added to Website'),
                 'values' => [
                     ['value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE, 'label' => $this->__('No Action')],
-                    ['value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD, 'label' => $this->__('Add to the Listing')],
                 ],
                 'value' => $this->formData['auto_website_adding_mode'],
                 'tooltip' => $this->__(
-                    'You need to provide additional settings for Magento Products to be listed automatically.'
+                    'Action which will be applied automatically.'
                 ),
                 'style' => 'width: 350px'
             ]

@@ -29,6 +29,14 @@
                   shared="false" />
     </event>
 
+    <!-- websites -->
+
+    <event name="catalog_product_website_update_before">
+        <observer name="m2epro_observer_product_website_update_before"
+                  instance="Ess\M2ePro\Observer\Product\Website\Update\Before"
+                  shared="false" />
+    </event>
+
     <!-- categories -->
 
     <event name="catalog_category_change_products">
@@ -70,9 +78,9 @@
                   instance="Ess\M2ePro\Observer\Invoice"
                   shared="false" />
     </event>
-    <event name="sales_order_shipment_save_after">
-        <observer name="m2epro_observer_shipment"
-                  instance="Ess\M2ePro\Observer\Shipment"
+    <event name="sales_order_invoice_save_after">
+        <observer name="m2epro_observer_invoice_save_after"
+                  instance="Ess\M2ePro\Observer\Invoice\Save\After"
                   shared="false" />
     </event>
     <event name="sales_shipment_item_save_after">
@@ -88,7 +96,12 @@
     </event>
     <event name="sales_order_creditmemo_refund">
         <observer name="m2epro_observer_creditmemo"
-                  instance="Ess\M2ePro\Observer\CreditMemo"
+                  instance="Ess\M2ePro\Observer\Creditmemo"
+                  shared="false" />
+    </event>
+    <event name="sales_order_creditmemo_save_after">
+        <observer name="m2epro_observer_creditmemo_save_after"
+                  instance="Ess\M2ePro\Observer\Creditmemo\Save\After"
                   shared="false" />
     </event>
     <event name="sales_order_save_after">
@@ -99,6 +112,11 @@
     <event name="ess_sales_convert_quote_item_to_order_item">
         <observer name="m2epro_observer_order_quote"
                   instance="Ess\M2ePro\Observer\Order\Quote"
+                  shared="false" />
+    </event>
+    <event name="sales_model_service_quote_submit_before">
+        <observer name="m2epro_observer_order_service_quote_submit_before"
+                  instance="Ess\M2ePro\Observer\Order\Service\Quote\Submit\Before"
                   shared="false" />
     </event>
 
@@ -128,8 +146,54 @@
                   shared="false" />
     </event>
 
-    <event name="catalog_product_import_bunch_save_after">
-        <observer name="m2epro_observer_import_bunch" instance="Ess\M2ePro\Observer\Import\Bunch"/>
+    <!-- listing product -->
+
+    <event name="ess_listing_product_save_after">
+        <observer name="m2epro_observer_listing_product_save_after"
+                  instance="Ess\M2ePro\Observer\Listing\Product\Save\After"
+                  shared="false" />
+    </event>
+
+    <event name="ess_listing_product_delete_before">
+        <observer name="m2epro_observer_listing_product_delete_before"
+                  instance="Ess\M2ePro\Observer\Listing\Product\Delete\Before"
+                  shared="false" />
+    </event>
+
+    <!-- cron keep alive -->
+
+    <event name="ess_cron_keep_alive_activate">
+        <observer name="m2epro_cron_keep_alive_activate" instance="Ess\M2ePro\Model\Cron\Strategy\Observer\KeepAlive" />
+    </event>
+
+    <event name="model_save_before">
+        <observer name="m2epro_cron_keep_alive_model_save" instance="Ess\M2ePro\Model\Cron\Strategy\Observer\KeepAlive" />
+    </event>
+
+    <event name="model_load_before">
+        <observer name="m2epro_cron_keep_alive_model_load" instance="Ess\M2ePro\Model\Cron\Strategy\Observer\KeepAlive" />
+    </event>
+
+    <event name="core_collection_abstract_load_before">
+        <observer name="m2epro_cron_keep_alive_collection_load" instance="Ess\M2ePro\Model\Cron\Strategy\Observer\KeepAlive" />
+    </event>
+
+    <!-- cron progress -->
+
+    <event name="ess_cron_progress_start">
+        <observer name="m2epro_cron_progress_start" instance="Ess\M2ePro\Model\Cron\Strategy\Observer\Progress" />
+    </event>
+
+    <event name="ess_cron_progress_set_percentage">
+        <observer name="m2epro_cron_progress_set_percentage" instance="Ess\M2ePro\Model\Cron\Strategy\Observer\Progress" />
+    </event>
+
+    <event name="ess_cron_progress_set_details">
+        <observer name="m2epro_cron_progress_set_details" instance="Ess\M2ePro\Model\Cron\Strategy\Observer\Progress" />
+    </event>
+
+    <event name="ess_cron_progress_stop">
+        <observer name="m2epro_cron_progress_stop" instance="Ess\M2ePro\Model\Cron\Strategy\Observer\Progress" />
     </event>
 
 </config>

@@ -7,7 +7,7 @@ define([
 
         // ---------------------------------------
 
-        proceedAction: function()
+        proceedAction: function ()
         {
             MessageObj.clear();
 
@@ -22,7 +22,7 @@ define([
                 this.changeStatus($('status_' + changedStatuses[i].marketplace_id));
             }
 
-            var waitingForEnd = setInterval(function() {
+            var waitingForEnd = setInterval(function () {
                 if (this.completeStatus === true) {
                     this.disableAllOptions();
 
@@ -36,7 +36,7 @@ define([
 
         // ---------------------------------------
 
-        saveWizardSettings: function(callback)
+        saveWizardSettings: function (callback)
         {
             var currentStatuses = this.getCurrentStatuses();
             var storedStatuses = this.getStoredStatuses();
@@ -70,7 +70,7 @@ define([
             new Ajax.Request(M2ePro.url.get('formSubmit', $('edit_form').serialize(true)), {
                 method: 'get',
                 asynchronous: true,
-                onSuccess: function(transport) {
+                onSuccess: function (transport) {
                     if (callback) {
                         callback();
                     }
@@ -80,7 +80,7 @@ define([
             return changedStatuses;
         },
 
-        runNextMarketplaceNow: function()
+        runNextMarketplaceNow: function ()
         {
             var self = this;
 
@@ -89,39 +89,6 @@ define([
                 $('synch_info_wait_'+self.marketplacesForUpdate[self.marketplacesForUpdateCurrentIndex-1]).hide();
                 $('synch_info_process_'+self.marketplacesForUpdate[self.marketplacesForUpdateCurrentIndex-1]).hide();
                 $('synch_info_complete_'+self.marketplacesForUpdate[self.marketplacesForUpdateCurrentIndex-1]).show();
-
-                var tempEndFlag = 0;
-                if (self.marketplacesForUpdateCurrentIndex >= self.marketplacesForUpdate.length) {
-                    tempEndFlag = 1;
-                }
-
-                new Ajax.Request(M2ePro.url.get('general/synchGetLastResult'), {
-                    method:'get',
-                    asynchronous: true,
-                    onSuccess: function(transport) {
-
-                        if (transport.responseText == self.synchProgressObj.resultTypeError) {
-                            self.synchErrors++;
-                        } else if (transport.responseText == self.synchProgressObj.resultTypeWarning) {
-                            self.synchWarnings++;
-                        } else {
-                            self.synchSuccess++;
-                        }
-
-                        if (tempEndFlag == 1) {
-                            if (self.synchErrors > 0) {
-                                self.synchProgressObj.printFinalMessage(self.synchProgressObj.resultTypeError);
-                            } else if (self.synchWarnings > 0) {
-                                self.synchProgressObj.printFinalMessage(self.synchProgressObj.resultTypeWarning);
-                            } else {
-                                self.synchProgressObj.printFinalMessage(self.synchProgressObj.resultTypeSuccess);
-                            }
-                            self.synchErrors = 0;
-                            self.synchWarnings = 0;
-                            self.synchSuccess = 0;
-                        }
-                    }
-                });
             }
 
             if (self.marketplacesForUpdateCurrentIndex >= self.marketplacesForUpdate.length) {
@@ -132,6 +99,10 @@ define([
 
                 self.synchProgressObj.end();
                 self.completeStatus = true;
+
+                self.synchSuccess++;
+
+                self.synchProgressObj.printFinalMessage(self.synchProgressObj.resultTypeSuccess);
 
                 return;
             }
@@ -161,7 +132,7 @@ define([
 
         // ---------------------------------------
 
-        checkAllOptions: function()
+        checkAllOptions: function ()
         {
             var isAnyOptionsEnabled = $$('select[id*="status_"]').some(function(element) {
                 return element.value == 1;
@@ -178,12 +149,12 @@ define([
             return true;
         },
 
-        disableAllOptions: function()
+        disableAllOptions: function ()
         {
             var allSelect = $$('select[id*="status_"]');
 
             if (allSelect.length) {
-                allSelect.each(function(element) {
+                allSelect.each(function (element) {
                     element.disabled = true;
                 });
             }

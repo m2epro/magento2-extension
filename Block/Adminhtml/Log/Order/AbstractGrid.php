@@ -244,6 +244,14 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             $ordersIds = array_merge($ordersIds, $tempOrdersIds);
         }
 
+        if ($this->getHelper('Component\Walmart')->isEnabled()) {
+            $tempOrdersIds = $this->activeRecordFactory->getObject('Walmart\Order')
+                ->getCollection()
+                ->addFieldToFilter('walmart_order_id', ['like' => '%'.$value.'%'])
+                ->getColumnValues('order_id');
+            $ordersIds = array_merge($ordersIds, $tempOrdersIds);
+        }
+
         $ordersIds = array_unique($ordersIds);
 
         $collection->addFieldToFilter('main_table.order_id', ['in' => $ordersIds]);

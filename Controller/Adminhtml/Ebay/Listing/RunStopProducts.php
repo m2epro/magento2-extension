@@ -15,8 +15,14 @@ class RunStopProducts extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Acti
 {
     public function execute()
     {
-        $this->setJsonContent($this->processConnector(\Ess\M2ePro\Model\Listing\Product::ACTION_STOP));
+        if ($this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('is_realtime'))) {
+            return $this->processConnector(
+                \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+            );
+        }
 
-        return $this->getResult();
+        return $this->scheduleAction(
+            \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+        );
     }
 }

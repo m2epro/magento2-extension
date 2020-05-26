@@ -186,7 +186,7 @@ class Form extends AbstractForm
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Order'));
         $this->jsUrl->add(
             $this->getUrl(
-                '*/walmart_order/saveShippingAddress',
+                '*/walmart_order_shippingAddress/save',
                 ['order_id' => $this->getRequest()->getParam('id')]
             ),
             'formSubmit'

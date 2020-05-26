@@ -16,7 +16,11 @@ use Ess\M2ePro\Model\Amazon\Listing\Product;
  */
 class Grid extends AbstractGrid
 {
+    /** @var $itemsCollection \Ess\M2ePro\Model\ResourceModel\Order\Item\Collection */
     private $itemsCollection = null;
+
+    /** @var $notesCollection \Ess\M2ePro\Model\ResourceModel\Order\Note\Collection */
+    protected $notesCollection = null;
 
     protected $resourceConnection;
     protected $amazonFactory;
@@ -90,6 +94,15 @@ class Grid extends AbstractGrid
         }
         // ---------------------------------------
 
+        // Add Not sent Invoice or Credit Memo Filter
+        // ---------------------------------------
+        if ($this->getRequest()->getParam('invoice_or_creditmemo_not_sent')) {
+            $collection->addFieldToFilter('is_invoice_sent', 0);
+            $collection->addFieldToFilter('is_credit_memo_sent', 0);
+        }
+
+        // ---------------------------------------
+
         $this->setCollection($collection);
         return parent::_prepareCollection();
     }
@@ -97,6 +110,10 @@ class Grid extends AbstractGrid
     protected function _afterLoadCollection()
     {
         $this->itemsCollection = $this->amazonFactory->getObject('Order\Item')
+            ->getCollection()
+            ->addFieldToFilter('order_id', ['in' => $this->getCollection()->getColumnValues('id')]);
+
+        $this->notesCollection = $this->activeRecordFactory->getObject('Order\Note')
             ->getCollection()
             ->addFieldToFilter('order_id', ['in' => $this->getCollection()->getColumnValues('id')]);
 
@@ -244,6 +261,18 @@ class Grid extends AbstractGrid
             'url'      => $this->getUrl('*/order/resubmitShippingInfo'),
             'confirm'  => $this->__('Are you sure?')
         ]);
+
+        $this->getMassactionBlock()->addItem('resend_invoice_creditmemo', [
+            'label'    => $this->__('Resend Invoice / Credit Memo'),
+            'url'      => $this->getUrl('*/amazon_order/resendInvoiceCreditmemo'),
+            'confirm'  => $this->__('Are you sure?')
+        ]);
+
+        $this->getMassactionBlock()->addItem('create_order', [
+            'label'    => $this->__('Create Magento Order'),
+            'url'      => $this->getUrl('*/amazon_order/createMagentoOrder'),
+            'confirm'  => $this->__('Are you sure?')
+        ]);
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -281,9 +310,31 @@ HTML;
 HTML;
         }
 
-        return <<<HTML
-<a href="{$url}" target="_blank">{$orderId}</a> {$primeImageHtml} {$businessImageHtml}
+        $returnString = '<a href="' . $url . '" target="_blank">' . $orderId . '</a> ';
+        $returnString .= $primeImageHtml;
+        $returnString .= $businessImageHtml;
+
+        /** @var $notes \Ess\M2ePro\Model\Order\Note[] */
+        $notes = $this->notesCollection->getItemsByColumnValue('order_id', $row->getData('id'));
+
+        if ($notes) {
+            $htmlNotesCount = $this->__(
+                'You have a custom note for the order. It can be reviewed on the order detail page.'
+            );
+
+            $returnString .= <<<HTML
+<div class="note_icon admin__field-tooltip">
+    <a class="admin__field-tooltip-note-action" href="javascript://"></a>
+    <div class="admin__field-tooltip-content" style="right: -4.4rem">
+        <div class="ebay-identifiers">
+           {$htmlNotesCount}
+        </div>
+    </div>
+</div>
 HTML;
+        }
+
+        return $returnString;
     }
 
     public function callbackColumnMagentoOrder($value, $row, $column, $isExport)

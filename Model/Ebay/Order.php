@@ -33,12 +33,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
     //########################################
 
-    // M2ePro\TRANSLATIONS
-    // Magento Order was canceled.
-    // Magento Order cannot be canceled.
-
-    //########################################
-
     private $shipmentFactory;
 
     private $externalTransactionsCollection = null;
@@ -701,17 +695,14 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     {
         $ebayAccount = $this->getEbayAccount();
 
-        if (!$this->isCheckoutCompleted()
-            && ($ebayAccount->shouldCreateMagentoOrderWhenCheckedOut()
-                || $ebayAccount->shouldCreateMagentoOrderWhenCheckedOutAndPaid())
+        if (!$this->isCheckoutCompleted() &&
+            ($ebayAccount->shouldCreateMagentoOrderWhenCheckedOut() ||
+             $ebayAccount->shouldCreateMagentoOrderWhenCheckedOutAndPaid())
         ) {
             return false;
         }
 
-        if (!$this->isPaymentCompleted()
-            && ($ebayAccount->shouldCreateMagentoOrderWhenPaid()
-                || $ebayAccount->shouldCreateMagentoOrderWhenCheckedOutAndPaid())
-        ) {
+        if (!$this->isPaymentCompleted() && $ebayAccount->shouldCreateMagentoOrderWhenCheckedOutAndPaid()) {
             return false;
         }
 
@@ -993,7 +984,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         }
 
         $action    = \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_PAYMENT;
-        $creator   = \Ess\M2ePro\Model\Order\Change::CREATOR_TYPE_OBSERVER;
+        $creator   = $this->getParentObject()->getLog()->getInitiator();
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
 
         $this->activeRecordFactory->getObject('Order\Change')->create(
@@ -1066,15 +1057,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         $params = array_merge($params, $trackingDetails);
 
-        $action    = \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING;
-        $creator   = \Ess\M2ePro\Model\Order\Change::CREATOR_TYPE_OBSERVER;
-        $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
-
         $this->activeRecordFactory->getObject('Order\Change')->create(
             $this->getId(),
-            $action,
-            $creator,
-            $component,
+            \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING,
+            $this->getParentObject()->getLog()->getInitiator(),
+            \Ess\M2ePro\Helper\Component\Ebay::NICK,
             $params
         );
 
@@ -1093,6 +1080,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             'transaction_id' => $firstItem->getChildObject()->getTransactionId(),
         ];
 
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
         $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObj->getVirtualConnector(
             'orders',

@@ -13,14 +13,14 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Product\Revise;
  */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 {
-    // ########################################
+    //########################################
 
     public function getCommand()
     {
         return ['product','update','entities'];
     }
 
-    // ########################################
+    //########################################
 
     protected function getActionType()
     {
@@ -31,10 +31,10 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
     {
         if (!empty($this->params['switch_to'])) {
             $switchTo = $this->params['switch_to'];
-            if ($switchTo === \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Qty::FULFILLMENT_MODE_AFN) {
+            if ($switchTo === \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty::FULFILLMENT_MODE_AFN) {
                 return 'switch_to_afn';
             }
-            if ($switchTo === \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Qty::FULFILLMENT_MODE_MFN) {
+            if ($switchTo === \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty::FULFILLMENT_MODE_MFN) {
                 return 'switch_to_mfn';
             }
         }
@@ -46,10 +46,10 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
     {
         if (!empty($this->params['switch_to'])) {
             $switchTo = $this->params['switch_to'];
-            if ($switchTo === \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Qty::FULFILLMENT_MODE_AFN) {
+            if ($switchTo === \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty::FULFILLMENT_MODE_AFN) {
                 return \Ess\M2ePro\Model\Listing\Log::ACTION_SWITCH_TO_AFN_ON_COMPONENT;
             }
-            if ($switchTo === \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Qty::FULFILLMENT_MODE_MFN) {
+            if ($switchTo === \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty::FULFILLMENT_MODE_MFN) {
                 return \Ess\M2ePro\Model\Listing\Log::ACTION_SWITCH_TO_MFN_ON_COMPONENT;
             }
         }
@@ -57,11 +57,12 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         return \Ess\M2ePro\Model\Listing\Log::ACTION_REVISE_PRODUCT_ON_COMPONENT;
     }
 
-    // ########################################
+    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingProducts
      * @return \Ess\M2ePro\Model\Listing\Product[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function filterChildListingProductsByStatus(array $listingProducts)
     {
@@ -83,5 +84,5 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         return $resultListingProducts;
     }
 
-    // ########################################
+    //########################################
 }

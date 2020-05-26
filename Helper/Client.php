@@ -272,7 +272,7 @@ class Client extends AbstractHelper
 
     public function getMysqlTotals()
     {
-        $moduleTables = $this->getHelper('Module_Database_Structure')->getMySqlTables();
+        $moduleTables = $this->getHelper('Module_Database_Structure')->getModuleTables();
         $magentoTables = $this->getHelper('Magento')->getMySqlTables();
 
         $connRead = $this->resource->getConnection();

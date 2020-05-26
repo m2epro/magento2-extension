@@ -135,7 +135,7 @@ class PhysicalUnit extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Ma
     {
         $productOptions = $this->getListingProduct()->getSetting('additional_data', 'variation_product_options', null);
         if (empty($productOptions)) {
-            return array();
+            return [];
         }
 
         return $productOptions;

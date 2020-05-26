@@ -24,7 +24,6 @@ class Delete extends AbstractProduct
         $this->activeRecordFactory->getObject('Listing')->removeDeletedProduct($this->getProduct());
         $this->activeRecordFactory->getObject('Listing\Other')->unmapDeletedProduct($this->getProduct());
         $this->modelFactory->getObject('Item')->removeDeletedProduct($this->getProduct());
-        $this->activeRecordFactory->getObject('ProductChange')->removeDeletedProduct($this->getProduct());
     }
 
     //########################################

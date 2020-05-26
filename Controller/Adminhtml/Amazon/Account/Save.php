@@ -23,8 +23,6 @@ class Save extends Account
             $this->_forward('index');
         }
 
-        $id = $this->getRequest()->getParam('id');
-
         // Base prepare
         // ---------------------------------------
         $data = [];
@@ -52,7 +50,6 @@ class Save extends Account
 
             'other_listings_synchronization',
             'other_listings_mapping_mode',
-            'other_listings_move_mode'
         ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -170,9 +167,9 @@ class Save extends Account
             ? $post['magento_orders_settings'][$tempKey] : [];
 
         $data['magento_orders_settings'][$tempKey]['source'] = $tempSettings['source'];
+        $data['magento_orders_settings'][$tempKey]['apply_to_amazon'] = $tempSettings['apply_to_amazon'];
 
         $prefixKeys = [
-            'mode',
             'prefix',
             'afn-prefix',
             'prime-prefix',
@@ -304,21 +301,17 @@ class Save extends Account
 
         // invoice/shipment settings
         // ---------------------------------------
-        $temp = \Ess\M2ePro\Model\Amazon\Account::MAGENTO_ORDERS_INVOICE_MODE_YES;
-        $data['magento_orders_settings']['invoice_mode'] = $temp;
-        $temp = \Ess\M2ePro\Model\Amazon\Account::MAGENTO_ORDERS_SHIPMENT_MODE_YES;
-        $data['magento_orders_settings']['shipment_mode'] = $temp;
+        $data['magento_orders_settings']['invoice_mode'] = 1;
+        $data['magento_orders_settings']['shipment_mode'] = 1;
 
         $temp = \Ess\M2ePro\Model\Amazon\Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM;
         if (!empty($data['magento_orders_settings']['status_mapping']['mode']) &&
             $data['magento_orders_settings']['status_mapping']['mode'] == $temp) {
-            $temp = \Ess\M2ePro\Model\Amazon\Account::MAGENTO_ORDERS_INVOICE_MODE_NO;
             if (!isset($post['magento_orders_settings']['invoice_mode'])) {
-                $data['magento_orders_settings']['invoice_mode'] = $temp;
+                $data['magento_orders_settings']['invoice_mode'] = 0;
             }
-            $temp = \Ess\M2ePro\Model\Amazon\Account::MAGENTO_ORDERS_SHIPMENT_MODE_NO;
             if (!isset($post['magento_orders_settings']['shipment_mode'])) {
-                $data['magento_orders_settings']['shipment_mode'] = $temp;
+                $data['magento_orders_settings']['shipment_mode'] = 0;
             }
         }
         // ---------------------------------------
@@ -327,24 +320,10 @@ class Save extends Account
         $data['magento_orders_settings'] = $this->getHelper('Data')->jsonEncode($data['magento_orders_settings']);
         // ---------------------------------------
 
-        $isEdit = $id !== null;
-
-        // tab: shipping settings
-        // ---------------------------------------
-        $keys = [
-            'shipping_mode'
-        ];
-        foreach ($keys as $key) {
-            if (isset($post[$key])) {
-                $data[$key] = $post[$key];
-            }
-        }
-        // ---------------------------------------
-
         // tab: vat calculation service
         // ---------------------------------------
         $keys = [
-            'is_vat_calculation_service_enabled',
+            'auto_invoicing',
             'is_magento_invoice_creation_disabled',
         ];
         foreach ($keys as $key) {
@@ -353,35 +332,14 @@ class Save extends Account
             }
         }
 
-        if (empty($data['is_vat_calculation_service_enabled'])) {
+        if (empty($data['auto_invoicing'])) {
             $data['is_magento_invoice_creation_disabled'] = false;
         }
         // ---------------------------------------
 
         // Add or update model
         // ---------------------------------------
-        $model = $this->amazonFactory->getObject('Account');
-        if ($id === null) {
-            $model->setData($data);
-        } else {
-            $model->load($id);
-            $model->addData($data);
-            $model->getChildObject()->addData($data);
-        }
-
-        $oldData = $model->getOrigData();
-        if ($id !== null) {
-            $oldData = array_merge($oldData, $model->getChildObject()->getOrigData());
-        }
-        $id = $model->save()->getId();
-        // ---------------------------------------
-
-        $model->getChildObject()->setSetting(
-            'other_listings_move_settings',
-            ['synch'],
-            $post['other_listings_move_synch']
-        );
-        $model->getChildObject()->save();
+        $model = $this->updateAccount($this->getRequest()->getParam('id'), $data);
 
         // Repricing
         // ---------------------------------------
@@ -390,78 +348,51 @@ class Save extends Account
             /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing $repricingModel */
             $repricingModel = $model->getChildObject()->getRepricing();
 
-            $repricingOldData = $repricingModel->getData();
+            /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing\SnapshotBuilder $snapshotBuilder */
+            $snapshotBuilder = $this->modelFactory->getObject('Amazon_Account_Repricing_SnapshotBuilder');
+            $snapshotBuilder->setModel($repricingModel);
+
+            $repricingOldData = $snapshotBuilder->getSnapshot();
 
             $repricingModel->addData($post['repricing']);
             $repricingModel->save();
 
-            $repricingNewData = $repricingModel->getData();
+            $snapshotBuilder = $this->modelFactory->getObject('Amazon_Account_Repricing_SnapshotBuilder');
+            $snapshotBuilder->setModel($repricingModel);
 
-            $repricingModel->setProcessRequired($repricingNewData, $repricingOldData);
+            $repricingNewData = $snapshotBuilder->getSnapshot();
+
+            /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing\Diff $diff */
+            $diff = $this->modelFactory->getObject('Amazon_Account_Repricing_Diff');
+            $diff->setOldSnapshot($repricingOldData);
+            $diff->setNewSnapshot($repricingNewData);
+
+            /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing\AffectedListingsProducts $affectedListingsProducts */
+            $affectedListingsProducts = $this->modelFactory->getObject(
+                'Amazon_Account_Repricing_AffectedListingsProducts'
+            );
+            $affectedListingsProducts->setModel($repricingModel);
+
+            /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing\ChangeProcessor $changeProcessor */
+            $changeProcessor = $this->modelFactory->getObject('Amazon_Account_Repricing_ChangeProcessor');
+            $changeProcessor->process($diff, $affectedListingsProducts->getObjectsData(['id', 'status']));
         }
         // ---------------------------------------
 
         try {
             // Add or update server
             // ---------------------------------------
-
-            /** @var $accountObj \Ess\M2ePro\Model\Account */
-            $accountObj = $model;
-
-            if (!$accountObj->isSetProcessingLock('server_synchronize')) {
-
-                /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
-                $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
-
-                if (!$isEdit) {
-                    $params = [
-                        'title'            => $post['title'],
-                        'marketplace_id'   => (int)$post['marketplace_id'],
-                        'merchant_id'      => $post['merchant_id'],
-                        'token'            => $post['token'],
-                        'related_store_id' => (int)$post['related_store_id']
-                    ];
-
-                    $connectorObj = $dispatcherObject->getConnector(
-                        'account',
-                        'add',
-                        'entityRequester',
-                        $params,
-                        $id
-                    );
-                    $dispatcherObject->process($connectorObj);
-                } else {
-                    $newData = [
-                        'title'            => $post['title'],
-                        'marketplace_id'   => (int)$post['marketplace_id'],
-                        'merchant_id'      => $post['merchant_id'],
-                        'token'            => $post['token'],
-                        'related_store_id' => (int)$post['related_store_id']
-                    ];
-
-                    $params = array_diff_assoc($newData, $oldData);
-
-                    if (!empty($params)) {
-                        $connectorObj = $dispatcherObject->getConnector(
-                            'account',
-                            'update',
-                            'entityRequester',
-                            $params,
-                            $id
-                        );
-                        $dispatcherObject->process($connectorObj);
-                    }
-                }
-            }
-            // ---------------------------------------
+            $this->sendDataToServer($model);
         } catch (\Exception $exception) {
             $this->getHelper('Module\Exception')->process($exception);
 
             // M2ePro_TRANSLATIONS
             // The Amazon access obtaining is currently unavailable.<br/>Reason: %error_message%
 
-            $error = 'The Amazon access obtaining is currently unavailable.<br/>Reason: %error_message%';
-            $error = $this->__($error, $exception->getMessage());
+            $error = $this->__(
+                'The Amazon access obtaining is currently unavailable.<br/>Reason: %error_message%',
+                $exception->getMessage()
+            );
 
             $model->delete();
 
@@ -490,10 +421,7 @@ class Save extends Account
         /** @var $wizardHelper \Ess\M2ePro\Helper\Module\Wizard */
         $wizardHelper = $this->getHelper('Module\Wizard');
 
-        $routerParams = [
-            'id' => $id,
-            '_current' => true
-        ];
+        $routerParams = ['id' => $model->getId(), '_current' => true];
         if ($wizardHelper->isActive(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK) &&
             $wizardHelper->getStep(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK) == 'account') {
             $routerParams['wizard'] = true;

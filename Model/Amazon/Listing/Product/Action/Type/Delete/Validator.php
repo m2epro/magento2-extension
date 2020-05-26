@@ -27,7 +27,7 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
             return false;
         }
 
-        if ($this->getVariationManager()->isRelationParentType() && !$this->validateParentListingProductFlags()) {
+        if ($this->getVariationManager()->isRelationParentType() && !$this->validateParentListingProduct()) {
             return false;
         }
 
@@ -37,24 +37,12 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
 
         if ($this->getListingProduct()->isNotListed()) {
             if (empty($params['remove'])) {
-                // M2ePro\TRANSLATIONS
-                // Item is not Listed or not available
                 $this->addMessage('Item is not Listed or not available');
             } else {
-                if ($this->getVariationManager()->isRelationChildType() &&
-                    $this->getVariationManager()->getTypeModel()->isVariationProductMatched()
-                ) {
-                    $parentAmazonListingProduct = $this->getVariationManager()
-                        ->getTypeModel()
-                        ->getAmazonParentListingProduct();
-
-                    $parentAmazonListingProduct->getVariationManager()->getTypeModel()->addRemovedProductOptions(
-                        $this->getVariationManager()->getTypeModel()->getProductOptions()
-                    );
-                }
-
-                $this->getListingProduct()->delete();
-                $this->getListingProduct()->isDeleted(true);
+                /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\RemoveHandler $removeHandler */
+                $removeHandler = $this->modelFactory->getObject('Amazon_Listing_Product_RemoveHandler');
+                $removeHandler->setListingProduct($this->getListingProduct());
+                $removeHandler->process();
             }
 
             return false;

@@ -19,8 +19,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     const SORT_VALUE_ASC = 3;
     const SORT_VALUE_DESC = 4;
 
-    const GLOBAL_GROUP = '__global__';
-
     const CACHE_LIFETIME = 3600; // 1 hour
 
     protected $activeRecordFactory;
@@ -41,7 +39,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @return \Ess\M2ePro\Model\Config\AbstractModel
      */
-
     protected function getModel()
     {
         return $this->activeRecordFactory->getObject($this->getModelName());
@@ -51,35 +48,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      * @return string
      */
     abstract protected function getModelName();
-
-    //########################################
-
-    public function getGlobalValue($key)
-    {
-        return $this->getValue(self::GLOBAL_GROUP, $this->prepareKey($key));
-    }
-
-    public function setGlobalValue($key, $value)
-    {
-        return $this->setValue(self::GLOBAL_GROUP, $this->prepareKey($key), $value);
-    }
-
-    public function deleteGlobalValue($key)
-    {
-        return $this->deleteValue(self::GLOBAL_GROUP, $this->prepareKey($key));
-    }
-
-    // ---------------------------------------
-
-    public function getAllGlobalValues($sort = self::SORT_NONE)
-    {
-        return $this->getAllValues(self::GLOBAL_GROUP, $sort);
-    }
-
-    public function deleteAllGlobalValues()
-    {
-        return $this->deleteAllValues(self::GLOBAL_GROUP);
-    }
 
     //########################################
 
@@ -160,14 +128,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $collection = $this->getCollection();
-
-        if ($group == self::GLOBAL_GROUP) {
-            $collection->addFieldToFilter(new \Zend_Db_Expr('`group`'), ['null' => true]);
-        } else {
-            $collection->addFieldToFilter(new \Zend_Db_Expr('`group`'), $group);
-        }
-
+        $collection->addFieldToFilter(new \Zend_Db_Expr('`group`'), $group);
         $collection->addFieldToFilter(new \Zend_Db_Expr('`key`'), $key);
+
         $dbData = $collection->toArray();
 
         if (!empty($dbData['items'])) {
@@ -178,9 +141,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
                 ->addData(['value'=>$value])
                 ->save();
         } else {
-            $group == self::GLOBAL_GROUP && $group = null;
             $this->getModel()
-                ->setData(['group' => $group,'key' => $key,'value' => $value])
+                ->setData(['group' => $group, 'key' => $key, 'value' => $value])
                 ->save();
         }
 
@@ -196,14 +158,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $collection = $this->getCollection();
-
-        if ($group == self::GLOBAL_GROUP) {
-            $collection->addFieldToFilter(new \Zend_Db_Expr('`group`'), ['null' => true]);
-        } else {
-            $collection->addFieldToFilter(new \Zend_Db_Expr('`group`'), $group);
-        }
-
+        $collection->addFieldToFilter(new \Zend_Db_Expr('`group`'), $group);
         $collection->addFieldToFilter(new \Zend_Db_Expr('`key`'), $key);
+
         $dbData = $collection->toArray();
 
         if (empty($dbData['items'])) {
@@ -220,7 +177,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     // ---------------------------------------
 
-    private function getAllValues($group = null, $sort = self::SORT_NONE)
+    private function getAllValues($group, $sort = self::SORT_NONE)
     {
         if (empty($group)) {
             return [];
@@ -229,12 +186,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $result = [];
 
         $collection = $this->getCollection();
-
-        if ($group == self::GLOBAL_GROUP) {
-            $collection->addFieldToFilter(new \Zend_Db_Expr('`group`'), ['null' => true]);
-        } else {
-            $collection->addFieldToFilter(new \Zend_Db_Expr('`group`'), $group);
-        }
+        $collection->addFieldToFilter(new \Zend_Db_Expr('`group`'), $group);
 
         $dbData = $collection->toArray();
 
@@ -247,19 +199,14 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         return $result;
     }
 
-    private function deleteAllValues($group = null)
+    private function deleteAllValues($group)
     {
         if (empty($group)) {
             return false;
         }
 
         $collection = $this->getCollection();
-
-        if ($group == self::GLOBAL_GROUP) {
-            $collection->addFieldToFilter(new \Zend_Db_Expr('`group`'), ['null' => true]);
-        } else {
-            $collection->addFieldToFilter(new \Zend_Db_Expr('`group`'), ['like' => $group.'%']);
-        }
+        $collection->addFieldToFilter(new \Zend_Db_Expr('`group`'), ['like' => $group]);
 
         $dbData = $collection->toArray();
 
@@ -299,10 +246,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      */
     private function getCacheModel()
     {
-        if ($this->getHelper('Module')->isDevelopmentEnvironment()) {
-            return $this->getHelper('Data_Cache_Runtime');
-        }
-
         return $this->getHelper('Data_Cache_Permanent');
     }
 
@@ -310,10 +253,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     private function prepareGroup($group)
     {
-        if ($group === null || $group == self::GLOBAL_GROUP) {
-            return self::GLOBAL_GROUP;
-        }
-
         if (empty($group)) {
             return false;
         }

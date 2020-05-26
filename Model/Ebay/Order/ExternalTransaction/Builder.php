@@ -56,7 +56,7 @@ class Builder extends AbstractModel
     /**
      * @return \Ess\M2ePro\Model\Ebay\Order\ExternalTransaction
      */
-    private function createOrderExternalTransaction()
+    protected function createOrderExternalTransaction()
     {
         $transaction = $this->activeRecordFactory->getObject('Ebay_Order_ExternalTransaction')
             ->getCollection()

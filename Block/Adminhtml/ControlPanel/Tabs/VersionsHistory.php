@@ -24,11 +24,7 @@ class VersionsHistory extends AbstractForm
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('controlPanelVersionsHistory');
-        // ---------------------------------------
-
         $this->setTemplate('control_panel/tabs/versions_history.phtml');
     }
 
@@ -42,10 +38,6 @@ class VersionsHistory extends AbstractForm
 
         $this->setChild('setup_info', $this->createBlock(
             'ControlPanel_Info_Installation'
-        ));
-
-        $this->setChild('public_versions_history', $this->createBlock(
-            'ControlPanel_Info_PublicVersionsHistory'
         ));
 
         return parent::_beforeToHtml();

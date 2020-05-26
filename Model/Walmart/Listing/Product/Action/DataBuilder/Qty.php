@@ -18,7 +18,7 @@ class Qty extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\A
     /**
      * @return array
      */
-    public function getRequestData()
+    public function getBuilderData()
     {
         if (!isset($this->cachedData['qty'])) {
             $this->cachedData['qty'] = $this->getWalmartListingProduct()->getQty();
@@ -62,8 +62,6 @@ class Qty extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\A
         }
 
         if ($type === \Ess\M2ePro\Model\Magento\Product::FORCING_QTY_TYPE_BACKORDERS) {
-            // M2ePro\TRANSLATIONS
-            // During the Quantity Calculation the Settings in the "Backorders" field were taken into consideration.
             $this->addWarningMessage('During the Quantity Calculation the Settings in the "Backorders" ' .
                 'field were taken into consideration.');
         }

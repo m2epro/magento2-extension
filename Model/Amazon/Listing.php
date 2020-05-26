@@ -1069,7 +1069,21 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
         $listingProduct->addData($dataForUpdate);
         $amazonListingProduct->addData($dataForUpdate);
+
+        $listingProduct->setSetting(
+            'additional_data',
+            $listingProduct::MOVING_LISTING_OTHER_SOURCE_KEY,
+            $listingOtherProduct->getId()
+        );
         $listingProduct->save();
+
+        $listingOtherProduct->setSetting(
+            'additional_data',
+            $listingOtherProduct::MOVING_LISTING_PRODUCT_DESTINATION_KEY,
+            $listingProduct->getId()
+        );
+
+        $listingOtherProduct->save();
 
         if ($amazonListingOther->isRepricing()) {
             $listingProductRepricing = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing');
@@ -1082,67 +1096,49 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $listingProductRepricing->save();
         }
 
+        $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
+        $instruction->setData(
+            [
+                'listing_product_id' => $listingProduct->getId(),
+                'component'          => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                'type'               => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
+                'initiator'          => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_OTHER,
+                'priority'           => 20,
+            ]
+        );
+        $instruction->save();
+
         return $listingProduct;
     }
 
-    //########################################
-
-    /**
-     * @return array
-     */
-    public function getTrackingAttributes()
-    {
-        return array_unique(array_merge(
-            $this->getConditionNoteAttributes(),
-            $this->getImageMainAttributes(),
-            $this->getGalleryImagesAttributes(),
-            $this->getGiftWrapAttributes(),
-            $this->getGiftMessageAttributes(),
-            $this->getHandlingTimeAttributes(),
-            $this->getRestockDateAttributes(),
-            $this->getSellingFormatTemplate()->getTrackingAttributes()
-        ));
-    }
-
-    //########################################
-
-    /**
-     * @param bool $asArrays
-     * @param string|array $columns
-     * @param bool $onlyPhysicalUnits
-     * @return array
-     */
-    public function getAffectedListingsProducts($asArrays = true, $columns = '*', $onlyPhysicalUnits = false)
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
-        $listingProductCollection = $this->parentFactory->getObject($this->getComponentMode(), 'Listing\Product')
-            ->getCollection();
-        $listingProductCollection->addFieldToFilter('listing_id', $this->getId());
-
-        if ($onlyPhysicalUnits) {
-            $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
+    public function addProductFromListing(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        \Ess\M2ePro\Model\Listing $sourceListing
+    ) {
+        if (!$this->getParentObject()->addProductFromListing($listingProduct, $sourceListing, false)) {
+            return false;
         }
 
-        if (is_array($columns) && !empty($columns)) {
-            $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $listingProductCollection->getSelect()->columns($columns);
+        if ($this->getParentObject()->getStoreId() != $sourceListing->getStoreId()) {
+            if (!$listingProduct->isNotListed()) {
+                if ($item = $listingProduct->getChildObject()->getAmazonItem()) {
+                    $item->setData('store_id', $this->getParentObject()->getStoreId());
+                    $item->save();
+                }
+            }
         }
 
-        return $asArrays ? (array)$listingProductCollection->getData() : (array)$listingProductCollection->getItems();
-    }
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $listingProduct->getChildObject();
+        $variationManager = $amazonListingProduct->getVariationManager();
 
-    public function setSynchStatusNeed($newData, $oldData)
-    {
-        $listingsProducts = $this->getAffectedListingsProducts(
-            true,
-            ['id', 'synch_status', 'synch_reasons'],
-            true
-        );
-        if (empty($listingsProducts)) {
-            return;
+        if ($variationManager->isRelationParentType()) {
+            /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product $resourceModel */
+            $resourceModel = $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource();
+            $resourceModel->moveChildrenToListing($listingProduct);
         }
 
-        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
+        return true;
     }
 
     //########################################

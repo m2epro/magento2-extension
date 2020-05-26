@@ -16,6 +16,8 @@ namespace Ess\M2ePro\Model\Ebay\Listing;
  */
 class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
+    protected $emailFilter;
+
     //########################################
 
     public function _construct()

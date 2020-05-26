@@ -69,7 +69,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         $form->addField(
-            'hidden_marketplace_id_'.$this->marketplaceData['id'],
+            'hidden_marketplace_id_' . $this->marketplaceData['id'],
             'hidden',
             [
                 'name' => 'return_policy[marketplace_id]',
@@ -87,8 +87,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         $fieldset = $form->addFieldset(
-            'return_policy_fieldset',
-            ['legend' => __('Return Policy'), 'collapsable' => false]
+            'return_policy_domestic_returns_fieldset',
+            ['legend' => __('Domestic Returns'), 'collapsable' => false]
         );
 
         if (!empty($this->marketplaceData['info']['returns_accepted'])) {
@@ -100,14 +100,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'label' => __('Return Policy'),
                     'title' => __('Return Policy'),
                     'values' => $this->getMarketplaceDataToOptions('returns_accepted'),
-                    'value' => $this->formData['accepted'],
-                    'tooltip' => $this->__(
-                        'Buyers are more comfortable shopping from Sellers who offer
-                         <a href="http://sellercentre.ebay.co.uk/offer-returns-policy"
-                            target="_blank">Returns Policies</a>,
-                         even though most Buyers will never return an Item.
-                         Items with a clear Returns Policy typically sell better than Items that don\'t have one.'
-                    )
+                    'value' => $this->formData['accepted']
                 ]
             );
         }
@@ -140,40 +133,6 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             );
         }
 
-        if ($this->canShowHolidayReturnOption()) {
-            $fieldset->addField(
-                'return_holiday_mode',
-                self::SELECT,
-                [
-                    'name' => 'return_policy[holiday_mode]',
-                    'label' => __('Extended Holiday Returns'),
-                    'title' => __('Extended Holiday Returns'),
-                    'values' => [
-                        ['value' => 0, 'label' => __('No')],
-                        ['value' => 1, 'label' => __('Yes')]
-                    ],
-                    'value' => isset($this->formData['holiday_mode']) ? $this->formData['holiday_mode'] : 0,
-                    'class' => 'return return-accepted',
-                    'tooltip' => $this->__(
-                        'You can specify Extended Holiday Returns (as well as their regular non-holiday returns period)
-                         for chosen Listings at any time during the year. The Extended Holiday Returns offer
-                         is not visible in the Listings until the current year\'s holiday returns period start date,
-                         at which point it overrides the non-holiday Returns Policy.
-                         <br/><br/>Buyers will see and be subject to the Extended Holiday Returns offer
-                         in Listings purchased through the purchase cutoff date, and will be able to return those
-                         purchases through the end date.
-                         <br/><br/>After the purchase cutoff date, the Extended Holiday Returns offer automatically
-                         disappears from the Listings, and non-holiday returns period reappears.
-                         Purchases made from that point on are subject to the non-holiday returns period,
-                         while purchases made before the cutoff date still have until the end date to be returned.
-                         <br/><br/>For more details please read
-                         <a href="http://pages.ebay.com/sellerinformation/returns-on-eBay/#faq=faq-58"
-                            target="_blank">this documentation</a>.'
-                    )
-                ]
-            );
-        }
-
         if (!empty($this->marketplaceData['info']['shipping_cost_paid_by'])) {
             $fieldset->addField(
                 'return_shipping_cost',
@@ -188,35 +147,108 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             );
         }
 
-        if (!empty($this->marketplaceData['info']['restocking_fee_value'])) {
+        $fieldset = $form->addFieldset(
+            'return_policy_international_returns_fieldset',
+            ['legend' => __('International Returns'), 'collapsable' => false]
+        );
+
+        if (!empty($this->marketplaceData['info']['international_returns_accepted'])) {
             $fieldset->addField(
-                'return_restocking_fee',
+                'return_international_accepted',
                 self::SELECT,
                 [
-                    'name' => 'return_policy[restocking_fee]',
-                    'label' => __('Restocking Fee Value'),
-                    'title' => __('Restocking Fee Value'),
-                    'values' => $this->getMarketplaceDataToOptions('restocking_fee_value'),
-                    'value' => $this->formData['restocking_fee'],
-                    'class' => 'return return-accepted'
+                    'name' => 'return_policy[international_accepted]',
+                    'label' => __('Return Policy'),
+                    'title' => __('Return Policy'),
+                    'values' => $this->getMarketplaceDataToOptions('international_returns_accepted'),
+                    'value' => $this->formData['international_accepted']
                 ]
             );
         }
 
-        $fieldset->addField(
-            'return_description',
-            'textarea',
-            [
-                'name' => 'return_policy[description]',
-                'label' => __('Refund Description'),
-                'title' => __('Refund Description'),
-                'value' => $this->formData['description'],
-                'class' => 'input-text'
-            ]
-        );
+        if (!empty($this->marketplaceData['info']['international_refund'])) {
+            $fieldset->addField(
+                'return_international_option',
+                self::SELECT,
+                [
+                    'name' => 'return_policy[international_option]',
+                    'label' => __('Refund Will Be Given As'),
+                    'title' => __('Refund Will Be Given As'),
+                    'values' => $this->getMarketplaceDataToOptions('international_refund'),
+                    'value' => $this->formData['international_option']
+                ]
+            );
+        }
+
+        if (!empty($this->marketplaceData['info']['international_returns_within'])) {
+            $fieldset->addField(
+                'return_international_within',
+                self::SELECT,
+                [
+                    'name' => 'return_policy[international_within]',
+                    'label' => __('Item Must Be Returned Within'),
+                    'title' => __('Item Must Be Returned Within'),
+                    'values' => $this->getMarketplaceDataToOptions('international_returns_within'),
+                    'value' => $this->formData['international_within']
+                ]
+            );
+        }
+
+        if (!empty($this->marketplaceData['info']['international_shipping_cost_paid_by'])) {
+            $fieldset->addField(
+                'return_international_shipping_cost',
+                self::SELECT,
+                [
+                    'name' => 'return_policy[international_shipping_cost]',
+                    'label' => __('Return Shipping Will Be Paid By'),
+                    'title' => __('Return Shipping Will Be Paid By'),
+                    'values' => $this->getMarketplaceDataToOptions('international_shipping_cost_paid_by'),
+                    'value' => $this->formData['international_shipping_cost']
+                ]
+            );
+        }
+
+        if ($this->canShowGeneralBlock()) {
+            $fieldset = $form->addFieldset(
+                'return_policy_additional_fieldset',
+                ['legend' => __('Additional'), 'collapsable' => false]
+            );
+
+            $fieldset->addField(
+                'return_description',
+                'textarea',
+                [
+                    'name' => 'return_policy[description]',
+                    'label' => __('Refund Description'),
+                    'title' => __('Refund Description'),
+                    'value' => $this->formData['description'],
+                    'class' => 'input-text'
+                ]
+            );
+        }
 
         $this->setForm($form);
         return $this;
+    }
+
+    //########################################
+
+    protected function getMarketplaceDataToOptions($key)
+    {
+        if (empty($this->marketplaceData['info'][$key])) {
+            return [];
+        }
+
+        $optionsData = [];
+        $helper = $this->getHelper('Data');
+        foreach ($this->marketplaceData['info'][$key] as $value) {
+            $optionsData[] = [
+                'value' => $value['ebay_id'],
+                'label' => $helper->escapeHtml($value['title'])
+            ];
+        }
+
+        return $optionsData;
     }
 
     //########################################
@@ -259,7 +291,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     public function getDefault()
     {
-        return $this->returnPolicyTemplate->getDefaultSettingsAdvancedMode();
+        return $this->returnPolicyTemplate->getDefaultSettings();
     }
 
     public function getMarketplaceData()
@@ -275,49 +307,87 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'info' => $marketplace->getChildObject()->getReturnPolicyInfo()
         ];
 
-        $policyLocalization = $this->getData('policy_localization');
+        foreach ($this->getDictionaryInfo('returns_within', $marketplace) as $key => $item) {
+            $data['info']['returns_within'][$key]['title'] = $this->__($item['title']);
+        }
 
-        if (!empty($policyLocalization)) {
-            /** @var \Ess\M2ePro\Helper\Module\Translation $translator */
+        foreach ($this->getDictionaryInfo('returns_accepted', $marketplace) as $key => $item) {
+            $data['info']['returns_accepted'][$key]['title'] = $this->__($item['title']);
+        }
 
-            foreach ($data['info']['returns_within'] as $key => $item) {
-                $data['info']['returns_within'][$key]['title'] = $translator->__($item['title']);
-            }
+        foreach ($this->getDictionaryInfo('refund', $marketplace) as $key => $item) {
+            $data['info']['refund'][$key]['title'] = $this->__($item['title']);
+        }
 
-            foreach ($data['info']['returns_accepted'] as $key => $item) {
-                $data['info']['returns_accepted'][$key]['title'] = $translator->__($item['title']);
-            }
+        foreach ($this->getDictionaryInfo('shipping_cost_paid_by', $marketplace) as $key => $item) {
+            $data['info']['shipping_cost_paid_by'][$key]['title'] = $this->__($item['title']);
+        }
 
-            foreach ($data['info']['shipping_cost_paid_by'] as $key => $item) {
-                $data['info']['shipping_cost_paid_by'][$key]['title'] = $translator->__($item['title']);
-            }
+        //----------------------------------------
+
+        foreach ($this->getInternationalDictionaryInfo('returns_within', $marketplace) as $key => $item) {
+            $data['info']['international_returns_within'][$key]['ebay_id'] = $item['ebay_id'];
+            $data['info']['international_returns_within'][$key]['title'] = $this->__($item['title']);
+        }
+
+        foreach ($this->getInternationalDictionaryInfo('returns_accepted', $marketplace) as $key => $item) {
+            $data['info']['international_returns_accepted'][$key]['ebay_id'] = $item['ebay_id'];
+            $data['info']['international_returns_accepted'][$key]['title'] = $this->__($item['title']);
+        }
+
+        foreach ($this->getInternationalDictionaryInfo('refund', $marketplace) as $key => $item) {
+            $data['info']['international_refund'][$key]['ebay_id'] = $item['ebay_id'];
+            $data['info']['international_refund'][$key]['title'] = $this->__($item['title']);
+        }
+
+        foreach ($this->getInternationalDictionaryInfo('shipping_cost_paid_by', $marketplace) as $key => $item) {
+            $data['info']['international_shipping_cost_paid_by'][$key]['ebay_id'] = $item['ebay_id'];
+            $data['info']['international_shipping_cost_paid_by'][$key]['title'] = $this->__($item['title']);
         }
 
         return $data;
     }
 
-    protected function getMarketplaceDataToOptions($key)
+    //########################################
+
+    public function canShowGeneralBlock()
     {
-        if (empty($this->marketplaceData['info'][$key])) {
-            return [];
+        $marketplace = $this->getHelper('Data\GlobalData')->getValue('ebay_marketplace');
+
+        if (!$marketplace instanceof \Ess\M2ePro\Model\Marketplace) {
+            throw new \Ess\M2ePro\Model\Exception\Logic('Marketplace is required for editing Return Policy.');
         }
 
-        $optionsData = [];
-        $helper = $this->getHelper('Data');
-        foreach ($this->marketplaceData['info'][$key] as $value) {
-            $optionsData[] = [
-                'value' => $value['ebay_id'],
-                'label' => $helper->escapeHtml($value['title'])
-            ];
+        return $marketplace->getChildObject()->isReturnDescriptionEnabled();
+    }
+
+    //########################################
+
+    protected function getDictionaryInfo($key, \Ess\M2ePro\Model\Marketplace $marketplace)
+    {
+        $returnPolicyInfo = $marketplace->getChildObject()->getReturnPolicyInfo();
+        return !empty($returnPolicyInfo[$key]) ? $returnPolicyInfo[$key] : [];
+    }
+
+    protected function getInternationalDictionaryInfo($key, \Ess\M2ePro\Model\Marketplace $marketplace)
+    {
+        $returnPolicyInfo = $marketplace->getChildObject()->getReturnPolicyInfo();
+
+        if (!empty($returnPolicyInfo['international_' . $key])) {
+            return $returnPolicyInfo['international_' . $key];
         }
 
-        return $optionsData;
+        return $this->getDictionaryInfo($key, $marketplace);
     }
 
     //########################################
 
     protected function _toHtml()
     {
+        $this->jsPhp->addConstants(
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\ReturnPolicy::class)
+        );
+
         $this->js->addRequireJs([
             'form' => 'M2ePro/Ebay/Template/ReturnPolicy'
         ], <<<JS
@@ -328,19 +398,6 @@ JS
         );
 
         return parent::_toHtml();
-    }
-
-    //########################################
-
-    public function canShowHolidayReturnOption()
-    {
-        $marketplace = $this->getHelper('Data\GlobalData')->getValue('ebay_marketplace');
-
-        if (!$marketplace instanceof \Ess\M2ePro\Model\Marketplace) {
-            throw new \Ess\M2ePro\Model\Exception\Logic('Marketplace is required for editing Return Policy.');
-        }
-
-        return $marketplace->getChildObject()->isHolidayReturnEnabled();
     }
 
     //########################################

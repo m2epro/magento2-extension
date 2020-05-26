@@ -106,6 +106,24 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     }
 
     /**
+     * @return string
+     */
+    public function getLotSize()
+    {
+        $src = $this->getEbaySellingFormatTemplate()->getLotSizeSource();
+
+        if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LOT_SIZE_MODE_CUSTOM_VALUE) {
+            return $src['value'];
+        }
+
+        if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LOT_SIZE_MODE_ATTRIBUTE) {
+            return $this->getMagentoProduct()->getAttributeValue($src['attribute']);
+        }
+
+        return '';
+    }
+
+    /**
      * @return int
      */
     public function getListingType()
@@ -116,9 +134,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             $ebayStringType = $this->getMagentoProduct()->getAttributeValue($src['attribute']);
 
             switch ($ebayStringType) {
-                case \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Selling::LISTING_TYPE_FIXED:
+                case \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General::LISTING_TYPE_FIXED:
                     return \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_FIXED;
-                case \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Selling::LISTING_TYPE_AUCTION:
+                case \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General::LISTING_TYPE_AUCTION:
                     return \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_AUCTION;
             }
 

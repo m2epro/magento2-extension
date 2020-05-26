@@ -14,16 +14,6 @@ class EbayVariationsWithASpace extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return [
-            'listing_product_variation',
-            'listing_product_variation_option',
-            'ebay_listing_product_variation',
-            'ebay_listing_product_variation_option',
-        ];
-    }
-
     public function execute()
     {
         $listingProductVariationOption = $this->getFullTableName('listing_product_variation_option');

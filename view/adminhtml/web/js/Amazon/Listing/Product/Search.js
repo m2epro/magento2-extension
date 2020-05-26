@@ -636,9 +636,6 @@ define([
                     modal({
                         title: 'Vocabulary',
                         type: 'popup',
-                        closed: function() {
-                            self.reloadVariationsGrid();
-                        },
                         buttons: [{
                             text: M2ePro.translator.translate('No'),
                             class: 'action-secondary action-dismiss',

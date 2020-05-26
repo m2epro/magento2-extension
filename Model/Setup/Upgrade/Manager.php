@@ -68,6 +68,7 @@ class Manager extends AbstractModel
                 $this->versionTo
             );
 
+            // @codingStandardsIgnoreLine
             $backupTables = array_merge($backupTables, $featureObject->getBackupTables());
 
             $this->featuresObjects[] = $featureObject;
@@ -91,6 +92,17 @@ class Manager extends AbstractModel
     public function getBackupObject()
     {
         return $this->backupObject;
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Setup
+     */
+    public function getCurrentSetupObject()
+    {
+        return $this->activeRecordFactory->getObject('Setup')->getResource()->initCurrentSetupObject(
+            $this->versionFrom,
+            $this->versionTo
+        );
     }
 
     //########################################

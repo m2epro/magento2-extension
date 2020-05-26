@@ -61,7 +61,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         if ($collection) {
             $columnIndex = $column->getFilterIndex() ?
                 $column->getFilterIndex() : $column->getIndex();
-            $collection->getSelect()->order($columnIndex.' '.strtoupper($column->getDir()));
+            $collection->getSelect()->order($columnIndex . ' ' . strtoupper($column->getDir()));
         }
         return $this;
     }
@@ -94,33 +94,33 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'component_mode' => 'component_mode',
                 'additional_data' => 'additional_data'
             ],
-            '{{table}}.listing_id='.(int)$this->listing->getData('id')
+            '{{table}}.listing_id=' . (int)$this->listing->getData('id')
         );
         $collection->joinTable(
             ['elp' => $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable()],
             'listing_product_id=id',
             [
-                'listing_product_id'    => 'listing_product_id',
-                'end_date'              => 'end_date',
-                'start_date'            => 'start_date',
-                'online_title'          => 'online_title',
-                'online_sku'            => 'online_sku',
-                'available_qty'         => new \Zend_Db_Expr('(elp.online_qty - elp.online_qty_sold)'),
-                'ebay_item_id'          => 'ebay_item_id',
-                'online_category'       => 'online_category',
-                'online_qty_sold'       => 'online_qty_sold',
-                'online_bids'           => 'online_bids',
-                'online_start_price'    => 'online_start_price',
-                'online_current_price'  => 'online_current_price',
-                'online_reserve_price'  => 'online_reserve_price',
+                'listing_product_id' => 'listing_product_id',
+                'end_date' => 'end_date',
+                'start_date' => 'start_date',
+                'online_title' => 'online_title',
+                'online_sku' => 'online_sku',
+                'available_qty' => new \Zend_Db_Expr('(elp.online_qty - elp.online_qty_sold)'),
+                'ebay_item_id' => 'ebay_item_id',
+                'online_main_category' => 'online_main_category',
+                'online_qty_sold' => 'online_qty_sold',
+                'online_bids' => 'online_bids',
+                'online_start_price' => 'online_start_price',
+                'online_current_price' => 'online_current_price',
+                'online_reserve_price' => 'online_reserve_price',
                 'online_buyitnow_price' => 'online_buyitnow_price',
-                'template_category_id'  => 'template_category_id',
-                'min_online_price'      => 'IF(
+                'template_category_id' => 'template_category_id',
+                'min_online_price' => 'IF(
                     (`t`.`variation_min_price` IS NULL),
                     `elp`.`online_current_price`,
                     `t`.`variation_min_price`
                 )',
-                'max_online_price'      => 'IF(
+                'max_online_price' => 'IF(
                     (`t`.`variation_max_price` IS NULL),
                     `elp`.`online_current_price`,
                     `t`.`variation_max_price`
@@ -140,8 +140,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     `mlpv`.`listing_product_id`,
                     MIN(`melpv`.`online_price`) as variation_min_price,
                     MAX(`melpv`.`online_price`) as variation_max_price
-                FROM `'. $this->activeRecordFactory->getObject('Listing_Product_Variation')
-                              ->getResource()->getMainTable() .'` AS `mlpv`
+                FROM `' . $this->activeRecordFactory->getObject('Listing_Product_Variation')
+                    ->getResource()->getMainTable() . '` AS `mlpv`
                 INNER JOIN `' .
                 $this->activeRecordFactory->getObject('Ebay_Listing_Product_Variation')->getResource()->getMainTable() .
                 '` AS `melpv`
@@ -184,7 +184,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         if ($this->getMassactionBlock()->getCount() == 0) {
             $this->getMassactionBlock()->addItem('fake', [
                 'label' => '&nbsp;&nbsp;&nbsp;&nbsp;',
-                'url'   => '#',
+                'url' => '#',
             ]);
             // Header of grid with massactions is rendering in other way, than with no massaction
             // so it causes broken layout when the actions are absent
@@ -216,40 +216,40 @@ CSS
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'    => $this->__('Product ID'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'entity_id',
+            'header' => $this->__('Product ID'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'entity_id',
             'frame_callback' => [$this, 'callbackColumnListingProductId'],
         ]);
 
         $this->addColumn('name', [
-            'header'    => $this->__('Product Title / Product SKU'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'online_title',
-            'escape'    => false,
+            'header' => $this->__('Product Title / Product SKU'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'online_title',
+            'escape' => false,
             'frame_callback' => [$this, 'callbackColumnTitle'],
             'filter_condition_callback' => [$this, 'callbackFilterTitle']
         ]);
 
         $this->addColumn('ebay_item_id', [
-            'header'    => $this->__('Item ID'),
-            'align'     => 'left',
-            'width'     => '100px',
-            'type'      => 'text',
-            'index'     => 'item_id',
+            'header' => $this->__('Item ID'),
+            'align' => 'left',
+            'width' => '100px',
+            'type' => 'text',
+            'index' => 'item_id',
             'frame_callback' => [$this, 'callbackColumnEbayItemId']
         ]);
 
         $this->addColumn('available_qty', [
-            'header'    => $this->__('Available QTY'),
-            'align'     => 'right',
-            'width'     => '50px',
-            'type'      => 'number',
-            'index'     => 'available_qty',
-            'filter'    => false,
+            'header' => $this->__('Available QTY'),
+            'align' => 'right',
+            'width' => '50px',
+            'type' => 'number',
+            'index' => 'available_qty',
+            'filter' => false,
             'frame_callback' => [$this, 'callbackColumnOnlineAvailableQty']
         ]);
 
@@ -261,18 +261,18 @@ CSS
         }
 
         $this->addColumn('price', [
-            'header'    => $this->__('Price'),
-            'align'     =>'right',
-            'width'     => '75px',
-            'type'      => 'number',
-            'index'     => $priceSortField,
+            'header' => $this->__('Price'),
+            'align' => 'right',
+            'width' => '75px',
+            'type' => 'number',
+            'index' => $priceSortField,
             'filter_index' => $priceSortField,
             'frame_callback' => [$this, 'callbackColumnPrice'],
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ]);
 
         $this->addColumn('ebay_status', [
-            'header'=> $this->__('Status'),
+            'header' => $this->__('Status'),
             'width' => '80px',
             'index' => 'ebay_status',
             'filter_index' => 'ebay_status',
@@ -280,12 +280,12 @@ CSS
             'sortable' => false,
             'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED     => $this->__('Listed'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN    => $this->__('Listed (Hidden)'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD       => $this->__('Sold'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED    => $this->__('Stopped'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED   => $this->__('Finished'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED    => $this->__('Pending')
+                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Listed'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN => $this->__('Listed (Hidden)'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD => $this->__('Sold'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Stopped'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED => $this->__('Finished'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Pending')
             ],
             'frame_callback' => [$this, 'callbackColumnStatus']
         ]);
@@ -300,7 +300,7 @@ CSS
         $productId = (int)$value;
 
         $url = $this->getUrl('catalog/product/edit', ['id' => $productId]);
-        $htmlWithoutThumbnail = '<a href="' . $url . '" target="_blank">'.$productId.'</a>';
+        $htmlWithoutThumbnail = '<a href="' . $url . '" target="_blank">' . $productId . '</a>';
 
         $showProductsThumbnails = (bool)(int)$this->getHelper('Module')->getConfig()
             ->getGroupValue('/view/', 'show_products_thumbnails');
@@ -352,7 +352,7 @@ HTML;
             ]
         );
 
-        return '<a href="' . $url . '" target="_blank">'.$value.'</a>';
+        return '<a href="' . $url . '" target="_blank">' . $value . '</a>';
     }
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
@@ -368,7 +368,7 @@ HTML;
 
         if ($row->getData('sku') === null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
-                                      ->setProductId($row->getData('entity_id'))->getSku();
+                ->setProductId($row->getData('entity_id'))->getSku();
         }
 
         $onlineSku = $row->getData('online_sku');
@@ -450,19 +450,19 @@ HTML;
             if ($row->getData('online_bids') > 0 || $onlineCurrentPrice > $onlineStartPrice) {
                 $currentPriceText = $this->__('Current Price');
                 $onlineCurrentStr = $this->convertAndFormatPriceCurrency($onlineCurrentPrice, $currency);
-                $onlineCurrentPriceHtml = '<strong>'.$currentPriceText.':</strong> '.$onlineCurrentStr.'<br/><br/>';
+                $onlineCurrentPriceHtml = '<strong>' . $currentPriceText . ':</strong> ' . $onlineCurrentStr . '<br/><br/>';
             }
 
             if ($onlineReservePrice > 0) {
                 $reservePriceText = $this->__('Reserve Price');
                 $onlineReserveStr = $this->convertAndFormatPriceCurrency($onlineReservePrice, $currency);
-                $onlineReservePriceHtml = '<strong>'.$reservePriceText.':</strong> '.$onlineReserveStr.'<br/>';
+                $onlineReservePriceHtml = '<strong>' . $reservePriceText . ':</strong> ' . $onlineReserveStr . '<br/>';
             }
 
             if ($onlineBuyItNowPrice > 0) {
                 $buyItNowText = $this->__('Buy It Now Price');
                 $onlineBuyItNowStr = $this->convertAndFormatPriceCurrency($onlineBuyItNowPrice, $currency);
-                $onlineBuyItNowPriceHtml = '<strong>'.$buyItNowText.':</strong> '.$onlineBuyItNowStr;
+                $onlineBuyItNowPriceHtml = '<strong>' . $buyItNowText . ':</strong> ' . $onlineBuyItNowStr;
             }
 
             $intervalHtml = $this->getTooltipHtml(<<<HTML
@@ -480,18 +480,18 @@ HTML
 HTML;
 
             if ($onlineCurrentPrice > $onlineStartPrice) {
-                $resultHtml = '<span style="color: grey; text-decoration: line-through;">'.$onlineStartStr.'</span>';
-                $resultHtml .= '<br/>'.$intervalHtml.'&nbsp;'.
-                    '<span class="product-price-value">'.$onlineCurrentStr.'</span>';
+                $resultHtml = '<span style="color: grey; text-decoration: line-through;">' . $onlineStartStr . '</span>';
+                $resultHtml .= '<br/>' . $intervalHtml . '&nbsp;' .
+                    '<span class="product-price-value">' . $onlineCurrentStr . '</span>';
             } else {
-                $resultHtml = $intervalHtml.'&nbsp;'.'<span class="product-price-value">'.$onlineStartStr.'</span>';
+                $resultHtml = $intervalHtml . '&nbsp;' . '<span class="product-price-value">' . $onlineStartStr . '</span>';
             }
         } else {
             $onlineMinPriceStr = $this->convertAndFormatPriceCurrency($onlineMinPrice, $currency);
             $onlineMaxPriceStr = $this->convertAndFormatPriceCurrency($onlineMaxPrice, $currency);
 
             $resultHtml = '<span class="product-price-value">' . $onlineMinPriceStr . '</span>' .
-                (($onlineMinPrice != $onlineMaxPrice) ? ' - ' . $onlineMaxPriceStr :  '');
+                (($onlineMinPrice != $onlineMaxPrice) ? ' - ' . $onlineMaxPriceStr : '');
         }
 
         return $resultHtml;
@@ -549,10 +549,10 @@ HTML;
 
         $collection->addFieldToFilter(
             [
-                ['attribute'=>'sku','like'=>'%'.$value.'%'],
-                ['attribute'=>'online_sku','like'=>'%'.$value.'%'],
-                ['attribute'=>'name', 'like'=>'%'.$value.'%'],
-                ['attribute'=>'online_title','like'=>'%'.$value.'%'],
+                ['attribute' => 'sku', 'like' => '%' . $value . '%'],
+                ['attribute' => 'online_sku', 'like' => '%' . $value . '%'],
+                ['attribute' => 'name', 'like' => '%' . $value . '%'],
+                ['attribute' => 'online_title', 'like' => '%' . $value . '%'],
             ]
         );
     }
@@ -568,25 +568,25 @@ HTML;
         $condition = '';
 
         if (isset($value['from']) && $value['from'] != '') {
-            $condition = 'min_online_price >= \''.$value['from'].'\'';
+            $condition = 'min_online_price >= \'' . $value['from'] . '\'';
         }
         if (isset($value['to']) && $value['to'] != '') {
             if (isset($value['from']) && $value['from'] != '') {
                 $condition .= ' AND ';
             }
-            $condition .= 'min_online_price <= \''.(float)$value['to'].'\'';
+            $condition .= 'min_online_price <= \'' . (float)$value['to'] . '\'';
         }
 
         $condition = '(' . $condition . ') OR (';
 
         if (isset($value['from']) && $value['from'] != '') {
-            $condition .= 'max_online_price >= \''.$value['from'].'\'';
+            $condition .= 'max_online_price >= \'' . $value['from'] . '\'';
         }
         if (isset($value['to']) && $value['to'] != '') {
             if (isset($value['from']) && $value['from'] != '') {
                 $condition .= ' AND ';
             }
-            $condition .= 'max_online_price <= \''.(float)$value['to'].'\'';
+            $condition .= 'max_online_price <= \'' . (float)$value['to'] . '\'';
         }
 
         $condition .= ')';
@@ -639,7 +639,7 @@ JS
     public function getGridUrl()
     {
         return $this->getUrl('*/ebay_listing_pickupStore/productsStepGrid', [
-            'id'=>$this->listing->getId()
+            'id' => $this->listing->getId()
         ]);
     }
 

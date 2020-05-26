@@ -148,7 +148,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
             ],
 
             'viewLog' => [
-                'caption' => $this->__('View Log'),
+                'caption' => $this->__('Logs & Events'),
                 'group'   => 'other',
                 'field'   => \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
                 'url'     => [

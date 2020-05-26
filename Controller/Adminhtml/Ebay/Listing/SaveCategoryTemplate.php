@@ -49,6 +49,7 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         // ---------------------------------------
 
         // ---------------------------------------
+        /** @var \Ess\M2ePro\Model\Listing $listing */
         $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId);
         // ---------------------------------------
 
@@ -98,15 +99,14 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         try {
             foreach ($collection->getItems() as $listingProduct) {
-                /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
-                $dataSnapshot = array_merge(
-                    $listingProduct->getDataSnapshot(),
-                    $listingProduct->getChildObject()->getDataSnapshot()
-                );
-                $snapshots[$listingProduct->getId()] = $dataSnapshot;
+                /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
-                $listingProduct->setData('template_category_id', $categoryTemplateId);
-                $listingProduct->setData('template_other_category_id', $otherCategoryTemplateId);
+                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\SnapshotBuilder $snapshotBuilder */
+                $snapshotBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_SnapshotBuilder');
+                $snapshotBuilder->setModel($listingProduct);
+
+                $snapshots[$listingProduct->getId()] = $snapshotBuilder->getSnapshot();
+
                 $listingProduct->getChildObject()->setData('template_category_id', $categoryTemplateId);
                 $listingProduct->getChildObject()->setData('template_other_category_id', $otherCategoryTemplateId);
 
@@ -122,17 +122,179 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             return;
         }
 
-        foreach ($collection->getItems() as $listingProduct) {
-            $dataSnapshot = array_merge(
-                $listingProduct->getDataSnapshot(),
-                $listingProduct->getChildObject()->getDataSnapshot()
-            );
+        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
 
-            $listingProduct->getChildObject()->setSynchStatusNeed(
-                $dataSnapshot,
-                $snapshots[$listingProduct->getId()]
-            );
+        foreach ($collection->getItems() as $listingProduct) {
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\SnapshotBuilder $snapshotBuilder */
+            $snapshotBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_SnapshotBuilder');
+            $snapshotBuilder->setModel($listingProduct);
+
+            $newData = $snapshotBuilder->getSnapshot();
+
+            $newTemplates = $templateManager->getTemplatesFromData($newData);
+            $oldTemplates = $templateManager->getTemplatesFromData($snapshots[$listingProduct->getId()]);
+
+            foreach ($templateManager->getAllTemplates() as $template) {
+                $templateManager->setTemplate($template);
+
+                /** @var \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel $snapshotBuilder */
+                if ($templateManager->isHorizontalTemplate()) {
+                    $snapshotBuilder = $this->modelFactory->getObject(
+                        'Ebay_'.$templateManager->getTemplateModelName().'_SnapshotBuilder'
+                    );
+                } else {
+                    $snapshotBuilder = $this->modelFactory->getObject(
+                        $templateManager->getTemplateModelName().'_SnapshotBuilder'
+                    );
+                }
+
+                $snapshotBuilder->setModel($newTemplates[$template]);
+
+                $newTemplateData = $snapshotBuilder->getSnapshot();
+
+                /** @var \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel $snapshotBuilder */
+                if ($templateManager->isHorizontalTemplate()) {
+                    $snapshotBuilder = $this->modelFactory->getObject(
+                        'Ebay_'.$templateManager->getTemplateModelName().'_SnapshotBuilder'
+                    );
+                } else {
+                    $snapshotBuilder = $this->modelFactory->getObject(
+                        $templateManager->getTemplateModelName().'_SnapshotBuilder'
+                    );
+                }
+
+                $snapshotBuilder->setModel($oldTemplates[$template]);
+
+                $oldTemplateData = $snapshotBuilder->getSnapshot();
+
+                /** @var \Ess\M2ePro\Model\Template\Diff\AbstractModel $diff */
+                if ($templateManager->isHorizontalTemplate()) {
+                    $diff = $this->modelFactory->getObject('Ebay_'.$templateManager->getTemplateModelName().'_Diff');
+                } else {
+                    $diff = $this->modelFactory->getObject(''.$templateManager->getTemplateModelName().'_Diff');
+                }
+
+                $diff->setNewSnapshot($newTemplateData);
+                $diff->setOldSnapshot($oldTemplateData);
+
+                /** @var \Ess\M2ePro\Model\Template\ChangeProcessor\AbstractModel $changeProcessor */
+                if ($templateManager->isHorizontalTemplate()) {
+                    $changeProcessor = $this->modelFactory->getObject(
+                        'Ebay_'.$templateManager->getTemplateModelName().'_ChangeProcessor'
+                    );
+                } else {
+                    $changeProcessor = $this->modelFactory->getObject(
+                        $templateManager->getTemplateModelName().'_ChangeProcessor'
+                    );
+                }
+
+                $changeProcessor->process(
+                    $diff,
+                    [['id' => $listingProduct->getId(), 'status' => $listingProduct->getStatus()]]
+                );
+            }
+
+            $this->processCategoryTemplateChange($listingProduct, $newData, $snapshots[$listingProduct->getId()]);
+            $this->processOtherCategoryTemplateChange($listingProduct, $newData, $snapshots[$listingProduct->getId()]);
         }
+    }
+
+    private function processCategoryTemplateChange($listingProduct, array $newData, array $oldData)
+    {
+        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+
+        $newTemplateSnapshot = [];
+
+        try {
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Category\SnapshotBuilder $snapshotBuilder */
+            $snapshotBuilder = $this->modelFactory->getObject('Ebay_Template_Category_SnapshotBuilder');
+
+            $newTemplate = $this->activeRecordFactory->getCachedObjectLoaded(
+                'Ebay_Template_Category',
+                $newData['template_category_id']
+            );
+            $snapshotBuilder->setModel($newTemplate);
+
+            $newTemplateSnapshot = $snapshotBuilder->getSnapshot();
+            // @codingStandardsIgnoreLine
+        } catch (\Exception $exception) {}
+
+        $oldTemplateSnapshot = [];
+
+        try {
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Category\SnapshotBuilder $snapshotBuilder */
+            $snapshotBuilder = $this->modelFactory->getObject('Ebay_Template_Category_SnapshotBuilder');
+
+            $oldTemplate = $this->activeRecordFactory->getCachedObjectLoaded(
+                'Ebay_Template_Category',
+                $oldData['template_category_id']
+            );
+            $snapshotBuilder->setModel($oldTemplate);
+
+            $oldTemplateSnapshot = $snapshotBuilder->getSnapshot();
+            // @codingStandardsIgnoreLine
+        } catch (\Exception $exception) {}
+
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Diff $diff */
+        $diff = $this->modelFactory->getObject('Ebay_Template_Category_Diff');
+        $diff->setNewSnapshot($newTemplateSnapshot);
+        $diff->setOldSnapshot($oldTemplateSnapshot);
+
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Category\ChangeProcessor $changeProcessor */
+        $changeProcessor = $this->modelFactory->getObject('Ebay_Template_Category_ChangeProcessor');
+        $changeProcessor->process(
+            $diff,
+            [['id' => $listingProduct->getId(), 'status' => $listingProduct->getStatus()]]
+        );
+    }
+
+    private function processOtherCategoryTemplateChange($listingProduct, array $newData, array $oldData)
+    {
+        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+
+        $newTemplateSnapshot = [];
+
+        try {
+            /** @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory\SnapshotBuilder $snapshotBuilder */
+            $snapshotBuilder = $this->modelFactory->getObject('Ebay_Template_OtherCategory_SnapshotBuilder');
+
+            $newTemplate = $this->activeRecordFactory->getCachedObjectLoaded(
+                'Ebay_Template_OtherCategory',
+                $newData['template_other_category_id']
+            );
+            $snapshotBuilder->setModel($newTemplate);
+
+            $newTemplateSnapshot = $snapshotBuilder->getSnapshot();
+            // @codingStandardsIgnoreLine
+        } catch (\Exception $exception) {}
+
+        $oldTemplateSnapshot = [];
+
+        try {
+            /** @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory\SnapshotBuilder $snapshotBuilder */
+            $snapshotBuilder = $this->modelFactory->getObject('Ebay_Template_OtherCategory_SnapshotBuilder');
+
+            $oldTemplate = $this->activeRecordFactory->getCachedObjectLoaded(
+                'Ebay_Template_OtherCategory',
+                $oldData['template_other_category_id']
+            );
+            $snapshotBuilder->setModel($oldTemplate);
+
+            $oldTemplateSnapshot = $snapshotBuilder->getSnapshot();
+            // @codingStandardsIgnoreLine
+        } catch (\Exception $exception) {}
+
+        /** @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory\Diff $diff */
+        $diff = $this->modelFactory->getObject('Ebay_Template_OtherCategory_Diff');
+        $diff->setNewSnapshot($newTemplateSnapshot);
+        $diff->setOldSnapshot($oldTemplateSnapshot);
+
+        /** @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory\ChangeProcessor $changeProcessor */
+        $changeProcessor = $this->modelFactory->getObject('Ebay_Template_OtherCategory_ChangeProcessor');
+        $changeProcessor->process(
+            $diff,
+            [['id' => $listingProduct->getId(), 'status' => $listingProduct->getStatus()]]
+        );
     }
 
     //########################################

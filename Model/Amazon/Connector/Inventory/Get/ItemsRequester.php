@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Inventory\Get;
  */
 class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {
-    // ########################################
+    //########################################
 
     public function getRequestData()
     {
@@ -30,5 +30,5 @@ class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\
         return ['inventory','get','items'];
     }
 
-    // ########################################
+    //########################################
 }

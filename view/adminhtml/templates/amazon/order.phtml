@@ -55,6 +55,11 @@ if (empty($currency)) {
                                     <?php if ($block->realMagentoOrderId !== null) { ?>
                                         <?php if ($block->realMagentoOrderId !== null) { ?>
                                             <a href="<?php echo $block->getUrl('sales/order/view', ['order_id' => $block->order->getData('magento_order_id')]); ?>" target="_blank"><?php echo $block->realMagentoOrderId; ?></a>
+
+                                            <?php if ($block->realMagentoOrderId == $block->order->getChildObject()->getSellerOrderId()) { ?>
+                                                &nbsp;<?php echo $block->__('(used as Your Seller Order ID)'); ?>
+                                            <?php } ?>
+
                                         <?php } else { ?>
                                             <?php echo $block->order->getData('magento_order_id'); ?>
                                         <?php } ?>
@@ -138,19 +143,6 @@ if (empty($currency)) {
                             </td>
                         </tr>
 
-                        <?php $additionalData = $block->order->getAdditionalData(); ?>
-
-                        <?php if ($block->order->getChildObject()->isFulfilledByAmazon() && !empty($additionalData['fulfillment_details']['fulfillment_center_id'])) : ?>
-                            <tr>
-                                <td class="label"><?php echo $block->__('AFN Warehouse') ?>:</td>
-                                <td class="value">
-                                    <strong>
-                                        <?php echo $additionalData['fulfillment_details']['fulfillment_center_id'] ?>
-                                    </strong>
-                                </td>
-                            </tr>
-                        <?php endif; ?>
-
                         <tr>
                             <td class="label"><?php echo $block->__('Account');?></td>
                             <td class="value">
@@ -202,7 +194,7 @@ if (empty($currency)) {
     <div class="fieldset-wrapper" id="magento_block_amazon_orders_payment" collapseable="no">
 
         <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
-            <strong class="admin__collapsible-title"><span><?php echo $block->__('Payment Information');?></span></strong>
+            <strong class="admin__collapsible-title"><span><?php echo $block->__('Payment & Invoicing Information');?></span></strong>
             <div class="form-buttons"></div>
         </div>
 
@@ -232,12 +224,25 @@ if (empty($currency)) {
 
                             </td>
                         </tr>
+                        <?php if ($this->order->getChildObject()->canSendCreditmemo()): ?>
+                            <tr>
+                                <td class="label"></td>
+                                <td class="value">
+                                    <?php echo $this->getChildHtml('resend_creditmemo') ?>
+                                </td>
+                            </tr>
+                        <?php elseif ($this->order->getChildObject()->canSendInvoice()): ?>
+                            <tr>
+                                <td class="label"></td>
+                                <td class="value">
+                                    <?php echo $this->getChildHtml('resend_invoice') ?>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
-
             </div>
         </div>
-
     </div>
 </div>
 
@@ -315,6 +320,19 @@ if (empty($currency)) {
 <div></div>
 
 <div class="col-m-6">
+
+    <div class="fieldset-wrapper" id="magento_block_amazon_orders_history" collapseable="no">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <strong class="admin__collapsible-title"><span><?php echo $block->__('Custom Notes');?></span></strong>
+        </div>
+
+        <div class="fieldset">
+            <?php echo $block->getChildHtml('order_note_grid'); ?>
+            <?php echo $block->getChildHtml('add_note_button'); ?>
+        </div>
+
+    </div>
 
     <div class="fieldset-wrapper" id="magento_block_amazon_orders_history" collapseable="no">
 

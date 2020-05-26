@@ -73,6 +73,11 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
         return implode('/', $urlParts);
     }
 
+    public function getMagentoMarketplaceUrl()
+    {
+        return $this->moduleConfig->getGroupValue('/support/', 'magento_marketplace_url');
+    }
+
     //########################################
 
     public function getDocumentationUrl()
@@ -87,6 +92,8 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
                 return $this->getDocumentationUrl() . '/display/eBayMagento2/';
             case \Ess\M2ePro\Helper\Component\Amazon::NICK:
                 return $this->getDocumentationUrl() . 'display/AmazonMagento2/';
+            case \Ess\M2ePro\Helper\Component\Walmart::NICK:
+                return $this->getDocumentationUrl() . 'display/WalmartMagento2/';
             default:
                 throw new \Ess\M2ePro\Model\Exception\Logic('Invalid Channel.');
         }
@@ -173,13 +180,6 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
     public function getForumArticleUrl($articleLink)
     {
         return $this->getForumUrl() . trim($articleLink, '/') . '/';
-    }
-
-    //########################################
-
-    public function getMagentoMarketplaceUrl()
-    {
-        return $this->moduleConfig->getGroupValue('/support/', 'magento_marketplace_url');
     }
 
     //########################################

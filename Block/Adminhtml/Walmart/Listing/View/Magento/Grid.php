@@ -110,7 +110,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'walmart_sku'             => 'sku',
                 'online_qty'              => 'online_qty',
                 'online_price'            => 'online_price',
-                'is_details_data_changed' => 'is_details_data_changed',
                 'is_online_price_invalid' => 'is_online_price_invalid',
             ],
             null,

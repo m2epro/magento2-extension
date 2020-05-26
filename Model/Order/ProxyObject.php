@@ -155,6 +155,14 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 
     abstract public function getOrderNumberPrefix();
 
+    //########################################
+
+    public function isMagentoOrdersCustomerNewNotifyWhenOrderCreated()
+    {
+        return $this->order->getParentObject()->getAccount()->getChildObject()
+            ->isMagentoOrdersCustomerNewNotifyWhenOrderCreated();
+    }
+
     /**
      * @return \Magento\Customer\Model\Data\Customer
      */

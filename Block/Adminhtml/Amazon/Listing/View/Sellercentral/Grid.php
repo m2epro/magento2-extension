@@ -27,6 +27,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected $localeCurrency;
     protected $resourceConnection;
 
+    private $parentAndChildReviseScheduledCache = [];
+
     //########################################
 
     public function __construct(
@@ -122,19 +124,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                   `alp`.`online_regular_sale_price`,
                   NULL
                 )',
-                'online_regular_sale_price_start_date'  => 'online_regular_sale_price_start_date',
-                'online_regular_sale_price_end_date'    => 'online_regular_sale_price_end_date',
-                'online_business_price'     => 'online_business_price',
-                'online_business_discounts' => 'online_business_discounts',
-                'is_afn_channel'                   => 'is_afn_channel',
-                'is_repricing'                     => 'is_repricing',
-                'is_general_id_owner'              => 'is_general_id_owner',
-                'is_variation_parent'              => 'is_variation_parent',
-                'variation_child_statuses'         => 'variation_child_statuses',
-                'variation_parent_id'              => 'variation_parent_id',
+                'online_regular_sale_price_start_date'   => 'online_regular_sale_price_start_date',
+                'online_regular_sale_price_end_date'     => 'online_regular_sale_price_end_date',
+                'online_business_price'          => 'online_business_price',
+                'online_business_discounts'      => 'online_business_discounts',
+                'is_repricing'                   => 'is_repricing',
+                'is_afn_channel'                 => 'is_afn_channel',
+                'is_general_id_owner'            => 'is_general_id_owner',
+                'is_variation_parent'            => 'is_variation_parent',
+                'variation_child_statuses'      => 'variation_child_statuses',
+                'variation_parent_id'           => 'variation_parent_id',
+                'defected_messages'              => 'defected_messages',
                 'variation_parent_afn_state'       => 'variation_parent_afn_state',
                 'variation_parent_repricing_state' => 'variation_parent_repricing_state',
-                'defected_messages'                => 'defected_messages',
             ],
             '{{table}}.is_variation_parent = 0'
         );
@@ -172,6 +174,36 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
+    }
+
+    protected function _afterLoadCollection()
+    {
+        $collection = $this->amazonFactory->getObject('Listing_Product')->getCollection();
+        $collection->getSelect()->join(
+            ['lps' => $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
+                ->getResource()->getMainTable()],
+            'lps.listing_product_id=main_table.id',
+            []
+        );
+
+        $collection->addFieldToFilter('is_variation_parent', 0);
+        $collection->addFieldToFilter('variation_parent_id', ['in' => $this->getCollection()->getColumnValues('id')]);
+        $collection->addFieldToFilter('lps.action_type', \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE);
+
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->columns(
+            [
+                'variation_parent_id' => 'second_table.variation_parent_id',
+                'count'               => new \Zend_Db_Expr('COUNT(lps.id)')
+            ]
+        );
+        $collection->getSelect()->group('variation_parent_id');
+
+        foreach ($collection->getItems() as $item) {
+            $this->parentAndChildReviseScheduledCache[$item->getData('variation_parent_id')] = true;
+        }
+
+        return parent::_afterLoadCollection();
     }
 
     protected function _prepareColumns()
@@ -499,9 +531,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     <img id="map_link_defected_message_icon_{$row->getId()}"
          class="tool-tip-image"
          style="vertical-align: middle;"
-         src="{$this->getSkinUrl('M2ePro/images/warning.png')}">
+         src="{$this->getViewFileUrl('Ess_M2ePro::images/warning.png')}">
     <span class="tool-tip-message tool-tip-warning tip-left" style="display:none;">
-        <img src="{$this->getSkinUrl('M2ePro/images/i_notice.gif')}">
+        <img src="{$this->getViewFileUrl('Ess_M2ePro::images/i_notice.gif')}">
         <span>{$msg}</span>
     </span>
 </span>
@@ -544,6 +576,10 @@ HTML;
 
     public function callbackColumnAvailableQty($value, $row, $column, $isExport)
     {
+        if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
+            return $this->__('N/A');
+        }
+
         if ((bool)$row->getData('is_afn_channel')) {
             $sku = $row->getData('amazon_sku');
 
@@ -587,6 +623,10 @@ HTML;
 
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
+        if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
+            return $this->__('N/A');
+        }
+
         $onlinePrice = $row->getData('online_regular_price');
 
         $repricingHtml ='';
@@ -601,11 +641,11 @@ HTML;
                  in the values updating made via the Repricing Service'
             );
 
-            if ((int)$row->getData('is_repricing_disabled') == 1) {
+            if ((int)$row->getData('is_repricing_disabled') == 1 || (int)$row->getData('is_repricing_inactive') == 1) {
                 $icon = 'repricing-disabled';
                 $text = $this->__(
-                    'This product is disabled on Amazon Repricing Tool.
-                     The Price is updated through the M2E Pro.'
+                    'This Item is disabled or unable to be repriced on Amazon Repricing Tool.
+                     Its Price is updated via M2E Pro.'
                 );
             }
 
@@ -636,7 +676,9 @@ HTML;
             $priceValue = $this->convertAndFormatPriceCurrency($onlinePrice, $currency);
         }
 
-        if ($row->getData('is_repricing') && !$row->getData('is_repricing_disabled')) {
+        if ($row->getData('is_repricing') &&
+            !$row->getData('is_repricing_disabled') &&
+            !$row->getData('is_repricing_inactive')) {
             $accountId = $this->listing['account_id'];
             $sku = $row->getData('amazon_sku');
 
@@ -758,6 +800,71 @@ HTML;
         }
 
         $value .= $this->getViewLogIconHtml($row->getData('id'));
+
+        $scheduledActionsCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
+            ->getCollection();
+        $scheduledActionsCollection->addFieldToFilter('listing_product_id', $row->getData('id'));
+
+        /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction */
+        $scheduledAction = $scheduledActionsCollection->getFirstItem();
+
+        switch ($scheduledAction->getActionType()) {
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_LIST:
+                $value .= '<br/><span style="color: #605fff">[List is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST:
+                $value .= '<br/><span style="color: #605fff">[Relist is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE:
+                $reviseParts = [];
+
+                $additionalData = $scheduledAction->getAdditionalData();
+                if (!empty($additionalData['configurator']) &&
+                    !isset($this->parentAndChildReviseScheduledCache[$row->getData('id')])) {
+                    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator */
+                    $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
+                    $configurator->setUnserializedData($additionalData['configurator']);
+
+                    if ($configurator->isIncludingMode()) {
+                        if ($configurator->isQtyAllowed()) {
+                            $reviseParts[] = 'QTY';
+                        }
+
+                        if ($configurator->isRegularPriceAllowed() || $configurator->isBusinessPriceAllowed()) {
+                            $reviseParts[] = 'Price';
+                        }
+
+                        if ($configurator->isDetailsAllowed()) {
+                            $reviseParts[] = 'Details';
+                        }
+
+                        if ($configurator->isImagesAllowed()) {
+                            $reviseParts[] = 'Images';
+                        }
+                    }
+                }
+
+                if (!empty($reviseParts)) {
+                    $value .= '<br/><span style="color: #605fff">[Revise of '.implode(', ', $reviseParts)
+                              .' is Scheduled...]</span>';
+                } else {
+                    $value .= '<br/><span style="color: #605fff">[Revise is Scheduled...]</span>';
+                }
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_STOP:
+                $value .= '<br/><span style="color: #605fff">[Stop is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_DELETE:
+                $value .= '<br/><span style="color: #605fff">[Delete is Scheduled...]</span>';
+                break;
+
+            default:
+                break;
+        }
 
         $tempLocks = $this->getLockedData($row);
         $tempLocks = $tempLocks['object_locks'];

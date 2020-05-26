@@ -41,39 +41,4 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     }
 
     //########################################
-
-    public function getChangedItems(
-        array $attributes,
-        $withStoreFilter = false
-    ) {
-        return $this->walmartFactory->getObject('Listing\Product')->getResource()->getChangedItems(
-            $attributes,
-            \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            $withStoreFilter
-        );
-    }
-
-    public function getChangedItemsByListingProduct(
-        array $attributes,
-        $withStoreFilter = false
-    ) {
-        return $this->walmartFactory->getObject('Listing\Product')->getResource()->getChangedItemsByListingProduct(
-            $attributes,
-            \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            $withStoreFilter
-        );
-    }
-
-    public function getChangedItemsByVariationOption(
-        array $attributes,
-        $withStoreFilter = false
-    ) {
-        return $this->walmartFactory->getObject('Listing\Product')->getResource()->getChangedItemsByVariationOption(
-            $attributes,
-            \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            $withStoreFilter
-        );
-    }
-
-    //########################################
 }

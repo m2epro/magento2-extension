@@ -77,20 +77,18 @@ abstract class AfterGetTokenAbstract extends InstallationAmazon
         return [
             'related_store_id' => 0,
 
-            'other_listings_synchronization' => AccountModel::OTHER_LISTINGS_SYNCHRONIZATION_NO,
-            'other_listings_mapping_mode' => AccountModel::OTHER_LISTINGS_MAPPING_MODE_NO,
+            'other_listings_synchronization' => 0,
+            'other_listings_mapping_mode' => 0,
             'other_listings_mapping_settings' => $this->getHelper('Data')->jsonEncode([]),
-            'other_listings_move_mode' => AccountModel::OTHER_LISTINGS_MOVE_TO_LISTINGS_DISABLED,
-            'other_listings_move_synch' => AccountModel::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_NONE,
 
             'magento_orders_settings' => $this->getHelper('Data')->jsonEncode([
                 'listing' => [
-                    'mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_MODE_YES,
+                    'mode' => 1,
                     'store_mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
                     'store_id' => null
                 ],
                 'listing_other' => [
-                    'mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES,
+                    'mode' => 1,
                     'product_mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
                     'store_id' => $this->getHelper('Magento\Store')->getDefaultStoreId(),
@@ -98,7 +96,7 @@ abstract class AfterGetTokenAbstract extends InstallationAmazon
                 'number' => [
                     'source' => AccountModel::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
                     'prefix' => [
-                        'mode'   => AccountModel::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_NO,
+                        'mode'   => 0,
                         'prefix' => '',
                     ],
                 ],
@@ -110,7 +108,7 @@ abstract class AfterGetTokenAbstract extends InstallationAmazon
                     'id' => null,
                     'website_id' => null,
                     'group_id' => null,
-//                'subscription_mode' => AccountModel::MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_NO,
+//                'subscription_mode' => 0,
                     'notifications' => [
 //                    'customer_created' => false,
                         'invoice_created' => false,
@@ -130,11 +128,11 @@ abstract class AfterGetTokenAbstract extends InstallationAmazon
                     'refund_mode' => 1,
                 ],
                 'fba' => [
-                    'mode' => AccountModel::MAGENTO_ORDERS_FBA_MODE_YES,
-                    'stock_mode' => AccountModel::MAGENTO_ORDERS_FBA_STOCK_MODE_NO
+                    'mode' => 1,
+                    'stock_mode' => 0
                 ],
-                'invoice_mode' => AccountModel::MAGENTO_ORDERS_INVOICE_MODE_YES,
-                'shipment_mode' => AccountModel::MAGENTO_ORDERS_SHIPMENT_MODE_YES
+                'invoice_mode' => 1,
+                'shipment_mode' => 1
             ])
         ];
     }

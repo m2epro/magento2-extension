@@ -37,7 +37,7 @@ class GlobalData extends \Ess\M2ePro\Helper\AbstractHelper
     public function setValue($key, $value)
     {
         $globalKey = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$key;
-        $this->registryModel->register($globalKey, $value, !$this->getHelper('Module')->isDevelopmentEnvironment());
+        $this->registryModel->register($globalKey, $value);
     }
 
     //########################################

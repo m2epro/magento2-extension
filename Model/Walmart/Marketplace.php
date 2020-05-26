@@ -27,30 +27,6 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
 
     //########################################
 
-    /**
-     * @param bool $asObjects
-     * @param array $filters
-     * @return array|\Ess\M2ePro\Model\AbstractModel[]
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function getWalmartItems($asObjects = false, array $filters = [])
-    {
-        return $this->getRelatedSimpleItems('Walmart\Item', 'marketplace_id', $asObjects, $filters);
-    }
-
-    /**
-     * @param bool $asObjects
-     * @param array $filters
-     * @return array|\Ess\M2ePro\Model\AbstractModel[]
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function getDescriptionTemplates($asObjects = false, array $filters = [])
-    {
-        return $this->getRelatedSimpleItems('Walmart_Template_Description', 'marketplace_id', $asObjects, $filters);
-    }
-
-    //########################################
-
     public function getCurrency()
     {
         return $this->getData('default_currency');

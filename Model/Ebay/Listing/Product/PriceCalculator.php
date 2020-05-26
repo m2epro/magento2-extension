@@ -33,7 +33,7 @@ class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
     public function getVariationValue(ListingProductVariation $variation)
     {
         if ($variation->getChildObject()->isDelete()) {
-            return 0;
+            return $variation->getChildObject()->getOnlinePrice();
         }
 
         return parent::getVariationValue($variation);

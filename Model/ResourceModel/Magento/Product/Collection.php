@@ -225,8 +225,8 @@ SQL;
             );
         }
 
-        /** @var \Ess\M2ePro\Model\Indexer\Listing\Product\VariationParent\Manager $manager */
-        $manager = $this->modelFactory->getObject('Indexer_Listing_Product_VariationParent_Manager', [
+        /** @var \Ess\M2ePro\Model\Listing\Product\Indexer\VariationParent\Manager $manager */
+        $manager = $this->modelFactory->getObject('Listing_Product_Indexer_VariationParent_Manager', [
             'listing' => $this->listing
         ]);
         $manager->prepare();
@@ -242,9 +242,9 @@ SQL;
 
     private function joinAmazonIndexerParent()
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Indexer\Listing\Product\VariationParent $resource */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Indexer\VariationParent $resource */
         $resource = $this->activeRecordFactory->getObject(
-            'Amazon_Indexer_Listing_Product_VariationParent'
+            'Amazon_Listing_Product_Indexer_VariationParent'
         )->getResource();
 
         $this->getSelect()->joinLeft(
@@ -331,9 +331,9 @@ SQL;
 
     private function joinEbayIndexerParent()
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Indexer\Listing\Product\VariationParent $resource */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Indexer\VariationParent $resource */
         $resource = $this->activeRecordFactory->getObject(
-            'Ebay_Indexer_Listing_Product_VariationParent'
+            'Ebay_Listing_Product_Indexer_VariationParent'
         )->getResource();
 
         $this->getSelect()->joinLeft(
@@ -356,8 +356,8 @@ SQL;
 
     private function joinWalmartIndexerParent()
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Indexer\Listing\Product\VariationParent $resource */
-        $resource = $this->activeRecordFactory->getObject('Walmart_Indexer_Listing_Product_VariationParent')
+        /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Indexer\VariationParent $resource */
+        $resource = $this->activeRecordFactory->getObject('Walmart_Listing_Product_Indexer_VariationParent')
                                               ->getResource();
 
         $this->getSelect()->joinLeft(
@@ -429,9 +429,9 @@ SQL;
             return;
         }
 
-        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Indexer\Listing\Product\VariationParent $resource */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Indexer\VariationParent $resource */
         $resource = $this->activeRecordFactory->getObject(
-            'Amazon_Indexer_Listing_Product_VariationParent'
+            'Amazon_Listing_Product_Indexer_VariationParent'
         )->getResource();
 
         $selectStmt = $resource->getBuildIndexSelect($this->listing);
@@ -472,9 +472,9 @@ SQL;
             return;
         }
 
-        /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Indexer\Listing\Product\VariationParent $resource */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Indexer\VariationParent $resource */
         $resource = $this->activeRecordFactory->getObject(
-            'Ebay_Indexer_Listing_Product_VariationParent'
+            'Ebay_Listing_Product_Indexer_VariationParent'
         )->getResource();
 
         $selectStmt = $resource->getBuildIndexSelect($this->listing);
@@ -511,9 +511,9 @@ SQL;
             return;
         }
 
-        /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Indexer\Listing\Product\VariationParent $resource */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Indexer\VariationParent $resource */
         $resource = $this->activeRecordFactory
-            ->getObject('Walmart_Indexer_Listing_Product_VariationParent')->getResource();
+            ->getObject('Walmart_Listing_Product_Indexer_VariationParent')->getResource();
 
         $selectStmt = $resource->getBuildIndexSelect($this->listing);
         $selectStmt->where('mwlp.variation_parent_id IN (?)', array_keys($listingProductsData));

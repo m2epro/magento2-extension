@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode;
+use \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode\AffectedListingsProducts;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode\Assign
@@ -50,15 +51,10 @@ class Assign extends ProductTaxCode
 
             $this->setProductTaxCodeTemplateForProducts($productsIdsLocked, $templateId);
             $this->runProcessorForParents($productsIdsLocked);
-
-            /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode $template */
-            $template = $this->activeRecordFactory->getObjectLoaded('Amazon_Template_ProductTaxCode', $templateId);
-            $template->setSynchStatusNeed($template->getDataSnapshot(), []);
         }
 
-        $this->setJsonContent([
-            'messages' => $messages
-        ]);
+        $this->setJsonContent(['messages' => $messages]);
+
         return $this->getResult();
     }
 }

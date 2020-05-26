@@ -130,7 +130,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            $otherListing->mapProduct($magentoProductId, \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
+            $otherListing->mapProduct($magentoProductId);
 
             return true;
         }

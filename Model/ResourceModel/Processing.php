@@ -13,12 +13,12 @@ namespace Ess\M2ePro\Model\ResourceModel;
  */
 class Processing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
-    // ########################################
+    //########################################
 
     public function _construct()
     {
         $this->_init('m2epro_processing', 'id');
     }
 
-    // ########################################
+    //########################################
 }

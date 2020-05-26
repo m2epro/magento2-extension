@@ -95,7 +95,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @return \Ess\M2ePro\Model\Walmart\Item
      * @throws \Ess\M2ePro\Model\Exception
-     * @throws Exception
+     * @throws \Exception
      */
     public function createWalmartItem()
     {

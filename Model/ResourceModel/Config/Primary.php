@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Config;
  */
 class Primary extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
-    // ########################################
+    //########################################
 
     /**
      * Define main table
@@ -23,5 +23,5 @@ class Primary extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
         $this->_init('m2epro_primary_config', 'id');
     }
 
-    // ########################################
+    //########################################
 }

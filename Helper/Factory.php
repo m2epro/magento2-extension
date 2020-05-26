@@ -52,5 +52,14 @@ class Factory
         return $helper;
     }
 
+    /**
+     * @param string $helperName
+     * @return bool
+     */
+    public function canCreateObject($helperName)
+    {
+        return class_exists('Ess\M2ePro\Helper\\' . str_replace('_', '\\', $helperName));
+    }
+
     //########################################
 }

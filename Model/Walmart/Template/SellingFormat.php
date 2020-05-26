@@ -177,19 +177,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     /**
      * @param bool $asObjects
      * @param array $filters
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function getListings($asObjects = false, array $filters = [])
-    {
-        return $this->getRelatedComponentItems('Listing', 'template_selling_format_id', $asObjects, $filters);
-    }
-
-    //########################################
-
-    /**
-     * @param bool $asObjects
-     * @param array $filters
      * @return array|\Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -1167,94 +1154,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     }
 
     //########################################
-
-    /**
-     * @return array
-     */
-    public function getDataSnapshot()
-    {
-        $data = parent::getDataSnapshot();
-
-        $data['promotions']        = $this->getPromotions();
-        $data['shipping_override'] = $this->getShippingOverrides();
-        $data['attributes']        = $this->getSettings('attributes');
-
-        return $data;
-    }
-
-    public function getTrackingAttributes()
-    {
-        return $this->getUsedAttributes();
-    }
-
-    public function getUsedAttributes()
-    {
-        $attributes = array_merge(
-            $this->getQtyAttributes(),
-            $this->getPriceAttributes(),
-            $this->getSaleTimeStartDateAttributes(),
-            $this->getSaleTimeEndDateAttributes(),
-            $this->getMapPriceAttributes(),
-            $this->getLagTimeAttributes(),
-            $this->getProductTaxCodeAttributes(),
-            $this->getItemWeightAttributes(),
-            $this->getMustShipAloneAttributes(),
-            $this->getShipsInOriginalPackagingModeAttributes(),
-            $this->getAttributesAttributes()
-        );
-
-        foreach ($this->getPromotions(true) as $promotion) {
-            $attributes = array_merge($attributes, $promotion->getUsedAttributes());
-        }
-
-        foreach ($this->getShippingOverrides(true) as $shippingOverride) {
-            $attributes = array_merge($attributes, $shippingOverride->getUsedAttributes());
-        }
-
-        return $attributes;
-    }
-
-    //########################################
-
-    /**
-     * @param bool $asArrays
-     * @param string|array $columns
-     * @param bool $onlyPhysicalUnits
-     * @return array
-     */
-    public function getAffectedListingsProducts($asArrays = true, $columns = '*', $onlyPhysicalUnits = false)
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Collection $listingCollection */
-        $listingCollection = $this->walmartFactory->getObject('Listing')->getCollection();
-        $listingCollection->addFieldToFilter('template_selling_format_id', $this->getId());
-        $listingCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-        $listingCollection->getSelect()->columns('id');
-
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
-        $listingProductCollection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('listing_id', ['in' => $listingCollection->getSelect()]);
-
-        if ($onlyPhysicalUnits) {
-            $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
-        }
-
-        if (is_array($columns) && !empty($columns)) {
-            $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $listingProductCollection->getSelect()->columns($columns);
-        }
-
-        return $asArrays ? (array)$listingProductCollection->getData() : (array)$listingProductCollection->getItems();
-    }
-
-    public function setSynchStatusNeed($newData, $oldData)
-    {
-        $listingsProducts = $this->getAffectedListingsProducts(true, ['id'], true);
-        if (empty($listingsProducts)) {
-            return;
-        }
-
-        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
-    }
 
     public function isCacheEnabled()
     {

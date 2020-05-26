@@ -39,7 +39,9 @@ class Content extends AbstractForm
                 <<<HTML
 <div>
     Under this section, you can link your Walmart account to M2E Pro.
-    Read how to <a href="%url%" target="_blank">get the API credentials</a>.
+    Read how to <a href="%url%" target="_blank">get the API credentials</a> or register on 
+    <a href="https://marketplace-apply.walmart.com/apply?id=00161000012XSxe" target="_blank">Walmart US</a> / 
+    <a href="https://marketplace.walmart.ca/apply?q=ca" target="_blank">Walmart CA</a>.
 </div>
 HTML
                 ,
@@ -228,21 +230,6 @@ JS
         $this->jsTranslator->add(
             'An error during of account creation.',
             $this->__('An error during of account creation.')
-        );
-
-        $this->jsTranslator->add(
-            'Another Synchronization Is Already Running.',
-            $this->__('Another Synchronization Is Already Running.')
-        );
-
-        $this->jsTranslator->add(
-            'Getting information. Please wait ...',
-            $this->__('Getting information. Please wait ...')
-        );
-
-        $this->jsTranslator->add(
-            'Preparing to start. Please wait ...',
-            $this->__('Preparing to start. Please wait ...')
         );
 
         $this->jsTranslator->add(

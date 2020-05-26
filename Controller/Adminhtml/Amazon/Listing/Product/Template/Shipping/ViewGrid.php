@@ -17,7 +17,6 @@ class ViewGrid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
     {
         $productsIds   = $this->getRequest()->getParam('products_ids');
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
-        $shippingMode  = $this->getRequest()->getParam('shipping_mode');
 
         if (empty($productsIds) && empty($marketplaceId)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
@@ -38,11 +37,7 @@ class ViewGrid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
             $productsIds = explode(',', $productsIds);
         }
 
-        $blockName = ($shippingMode == \Ess\M2ePro\Model\Amazon\Account::SHIPPING_MODE_OVERRIDE)
-            ? 'Amazon_Listing_Product_Template_ShippingOverride_Grid'
-            : 'Amazon_Listing_Product_Template_ShippingTemplate_Grid';
-
-        $grid = $this->createBlock($blockName);
+        $grid = $this->createBlock('Amazon_Listing_Product_Template_Shipping_Grid');
         $grid->setMarketplaceId($marketplaceId);
         $grid->setProductsIds($productsIds);
 

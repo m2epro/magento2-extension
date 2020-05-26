@@ -88,9 +88,6 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     const ACTION_CHANNEL_CHANGE = 25;
     const _ACTION_CHANNEL_CHANGE = 'Change Product on Channel';
 
-    const ACTION_TRANSLATE_PRODUCT = 28;
-    const _ACTION_TRANSLATE_PRODUCT = 'Translation';
-
     //########################################
 
     public function _construct()

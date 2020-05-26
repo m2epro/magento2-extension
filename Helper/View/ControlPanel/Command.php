@@ -18,20 +18,15 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
 {
     //########################################
 
-    const CONTROLLER_MODULE_MODULE              = 'controlPanel_module/module';
-    const CONTROLLER_MODULE_SYNCHRONIZATION     = 'controlPanel_module/synchronization';
     const CONTROLLER_MODULE_INTEGRATION         = 'controlPanel_module/integration';
     const CONTROLLER_MODULE_INTEGRATION_EBAY    = 'controlPanel_module_integration/ebay';
     const CONTROLLER_MODULE_INTEGRATION_AMAZON  = 'controlPanel_module_integration/amazon';
     const CONTROLLER_MODULE_INTEGRATION_WALMART = 'controlPanel_module_integration/walmart';
-    const CONTROLLER_MODULE_SERVICING           = 'controlPanel_module/servicing';
 
     const CONTROLLER_TOOLS_M2EPRO_GENERAL   = 'controlPanel_tools_m2ePro/general';
     const CONTROLLER_TOOLS_M2EPRO_INSTALL   = 'controlPanel_tools_m2ePro/install';
     const CONTROLLER_TOOLS_MAGENTO          = 'controlPanel_tools/magento';
     const CONTROLLER_TOOLS_ADDITIONAL       = 'controlPanel_tools/additional';
-
-    const CONTROLLER_DEBUG                  = 'controlPanel_debug/debug';
 
     private $backendUrlBuilder;
 
@@ -89,10 +84,6 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
             preg_match('/@invisible/', $commentsString, $matches);
             isset($matches[0]) && $methodInvisible = true;
 
-            $methodNonProduction = false;
-            preg_match('/@non-production/', $commentsString, $matches);
-            isset($matches[0]) && $methodNonProduction = true;
-
             $methodTitle = $action;
             preg_match('/@title[\s]*\"(.*)\"/', $commentsString, $matches);
             isset($matches[1]) && $methodTitle = $matches[1];
@@ -134,7 +125,6 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
 
             $methods[] = [
                 'invisible'      => $methodInvisible,
-                'non_production' => $methodNonProduction,
                 'title'          => $methodTitle,
                 'description'    => $methodDescription,
                 'url'            => $this->backendUrlBuilder->getUrl('*/'.$controller, ['action' => $action]),
@@ -147,80 +137,6 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
                 ],
                 'components'  => $methodComponents,
                 'new_window'  => $methodNewWindow
-            ];
-        }
-        // ---------------------------------------
-
-        return $methods;
-    }
-
-    // ---------------------------------------
-
-    public function parseDebugCommandsData($controller)
-    {
-        $tempClass = $this->getControllerClassName($controller);
-
-        $reflectionClass = new \ReflectionClass($tempClass);
-        $reflectionMethods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
-
-        // Get actions methods
-        // ---------------------------------------
-        $actions = [];
-        foreach ($reflectionMethods as $reflectionMethod) {
-            $methodName = $reflectionMethod->name;
-
-            if (substr($methodName, strlen($methodName)-6) != 'Action') {
-                continue;
-            }
-
-            $methodName = substr($methodName, 0, strlen($methodName)-6);
-
-            $actions[] = $methodName;
-        }
-        // ---------------------------------------
-
-        // Print method actions
-        // ---------------------------------------
-        $methods = [];
-        foreach ($actions as $action) {
-            $controllerName = $this->getControllerClassName($controller);
-            $reflectionMethod = new \ReflectionMethod($controllerName, $action.'Action');
-
-            $commentsString = $this->getMethodComments($reflectionMethod);
-
-            preg_match('/@hidden/', $commentsString, $matchesHidden);
-
-            if (isset($matchesHidden[0])) {
-                continue;
-            }
-
-            preg_match('/@title[\s]*\"(.*)\"/', $commentsString, $matchesTitle);
-            preg_match('/@description[\s]*\"(.*)\"/', $commentsString, $matchesDescription);
-
-            if (!isset($matchesTitle[1]) || !isset($matchesDescription[1])) {
-                continue;
-            }
-
-            $methodTitle = $matchesTitle[1];
-            $methodDescription = $matchesDescription[1];
-
-            $methodUrl = $this->backendUrlBuilder->getUrl('*/'.$controller, ['action' => $action]);
-
-            preg_match('/@confirm[\s]*\"(.*)\"/', $commentsString, $matchesConfirm);
-            $methodConfirm = '';
-            if (isset($matchesConfirm[1])) {
-                $methodConfirm = $matchesConfirm[1];
-            }
-
-            preg_match('/new_window/', $commentsString, $matchesNewWindow);
-            $methodNewWindow = isset($matchesNewWindow[0]);
-
-            $methods[] = [
-                'title' => $methodTitle,
-                'description' => $methodDescription,
-                'url' => $methodUrl,
-                'confirm' => $methodConfirm,
-                'new_window' => $methodNewWindow
             ];
         }
         // ---------------------------------------

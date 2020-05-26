@@ -198,7 +198,8 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             'marketplaces',
             'cron',
             'statistic',
-            'changed_sources'
+            'maintenance_schedule',
+            'product_variation_vocabulary'
         ];
     }
 
@@ -209,8 +210,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     {
         return [
             'exceptions',
-            'statistic',
-            'changed_sources'
+            'statistic'
         ];
     }
 

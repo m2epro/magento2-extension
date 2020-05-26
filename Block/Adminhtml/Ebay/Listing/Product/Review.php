@@ -8,22 +8,22 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product;
 
+use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode as SourceModeBlock;
+
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Review
  */
 class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
+    protected $source;
+
     //########################################
 
     public function _construct()
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('ebayListingProductReview');
-        // ---------------------------------------
-
         $this->setTemplate('ebay/listing/product/review.phtml');
     }
 
@@ -33,9 +33,11 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     {
         parent::_beforeToHtml();
 
+        $listing = $this->getHelper('Data\GlobalData')->getValue('review_listing');
+
         // ---------------------------------------
         $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
-            'data' => ['listing' => $this->getHelper('Data\GlobalData')->getValue('review_listing')]
+            'data' => ['listing' => $listing]
         ]);
 
         $this->setChild('view_header', $viewHeaderBlock);
@@ -83,6 +85,35 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         $this->getRequest()->getParam('disable_list', false) && $buttonBlock->setData('style', 'display: none');
         $this->setChild('save_and_list', $buttonBlock);
         // ---------------------------------------
+
+        // ---------------------------------------
+        if ($this->getSource() === SourceModeBlock::MODE_OTHER) {
+            $url = $this->getUrl('*/ebay_listing_other/view', [
+                    'account'     => $listing->getAccountId(),
+                    'marketplace' => $listing->getMarketplaceId(),
+            ]);
+            $buttonBlock = $this->createBlock('Magento\Button')
+                ->setData([
+                    'label' => $this->__('Back to 3rd Party Listing'),
+                    'onclick' => 'setLocation(\''.$url.'\');',
+                    'class'   => 'primary go'
+                ]);
+            $this->setChild('back_to_listing_other', $buttonBlock);
+        }
+
+        // ---------------------------------------
+    }
+
+    //########################################
+
+    public function setSource($value)
+    {
+        $this->source = $value;
+    }
+
+    public function getSource()
+    {
+        return $this->source;
     }
 
     //########################################

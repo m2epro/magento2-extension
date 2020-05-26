@@ -15,10 +15,10 @@ class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     const NOT_PAYPAL_TRANSACTION = 'SIS';
 
-    private $ebayFactory;
-
     /** @var $order \Ess\M2ePro\Model\Order */
-    private $order = null;
+    protected $order = null;
+
+    protected $ebayFactory;
 
     //########################################
 

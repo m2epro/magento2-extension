@@ -80,21 +80,6 @@ class Entity extends AbstractModel
         return $result;
     }
 
-    public function updateGroup($value)
-    {
-        return $this->configModifier->updateGroup($value, $this->getWhereConditions());
-    }
-
-    public function updateKey($value)
-    {
-        return $this->configModifier->updateKey($value, $this->getWhereConditions());
-    }
-
-    public function updateValue($value)
-    {
-        return $this->configModifier->updateValue($value, $this->getWhereConditions());
-    }
-
     public function delete()
     {
         $result = $this->configModifier->delete($this->group, $this->key);
@@ -104,6 +89,31 @@ class Entity extends AbstractModel
         }
 
         return $result;
+    }
+
+    // ---------------------------------------
+
+    public function updateGroup($value)
+    {
+        $this->configModifier->updateGroup($value, $this->getWhereConditions());
+        $this->group = $value;
+
+        return $this;
+    }
+
+    public function updateKey($value)
+    {
+        $this->configModifier->updateKey($value, $this->getWhereConditions());
+        $this->key = $value;
+
+        return $this;
+    }
+
+    public function updateValue($value)
+    {
+        $this->configModifier->updateValue($value, $this->getWhereConditions());
+
+        return $this;
     }
 
     //########################################

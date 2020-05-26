@@ -23,20 +23,14 @@ class ReviseRules extends AbstractForm
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
         $defaults = [
-            'revise_update_qty'                              =>
-                Synchronization::REVISE_UPDATE_QTY_YES,
-            'revise_update_qty_max_applied_value_mode'       =>
-                Synchronization::REVISE_MAX_AFFECTED_QTY_MODE_ON,
-            'revise_update_qty_max_applied_value'            =>
-                Synchronization::REVISE_UPDATE_QTY_MAX_APPLIED_VALUE_DEFAULT,
-            'revise_update_price'                            =>
-                Synchronization::REVISE_UPDATE_PRICE_YES,
-            'revise_update_price_max_allowed_deviation_mode' =>
-                Synchronization::REVISE_MAX_ALLOWED_PRICE_DEVIATION_MODE_ON,
-            'revise_update_price_max_allowed_deviation'      =>
-                Synchronization::REVISE_UPDATE_PRICE_MAX_ALLOWED_DEVIATION_DEFAULT,
-            'revise_update_promotions'                       =>
-                Synchronization::REVISE_UPDATE_PROMOTIONS_NONE,
+            'revise_update_qty'                              => 1,
+            'revise_update_qty_max_applied_value_mode'       => 1,
+            'revise_update_qty_max_applied_value'            => 5,
+            'revise_update_price'                            => 1,
+            'revise_update_price_max_allowed_deviation_mode' => 1,
+            'revise_update_price_max_allowed_deviation'      => 3,
+            'revise_update_promotions'                       => 0,
+            'revise_update_details'                          => 0,
         ];
 
         $formData = array_merge($defaults, $formData);
@@ -49,19 +43,16 @@ class ReviseRules extends AbstractForm
             [
                 'content' => $this->__(
                     <<<HTML
-<p>
-Define the Revise Conditions based on which M2E Pro will automatically revise your Items on Walmart.
-</p><br>
+<p>Specify which Channel data should be automatically revised by M2E Pro.</p><br>
 
-<p>Selected Item properties will be automatically updated when any changes are made to the Policy
-settings that define these Item properties or Magento Attribute values used for these Item properties
-in the Policy template.</p><br>
+<p>Selected Item Properties will be automatically updated based on the changes in related Magento Attributes or 
+Policy Templates.</p><br>
 
-<p><strong>Note:</strong> M2E Pro Listing Synchronization must be enabled under
-<i>Walmart Integration > Configuration > Settings > Synchronization</i>. Otherwise,
-Synchronization Rules will not take effect.
-</p>
+<p>More detailed information on how to work with this Page can be found
+<a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
+                    ,
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/UABhAQ')
                 )
             ]
         );
@@ -82,9 +73,9 @@ HTML
                 'label' => $this->__('Quantity'),
                 'value' => $formData['revise_update_qty'],
                 'values' => [
-                    Synchronization::REVISE_UPDATE_QTY_NONE => $this->__('No'),
-                    Synchronization::REVISE_UPDATE_QTY_YES => $this->__('Yes'),
+                    1 => $this->__('Yes'),
                 ],
+                'disabled' => true,
                 'tooltip' => $this->__(
                     'Automatically revises Item Quantity and Lag Time on Walmart when any changes are made
                     to the Selling Policy settings that define these Item properties or Magento Attribute
@@ -102,8 +93,8 @@ HTML
                 'label' => $this->__('Conditional Revise'),
                 'value' => $formData['revise_update_qty_max_applied_value_mode'],
                 'values' => [
-                    Synchronization::REVISE_MAX_AFFECTED_QTY_MODE_OFF => $this->__('No'),
-                    Synchronization::REVISE_MAX_AFFECTED_QTY_MODE_ON => $this->__('Yes'),
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
                     'Enable to narrow the conditions under which the Item Quantity should be revised.
@@ -143,8 +134,8 @@ HTML
                 'label' => $this->__('Price'),
                 'value' => $formData['revise_update_price'],
                 'values' => [
-                    Synchronization::REVISE_UPDATE_PRICE_NONE => $this->__('No'),
-                    Synchronization::REVISE_UPDATE_PRICE_YES => $this->__('Yes'),
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
                     'Automatically revises Item Price on Walmart when any changes are made to the
@@ -163,8 +154,8 @@ HTML
                 'label' => $this->__('Conditional Revise'),
                 'value' => $formData['revise_update_price_max_allowed_deviation_mode'],
                 'values' => [
-                    Synchronization::REVISE_MAX_ALLOWED_PRICE_DEVIATION_MODE_OFF => $this->__('No'),
-                    Synchronization::REVISE_MAX_ALLOWED_PRICE_DEVIATION_MODE_ON => $this->__('Yes'),
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
                     'Enable to narrow the conditions under which the Item Price should be revised.
@@ -226,8 +217,8 @@ HTML
                 'label' => $this->__('Promotions'),
                 'value' => $formData['revise_update_promotions'],
                 'values' => [
-                    Synchronization::REVISE_UPDATE_PROMOTIONS_NONE => $this->__('No'),
-                    Synchronization::REVISE_UPDATE_PROMOTIONS_YES => $this->__('Yes'),
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
                     'Automatically revises Promotions on Walmart when any changes are made to
@@ -237,31 +228,33 @@ HTML
             ]
         );
 
+        $fieldset->addField(
+            'revise_update_details',
+            self::SELECT,
+            [
+                'name' => 'revise_update_details',
+                'label' => $this->__('Details'),
+                'value' => $formData['revise_update_details'],
+                'values' => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'tooltip' => $this->__(
+                    'Data will be automatically revised on Walmart Listing(s) if changes are made to the
+                    Magento Attributes related to Image, Description, or Selling Settings.'
+                )
+            ]
+        );
+
         $form->addField(
             'revise_qty_max_applied_value_confirmation_popup_template',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $this->__('
-                    <br/>It is necessary to understand that Disabling this Option can <strong>negatively</strong>
-                    influence on <strong>M2E Pro Performance</strong>.<br/><br/>
-                    In case this Option is <strong>Disabled</strong>, M2E Pro will Revise the smallest changes
-                    for High Quantity Values (e.g. from 515 to 514), that most likely has no practical effect.
-                    It can be time-consuming and more important changes (e.g. from 1 to 0)
-                    for another Product can be <strong>stayed in queue</strong> instead of immediate update.
-                    Also it can cause increase of Order Import passivity up to 12 hours.<br/>
-                    If you <strong>Enable</strong> "Conditional Revise" Option and "Revise When Less or
-                    Equal to" Option is set to 5, M2E Pro will Revise your Products in realtime
-                    format only when Magento Quantity will be less or equal 5.
-                    Revise will not be run until the Quantity Value is more than 5.<br/><br/>
-                    So M2E Pro <strong>does not recommend</strong> to Disable this Option and suggests
-                    to specify for "Revise When Less or Equal to" Option Value 5 (The less Value = less Unuseful
-                    Calls + more Performance of M2E Pro).<br/>
-                    You can always change this Option Value according to your needs.<br/><br/>
-                    <strong>Note:</strong> For Sellers who synchronize Magento
-                    Inventory with Suppliers Inventory by any Automatic Software this Option is
-                    <strong>critically required</strong>, as usually Supplier\'s Quantity has
-                    Big Values and it is changed very often.
-                '),
+                'text' => $this->__(
+                    '<br/>Disabling this option might affect synchronization performance. Please read
+             <a href="%url%" target="_blank">this article</a> before using the option.',
+                    $this->getHelper('Module_Support')->getSupportUrl('knowledgebase/1579746/')
+                ),
                 'style' => 'display: none;'
             ]
         );
@@ -271,23 +264,9 @@ HTML
             self::CUSTOM_CONTAINER,
             [
                 'text' => $this->__('
-                    <br/>It is necessary to understand that Disabling this Option can <strong>negatively</strong>
-                    nfluence on <strong>M2E Pro Performance</strong>.<br/><br/>
-                    In case this Option is <strong>Disabled</strong>, M2E Pro will Revise the smallest changes
-                    for Price Values (e.g. from 25.25$ to 25.26$), that most likely has no practical effect.
-                    It can be time-consuming and more important changes (e.g. from 1$ to 50$) for another
-                    Product can be <strong>stayed in queue</strong> instead of immediate update.
-                    Also it can cause increase of Order Import passivity up to 12 hours.<br/>
-                    If you <strong>Enable</strong> "Conditional Revise" Option and "Revise When Deviation More or
-                    Equal than" set to 3%, M2E Pro will Revise your Products in realtime format only when Price
-                    change will be more than 3% from Starting Price.<br/><br/>
-                    So M2E Pro <strong>does not recommend</strong> to Disable this Option (The more value =
-                    less Unusefull Calls + more Performance of M2E Pro).<br/>
-                    You can always change this Option Value according to your needs.<br/><br/>
-                    <strong>Note:</strong> For Sellers who synchronize Magento Inventory with Suppliers
-                    Inventory by any Automatic Software this Option is <strong>critically required</strong>,
-                    as Supplier\s Price Values are changed very often.
-                '),
+                    Disabling this option might affect synchronization performance.
+                     Please read this <a href="%url%" target="_blank">article</a> before using the option.
+                ', $this->getHelper('Module\Support')->getSupportUrl('knowledgebase/1587081/')),
                 'style' => 'display: none;'
             ]
         );

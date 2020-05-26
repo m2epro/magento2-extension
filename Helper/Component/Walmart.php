@@ -17,6 +17,8 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const NICK  = 'walmart';
 
+    const MARKETPLACE_SYNCHRONIZATION_LOCK_ITEM_NICK = 'walmart_marketplace_synchronization';
+
     const MARKETPLACE_US = 37;
     const MARKETPLACE_CA = 38;
 
@@ -123,6 +125,18 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         return 'https://developer.' . $domain . '/#/generateKey';
+    }
+
+    public function getIdentifierForItemUrl($marketplaceId)
+    {
+        switch ($marketplaceId) {
+            case \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US:
+                return 'item_id';
+            case \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA:
+                return 'wpid';
+            default:
+                throw new \Ess\M2ePro\Model\Exception\Logic('Unknown Marketplace ID.');
+        }
     }
 
     public function getItemUrl($productItemId, $marketplaceId = null)

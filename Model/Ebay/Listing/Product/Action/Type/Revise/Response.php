@@ -23,11 +23,6 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED
         ];
 
-        if ($this->getConfigurator()->isDefaultMode()) {
-            $data['synch_status'] = \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_OK;
-            $data['synch_reasons'] = null;
-        }
-
         $data = $this->appendStatusHiddenValue($data);
         $data = $this->appendStatusChangerValue($data, $responseParams);
 
@@ -36,16 +31,22 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data = $this->appendOnlinePriceValues($data);
         $data = $this->appendOnlineInfoDataValues($data);
 
-        $data = $this->appendOutOfStockValues($data);
         $data = $this->appendItemFeesValues($data, $response);
         $data = $this->appendStartDateEndDateValues($data, $response);
-        $data = $this->appendGalleryImagesValues($data, $response, $responseParams);
+        $data = $this->appendGalleryImagesValues($data, $response);
 
         $data = $this->appendIsVariationMpnFilledValue($data);
         $data = $this->appendVariationsThatCanNotBeDeleted($data, $response);
 
         $data = $this->appendIsVariationValue($data);
         $data = $this->appendIsAuctionType($data);
+
+        $data = $this->appendImagesValues($data);
+        $data = $this->appendCategoriesValues($data);
+        $data = $this->appendPaymentValues($data);
+        $data = $this->appendShippingValues($data);
+        $data = $this->appendReturnValues($data);
+        $data = $this->appendOtherValues($data);
 
         if (isset($data['additional_data'])) {
             $data['additional_data'] = $this->getHelper('Data')->jsonEncode($data['additional_data']);
@@ -91,77 +92,79 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
      */
     public function getSuccessfulMessage()
     {
-        if ($this->getConfigurator()->isDefaultMode()) {
-            // M2ePro\TRANSLATIONS
-            // Item was successfully Revised
+        if ($this->getConfigurator()->isExcludingMode()) {
             return 'Item was successfully Revised';
         }
 
-        $sequenceString = '';
+        $sequenceStrings = [];
+        $isPlural = false;
 
         if ($this->getConfigurator()->isVariationsAllowed() && $this->getRequestData()->isVariationItem()) {
-            // M2ePro\TRANSLATIONS
-            // Variations
-            $sequenceString .= 'Variations,';
+            $sequenceStrings[] = 'Variations';
+            $isPlural = true;
         } else {
             if ($this->getConfigurator()->isQtyAllowed()) {
-                // M2ePro\TRANSLATIONS
-                // QTY
-                $sequenceString .= 'QTY,';
+                $sequenceStrings[] = 'QTY';
             }
 
             if ($this->getConfigurator()->isPriceAllowed()) {
-                // M2ePro\TRANSLATIONS
-                // Price
-                $sequenceString .= 'Price,';
+                $sequenceStrings[] = 'Price';
             }
         }
 
         if ($this->getConfigurator()->isTitleAllowed()) {
-            // M2ePro\TRANSLATIONS
-            // Title
-            $sequenceString .= 'Title,';
+            $sequenceStrings[] = 'Title';
         }
 
         if ($this->getConfigurator()->isSubtitleAllowed()) {
-            // M2ePro\TRANSLATIONS
-            // Subtitle
-            $sequenceString .= 'Subtitle,';
+            $sequenceStrings[] = 'Subtitle';
         }
 
         if ($this->getConfigurator()->isDescriptionAllowed()) {
-            // M2ePro\TRANSLATIONS
-            // Description
-            $sequenceString .= 'Description,';
+            $sequenceStrings[] = 'Description';
         }
 
         if ($this->getConfigurator()->isImagesAllowed()) {
-            // M2ePro\TRANSLATIONS
-            // Images
-            $sequenceString .= 'Images,';
+            $sequenceStrings[] = 'Images';
+            $isPlural = true;
         }
 
-        if ($this->getConfigurator()->isSpecificsAllowed()) {
-            // M2ePro\TRANSLATIONS
-            // Specifics
-            $sequenceString .= 'Specifics,';
+        if ($this->getConfigurator()->isCategoriesAllowed()) {
+            $sequenceStrings[] = 'Categories / Specifics';
+            $isPlural = true;
         }
 
-        if ($this->getConfigurator()->isShippingServicesAllowed()) {
-            // M2ePro\TRANSLATIONS
-            // Shipping Services
-            $sequenceString .= 'Shipping Services,';
+        if ($this->getConfigurator()->isPaymentAllowed()) {
+            $sequenceStrings[] = 'Payment';
         }
 
-        if (empty($sequenceString)) {
-            // M2ePro\TRANSLATIONS
-            // Item was successfully Revised
+        if ($this->getConfigurator()->isShippingAllowed()) {
+            $sequenceStrings[] = 'Shipping';
+        }
+
+        if ($this->getConfigurator()->isReturnAllowed()) {
+            $sequenceStrings[] = 'Return';
+        }
+
+        if ($this->getConfigurator()->isOtherAllowed()) {
+            $sequenceStrings[] = 'Condition, Condition Note, Lot Size, Tax, Best Offer, Donation';
+            $isPlural = true;
+        }
+
+        if (empty($sequenceStrings)) {
             return 'Item was successfully Revised';
         }
 
-        // M2ePro\TRANSLATIONS
-        // was successfully Revised
-        return ucfirst(trim($sequenceString, ',')).' was successfully Revised';
+        if (count($sequenceStrings) == 1) {
+            $verb = 'was';
+            if ($isPlural) {
+                $verb = 'were';
+            }
+
+            return ucfirst($sequenceStrings[0]).' '.$verb.' successfully Revised';
+        }
+
+        return ucfirst(implode(', ', $sequenceStrings)).' were successfully Revised';
     }
 
     //########################################
@@ -191,6 +194,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
     {
         $data = parent::appendOnlinePriceValues($data);
 
+        // if auction item has bids, we do not know correct online_current_price after revise action
         if ($this->getRequestData()->hasPriceStart() &&
             $this->getEbayListingProduct()->isListingTypeAuction() &&
             $this->getEbayListingProduct()->getOnlineBids()) {
@@ -227,7 +231,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
     // ---------------------------------------
 
-    private function updateEbayItem()
+    protected function updateEbayItem()
     {
         $data = [
             'account_id'     => $this->getAccount()->getId(),
@@ -249,7 +253,6 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
                         'product_options' => $productOptions,
                         'channel_options' => $channelOptions,
                     ];
-
                     continue;
                 }
 

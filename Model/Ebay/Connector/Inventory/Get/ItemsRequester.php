@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Ebay\Connector\Inventory\Get;
  */
 abstract class ItemsRequester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Requester
 {
-    // ########################################
+    //########################################
 
     protected function getRequestData()
     {
@@ -25,7 +25,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Ebay\Connector\Command\P
         return ['inventory','get','items'];
     }
 
-    // ########################################
+    //########################################
 
     protected function getResponserParams()
     {
@@ -35,5 +35,5 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Ebay\Connector\Command\P
         ];
     }
 
-    // ########################################
+    //########################################
 }

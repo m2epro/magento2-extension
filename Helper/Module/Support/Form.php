@@ -70,12 +70,10 @@ class Form extends \Ess\M2ePro\Helper\AbstractHelper
         $platformInfo['name'] = $this->getHelper('Magento')->getName();
         $platformInfo['edition'] = $this->getHelper('Magento')->getEditionName();
         $platformInfo['version'] = $this->getHelper('Magento')->getVersion();
-        $platformInfo['revision'] = $this->getHelper('Magento')->getRevision();
 
         $moduleInfo = [];
         $moduleInfo['name'] = $this->getHelper('Module')->getName();
         $moduleInfo['version'] = $this->getHelper('Module')->getPublicVersion();
-        $moduleInfo['revision'] = $this->getHelper('Module')->getRevision();
 
         $phpInfo = $this->getHelper('Client')->getPhpSettings();
         $phpInfo['api'] = $this->getHelper('Client')->getPhpApiName();
@@ -101,12 +99,10 @@ class Form extends \Ess\M2ePro\Helper\AbstractHelper
 Name: {$platformInfo['name']}
 Edition: {$platformInfo['edition']}
 Version: {$platformInfo['version']}
-Revision: {$platformInfo['revision']}
 
 -------------------------------- MODULE INFO -------------------------------------
 Name: {$moduleInfo['name']}
 Version: {$moduleInfo['version']}
-Revision: {$moduleInfo['revision']}
 
 -------------------------------- LOCATION INFO -----------------------------------
 Domain: {$locationInfo['domain']}

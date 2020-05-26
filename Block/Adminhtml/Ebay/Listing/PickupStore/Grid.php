@@ -45,7 +45,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         // Initialization block
         // ---------------------------------------
-        $this->setId('ebayListingPickupStoreGrid'.$this->listing->getId());
+        $this->setId('ebayListingPickupStoreGrid' . $this->listing->getId());
         $this->setDefaultSort('id');
         $this->setDefaultDir('ASC');
         $this->setSaveParametersInSession(true);
@@ -84,23 +84,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'component_mode' => 'component_mode',
                 'additional_data' => 'additional_data'
             ],
-            '{{table}}.listing_id='.(int)$listingData['id']
+            '{{table}}.listing_id=' . (int)$listingData['id']
         );
         $collection->joinTable(
             ['elp' => $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable()],
             'listing_product_id=lp_id',
             [
-                'listing_product_id'    => 'listing_product_id',
-                'end_date'              => 'end_date',
-                'start_date'            => 'start_date',
-                'online_title'          => 'online_title',
-                'online_sku'            => 'online_sku',
-                'available_qty'         => new \Zend_Db_Expr('(elp.online_qty - elp.online_qty_sold)'),
-                'ebay_item_id'          => 'ebay_item_id',
-                'online_category'       => 'online_category',
-                'online_qty_sold'       => 'online_qty_sold',
-                'online_bids'           => 'online_bids',
-                'template_category_id'  => 'template_category_id',
+                'listing_product_id' => 'listing_product_id',
+                'end_date' => 'end_date',
+                'start_date' => 'start_date',
+                'online_title' => 'online_title',
+                'online_sku' => 'online_sku',
+                'available_qty' => new \Zend_Db_Expr('(elp.online_qty - elp.online_qty_sold)'),
+                'ebay_item_id' => 'ebay_item_id',
+                'online_main_category' => 'online_main_category',
+                'online_qty_sold' => 'online_qty_sold',
+                'online_bids' => 'online_bids',
+                'template_category_id' => 'template_category_id',
             ]
         );
         $collection->joinTable(
@@ -112,8 +112,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
 
         $collection->getSelect()->join(
-            ['elpps' => $this->activeRecordFactory->getObject('Ebay_Listing_Product_PickupStore')
-                             ->getResource()->getMainTable()],
+            [
+                'elpps' => $this->activeRecordFactory->getObject('Ebay_Listing_Product_PickupStore')
+                    ->getResource()->getMainTable()
+            ],
             'elp.listing_product_id=elpps.listing_product_id',
             [
                 'id' => 'id',
@@ -122,26 +124,30 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
 
         $collection->getSelect()->joinLeft(
-            ['meaps' => $this->activeRecordFactory->getObject('Ebay_Account_PickupStore')
-                             ->getResource()->getMainTable()],
+            [
+                'meaps' => $this->activeRecordFactory->getObject('Ebay_Account_PickupStore')
+                    ->getResource()->getMainTable()
+            ],
             'elpps.account_pickup_store_id = meaps.id',
             [
                 'pickup_store_id' => 'id',
-                'store_name'  => 'name',
+                'store_name' => 'name',
                 'location_id' => 'location_id',
-                'phone'       => 'phone',
+                'phone' => 'phone',
                 'postal_code' => 'postal_code',
-                'country'     => 'country',
-                'region'      => 'region',
-                'city'        => 'city',
-                'address_1'   => 'address_1',
-                'address_2'   => 'address_2'
+                'country' => 'country',
+                'region' => 'region',
+                'city' => 'city',
+                'address_1' => 'address_1',
+                'address_2' => 'address_2'
             ]
         );
 
         $collection->getSelect()->joinLeft(
-            ['meapss' => $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')
-                              ->getResource()->getMainTable()],
+            [
+                'meapss' => $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')
+                    ->getResource()->getMainTable()
+            ],
             'meapss.account_pickup_store_id = meaps.id AND meapss.sku = elp.online_sku',
             [
                 'pickup_store_product_qty' => 'IF(
@@ -165,15 +171,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     SUM(`meapss`.`is_in_processing`) as `variations_processing`,
                     SUM(`meapss`.`is_added`) as `variations_added`,
                     COUNT(`meapss`.`is_in_processing`) as `count_variations_in_state`
-                FROM `'. $this->activeRecordFactory->getObject('Listing_Product_Variation')
-                              ->getResource()->getMainTable() .'` AS `mlpv`
+                FROM `' . $this->activeRecordFactory->getObject('Listing_Product_Variation')
+                    ->getResource()->getMainTable() . '` AS `mlpv`
                 INNER JOIN `' .
                 $this->activeRecordFactory->getObject('Ebay_Listing_Product_Variation')
-                                          ->getResource()->getMainTable().'` AS `melpv`
+                    ->getResource()->getMainTable() . '` AS `melpv`
                     ON (`mlpv`.`id` = `melpv`.`listing_product_variation_id`)
                 INNER JOIN `' .
                 $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')
-                                          ->getResource()->getMainTable().'` AS meapss
+                    ->getResource()->getMainTable() . '` AS meapss
                     ON (meapss.sku = melpv.online_sku)
                 WHERE `melpv`.`status` != ' . \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED . '
                 GROUP BY `meapss`.`account_pickup_store_id`, `mlpv`.`listing_product_id`
@@ -224,77 +230,77 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'    => $this->__('Product ID'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'entity_id',
+            'header' => $this->__('Product ID'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'entity_id',
             'frame_callback' => [$this, 'callbackColumnListingProductId'],
         ]);
 
         $this->addColumn('name', [
-            'header'    => $this->__('Product Title / Product SKU'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'online_title',
-            'width'     => '550px',
-            'escape'    => false,
+            'header' => $this->__('Product Title / Product SKU'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'online_title',
+            'width' => '550px',
+            'escape' => false,
             'frame_callback' => [$this, 'callbackColumnTitle'],
             'filter_condition_callback' => [$this, 'callbackFilterTitle']
         ]);
 
         $this->addColumn('account_pickup_store_id', [
-            'header'    => $this->__('Store Details'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'id',
-            'width'     => '500px',
+            'header' => $this->__('Store Details'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'id',
+            'width' => '500px',
             'frame_callback' => [$this, 'callbackColumnPickupStore'],
             'filter_condition_callback' => [$this, 'callbackFilterPickupStore']
         ]);
 
         $this->addColumn('ebay_item_id', [
-            'header'    => $this->__('Item ID'),
-            'align'     => 'left',
-            'width'     => '100px',
-            'type'      => 'text',
-            'index'     => 'item_id',
+            'header' => $this->__('Item ID'),
+            'align' => 'left',
+            'width' => '100px',
+            'type' => 'text',
+            'index' => 'item_id',
             'frame_callback' => [$this, 'callbackColumnEbayItemId']
         ]);
 
         $this->addColumn('pickup_store_product_qty', [
-            'header'    => $this->__('Available QTY'),
-            'align'     => 'left',
-            'width'     => '110px',
-            'type'      => 'number',
-            'index'     => 'pickup_store_product_qty',
+            'header' => $this->__('Available QTY'),
+            'align' => 'left',
+            'width' => '110px',
+            'type' => 'number',
+            'index' => 'pickup_store_product_qty',
             'frame_callback' => [$this, 'callbackColumnOnlineQty'],
             'filter_condition_callback' => [$this, 'callbackFilterOnlineQty']
         ]);
 
         $this->addColumn('availability', [
-            'header'    => $this->__('Availability'),
-            'align'     => 'right',
-            'width'     => '110px',
-            'type'      => 'options',
-            'sortable'  => false,
-            'options'   => [
+            'header' => $this->__('Availability'),
+            'align' => 'right',
+            'width' => '110px',
+            'type' => 'options',
+            'sortable' => false,
+            'options' => [
                 1 => $this->__('Yes'),
                 0 => $this->__('No')
             ],
-            'index'     => 'pickup_store_product_qty',
+            'index' => 'pickup_store_product_qty',
             'frame_callback' => [$this, 'callbackColumnOnlineAvailability'],
             'filter_condition_callback' => [$this, 'callbackFilterOnlineAvailability']
         ]);
 
         $this->addColumn('delete_action', [
-            'header'    => $this->__('Logs'),
-            'align'     => 'left',
-            'type'      => 'action',
-            'index'     => 'delete_action',
-            'width'     => '100px',
-            'filter'    => false,
-            'sortable'  => false,
+            'header' => $this->__('Logs'),
+            'align' => 'left',
+            'type' => 'action',
+            'index' => 'delete_action',
+            'width' => '100px',
+            'filter' => false,
+            'sortable' => false,
             'frame_callback' => [$this, 'callbackColumnLog'],
         ]);
 
@@ -307,9 +313,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setMassactionIdFieldOnlyIndexValue(true);
 
         $this->getMassactionBlock()->addItem('unassign', [
-            'label'    => $this->__('Unassign'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'label' => $this->__('Unassign'),
+            'url' => '',
+            'confirm' => $this->__('Are you sure?')
         ]);
 
         return parent::_prepareMassaction();
@@ -355,7 +361,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $productId = (int)$value;
 
         $url = $this->getUrl('catalog/product/edit', ['id' => $productId]);
-        $htmlWithoutThumbnail = '<a href="' . $url . '" target="_blank">'.$productId.'</a>';
+        $htmlWithoutThumbnail = '<a href="' . $url . '" target="_blank">' . $productId . '</a>';
 
         $showProductsThumbnails = (bool)(int)$this->getHelper('Module')->getConfig()
             ->getGroupValue('/view/', 'show_products_thumbnails');
@@ -399,15 +405,15 @@ HTML;
 
         if ($row->getData('sku') === null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
-                        ->setProductId($row->getData('catalog_product_id'))
-                        ->getSku();
+                ->setProductId($row->getData('catalog_product_id'))
+                ->getSku();
         }
 
         $onlineSku = $row->getData('online_sku');
         !empty($onlineSku) && $sku = $onlineSku;
 
         $valueHtml .= '<br/><strong>' . $this->__('SKU') . ':</strong>&nbsp;'
-                      . $this->getHelper('Data')->escapeHtml($sku);
+            . $this->getHelper('Data')->escapeHtml($sku);
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->ebayFactory->getObjectLoaded(
@@ -416,7 +422,7 @@ HTML;
         );
 
         if (!$listingProduct->getChildObject()->isVariationsReady()) {
-            return '<div style="padding: 2px 4px;">'.$valueHtml.'</div>';
+            return '<div style="padding: 2px 4px;">' . $valueHtml . '</div>';
         }
 
         $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
@@ -433,7 +439,7 @@ HTML;
         $itemId = $this->getData('item_id');
 
         if (!empty($itemId)) {
-            $vpmt .= '('. $itemId .')';
+            $vpmt .= '(' . $itemId . ')';
         }
 
         $linkTitle = $this->__('Open Manage Variations Tool');
@@ -448,7 +454,7 @@ HTML;
 </div>
 HTML;
 
-        return '<div style="padding: 0 4px;">'.$valueHtml.'</div>';
+        return '<div style="padding: 0 4px;">' . $valueHtml . '</div>';
     }
 
     public function callbackColumnEbayItemId($value, $row, $column, $isExport)
@@ -468,7 +474,7 @@ HTML;
             'account_id' => $listingData['account_id'],
             'marketplace_id' => $listingData['marketplace_id']
         ]);
-        return '<a href="' . $url . '" target="_blank">'.$value.'</a>';
+        return '<a href="' . $url . '" target="_blank">' . $value . '</a>';
     }
 
     public function callbackColumnOnlineQty($value, $row, $column, $isExport)
@@ -498,7 +504,7 @@ HTML;
         $inProgressHtml = '';
         if ((bool)$row->getData('is_in_processing') || (bool)$row->getData('variations_processing')) {
             $inProgressLabel = $this->__('In Progress');
-            $inProgressHtml = '&nbsp;<div style="color: #605fff">'.$inProgressLabel.'</div>';
+            $inProgressHtml = '&nbsp;<div style="color: #605fff">' . $inProgressLabel . '</div>';
         }
 
         return $qty . $inProgressHtml;
@@ -515,15 +521,15 @@ HTML;
         $countVariationsInState = $row->getData('count_variations_in_state');
 
         if ($qty === null || $row->getData('is_added') || ($countVariationsInState !== null &&
-            $variationsAdded !== null && $countVariationsInState == $variationsAdded)) {
+                $variationsAdded !== null && $countVariationsInState == $variationsAdded)) {
             return $this->__('Adding to Store');
         }
 
         if ($qty <= 0) {
-            return '<span style="color: red;">'.$this->__('Out Of Stock').'</span>';
+            return '<span style="color: red;">' . $this->__('Out Of Stock') . '</span>';
         }
 
-        return '<span>'.$this->__('In Stock').'</span>';
+        return '<span>' . $this->__('In Stock') . '</span>';
     }
 
     public function callbackColumnPickupStore($value, $row, $column, $isExport)
@@ -551,7 +557,7 @@ HTML;
         if (!empty($address2)) {
             $addressHtml .= ',' . $address2;
         }
-        $addressHtml .= ', ' .$row->getData('postal_code');
+        $addressHtml .= ', ' . $row->getData('postal_code');
 
         return <<<HTML
         <style>
@@ -577,7 +583,7 @@ HTML;
             </ul>
         </div>
 HTML
-        ;
+            ;
     }
 
     public function callbackColumnLog($value, $row, $column, $isExport)
@@ -596,9 +602,9 @@ HTML
 
         if (!empty($logIcon)) {
             $logIcon .= '<input type="hidden"
-                                id="product_row_order_'.$row->getData('id').'"
-                                value="'.$row->getData('id').'"
-                                listing-product-pickup-store-state="'.$row->getData('state_id').'"/>';
+                                id="product_row_order_' . $row->getData('id') . '"
+                                value="' . $row->getData('id') . '"
+                                listing-product-pickup-store-state="' . $row->getData('state_id') . '"/>';
         }
 
         return $logIcon;
@@ -619,7 +625,7 @@ HTML
             $selected = [0];
         }
 
-        $query = 'elpps.id ' . ((int)$value ? 'IN' : 'NOT IN' ) . '('.implode(',', $selected).')';
+        $query = 'elpps.id ' . ((int)$value ? 'IN' : 'NOT IN') . '(' . implode(',', $selected) . ')';
         $collection->getSelect()->where($query);
     }
 
@@ -633,10 +639,10 @@ HTML
 
         $collection->addFieldToFilter(
             [
-                ['attribute'=>'sku','like'=>'%'.$value.'%'],
-                ['attribute'=>'online_sku','like'=>'%'.$value.'%'],
-                ['attribute'=>'name', 'like'=>'%'.$value.'%'],
-                ['attribute'=>'online_title','like'=>'%'.$value.'%']
+                ['attribute' => 'sku', 'like' => '%' . $value . '%'],
+                ['attribute' => 'online_sku', 'like' => '%' . $value . '%'],
+                ['attribute' => 'name', 'like' => '%' . $value . '%'],
+                ['attribute' => 'online_title', 'like' => '%' . $value . '%']
             ]
         );
     }
@@ -652,13 +658,13 @@ HTML
         $from = '';
         if (isset($value['from'])) {
             $from = '(meapss.online_qty >= ' . (int)$value['from']
-                    . ' OR t.variations_qty >= ' . (int)$value['from'] .')';
+                . ' OR t.variations_qty >= ' . (int)$value['from'] . ')';
         }
 
         $to = '';
         if (isset($value['to'])) {
             $to = '(meapss.online_qty <= ' . (int)$value['to']
-                  . ' OR t.variations_qty <= ' . (int)$value['to'] .')';
+                . ' OR t.variations_qty <= ' . (int)$value['to'] . ')';
         }
 
         $collection->getSelect()->where(
@@ -675,8 +681,8 @@ HTML
         }
 
         $collection->getSelect()->where(
-            'meapss.online_qty ' . ((int)$value ? '>' : '<=' ) . ' 0' .
-            ' OR t.variations_qty ' . ((int)$value ? '>' : '<=' ) . ' 0'
+            'meapss.online_qty ' . ((int)$value ? '>' : '<=') . ' 0' .
+            ' OR t.variations_qty ' . ((int)$value ? '>' : '<=') . ' 0'
         );
     }
 
@@ -738,8 +744,8 @@ HTML
         $dbSelect = $this->resourceConnection->getConnection()->select()
             ->from(
                 $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_Log')
-                                         ->getResource()->getMainTable(),
-                ['id', 'action_id','action','type','description','create_date']
+                    ->getResource()->getMainTable(),
+                ['id', 'action_id', 'action', 'type', 'description', 'create_date']
             )
             ->where('`account_pickup_store_state_id` = ?', $stateId)
             ->where('`action` IN (?)', $availableActionsId)
@@ -760,7 +766,7 @@ HTML
 
         $summary = $this->createBlock('Listing_Log_Grid_LastActions')->setData([
             'entity_id' => (int)$columnId,
-            'logs'      => $logs,
+            'logs' => $logs,
             'available_actions' => $this->getAvailableActions(),
             'view_help_handler' => 'EbayListingPickupStoreGridObj.viewItemHelp',
             'hide_help_handler' => 'EbayListingPickupStoreGridObj.hideItemHelp',
@@ -769,7 +775,7 @@ HTML
         $pickupStoreState = $this->activeRecordFactory->getObjectLoaded('Ebay_Account_PickupStore_State', $stateId);
 
         $this->jsTranslator->addTranslations([
-            'Log For SKU '. $stateId => $this->__('Log For SKU (%s%)', $pickupStoreState->getSku())
+            'Log For SKU ' . $stateId => $this->__('Log For SKU (%s%)', $pickupStoreState->getSku())
         ]);
 
         return $summary->toHtml();
@@ -778,9 +784,9 @@ HTML
     private function getAvailableActions()
     {
         return [
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_UNKNOWN        => $this->__('Unknown'),
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_ADD_PRODUCT    => $this->__('Add'),
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_UPDATE_QTY     => $this->__('Update'),
+            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_UNKNOWN => $this->__('Unknown'),
+            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_ADD_PRODUCT => $this->__('Add'),
+            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_UPDATE_QTY => $this->__('Update'),
             \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_DELETE_PRODUCT => $this->__('Delete'),
         ];
     }
@@ -794,7 +800,7 @@ HTML
             $allIds[] = $item['id'];
         }
 
-        $allIdsStr  = implode(',', $allIds);
+        $allIdsStr = implode(',', $allIds);
 
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(

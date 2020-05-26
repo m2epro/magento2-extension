@@ -14,14 +14,6 @@ class AmazonBusinessDataMigration extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return [
-            'amazon_listing_product',
-            'amazon_template_selling_format',
-        ];
-    }
-
     public function execute()
     {
         $this->getConnection()->exec(<<<SQL

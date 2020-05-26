@@ -8,11 +8,19 @@
 
 namespace Ess\M2ePro\Model\Listing;
 
+use \Ess\M2ePro\Model\Amazon\Listing\Other as AmazonListingOther;
+use \Ess\M2ePro\Model\Ebay\Listing\Other as EbayListingOther;
+use \Ess\M2ePro\Model\Walmart\Listing\Other as WalmartListingOther;
+
 /**
  * Class \Ess\M2ePro\Model\Listing\Other
+ *
+ * @method AmazonListingOther|EbayListingOther|WalmartListingOther getChildObject()
  */
 class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
+    const MOVING_LISTING_PRODUCT_DESTINATION_KEY = 'moved_to_listing_product_id';
+
     /**
      * @var \Ess\M2ePro\Model\Account
      */
@@ -259,64 +267,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
         return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED;
     }
 
-    // ---------------------------------------
-
-    /**
-     * @return bool
-     */
-    public function isListable()
-    {
-        return ($this->isNotListed() || $this->isSold() ||
-                $this->isStopped() || $this->isFinished() ||
-                $this->isHidden() || $this->isUnknown()) &&
-                !$this->isBlocked();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRelistable()
-    {
-        return ($this->isSold() || $this->isStopped() ||
-                $this->isFinished() || $this->isUnknown()) &&
-                !$this->isBlocked();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRevisable()
-    {
-        return ($this->isListed() || $this->isHidden() || $this->isUnknown()) &&
-                !$this->isBlocked();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isStoppable()
-    {
-        return ($this->isListed() || $this->isHidden() || $this->isUnknown()) &&
-                !$this->isBlocked();
-    }
-
-    //########################################
-
-    public function reviseAction(array $params = [])
-    {
-        return $this->getChildObject()->reviseAction($params);
-    }
-
-    public function relistAction(array $params = [])
-    {
-        return $this->getChildObject()->relistAction($params);
-    }
-
-    public function stopAction(array $params = [])
-    {
-        return $this->getChildObject()->stopAction($params);
-    }
-
     //########################################
 
     public function unmapDeletedProduct($product)
@@ -330,7 +280,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
                                     ->getItems();
 
         foreach ($listingsOther as $listingOther) {
-            $listingOther->unmapProduct(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
+            $listingOther->unmapProduct();
         }
     }
 
@@ -338,51 +288,49 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
 
     /**
      * @param int $productId
-     * @param int $logsInitiator
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function mapProduct($productId, $logsInitiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN)
+    public function mapProduct($productId)
     {
         $this->addData(['product_id'=>$productId])->save();
         $this->getChildObject()->afterMapProduct();
-
-        $logModel = $this->activeRecordFactory->getObject('Listing_Other_Log');
-        $logModel->setComponentMode($this->getComponentMode());
-        $logModel->addProductMessage(
-            $this->getId(),
-            $logsInitiator,
-            null,
-            \Ess\M2ePro\Model\Listing\Other\Log::ACTION_MAP_ITEM,
-            // M2ePro\TRANSLATIONS
-            // Item was successfully Mapped
-            'Item was successfully Mapped',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
-        );
     }
 
     /**
-     * @param int $logsInitiator
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function unmapProduct($logsInitiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN)
+    public function unmapProduct()
     {
         $this->getChildObject()->beforeUnmapProduct();
         $this->setData('product_id', null)->save();
+    }
 
-        $logModel = $this->activeRecordFactory->getObject('Listing_Other_Log');
-        $logModel->setComponentMode($this->getComponentMode());
-        $logModel->addProductMessage(
-            $this->getId(),
-            $logsInitiator,
-            null,
-            \Ess\M2ePro\Model\Listing\Other\Log::ACTION_UNMAP_ITEM,
-            // M2ePro\TRANSLATIONS
-            // Item was successfully Unmapped
-            'Item was successfully Unmapped',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+    // ---------------------------------------
+
+    public function moveToListingSucceed()
+    {
+        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+        $listingProduct = $this->activeRecordFactory->getObject('Listing\Product')->load(
+            (int)$this->getSetting('additional_data', self::MOVING_LISTING_PRODUCT_DESTINATION_KEY)
         );
+        if ($listingProduct->getId()) {
+            $listingLogModel = $this->activeRecordFactory->getObject('Listing_Log');
+            $listingLogModel->setComponentMode($this->getComponentMode());
+            $actionId = $listingLogModel->getResource()->getNextActionId();
+            $listingLogModel->addProductMessage(
+                $listingProduct->getListingId(),
+                $listingProduct->getProductId(),
+                $listingProduct->getId(),
+                \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+                $actionId,
+                \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_FROM_OTHER_LISTING,
+                'Item was successfully Moved.',
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+            );
+        }
+
+        $this->delete();
     }
 
     //########################################

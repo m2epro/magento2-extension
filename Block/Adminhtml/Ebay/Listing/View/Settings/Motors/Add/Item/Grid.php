@@ -223,7 +223,7 @@ JS
         margin-left: 3px;
         background-position: center;
         background-repeat: no-repeat;
-        background-image: url("{$this->getSkinUrl('M2ePro/images/delete.png')}");
+        background-image: url("{$this->getViewFileUrl('Ess_M2ePro::images/delete.png')}");
     }
 CSS
         );

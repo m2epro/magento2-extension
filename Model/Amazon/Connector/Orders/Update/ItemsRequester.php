@@ -15,7 +15,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 {
     protected $activeRecordFactory;
 
-    // ########################################
+    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -33,14 +33,14 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
         );
     }
 
-    // ########################################
+    //########################################
 
     public function getCommand()
     {
         return ['orders','update','entities'];
     }
 
-    // ########################################
+    //########################################
 
     public function process()
     {
@@ -48,11 +48,11 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
         $this->getProcessingRunner()->start();
     }
 
-    // ########################################
+    //########################################
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Amazon_Connector_Orders_Update_ProcessingRunner';
+        return 'Amazon_Connector_Orders_ProcessingRunner';
     }
 
     protected function getProcessingParams()
@@ -63,14 +63,16 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
                 'request_data' => $this->getRequestData(),
                 'order_id'     => $this->params['order']['order_id'],
                 'change_id'    => $this->params['order']['change_id'],
+                'action_type'  => \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_UPDATE,
+                'lock_name'    => 'update_shipping_status',
                 'start_date'   => $this->getHelper('Data')->getCurrentGmtDate(),
             ]
         );
     }
 
-    // ########################################
+    //########################################
 
-    protected function getRequestData()
+    public function getRequestData()
     {
         $order = $this->params['order'];
         $fulfillmentDate = new \DateTime($order['fulfillment_date'], new \DateTimeZone('UTC'));
@@ -98,5 +100,5 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
         return $request;
     }
 
-    // ########################################
+    //########################################
 }

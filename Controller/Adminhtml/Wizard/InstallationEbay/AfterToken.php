@@ -86,23 +86,20 @@ class AfterToken extends InstallationEbay
         return [
 
             'marketplaces_data' => $this->getHelper('Data')->jsonEncode([]),
-
-            'feedbacks_receive' => AccountModel::FEEDBACKS_RECEIVE_NO,
+            'feedbacks_receive' => 0,
             'feedbacks_auto_response' => AccountModel::FEEDBACKS_AUTO_RESPONSE_NONE,
-            'feedbacks_auto_response_only_positive' => AccountModel::FEEDBACKS_AUTO_RESPONSE_ONLY_POSITIVE_NO,
-
-            'other_listings_synchronization' => AccountModel::OTHER_LISTINGS_SYNCHRONIZATION_NO,
-            'other_listings_mapping_mode' => AccountModel::OTHER_LISTINGS_MAPPING_MODE_NO,
+            'feedbacks_auto_response_only_positive' => 0,
+            'other_listings_synchronization' => 0,
+            'other_listings_mapping_mode' => 0,
             'other_listings_mapping_settings' => $this->getHelper('Data')->jsonEncode([]),
-
             'magento_orders_settings' => $this->getHelper('Data')->jsonEncode([
                 'listing' => [
-                    'mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_MODE_YES,
+                    'mode' => 1,
                     'store_mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
                     'store_id' => null
                 ],
                 'listing_other' => [
-                    'mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES,
+                    'mode' => 1,
                     'product_mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
                     'store_id' => $this->getHelper('Magento\Store')->getDefaultStoreId(),
@@ -119,7 +116,6 @@ class AfterToken extends InstallationEbay
                 ],
                 'creation' => [
                     'mode' => AccountModel::MAGENTO_ORDERS_CREATE_CHECKOUT_AND_PAID,
-                    'reservation_days' => 0
                 ],
                 'tax' => [
                     'mode' => AccountModel::MAGENTO_ORDERS_TAX_MODE_MIXED
@@ -133,8 +129,8 @@ class AfterToken extends InstallationEbay
                 'qty_reservation' => [
                     'days' => 0
                 ],
-                'invoice_mode' => AccountModel::MAGENTO_ORDERS_INVOICE_MODE_YES,
-                'shipment_mode' => AccountModel::MAGENTO_ORDERS_SHIPMENT_MODE_YES
+                'invoice_mode' => 1,
+                'shipment_mode' => 1
             ])
         ];
     }

@@ -279,6 +279,78 @@ HTML
             );
         }
 
+        $auMarketplace = $this->ebayFactory->getObjectLoaded('Marketplace', EbayHelper::MARKETPLACE_AU);
+        if ($auMarketplace->isStatusEnabled() && $auMarketplace->getChildObject()->isEpidEnabled()) {
+            $attribute = $configModel->getGroupValue('/ebay/motors/', 'epids_au_attribute');
+            list($ebayDictionaryCount, $customDictionaryCount) = $this->getMotorsDictionaryRecordCount(
+                \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_AU
+            );
+
+            $fieldset = $form->addFieldset(
+                'motors_epids_au',
+                [
+                    'legend'      => $this->__('Parts Compatibility [ePIDs AU]'),
+                    'collapsable' => false,
+                    'tooltip'     => $this->__(
+                        'In this Section, you can provide a Magento Attribute where ePID values for AU marketplace
+                        will be saved.
+                        <br/>
+                        Also you can Add/Update ePID Database manually by clicking <strong>Manage Option</strong>
+                        in Database line.
+                        <br/>
+                        You have an ability to choose either ePID or kType values should be used on eBay AU.
+                        Specify the appropriate <strong>Parts Compatibility Mode</strong> for your Listing in M2E Pro
+                        Listings grid.'
+                    )
+                ]
+            );
+
+            $fieldset->addField(
+                'motors_epids_au_attribute',
+                self::SELECT,
+                [
+                    'name'    => 'motors_epids_au_attribute',
+                    'label'   => $this->__('Attribute'),
+                    'values'  => $preparedAttributes,
+                    'value'   => $attribute,
+                    'class'   => 'M2ePro-custom-attribute-can-be-created',
+                    'tooltip' => $this->__(
+                        'Choose the Attribute that contains the Product Reference IDs (ePIDs) of compatible vehicles
+                         for the parts.
+                         In the M2E Pro Listing, use the <strong>Add Compatible Vehicles</strong> tool to find
+                         necessary compatible Items.
+                         <br/>
+                         Only Textarea Attributes are shown.'
+                    )
+                ]
+            )
+                ->addCustomAttribute('allowed_attribute_types', 'textarea')
+                ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
+
+            $motorsType = \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_AU;
+            $popupTitle = $this->__('Manage Custom Compatibility [ePIDs AU]');
+
+            $fieldset->addField(
+                'motors_epids_au_database',
+                self::CUSTOM_CONTAINER,
+                [
+                    'label' => $this->__('Database'),
+                    'text' => <<<HTML
+<span style="padding-right: 2px;">{$this->__('From eBay')}: </span>
+<span style="font-weight: bold; display: inline-block; width: 40px;">{$ebayDictionaryCount}</span>
+
+<span style="padding-right: 2px; padding-left: 10px;">{$this->__('Custom Added')}: </span>
+<span id="epids_au_custom_count" style="font-weight: bold; padding-right: 2px;">{$customDictionaryCount}</span>
+
+<span>
+    (<a href="javascript:void(0);"
+        onclick="EbaySettingsMotorsObj.manageMotorsRecords('{$motorsType}','{$popupTitle}');">{$this->__('manage')}</a>)
+</span>
+HTML
+                ]
+            );
+        }
+
         if ($this->getData('ktypes_enabled')) {
             $attribute = $configModel->getGroupValue('/ebay/motors/', 'ktypes_attribute');
             list($ebayDictionaryCount, $customDictionaryCount) = $this->getMotorsDictionaryRecordCount(

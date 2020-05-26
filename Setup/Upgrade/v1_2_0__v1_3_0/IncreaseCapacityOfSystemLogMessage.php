@@ -14,11 +14,6 @@ class IncreaseCapacityOfSystemLogMessage extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return [];
-    }
-
     public function execute()
     {
         $this->getTableModifier('system_log')

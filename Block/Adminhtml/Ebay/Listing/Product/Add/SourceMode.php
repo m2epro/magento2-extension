@@ -13,8 +13,9 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add;
  */
 class SourceMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
-    const MODE_PRODUCT = 'product';
+    const MODE_PRODUCT  = 'product';
     const MODE_CATEGORY = 'category';
+    const MODE_OTHER    = 'other';
 
     //########################################
 
@@ -22,20 +23,12 @@ class SourceMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContai
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('ebayListingSourceMode');
         $this->_controller = 'adminhtml_ebay_listing_product_add';
         $this->_mode = 'sourceMode';
-        // ---------------------------------------
 
-        // Set header text
-        // ---------------------------------------
         $this->_headerText = $this->__('Add Products');
-        // ---------------------------------------
 
-        // Set buttons actions
-        // ---------------------------------------
         $this->removeButton('back');
         $this->removeButton('reset');
         $this->removeButton('delete');

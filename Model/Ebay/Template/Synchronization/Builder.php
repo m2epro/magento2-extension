@@ -66,7 +66,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
         $defaultData = $this->activeRecordFactory->getObject('Ebay_Template_Synchronization')->getDefaultSettings();
 
-        $data = array_replace_recursive($defaultData, $data);
+        $data = $this->getHelper('Data')->arrayReplaceRecursive($defaultData, $data);
 
         $prepared = array_merge(
             $prepared,
@@ -121,8 +121,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             $prepared['list_qty_calculated_value_max'] = (int)$data['list_qty_calculated_value_max'];
         }
 
-        // ---------------------------------------
-
         if (isset($data['list_advanced_rules_mode'])) {
             $prepared['list_advanced_rules_mode'] = (int)$data['list_advanced_rules_mode'];
         }
@@ -136,11 +134,9 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
     private function prepareReviseData(array $data)
     {
-        $prepared = [];
-
-        if (isset($data['revise_update_qty'])) {
-            $prepared['revise_update_qty'] = (int)$data['revise_update_qty'];
-        }
+        $prepared = [
+            'revise_update_qty' => 1,
+        ];
 
         $key = 'revise_update_qty_max_applied_value_mode';
         if (isset($data[$key])) {
@@ -181,38 +177,24 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             $prepared['revise_update_images'] = (int)$data['revise_update_images'];
         }
 
-        if (isset($data['revise_update_specifics'])) {
-            $prepared['revise_update_specifics'] = (int)$data['revise_update_specifics'];
+        if (isset($data['revise_update_categories'])) {
+            $prepared['revise_update_categories'] = (int)$data['revise_update_categories'];
         }
 
-        if (isset($data['revise_update_shipping_services'])) {
-            $prepared['revise_update_shipping_services'] = (int)$data['revise_update_shipping_services'];
+        if (isset($data['revise_update_shipping'])) {
+            $prepared['revise_update_shipping'] = (int)$data['revise_update_shipping'];
         }
 
-        // ---------------------------------------
-
-        if (isset($data['revise_change_selling_format_template'])) {
-            $prepared['revise_change_selling_format_template'] = (int)$data['revise_change_selling_format_template'];
+        if (isset($data['revise_update_payment'])) {
+            $prepared['revise_update_payment'] = (int)$data['revise_update_payment'];
         }
 
-        if (isset($data['revise_change_description_template'])) {
-            $prepared['revise_change_description_template'] = (int)$data['revise_change_description_template'];
+        if (isset($data['revise_update_return'])) {
+            $prepared['revise_update_return'] = (int)$data['revise_update_return'];
         }
 
-        if (isset($data['revise_change_category_template'])) {
-            $prepared['revise_change_category_template'] = (int)$data['revise_change_category_template'];
-        }
-
-        if (isset($data['revise_change_payment_template'])) {
-            $prepared['revise_change_payment_template'] = (int)$data['revise_change_payment_template'];
-        }
-
-        if (isset($data['revise_change_shipping_template'])) {
-            $prepared['revise_change_shipping_template'] = (int)$data['revise_change_shipping_template'];
-        }
-
-        if (isset($data['revise_change_return_policy_template'])) {
-            $prepared['revise_change_return_policy_template'] = (int)$data['revise_change_return_policy_template'];
+        if (isset($data['revise_update_other'])) {
+            $prepared['revise_update_other'] = (int)$data['revise_update_other'];
         }
 
         return $prepared;
@@ -228,10 +210,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
         if (isset($data['relist_filter_user_lock'])) {
             $prepared['relist_filter_user_lock'] = (int)$data['relist_filter_user_lock'];
-        }
-
-        if (isset($data['relist_send_data'])) {
-            $prepared['relist_send_data'] = (int)$data['relist_send_data'];
         }
 
         if (isset($data['relist_status_enabled'])) {
@@ -266,8 +244,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             $prepared['relist_qty_calculated_value_max'] = (int)$data['relist_qty_calculated_value_max'];
         }
 
-        // ---------------------------------------
-
         if (isset($data['relist_advanced_rules_mode'])) {
             $prepared['relist_advanced_rules_mode'] = (int)$data['relist_advanced_rules_mode'];
         }
@@ -282,6 +258,10 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
     private function prepareStopData(array $data)
     {
         $prepared = [];
+
+        if (isset($data['stop_mode'])) {
+            $prepared['stop_mode'] = (int)$data['stop_mode'];
+        }
 
         if (isset($data['stop_status_disabled'])) {
             $prepared['stop_status_disabled'] = (int)$data['stop_status_disabled'];
@@ -314,8 +294,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         if (isset($data['stop_qty_calculated_value_max'])) {
             $prepared['stop_qty_calculated_value_max'] = (int)$data['stop_qty_calculated_value_max'];
         }
-
-        // ---------------------------------------
 
         if (isset($data['stop_advanced_rules_mode'])) {
             $prepared['stop_advanced_rules_mode'] = (int)$data['stop_advanced_rules_mode'];

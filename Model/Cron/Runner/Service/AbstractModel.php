@@ -75,8 +75,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Cron\Runner\AbstractModel
 
     public function resetTasksStartFrom()
     {
-        $this->resetTaskStartFrom('servicing');
-        $this->resetTaskStartFrom('synchronization');
+        $this->resetTaskStartFrom(\Ess\M2ePro\Model\Cron\Task\System\Servicing\Synchronize::NICK);
+        $this->resetTaskStartFrom(\Ess\M2ePro\Model\Cron\Task\Amazon\Order\Receive::NICK);
+        $this->resetTaskStartFrom(\Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges::NICK);
     }
 
     protected function resetTaskStartFrom($taskName)

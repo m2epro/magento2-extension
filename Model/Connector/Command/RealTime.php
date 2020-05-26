@@ -13,11 +13,11 @@ namespace Ess\M2ePro\Model\Connector\Command;
  */
 abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\AbstractModel
 {
-    // ########################################
+    //########################################
 
     protected $responseData = null;
 
-    // ########################################
+    //########################################
 
     public function process()
     {
@@ -30,7 +30,7 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\AbstractMode
         $this->prepareResponseData();
     }
 
-    // ########################################
+    //########################################
 
     protected function validateResponse()
     {
@@ -42,7 +42,7 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\AbstractMode
         $this->responseData = $this->getResponse()->getResponseData();
     }
 
-    // ########################################
+    //########################################
 
     public function getResponseData()
     {
@@ -54,5 +54,5 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\AbstractMode
         return $this->getResponse()->getMessages()->getEntitiesAsArrays();
     }
 
-    // ########################################
+    //########################################
 }

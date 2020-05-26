@@ -57,8 +57,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
     protected function getMaxLastHandledRecordsCount()
     {
         return $this->moduleConfig->getGroupValue(
-            '/logs/view/grouped/',
-            'max_last_handled_records_count'
+            '/logs/grouped/',
+            'max_records_count'
         );
     }
 

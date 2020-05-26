@@ -141,7 +141,6 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         foreach ($this->originalStoreConfig as $key => $value) {
             $this->mutableConfig->unsetValue(
                 $key,
-                $value,
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
                 $this->getStore()->getCode()
             );

@@ -27,10 +27,10 @@ class Data extends AbstractBlock
         $this->setChild('tabs', $this->createBlock('Ebay_Template_Synchronization_Edit_Form_Tabs'));
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Synchronization::class)
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Template\Synchronization::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Template\Synchronization::class)
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Synchronization::class)
         );
 
         $this->jsTranslator->addTranslations([
@@ -57,10 +57,6 @@ class Data extends AbstractBlock
         $this->css->add(<<<CSS
 .field-advanced_filter ul.rule-param-children {
     margin-top: 1em;
-}
-.field-advanced_filter .rule-param {
-    vertical-align: top;
-    display: inline-block;
 }
 .field-advanced_filter .rule-param .label {
     font-size: 14px;

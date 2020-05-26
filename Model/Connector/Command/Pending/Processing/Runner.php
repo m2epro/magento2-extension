@@ -25,7 +25,7 @@ abstract class Runner extends \Ess\M2ePro\Model\Processing\Runner
     /** @var \Ess\M2ePro\Model\Connector\Connection\Response $response */
     protected $response = null;
 
-    // ##################################
+    //##################################
 
     public function setProcessingObject(\Ess\M2ePro\Model\Processing $processingObjectObject)
     {
@@ -75,7 +75,7 @@ abstract class Runner extends \Ess\M2ePro\Model\Processing\Runner
         return $this->responserParams;
     }
 
-    // ##################################
+    //##################################
 
     protected function eventAfter()
     {
@@ -88,7 +88,7 @@ abstract class Runner extends \Ess\M2ePro\Model\Processing\Runner
         }
     }
 
-    // ##################################
+    //##################################
 
     protected function getResponser($returnNewObject = false)
     {
@@ -122,5 +122,5 @@ abstract class Runner extends \Ess\M2ePro\Model\Processing\Runner
         return $this->response;
     }
 
-    // ##################################
+    //##################################
 }

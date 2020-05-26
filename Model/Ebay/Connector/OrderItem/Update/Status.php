@@ -15,40 +15,34 @@ use \Ess\M2ePro\Model\Order as Order;
  */
 class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 {
-    // M2ePro_TRANSLATIONS
-    // Shipping status was not updated (Item: %item_id%, Transaction: %trn_id%). Reason: %msg%
-    // Shipping status was not updated (Item: %item_id%, Transaction: %trn_id%). Reason: eBay Failure.
-    // Tracking number "%num%" for "%code%" has been sent to eBay (Item: %item_id%, Transaction: %trn_id%).
-    // Order Item has been marked as Shipped (Item: %item_id%, Transaction: %trn_id%).
-
     /** @var $orderItem Order\Item */
     private $orderItem;
     private $activeRecordFactory;
 
-    // ########################################
+    //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\Marketplace $marketplace,
-        \Ess\M2ePro\Model\Account $account,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Order\Item $orderItem,
-        array $params
+        \Ess\M2ePro\Model\Marketplace $marketplace = null,
+        \Ess\M2ePro\Model\Account $account = null,
+        array $params = []
     ) {
-        parent::__construct(
-            $marketplace,
-            $account,
-            $helperFactory,
-            $modelFactory,
-            $params
-        );
+        parent::__construct($helperFactory, $modelFactory, $marketplace, $account, $params);
+
         $this->activeRecordFactory = $activeRecordFactory;
         $this->orderItem           = ($orderItem->getId() !== null) ? $orderItem : null;
     }
 
-    // ########################################
+    //########################################
 
+    /**
+     * @param Order\Item $orderItem
+     * @return $this
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function setOrderItem(Order\Item $orderItem)
     {
         $this->orderItem = $orderItem;
@@ -70,19 +64,29 @@ class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
         throw new \Ess\M2ePro\Model\Exception\Logic('Order change id has not been set.');
     }
 
-    // ########################################
+    //########################################
 
+    /**
+     * @return array
+     */
     protected function getCommand()
     {
         return ['orders', 'update', 'status'];
     }
 
+    /**
+     * @return bool
+     */
     protected function isNeedSendRequest()
     {
         return true;
     }
 
-    protected function getRequestData()
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getRequestData()
     {
         $action = \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP;
 
@@ -94,7 +98,6 @@ class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
         $carrierCode    = !empty($this->params['carrier_code'])    ? $this->params['carrier_code']    : null;
 
         return [
-            'account'         => $this->orderItem->getOrder()->getAccount()->getChildObject()->getServerHash(),
             'action'          => $action,
             'item_id'         => $this->orderItem->getChildObject()->getItemId(),
             'transaction_id'  => $this->orderItem->getChildObject()->getTransactionId(),
@@ -103,13 +106,21 @@ class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
         ];
     }
 
-    // ########################################
+    //########################################
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function process()
     {
         if (!$this->isNeedSendRequest()) {
-            return false;
+            return;
         }
+
+        /** @var \Ess\M2ePro\Model\Order\Change $orderChange */
+        $orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($this->getOrderChangeId());
+        $this->orderItem->getOrder()->getLog()->setInitiator($orderChange->getCreatorType());
 
         parent::process();
 
@@ -127,18 +138,28 @@ class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
         }
     }
 
-    // ########################################
+    //########################################
 
+    /**
+     * @return bool
+     */
     protected function validateResponseData()
     {
         return true;
     }
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function prepareResponseData()
     {
         if ($this->getResponse()->isResultError()) {
             return;
         }
+
+        /** @var \Ess\M2ePro\Model\Order\Change $orderChange */
+        $orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($this->getOrderChangeId());
+        $this->orderItem->getOrder()->getLog()->setInitiator($orderChange->getCreatorType());
 
         $responseData = $this->getResponse()->getResponseData();
 
@@ -170,11 +191,8 @@ class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
             ]);
         }
 
-        $this->activeRecordFactory
-             ->getObject('Order\Change')
-             ->getResource()
-             ->deleteByIds([$this->getOrderChangeId()]);
+        $orderChange->delete();
     }
 
-    // ########################################
+    //########################################
 }

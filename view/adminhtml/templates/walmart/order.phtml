@@ -276,6 +276,22 @@ if (empty($currency)) {
     <div class="fieldset-wrapper" id="magento_block_walmart_orders_history" collapseable="no">
 
         <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <strong class="admin__collapsible-title"><span><?php echo $block->__('Custom Notes');?></span></strong>
+            <div class="form-buttons"></div>
+        </div>
+
+        <a name="order_log"></a>
+
+        <div class="fieldset">
+            <?php echo $block->getChildHtml('order_note_grid'); ?>
+            <?php echo $block->getChildHtml('add_note_button'); ?>
+        </div>
+
+    </div>
+
+    <div class="fieldset-wrapper" id="magento_block_walmart_orders_history" collapseable="no">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
             <strong class="admin__collapsible-title"><span><?php echo $block->__('Order Log');?></span></strong>
             <div class="form-buttons"></div>
         </div>

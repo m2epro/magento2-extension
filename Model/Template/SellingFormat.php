@@ -75,18 +75,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abst
 
     //########################################
 
-    public function getTrackingAttributes()
-    {
-        return $this->getChildObject()->getTrackingAttributes();
-    }
-
-    public function getUsedAttributes()
-    {
-        return $this->getChildObject()->getUsedAttributes();
-    }
-
-    //########################################
-
     public function getCacheGroupTags()
     {
         return array_merge(parent::getCacheGroupTags(), ['template']);

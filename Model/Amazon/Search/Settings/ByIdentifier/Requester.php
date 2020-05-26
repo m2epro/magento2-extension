@@ -13,11 +13,11 @@ namespace Ess\M2ePro\Model\Amazon\Search\Settings\ByIdentifier;
  */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByIdentifier\ItemsRequester
 {
-    // ########################################
+    //########################################
 
     protected function getResponserRunnerModelName()
     {
-        return 'Amazon\Search\Settings\ProcessingRunner';
+        return 'Amazon_Search_Settings_ProcessingRunner';
     }
 
     protected function getResponserParams()
@@ -28,7 +28,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByIdentifier\I
         );
     }
 
-    // ########################################
+    //########################################
 
     protected function getQuery()
     {
@@ -45,5 +45,5 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByIdentifier\I
         return $this->params['variation_bad_parent_modify_child_to_simple'];
     }
 
-    // ########################################
+    //########################################
 }

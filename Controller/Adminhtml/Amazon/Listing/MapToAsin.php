@@ -60,7 +60,7 @@ class MapToAsin extends Main
 
         $searchStatusInProgress = \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_IN_PROGRESS;
 
-        if ($listingProduct->getData('search_settings_status') == $searchStatusInProgress) {
+        if ($amazonListingProduct->getData('search_settings_status') == $searchStatusInProgress) {
             $this->setAjaxContent('0', false);
 
             return $this->getResult();

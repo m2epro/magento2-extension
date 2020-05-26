@@ -164,24 +164,4 @@ class BusinessDiscount extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
     }
 
     //########################################
-
-    /**
-     * @return array
-     */
-    public function getTrackingAttributes()
-    {
-        return $this->getUsedAttributes();
-    }
-
-    /**
-     * @return array
-     */
-    public function getUsedAttributes()
-    {
-        return array_unique(
-            $this->getAttributes()
-        );
-    }
-
-    //########################################
 }

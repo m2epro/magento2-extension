@@ -44,7 +44,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         return $this->initiator;
     }
 
-    // ########################################
+    //########################################
 
     public function addMessage($orderId, $description, $type, array $additionalData = [])
     {
@@ -52,7 +52,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         $this->createMessage($dataForAdd);
     }
 
-    // ########################################
+    //########################################
 
     protected function createMessage($dataForAdd)
     {
@@ -85,13 +85,6 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         ];
 
         return $dataForAdd;
-    }
-
-    //########################################
-
-    public function delete()
-    {
-        return parent::delete();
     }
 
     //########################################

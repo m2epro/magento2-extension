@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Ebay\Connector\Inventory\Get;
  */
 abstract class ItemsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Responser
 {
-    // ########################################
+    //########################################
 
     protected function validateResponse()
     {
@@ -25,5 +25,5 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\P
         return true;
     }
 
-    // ########################################
+    //########################################
 }

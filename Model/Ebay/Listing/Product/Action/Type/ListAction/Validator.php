@@ -39,10 +39,7 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
     public function validate()
     {
         if (!$this->getListingProduct()->isListable()) {
-            // M2ePro\TRANSLATIONS
-            // Item is Listed or not available
             $this->addMessage('Item is Listed or not available');
-
             return false;
         }
 
@@ -111,7 +108,7 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
 
         $listingProductCollection
             ->getSelect()
-            ->join(['l'=>$listingTable], '`main_table`.`listing_id` = `l`.`id`', []);
+            ->join(['l' => $listingTable], '`main_table`.`listing_id` = `l`.`id`', []);
 
         $listingProductCollection
             ->addFieldToFilter('status', ['neq' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED])
@@ -126,6 +123,7 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
             );
         }
 
+        /** @var \Ess\M2ePro\Model\Listing\Product $theSameListingProduct */
         $theSameListingProduct = $listingProductCollection->getFirstItem();
 
         if (!$theSameListingProduct->getId()) {
@@ -133,7 +131,7 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
         }
 
         $this->addMessage($this->getHelper('Module\Log')->encodeDescription(
-            'There is another Item with the same eBay User ID, '.
+            'There is another Item with the same eBay User ID, ' .
             'Product ID and eBay Site presented in "%listing_title%" (%listing_id%) Listing.',
             [
                 '!listing_title' => $theSameListingProduct->getListing()->getTitle(),

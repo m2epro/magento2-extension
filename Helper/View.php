@@ -18,6 +18,9 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
     const LISTING_CREATION_MODE_FULL = 0;
     const LISTING_CREATION_MODE_LISTING_ONLY = 1;
 
+    const MOVING_LISTING_OTHER_SELECTED_SESSION_KEY = 'moving_listing_other_selected';
+    const MOVING_LISTING_PRODUCTS_SELECTED_SESSION_KEY = 'moving_listing_products_selected';
+
     protected $activeRecordFactory;
     protected $urlBuilder;
     protected $modelFactory;
@@ -153,32 +156,11 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getModifiedLogMessage($logMessage)
     {
-        $description = $this->getHelper('Module\Log')->decodeDescription($logMessage);
-
-        preg_match_all('/[^(href=")]?(http|https)\:\/\/[a-z0-9\-\._\/+\?\&\%=;\(\)]+/i', $description, $matches);
-        $matches = array_unique($matches[0]);
-
-        foreach ($matches as &$url) {
-            $url = trim($url, '.()[] ');
-        }
-        unset($url);
-
-        foreach ($matches as $url) {
-            $nestingLinks = 0;
-            foreach ($matches as $value) {
-                if (strpos($value, $url) !== false) {
-                    $nestingLinks++;
-                }
-            }
-
-            if ($nestingLinks > 1) {
-                continue;
-            }
-
-            $description = str_replace($url, "<a target=\"_blank\" href=\"{$url}\">{$url}</a>", $description);
-        }
-
-        return $this->getHelper('Data')->escapeHtml($description, ['a'], ENT_NOQUOTES);
+        return $this->getHelper('Data')->escapeHtml(
+            $this->getHelper('Module\Log')->decodeDescription($logMessage),
+            ['a'],
+            ENT_NOQUOTES
+        );
     }
 
     //########################################

@@ -59,12 +59,8 @@ class Delete extends Template
     private function getTemplateObject($type, $id)
     {
         switch ($type) {
-            case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING_OVERRIDE:
-                $model = $this->activeRecordFactory->getObject('Amazon_Template_ShippingOverride')->load($id);
-                break;
-
-            case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING_TEMPLATE:
-                $model = $this->activeRecordFactory->getObject('Amazon_Template_ShippingTemplate')->load($id);
+            case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING:
+                $model = $this->activeRecordFactory->getObject('Amazon_Template_Shipping')->load($id);
                 break;
 
             case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_PRODUCT_TAX_CODE:

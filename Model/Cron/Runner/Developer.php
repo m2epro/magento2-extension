@@ -29,17 +29,25 @@ class Developer extends AbstractModel
 
     //########################################
 
+    public function process()
+    {
+        // @codingStandardsIgnoreLine
+        session_write_close();
+        parent::process();
+    }
+
+    //########################################
+
     /**
      * @return \Ess\M2ePro\Model\Cron\Strategy\AbstractModel
      */
     protected function getStrategyObject()
     {
-        /** @var \Ess\M2ePro\Model\Cron\Strategy\AbstractModel $strategyObject */
-        $strategyObject = $this->modelFactory->getObject('Cron_Strategy_Serial');
+        $tasks = $this->allowedTasks;
+        empty($tasks) && $tasks = $this->modelFactory->getObject('Cron_Task_Repository')->getRegisteredTasks();
 
-        if (!empty($this->allowedTasks)) {
-            $strategyObject->setAllowedTasks($this->allowedTasks);
-        }
+        $strategyObject = $this->modelFactory->getObject('Cron_Strategy_Serial');
+        $strategyObject->setAllowedTasks($tasks);
 
         return $strategyObject;
     }
@@ -57,6 +65,11 @@ class Developer extends AbstractModel
     }
 
     protected function isPossibleToRun()
+    {
+        return true;
+    }
+
+    protected function canProcessRunner()
     {
         return true;
     }

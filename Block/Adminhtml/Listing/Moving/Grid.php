@@ -186,7 +186,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 &nbsp;<a href="javascript:void(0);" onclick="CommonObj.confirm({
         actions: {
             confirm: function () {
-                {$this->getMovingHandlerJs()}.tryToSubmit({$row->getData('id')});
+                {$this->getMovingHandlerJs()}.gridHandler.tryToMove({$row->getData('id')});
             }.bind(this),
             cancel: function () {
                 return false;
@@ -244,19 +244,18 @@ HTML
 
     protected function getNewListingUrl()
     {
-        if ($this->getHelper('Data\GlobalData')->getValue('componentMode') === Walmart::NICK) {
-            $url = '*/walmart_listing_create/index';
-        } else {
-            $url = '*/amazon_listing_create/index';
-        }
-
-        $newListingUrl = $this->getUrl($url, [
-            'step'           => 1,
-            'clear'          => 1,
-            'account_id'     => $this->getHelper('Data\GlobalData')->getValue('accountId'),
-            'marketplace_id' => $this->getHelper('Data\GlobalData')->getValue('marketplaceId'),
-            'creation_mode'  => \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY,
-        ]);
+        $componentMode = $this->getHelper('Data\GlobalData')->getValue('componentMode');
+        $newListingUrl = $this->getUrl(
+            '*/' .strtolower($componentMode). '_listing_create/index',
+            [
+                'step'           => 1,
+                'clear'          => 1,
+                'account_id'     => $this->getHelper('Data\GlobalData')->getValue('accountId'),
+                'marketplace_id' => $this->getHelper('Data\GlobalData')->getValue('marketplaceId'),
+                'creation_mode'  => \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY,
+                'component'      => $componentMode
+            ]
+        );
 
         return $newListingUrl;
     }

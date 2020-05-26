@@ -14,11 +14,6 @@ class CatchMagentoOrdersCreationFailure extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['order'];
-    }
-
     public function execute()
     {
         $this->getTableModifier('order')

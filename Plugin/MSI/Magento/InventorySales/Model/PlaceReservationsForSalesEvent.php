@@ -7,6 +7,7 @@
 
 namespace Ess\M2ePro\Plugin\MSI\Magento\InventorySales\Model;
 
+use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
 use Magento\InventorySalesApi\Api\GetStockBySalesChannelInterface;
 use Magento\InventorySalesApi\Api\Data\SalesEventInterface;
 use Ess\M2ePro\Model\MSI\Order\Reserve;
@@ -86,17 +87,15 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
         foreach ($items as $item) {
 
             $affected = $this->msiAffectedProducts->getAffectedProductsByStockAndSku(
-                $stock->getStockId(), $item->getSku()
+                $stock->getStockId(),
+                $item->getSku()
             );
 
             if (empty($affected)) {
                 continue;
             }
 
-            $this->activeRecordFactory->getObject('ProductChange')->addUpdateAction(
-                $this->productResource->getIdBySku($item->getSku()),
-                \Ess\M2ePro\Model\ProductChange::INITIATOR_OBSERVER
-            );
+            $this->addListingProductInstructions($affected);
 
             foreach ($affected as $listingProduct) {
                 $this->logListingProductMessage($listingProduct, $salesEvent, $salesChannel, $item);
@@ -194,6 +193,32 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
         ];
 
         return in_array($salesEvent->getType(), $compensatingReservationTypes, true);
+    }
+
+    //########################################
+
+    private function addListingProductInstructions($affectedProducts)
+    {
+        $synchronizationInstructionsData = [];
+
+        foreach ($affectedProducts as $listingProduct) {
+            /** @var \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel $changeProcessor */
+            $changeProcessor = $this->modelFactory->getObject(
+                ucfirst($listingProduct->getComponentMode()) . '_Magento_Product_ChangeProcessor'
+            );
+            $changeProcessor->setListingProduct($listingProduct);
+            $changeProcessor->setDefaultInstructionTypes(
+                [
+                    ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_STATUS_DATA_POTENTIALLY_CHANGED,
+                    ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_QTY_DATA_POTENTIALLY_CHANGED,
+                ]
+            );
+            $changeProcessor->process();
+        }
+
+        $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->add(
+            $synchronizationInstructionsData
+        );
     }
 
     //########################################

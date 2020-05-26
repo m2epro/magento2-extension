@@ -22,10 +22,6 @@
     // make status change of product with ID 20 and then notify M2E Pro
     $model->markStatusWasChanged(20);
 
-    // make attribute 'custom_attribute_code' value change from 'old' to 'new' of product with ID 21
-    // in store with ID 1 and then notify M2E Pro
-    $model->markProductAttributeChanged(21, 'custom_attribute_code', 1, 'old', 'new');
-
     $model->applyChanges();
 */
 
@@ -36,51 +32,62 @@ namespace Ess\M2ePro\PublicServices\Product;
  */
 class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 {
-    const VERSION = '1.0.2';
+    const VERSION = '2.0.1';
+
+    const INSTRUCTION_TYPE_PRODUCT_CHANGED = 'sql_change_product_changed';
+    const INSTRUCTION_TYPE_STATUS_CHANGED  = 'sql_change_status_changed';
+    const INSTRUCTION_TYPE_QTY_CHANGED     = 'sql_change_qty_changed';
+    const INSTRUCTION_TYPE_PRICE_CHANGED   = 'sql_change_price_changed';
+
+    const INSTRUCTION_INITIATOR = 'public_services_sql_change_processor';
 
     protected $preventDuplicatesMode = true;
 
-    protected $changes = [];
+    protected $changesData = [];
 
+    protected $activeRecordFactory;
     protected $resource;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\ResourceConnection $resource
+        \Ess\M2ePro\Helper\Factory $helperFactory
     ) {
+        $this->activeRecordFactory = $activeRecordFactory;
         $this->resource = $resource;
         parent::__construct($helperFactory, $modelFactory);
+    }
+    //########################################
+
+    public function enablePreventDuplicatesMode()
+    {
+        $this->preventDuplicatesMode = true;
+    }
+
+    public function disablePreventDuplicatesMode()
+    {
+        $this->preventDuplicatesMode = false;
     }
 
     //########################################
 
-    public function needPreventDuplicates($value = null)
-    {
-        if ($value === null) {
-            return $this->preventDuplicatesMode;
-        }
-
-        $this->preventDuplicatesMode = $value;
-        return $this;
-    }
-
-    // ---------------------------------------
-
     public function applyChanges()
     {
-        $this->filterOnlyAffectedChanges();
+        $instructionsData = $this->getInstructionsData();
 
-        if (count($this->changes) <= 0) {
-            return $this;
+        if ($this->preventDuplicatesMode) {
+            $instructionsData = $this->filterExistedInstructions($instructionsData);
         }
 
-        $this->needPreventDuplicates() ? $this->insertPreventDuplicates()
-                                       : $this->simpleInsert();
+        $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()
+            ->add($instructionsData);
 
-        return $this->flushChanges();
+        $this->flushChanges();
+
+        return $this;
     }
 
     /**
@@ -88,34 +95,43 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
      */
     public function flushChanges()
     {
-        $this->changes = [];
+        $this->changesData = [];
         return $this;
     }
 
     //########################################
 
-    public function markProductChanged($productId)
+    /**
+     * Backward compatibility issue
+     * @param $productId
+     * @return $this
+     */
+    public function markQtyWasChanged($productId)
     {
-        $change = $this->_getSkeleton();
-        $change['product_id'] = (int)$productId;
-
-        return $this->_addChange($change);
+        return $this->markProductChanged($productId);
     }
 
+    /**
+     * Backward compatibility issue
+     * @param $productId
+     * @return $this
+     */
     public function markPriceWasChanged($productId)
     {
         return $this->markProductChanged($productId);
     }
 
+    /**
+     * Backward compatibility issue
+     * @param $productId
+     * @return $this
+     */
     public function markStatusWasChanged($productId)
     {
         return $this->markProductChanged($productId);
     }
 
-    public function markQtyWasChanged($productId)
-    {
-        return $this->markProductChanged($productId);
-    }
+    //----------------------------------------
 
     public function markProductAttributeChanged(
         $productId,
@@ -124,199 +140,143 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
         $valueOld = null,
         $valueNew = null
     ) {
-        $this->markProductChanged($productId);
-
-        $change = $this->_getSkeleton();
-        $change['product_id'] = (int)$productId;
-        $change['store_id']   = (int)$storeId;
-        $change['attribute']  = $attributeCode;
-        $change['value_old']  = $valueOld;
-        $change['value_new']  = $valueNew;
-
-        return $this->_addChange($change);
-    }
-
-    // ---------------------------------------
-
-    public function markProductCreated($productId)
-    {
-        $change = $this->_getSkeleton();
-        $change['product_id'] = (int)$productId;
-        $change['action']     = \Ess\M2ePro\Model\ProductChange::ACTION_CREATE;
-        $change['attribute']  = null;
-
-        return $this->_addChange($change);
-    }
-
-    public function markProductRemoved($productId)
-    {
-        $change = $this->_getSkeleton();
-        $change['product_id'] = (int)$productId;
-        $change['action']     = \Ess\M2ePro\Model\ProductChange::ACTION_DELETE;
-        $change['attribute']  = null;
-
-        return $this->_addChange($change);
+        throw new \Ess\M2ePro\Model\Exception\Logic('Method is not supported.');
     }
 
     //########################################
 
-    private function _getSkeleton()
+    public function markProductChanged($productId)
     {
-        return [
-            'product_id'    => null,
-            'store_id'      => null,
-            'action'        => \Ess\M2ePro\Model\ProductChange::ACTION_UPDATE,
-            'attribute'     => \Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE,
-            'value_old'     => null,
-            'value_new'     => null,
-            'initiators'    => \Ess\M2ePro\Model\ProductChange::INITIATOR_DEVELOPER,
-            'count_changes' => null,
-            'update_date'   => $date = $this->getHelper('Data')->getCurrentGmtDate(),
-            'create_date'   => $date
+        $this->changesData[] = [
+            'product_id'       => (int)$productId,
+            'instruction_type' => self::INSTRUCTION_TYPE_PRODUCT_CHANGED,
         ];
-    }
-
-    private function _addChange(array $change)
-    {
-        $key = $change['product_id'].'##'.$change['store_id'].'##'.$change['attribute'];
-
-        $this->hasChangesCounter($change) && $change['count_changes'] = 1;
-
-        if (!array_key_exists($key, $this->changes)) {
-            $this->changes[$key] = $change;
-            return $this;
-        }
-
-        if (!$this->hasChangesCounter($change)) {
-            return $this;
-        }
-
-        $this->changes[$key]['value_new'] = $change['value_new'];
-        $this->changes[$key]['count_changes']++;
-
         return $this;
     }
 
-    // ---------------------------------------
-
-    private function getAffectedProductsIds()
+    public function markStatusChanged($productId)
     {
-        $productIds = [];
-
-        foreach ($this->changes as $change) {
-            $productIds[] = (int)$change['product_id'];
-        }
-
-        return array_unique($productIds);
+        $this->changesData[] = [
+            'product_id'       => (int)$productId,
+            'instruction_type' => self::INSTRUCTION_TYPE_STATUS_CHANGED,
+        ];
+        return $this;
     }
 
-    private function hasChangesCounter($change)
+    public function markQtyChanged($productId)
     {
-        if ($change['attribute'] == \Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE) {
-            return false;
-        }
-
-        if ($change['action'] == \Ess\M2ePro\Model\ProductChange::ACTION_CREATE ||
-            $change['action'] == \Ess\M2ePro\Model\ProductChange::ACTION_DELETE) {
-            return false;
-        }
-
-        return true;
+        $this->changesData[] = [
+            'product_id'       => (int)$productId,
+            'instruction_type' => self::INSTRUCTION_TYPE_QTY_CHANGED,
+        ];
+        return $this;
     }
 
-    // ---------------------------------------
-
-    private function filterOnlyAffectedChanges()
+    public function markPriceChanged($productId)
     {
-        if (count($this->changes) <= 0) {
-            return;
+        $this->changesData[] = [
+            'product_id'       => (int)$productId,
+            'instruction_type' => self::INSTRUCTION_TYPE_PRICE_CHANGED,
+        ];
+        return $this;
+    }
+
+    //########################################
+
+    protected function getInstructionsData()
+    {
+        if (empty($this->_changesData)) {
+            return [];
+        }
+
+        $productInstructionTypes = [];
+
+        foreach ($this->_changesData as $changeData) {
+            $productId = (int)$changeData['product_id'];
+
+            $productInstructionTypes[$productId][] = $changeData['instruction_type'];
+            $productInstructionTypes[$productId] = array_unique($productInstructionTypes[$productId]);
         }
 
         $connection = $this->resource->getConnection();
 
-        $listingProductTable  = $this->getHelper('Module_Database_Structure')
+        $listingProductTable = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_listing_product');
+        $variationTable = $this->getHelper('Module_Database_Structure')
+            ->getTableNameWithPrefix('m2epro_listing_product_variation');
         $variationOptionTable = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_listing_product_variation_option');
 
-        $simpleProductsSelect = $connection
-            ->select()
-            ->distinct()
-            ->from($listingProductTable, ['product_id']);
+        $instructionsData = [];
 
-        $variationsProductsSelect = $connection
-            ->select()
-            ->distinct()
-            ->from($variationOptionTable, ['product_id']);
+        foreach (array_chunk($productInstructionTypes, 1000, true) as $productInstructionTypesPart) {
+            $simpleProductsSelect = $connection
+                ->select()
+                ->from($listingProductTable, ['magento_product_id' => 'product_id', 'listing_product_id' => 'id'])
+                ->where('product_id IN (?)', array_keys($productInstructionTypesPart));
 
-        $stmtQuery = $connection
-            ->select()
-            ->union([$simpleProductsSelect, $variationsProductsSelect])
-            ->query();
+            $variationsProductsSelect = $connection
+                ->select()
+                ->from(['lpvo' => $variationOptionTable], ['magento_product_id' => 'product_id'])
+                ->joinLeft(
+                    ['lpv' => $variationTable],
+                    'lpv.id = lpvo.listing_product_variation_id',
+                    ['listing_product_id']
+                )
+                ->where('product_id IN (?)', array_keys($productInstructionTypesPart));
 
-        $productsInListings = [];
-        while ($productId = $stmtQuery->fetchColumn()) {
-            $productsInListings[] = (int)$productId;
-        }
+            $stmtQuery = $connection
+                ->select()
+                ->union([$simpleProductsSelect, $variationsProductsSelect])
+                ->query();
 
-        foreach ($this->changes as $key => $change) {
-            if (!in_array($change['product_id'], $productsInListings)) {
-                unset($this->changes[$key]);
+            while ($row = $stmtQuery->fetch()) {
+                $magentoProductId = (int)$row['magento_product_id'];
+                $listingProductId = (int)$row['listing_product_id'];
+
+                foreach ($productInstructionTypesPart[$magentoProductId] as $instructionType) {
+                    $instructionsData[] = [
+                        'listing_product_id' => $listingProductId,
+                        'type'               => $instructionType,
+                        'initiator'          => self::INSTRUCTION_INITIATOR,
+                        'priority'           => 50,
+                    ];
+                }
             }
         }
+
+        return $instructionsData;
     }
 
-    private function insertPreventDuplicates()
+    protected function filterExistedInstructions(array $instructionsData)
     {
+        $indexedInstructionsData = [];
+
+        foreach ($instructionsData as $instructionData) {
+            $key = $instructionData['listing_product_id'].'##'.$instructionData['type'];
+            $indexedInstructionsData[$key] = $instructionData;
+        }
+
         $connection = $this->resource->getConnection();
-        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_product_change');
 
-        $queryStmt = $connection
+        $instructionTable = $this->getHelper('Module_Database_Structure')
+            ->getTableNameWithPrefix('m2epro_listing_product_instruction');
+
+        $stmt = $connection
             ->select()
-            ->from($tableName)
-            ->where('`product_id` IN (?)', $this->getAffectedProductsIds())
+            ->from($instructionTable, ['listing_product_id', 'type'])
             ->query();
 
-        $existedChanges = [];
+        while ($row = $stmt->fetch()) {
+            $listingProductId = (int)$row['listing_product_id'];
+            $type             = $row['type'];
 
-        while ($row = $queryStmt->fetch()) {
-            $key = $row['product_id'].'##'.$row['store_id'].'##'.$row['attribute'];
-            $existedChanges[$key] = $row;
+            if (isset($indexedInstructionsData[$listingProductId.'##'.$type])) {
+                unset($indexedInstructionsData[$listingProductId.'##'.$type]);
+            }
         }
 
-        $inserts = [];
-        foreach ($this->changes as $changeKey => $change) {
-            if (array_key_exists($changeKey, $existedChanges) && !$this->hasChangesCounter($change)) {
-                continue;
-            }
-
-            if (!array_key_exists($changeKey, $existedChanges)) {
-                $inserts[] = $change;
-                continue;
-            }
-
-            $id = $existedChanges[$changeKey]['id'];
-            $changesCounter = $existedChanges[$changeKey]['count_changes'] + $change['count_changes'];
-
-            $connection->update(
-                $tableName,
-                [
-                    'count_changes' => $changesCounter,
-                    'value_new'     => $change['value_new'],
-                    'update_date'   => $change['update_date']
-                ],
-                "id = {$id}"
-            );
-        }
-
-        count($inserts) && $connection->insertMultiple($tableName, $inserts);
-    }
-
-    private function simpleInsert()
-    {
-        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_product_change');
-
-        $this->resource->getConnection()->insertMultiple($tableName, $this->changes);
+        return array_values($indexedInstructionsData);
     }
 
     //########################################

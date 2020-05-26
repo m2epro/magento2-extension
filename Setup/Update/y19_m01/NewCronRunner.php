@@ -14,11 +14,6 @@ use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
  */
 class NewCronRunner extends AbstractFeature
 {
-    public function getBackupTables()
-    {
-        return ['module_config'];
-    }
-
     public function execute()
     {
         $this->getConnection()->update(

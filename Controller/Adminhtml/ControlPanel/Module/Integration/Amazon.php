@@ -18,7 +18,6 @@ use Ess\M2ePro\Model\Amazon\Account;
  */
 class Amazon extends Command
 {
-    private $synchConfig;
     private $formKey;
     private $csvParser;
     private $phpEnvironmentRequest;
@@ -27,14 +26,12 @@ class Amazon extends Command
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Synchronization $synchConfig,
         \Magento\Framework\Data\Form\FormKey $formKey,
         \Magento\Framework\File\Csv $csvParser,
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         Context $context
     ) {
-        $this->synchConfig = $synchConfig;
         $this->formKey = $formKey;
         $this->csvParser = $csvParser;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
@@ -73,10 +70,7 @@ class Amazon extends Command
         }
 
         $accountsCollection = $this->parentFactory->getObject(AmazonHelper::NICK, 'Account')->getCollection();
-        $accountsCollection->addFieldToFilter(
-            'other_listings_synchronization',
-            Account::OTHER_LISTINGS_SYNCHRONIZATION_YES
-        );
+        $accountsCollection->addFieldToFilter('other_listings_synchronization', 1);
 
         foreach ($accountsCollection->getItems() as $account) {
             $additionalData = (array)$this->getHelper('Data')

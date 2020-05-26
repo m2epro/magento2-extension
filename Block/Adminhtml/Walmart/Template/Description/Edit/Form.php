@@ -17,8 +17,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     public $templateModel;
     public $formData = [];
-
-    public $generalAttributesByInputTypes = [];
     public $allAttributesByInputTypes     = [];
 
     //########################################
@@ -38,21 +36,16 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
         $allAttributes          = $magentoAttributeHelper->getAll();
-        $generalAttributes      = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
-
-        $this->generalAttributesByInputTypes = [
-            'text' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, ['text']),
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, ['text', 'select']),
-            'text_weight' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, ['text', 'weight']),
-            'text_images' => $magentoAttributeHelper->filterByInputTypes(
-                $generalAttributes,
-                ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
-            ),
-            'text_price' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, ['text', 'price']),
-        ];
-
+        
         $this->allAttributesByInputTypes = [
             'text_select' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'select']),
+            'text' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text']),
+            'text_weight' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'weight']),
+            'text_images' => $magentoAttributeHelper->filterByInputTypes(
+                $allAttributes,
+                ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
+            ),
+            'text_price' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'price']),
         ];
     }
 
@@ -1430,7 +1423,7 @@ HTML
 
         $forceAddedAttributeOption = $this->getForceAddedAttributeOption(
             $this->formData[$attributeName],
-            $this->generalAttributesByInputTypes[$attributeType],
+            $this->allAttributesByInputTypes[$attributeType],
             $attributeMode
         );
 
@@ -1490,14 +1483,14 @@ HTML
 
     public function getAttributesByInputTypesOptions($value, $attributeType, $conditionCallback = false)
     {
-        if (!isset($this->generalAttributesByInputTypes[$attributeType])) {
+        if (!isset($this->allAttributesByInputTypes[$attributeType])) {
             return [];
         }
 
         $optionsResult = [];
         $helper = $this->getHelper('Data');
 
-        foreach ($this->generalAttributesByInputTypes[$attributeType] as $attribute) {
+        foreach ($this->allAttributesByInputTypes[$attributeType] as $attribute) {
             $tmpOption = [
                 'value' => $value,
                 'label' => $helper->escapeHtml($attribute['label']),

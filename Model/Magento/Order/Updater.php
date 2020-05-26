@@ -13,12 +13,6 @@ namespace Ess\M2ePro\Model\Magento\Order;
  */
 class Updater extends \Ess\M2ePro\Model\AbstractModel
 {
-    // M2ePro\TRANSLATIONS
-    // Cancel is not allowed for Orders which were already Canceled.
-    // Cancel is not allowed for Orders with Invoiced Items.
-    // Cancel is not allowed for Orders which were put on Hold.
-    // Cancel is not allowed for Orders which were Completed or Closed.
-
     //########################################
 
     protected $customerFactory;

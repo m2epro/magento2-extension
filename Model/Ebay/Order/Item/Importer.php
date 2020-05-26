@@ -13,16 +13,13 @@ namespace Ess\M2ePro\Model\Ebay\Order\Item;
  */
 class Importer extends \Ess\M2ePro\Model\AbstractModel
 {
-    private $fileDriver;
-
-    private $filesystem;
-
-    private $productMediaConfig;
-
-    private $currencyFactory;
-
     /** @var $item \Ess\M2ePro\Model\Ebay\Order\Item */
     private $item = null;
+
+    protected $fileDriver;
+    protected $filesystem;
+    protected $productMediaConfig;
+    protected $currencyFactory;
 
     //########################################
 
@@ -55,6 +52,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
             $params['variation_sku'] = $variationSku;
         }
 
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
         $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObj->getVirtualConnector(
             'item',
@@ -124,7 +122,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
      * @param array $itemData
      * @return float
      */
-    private function getNewProductPrice(array $itemData)
+    protected function getNewProductPrice(array $itemData)
     {
         $currencyModel = $this->currencyFactory->create();
         $allowedCurrencies = $currencyModel->getConfigAllowCurrencies();
@@ -157,9 +155,9 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
      * @param array $itemData
      * @return array
      */
-    private function getNewProductImages(array $itemData)
+    protected function getNewProductImages(array $itemData)
     {
-        if (count($itemData['pictureUrl']) == 0) {
+        if (empty($itemData['pictureUrl'])) {
             return [];
         }
 
@@ -198,7 +196,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
         return $images;
     }
 
-    private function createDestinationFolder($itemTitle)
+    protected function createDestinationFolder($itemTitle)
     {
         $baseTmpImageName = $this->getHelper('Data')->convertStringToSku($itemTitle);
 
@@ -207,12 +205,10 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
         )->getAbsolutePath()
         . $this->productMediaConfig->getBaseTmpMediaPath() . DIRECTORY_SEPARATOR;
 
-        $destinationFolder .= $baseTmpImageName{0} . DIRECTORY_SEPARATOR . $baseTmpImageName{1};
+        $destinationFolder .= $baseTmpImageName[0] . DIRECTORY_SEPARATOR . $baseTmpImageName[1];
 
         if (!($this->fileDriver->isDirectory($destinationFolder)
             || $this->fileDriver->createDirectory($destinationFolder, 0777))) {
-            // M2ePro\TRANSLATIONS
-            // Unable to create directory '%directory%'.
             throw new \Ess\M2ePro\Model\Exception("Unable to create directory '{$destinationFolder}'.");
         }
 
@@ -244,8 +240,6 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
         $imageInfo = $this->fileDriver->isFile($imagePath) ? getimagesize($imagePath) : null;
 
         if (empty($imageInfo)) {
-            // M2ePro\TRANSLATIONS
-            // Image %url% was not downloaded.
             throw new \Ess\M2ePro\Model\Exception("Image {$url} was not downloaded.");
         }
     }

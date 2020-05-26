@@ -18,8 +18,11 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     private $isTableLocked = false;
     private $isTransactionStarted = false;
 
-    private $resourceConnection = null;
-    private $activeRecordFactory = null;
+    /** @var \Magento\Framework\App\ResourceConnection */
+    private $resourceConnection;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
+    private $activeRecordFactory;
 
     //########################################
 
@@ -28,10 +31,12 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        $nick,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->nick = $nick;
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
@@ -101,7 +106,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         $this->unlockTable();
     }
 
-    // ########################################
+    //########################################
 
     private function startTransaction()
     {
@@ -143,11 +148,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     }
 
     //########################################
-
-    public function setNick($value)
-    {
-        $this->nick = $value;
-    }
 
     public function getNick()
     {

@@ -51,6 +51,7 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         // ---------------------------------------
         $this->addButton('save_and_go_to_listing_view', [
+            'id'        => 'walmart_listing_category_continue_btn',
             'label'     => $this->__('Continue'),
             'onclick'   => 'ListingGridHandlerObj.completeCategoriesDataStep()',
             'class'     => 'action-primary forward'
@@ -113,8 +114,6 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         );
 
         ListingGridHandlerObj.afterInitPage();
-
-        ListingGridHandlerObj.actionHandler.setOptions(M2ePro);
     });
 JS
         );

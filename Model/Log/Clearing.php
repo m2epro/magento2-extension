@@ -14,7 +14,6 @@ namespace Ess\M2ePro\Model\Log;
 class Clearing extends \Ess\M2ePro\Model\AbstractModel
 {
     const LOG_LISTINGS          = 'listings';
-    const LOG_OTHER_LISTINGS    = 'other_listings';
     const LOG_SYNCHRONIZATIONS  = 'synchronizations';
     const LOG_ORDERS            = 'orders';
 
@@ -106,7 +105,6 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
     private function isValidLogType($log)
     {
         return $log == self::LOG_LISTINGS ||
-               $log == self::LOG_OTHER_LISTINGS ||
                $log == self::LOG_SYNCHRONIZATIONS ||
                $log == self::LOG_ORDERS ||
                $log == self::LOG_EBAY_PICKUP_STORE;
@@ -138,11 +136,6 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
             case self::LOG_LISTINGS:
                 $resourceModel = $this->activeRecordFactory
                               ->getObject('Listing\Log')
-                              ->getResource();
-                break;
-            case self::LOG_OTHER_LISTINGS:
-                $resourceModel = $this->activeRecordFactory
-                              ->getObject('Listing_Other_Log')
                               ->getResource();
                 break;
             case self::LOG_SYNCHRONIZATIONS:

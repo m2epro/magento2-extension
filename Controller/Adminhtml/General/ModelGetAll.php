@@ -27,7 +27,8 @@ class ModelGetAll extends General
         $marketplaceId = $this->getRequest()->getParam('marketplace_id', '');
 
         if ($model == '' || $idField == '' || $dataField == '') {
-            return $this->setJsonContent([]);
+            $this->setJsonContent([]);
+            return $this->getResult();
         }
 
         $model = str_replace('_', '\\', $model);

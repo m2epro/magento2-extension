@@ -147,6 +147,22 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     }
 
     /**
+     * @return bool
+     */
+    public function isOnlineInactive()
+    {
+        return (bool)$this->getData('is_online_inactive');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOnlineManaged()
+    {
+        return !$this->isOnlineDisabled() && !$this->isOnlineInactive();
+    }
+
+    /**
      * @return float|int
      */
     public function getOnlineRegularPrice()
@@ -180,6 +196,40 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     //########################################
 
+    /**
+     * @return float|int
+     */
+    public function getLastUpdatedRegularPrice()
+    {
+        return $this->getData('last_updated_regular_price');
+    }
+
+    /**
+     * @return float|int
+     */
+    public function getLastUpdatedMinPrice()
+    {
+        return $this->getData('last_updated_min_price');
+    }
+
+    /**
+     * @return float|int
+     */
+    public function getLastUpdatedMaxPrice()
+    {
+        return $this->getData('last_updated_max_price');
+    }
+
+    /**
+     * @return bool
+     */
+    public function getLastUpdatedIsDisabled()
+    {
+        return (bool)$this->getData('last_updated_is_disabled');
+    }
+
+    //########################################
+
     public function getRegularPrice()
     {
         if ($this->regularPriceCache !== null) {
@@ -199,15 +249,10 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         if ($source['mode'] == AccountRepricing::REGULAR_PRICE_MODE_PRODUCT_POLICY) {
             $amazonSellingFormatTemplate = $this->getAmazonListingProduct()->getAmazonSellingFormatTemplate();
 
-            $source        = $amazonSellingFormatTemplate->getRegularPriceSource();
-            $sourceModeMapping = [
-                PriceCalculator::MODE_NONE      => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
-                PriceCalculator::MODE_PRODUCT   => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
-                PriceCalculator::MODE_SPECIAL   => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL,
-                PriceCalculator::MODE_ATTRIBUTE => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE,
-            ];
-            $coefficient   = $amazonSellingFormatTemplate->getRegularPriceCoefficient();
-            $variationMode = $amazonSellingFormatTemplate->getRegularPriceVariationMode();
+            $source            = $amazonSellingFormatTemplate->getRegularPriceSource();
+            $sourceModeMapping = null;
+            $coefficient       = $amazonSellingFormatTemplate->getRegularPriceCoefficient();
+            $variationMode     = $amazonSellingFormatTemplate->getRegularPriceVariationMode();
         }
 
         $calculator = $this->getPriceCalculator($source, $sourceModeMapping, $coefficient, $variationMode);
@@ -215,7 +260,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
             $variations = $this->getListingProduct()->getVariations(true);
-            if (count($variations) <= 0) {
+            if (empty($variations)) {
                 throw new Exception\Logic(
                     'There are no variations for a variation product.',
                     [
@@ -264,7 +309,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
             $variations = $this->getListingProduct()->getVariations(true);
-            if (count($variations) <= 0) {
+            if (empty($variations)) {
                 throw new Exception\Logic(
                     'There are no variations for a variation product.',
                     [
@@ -313,7 +358,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
             $variations = $this->getListingProduct()->getVariations(true);
-            if (count($variations) <= 0) {
+            if (empty($variations)) {
                 throw new Exception\Logic(
                     'There are no variations for a variation product.',
                     [
@@ -373,13 +418,13 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     private function getPriceCalculator(
         array $source,
-        array $sourceModeMapping,
+        $sourceModeMapping = null,
         $coefficient = null,
         $priceVariationMode = null
     ) {
         /** @var PriceCalculator $calculator */
         $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_Repricing_PriceCalculator');
-        $calculator->setSourceModeMapping($sourceModeMapping);
+        $sourceModeMapping !== null && $calculator->setSourceModeMapping($sourceModeMapping);
         $calculator->setSource($source)->setProduct($this->getListingProduct());
         $calculator->setCoefficient($coefficient);
         $calculator->setPriceVariationMode($priceVariationMode);

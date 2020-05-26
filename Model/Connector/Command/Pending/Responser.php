@@ -20,7 +20,7 @@ abstract class Responser extends \Ess\M2ePro\Model\AbstractModel
 
     protected $preparedResponseData = [];
 
-    // ########################################
+    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
@@ -33,14 +33,14 @@ abstract class Responser extends \Ess\M2ePro\Model\AbstractModel
         parent::__construct($helperFactory, $modelFactory);
     }
 
-    // ########################################
+    //########################################
 
     protected function getResponse()
     {
         return $this->response;
     }
 
-    // ########################################
+    //########################################
 
     public function process()
     {
@@ -60,14 +60,14 @@ abstract class Responser extends \Ess\M2ePro\Model\AbstractModel
         return $this->getPreparedResponseData();
     }
 
-    // ########################################
+    //########################################
 
     public function getPreparedResponseData()
     {
         return $this->preparedResponseData;
     }
 
-    // ########################################
+    //########################################
 
     public function failDetected($messageText)
     {
@@ -95,12 +95,12 @@ abstract class Responser extends \Ess\M2ePro\Model\AbstractModel
 
     abstract protected function processResponseData();
 
-    // ########################################
+    //########################################
 
     protected function processResponseMessages()
     {
         return null;
     }
 
-    // ########################################
+    //########################################
 }

@@ -16,31 +16,24 @@ class WalmartSynchAdvancedConditions extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return [
-            'walmart_template_synchronization'
-        ];
-    }
-
     public function execute()
     {
         $this->getTableModifier('walmart_template_synchronization')
             ->addColumn(
                 'list_advanced_rules_mode',
-                'SMALLINT(4) UNSIGNED NOT NULL',
+                'SMALLINT(5) UNSIGNED NOT NULL',
                 null,
                 'list_qty_calculated_value_max'
             )
             ->addColumn(
                 'relist_advanced_rules_mode',
-                'SMALLINT(4) UNSIGNED NOT NULL',
+                'SMALLINT(5) UNSIGNED NOT NULL',
                 null,
                 'relist_qty_calculated_value_max'
             )
             ->addColumn(
                 'stop_advanced_rules_mode',
-                'SMALLINT(4) UNSIGNED NOT NULL',
+                'SMALLINT(5) UNSIGNED NOT NULL',
                 null,
                 'stop_qty_calculated_value_max'
             )

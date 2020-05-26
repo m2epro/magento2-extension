@@ -13,15 +13,6 @@ namespace Ess\M2ePro\Model\Amazon;
  */
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
-    const SHIPPING_MODE_OVERRIDE   = 0;
-    const SHIPPING_MODE_TEMPLATE   = 1;
-
-    const OTHER_LISTINGS_SYNCHRONIZATION_NO  = 0;
-    const OTHER_LISTINGS_SYNCHRONIZATION_YES = 1;
-
-    const OTHER_LISTINGS_MAPPING_MODE_NO  = 0;
-    const OTHER_LISTINGS_MAPPING_MODE_YES = 1;
-
     const OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_NONE             = 0;
     const OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_CUSTOM_ATTRIBUTE = 1;
 
@@ -38,31 +29,14 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     const OTHER_LISTINGS_MAPPING_GENERAL_ID_DEFAULT_PRIORITY = 2;
     const OTHER_LISTINGS_MAPPING_TITLE_DEFAULT_PRIORITY      = 3;
 
-    const OTHER_LISTINGS_MOVE_TO_LISTINGS_DISABLED = 0;
-    const OTHER_LISTINGS_MOVE_TO_LISTINGS_ENABLED  = 1;
-
-    const OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_NONE = 0;
-    const OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_ALL  = 1;
-    const OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_PRICE  = 2;
-    const OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_QTY  = 3;
-
-    const MAGENTO_ORDERS_LISTINGS_MODE_NO  = 0;
-    const MAGENTO_ORDERS_LISTINGS_MODE_YES = 1;
-
     const MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT = 0;
     const MAGENTO_ORDERS_LISTINGS_STORE_MODE_CUSTOM  = 1;
-
-    const MAGENTO_ORDERS_LISTINGS_OTHER_MODE_NO  = 0;
-    const MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES = 1;
 
     const MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE = 0;
     const MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT = 1;
 
     const MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO = 'magento';
     const MAGENTO_ORDERS_NUMBER_SOURCE_CHANNEL = 'channel';
-
-    const MAGENTO_ORDERS_NUMBER_PREFIX_MODE_NO  = 0;
-    const MAGENTO_ORDERS_NUMBER_PREFIX_MODE_YES = 1;
 
     const MAGENTO_ORDERS_TAX_MODE_NONE    = 0;
     const MAGENTO_ORDERS_TAX_MODE_CHANNEL = 1;
@@ -72,9 +46,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     const MAGENTO_ORDERS_CUSTOMER_MODE_GUEST      = 0;
     const MAGENTO_ORDERS_CUSTOMER_MODE_PREDEFINED = 1;
     const MAGENTO_ORDERS_CUSTOMER_MODE_NEW        = 2;
-
-    const MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_NO  = 0;
-    const MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_YES = 1;
 
     const MAGENTO_ORDERS_BILLING_ADDRESS_MODE_SHIPPING = 0;
     const MAGENTO_ORDERS_BILLING_ADDRESS_MODE_SHIPPING_IF_SAME_CUSTOMER_AND_RECIPIENT = 1;
@@ -86,17 +57,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     const MAGENTO_ORDERS_STATUS_MAPPING_PROCESSING = 'processing';
     const MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED    = 'complete';
 
-    const MAGENTO_ORDERS_FBA_MODE_NO  = 0;
-    const MAGENTO_ORDERS_FBA_MODE_YES = 1;
-
-    const MAGENTO_ORDERS_FBA_STOCK_MODE_NO  = 0;
-    const MAGENTO_ORDERS_FBA_STOCK_MODE_YES = 1;
-
-    const MAGENTO_ORDERS_INVOICE_MODE_NO  = 0;
-    const MAGENTO_ORDERS_INVOICE_MODE_YES = 1;
-
-    const MAGENTO_ORDERS_SHIPMENT_MODE_NO  = 0;
-    const MAGENTO_ORDERS_SHIPMENT_MODE_YES = 1;
+    const MAGENTO_ORDERS_AUTO_INVOICING_DISABLED = 0;
+    const MAGENTO_ORDERS_AUTO_INVOICING_VAT_CALCULATION_SERVICE = 1;
+    const MAGENTO_ORDERS_AUTO_INVOICING_UPLOAD_MAGENTO_INVOICES = 2;
 
     //########################################
 
@@ -276,32 +239,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getShippingMode()
-    {
-        return (int)$this->getData('shipping_mode');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isShippingModeOverride()
-    {
-        return $this->getShippingMode() == self::SHIPPING_MODE_OVERRIDE;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isShippingModeTemplate()
-    {
-        return $this->getShippingMode() == self::SHIPPING_MODE_TEMPLATE;
-    }
-
-    //########################################
-
-    /**
-     * @return int
-     */
     public function getOtherListingsSynchronization()
     {
         return (int)$this->getData('other_listings_synchronization');
@@ -443,7 +380,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function isOtherListingsSynchronizationEnabled()
     {
-        return $this->getOtherListingsSynchronization() == self::OTHER_LISTINGS_SYNCHRONIZATION_YES;
+        return $this->getOtherListingsSynchronization() == 1;
     }
 
     /**
@@ -451,7 +388,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function isOtherListingsMappingEnabled()
     {
-        return $this->getOtherListingsMappingMode() == self::OTHER_LISTINGS_MAPPING_MODE_YES;
+        return $this->getOtherListingsMappingMode() == 1;
     }
 
     // ---------------------------------------
@@ -538,79 +475,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isOtherListingsMoveToListingsEnabled()
-    {
-        return (int)$this->getData('other_listings_move_mode') == self::OTHER_LISTINGS_MOVE_TO_LISTINGS_ENABLED;
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return bool
-     */
-    public function isOtherListingsMoveToListingsSynchModeNone()
-    {
-        $setting = $this->getSetting(
-            'other_listings_move_settings',
-            'synch',
-            self::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_NONE
-        );
-        return $setting == self::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_NONE;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isOtherListingsMoveToListingsSynchModeAll()
-    {
-        $setting = $this->getSetting(
-            'other_listings_move_settings',
-            'synch',
-            self::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_NONE
-        );
-        return $setting == self::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_ALL;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isOtherListingsMoveToListingsSynchModeQty()
-    {
-        $setting = $this->getSetting(
-            'other_listings_move_settings',
-            'synch',
-            self::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_NONE
-        );
-        return $setting == self::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_QTY;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isOtherListingsMoveToListingsSynchModePrice()
-    {
-        $setting = $this->getSetting(
-            'other_listings_move_settings',
-            'synch',
-            self::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_NONE
-        );
-        return $setting == self::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_PRICE;
-    }
-
-    //########################################
-
-    /**
-     * @return bool
-     */
     public function isMagentoOrdersListingsModeEnabled()
     {
-        $setting = $this->getSetting(
-            'magento_orders_settings',
-            ['listing', 'mode'],
-            self::MAGENTO_ORDERS_LISTINGS_MODE_YES
-        );
-
-        return $setting == self::MAGENTO_ORDERS_LISTINGS_MODE_YES;
+        return $this->getSetting('magento_orders_settings', ['listing', 'mode'], 1) == 1;
     }
 
     /**
@@ -643,13 +510,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function isMagentoOrdersListingsOtherModeEnabled()
     {
-        $setting = $this->getSetting(
-            'magento_orders_settings',
-            ['listing_other', 'mode'],
-            self::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES
-        );
-
-        return $setting == self::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES;
+        return $this->getSetting('magento_orders_settings', ['listing_other', 'mode'], 1) == 1;
     }
 
     /**
@@ -720,40 +581,54 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     // ---------------------------------------
 
     /**
-     * @return bool
+     * @return string
      */
-    public function isMagentoOrdersNumberPrefixEnable()
-    {
-        $setting = $this->getSetting(
-            'magento_orders_settings',
-            ['number', 'prefix', 'mode'],
-            self::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_NO
-        );
-        return $setting == self::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_YES;
-    }
-
     public function getMagentoOrdersNumberRegularPrefix()
     {
         $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
         return isset($settings['prefix']) ? $settings['prefix'] : '';
     }
 
+    /**
+     * @return string
+     */
     public function getMagentoOrdersNumberAfnPrefix()
     {
         $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
         return isset($settings['afn-prefix']) ? $settings['afn-prefix'] : '';
     }
 
+    /**
+     * @return string
+     */
     public function getMagentoOrdersNumberPrimePrefix()
     {
         $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
         return isset($settings['prime-prefix']) ? $settings['prime-prefix'] : '';
     }
 
+    /**
+     * @return string
+     */
     public function getMagentoOrdersNumberB2bPrefix()
     {
         $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
         return isset($settings['b2b-prefix']) ? $settings['b2b-prefix'] : '';
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isMagentoOrdersNumberApplyToAmazonOrderEnable()
+    {
+        $setting = $this->getSetting(
+            'magento_orders_settings',
+            ['number', 'apply_to_amazon'],
+            0
+        );
+        return $setting == 1;
     }
 
     // ---------------------------------------
@@ -874,13 +749,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function isMagentoOrdersCustomerNewSubscribed()
     {
-        $setting = $this->getSetting(
-            'magento_orders_settings',
-            ['customer', 'subscription_mode'],
-            self::MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_NO
-        );
-
-        return $setting == self::MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_YES;
+        return $this->getSetting('magento_orders_settings', ['customer', 'subscription_mode'], 0) == 1;
     }
 
     /**
@@ -981,7 +850,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return true;
         }
 
-        return $this->getSetting('magento_orders_settings', 'invoice_mode') == self::MAGENTO_ORDERS_INVOICE_MODE_YES;
+        return $this->getSetting('magento_orders_settings', 'invoice_mode', 0) == 1;
     }
 
     public function isMagentoOrdersShipmentEnabled()
@@ -990,36 +859,45 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return true;
         }
 
-        return $this->getSetting('magento_orders_settings', 'shipment_mode') == self::MAGENTO_ORDERS_SHIPMENT_MODE_YES;
+        return $this->getSetting('magento_orders_settings', 'shipment_mode', 0) == 1;
     }
 
     // ---------------------------------------
 
     public function isMagentoOrdersFbaModeEnabled()
     {
-        $setting = $this->getSetting(
-            'magento_orders_settings',
-            ['fba', 'mode'],
-            self::MAGENTO_ORDERS_FBA_MODE_YES
-        );
-
-        return $setting == self::MAGENTO_ORDERS_FBA_MODE_YES;
+        return $this->getSetting('magento_orders_settings', ['fba', 'mode'], 1) == 1;
     }
 
     public function isMagentoOrdersFbaStockEnabled()
     {
-        $setting = $this->getSetting('magento_orders_settings', ['fba', 'stock_mode']);
-        return $setting == self::MAGENTO_ORDERS_FBA_STOCK_MODE_YES;
+        return $this->getSetting('magento_orders_settings', ['fba', 'stock_mode'], 0) == 1;
     }
 
     //########################################
+
+    /**
+     * @return int
+     */
+    public function getAutoInvoicing()
+    {
+        return (int)$this->getData('auto_invoicing');
+    }
 
     /**
      * @return bool
      */
     public function isVatCalculationServiceEnabled()
     {
-        return (bool)$this->getData('is_vat_calculation_service_enabled');
+        return $this->getAutoInvoicing() == self::MAGENTO_ORDERS_AUTO_INVOICING_VAT_CALCULATION_SERVICE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUploadInvoicesEnabled()
+    {
+        return $this->getAutoInvoicing() == self::MAGENTO_ORDERS_AUTO_INVOICING_UPLOAD_MAGENTO_INVOICES;
     }
 
     /**

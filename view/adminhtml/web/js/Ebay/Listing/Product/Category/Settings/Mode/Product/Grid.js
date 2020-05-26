@@ -218,65 +218,12 @@ define([
                         }
 
                         self.saveCategoriesData(EbayListingProductCategorySettingsChooserObj.getInternalData());
+                        self.unselectAllAndReload();
                     }
                 }]
             }, popup);
 
             popup.modal('openModal');
-        },
-
-        // ---------------------------------------
-
-        nextStep: function () {
-            var self = this;
-
-            MagentoMessageObj.clear();
-
-            new Ajax.Request(M2ePro.url.get('ebay_listing_product_category_settings/stepTwoModeProductValidate'), {
-                method: 'get',
-                asynchronous: true,
-                parameters: {},
-                onSuccess: function (transport) {
-
-                    var response = transport.responseText.evalJSON();
-
-                    if (response['validation']) {
-                        return setLocation(M2ePro.url.get('ebay_listing_product_category_settings'));
-                    }
-
-                    if (response['message']) {
-                        return MagentoMessageObj.addErrorMessage(response['message']);
-                    }
-
-                    var popup = jQuery('#next_step_warning_popup_content');
-
-                    modal({
-                        title: M2ePro.translator.translate('Set eBay Category'),
-                        type: 'popup',
-                        buttons: [{
-                            text: M2ePro.translator.translate('Cancel'),
-                            class: 'action-secondary action-dismiss',
-                            click: function () {
-                                this.closeModal();
-                            }
-                        },{
-                            text: M2ePro.translator.translate('Continue'),
-                            class: 'action-primary action-accept forward',
-                            id: 'save_popup_button',
-                            click: function () {
-                                this.closeModal();
-                                setLocation(M2ePro.url.get('ebay_listing_product_category_settings'));
-                            }
-                        }]
-                    }, popup);
-
-                    popup.modal('openModal');
-
-                    // $('total_count').update(response['total_count']);
-                    // $('failed_count').update(response['failed_count']);
-
-                }.bind(this)
-            });
         },
 
         // ---------------------------------------
@@ -348,6 +295,24 @@ define([
             }
 
             return true;
+        },
+
+        // ---------------------------------------
+
+        validateCategories: function (isAlLeasOneCategorySelected, showErrorMessage) {
+            MagentoMessageObj.setContainer('#anchor-content');
+            var button = $('ebay_listing_category_continue_btn');
+            if (parseInt(isAlLeasOneCategorySelected)) {
+                button.addClassName('disabled');
+                button.disable();
+                if (showErrorMessage) {
+                    MagentoMessageObj.addErrorMessage(M2ePro.translator.translate('select_relevant_category'));
+                }
+            } else {
+                button.removeClassName('disabled');
+                button.enable();
+                MagentoMessageObj.clear();
+            }
         }
 
         // ---------------------------------------

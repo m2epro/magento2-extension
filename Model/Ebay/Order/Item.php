@@ -11,30 +11,19 @@ namespace Ess\M2ePro\Model\Ebay\Order;
 /**
  * @method \Ess\M2ePro\Model\Order\Item getParentObject()
  */
-
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
     const UNPAID_ITEM_PROCESS_NOT_OPENED = 0;
-    const UNPAID_ITEM_PROCESS_OPENED     = 1;
+    const UNPAID_ITEM_PROCESS_OPENED = 1;
 
     const DISPUTE_EXPLANATION_BUYER_HAS_NOT_PAID = 'BuyerNotPaid';
-    const DISPUTE_REASON_BUYER_HAS_NOT_PAID      = 'BuyerHasNotPaid';
-
-    //########################################
-
-    // M2ePro\TRANSLATIONS
-    // Product Import is disabled in eBay Account Settings.
-    // Data obtaining for eBay Item failed. Please try again later.
-    // Product for eBay Item #%id% was created in Magento Catalog.
-
-    //########################################
-
-    private $productBuilderFactory;
-
-    private $productFactory;
+    const DISPUTE_REASON_BUYER_HAS_NOT_PAID = 'BuyerHasNotPaid';
 
     /** @var $channelItem \Ess\M2ePro\Model\Ebay\Item */
     private $channelItem = null;
+
+    protected $productBuilderFactory;
+    protected $productFactory;
 
     //########################################
 
@@ -76,6 +65,9 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
 
     //########################################
 
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Order\Item\ProxyObject
+     */
     public function getProxy()
     {
         return $this->modelFactory->getObject('Ebay_Order_Item_ProxyObject', [
@@ -231,7 +223,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
      */
     public function hasVariation()
     {
-        return !empty($this->getVariationDetails());
+        $details = $this->getVariationDetails();
+        return !empty($details);
     }
 
     /**
@@ -308,35 +301,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
 
     //########################################
 
-    public function canCreateMagentoOrder()
-    {
-        return $this->isOrdersCreationEnabled();
-    }
-
-    public function isReservable()
-    {
-        return $this->isOrdersCreationEnabled();
-    }
-
-    // ---------------------------------------
-
-    private function isOrdersCreationEnabled()
-    {
-        $ebayItem = $this->getChannelItem();
-
-        if ($ebayItem !== null && !$this->getEbayAccount()->isMagentoOrdersListingsModeEnabled()) {
-            return false;
-        }
-
-        if ($ebayItem === null && !$this->getEbayAccount()->isMagentoOrdersListingsOtherModeEnabled()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    //########################################
-
     /**
      * @return int
      */
@@ -349,9 +313,39 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
                 ? $this->getEbayAccount()->getMagentoOrdersListingsStoreId()
                 : $this->getChannelItem()->getStoreId();
         }
+
         // ---------------------------------------
 
         return $this->getEbayAccount()->getMagentoOrdersListingsOtherStoreId();
+    }
+
+    //########################################
+
+    public function canCreateMagentoOrder()
+    {
+        return $this->isOrdersCreationEnabled();
+    }
+
+    public function isReservable()
+    {
+        return $this->isOrdersCreationEnabled();
+    }
+
+    // ---------------------------------------
+
+    protected function isOrdersCreationEnabled()
+    {
+        $channelItem = $this->getChannelItem();
+
+        if ($channelItem !== null && !$this->getEbayAccount()->isMagentoOrdersListingsModeEnabled()) {
+            return false;
+        }
+
+        if ($channelItem === null && !$this->getEbayAccount()->isMagentoOrdersListingsOtherModeEnabled()) {
+            return false;
+        }
+
+        return true;
     }
 
     //########################################
@@ -363,6 +357,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         if ($this->getChannelItem() !== null) {
             return $this->getChannelItem()->getProductId();
         }
+
         // ---------------------------------------
 
         // 3rd party Item
@@ -376,15 +371,16 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
             $product = $this->productFactory->create()
                 ->setStoreId($this->getEbayOrder()->getAssociatedStoreId())
                 ->getCollection()
-                    ->addAttributeToSelect('sku')
-                    ->addAttributeToFilter('sku', $sku)
-                    ->getFirstItem();
+                ->addAttributeToSelect('sku')
+                ->addAttributeToFilter('sku', $sku)
+                ->getFirstItem();
 
             if ($product->getId()) {
                 $this->associateWithProduct($product);
                 return $product->getId();
             }
         }
+
         // ---------------------------------------
 
         $product = $this->createProduct();
@@ -402,7 +398,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
      * @return \Magento\Catalog\Model\Product
      * @throws \Ess\M2ePro\Model\Exception
      */
-    private function createProduct()
+    protected function createProduct()
     {
         if (!$this->getEbayAccount()->isMagentoOrdersListingsOtherProductImportEnabled()) {
             throw new \Ess\M2ePro\Model\Exception('Product Import is disabled in Account Settings.');
@@ -428,13 +424,14 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         $product = $this->productFactory->create()
             ->setStoreId($this->getEbayOrder()->getAssociatedStoreId())
             ->getCollection()
-                ->addAttributeToSelect('sku')
-                ->addAttributeToFilter('sku', $productData['sku'])
-                ->getFirstItem();
+            ->addAttributeToSelect('sku')
+            ->addAttributeToFilter('sku', $productData['sku'])
+            ->getFirstItem();
 
         if ($product->getId()) {
             return $product;
         }
+
         // ---------------------------------------
 
         $storeId = $this->getEbayAccount()->getMagentoOrdersListingsOtherStoreId();
@@ -460,11 +457,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         return $productBuilder->getProduct();
     }
 
-    private function associateWithProduct(\Magento\Catalog\Model\Product $product)
+    protected function associateWithProduct(\Magento\Catalog\Model\Product $product)
     {
         if (!$this->hasVariation()) {
             $this->_eventManager->dispatch('ess_associate_ebay_order_item_to_product', [
-                'product'    => $product,
+                'product' => $product,
                 'order_item' => $this->getParentObject(),
             ]);
         }
@@ -509,8 +506,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
 
         $params = array_merge($params, $trackingDetails);
 
-        $action    = \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING;
-        $creator   = \Ess\M2ePro\Model\Order\Change::CREATOR_TYPE_OBSERVER;
+        $action = \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING;
+        $creator = $this->getEbayOrder()->getParentObject()->getLog()->getInitiator();
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
 
         $this->activeRecordFactory->getObject('Order\Change')->create(

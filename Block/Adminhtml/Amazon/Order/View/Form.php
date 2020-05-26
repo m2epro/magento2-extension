@@ -83,6 +83,28 @@ class Form extends AbstractContainer
         }
         // ---------------------------------------
 
+        if ($this->order->getChildObject()->canSendCreditmemo()) {
+            $orderId = $this->order->getId();
+            $documentType = \Ess\M2ePro\Model\Amazon\Order::DOCUMENT_TYPE_CREDIT_NOTE;
+            $data = [
+                'class'   => 'primary',
+                'label'   => $this->__('Resend Credit Memo'),
+                'onclick' => "AmazonOrderObj.resendInvoice({$orderId}, '{$documentType}');",
+            ];
+            $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
+            $this->setChild('resend_creditmemo', $buttonBlock);
+        } elseif ($this->order->getChildObject()->canSendInvoice()) {
+            $orderId = $this->order->getId();
+            $documentType = \Ess\M2ePro\Model\Amazon\Order::DOCUMENT_TYPE_INVOICE;
+            $data = [
+                'class'   => 'primary',
+                'label'   => $this->__('Resend Invoice'),
+                'onclick' => "AmazonOrderObj.resendInvoice({$orderId}, '{$documentType}');",
+            ];
+            $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
+            $this->setChild('resend_invoice', $buttonBlock);
+        }
+
         // Shipping data
         // ---------------------------------------
         /** @var $shippingAddress \Ess\M2ePro\Model\Amazon\Order\ShippingAddress */
@@ -91,6 +113,14 @@ class Form extends AbstractContainer
         $this->shippingAddress = $shippingAddress->getData();
         $this->shippingAddress['country_name'] = $shippingAddress->getCountryName();
         // ---------------------------------------
+        $buttonAddNoteBlock = $this->createBlock('Magento\Button')
+            ->setData(
+                [
+                    'label'   => $this->__('Add Note'),
+                    'onclick' => "OrderNoteObj.openAddNotePopup({$this->order->getId()})",
+                    'class'   => 'order_note_btn',
+                ]
+            );
 
         $this->jsUrl->addUrls([
             'order/getDebugInformation' => $this->getUrl(
@@ -105,6 +135,9 @@ class Form extends AbstractContainer
                 '*/amazon_order_shippingAddress/save',
                 ['id' => $this->getRequest()->getParam('id')]
             ),
+            'amazon_order/resendInvoice' => $this->getUrl(
+                '*/amazon_order/resendInvoice'
+            ),
         ]);
 
         $this->jsPhp->addConstants(
@@ -115,6 +148,8 @@ class Form extends AbstractContainer
         $this->setChild('item', $this->createBlock('Amazon_Order_View_Item'));
         $this->setChild('item_edit', $this->createBlock('Order_Item_Edit'));
         $this->setChild('log', $this->createBlock('Order_View_Log_Grid'));
+        $this->setChild('order_note_grid', $this->createBlock('Order_Note_Grid'));
+        $this->setChild('add_note_button', $buttonAddNoteBlock);
 
         return parent::_beforeToHtml();
     }
@@ -166,4 +201,27 @@ class Form extends AbstractContainer
     {
         return $this->modelFactory->getObject('Currency')->formatPrice($currencyName, $priceValue);
     }
+
+    //########################################
+
+    protected function _toHtml()
+    {
+        $orderNoteGridId = $this->getChildBlock('order_note_grid')->getId();
+        $this->jsTranslator->add('Custom Note', $this->__('Custom Note'));
+
+        $this->js->add(<<<JS
+    require([
+        'M2ePro/Order/Note',
+        'M2ePro/Amazon/Order',
+    ], function(){
+        window.OrderNoteObj = new OrderNote('$orderNoteGridId');
+        window.AmazonOrderObj = new AmazonOrder();
+    });
+JS
+        );
+
+        return parent::_toHtml();
+    }
+
+    //########################################
 }

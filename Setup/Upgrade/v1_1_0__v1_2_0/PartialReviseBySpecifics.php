@@ -14,11 +14,6 @@ class PartialReviseBySpecifics extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['ebay_template_synchronization'];
-    }
-
     public function execute()
     {
         $this->getTableModifier('ebay_template_synchronization')

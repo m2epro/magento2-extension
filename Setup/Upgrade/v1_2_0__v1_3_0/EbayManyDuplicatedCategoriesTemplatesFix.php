@@ -14,11 +14,6 @@ class EbayManyDuplicatedCategoriesTemplatesFix extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['listing'];
-    }
-
     public function execute()
     {
         $listingTable = $this->getFullTableName('listing');

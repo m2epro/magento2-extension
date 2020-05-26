@@ -30,7 +30,6 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
             'walmart_start_date'           => 'WalmartStartDate',
             'walmart_end_date'             => 'WalmartEndDate',
             'walmart_status'               => 'WalmartStatus',
-            'walmart_details_data_changed' => 'WalmartDetailsDataChanged',
             'walmart_online_price_invalid' => 'WalmartOnlinePriceInvalid',
         ];
 

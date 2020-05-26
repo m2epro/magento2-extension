@@ -48,13 +48,38 @@ class Save extends Template
             $model = $this->activeRecordFactory->getObject('Amazon_Template_ProductTaxCode');
         }
 
-        $oldData = (!empty($id)) ? $model->getDataSnapshot() : [];
+        $oldData = [];
+        if (!empty($id)) {
+            /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode\SnapshotBuilder $snapshotBuilder */
+            $snapshotBuilder = $this->modelFactory->getObject('Amazon_Template_ProductTaxCode_SnapshotBuilder');
+            $snapshotBuilder->setModel($model);
+            $oldData = $snapshotBuilder->getSnapshot();
+        }
 
         $model->addData($data)->save();
 
-        $newData = $model->getDataSnapshot();
+        /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode\SnapshotBuilder $snapshotBuilder */
+        $snapshotBuilder = $this->modelFactory->getObject('Amazon_Template_ProductTaxCode_SnapshotBuilder');
+        $snapshotBuilder->setModel($model);
+        $newData = $snapshotBuilder->getSnapshot();
 
-        $model->setSynchStatusNeed($newData, $oldData);
+        /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode\Diff $diff */
+        $diff = $this->modelFactory->getObject('Amazon_Template_ProductTaxCode_Diff');
+        $diff->setNewSnapshot($newData);
+        $diff->setOldSnapshot($oldData);
+
+        /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode\AffectedListingsProducts $affectedListingsProducts */
+        $affectedListingsProducts = $this->modelFactory->getObject(
+            'Amazon_Template_ProductTaxCode_AffectedListingsProducts'
+        );
+        $affectedListingsProducts->setModel($model);
+
+        /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode\ChangeProcessor $changeProcessor */
+        $changeProcessor = $this->modelFactory->getObject('Amazon_Template_ProductTaxCode_ChangeProcessor');
+        $changeProcessor->process(
+            $diff,
+            $affectedListingsProducts->getObjectsData(['id', 'status'], ['only_physical_units' => true])
+        );
 
         if ($this->isAjax()) {
             $this->setJsonContent([

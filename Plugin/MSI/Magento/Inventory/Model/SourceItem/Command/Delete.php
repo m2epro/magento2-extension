@@ -7,6 +7,8 @@
 
 namespace Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command;
 
+use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+
 /**
  * Class \Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command\Delete
  */
@@ -65,17 +67,15 @@ class Delete extends \Ess\M2ePro\Plugin\AbstractPlugin
         foreach ($sourceItems as $sourceItem) {
 
             $affected = $this->msiAffectedProducts->getAffectedProductsBySourceAndSku(
-                $sourceItem->getSourceCode(), $sourceItem->getSku()
+                $sourceItem->getSourceCode(),
+                $sourceItem->getSku()
             );
 
             if (empty($affected)) {
                 continue;
             }
 
-            $this->activeRecordFactory->getObject('ProductChange')->addUpdateAction(
-                $this->productResource->getIdBySku($sourceItem->getSku()),
-                \Ess\M2ePro\Model\ProductChange::INITIATOR_OBSERVER
-            );
+            $this->addListingProductInstructions($affected);
 
             foreach ($affected as $listingProduct) {
                 $this->logListingProductMessage($listingProduct, $sourceItem);
@@ -90,7 +90,7 @@ class Delete extends \Ess\M2ePro\Plugin\AbstractPlugin
     private function logListingProductMessage(
         \Ess\M2ePro\Model\Listing\Product $listingProduct,
         \Magento\InventoryApi\Api\Data\SourceItemInterface $sourceItem
-    ){
+    ) {
         $log = $this->activeRecordFactory->getObject('Listing\Log');
         $log->setComponentMode($listingProduct->getComponentMode());
 
@@ -107,6 +107,32 @@ class Delete extends \Ess\M2ePro\Plugin\AbstractPlugin
             ),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+        );
+    }
+
+    //########################################
+
+    private function addListingProductInstructions($affectedProducts)
+    {
+        $synchronizationInstructionsData = [];
+
+        foreach ($affectedProducts as $listingProduct) {
+            /** @var \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel $changeProcessor */
+            $changeProcessor = $this->modelFactory->getObject(
+                ucfirst($listingProduct->getComponentMode()) . '_Magento_Product_ChangeProcessor'
+            );
+            $changeProcessor->setListingProduct($listingProduct);
+            $changeProcessor->setDefaultInstructionTypes(
+                [
+                    ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_STATUS_DATA_POTENTIALLY_CHANGED,
+                    ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_QTY_DATA_POTENTIALLY_CHANGED,
+                ]
+            );
+            $changeProcessor->process();
+        }
+
+        $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->add(
+            $synchronizationInstructionsData
         );
     }
 

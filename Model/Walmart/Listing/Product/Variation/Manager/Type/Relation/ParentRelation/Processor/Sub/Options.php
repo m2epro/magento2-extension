@@ -69,7 +69,7 @@ class Options extends AbstractModel
     {
         $productOptions = $this->getProcessor()->getTypeModel()->getNotRemovedUnusedProductOptions();
 
-        if (count($productOptions) <= 0) {
+        if (empty($productOptions)) {
             return false;
         }
 

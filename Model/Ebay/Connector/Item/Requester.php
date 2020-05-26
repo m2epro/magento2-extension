@@ -8,18 +8,19 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Item;
 
-use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description as RequestDescription;
-
 /**
  * @method \Ess\M2ePro\Model\Ebay\Connector\Item\Responser getResponser()
  */
 abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Requester
 {
-    const DEFAULT_REQUEST_TIMEOUT         = 300;
+    const DEFAULT_REQUEST_TIMEOUT = 300;
     const TIMEOUT_INCREMENT_FOR_ONE_IMAGE = 30;
 
     /** @var \Ess\M2ePro\Model\Listing\Product */
     protected $listingProduct = null;
+
+    /** @var \Ess\M2ePro\Model\Listing\Product\LockManager */
+    protected $lockManager = null;
 
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Validator */
     protected $validatorObject = null;
@@ -33,29 +34,25 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Logger */
     protected $logger = null;
 
+    /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message[] */
+    protected $storedLogMessages = [];
+
     protected $isRealTime = false;
 
     //########################################
 
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
-        if ($listingProduct->getActionConfigurator() !== null) {
-            $actionConfigurator = $listingProduct->getActionConfigurator();
-        } else {
-            $actionConfigurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
+        $this->listingProduct = $listingProduct;
+
+        if ($listingProduct->getActionConfigurator() === null) {
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
+            $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
+            $this->listingProduct->setActionConfigurator($configurator);
         }
-
-        $this->listingProduct = $listingProduct->load($listingProduct->getId());
-
-        if ($this->listingProduct->needSynchRulesCheck()) {
-            $this->listingProduct->setData('need_synch_rules_check', 0);
-            $this->listingProduct->save();
-        }
-
-        $this->listingProduct->setActionConfigurator($actionConfigurator);
 
         $this->marketplace = $this->listingProduct->getMarketplace();
-        $this->account     = $this->listingProduct->getAccount();
+        $this->account = $this->listingProduct->getAccount();
     }
 
     //########################################
@@ -80,23 +77,14 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
     protected function getProcessingParams()
     {
-        $configuratorParams = $this->listingProduct->getActionConfigurator()->getParams();
-
-        $startDate = $this->getHelper('Data')->getCurrentGmtDate();
-        if (!empty($configuratorParams['start_processing_date'])) {
-            $startDate = $configuratorParams['start_processing_date'];
-        }
-
         return array_merge(
             parent::getProcessingParams(),
             [
-                'request_data'        => $this->getRequestData(),
-                'listing_product_id'  => $this->listingProduct->getId(),
-                'lock_identifier'     => $this->getLockIdentifier(),
-                'action_type'         => $this->getActionType(),
-                'priority'            => $this->listingProduct->getActionConfigurator()->getPriority(),
-                'request_timeout'     => $this->getRequestTimeout(),
-                'start_date'          => $startDate,
+                'request_data' => $this->getRequestData(),
+                'listing_product_id' => $this->listingProduct->getId(),
+                'lock_identifier' => $this->getLockIdentifier(),
+                'action_type' => $this->getActionType(),
+                'request_timeout' => $this->getRequestTimeout()
             ]
         );
     }
@@ -119,7 +107,8 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         if (!isset($requestData['is_eps_ebay_images_mode']) || !isset($requestData['upload_images_mode']) ||
             $requestData['is_eps_ebay_images_mode'] === false ||
             ($requestData['is_eps_ebay_images_mode'] === null &&
-                $requestData['upload_images_mode'] == RequestDescription::UPLOAD_IMAGES_MODE_SELF)) {
+                $requestData['upload_images_mode'] ==
+                \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Images::UPLOAD_IMAGES_MODE_SELF)) {
             return self::DEFAULT_REQUEST_TIMEOUT;
         }
 
@@ -135,13 +124,15 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
             $this->getLogger()->setStatus(\Ess\M2ePro\Helper\Data::STATUS_SUCCESS);
 
             if ($this->isListingProductLocked()) {
+                $this->writeStoredLogMessages();
                 return;
             }
 
             $this->lockListingProduct();
             $this->initializeVariations();
 
-            if (!$this->validateListingProduct()) {
+            if (!$this->validateListingProduct() || !$this->validateConfigurator()) {
+                $this->writeStoredLogMessages();
                 return;
             }
 
@@ -162,23 +153,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
     protected function processRealTime()
     {
-        try {
-            parent::process();
-        } catch (\Ess\M2ePro\Model\Exception\Connection $exception) {
-            if ($this->account->getChildObject()->isModeSandbox()) {
-                throw $exception;
-            }
-
-            $this->processResponser();
-        } catch (\Exception $exception) {
-            if (strpos($exception->getMessage(), 'code:34') === false ||
-                $this->account->getChildObject()->isModeSandbox()
-            ) {
-                throw $exception;
-            }
-
-            $this->processResponser();
-        }
+        parent::process();
 
         if ($this->getResponser()->getStatus() != \Ess\M2ePro\Helper\Data::STATUS_SUCCESS) {
             $this->getLogger()->setStatus($this->getResponser()->getStatus());
@@ -199,17 +174,14 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         $tempData = $this->getRequestObject()->getRequestData();
 
         foreach ($this->getRequestObject()->getWarningMessages() as $messageText) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 $messageText,
                 \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING
             );
 
-            $this->getLogger()->logListingProductMessage(
-                $this->listingProduct,
-                $message,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
-            );
+            $this->storeLogMessage($message);
         }
 
         return $this->buildRequestDataObject($tempData)->getData();
@@ -219,9 +191,17 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
     protected function getResponserParams()
     {
+        $logMessages = [];
+        foreach ($this->getStoredLogMessages() as $message) {
+            $logMessages[] = $message->asArray();
+        }
+
+        $metaData = $this->getRequestObject()->getMetaData();
+        $metaData['log_messages'] = $logMessages;
+
         $product = [
             'request'          => $this->getRequestDataObject()->getData(),
-            'request_metadata' => $this->getRequestObject()->getMetaData(),
+            'request_metadata' => $metaData,
             'configurator'     => $this->listingProduct->getActionConfigurator()->getSerializedData(),
             'id'               => $this->listingProduct->getId(),
         ];
@@ -248,14 +228,11 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         $validationResult = $validator->validate();
 
         foreach ($validator->getMessages() as $messageData) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData($messageData['text'], $messageData['type']);
 
-            $this->getLogger()->logListingProductMessage(
-                $this->listingProduct,
-                $message,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
-            );
+            $this->storeLogMessage($message);
         }
 
         if ($validationResult) {
@@ -266,6 +243,34 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
         return false;
     }
+
+    /**
+     * Some data parts can be disallowed from configurator on validateListingProduct() action
+     * @return bool
+     */
+    protected function validateConfigurator()
+    {
+        /** @var \Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator */
+        $configurator = $this->listingProduct->getActionConfigurator();
+        if (empty($configurator->getAllowedDataTypes())) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
+            $message->initFromPreparedData(
+                'There was no need for this action. It was skipped.
+                Please check the log message above for more detailed information.',
+                \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
+            );
+
+            $this->storeLogMessage($message);
+            $this->unlockListingProduct();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    //########################################
 
     protected function initializeVariations()
     {
@@ -278,23 +283,15 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
     protected function isListingProductLocked()
     {
-        $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
-        $lockItem->setNick(\Ess\M2ePro\Helper\Component\Ebay::NICK.'_listing_product_'.$this->listingProduct->getId());
-
-        if ($this->listingProduct->isSetProcessingLock('in_action') || $lockItem->isExist()) {
-            // M2ePro\TRANSLATIONS
-            // Another Action is being processed. Try again when the Action is completed.
+        if ($this->listingProduct->isSetProcessingLock('in_action') || $this->getLockManager()->isLocked()) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 'Another Action is being processed. Try again when the Action is completed.',
                 \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
             );
 
-            $this->getLogger()->logListingProductMessage(
-                $this->listingProduct,
-                $message,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
-            );
+            $this->storeLogMessage($message);
 
             return true;
         }
@@ -302,26 +299,19 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         return false;
     }
 
-    // ########################################
+    //########################################
 
     protected function lockListingProduct()
     {
-        $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
-        $lockItem->setNick(\Ess\M2ePro\Helper\Component\Ebay::NICK.'_listing_product_'.$this->listingProduct->getId());
-
-        $lockItem->create();
-        $lockItem->makeShutdownFunction();
+        $this->getLockManager()->lock();
     }
 
     protected function unlockListingProduct()
     {
-        $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
-        $lockItem->setNick(\Ess\M2ePro\Helper\Component\Ebay::NICK.'_listing_product_'.$this->listingProduct->getId());
-
-        $lockItem->remove();
+        $this->getLockManager()->unlock();
     }
 
-    // ########################################
+    //########################################
 
     public function getStatus()
     {
@@ -341,6 +331,33 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
     abstract protected function getActionType();
 
     abstract protected function getLogsAction();
+
+    protected function getLockManager()
+    {
+        if ($this->lockManager !== null) {
+            return $this->lockManager;
+        }
+
+        switch ($this->params['status_changer']) {
+            case \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN:
+                $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
+                break;
+            case \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER:
+                $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_USER;
+                break;
+            default:
+                $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION;
+                break;
+        }
+
+        $this->lockManager = $this->modelFactory->getObject('Listing_Product_LockManager');
+        $this->lockManager->setListingProduct($this->listingProduct);
+        $this->lockManager->setInitiator($initiator);
+        $this->lockManager->setLogsActionId($this->params['logs_action_id']);
+        $this->lockManager->setLogsAction($this->getLogsAction());
+
+        return $this->lockManager;
+    }
 
     protected function getOrmActionType()
     {
@@ -378,7 +395,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
             /** @var $validator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Validator */
             $validator = $this->modelFactory->getObject(
-                'Ebay\Listing\Product\Action\Type\\'.$this->getOrmActionType().'\Validator'
+                'Ebay\Listing\Product\Action\Type\\' . $this->getOrmActionType() . '\Validator'
             );
 
             $validator->setParams($this->params);
@@ -393,6 +410,8 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
     /**
      * @return \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getRequestObject()
     {
@@ -405,19 +424,21 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
     /**
      * @return \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function makeRequestObject()
     {
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request $request */
 
         $request = $this->modelFactory->getObject(
-            'Ebay\Listing\Product\Action\Type\\'.$this->getOrmActionType().'\Request'
+            'Ebay\Listing\Product\Action\Type\\' . $this->getOrmActionType() . '\Request'
         );
 
         $request->setParams($this->params);
         $request->setListingProduct($this->listingProduct);
         $request->setConfigurator($this->listingProduct->getActionConfigurator());
-        $request->setValidatorsData($this->getValidatorObject()->getData());
+        $request->setCachedData($this->getValidatorObject()->getData());
 
         return $request;
     }
@@ -425,6 +446,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
     /**
      * @param array $data
      * @return \Ess\M2ePro\Model\Ebay\Listing\Product\Action\RequestData
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function buildRequestDataObject(array $data)
     {
@@ -438,9 +460,11 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
     /**
      * @param array $data
      * @return \Ess\M2ePro\Model\Ebay\Listing\Product\Action\RequestData
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function makeRequestDataObject(array $data)
     {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\RequestData $requestData */
         $requestData = $this->modelFactory->getObject('Ebay_Listing_Product_Action_RequestData');
 
         $requestData->setData($data);
@@ -494,6 +518,32 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         }
 
         return $this->logger;
+    }
+
+    //########################################
+
+    /**
+     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message[]
+     */
+    protected function getStoredLogMessages()
+    {
+        return $this->storedLogMessages;
+    }
+
+    protected function storeLogMessage(\Ess\M2ePro\Model\Connector\Connection\Response\Message $message)
+    {
+        $this->storedLogMessages[] = $message;
+    }
+
+    protected function writeStoredLogMessages()
+    {
+        foreach ($this->getStoredLogMessages() as $message) {
+            $this->getLogger()->logListingProductMessage(
+                $this->listingProduct,
+                $message,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+            );
+        }
     }
 
     //########################################

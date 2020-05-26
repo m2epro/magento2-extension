@@ -335,21 +335,4 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     }
 
     //########################################
-
-    public function getTrackingAttributes()
-    {
-        return $this->getUsedAttributes();
-    }
-
-    public function getUsedAttributes()
-    {
-        return array_merge(
-            $this->getPriceAttributes(),
-            $this->getComparisonPriceAttributes(),
-            $this->getStartDateAttributes(),
-            $this->getEndDateAttributes()
-        );
-    }
-
-    //########################################
 }

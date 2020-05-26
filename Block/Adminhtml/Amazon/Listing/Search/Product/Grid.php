@@ -13,6 +13,8 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\Product;
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGrid
 {
+    private $parentAndChildReviseScheduledCache = [];
+
     //########################################
 
     public function _construct()
@@ -134,6 +136,36 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
         return parent::_prepareCollection();
     }
 
+    protected function _afterLoadCollection()
+    {
+        $collection = $this->amazonFactory->getObject('Listing_Product')->getCollection();
+        $collection->getSelect()->join(
+            ['lps' => $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
+                ->getResource()->getMainTable()],
+            'lps.listing_product_id=main_table.id',
+            []
+        );
+
+        $collection->addFieldToFilter('is_variation_parent', 0);
+        $collection->addFieldToFilter('variation_parent_id', ['in' => $this->getCollection()->getColumnValues('id')]);
+        $collection->addFieldToFilter('lps.action_type', \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE);
+
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->columns(
+            [
+                'variation_parent_id' => 'second_table.variation_parent_id',
+                'count'               => new \Zend_Db_Expr('COUNT(lps.id)')
+            ]
+        );
+        $collection->getSelect()->group('variation_parent_id');
+
+        foreach ($collection->getItems() as $item) {
+            $this->parentAndChildReviseScheduledCache[$item->getData('variation_parent_id')] = true;
+        }
+
+        return parent::_afterLoadCollection();
+    }
+
     //########################################
 
     public function callbackColumnProductTitle($value, $row, $column, $isExport)
@@ -251,8 +283,7 @@ HTML;
         $variationManager = $listingProduct->getChildObject()->getVariationManager();
 
         if (!$variationManager->isVariationParent()) {
-            return $value .
-            $this->getLockedTag($row);
+            return $value . $this->getScheduledTag($row) . $this->getLockedTag($row);
         }
 
         $html = '';
@@ -267,18 +298,17 @@ HTML;
         $variationsStatuses = $row->getData('variation_child_statuses');
 
         if (empty($generalId) || empty($variationsStatuses)) {
-            return $this->getProductStatus($sNotListed).
-            $this->getLockedTag($row);
+            return $this->getProductStatus($sNotListed).$this->getScheduledTag($row).$this->getLockedTag($row);
         }
 
         $sortedStatuses     = [];
         $variationsStatuses = $this->getHelper('Data')->jsonDecode($variationsStatuses);
 
-        isset($variationsStatuses[$sUnknown]) && $sortedStatuses[$sUnknown]   = $variationsStatuses[$sUnknown];
+        isset($variationsStatuses[$sUnknown]) && $sortedStatuses[$sUnknown]     = $variationsStatuses[$sUnknown];
         isset($variationsStatuses[$sNotListed]) && $sortedStatuses[$sNotListed] = $variationsStatuses[$sNotListed];
-        isset($variationsStatuses[$sListed]) && $sortedStatuses[$sListed]    = $variationsStatuses[$sListed];
-        isset($variationsStatuses[$sStopped]) && $sortedStatuses[$sStopped]   = $variationsStatuses[$sStopped];
-        isset($variationsStatuses[$sBlocked]) && $sortedStatuses[$sBlocked]   = $variationsStatuses[$sBlocked];
+        isset($variationsStatuses[$sListed]) && $sortedStatuses[$sListed]       = $variationsStatuses[$sListed];
+        isset($variationsStatuses[$sStopped]) && $sortedStatuses[$sStopped]     = $variationsStatuses[$sStopped];
+        isset($variationsStatuses[$sBlocked]) && $sortedStatuses[$sBlocked]     = $variationsStatuses[$sBlocked];
 
         foreach ($sortedStatuses as $status => $productsCount) {
             if (empty($productsCount)) {
@@ -289,8 +319,7 @@ HTML;
             $html .= $this->getProductStatus($status) . '&nbsp;'. $productsCount . '<br/>';
         }
 
-        return $html .
-        $this->getLockedTag($row);
+        return $html . $this->getScheduledTag($row) . $this->getLockedTag($row);
     }
 
     public function callbackColumnActions($value, $row, $column, $isExport)
@@ -389,6 +418,85 @@ HTML;
 
         if ($childCount > 0) {
             $html .= '<br/><span style="color: #605fff">[' . $this->__('Child(s) in Action') . '...]</span>';
+        }
+
+        return $html;
+    }
+
+    protected function getScheduledTag($row)
+    {
+        $html = '';
+
+        /**
+         * @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $scheduledActionsCollection
+         */
+        $scheduledActionsCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
+            ->getCollection();
+        $scheduledActionsCollection->addFieldToFilter('listing_product_id', $row['id']);
+
+        /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction */
+        $scheduledAction = $scheduledActionsCollection->getFirstItem();
+
+        if (!$scheduledAction->getId()) {
+            return $html;
+        }
+
+        switch ($scheduledAction->getActionType()) {
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_LIST:
+                $html .= '<br/><span style="color: #605fff">[List is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST:
+                $html .= '<br/><span style="color: #605fff">[Relist is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE:
+                $reviseParts = [];
+
+                $additionalData = $scheduledAction->getAdditionalData();
+                if (!empty($additionalData['configurator']) &&
+                    !isset($this->parentAndChildReviseScheduledCache[$row->getData('id')])) {
+                    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator */
+                    $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
+                    $configurator->setUnserializedData($additionalData['configurator']);
+
+                    if ($configurator->isIncludingMode()) {
+                        if ($configurator->isQtyAllowed()) {
+                            $reviseParts[] = 'QTY';
+                        }
+
+                        if ($configurator->isRegularPriceAllowed() || $configurator->isBusinessPriceAllowed()) {
+                            $reviseParts[] = 'Price';
+                        }
+
+                        if ($configurator->isDetailsAllowed()) {
+                            $reviseParts[] = 'Details';
+                        }
+
+                        if ($configurator->isImagesAllowed()) {
+                            $reviseParts[] = 'Images';
+                        }
+                    }
+                }
+
+                if (!empty($reviseParts)) {
+                    $html .= '<br/><span style="color: #605fff">[Revise of '.implode(', ', $reviseParts)
+                        .' is Scheduled...]</span>';
+                } else {
+                    $html .= '<br/><span style="color: #605fff">[Revise is Scheduled...]</span>';
+                }
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_STOP:
+                $html .= '<br/><span style="color: #605fff">[Stop is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_DELETE:
+                $html .= '<br/><span style="color: #605fff">[Delete is Scheduled...]</span>';
+                break;
+
+            default:
+                break;
         }
 
         return $html;

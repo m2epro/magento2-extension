@@ -21,20 +21,24 @@ class Updating extends AbstractModel
      */
     public function process(array $listingsProductsRepricing)
     {
-        $changesData = [];
-        $updatedSkus = [];
+        $changesData                      = [];
+        $updatedListingProductsRepricing  = [];
+        $updatedSkus                      = [];
 
         foreach ($listingsProductsRepricing as $listingProductRepricing) {
             $changeData = $this->getChangeData($listingProductRepricing);
             if ($changeData && !in_array($changeData['sku'], $updatedSkus, true)) {
                 $changesData[] = $changeData;
                 $updatedSkus[] = $changeData['sku'];
+                $updatedListingProductsRepricing[] = $listingProductRepricing;
             }
         }
 
         if (!$this->sendData($changesData)) {
             return false;
         }
+
+        $this->updateListingsProductsRepricing($updatedListingProductsRepricing);
 
         return $updatedSkus;
     }
@@ -53,10 +57,10 @@ class Updating extends AbstractModel
         $minPrice     = $listingProductRepricing->getMinPrice();
         $maxPrice     = $listingProductRepricing->getMaxPrice();
 
-        if ($regularPrice == $listingProductRepricing->getOnlineRegularPrice() &&
-            $minPrice     == $listingProductRepricing->getOnlineMinPrice() &&
-            $maxPrice     == $listingProductRepricing->getOnlineMaxPrice() &&
-            $isDisabled   == $listingProductRepricing->isOnlineDisabled()
+        if ($isDisabled   == $listingProductRepricing->getLastUpdatedIsDisabled() &&
+            $regularPrice == $listingProductRepricing->getLastUpdatedRegularPrice() &&
+            $minPrice     == $listingProductRepricing->getLastUpdatedMinPrice() &&
+            $maxPrice     == $listingProductRepricing->getLastUpdatedMaxPrice()
         ) {
             return false;
         }
@@ -93,6 +97,25 @@ class Updating extends AbstractModel
 
         $this->processErrorMessages($result['response']);
         return true;
+    }
+
+    protected function updateListingsProductsRepricing(array $updatedProducts)
+    {
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing $updatedProduct */
+        foreach ($updatedProducts as $updatedProduct) {
+            $this->resourceConnection->getConnection()->update(
+                $this->getHelper('Module_Database_Structure')
+                    ->getTableNameWithPrefix('m2epro_amazon_listing_product_repricing'),
+                [
+                    'last_updated_regular_price' => $updatedProduct->getRegularPrice(),
+                    'last_updated_min_price'     => $updatedProduct->getMinPrice(),
+                    'last_updated_max_price'     => $updatedProduct->getMaxPrice(),
+                    'last_updated_is_disabled'   => $updatedProduct->isDisabled(),
+                    'update_date'                => $this->getHelper('Data')->getCurrentGmtDate(),
+                ],
+                ['listing_product_id = ?' => $updatedProduct->getListingProductId()]
+            );
+        }
     }
 
     //########################################

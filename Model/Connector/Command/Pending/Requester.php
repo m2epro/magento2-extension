@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Connector\Command\Pending;
  */
 abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\AbstractModel
 {
-    /** @var \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single $processingRunner */
+    /** @var \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Single\Runner $processingRunner */
     protected $processingRunner = null;
 
     protected $processingServerHash = null;
@@ -23,7 +23,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\AbstractMod
 
     protected $preparedResponseData = null;
 
-    // ########################################
+    //########################################
 
     protected function getProcessingRunner()
     {
@@ -53,11 +53,27 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\AbstractMod
         ]);
     }
 
-    // ########################################
+    //########################################
 
     public function process()
     {
-        $this->getConnection()->process();
+        try {
+            $this->getConnection()->process();
+        } catch (\Exception $exception) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
+            $message->initFromException($exception);
+
+            if ($this->getConnection()->getResponse() === null ||
+                $this->getConnection()->getResponse()->getMessages() === null) {
+                $response = $this->modelFactory->getObject('Connector_Connection_Response');
+                $response->initFromPreparedResponse([], []);
+
+                $this->getConnection()->setResponse($response);
+            }
+
+            $this->getConnection()->getResponse()->getMessages()->addEntity($message);
+        }
 
         $this->eventBeforeExecuting();
 
@@ -87,25 +103,25 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\AbstractMod
         }
     }
 
-    // ########################################
+    //########################################
 
     public function getPreparedResponseData()
     {
         return $this->preparedResponseData;
     }
 
-    // ########################################
+    //########################################
 
     public function eventBeforeExecuting()
     {
         return null;
     }
 
-    // ########################################
+    //########################################
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Connector_Command_Pending_Processing_Runner_Single';
+        return 'Connector_Command_Pending_Processing_Single_Runner';
     }
 
     protected function getProcessingParams()
@@ -133,5 +149,5 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\AbstractMod
         return $this->params;
     }
 
-    // ########################################
+    //########################################
 }

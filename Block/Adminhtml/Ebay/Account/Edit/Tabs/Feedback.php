@@ -25,10 +25,9 @@ class Feedback extends AbstractForm
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         $defaults = [
-            'feedbacks_receive' => \Ess\M2ePro\Model\Ebay\Account::FEEDBACKS_RECEIVE_NO,
+            'feedbacks_receive' => 0,
             'feedbacks_auto_response' => \Ess\M2ePro\Model\Ebay\Account::FEEDBACKS_AUTO_RESPONSE_NONE,
-            'feedbacks_auto_response_only_positive' =>
-                \Ess\M2ePro\Model\Ebay\Account::FEEDBACKS_AUTO_RESPONSE_ONLY_POSITIVE_NO
+            'feedbacks_auto_response_only_positive' => 0
         ];
         $formData = array_merge($defaults, $formData);
         $this->setData('form_data', $formData);
@@ -69,8 +68,8 @@ class Feedback extends AbstractForm
                 'name' => 'feedbacks_receive',
                 'label' => $this->__('Import Feedback'),
                 'values' => [
-                    Account::FEEDBACKS_RECEIVE_YES => $this->__('Yes'),
-                    Account::FEEDBACKS_RECEIVE_NO => $this->__('No'),
+                    1 => $this->__('Yes'),
+                    0 => $this->__('No'),
                 ],
                 'value' => $formData['feedbacks_receive'],
                 'tooltip' => $this->__(
@@ -99,8 +98,7 @@ class Feedback extends AbstractForm
                     <b>Disabled</b> means no automatic responses to Feedback will be made.'
                 ),
                 'field_extra_attributes' => 'id="feedbacks_auto_response_container" ' .
-                    (($formData['feedbacks_receive'] == Account::FEEDBACKS_RECEIVE_NO) ?
-                        'style="display: none;"' : '')
+                    (($formData['feedbacks_receive'] == 0) ? 'style="display: none;"' : '')
             ]
         );
 
@@ -112,8 +110,8 @@ class Feedback extends AbstractForm
                 'name' => 'feedbacks_auto_response_only_positive',
                 'label' => $this->__('Send to'),
                 'values' => [
-                    Account::FEEDBACKS_AUTO_RESPONSE_ONLY_POSITIVE_NO => $this->__('All'),
-                    Account::FEEDBACKS_AUTO_RESPONSE_ONLY_POSITIVE_YES => $this->__('Positive')
+                    0 => $this->__('All'),
+                    1 => $this->__('Positive')
                 ],
                 'value' => $formData['feedbacks_auto_response_only_positive'],
                 'tooltip' => $this->__(
@@ -121,7 +119,7 @@ class Feedback extends AbstractForm
                     <b>Positive</b> Feedback only.'
                 ),
                 'field_extra_attributes' => 'id="feedbacks_auto_response_only_positive_container" ' .
-                    (($formData['feedbacks_receive'] == Account::FEEDBACKS_RECEIVE_NO ||
+                    (($formData['feedbacks_receive'] == 0 ||
                         $formData['feedbacks_auto_response'] == Account::FEEDBACKS_AUTO_RESPONSE_NONE) ?
                         'style="display: none;"' : '')
             ]
@@ -210,7 +208,7 @@ CSS
         $gridHtml = $grid->toHtml();
 
         $showTemplates = (
-            $formData['feedbacks_receive'] == Account::FEEDBACKS_RECEIVE_YES &&
+            $formData['feedbacks_receive'] == 1 &&
             $formData['feedbacks_auto_response'] != Account::FEEDBACKS_AUTO_RESPONSE_NONE
         );
         $gridContainerStyle = $showTemplates ? '' : 'style="display: none;"';

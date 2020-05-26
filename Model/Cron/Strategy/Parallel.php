@@ -8,26 +8,28 @@
 
 namespace Ess\M2ePro\Model\Cron\Strategy;
 
-use Ess\M2ePro\Model\Exception;
+use \Ess\M2ePro\Model\Lock\Item\Manager as LockManager;
 
 /**
  * Class \Ess\M2ePro\Model\Cron\Strategy\Parallel
  */
 class Parallel extends AbstractModel
 {
-    const GENERAL_LOCK_ITEM_PREFIX = 'cron_strategy_parallel_';
+    const GENERAL_LOCK_ITEM_PREFIX  = 'cron_strategy_parallel_';
+    const FAST_TASKS_LOCK_ITEM_NICK = 'cron_strategy_parallel_fast_tasks';
 
     const MAX_PARALLEL_EXECUTED_CRONS_COUNT = 10;
+    const MAX_FIRST_SLOW_TASK_EXECUTION_TIME_FOR_CONTINUE = 60;
 
     /**
      * @var \Ess\M2ePro\Model\Lock\Item\Manager
      */
-    private $generalLockItem = null;
+    protected $lockItemManager;
 
     /**
      * @var \Ess\M2ePro\Model\Lock\Item\Manager
      */
-    private $fastTasksLockItem = null;
+    protected $fastTasksLockItemManager;
 
     //########################################
 
@@ -40,219 +42,211 @@ class Parallel extends AbstractModel
 
     protected function processTasks()
     {
-        $result = true;
-
-        /** @var \Ess\M2ePro\Model\Lock\Transactional\Manager $transactionalManager */
-        $transactionalManager = $this->modelFactory->getObject('Lock_Transactional_Manager');
-        $transactionalManager->setNick(self::INITIALIZATION_TRANSACTIONAL_LOCK_NICK);
-
-        $transactionalManager->lock();
+        $this->getInitializationLockManager()->lock();
 
         if ($this->isSerialStrategyInProgress()) {
-            $transactionalManager->unlock();
-            return $result;
+            $this->getInitializationLockManager()->unlock();
+            return;
         }
 
-        $this->getGeneralLockItem()->create();
-        $this->getGeneralLockItem()->makeShutdownFunction();
-
-        if (!$this->getFastTasksLockItem()->isExist()) {
-            $this->getFastTasksLockItem()->create($this->getGeneralLockItem()->getRealId());
-            $this->getFastTasksLockItem()->makeShutdownFunction();
-
-            $transactionalManager->unlock();
-
-            $result = !$this->processFastTasks() ? false : $result;
-
-            $this->getFastTasksLockItem()->remove();
+        if ($this->getLockItemManager() === false) {
+            return;
         }
 
-        $transactionalManager->unlock();
+        try {
+            $this->getLockItemManager()->create();
+            $this->makeLockItemShutdownFunction($this->getLockItemManager());
 
-        $result = !$this->processSlowTasks() ? false : $result;
+            $this->processFastTasks();
+            $this->getInitializationLockManager()->unlock();
+            $this->processSlowTasks();
+        } catch (\Exception $exception) {
+            $this->processException($exception);
+        }
 
-        $this->getGeneralLockItem()->remove();
-
-        return $result;
+        $this->getLockItemManager()->remove();
     }
 
     // ---------------------------------------
 
-    private function processFastTasks()
+    protected function processFastTasks()
     {
-        $result = true;
-
-        foreach ($this->getAllowedFastTasks() as $taskNick) {
-            try {
-                $taskObject = $this->getTaskObject($taskNick);
-                $taskObject->setParentLockItem($this->getFastTasksLockItem());
-
-                $tempResult = $taskObject->process();
-
-                if ($tempResult !== null && !$tempResult) {
-                    $result = false;
-                }
-
-                $this->getFastTasksLockItem()->activate();
-            } catch (\Exception $exception) {
-                $result = false;
-
-                $this->getOperationHistory()->addContentData('exception', [
-                    'message' => $exception->getMessage(),
-                    'file'    => $exception->getFile(),
-                    'line'    => $exception->getLine(),
-                    'trace'   => $exception->getTraceAsString(),
-                ]);
-
-                $this->getHelper('Module\Exception')->process($exception);
-            }
+        if ($this->getFastTasksLockItemManager() === false) {
+            return;
         }
 
-        return $result;
+        try {
+            $this->getFastTasksLockItemManager()->create($this->getLockItemManager()->getNick());
+            $this->makeLockItemShutdownFunction($this->getFastTasksLockItemManager());
+
+            $this->getInitializationLockManager()->unlock();
+
+            $this->keepAliveStart($this->getFastTasksLockItemManager());
+            $this->startListenProgressEvents($this->getFastTasksLockItemManager());
+
+            $taskGroup = $this->getNextTaskGroup();
+            $this->getHelper('Module_Cron')->setLastExecutedTaskGroup($taskGroup);
+
+            foreach ($this->getAllowedFastTasks($taskGroup) as $taskNick) {
+                try {
+                    $taskObject = $this->getTaskObject($taskNick);
+                    $taskObject->setLockItemManager($this->getFastTasksLockItemManager());
+
+                    $taskObject->process();
+                } catch (\Exception $exception) {
+                    $this->processException($exception);
+                }
+            }
+
+            $this->keepAliveStop();
+            $this->stopListenProgressEvents();
+        } catch (\Exception $exception) {
+            $this->processException($exception);
+        }
+
+        $this->getFastTasksLockItemManager()->remove();
     }
 
-    private function processSlowTasks()
+    protected function processSlowTasks()
     {
-        $helper = $this->getHelper('Module\Cron');
+        $startTime = time();
 
-        $result = true;
+        $countOfAllowedTasks = count($this->getAllowedSlowTasks());
+        for ($i = 0; $i < $countOfAllowedTasks; $i++) {
 
-        for ($i = 0; $i < count($this->getAllowedSlowTasks()); $i++) {
-            $transactionalManager = $this->modelFactory->getObject('Lock_Transactional_Manager');
-            $transactionalManager->setNick(self::GENERAL_LOCK_ITEM_PREFIX.'slow_task_switch');
+            $transactionalManager = $this->modelFactory->getObject('Lock_Transactional_Manager', [
+                'nick' => self::GENERAL_LOCK_ITEM_PREFIX . 'slow_task_switch'
+            ]);
 
             $transactionalManager->lock();
 
             $taskNick = $this->getNextSlowTask();
-            $helper->setLastExecutedSlowTask($taskNick);
+            $this->getHelper('Module_Cron')->setLastExecutedSlowTask($taskNick);
 
             $transactionalManager->unlock();
 
-            $taskObject = $this->getTaskObject($taskNick);
-            $taskObject->setParentLockItem($this->getGeneralLockItem());
+            $taskLockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
+                'nick' => 'cron_task_'.str_replace("/", "_", $taskNick)
+            ]);
 
-            if (!$taskObject->isPossibleToRun()) {
-                continue;
+            if ($taskLockItemManager->isExist()) {
+                if (!$taskLockItemManager->isInactiveMoreThanSeconds(LockManager::DEFAULT_MAX_INACTIVE_TIME)) {
+                    continue;
+                }
+
+                $taskLockItemManager->remove();
             }
 
             try {
-                $result = $taskObject->process();
+                $taskLockItemManager->create($this->getLockItemManager()->getNick());
+                $this->makeLockItemShutdownFunction($taskLockItemManager);
+
+                $taskObject = $this->getTaskObject($taskNick);
+                $taskObject->setLockItemManager($taskLockItemManager);
+
+                $this->keepAliveStart($taskLockItemManager);
+                $this->startListenProgressEvents($taskLockItemManager);
+
+                $taskObject->process();
+
+                $this->keepAliveStop();
+                $this->stopListenProgressEvents();
             } catch (\Exception $exception) {
-                $result = false;
-
-                $this->getOperationHistory()->addContentData('exception', [
-                    'message' => $exception->getMessage(),
-                    'file'    => $exception->getFile(),
-                    'line'    => $exception->getLine(),
-                    'trace'   => $exception->getTraceAsString(),
-                ]);
-
-                $this->getHelper('Module\Exception')->process($exception);
+                $this->processException($exception);
             }
 
-            break;
-        }
+            $taskLockItemManager->remove();
 
-        return $result;
+            $processTime = time() - $startTime;
+            if ($processTime > self::MAX_FIRST_SLOW_TASK_EXECUTION_TIME_FOR_CONTINUE) {
+                break;
+            }
+        }
     }
 
     //########################################
 
-    private function getAllowedFastTasks()
+    protected function getAllowedFastTasks($group)
     {
-        return array_intersect($this->getAllowedTasks(), [
-            \Ess\M2ePro\Model\Cron\Task\IssuesResolver::NICK,
-            \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingInspectProducts::NICK,
-            \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingUpdateSettings::NICK,
-            \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingSynchronizationGeneral::NICK,
-            \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingSynchronizationActualPrice::NICK,
-            \Ess\M2ePro\Model\Cron\Task\RequestPendingSingle::NICK,
-            \Ess\M2ePro\Model\Cron\Task\RequestPendingPartial::NICK,
-            \Ess\M2ePro\Model\Cron\Task\ConnectorRequesterPendingSingle::NICK,
-            \Ess\M2ePro\Model\Cron\Task\ConnectorRequesterPendingPartial::NICK,
-            \Ess\M2ePro\Model\Cron\Task\Amazon\Actions::NICK,
-            \Ess\M2ePro\Model\Cron\Task\Walmart\Actions::NICK,
-            \Ess\M2ePro\Model\Cron\Task\LogsClearing::NICK,
-            \Ess\M2ePro\Model\Cron\Task\Servicing::NICK,
-            \Ess\M2ePro\Model\Cron\Task\HealthStatus::NICK,
-            \Ess\M2ePro\Model\Cron\Task\Ebay\UpdateAccountsPreferences::NICK,
-            \Ess\M2ePro\Model\Cron\Task\Synchronization::NICK,
-            \Ess\M2ePro\Model\Cron\Task\ArchiveOrdersEntities::NICK
-        ]);
-    }
-
-    private function getAllowedSlowTasks()
-    {
-        return array_intersect($this->getAllowedTasks(), [
-            \Ess\M2ePro\Model\Cron\Task\Ebay\Actions::NICK
-        ]);
-    }
-
-    // ---------------------------------------
-
-    private function getNextSlowTask()
-    {
-        $helper = $this->getHelper('Module\Cron');
-        $lastExecutedTask = $helper->getLastExecutedSlowTask();
-
-        $allowedSlowTasks = $this->getAllowedSlowTasks();
-        $lastExecutedTaskIndex = array_search($lastExecutedTask, $allowedSlowTasks);
-
-        if (empty($lastExecutedTask)
-            || $lastExecutedTaskIndex === false
-            || end($allowedSlowTasks) == $lastExecutedTask) {
-            return reset($allowedSlowTasks);
-        }
-
-        return $allowedSlowTasks[$lastExecutedTaskIndex + 1];
+        $tasks = $this->taskRepo->getGroupTasks($group);
+        return array_values(array_diff($tasks, $this->getAllowedSlowTasks()));
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Lock\Item\Manager
-     * @throws Exception
+     * These tasks will work in parallel to each one and to fast tasks process also. Up to 10 processes!
      */
-    private function getGeneralLockItem()
+    protected function getAllowedSlowTasks()
     {
-        if ($this->generalLockItem !== null) {
-            return $this->generalLockItem;
+        return $this->taskRepo->getParallelTasks();
+    }
+
+    //########################################
+
+    protected function getNextSlowTask()
+    {
+        $lastExecuted = $this->getHelper('Module_Cron')->getLastExecutedSlowTask();
+        $allowed = $this->getAllowedSlowTasks();
+        $lastExecutedIndex = array_search($lastExecuted, $allowed, true);
+
+        if (empty($lastExecuted) || $lastExecutedIndex === false || end($allowed) === $lastExecuted) {
+            return reset($allowed);
+        }
+
+        return $allowed[$lastExecutedIndex + 1];
+    }
+
+    //########################################
+
+    /**
+     * @return \Ess\M2ePro\Model\Lock\Item\Manager|bool
+     */
+    protected function getLockItemManager()
+    {
+        if ($this->lockItemManager !== null) {
+            return $this->lockItemManager;
         }
 
         for ($index = 1; $index <= self::MAX_PARALLEL_EXECUTED_CRONS_COUNT; $index++) {
-            $lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
-            $lockItem->setNick(self::GENERAL_LOCK_ITEM_PREFIX.$index);
+            $lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
+                'nick' => self::GENERAL_LOCK_ITEM_PREFIX.$index
+            ]);
 
-            if (!$lockItem->isExist()) {
-                return $this->generalLockItem = $lockItem;
+            if (!$lockItemManager->isExist()) {
+                return $this->lockItemManager = $lockItemManager;
+            }
+
+            if ($lockItemManager->isInactiveMoreThanSeconds(LockManager::DEFAULT_MAX_INACTIVE_TIME)) {
+                $lockItemManager->remove();
+                return $this->lockItemManager = $lockItemManager;
             }
         }
 
-        throw new Exception('Too many parallel lock items.');
+        return false;
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Lock\Item\Manager
+     * @return \Ess\M2ePro\Model\Lock\Item\Manager|bool
      */
-    private function getFastTasksLockItem()
+    protected function getFastTasksLockItemManager()
     {
-        if ($this->fastTasksLockItem !== null) {
-            return $this->fastTasksLockItem;
+        if ($this->fastTasksLockItemManager !== null) {
+            return $this->fastTasksLockItemManager;
         }
 
-        $this->fastTasksLockItem = $this->modelFactory->getObject('Lock_Item_Manager');
-        $this->fastTasksLockItem->setNick('cron_strategy_parallel_fast_tasks');
+        $lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
+            'nick' => self::FAST_TASKS_LOCK_ITEM_NICK
+        ]);
 
-        return $this->fastTasksLockItem;
-    }
+        if (!$lockItemManager->isExist()) {
+            return $this->fastTasksLockItemManager = $lockItemManager;
+        }
 
-    /**
-     * @return bool
-     */
-    private function isSerialStrategyInProgress()
-    {
-        $serialLockItem = $this->modelFactory->getObject('Lock_Item_Manager');
-        $serialLockItem->setNick(Serial::LOCK_ITEM_NICK);
+        if ($lockItemManager->isInactiveMoreThanSeconds(LockManager::DEFAULT_MAX_INACTIVE_TIME)) {
+            $lockItemManager->remove();
+            return $this->fastTasksLockItemManager = $lockItemManager;
+        }
 
-        return $serialLockItem->isExist();
+        return false;
     }
 
     //########################################

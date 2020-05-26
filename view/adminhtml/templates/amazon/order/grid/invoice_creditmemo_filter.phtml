@@ -1,0 +1,27 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Order\Grid\InvoiceCreditmemoFilter $block */
+
+?>
+
+<div class="switcher">
+    <input
+        id="switcher_invoice_creditmemo_filter"
+        type="checkbox"
+        class="admin__control-checkbox"
+        <?php if ($block->isChecked()) :
+            ?>checked="checked"<?php
+        endif; ?>
+        onclick="setLocation('<?php echo $block->getFilterUrl(); ?>');"
+    >
+    <label for="switcher_not_created_filter" class="admin__field-label">
+        <span><?php echo $block->__('No Invoice/CreditMemo Sent'); ?></span>
+    </label>
+</div>

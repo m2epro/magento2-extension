@@ -68,7 +68,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         $defaultData['product_details'] = $this->getHelper('Data')->jsonDecode($defaultData['product_details']);
         $defaultData['watermark_settings'] = $this->getHelper('Data')->jsonDecode($defaultData['watermark_settings']);
 
-        $data = array_replace_recursive($defaultData, $data);
+        $data = $this->getHelper('Data')->arrayReplaceRecursive($defaultData, $data);
 
         if (isset($data['title_mode'])) {
             $prepared['title_mode'] = (int)$data['title_mode'];

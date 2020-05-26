@@ -30,7 +30,9 @@ class CreateLicense extends InstallationWalmart
         $licenseData = [];
         foreach ($requiredKeys as $key) {
             if ($tempValue = $this->getRequest()->getParam($key)) {
-                $licenseData[$key] = $tempValue;
+                $licenseData[$key] = $this->getHelper('Data')->escapeJs(
+                    $this->getHelper('Data')->escapeHtml($tempValue)
+                );
                 continue;
             }
 
@@ -42,26 +44,46 @@ class CreateLicense extends InstallationWalmart
             return $this->getResult();
         }
 
-        $registry = $this->activeRecordFactory->getObject('Registry');
-
-        $registry->setData('key', '/wizard/license_form_data/');
-        $registry->setData('value', $this->getHelper('Data')->jsonEncode($licenseData));
-        $registry->save();
-
         if ($this->getHelper('Module\License')->getKey()) {
             $this->setJsonContent(['status' => true]);
             return $this->getResult();
         }
 
-        $licenseResult = $this->getHelper('Module\License')->obtainRecord(
-            $licenseData['email'],
-            $licenseData['firstname'],
-            $licenseData['lastname'],
-            $licenseData['country'],
-            $licenseData['city'],
-            $licenseData['postal_code'],
-            $licenseData['phone']
-        );
+        $message = null;
+
+        try {
+            $licenseResult = $this->getHelper('Module\License')->obtainRecord(
+                $licenseData['email'],
+                $licenseData['firstname'],
+                $licenseData['lastname'],
+                $licenseData['country'],
+                $licenseData['city'],
+                $licenseData['postal_code'],
+                $licenseData['phone']
+            );
+        } catch (\Exception $e) {
+            $this->getHelper('Module\Exception')->process($e);
+            $licenseResult = false;
+            $message = $this->__($e->getMessage());
+        }
+
+        if (!$licenseResult) {
+            if (!$message) {
+                $message = $this->__('License Creation is failed. Please contact M2E Pro Support for resolution.');
+            }
+
+            $this->setJsonContent([
+                'status'  => $licenseResult,
+                'message' => $message
+            ]);
+
+            return $this->getResult();
+        }
+
+        $registry = $this->activeRecordFactory->getObject('Registry');
+        $registry->setData('key', '/wizard/license_form_data/');
+        $registry->setData('value', $this->getHelper('Data')->jsonEncode($licenseData));
+        $registry->save();
 
         $this->setJsonContent(['status' => $licenseResult]);
         return $this->getResult();

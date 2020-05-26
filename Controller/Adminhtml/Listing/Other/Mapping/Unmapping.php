@@ -45,7 +45,7 @@ class Unmapping extends Listing
                 continue;
             }
 
-            $listingOtherProductInstance->unmapProduct(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
+            $listingOtherProductInstance->unmapProduct();
         }
 
         $this->setAjaxContent('1', false);

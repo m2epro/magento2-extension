@@ -15,18 +15,46 @@ use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
  */
 class UpdatePaymentStatus extends Order
 {
+    //########################################
+
     public function execute()
     {
-        if ($this->processConnector(\Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_PAY)) {
+        $ids = $this->getRequestIds();
+
+        if (count($ids) == 0) {
+            $this->messageManager->addError($this->__('Please select Order(s).'));
+            return false;
+        }
+
+        $ordersCollection = $this->ebayFactory->getObject('Order')->getCollection();
+        $ordersCollection->addFieldToFilter('id', ['in' => $ids]);
+
+        $hasFailed = false;
+        $hasSucceeded = false;
+
+        foreach ($ordersCollection->getItems() as $order) {
+            /** @var \Ess\M2ePro\Model\Order $order */
+            $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
+            $order->getChildObject()->updatePaymentStatus() ? $hasSucceeded = true
+                                                            : $hasFailed = true;
+        }
+
+        if (!$hasFailed && $hasSucceeded) {
             $this->messageManager->addSuccess(
-                $this->__('Payment status for selected eBay Order(s) was updated to Paid.')
+                $this->__('Updating eBay Order(s) Status to Paid in Progress...')
             );
-        } else {
+        } elseif ($hasFailed && !$hasSucceeded) {
             $this->messageManager->addError(
-                $this->__('Payment status for selected eBay Order(s) was not updated.')
+                $this->__('eBay Order(s) can not be updated for Paid Status.')
+            );
+        } elseif ($hasFailed && $hasSucceeded) {
+            $this->messageManager->addError(
+                $this->__('Some of eBay Order(s) can not be updated for Paid Status.')
             );
         }
 
         return $this->_redirect($this->_redirect->getRefererUrl());
     }
+
+    //########################################
 }

@@ -107,12 +107,12 @@ CSS
     This file should be in CSV format, where each line describes one Compatible Vehicle.<br/><br/>
     First line of the file should contain names of Columns:
     <ul class="list">
-    <li>for ePIDs: epid,product_type,make,model,submodel,year,trim,engine</li>
-    <li>for kTypes: ktype,make,model,variant,body_style,type,from_year,to_year,engine</li>
+    <li>for ePIDs: epid, product_type, make, model, submodel, street_name, year, trim, engine</li>
+    <li>for kTypes: ktype, make, model, variant, body_style, type, from_year, to_year, engine</li>
     </ul>
     There are several required fields:
     <ul class="list">
-    <li>for ePIDs: epid,product_type,make,model,submodel,year</li>
+    <li>for ePIDs: epid, product_type, make, model, submodel, year</li>
     <li>for kTypes: ktype</li>
     </ul>
     For ePIDs product_type column you should provide one of these possible Values:

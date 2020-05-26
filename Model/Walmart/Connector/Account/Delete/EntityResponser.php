@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Walmart\Connector\Account\Delete;
  */
 class EntityResponser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Responser
 {
-    // ########################################
+    //########################################
 
     protected function validateResponse()
     {
@@ -25,5 +25,5 @@ class EntityResponser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pendin
         return null;
     }
 
-    // ########################################
+    //########################################
 }

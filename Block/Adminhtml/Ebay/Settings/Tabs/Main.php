@@ -105,11 +105,11 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
                 'name'   => 'upload_images_mode',
                 'label'  => $this->__('Main Image/Gallery Hosting Mode'),
                 'values' => [
-                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description::UPLOAD_IMAGES_MODE_AUTO
+                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Images::UPLOAD_IMAGES_MODE_AUTO
                     => $this->__('Automatic'),
-                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description::UPLOAD_IMAGES_MODE_SELF
+                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Images::UPLOAD_IMAGES_MODE_SELF
                     => $this->__('Self-Hosted'),
-                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description::UPLOAD_IMAGES_MODE_EPS
+                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Images::UPLOAD_IMAGES_MODE_EPS
                     => $this->__('EPS-Hosted'),
                 ],
                 'value' => $uploadImagesMode,

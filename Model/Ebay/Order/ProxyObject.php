@@ -84,12 +84,11 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return $this->order->getEbayOrderId();
     }
 
+    /**
+     * @return string
+     */
     public function getOrderNumberPrefix()
     {
-        if (!$this->order->getEbayAccount()->isMagentoOrdersNumberPrefixEnable()) {
-            return '';
-        }
-
         return $this->order->getEbayAccount()->getMagentoOrdersNumberRegularPrefix();
     }
 
@@ -183,8 +182,8 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
         $recipientNameParts = $this->getNameParts($rawAddressData['recipient_name']);
         $addressData['firstname']   = $recipientNameParts['firstname'];
-        $addressData['middlename']  = $recipientNameParts['middlename'];
         $addressData['lastname']    = $recipientNameParts['lastname'];
+        $addressData['middlename']  = $recipientNameParts['middlename'];
 
         $customerNameParts = $this->getNameParts($rawAddressData['buyer_name']);
         $addressData['customer_firstname']   = $customerNameParts['firstname'];

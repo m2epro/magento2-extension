@@ -21,6 +21,11 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
  */
 class UpgradeData implements UpgradeDataInterface
 {
+    /**
+     * Means that version, upgrade files are included to the build
+     */
+    const MIN_SUPPORTED_VERSION_FOR_UPGRADE = '1.0.0';
+
     /** @var \Magento\Framework\Module\ModuleResource $moduleResource */
     private $moduleResource;
 
@@ -30,16 +35,13 @@ class UpgradeData implements UpgradeDataInterface
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory */
     private $activeRecordFactory;
 
-    /** @var Module $moduleConfig */
-    private $moduleConfig;
-
     /** @var \Ess\M2ePro\Helper\Factory $helperFactory */
     private $helperFactory;
 
     /** @var \Ess\M2ePro\Model\Factory $modelFactory */
     private $modelFactory;
 
-    /** @var  ModuleDataSetupInterface $installer */
+    /** @var ModuleDataSetupInterface $installer */
     private $installer;
 
     /** @var \Psr\Log\LoggerInterface */
@@ -69,7 +71,10 @@ class UpgradeData implements UpgradeDataInterface
         '1.3.4' => ['1.4.0'],
         '1.4.0' => ['1.4.1'],
         '1.4.1' => ['1.4.2'],
-        '1.4.2' => ['1.4.3']
+        '1.4.2' => ['1.4.3'],
+        '1.4.3' => ['1.5.0'],
+        '1.5.0' => ['1.5.1'],
+        '1.5.1' => ['1.6.0'],
     ];
 
     //########################################
@@ -78,7 +83,6 @@ class UpgradeData implements UpgradeDataInterface
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         \Magento\Framework\Module\ModuleListInterface $moduleList,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Setup\LoggerFactory $loggerFactory
@@ -86,7 +90,6 @@ class UpgradeData implements UpgradeDataInterface
         $this->moduleResource = new \Magento\Framework\Module\ModuleResource($context);
         $this->moduleList = $moduleList;
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->moduleConfig = $moduleConfig;
         $this->helperFactory = $helperFactory;
         $this->modelFactory = $modelFactory;
 
@@ -140,7 +143,7 @@ class UpgradeData implements UpgradeDataInterface
                     'installer'   => $this->installer,
                 ]);
 
-                $setupObject  = $this->initSetupObject($versionFrom, $versionTo);
+                $setupObject  = $upgradeManager->getCurrentSetupObject();
                 $backupObject = $upgradeManager->getBackupObject();
 
                 if ($setupObject->isBackuped() && $this->isAllowedRollbackFromBackup()) {
@@ -160,8 +163,12 @@ class UpgradeData implements UpgradeDataInterface
             }
         } catch (\Exception $exception) {
             $this->logger->error($exception, ['source' => 'UpgradeData']);
-            $this->helperFactory->getObject('Module\Exception')->process($exception);
             $this->helperFactory->getObject('Data\GlobalData')->setValue('is_setup_failed', true);
+
+            if (isset($setupObject)) {
+                $setupObject->setData('profiler_data', $exception->__toString());
+                $setupObject->save();
+            }
 
             $this->installer->endSetup();
             return;
@@ -191,19 +198,18 @@ class UpgradeData implements UpgradeDataInterface
 
     private function checkPreconditions()
     {
-        $maxSetupVersion = $this->activeRecordFactory->getObject('Setup')
-            ->getResource()
-            ->getMaxCompletedItem();
+        $setupResource = $this->activeRecordFactory->getObject('Setup')->getResource();
 
+        $maxSetupVersion = $setupResource->getMaxCompletedItem();
         $maxSetupVersion && $maxSetupVersion = $maxSetupVersion->getVersionTo();
 
         if ($maxSetupVersion !== null && $maxSetupVersion != $this->getMagentoResourceVersion()) {
             $this->setMagentoResourceVersion($maxSetupVersion);
         }
 
-        $notCompletedUpgrades = $this->getNotCompletedUpgrades();
-
+        $notCompletedUpgrades = $setupResource->getNotCompletedUpgrades();
         if (!empty($notCompletedUpgrades) && !$this->isAllowedRollbackFromBackup()) {
+            // @codingStandardsIgnoreLine
             throw new Exception('There are some not completed previous upgrades');
         }
 
@@ -211,12 +217,14 @@ class UpgradeData implements UpgradeDataInterface
             // only 1 not completed upgrade allowed for rollback from backup
 
             if (count($notCompletedUpgrades) > 1) {
+                // @codingStandardsIgnoreLine
                 throw new Exception('There are more than 1 not completed previous upgrades available');
             }
 
             if (!empty($notCompletedUpgrades) &&
                 reset($notCompletedUpgrades)->getVersionFrom() != $this->getMagentoResourceVersion()
             ) {
+                // @codingStandardsIgnoreLine
                 throw new Exception('Not completed upgrade is invalid for rollback from backup');
             }
         }
@@ -226,8 +234,9 @@ class UpgradeData implements UpgradeDataInterface
     {
         $resultVersions = [];
 
-        // we must execute last failed upgrade first
-        if ($this->isAllowedRollbackFromBackup() && ($notCompletedUpgrades = $this->getNotCompletedUpgrades())) {
+        $setupResource = $this->activeRecordFactory->getObject('Setup')->getResource();
+        $notCompletedUpgrades = $setupResource->getNotCompletedUpgrades();
+        if ($this->isAllowedRollbackFromBackup() && !empty($notCompletedUpgrades)) {
             /** @var Setup[] $notCompletedUpgrades */
 
             $notCompletedUpgrade = reset($notCompletedUpgrades);
@@ -237,6 +246,16 @@ class UpgradeData implements UpgradeDataInterface
         $versionFrom = end($resultVersions);
         if (empty($versionFrom)) {
             $versionFrom = $this->getMagentoResourceVersion();
+        }
+
+        if (version_compare($versionFrom, self::MIN_SUPPORTED_VERSION_FOR_UPGRADE, '<')) {
+            // @codingStandardsIgnoreStart
+            throw new Exception(
+                sprintf(
+                    'This version [%s] is too old.', $versionFrom
+                )
+            );
+            // @codingStandardsIgnoreEnd
         }
 
         while ($versionFrom != $this->getConfigVersion()) {
@@ -250,43 +269,6 @@ class UpgradeData implements UpgradeDataInterface
     }
 
     //########################################
-
-    /**
-     * @return Setup[]
-     */
-    private function getNotCompletedUpgrades()
-    {
-        $collection = $this->activeRecordFactory->getObject('Setup')->getCollection();
-        $collection->addFieldToFilter('version_from', ['notnull' => true]);
-        $collection->addFieldToFilter('version_to', ['notnull' => true]);
-        $collection->addFieldToFilter('is_backuped', 1);
-        $collection->addFieldToFilter('is_completed', 0);
-
-        return $collection->getItems();
-    }
-
-    private function initSetupObject($versionFrom, $versionTo)
-    {
-        $collection = $this->activeRecordFactory->getObject('Setup')->getCollection();
-        $collection->addFieldToFilter('version_from', $versionFrom);
-        $collection->addFieldToFilter('version_to', $versionTo);
-        $collection->getSelect()->limit(1);
-
-        /** @var Setup $setupObject */
-        $setupObject = $collection->getFirstItem();
-
-        if (!$setupObject->getId()) {
-            $setupObject->setData([
-                'version_from' => $versionFrom,
-                'version_to'   => $versionTo,
-                'is_backuped'  => 0,
-                'is_completed' => 0,
-            ]);
-            $setupObject->save();
-        }
-
-        return $setupObject;
-    }
 
     private function isMaintenanceCanBeIgnored()
     {

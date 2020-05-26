@@ -37,6 +37,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
             'title',
             'mode',
             'token_session',
+            'sell_api_token_session'
         ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -181,7 +182,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
         }
 
         $prefixKeys = [
-            'mode',
             'prefix',
         ];
         $tempSettings = !empty($tempSettings['prefix']) ? $tempSettings['prefix'] : [];
@@ -200,7 +200,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 
         $keys = [
             'mode',
-            'reservation_days'
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -312,21 +311,17 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 
         // invoice/shipment settings
         // ---------------------------------------
-        $temp = \Ess\M2ePro\Model\Ebay\Account::MAGENTO_ORDERS_INVOICE_MODE_YES;
-        $data['magento_orders_settings']['invoice_mode'] = $temp;
-        $temp = \Ess\M2ePro\Model\Ebay\Account::MAGENTO_ORDERS_SHIPMENT_MODE_YES;
-        $data['magento_orders_settings']['shipment_mode'] = $temp;
+        $data['magento_orders_settings']['invoice_mode'] = 1;
+        $data['magento_orders_settings']['shipment_mode'] = 1;
 
         $temp = \Ess\M2ePro\Model\Ebay\Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM;
         if (!empty($data['magento_orders_settings']['status_mapping']['mode']) &&
             $data['magento_orders_settings']['status_mapping']['mode'] == $temp) {
             if (!isset($post['magento_orders_settings']['invoice_mode'])) {
-                $temp = \Ess\M2ePro\Model\Ebay\Account::MAGENTO_ORDERS_INVOICE_MODE_NO;
-                $data['magento_orders_settings']['invoice_mode'] = $temp;
+                $data['magento_orders_settings']['invoice_mode'] = 0;
             }
             if (!isset($post['magento_orders_settings']['shipment_mode'])) {
-                $temp = \Ess\M2ePro\Model\Ebay\Account::MAGENTO_ORDERS_SHIPMENT_MODE_NO;
-                $data['magento_orders_settings']['shipment_mode'] = $temp;
+                $data['magento_orders_settings']['shipment_mode'] = 0;
             }
         }
         // ---------------------------------------

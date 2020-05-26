@@ -70,10 +70,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             $prepared['duration_attribute'] = $data['duration_attribute'];
         }
 
-        if (isset($data['out_of_stock_control'])) {
-            $prepared['out_of_stock_control'] = (int)$data['out_of_stock_control'];
-        }
-
         if (isset($data['qty_mode'])) {
             $prepared['qty_mode'] = (int)$data['qty_mode'];
         }
@@ -100,6 +96,18 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
         if (isset($data['qty_max_posted_value'])) {
             $prepared['qty_max_posted_value'] = (int)$data['qty_max_posted_value'];
+        }
+
+        if (isset($data['lot_size_mode'])) {
+            $prepared['lot_size_mode'] = (int)$data['lot_size_mode'];
+        }
+
+        if (isset($data['lot_size_custom_value'])) {
+            $prepared['lot_size_custom_value'] = (int)$data['lot_size_custom_value'];
+        }
+
+        if (isset($data['lot_size_attribute'])) {
+            $prepared['lot_size_attribute'] = $data['lot_size_attribute'];
         }
 
         if (isset($data['vat_percent'])) {

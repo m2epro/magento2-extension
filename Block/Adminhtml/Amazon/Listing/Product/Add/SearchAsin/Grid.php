@@ -637,7 +637,6 @@ JS
             {$this->listing->getId()}
         );
 
-        ListingGridHandlerObj.actionHandler.setOptions(M2ePro);
         ListingGridHandlerObj.actionHandler.setProgressBar('search_asin_progress_bar');
         ListingGridHandlerObj.actionHandler.setGridWrapper('search_asin_content_container');
         ListingGridHandlerObj.afterInitPage();

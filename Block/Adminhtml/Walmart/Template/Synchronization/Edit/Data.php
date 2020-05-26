@@ -21,6 +21,17 @@ class Data extends AbstractBlock
     {
         $this->setChild('tabs', $this->createBlock('Walmart_Template_Synchronization_Edit_Tabs'));
 
+        $this->css->add(<<<CSS
+.field-advanced_filter ul.rule-param-children {
+    margin-top: 1em;
+}
+.field-advanced_filter .rule-param .label {
+    font-size: 14px;
+    font-weight: 600;
+}
+CSS
+        );
+
         return parent::_prepareLayout();
     }
 }

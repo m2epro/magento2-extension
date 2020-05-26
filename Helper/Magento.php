@@ -114,11 +114,6 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->moduleList->getOne(self::MAGENTO_INVENTORY_MODULE_NICK) !== null;
     }
 
-    public function getRevision()
-    {
-        return 'undefined';
-    }
-
     //########################################
 
     public function getEditionName()
@@ -282,14 +277,14 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
     public function addGlobalNotification(
         $title,
         $description,
-        $type = \Magento\Framework\Notification\MessageInterface::SEVERITY_CRITICAL,
+        $type = null,
         $url = null
     ) {
         $dataForAdd = [
             'title' => $title !== null ? $title : $this->getHelper('Module\Translation')->__('M2E Pro Notification'),
             'description' => $description,
             'url' => $url !== null ? $url : 'http://m2epro.com/?' . sha1($title !== null ? $title : $description),
-            'severity' => $type,
+            'severity' => $type !== null ? $type : \Magento\Framework\Notification\MessageInterface::SEVERITY_CRITICAL,
             'date_added' => date('Y-m-d H:i:s')
         ];
 

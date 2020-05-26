@@ -24,37 +24,32 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
     protected function getActionData()
     {
         $data = [
-            'sku'       => $this->validatorsData['sku'],
-            'type_mode' => $this->validatorsData['list_type'],
+            'sku'       => $this->cachedData['sku'],
+            'type_mode' => $this->cachedData['list_type'],
         ];
 
-        if ($this->validatorsData['list_type'] == self::LIST_TYPE_NEW &&
-            $this->getVariationManager()->isRelationMode()) {
-                $data = array_merge($data, $this->getRelationData());
+        if ($this->cachedData['list_type'] == self::LIST_TYPE_NEW && $this->getVariationManager()->isRelationMode()) {
+            $data = array_merge($data, $this->getRelationData());
         }
 
         $data = array_merge(
             $data,
-            $this->getRequestDetails()->getRequestData(),
-            $this->getRequestImages()->getRequestData()
+            $this->getQtyData(),
+            $this->getRegularPriceData(),
+            $this->getBusinessPriceData(),
+            $this->getDetailsData(),
+            $this->getImagesData()
         );
 
         if ($this->getVariationManager()->isRelationParentType()) {
             return $data;
         }
 
-        if ($this->validatorsData['list_type'] == self::LIST_TYPE_NEW) {
+        if ($this->cachedData['list_type'] == self::LIST_TYPE_NEW) {
             $data = array_merge($data, $this->getNewProductIdentifierData());
         } else {
             $data = array_merge($data, $this->getExistProductIdentifierData());
         }
-
-        $data = array_merge(
-            $data,
-            $this->getRequestQty()->getRequestData(),
-            $this->getRequestPrice()->getRequestData(),
-            $this->getRequestShippingOverride()->getRequestData()
-        );
 
         return $data;
     }
@@ -64,8 +59,8 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
     private function getExistProductIdentifierData()
     {
         return [
-            'product_id' => $this->validatorsData['general_id'],
-            'product_id_type' => $this->getHelper('Data')->isISBN($this->validatorsData['general_id'])
+            'product_id' => $this->cachedData['general_id'],
+            'product_id_type' => $this->getHelper('Data')->isISBN($this->cachedData['general_id'])
                 ? 'ISBN' : 'ASIN',
         ];
     }

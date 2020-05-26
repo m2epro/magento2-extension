@@ -35,7 +35,7 @@ class BeforeGetToken extends Account
             $connectorObj = $dispatcherObject->getVirtualConnector(
                 'account',
                 'get',
-                'authUrl',
+                'grandAccessUrl',
                 ['back_url' => $backUrl, 'mode' => $mode],
                 null,
                 null,
@@ -47,8 +47,6 @@ class BeforeGetToken extends Account
             $response = $connectorObj->getResponseData();
         } catch (\Exception $exception) {
             $this->getHelper('Module\Exception')->process($exception);
-            // M2ePro_TRANSLATIONS
-            // The eBay token obtaining is currently unavailable.<br/>Reason: %error_message%
             $error = 'The eBay token obtaining is currently unavailable.<br/>Reason: %error_message%';
             $error = $this->__($error, $exception->getMessage());
 

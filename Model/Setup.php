@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Model;
 
 /**
  * Class \Ess\M2ePro\Model\Setup
+ * @method \Ess\M2ePro\Model\ResourceModel\Setup getResource()
  */
 class Setup extends ActiveRecord\AbstractModel
 {

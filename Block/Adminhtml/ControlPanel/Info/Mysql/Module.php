@@ -73,8 +73,8 @@ class Module extends AbstractBlock
             'Config' => [
                 'm2epro_module_config',
                 'm2epro_primary_config',
-                'm2epro_synchronization_config',
-                'm2epro_cache_config'
+                'm2epro_cache_config',
+                'm2epro_registry'
             ]
         ];
     }
@@ -84,7 +84,9 @@ class Module extends AbstractBlock
         return [
             'Additional' => [
                 'm2epro_lock_item',
-                'm2epro_product_change',
+                'm2epro_lock_transactional',
+                'm2epro_listing_product_instruction',
+                'm2epro_listing_product_scheduled_action',
                 'm2epro_order_change',
                 'm2epro_operation_history'
             ]

@@ -46,33 +46,6 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Base
      */
     protected function preDispatch(\Magento\Framework\App\RequestInterface $request)
     {
-        if ($request->isGet() &&
-            !$request->isPost() &&
-            !$request->isXmlHttpRequest()) {
-            $this->addDevelopmentNotification();
-        }
-
-        return true;
-    }
-
-    //########################################
-
-    private function addDevelopmentNotification()
-    {
-        if (!$this->getHelper('Magento')->isDeveloper() &&
-            !$this->getHelper('Module')->isDevelopmentMode()) {
-            return false;
-        }
-
-        $enabledMods = [];
-        $this->getHelper('Magento')->isDeveloper() && $enabledMods[] = 'Magento';
-        $this->getHelper('Module')->isDevelopmentMode() && $enabledMods[] = 'M2ePro';
-
-        $msg = $this->getMessageManager()->createMessage(\Magento\Framework\Message\MessageInterface::TYPE_WARNING);
-        $msg->setText(implode(', ', $enabledMods).' Development Mode is Enabled.');
-
-        $this->getMessageManager()->addUniqueMessages([$msg]);
-
         return true;
     }
 

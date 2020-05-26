@@ -423,16 +423,16 @@ HTML;
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
 
         $attributeHelper = $this->getHelper('Magento\Attribute');
-        $generalAttributes = $attributeHelper->getGeneralFromAllAttributeSets();
+        $allAttributes = $attributeHelper->getAll();
 
-        $generalAttributesByInputTypes = [
-            'text' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, ['text']),
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, ['text', 'select']),
+        $allAttributesByInputTypes = [
+            'text' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text']),
+            'text_select' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'select']),
         ];
 
         $isExistInAttributesArray = $magentoAttributeHelper->isExistInAttributesArray(
             $this->formData['worldwide_id_custom_attribute'],
-            $generalAttributesByInputTypes['text']
+            $allAttributesByInputTypes['text']
         );
 
         if ($this->formData['worldwide_id_custom_attribute'] != '' && !$isExistInAttributesArray) {
@@ -448,7 +448,7 @@ HTML;
             ];
         }
 
-        foreach ($generalAttributesByInputTypes['text'] as $attribute) {
+        foreach ($allAttributesByInputTypes['text'] as $attribute) {
             $tmpOption = [
                 'value' => Description::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $this->getHelper('Data')->escapeHtml($attribute['label']),

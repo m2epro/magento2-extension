@@ -28,6 +28,8 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
         $data = $this->appendStatusChangerValue($data);
         $data = $this->appendIdentifiersData($data, $generalId);
+        $data = $this->appendDetailsValues($data);
+        $data = $this->appendImagesValues($data);
 
         $variationManager = $this->getAmazonListingProduct()->getVariationManager();
 
@@ -37,6 +39,11 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
             $data = $this->appendQtyValues($data);
             $data = $this->appendRegularPriceValues($data);
             $data = $this->appendBusinessPriceValues($data);
+            $data = $this->appendGiftSettingsStatus($data);
+        }
+
+        if (isset($data['additional_data'])) {
+            $data['additional_data'] = $this->getHelper('Data')->jsonEncode($data['additional_data']);
         }
 
         $this->getListingProduct()->addData($data);

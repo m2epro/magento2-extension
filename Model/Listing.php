@@ -17,6 +17,15 @@ use \Ess\M2ePro\Model\Walmart\Listing\Product as WalmartProduct;
  */
 class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
+    const INSTRUCTION_TYPE_PRODUCT_ADDED       = 'listing_product_added';
+    const INSTRUCTION_INITIATOR_ADDING_PRODUCT = 'adding_product_to_listing';
+
+    const INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER       = 'listing_product_moved_from_other';
+    const INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_OTHER = 'moving_product_from_other_to_listing';
+
+    const INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING       = 'listing_product_moved_from_listing';
+    const INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_LISTING = 'moving_product_from_listing_to_listing';
+
     const SOURCE_PRODUCTS_CUSTOM     = 1;
     const SOURCE_PRODUCTS_CATEGORIES = 2;
 
@@ -139,8 +148,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_LISTING,
-            // M2ePro\TRANSLATIONS
-            // Listing was successfully deleted
             'Listing was successfully deleted',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
@@ -159,6 +166,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     /**
      * @return \Ess\M2ePro\Model\Account
+     * @throws Exception\Logic
      */
     public function getAccount()
     {
@@ -504,14 +512,25 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             $initiator,
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_PRODUCT_TO_LISTING,
-            // M2ePro\TRANSLATIONS
-            // Product was successfully Added
             'Product was successfully Added',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW,
             $logAdditionalInfo
         );
         // ---------------------------------------
+
+        /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
+        $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
+        $instruction->setData(
+            [
+                'listing_product_id' => $listingProductTemp->getId(),
+                'component'          => $this->getComponentMode(),
+                'type'               => self::INSTRUCTION_TYPE_PRODUCT_ADDED,
+                'initiator'          => self::INSTRUCTION_INITIATOR_ADDING_PRODUCT,
+                'priority'           => 70
+            ]
+        );
+        $instruction->save();
 
         return $listingProductTemp;
     }
@@ -555,6 +574,125 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         $categoryProductsArray = $connection->fetchCol($sqlQuery);
 
         return (array)$categoryProductsArray;
+    }
+
+    public function addProductFromListing(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        \Ess\M2ePro\Model\Listing $sourceListing,
+        $checkHasProduct = true
+    ) {
+        $logModel = $this->activeRecordFactory->getObject('Listing\Log');
+        $logModel->setComponentMode($this->getComponentMode());
+        $actionId = $logModel->getResource()->getNextActionId();
+
+        if ($listingProduct->isSetProcessingLock() ||
+            $listingProduct->isSetProcessingLock('in_action')) {
+            $logModel->addProductMessage(
+                $sourceListing->getId(),
+                $listingProduct->getProductId(),
+                $listingProduct->getId(),
+                \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+                $actionId,
+                \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
+                'Item was not Moved because it is in progress state now',
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+            );
+
+            return false;
+        }
+
+        // Add attribute set filter
+        // ---------------------------------------
+
+        $table = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('catalog_product_entity');
+        $dbSelect = $this->getResource()->getConnection()
+            ->select()
+            ->from($table, new \Zend_Db_Expr('DISTINCT `entity_id`'))
+            ->where('`entity_id` = ?', (int)$listingProduct->getProductId());
+
+        $productArray = $this->getResource()->getConnection()->fetchCol($dbSelect);
+
+        if (empty($productArray)) {
+            $logModel->addProductMessage(
+                $sourceListing->getId(),
+                $listingProduct->getProductId(),
+                $listingProduct->getId(),
+                \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+                $actionId,
+                \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
+                'Item was not Moved',
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+            );
+
+            return false;
+        }
+
+        // ---------------------------------------
+
+        if ($checkHasProduct && $this->hasProduct($listingProduct->getProductId())) {
+            $logModel->addProductMessage(
+                $sourceListing->getId(),
+                $listingProduct->getProductId(),
+                $listingProduct->getId(),
+                \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+                $actionId,
+                \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
+                'Product already exists in the selected Listing',
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+            );
+
+            return false;
+        }
+
+        $logModel->addProductMessage(
+            $sourceListing->getId(),
+            $listingProduct->getProductId(),
+            $listingProduct->getId(),
+            \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+            $actionId,
+            \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
+            'Item was successfully Moved',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+        );
+
+        $logModel->addProductMessage(
+            $this->getId(),
+            $listingProduct->getProductId(),
+            $listingProduct->getId(),
+            \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+            $actionId,
+            \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
+            'Item was successfully Moved',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+        );
+
+        // ---------------------------------------
+        $listingProduct->setData('listing_id', $this->getId());
+        $listingProduct->save();
+        $listingProduct->setListing($this);
+        // ---------------------------------------
+
+        // ---------------------------------------
+        /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
+        $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
+        $instruction->setData(
+            [
+                'listing_product_id' => $listingProduct->getId(),
+                'component'          => $this->getComponentMode(),
+                'type'               => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
+                'initiator'          => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_LISTING,
+                'priority'           => 20,
+            ]
+        );
+        $instruction->save();
+        // ---------------------------------------
+
+        return true;
     }
 
     //########################################
@@ -735,9 +873,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                     \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
                     null,
                     \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_MAGENTO,
-                    // M2ePro\TRANSLATIONS
-                                    // Variation Option was deleted. Item was reset.
-                                    'Variation Option was deleted. Item was reset.',
+                    'Variation Option was deleted. Item was reset.',
                     \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING,
                     \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
                 );
@@ -772,13 +908,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             $listingProduct->delete();
         }
         // ---------------------------------------
-    }
-
-    //########################################
-
-    public function getTrackingAttributes()
-    {
-        return $this->getChildObject()->getTrackingAttributes();
     }
 
     //########################################

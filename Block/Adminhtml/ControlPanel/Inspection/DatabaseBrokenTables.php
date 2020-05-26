@@ -74,7 +74,7 @@ class DatabaseBrokenTables extends AbstractInspection
         $helper = $this->getHelper('Module_Database_Structure');
 
         $notInstalledTables = [];
-        foreach ($helper->getMySqlTables() as $tableName) {
+        foreach ($helper->getModuleTables() as $tableName) {
             !$helper->isTableExists($tableName) && $notInstalledTables[] = $tableName;
         }
 
@@ -86,7 +86,7 @@ class DatabaseBrokenTables extends AbstractInspection
         $helper = $this->getHelper('Module_Database_Structure');
 
         $crashedTables = [];
-        foreach ($helper->getMySqlTables() as $tableName) {
+        foreach ($helper->getModuleTables() as $tableName) {
             if (!$helper->isTableExists($tableName)) {
                 continue;
             }
@@ -104,7 +104,6 @@ class DatabaseBrokenTables extends AbstractInspection
         return [
             'm2epro_primary_config',
             'm2epro_module_config',
-            'm2epro_synchronization_config',
             'm2epro_wizard',
             'm2epro_marketplace',
             'm2epro_amazon_marketplace',

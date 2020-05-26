@@ -32,7 +32,7 @@ class Selling extends AbstractModel
         $repricingState = null;
         $isAfn = Product::IS_AFN_CHANNEL_NO;
         $isRepricing = Product::IS_REPRICING_NO;
-        $repricingEnabled = $repricingDisabled = $afnCount = $totalCount = 0;
+        $repricingManaged = $repricingNotManaged = $afnCount = $totalCount = 0;
 
         foreach ($this->getProcessor()->getTypeModel()->getChildListingsProducts() as $listingProduct) {
             if ($listingProduct->isNotListed() || $listingProduct->isBlocked()) {
@@ -46,9 +46,7 @@ class Selling extends AbstractModel
 
             if ($amazonListingProduct->isRepricingUsed()) {
                 $isRepricing = Product::IS_REPRICING_YES;
-
-                $amazonListingProduct->isRepricingDisabled() && $repricingDisabled++;
-                $amazonListingProduct->isRepricingEnabled() && $repricingEnabled++;
+                $amazonListingProduct->isRepricingManaged() ? $repricingManaged++ : $repricingNotManaged++;
             }
 
             if ($amazonListingProduct->isAfnChannel()) {
@@ -86,7 +84,7 @@ class Selling extends AbstractModel
         ($afnCount > 0) && $afnState = Product::VARIATION_PARENT_IS_AFN_STATE_PARTIAL;
         ($afnCount == $totalCount) && $afnState = Product::VARIATION_PARENT_IS_AFN_STATE_ALL_YES;
 
-        $totalOnRepricing = $repricingDisabled + $repricingEnabled;
+        $totalOnRepricing = $repricingNotManaged + $repricingManaged;
         ($totalOnRepricing == 0) && $repricingState = Product::VARIATION_PARENT_IS_REPRICING_STATE_ALL_NO;
         ($totalOnRepricing > 0) && $repricingState = Product::VARIATION_PARENT_IS_REPRICING_STATE_PARTIAL;
         ($totalOnRepricing == $totalCount) && $repricingState = Product::VARIATION_PARENT_IS_REPRICING_STATE_ALL_YES;
@@ -103,13 +101,13 @@ class Selling extends AbstractModel
 
         $this->getProcessor()->getListingProduct()->setSetting(
             'additional_data',
-            'repricing_enabled_count',
-            $repricingEnabled
+            'repricing_managed_count',
+            $repricingManaged
         );
         $this->getProcessor()->getListingProduct()->setSetting(
             'additional_data',
-            'repricing_disabled_count',
-            $repricingDisabled
+            'repricing_not_managed_count',
+            $repricingNotManaged
         );
         $this->getProcessor()->getListingProduct()->setSetting(
             'additional_data',

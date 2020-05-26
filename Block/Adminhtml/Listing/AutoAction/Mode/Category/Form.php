@@ -81,11 +81,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'title' => $this->__('Product Assigned to Categories'),
                 'values' => [
                     ['label' => $this->__('No Action'), 'value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE],
-                    ['label' => $this->__('Add to the Listing'), 'value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD]
                 ],
                 'value' => $this->formData['adding_mode'],
                 'tooltip' => $this->__(
-                    'You need to provide additional settings for Magento Products to be listed automatically.'
+                    'Action which will be applied automatically.'
                 ),
                 'style' => 'width: 350px'
             ]

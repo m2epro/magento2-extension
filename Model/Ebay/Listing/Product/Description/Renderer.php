@@ -249,7 +249,7 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
 
     protected function getHandlingTime()
     {
-        $handlingTime = $this->listingProduct->getShippingTemplate()->getDispatchTime();
+        $handlingTime = $this->listingProduct->getShippingTemplateSource()->getDispatchTime();
 
         $result = $this->getHelper('Module\Translation')->__('Business Day');
 

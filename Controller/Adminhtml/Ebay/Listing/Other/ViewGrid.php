@@ -15,11 +15,7 @@ class ViewGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
 {
     public function execute()
     {
-        $block = $this->createBlock(
-            'Ebay_Listing_Other_View_Grid'
-        );
-
-        $this->setAjaxContent($block);
+        $this->setAjaxContent($this->createBlock('Ebay_Listing_Other_View_Grid'));
         return $this->getResult();
     }
 }

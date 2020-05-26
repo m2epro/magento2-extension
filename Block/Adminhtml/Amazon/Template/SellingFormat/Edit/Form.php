@@ -40,7 +40,7 @@ class Form extends AbstractForm
         $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $attributes = $this->getHelper('Magento\Attribute')->getGeneralFromAllAttributeSets();
+        $attributes = $this->getHelper('Magento\Attribute')->getAll();
 
         $formData['discount_rules'] = $template && $template->getId() ?
             $template->getChildObject()->getBusinessDiscounts() : [];

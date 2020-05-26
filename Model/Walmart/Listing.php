@@ -279,7 +279,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             'wpid' => $walmartListingOther->getWpid(),
 
             'item_id'     => $walmartListingOther->getItemId(),
-            'channel_url' => $walmartListingOther->getChannelUrl(),
 
             'online_price'            => $walmartListingOther->getOnlinePrice(),
             'online_qty'              => $walmartListingOther->getOnlineQty(),
@@ -294,9 +293,34 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             'status_change_reasons' => $walmartListingOther->getData('status_change_reasons'),
         ];
 
+        $listingProduct->setSetting(
+            'additional_data',
+            $listingProduct::MOVING_LISTING_OTHER_SOURCE_KEY,
+            $listingOtherProduct->getId()
+        );
         $listingProduct->addData($dataForUpdate);
         $walmartListingProduct->addData($dataForUpdate);
         $listingProduct->save();
+
+        $listingOtherProduct->setSetting(
+            'additional_data',
+            $listingOtherProduct::MOVING_LISTING_PRODUCT_DESTINATION_KEY,
+            $listingProduct->getId()
+        );
+
+        $listingOtherProduct->save();
+
+        $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
+        $instruction->setData(
+            [
+                'listing_product_id' => $listingProduct->getId(),
+                'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                'type'               => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
+                'initiator'          => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_OTHER,
+                'priority'           => 20,
+            ]
+        );
+        $instruction->save();
 
         return $listingProduct;
     }
@@ -319,57 +343,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         }
 
         return true;
-    }
-
-    //########################################
-
-    /**
-     * @return array
-     */
-    public function getTrackingAttributes()
-    {
-        return [];
-    }
-
-    //########################################
-
-    /**
-     * @param bool $asArrays
-     * @param string|array $columns
-     * @param bool $onlyPhysicalUnits
-     * @return array
-     */
-    public function getAffectedListingsProducts($asArrays = true, $columns = '*', $onlyPhysicalUnits = false)
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
-        $listingProductCollection = $this->walmartFactory->getObject('Listing\Product')
-                                                        ->getCollection();
-        $listingProductCollection->addFieldToFilter('listing_id', $this->getId());
-
-        if ($onlyPhysicalUnits) {
-            $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
-        }
-
-        if (is_array($columns) && !empty($columns)) {
-            $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $listingProductCollection->getSelect()->columns($columns);
-        }
-
-        return $asArrays ? (array)$listingProductCollection->getData() : (array)$listingProductCollection->getItems();
-    }
-
-    public function setSynchStatusNeed($newData, $oldData)
-    {
-        $listingsProducts = $this->getAffectedListingsProducts(
-            true,
-            ['id', 'synch_status', 'synch_reasons'],
-            true
-        );
-        if (empty($listingsProducts)) {
-            return;
-        }
-
-        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

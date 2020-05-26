@@ -62,37 +62,27 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
         $prepared['marketplace_id'] = (int)$data['marketplace_id'];
 
-        if (isset($data['accepted'])) {
-            $prepared['accepted'] = $data['accepted'];
+        $domesticKeys = [
+            'accepted',
+            'option',
+            'within',
+            'shipping_cost'
+        ];
+        foreach ($domesticKeys as $keyName) {
+            isset($data[$keyName]) && $prepared[$keyName] = $data[$keyName];
         }
 
-        if (isset($data['option'])) {
-            $prepared['option'] = $data['option'];
+        $internationalKeys = [
+            'international_accepted',
+            'international_option',
+            'international_within',
+            'international_shipping_cost'
+        ];
+        foreach ($internationalKeys as $keyName) {
+            isset($data[$keyName]) && $prepared[$keyName] = $data[$keyName];
         }
 
-        if (isset($data['within'])) {
-            $prepared['within'] = $data['within'];
-        }
-
-        if (isset($data['holiday_mode'])) {
-            $prepared['holiday_mode'] = $data['holiday_mode'];
-        }
-
-        if (isset($data['shipping_cost'])) {
-            $prepared['shipping_cost'] = $data['shipping_cost'];
-        }
-
-        if (isset($data['restocking_fee'])) {
-            $prepared['restocking_fee'] = $data['restocking_fee'];
-        }
-
-        if (isset($data['description'])) {
-            $prepared['description'] = $data['description'];
-        }
-
-        if (isset($data['accepted']) && $prepared['accepted'] != 'ReturnsAccepted') {
-            $prepared['holiday_mode'] = 0;
-        }
+        isset($data['description']) && $prepared['description'] = $data['description'];
 
         return $prepared;
     }

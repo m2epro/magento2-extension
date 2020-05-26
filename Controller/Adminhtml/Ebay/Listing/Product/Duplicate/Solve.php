@@ -47,7 +47,7 @@ class Solve extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         if ($result && $this->getRequest()->getParam('list_current_item') == 1) {
-            $result = $this->solveEbayItemDuplicateList($listingProduct, $messages);
+            $result = $this->solveEbayItemDuplicateList($listingProduct);
         }
 
         $this->setJsonContent([
@@ -92,7 +92,7 @@ class Solve extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         return true;
     }
 
-    private function solveEbayItemDuplicateList(\Ess\M2ePro\Model\Listing\Product $listingProduct, array &$messages)
+    private function solveEbayItemDuplicateList(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
         $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');

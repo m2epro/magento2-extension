@@ -13,17 +13,17 @@ namespace Ess\M2ePro\Model\Ebay\Order;
  */
 class Helper extends \Ess\M2ePro\Model\AbstractModel
 {
-    const EBAY_ORDER_STATUS_ACTIVE    = 'Active';
+    const EBAY_ORDER_STATUS_ACTIVE = 'Active';
     const EBAY_ORDER_STATUS_COMPLETED = 'Completed';
     const EBAY_ORDER_STATUS_CANCELLED = 'Cancelled';
-    const EBAY_ORDER_STATUS_INACTIVE  = 'Inactive';
+    const EBAY_ORDER_STATUS_INACTIVE = 'Inactive';
 
     const EBAY_CHECKOUT_STATUS_COMPLETE = 'Complete';
 
-    const EBAY_PAYMENT_METHOD_NONE      = 'None';
+    const EBAY_PAYMENT_METHOD_NONE = 'None';
     const EBAY_PAYMENT_STATUS_SUCCEEDED = 'NoPaymentFailure';
 
-    private $resourceConnection;
+    protected $resourceConnection;
 
     //########################################
 
@@ -87,8 +87,8 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
         } else {
             if ($paymentStatusEbay == self::EBAY_PAYMENT_STATUS_SUCCEEDED) {
                 return $paymentDate
-                    ?\Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED
-                    :\Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_PROCESS;
+                    ? \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED
+                    : \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_PROCESS;
             }
         }
 
@@ -99,8 +99,8 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
     {
         if ($shippingDate == '') {
             return $isShippingServiceSelected
-                ?\Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_PROCESSING
-                :\Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_NOT_SELECTED;
+                ? \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_PROCESSING
+                : \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_NOT_SELECTED;
         }
 
         return \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_COMPLETED;
@@ -114,14 +114,14 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
             return $code;
         }
 
-        $connRead = $this->resourceConnection->getConnection();
+        $connection = $this->resourceConnection->getConnection();
         $tableDictMarketplace = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_marketplace');
 
-        $dbSelect = $connRead->select()
+        $dbSelect = $connection->select()
             ->from($tableDictMarketplace, 'payments')
             ->where('`marketplace_id` = ?', (int)$marketplaceId);
-        $marketplace = $connRead->fetchRow($dbSelect);
+        $marketplace = $connection->fetchRow($dbSelect);
 
         if (!$marketplace) {
             return $code;
@@ -144,15 +144,15 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
             return $code;
         }
 
-        $connRead          = $this->resourceConnection->getConnection();
+        $connection = $this->resourceConnection->getConnection();
         $tableDictShipping = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_shipping');
 
-        $dbSelect = $connRead->select()
+        $dbSelect = $connection->select()
             ->from($tableDictShipping, 'title')
             ->where('`marketplace_id` = ?', (int)$marketplaceId)
             ->where('`ebay_id` = ?', $code);
-        $shipping = $connRead->fetchRow($dbSelect);
+        $shipping = $connection->fetchRow($dbSelect);
 
         return !empty($shipping['title']) ? $shipping['title'] : $code;
     }

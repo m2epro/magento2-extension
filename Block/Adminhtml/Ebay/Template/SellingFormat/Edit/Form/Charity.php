@@ -56,12 +56,16 @@ class Charity extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     public function getEnabledMarketplaces()
     {
         if ($this->enabledMarketplaces === null) {
-            $collection = $this->activeRecordFactory->getObject('Marketplace')->getCollection();
-            $collection->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Ebay::NICK);
-            $collection->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
-            $collection->setOrder('sorder', 'ASC');
+            if ($this->getData('marketplace') !== null) {
+                $this->enabledMarketplaces = array($this->getData('marketplace'));
+            } else {
+                $collection = $this->activeRecordFactory->getObject('Marketplace')->getCollection();
+                $collection->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Ebay::NICK);
+                $collection->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
+                $collection->setOrder('sorder', 'ASC');
 
-            $this->enabledMarketplaces = $collection->getItems();
+                $this->enabledMarketplaces = $collection->getItems();
+            }
         }
 
         return $this->enabledMarketplaces;

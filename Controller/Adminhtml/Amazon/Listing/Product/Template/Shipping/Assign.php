@@ -17,7 +17,6 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
     {
         $productsIds  = $this->getRequest()->getParam('products_ids');
         $templateId   = $this->getRequest()->getParam('template_id');
-        $shippingMode = $this->getRequest()->getParam('shipping_mode');
 
         if (empty($productsIds) || empty($templateId)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
@@ -47,22 +46,8 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
                 'text' => $this->__('Shipping Policy was successfully assigned.')
             ];
 
-            $this->setShippingTemplateForProducts($productsIdsLocked, $templateId, $shippingMode);
+            $this->setShippingTemplateForProducts($productsIdsLocked, $templateId);
             $this->runProcessorForParents($productsIdsLocked);
-
-            if ($shippingMode == \Ess\M2ePro\Model\Amazon\Account::SHIPPING_MODE_OVERRIDE) {
-                $template = $this->activeRecordFactory->getObjectLoaded(
-                    'Amazon_Template_ShippingOverride',
-                    $templateId
-                );
-            } else {
-                $template = $this->activeRecordFactory->getObjectLoaded(
-                    'Amazon_Template_ShippingTemplate',
-                    $templateId
-                );
-            }
-
-            $template->setSynchStatusNeed($template->getDataSnapshot(), []);
         }
 
         $this->setJsonContent(['messages' => $messages]);

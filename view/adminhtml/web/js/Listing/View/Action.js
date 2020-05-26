@@ -23,15 +23,6 @@ define([
 
         // ---------------------------------------
 
-        options: {},
-
-        setOptions: function (options) {
-            this.options = Object.extend(this.options, options);
-            return this;
-        },
-
-        // ---------------------------------------
-
         setProgressBar: function (progressBarId) {
             this.progressBarObj = new ProgressBar(progressBarId);
         },
@@ -85,14 +76,6 @@ define([
                     }
                     if (self.sendPartsResponses[i].result == 'warning') {
                         combineResult = 'warning';
-                    }
-                }
-
-                for (var i = 0; i < self.sendPartsResponses.length; i++) {
-                    if (typeof self.sendPartsResponses[i].is_processing_items != 'undefined' &&
-                        self.sendPartsResponses[i].is_processing_items == true) {
-                        self.magentoMessageObj.addNoticeMessage(self.options.text.locked_obj_notice);
-                        break;
                     }
                 }
 
@@ -328,50 +311,6 @@ define([
                 M2ePro.url.get('previewItems') + 'productIds/' + implode(',', orderedSelectedProductsArray)
                 + '/currentProductId/' + orderedSelectedProductsArray[0]
             );
-        },
-
-        startTranslateAction: function () {
-            var selectedProductsParts = this.gridHandler.getSelectedItemsParts(100);
-            if (selectedProductsParts.length == 0) {
-                return;
-            }
-
-            var self = this;
-            EbayListingTransferringTranslateHandlerObj.loadActionHtml(
-                self.gridHandler.getSelectedProductsArray(),
-                function () {
-                    self.startActions(
-                        self.options.text.start_translate_selected_items_message,
-                        self.options.url.get('runStartTranslateProducts'),
-                        selectedProductsParts
-                    );
-                }, function () {
-                    self.gridHandler.unselectAll();
-                });
-        },
-
-        stopTranslateAction: function () {
-            var self = this;
-
-            self.confirm({
-                actions: {
-                    confirm: function () {
-                        var selectedProductsParts = self.gridHandler.getSelectedItemsParts(100);
-                        if (selectedProductsParts.length == 0) {
-                            return;
-                        }
-
-                        self.startActions(
-                            self.options.text.stop_translate_selected_items_message,
-                            self.options.url.get('runStopTranslateProducts'),
-                            selectedProductsParts
-                        );
-                    },
-                    cancel: function () {
-                        return false;
-                    }
-                }
-            });
         }
 
         // ---------------------------------------

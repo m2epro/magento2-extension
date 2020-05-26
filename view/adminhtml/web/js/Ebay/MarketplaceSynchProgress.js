@@ -27,16 +27,16 @@ define([
                         MessageObj.addErrorMessage(str_replace(
                             '%url%',
                             M2ePro.url.get('logViewUrl'),
-                            M2ePro.translator.translate('Synchronization ended with errors. <a target="_blank" href="%url%">View Log</a> for details.')
+                            M2ePro.translator.translate('Marketplace synchronization was completed with errors. <a target="_blank" href="%url%">View Log</a> for the details.')
                         ));
                     } else if (resultType == self.resultTypeWarning) {
                         MessageObj.addWarningMessage(str_replace(
                             '%url%',
                             M2ePro.url.get('logViewUrl'),
-                            M2ePro.translator.translate('Synchronization ended with warnings. <a target="_blank" href="%url%">View Log</a> for details.')
+                            M2ePro.translator.translate('Marketplace synchronization was completed with warnings. <a target="_blank" href="%url%">View Log</a> for the details.')
                         ));
                     } else {
-                        MessageObj.addSuccessMessage(M2ePro.translator.translate('Synchronization has successfully ended.'));
+                        MessageObj.addSuccessMessage(M2ePro.translator.translate('Marketplace synchronization was completed successfully.'));
                     }
                 }
             });

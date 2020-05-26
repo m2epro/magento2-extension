@@ -18,21 +18,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     const MODE_SANDBOX = 0;
     const MODE_PRODUCTION = 1;
 
-    const FEEDBACKS_RECEIVE_NO = 0;
-    const FEEDBACKS_RECEIVE_YES = 1;
-
     const FEEDBACKS_AUTO_RESPONSE_NONE = 0;
     const FEEDBACKS_AUTO_RESPONSE_CYCLED = 1;
     const FEEDBACKS_AUTO_RESPONSE_RANDOM = 2;
-
-    const FEEDBACKS_AUTO_RESPONSE_ONLY_POSITIVE_NO = 0;
-    const FEEDBACKS_AUTO_RESPONSE_ONLY_POSITIVE_YES = 1;
-
-    const OTHER_LISTINGS_SYNCHRONIZATION_NO = 0;
-    const OTHER_LISTINGS_SYNCHRONIZATION_YES = 1;
-
-    const OTHER_LISTINGS_MAPPING_MODE_NO = 0;
-    const OTHER_LISTINGS_MAPPING_MODE_YES = 1;
 
     const OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE = 0;
     const OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT = 1;
@@ -50,14 +38,8 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     const OTHER_LISTINGS_MAPPING_TITLE_DEFAULT_PRIORITY = 2;
     const OTHER_LISTINGS_MAPPING_ITEM_ID_DEFAULT_PRIORITY = 3;
 
-    const MAGENTO_ORDERS_LISTINGS_MODE_NO = 0;
-    const MAGENTO_ORDERS_LISTINGS_MODE_YES = 1;
-
     const MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT = 0;
     const MAGENTO_ORDERS_LISTINGS_STORE_MODE_CUSTOM = 1;
-
-    const MAGENTO_ORDERS_LISTINGS_OTHER_MODE_NO = 0;
-    const MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES = 1;
 
     const MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE = 0;
     const MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT = 1;
@@ -65,12 +47,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     const MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO = 'magento';
     const MAGENTO_ORDERS_NUMBER_SOURCE_CHANNEL = 'channel';
 
-    const MAGENTO_ORDERS_NUMBER_PREFIX_MODE_NO = 0;
-    const MAGENTO_ORDERS_NUMBER_PREFIX_MODE_YES = 1;
-
-    const MAGENTO_ORDERS_CREATE_IMMEDIATELY = 1;
     const MAGENTO_ORDERS_CREATE_CHECKOUT = 2;
-    const MAGENTO_ORDERS_CREATE_PAID = 3;
     const MAGENTO_ORDERS_CREATE_CHECKOUT_AND_PAID = 4;
 
     const MAGENTO_ORDERS_TAX_MODE_NONE = 0;
@@ -82,21 +59,12 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     const MAGENTO_ORDERS_CUSTOMER_MODE_PREDEFINED = 1;
     const MAGENTO_ORDERS_CUSTOMER_MODE_NEW = 2;
 
-    const MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_NO = 0;
-    const MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_YES = 1;
-
     const MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT = 0;
     const MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM = 1;
 
     const MAGENTO_ORDERS_STATUS_MAPPING_NEW = 'pending';
     const MAGENTO_ORDERS_STATUS_MAPPING_PAID = 'processing';
     const MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED = 'complete';
-
-    const MAGENTO_ORDERS_INVOICE_MODE_NO = 0;
-    const MAGENTO_ORDERS_INVOICE_MODE_YES = 1;
-
-    const MAGENTO_ORDERS_SHIPMENT_MODE_NO = 0;
-    const MAGENTO_ORDERS_SHIPMENT_MODE_YES = 1;
 
     //########################################
 
@@ -237,11 +205,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getData('user_id');
     }
 
-    public function getTranslationHash()
-    {
-        return $this->getData('translation_hash');
-    }
-
     /**
      * @return bool
      */
@@ -273,7 +236,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function isFeedbacksReceive()
     {
-        return $this->getFeedbacksReceive() == self::FEEDBACKS_RECEIVE_YES;
+        return $this->getFeedbacksReceive() == 1;
     }
 
     // ---------------------------------------
@@ -325,7 +288,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function isFeedbacksAutoResponseOnlyPositive()
     {
-        return $this->getFeedbacksAutoResponseOnlyPositive() == self::FEEDBACKS_AUTO_RESPONSE_ONLY_POSITIVE_YES;
+        return $this->getFeedbacksAutoResponseOnlyPositive() == 1;
     }
 
     //########################################
@@ -476,7 +439,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function isOtherListingsSynchronizationEnabled()
     {
-        return $this->getOtherListingsSynchronization() == self::OTHER_LISTINGS_SYNCHRONIZATION_YES;
+        return $this->getOtherListingsSynchronization() == 1;
     }
 
     /**
@@ -484,7 +447,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function isOtherListingsMappingEnabled()
     {
-        return $this->getOtherListingsMappingMode() == self::OTHER_LISTINGS_MAPPING_MODE_YES;
+        return $this->getOtherListingsMappingMode() == 1;
     }
 
     // ---------------------------------------
@@ -584,13 +547,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function isMagentoOrdersListingsModeEnabled()
     {
-        $setting = $this->getSetting(
-            'magento_orders_settings',
-            ['listing', 'mode'],
-            self::MAGENTO_ORDERS_LISTINGS_MODE_YES
-        );
-
-        return $setting == self::MAGENTO_ORDERS_LISTINGS_MODE_YES;
+        return $this->getSetting('magento_orders_settings', ['listing', 'mode'], 1) == 1;
     }
 
     /**
@@ -624,13 +581,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function isMagentoOrdersListingsOtherModeEnabled()
     {
-        $setting = $this->getSetting(
-            'magento_orders_settings',
-            ['listing_other', 'mode'],
-            self::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES
-        );
-
-        return $setting == self::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES;
+        return $this->getSetting('magento_orders_settings', ['listing_other', 'mode'], 1) == 1;
     }
 
     /**
@@ -702,18 +653,8 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     // ---------------------------------------
 
     /**
-     * @return bool
+     * @return string
      */
-    public function isMagentoOrdersNumberPrefixEnable()
-    {
-        $setting = $this->getSetting(
-            'magento_orders_settings',
-            ['number', 'prefix', 'mode'],
-            self::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_NO
-        );
-        return $setting == self::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_YES;
-    }
-
     public function getMagentoOrdersNumberRegularPrefix()
     {
         $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
@@ -736,14 +677,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /**
      * @return bool
      */
-    public function shouldCreateMagentoOrderImmediately()
-    {
-        return $this->getMagentoOrdersCreationMode() == self::MAGENTO_ORDERS_CREATE_IMMEDIATELY;
-    }
-
-    /**
-     * @return bool
-     */
     public function shouldCreateMagentoOrderWhenCheckedOut()
     {
         return $this->getMagentoOrdersCreationMode() == self::MAGENTO_ORDERS_CREATE_CHECKOUT;
@@ -752,27 +685,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /**
      * @return bool
      */
-    public function shouldCreateMagentoOrderWhenPaid()
-    {
-        return $this->getMagentoOrdersCreationMode() == self::MAGENTO_ORDERS_CREATE_PAID;
-    }
-
-    /**
-     * @return bool
-     */
     public function shouldCreateMagentoOrderWhenCheckedOutAndPaid()
     {
         return $this->getMagentoOrdersCreationMode() == self::MAGENTO_ORDERS_CREATE_CHECKOUT_AND_PAID;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMagentoOrdersReservationDays()
-    {
-        $setting = $this->getSetting('magento_orders_settings', ['creation', 'reservation_days'], 0);
-
-        return (int)$setting;
     }
 
     /**
@@ -902,13 +817,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function isMagentoOrdersCustomerNewSubscribed()
     {
-        $setting = $this->getSetting(
-            'magento_orders_settings',
-            ['customer', 'subscription_mode'],
-            self::MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_NO
-        );
-
-        return $setting == self::MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_YES;
+        return $this->getSetting('magento_orders_settings', ['customer', 'subscription_mode'], 0) == 1;
     }
 
     /**
@@ -1049,7 +958,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             return true;
         }
 
-        return $this->getSetting('magento_orders_settings', 'invoice_mode') == self::MAGENTO_ORDERS_INVOICE_MODE_YES;
+        return $this->getSetting('magento_orders_settings', 'invoice_mode', 0) == 1;
     }
 
     // ---------------------------------------
@@ -1063,7 +972,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             return true;
         }
 
-        return $this->getSetting('magento_orders_settings', 'shipment_mode') == self::MAGENTO_ORDERS_SHIPMENT_MODE_YES;
+        return $this->getSetting('magento_orders_settings', 'shipment_mode', 0) == 1;
     }
 
     //########################################
@@ -1079,6 +988,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function updateUserPreferences()
     {
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObject->getVirtualConnector(
             'account',
@@ -1106,10 +1016,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     // ---------------------------------------
 
     /**
-     * @param bool $returnRealValue
-     * @return bool|null
+     * @return bool
+     * @throws Logic
      */
-    public function getOutOfStockControl($returnRealValue = false)
+    public function getOutOfStockControl()
     {
         $userPreferences = $this->getUserPreferences();
 
@@ -1117,7 +1027,41 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             return strtolower($userPreferences['OutOfStockControlPreference']) === 'true';
         }
 
-        return $returnRealValue ? null : false;
+        return false;
+    }
+
+    //########################################
+
+    public function getRateTables()
+    {
+        return $this->getSettings('rate_tables');
+    }
+
+    public function updateRateTables()
+    {
+        if (empty($this->getSellApiTokenSession())) {
+            return;
+        }
+
+        $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        $connectorObj = $dispatcherObject->getVirtualConnector(
+            'account',
+            'get',
+            'shippingRateTables',
+            [],
+            null,
+            null,
+            $this->getId()
+        );
+
+        $dispatcherObject->process($connectorObj);
+        $responseData = $connectorObj->getResponseData();
+
+        if (empty($responseData)) {
+            return;
+        }
+
+        $this->setData('rate_tables', $this->getHelper('Data')->jsonEncode($responseData))->save();
     }
 
     //########################################
@@ -1125,7 +1069,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isPickupStoreEnabled()
     {
         $additionalData = $this->getHelper('Data')->jsonDecode($this->getParentObject()->getData('additional_data'));
-        return $this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled() && !empty($additionalData['bopis']);
+        return !empty($additionalData['bopis']);
     }
 
     //########################################
@@ -1138,6 +1082,18 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getTokenExpiredDate()
     {
         return $this->getData('token_expired_date');
+    }
+
+    // ---------------------------------------
+
+    public function getSellApiTokenSession()
+    {
+        return $this->getData('sell_api_token_session');
+    }
+
+    public function getSellApiTokenExpiredDate()
+    {
+        return $this->getData('sell_api_token_expired_date');
     }
 
     // ---------------------------------------
@@ -1198,9 +1154,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $connRead = $this->getResource()->getConnection();
 
         $dbSelect = $connRead->select()
-                             ->from($tableAccountStoreCategories, '*')
-                             ->where('`account_id` = ?', (int)$this->getId())
-                             ->order(['sorder ASC']);
+            ->from($tableAccountStoreCategories, '*')
+            ->where('`account_id` = ?', (int)$this->getId())
+            ->order(['sorder ASC']);
 
         return $connRead->fetchAll($dbSelect);
     }
@@ -1237,6 +1193,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function updateEbayStoreInfo()
     {
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
         $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObj->getVirtualConnector(
             'account',
@@ -1265,10 +1222,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $dataForUpdate = [];
         foreach ($infoKeys as $key) {
             if (!isset($data['data'][$key])) {
-                $dataForUpdate['ebay_store_'.$key] = '';
+                $dataForUpdate['ebay_store_' . $key] = '';
                 continue;
             }
-            $dataForUpdate['ebay_store_'.$key] = $data['data'][$key];
+            $dataForUpdate['ebay_store_' . $key] = $data['data'][$key];
         }
         $this->addData($dataForUpdate);
         $this->save();
@@ -1278,7 +1235,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $tableAccountStoreCategories = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
 
-        $connection->delete($tableAccountStoreCategories, ['account_id = ?'=>$this->getId()]);
+        $connection->delete($tableAccountStoreCategories, ['account_id = ?' => $this->getId()]);
 
         if (empty($data['categories'])) {
             return;
@@ -1294,6 +1251,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function updateShippingDiscountProfiles($marketplaceId)
     {
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
         $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObj->getVirtualConnector(
             'account',

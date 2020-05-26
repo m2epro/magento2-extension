@@ -142,8 +142,9 @@ HTML;
         $idGroup = 1;
 
         $groupOrder = [
-            'america' => 'America',
-            'europe' => 'Europe',
+            'america'      => 'America',
+            'europe'       => 'Europe',
+            'australia'    => 'Australia Region',
             'asia_pacific' => 'Asia / Pacific'
         ];
 
@@ -188,17 +189,17 @@ HTML;
     {
         $staticData = [
             [
-                'group_id' => 3,
+                'group_id' => 4,
                 'label' => $this->__('Japan'),
                 'note' => 'amazon.co.jp',
             ],
             [
-                'group_id' => 3,
+                'group_id' => 4,
                 'label' => $this->__('China'),
                 'note' => 'amazon.cn',
             ],
             [
-                'group_id' => 3,
+                'group_id' => 4,
                 'label' => $this->__('India'),
                 'note' => 'amazon.in',
             ],
@@ -230,43 +231,27 @@ HTML;
             ),
 
             'runSynchNow' => $this->getUrl('*/amazon_marketplace/runSynchNow'),
-            'synchCheckProcessingNow' => $this->getUrl('*/amazon_synchronization/synchCheckProcessingNow')
         ]);
 
-        $this->jsTranslator->addTranslations([
-            'Settings have been saved.' => $this->__('Settings have been saved.'),
-            'You must select at least one Site you will work with.' =>
-                $this->__('You must select at least one Site you will work with.'),
-
-            'Another Synchronization Is Already Running.' => $this->__('Another Synchronization Is Already Running.'),
-            'Getting information. Please wait ...' => $this->__('Getting information. Please wait ...'),
-            'Preparing to start. Please wait ...' => $this->__('Preparing to start. Please wait ...'),
-
-            'Synchronization has successfully ended.' => $this->__('Synchronization has successfully ended.'),
-            'Synchronization ended with warnings. <a target="_blank" href="%url%">View Log</a> for details.' =>
-                $this->__(
-                    'Synchronization ended with warnings. <a target="_blank" href="%url%">View Log</a> for details.'
-                ),
-            'Synchronization ended with errors. <a target="_blank" href="%url%">View Log</a> for details.' =>
-                $this->__(
-                    'Synchronization ended with errors. <a target="_blank" href="%url%">View Log</a> for details.'
-                )
-        ]);
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Marketplace'));
 
         $storedStatuses = $this->getHelper('Data')->jsonEncode($this->storedStatuses);
         $this->js->addOnReadyJs(<<<JS
             require([
                 'M2ePro/Marketplace',
-                'M2ePro/SynchProgress',
+                'M2ePro/Amazon/Marketplace/SynchProgress',
                 'M2ePro/Plugin/ProgressBar',
-                'M2ePro/Plugin/AreaWrapper'
+                'M2ePro/Plugin/AreaWrapper',
+                'M2ePro/Amazon/Marketplace/SynchProgress'
             ], function() {
                 window.MarketplaceProgressBarObj = new ProgressBar('marketplaces_progress_bar');
                 window.MarketplaceWrapperObj = new AreaWrapper('marketplaces_content_container');
 
-                window.MarketplaceProgressObj = new SynchProgress(MarketplaceProgressBarObj, MarketplaceWrapperObj );
+                window.MarketplaceProgressObj = new AmazonMarketplaceSynchProgress(
+                    MarketplaceProgressBarObj,
+                    MarketplaceWrapperObj
+                );
                 window.MarketplaceObj = new Marketplace(MarketplaceProgressObj, $storedStatuses);
-                window.MarketplaceProgressObj.initPageCheckState();
             });
 JS
         );

@@ -16,15 +16,6 @@ define([
 
         // ---------------------------------------
 
-        options: {},
-
-        setOptions: function (options) {
-            this.options = Object.extend(this.options, options);
-            return this;
-        },
-
-        // ---------------------------------------
-
         switchToAFN: function (productsIds) {
             var self = this;
             self.gridHandler.unselectAll();
@@ -32,7 +23,7 @@ define([
             new Ajax.Request(M2ePro.url.get('amazon_listing_product_fulfillment/switchToAFN'), {
                 method: 'post',
                 parameters: {
-                    products_ids: productsIds
+                    selected_products: productsIds
                 },
                 onSuccess: function (transport) {
 
@@ -62,7 +53,7 @@ define([
             new Ajax.Request(M2ePro.url.get('amazon_listing_product_fulfillment/switchToMFN'), {
                 method: 'post',
                 parameters: {
-                    products_ids: productsIds
+                    selected_products: productsIds
                 },
                 onSuccess: function (transport) {
                     if (!transport.responseText.isJSON()) {

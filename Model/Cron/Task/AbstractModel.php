@@ -8,14 +8,21 @@
 
 namespace Ess\M2ePro\Model\Cron\Task;
 
-use Ess\M2ePro\Model\Exception;
-
 /**
  * Class \Ess\M2ePro\Model\Cron\Task\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
-    private $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
+    const NICK = null;
+
+    protected $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
+
+    /**
+     * @var int (in seconds)
+     */
+    protected $interval = 60;
+
+    protected $eventManager;
 
     protected $parentFactory;
 
@@ -26,34 +33,41 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Lock\Item\Manager
      */
-    private $lockItem       = null;
-    /**
-     * @var \Ess\M2ePro\Model\Lock\Item\Manager
-     */
-    private $parentLockItem = null;
+    protected $lockItemManager;
 
     /**
-     * @var \Ess\M2ePro\Model\OperationHistory
+     * @var \Ess\M2ePro\Model\Cron\OperationHistory
      */
-    private $operationHistory       = null;
+    protected $operationHistory;
+
     /**
-     * @var \Ess\M2ePro\Model\OperationHistory
+     * @var \Ess\M2ePro\Model\Cron\OperationHistory
      */
-    private $parentOperationHistory = null;
+    protected $parentOperationHistory;
+
+    /**
+     * @var \Ess\M2ePro\Model\Cron\Task\Repository
+     */
+    protected $taskRepo;
 
     //########################################
 
     public function __construct(
+        \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
         \Magento\Framework\App\ResourceConnection $resource
     ) {
         parent::__construct($helperFactory, $modelFactory);
+        $this->eventManager = $eventManager;
         $this->parentFactory = $parentFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->resource = $resource;
+
+        $this->taskRepo = $taskRepo;
     }
 
     //########################################
@@ -64,51 +78,59 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $this->updateLastAccess();
 
         if (!$this->isPossibleToRun()) {
-            return true;
+            return;
         }
 
         $this->updateLastRun();
         $this->beforeStart();
 
-        $result = true;
-
         try {
-            $tempResult = $this->performActions();
 
-            if ($tempResult !== null && !$tempResult) {
-                $result = false;
-            }
+            $this->eventManager->dispatch(
+                \Ess\M2ePro\Model\Cron\Strategy\AbstractModel::PROGRESS_START_EVENT_NAME,
+                ['progress_nick' => $this->getNick()]
+            );
 
-            $this->getLockItem()->activate();
+            $this->performActions();
+
+            $this->eventManager->dispatch(
+                \Ess\M2ePro\Model\Cron\Strategy\AbstractModel::PROGRESS_STOP_EVENT_NAME,
+                ['progress_nick' => $this->getNick()]
+            );
         } catch (\Exception $exception) {
-            $result = false;
+            $this->getOperationHistory()->addContentData(
+                'exceptions',
+                [
+                    'message' => $exception->getMessage(),
+                    'file'    => $exception->getFile(),
+                    'line'    => $exception->getLine(),
+                    'trace'   => $exception->getTraceAsString(),
+                ]
+            );
 
-            $this->getOperationHistory()->addContentData('exception', [
-                'message' => $exception->getMessage(),
-                'file'    => $exception->getFile(),
-                'line'    => $exception->getLine(),
-                'trace'   => $exception->getTraceAsString(),
-            ]);
-
-            $this->getHelper('Module\Exception')->process($exception);
+            $this->getHelper('Module_Exception')->process($exception);
         }
 
         $this->afterEnd();
-
-        return $result;
     }
-
-    // ---------------------------------------
-
-    abstract protected function getNick();
-
-    abstract protected function getMaxMemoryLimit();
 
     // ---------------------------------------
 
     abstract protected function performActions();
 
     //########################################
+
+    protected function getNick()
+    {
+        $nick = static::NICK;
+        if (empty($nick)) {
+            throw new \Ess\M2ePro\Model\Exception\Logic('Task NICK is not defined.');
+        }
+
+        return $nick;
+    }
+
+    // ---------------------------------------
 
     public function setInitiator($value)
     {
@@ -123,41 +145,55 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     // ---------------------------------------
 
     /**
-     * @param \Ess\M2ePro\Model\Lock\Item\Manager $object
+     * @param \Ess\M2ePro\Model\Lock\Item\Manager $lockItemManager
      * @return $this
      */
-    public function setParentLockItem(\Ess\M2ePro\Model\Lock\Item\Manager $object)
+    public function setLockItemManager(\Ess\M2ePro\Model\Lock\Item\Manager $lockItemManager)
     {
-        $this->parentLockItem = $object;
+        $this->lockItemManager = $lockItemManager;
         return $this;
     }
 
     /**
      * @return \Ess\M2ePro\Model\Lock\Item\Manager
      */
-    public function getParentLockItem()
+    public function getLockItemManager()
     {
-        return $this->parentLockItem;
+        return $this->lockItemManager;
     }
 
     // ---------------------------------------
 
     /**
-     * @param \Ess\M2ePro\Model\OperationHistory $object
+     * @param \Ess\M2ePro\Model\Cron\OperationHistory $object
      * @return $this
      */
-    public function setParentOperationHistory(\Ess\M2ePro\Model\OperationHistory $object)
+    public function setParentOperationHistory(\Ess\M2ePro\Model\Cron\OperationHistory $object)
     {
         $this->parentOperationHistory = $object;
         return $this;
     }
 
     /**
-     * @return \Ess\M2ePro\Model\OperationHistory
+     * @return \Ess\M2ePro\Model\Cron\OperationHistory
      */
     public function getParentOperationHistory()
     {
         return $this->parentOperationHistory;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return \Ess\M2ePro\Model\Synchronization\Log
+     */
+    protected function getSynchronizationLog()
+    {
+        $synchronizationLog = $this->activeRecordFactory->getObject('Synchronization_Log');
+        $synchronizationLog->setInitiator($this->initiator);
+        $synchronizationLog->setOperationHistoryId($this->getOperationHistory()->getId());
+
+        return $synchronizationLog;
     }
 
     //########################################
@@ -167,47 +203,47 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isPossibleToRun()
     {
+        if ($this->getInitiator() === \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER) {
+            return true;
+        }
+
+        if (!$this->isModeEnabled()) {
+            return false;
+        }
+
+        if ($this->isComponentDisabled()) {
+            return false;
+        }
+
         $currentTimeStamp = $this->getHelper('Data')->getCurrentGmtDate(true);
 
         $startFrom = $this->getConfigValue('start_from');
         $startFrom = !empty($startFrom) ? strtotime($startFrom) : $currentTimeStamp;
 
-        return $this->isModeEnabled() &&
-               (($startFrom <= $currentTimeStamp && $this->isIntervalExceeded()) ||
-                 $this->getInitiator() == \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER) &&
-               !$this->getLockItem()->isExist();
+        return $startFrom <= $currentTimeStamp && $this->isIntervalExceeded();
     }
 
     //########################################
 
     protected function initialize()
     {
-        $this->getHelper('Client')->setMemoryLimit($this->getMaxMemoryLimit());
-        $this->getHelper('Module\Exception')->setFatalErrorHandler();
+        $this->getHelper('Module_Exception')->setFatalErrorHandler();
     }
 
     protected function updateLastAccess()
     {
-        $this->setConfigValue('last_access', $this->getHelper('Data')->getCurrentGmtDate());
+        $this->setCacheConfigValue('last_access', $this->getHelper('Data')->getCurrentGmtDate());
     }
 
     protected function updateLastRun()
     {
-        $this->setConfigValue('last_run', $this->getHelper('Data')->getCurrentGmtDate());
+        $this->setCacheConfigValue('last_run', $this->getHelper('Data')->getCurrentGmtDate());
     }
 
     // ---------------------------------------
 
     protected function beforeStart()
     {
-        if ($this->getLockItem()->isExist()) {
-            throw new Exception('Lock item "'.$this->getLockItem()->getNick().'" already exists.');
-        }
-
-        $parentId = $this->getParentLockItem() ? $this->getParentLockItem()->getRealId() : null;
-        $this->getLockItem()->create($parentId);
-        $this->getLockItem()->makeShutdownFunction();
-
         $parentId = $this->getParentOperationHistory()
             ? $this->getParentOperationHistory()->getObject()->getId() : null;
         $nick = str_replace("/", "_", $this->getNick());
@@ -218,28 +254,12 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     protected function afterEnd()
     {
         $this->getOperationHistory()->stop();
-        $this->getLockItem()->remove();
     }
 
     //########################################
 
     /**
-     * @return \Ess\M2ePro\Model\Lock\Item\Manager
-     */
-    protected function getLockItem()
-    {
-        if ($this->lockItem !== null) {
-            return $this->lockItem;
-        }
-
-        $this->lockItem = $this->modelFactory->getObject('Lock_Item_Manager');
-        $this->lockItem->setNick('cron_task_'.str_replace("/", "_", $this->getNick()));
-
-        return $this->lockItem;
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\OperationHistory
+     * @return \Ess\M2ePro\Model\Cron\OperationHistory
      */
     protected function getOperationHistory()
     {
@@ -247,7 +267,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             return $this->operationHistory;
         }
 
-        return $this->operationHistory = $this->activeRecordFactory->getObject('OperationHistory');
+        return $this->operationHistory = $this->activeRecordFactory->getObject('Cron_OperationHistory');
     }
 
     // ---------------------------------------
@@ -257,7 +277,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function isModeEnabled()
     {
-        return (bool)$this->getConfigValue('mode');
+        $mode = $this->getConfigValue('mode');
+
+        if ($mode !== null) {
+            return (bool)$mode;
+        }
+
+        return true;
     }
 
     /**
@@ -265,40 +291,152 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function isIntervalExceeded()
     {
-        $lastRun = $this->getConfigValue('last_run');
+        $lastRun = $this->getCacheConfigValue('last_run');
 
         if ($lastRun === null) {
             return true;
         }
 
-        $interval = (int)$this->getConfigValue('interval');
         $currentTimeStamp = $this->getHelper('Data')->getCurrentGmtDate(true);
 
-        return $currentTimeStamp > strtotime($lastRun) + $interval;
+        return $currentTimeStamp > strtotime($lastRun) + $this->getInterval();
+    }
+
+    public function getInterval()
+    {
+        $interval = $this->getConfigValue('interval');
+        return $interval === null ? $this->interval : (int)$interval;
+    }
+
+    public function isComponentDisabled()
+    {
+        if (count($this->getHelper('Component')->getEnabledComponents()) === 0) {
+            return true;
+        }
+
+        return in_array(
+            $this->taskRepo->getTaskComponent($this->getNick()),
+            $this->getHelper('Component')->getDisabledComponents(),
+            true
+        );
     }
 
     //########################################
 
-    private function getConfig()
+    protected function processTaskException(\Exception $exception)
+    {
+        $this->getOperationHistory()->addContentData(
+            'exceptions',
+            [
+                'message' => $exception->getMessage(),
+                'file'    => $exception->getFile(),
+                'line'    => $exception->getLine(),
+                'trace'   => $exception->getTraceAsString(),
+            ]
+        );
+
+        $this->getSynchronizationLog()->addMessage(
+            $this->getHelper('Module\Translation')->__($exception->getMessage()),
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+        );
+
+        $this->getHelper('Module_Exception')->process($exception);
+    }
+
+    protected function processTaskAccountException($message, $file, $line, $trace = null)
+    {
+        $this->getOperationHistory()->addContentData(
+            'exceptions',
+            [
+                'message' => $message,
+                'file'    => $file,
+                'line'    => $line,
+                'trace'   => $trace,
+            ]
+        );
+
+        $this->getSynchronizationLog()->addMessage(
+            $message,
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+        );
+    }
+
+    //########################################
+
+    protected function setRegistryValue($key, $value)
+    {
+        $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', $key, 'key', false);
+
+        if ($registryModel === null) {
+            $registryModel = $this->activeRecordFactory->getObject('Registry');
+        }
+
+        $registryModel->setData('key', $key);
+        $registryModel->setData('value', $value);
+        $registryModel->save();
+    }
+
+    protected function deleteRegistryValue($key)
+    {
+        $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', $key, 'key', false);
+
+        if ($registryModel !== null && $registryModel->getId()) {
+            $registryModel->delete();
+        }
+    }
+
+    protected function getRegistryValue($key)
+    {
+        $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', $key, 'key', false);
+
+        if ($registryModel === null) {
+            $registryModel = $this->activeRecordFactory->getObject('Registry');
+        }
+
+        return $registryModel->getValue();
+    }
+
+    //########################################
+
+    protected function getConfig()
     {
         return $this->getHelper('Module')->getConfig();
     }
 
-    private function getConfigGroup()
+    protected function getCacheConfig()
+    {
+        return $this->getHelper('Module')->getCacheConfig();
+    }
+
+    protected function getConfigGroup()
     {
         return '/cron/task/'.$this->getNick().'/';
     }
 
     // ---------------------------------------
 
-    private function getConfigValue($key)
+    protected function setConfigValue($key, $value)
+    {
+        return $this->getConfig()->setGroupValue($this->getConfigGroup(), $key, $value);
+    }
+
+    protected function getConfigValue($key)
     {
         return $this->getConfig()->getGroupValue($this->getConfigGroup(), $key);
     }
 
-    private function setConfigValue($key, $value)
+    // ---------------------------------------
+
+    protected function setCacheConfigValue($key, $value)
     {
-        return $this->getConfig()->setGroupValue($this->getConfigGroup(), $key, $value);
+        return $this->getCacheConfig()->setGroupValue($this->getConfigGroup(), $key, $value);
+    }
+
+    protected function getCacheConfigValue($key)
+    {
+        return $this->getCacheConfig()->getGroupValue($this->getConfigGroup(), $key);
     }
 
     //########################################

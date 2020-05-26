@@ -27,8 +27,6 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     const WEIGHT_CUSTOM_VALUE           = 1;
     const WEIGHT_CUSTOM_ATTRIBUTE       = 2;
 
-    //########################################
-
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Shipping
      */
@@ -257,28 +255,6 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getInternationalHandlingCost()
     {
         return (float)$this->getData('international_handling_cost');
-    }
-
-    //########################################
-
-    /**
-     * @return array
-     */
-    public function getTrackingAttributes()
-    {
-        return [];
-    }
-
-    /**
-     * @return array
-     */
-    public function getUsedAttributes()
-    {
-        return array_unique(array_merge(
-            $this->getPackageSizeAttributes(),
-            $this->getDimensionAttributes(),
-            $this->getWeightAttributes()
-        ));
     }
 
     //########################################

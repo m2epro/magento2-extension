@@ -13,13 +13,13 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details;
  */
 abstract class ItemsResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
 {
-    // ########################################
+    //########################################
 
     protected function validateResponse()
     {
-        $responseData = $this->getResponse()->getData();
+        $responseData = $this->getResponse()->getResponseData();
         return isset($responseData['data']);
     }
 
-    // ########################################
+    //########################################
 }

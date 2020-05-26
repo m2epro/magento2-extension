@@ -17,10 +17,12 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
     const TYPE_KTYPE      = 2;
     const TYPE_EPID_UK    = 3;
     const TYPE_EPID_DE    = 4;
+    const TYPE_EPID_AU    = 5;
 
     const EPID_SCOPE_MOTORS = 1;
     const EPID_SCOPE_UK     = 2;
     const EPID_SCOPE_DE     = 3;
+    const EPID_SCOPE_AU     = 4;
 
     const PRODUCT_TYPE_VEHICLE    = 0;
     const PRODUCT_TYPE_MOTORCYCLE = 1;
@@ -71,6 +73,12 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
                 return $this->moduleConfig->getGroupValue(
                     '/ebay/motors/',
                     'epids_de_attribute'
+                );
+
+            case self::TYPE_EPID_AU:
+                return $this->moduleConfig->getGroupValue(
+                    '/ebay/motors/',
+                    'epids_au_attribute'
                 );
         }
 
@@ -234,7 +242,8 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
         if (in_array($type, [
             self::TYPE_EPID_MOTOR,
             self::TYPE_EPID_UK,
-            self::TYPE_EPID_DE])
+            self::TYPE_EPID_DE,
+            self::TYPE_EPID_AU])
         ) {
             return true;
         }
@@ -293,6 +302,9 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
             case self::TYPE_EPID_DE:
                 return self::EPID_SCOPE_DE;
 
+            case self::TYPE_EPID_AU:
+                return self::EPID_SCOPE_AU;
+
             default:
                 return null;
         }
@@ -309,6 +321,9 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 
             case \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_DE:
                 return self::TYPE_EPID_DE;
+
+            case \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_AU:
+                return self::TYPE_EPID_AU;
 
             default:
                 return null;

@@ -346,8 +346,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             \Ess\M2ePro\Helper\Data::INITIATOR_USER,
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_LISTING,
-            // M2ePro_TRANSLATIONS
-            // Listing was successfully Added
             'Listing was successfully Added',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH

@@ -15,29 +15,19 @@ use Ess\M2ePro\Model\Exception\Logic;
  */
 class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
 {
-    const DATA_TYPE_GENERAL           = 'general';
-    const DATA_TYPE_QTY               = 'qty';
-    const DATA_TYPE_PRICE             = 'price';
-    const DATA_TYPE_TITLE             = 'title';
-    const DATA_TYPE_SUBTITLE          = 'subtitle';
-    const DATA_TYPE_DESCRIPTION       = 'description';
-    const DATA_TYPE_IMAGES            = 'images';
-    const DATA_TYPE_SPECIFICS         = 'specifics';
-    const DATA_TYPE_SHIPPING_SERVICES = 'shipping_services';
-    const DATA_TYPE_VARIATIONS        = 'variations';
-
-    const PRIORITY_QTY        = 50;
-    const PRIORITY_VARIATION  = 50;
-    const PRIORITY_PRICE      = 30;
-
-    const PRIORITY_STOP                     = 60;
-    const PRIORITY_REVISE_INSTEAD_OF_STOP   = 60;
-    const PRIORITY_REVISE_INSTEAD_OF_RELIST = 20;
-    const PRIORITY_RELIST                   = 20;
-    const PRIORITY_LIST                     = 10;
-    const PRIORITY_LOW                      = 0;
-
-    private $priority = self::PRIORITY_LOW;
+    const DATA_TYPE_GENERAL = 'general';
+    const DATA_TYPE_QTY = 'qty';
+    const DATA_TYPE_PRICE = 'price';
+    const DATA_TYPE_TITLE = 'title';
+    const DATA_TYPE_SUBTITLE = 'subtitle';
+    const DATA_TYPE_DESCRIPTION = 'description';
+    const DATA_TYPE_IMAGES = 'images';
+    const DATA_TYPE_CATEGORIES = 'categories';
+    const DATA_TYPE_SHIPPING = 'shipping';
+    const DATA_TYPE_PAYMENT = 'payment';
+    const DATA_TYPE_RETURN = 'return';
+    const DATA_TYPE_OTHER = 'other';
+    const DATA_TYPE_VARIATIONS = 'variations';
 
     //########################################
 
@@ -54,8 +44,11 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
             self::DATA_TYPE_SUBTITLE,
             self::DATA_TYPE_DESCRIPTION,
             self::DATA_TYPE_IMAGES,
-            self::DATA_TYPE_SPECIFICS,
-            self::DATA_TYPE_SHIPPING_SERVICES,
+            self::DATA_TYPE_CATEGORIES,
+            self::DATA_TYPE_SHIPPING,
+            self::DATA_TYPE_PAYMENT,
+            self::DATA_TYPE_RETURN,
+            self::DATA_TYPE_OTHER,
             self::DATA_TYPE_VARIATIONS,
         ];
     }
@@ -247,25 +240,25 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
     /**
      * @return bool
      */
-    public function isSpecificsAllowed()
+    public function isCategoriesAllowed()
     {
-        return $this->isAllowed(self::DATA_TYPE_SPECIFICS);
+        return $this->isAllowed(self::DATA_TYPE_CATEGORIES);
     }
 
     /**
      * @return $this
      */
-    public function allowSpecifics()
+    public function allowCategories()
     {
-        return $this->allow(self::DATA_TYPE_SPECIFICS);
+        return $this->allow(self::DATA_TYPE_CATEGORIES);
     }
 
     /**
      * @return $this
      */
-    public function disallowSpecifics()
+    public function disallowCategories()
     {
-        return $this->disallow(self::DATA_TYPE_SPECIFICS);
+        return $this->disallow(self::DATA_TYPE_CATEGORIES);
     }
 
     // ---------------------------------------
@@ -273,25 +266,103 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
     /**
      * @return bool
      */
-    public function isShippingServicesAllowed()
+    public function isShippingAllowed()
     {
-        return $this->isAllowed(self::DATA_TYPE_SHIPPING_SERVICES);
+        return $this->isAllowed(self::DATA_TYPE_SHIPPING);
     }
 
     /**
      * @return $this
      */
-    public function allowShippingServices()
+    public function allowShipping()
     {
-        return $this->allow(self::DATA_TYPE_SHIPPING_SERVICES);
+        return $this->allow(self::DATA_TYPE_SHIPPING);
     }
 
     /**
      * @return $this
      */
-    public function disallowShippingServices()
+    public function disallowShipping()
     {
-        return $this->disallow(self::DATA_TYPE_SHIPPING_SERVICES);
+        return $this->disallow(self::DATA_TYPE_SHIPPING);
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isPaymentAllowed()
+    {
+        return $this->isAllowed(self::DATA_TYPE_PAYMENT);
+    }
+
+    /**
+     * @return $this
+     */
+    public function allowPayment()
+    {
+        return $this->allow(self::DATA_TYPE_PAYMENT);
+    }
+
+    /**
+     * @return $this
+     */
+    public function disallowPayment()
+    {
+        return $this->disallow(self::DATA_TYPE_PAYMENT);
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isReturnAllowed()
+    {
+        return $this->isAllowed(self::DATA_TYPE_RETURN);
+    }
+
+    /**
+     * @return $this
+     */
+    public function allowReturn()
+    {
+        return $this->allow(self::DATA_TYPE_RETURN);
+    }
+
+    /**
+     * @return $this
+     */
+    public function disallowReturn()
+    {
+        return $this->disallow(self::DATA_TYPE_RETURN);
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isOtherAllowed()
+    {
+        return $this->isAllowed(self::DATA_TYPE_OTHER);
+    }
+
+    /**
+     * @return $this
+     */
+    public function allowOther()
+    {
+        return $this->allow(self::DATA_TYPE_OTHER);
+    }
+
+    /**
+     * @return $this
+     */
+    public function disallowOther()
+    {
+        return $this->disallow(self::DATA_TYPE_OTHER);
     }
 
     // ---------------------------------------
@@ -318,28 +389,6 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
     public function disallowVariations()
     {
         return $this->disallow(self::DATA_TYPE_VARIATIONS);
-    }
-
-    //########################################
-
-    public function tryToIncreasePriority($priority)
-    {
-        if ($this->priority >= $priority) {
-            return $this;
-        }
-
-        return $this->setPriority($priority);
-    }
-
-    public function setPriority($priority)
-    {
-        $this->priority = $priority;
-        return $this;
-    }
-
-    public function getPriority()
-    {
-        return $this->priority;
     }
 
     //########################################

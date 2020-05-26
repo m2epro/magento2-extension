@@ -16,7 +16,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     public $templateModel = null;
     public $formData = [];
     public $marketplaceData = [];
-    public $generalAttributesByInputTypes = [];
+    public $attributesByInputTypes = [];
     public $allAttributes = [];
 
     //########################################
@@ -40,11 +40,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $this->allAttributes = $magentoAttributeHelper->getAll();
 
-        $generalAttributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
-
-        $this->generalAttributesByInputTypes = [
-            'text' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, ['text']),
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($generalAttributes, ['text', 'select'])
+        $this->attributesByInputTypes = [
+            'text' => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text']),
+            'text_select' => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text', 'select'])
         ];
     }
 

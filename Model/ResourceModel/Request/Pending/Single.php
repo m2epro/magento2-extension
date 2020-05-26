@@ -13,14 +13,14 @@ namespace Ess\M2ePro\Model\ResourceModel\Request\Pending;
  */
 class Single extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
-    // ########################################
+    //########################################
 
     public function _construct()
     {
         $this->_init('m2epro_request_pending_single', 'id');
     }
 
-    // ########################################
+    //########################################
 
     public function getComponentsInProgress()
     {
@@ -33,5 +33,5 @@ class Single extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
         return $this->getConnection()->fetchCol($select);
     }
 
-    // ########################################
+    //########################################
 }

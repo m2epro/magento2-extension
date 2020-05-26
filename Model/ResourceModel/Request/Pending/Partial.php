@@ -13,14 +13,14 @@ namespace Ess\M2ePro\Model\ResourceModel\Request\Pending;
  */
 class Partial extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
-    // ########################################
+    //########################################
 
     public function _construct()
     {
         $this->_init('m2epro_request_pending_partial', 'id');
     }
 
-    // ########################################
+    //########################################
 
     public function getResultData(\Ess\M2ePro\Model\Request\Pending\Partial $requestPendingPartial, $partNumber)
     {
@@ -64,5 +64,5 @@ class Partial extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
         );
     }
 
-    // ########################################
+    //########################################
 }

@@ -18,7 +18,7 @@ class Item extends AbstractGrid
     /** @var $order \Ess\M2ePro\Model\Order */
     protected $order = null;
 
-    protected $itemSkuToWalmartItemCache;
+    protected $itemSkuToWalmartIds;
 
     protected $productModel;
     protected $resourceConnection;
@@ -157,12 +157,12 @@ class Item extends AbstractGrid
 
         foreach ($collection->getItems() as $item) {
             /**@var \Ess\M2ePro\Model\Listing\Product $item */
-            $sku = (string)$item->getChildObject()->getSku();
+            $sku    = (string)$item->getChildObject()->getSku();
             $itemId = (string)$item->getChildObject()->getItemId();
+            $wpid   = (string)$item->getChildObject()->getWpid();
 
-            if ($itemId) {
-                $cache[$sku] = $itemId;
-            }
+            $itemId && $cache[$sku]['item_id'] = $itemId;
+            $wpid && $cache[$sku]['wpid']      = $wpid;
         }
         // ---------------------------------------
 
@@ -176,16 +176,18 @@ class Item extends AbstractGrid
 
         foreach ($collection->getItems() as $item) {
             /**@var \Ess\M2ePro\Model\Listing\Other $item */
-            $sku = (string)$item->getChildObject()->getSku();
+            $sku    = (string)$item->getChildObject()->getSku();
             $itemId = (string)$item->getChildObject()->getItemId();
+            $wpid   = (string)$item->getChildObject()->getWpid();
 
-            if ($itemId && empty($cache[$sku])) {
-                $cache[$sku] = $itemId;
+            if (empty($cache[$sku])) {
+                $itemId && $cache[$sku]['item_id'] = $itemId;
+                $wpid && $cache[$sku]['wpid']      = $wpid;
             }
         }
         // ---------------------------------------
 
-        $this->itemSkuToWalmartItemCache = $cache;
+        $this->itemSkuToWalmartIds = $cache;
 
         return parent::_afterLoadCollection();
     }
@@ -213,11 +215,15 @@ HTML;
         }
 
         $walmartLink = '';
-        if (!empty($this->itemSkuToWalmartItemCache[$row->getSku()])) {
+        $marketplaceId = $this->order->getMarketplaceId();
+        $walmartHelper = $this->getHelper('Component\Walmart');
+        $idForLink = $walmartHelper->getIdentifierForItemUrl($marketplaceId);
+
+        if (!empty($this->itemSkuToWalmartIds[$row->getChildObject()->getSku()][$idForLink])) {
             $itemLinkText = $this->__('View on Walmart');
-            $itemUrl = $this->getHelper('Component\Walmart')->getItemUrl(
-                $this->itemSkuToWalmartItemCache[$row->getSku()],
-                $this->order->getData('marketplace_id')
+            $itemUrl = $walmartHelper->getItemUrl(
+                $this->itemSkuToWalmartIds[$row->getChildObject()->getSku()][$idForLink],
+                $marketplaceId
             );
 
             $walmartLink = <<<HTML

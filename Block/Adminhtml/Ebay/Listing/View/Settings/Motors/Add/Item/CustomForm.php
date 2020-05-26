@@ -160,6 +160,15 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'item[engine]'
             ]
         );
+
+        $fieldset->addField(
+            'street_name',
+            'text',
+            [
+                'label' => 'Street Name',
+                'name' => 'item[street_name]'
+            ]
+        );
     }
 
     private function buildKtypeFields(\Magento\Framework\Data\Form $form)

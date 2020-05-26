@@ -36,25 +36,32 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isFeatureEnabled()
     {
-        return (int)$this->modelFactory->getObject('Config_Manager_Module')
-                                       ->getGroupValue('/ebay/in_store_pickup/', 'mode');
+        return count($this->getEnabledAccounts()) !== 0;
     }
 
     /**
-     * @return array
+     * @return \Ess\M2ePro\Model\Account[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getEnabledAccounts()
     {
-        /** @var \Ess\M2ePro\Model\Account[] $accounts */
-        $accounts = $this->activeRecordFactory->getObject('Account')->getCollection()
-            ->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Ebay::NICK);
+        $cacheKey = 'ebay_pickup_store_enabled_accounts';
+        $enabledAccounts = $this->helperFactory->getObject('Data_Cache_Runtime')->getValue($cacheKey);
 
-        $enabledAccounts = [];
-        foreach ($accounts as $account) {
-            if ($account->getChildObject()->isPickupStoreEnabled()) {
-                $enabledAccounts[] = $account;
+        if ($enabledAccounts === null) {
+            $enabledAccounts = [];
+
+            $collection = $this->activeRecordFactory->getObject('Account')->getCollection();
+            $collection->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Ebay::NICK);
+
+            foreach ($collection->getItems() as $account) {
+                /**@var \Ess\M2ePro\Model\Account $account */
+                if ($account->getChildObject()->isPickupStoreEnabled()) {
+                    $enabledAccounts[] = $account;
+                }
             }
+
+            $this->helperFactory->getObject('Data_Cache_Runtime')->setValue($cacheKey, $enabledAccounts);
         }
 
         return $enabledAccounts;

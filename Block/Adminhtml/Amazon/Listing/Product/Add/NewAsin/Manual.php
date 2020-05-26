@@ -49,9 +49,10 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $url = $this->getUrl('*/*/index', ['_current' => true, 'step' => 5]);
         // ---------------------------------------
         $this->addButton('save_and_go_to_listing_view', [
-            'label'     => $this->__('Continue'),
-            'onclick'   => 'ListingGridHandlerObj.checkManualProducts(\''.$url.'\')',
-            'class'     => 'action-primary forward'
+            'id'      => 'amazon_listing_category_continue_btn',
+            'label'   => $this->__('Continue'),
+            'onclick' => 'ListingGridHandlerObj.checkManualProducts(\''.$url.'\')',
+            'class'   => 'action-primary forward'
         ]);
         // ---------------------------------------
     }
@@ -118,8 +119,6 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         );
 
         ListingGridHandlerObj.afterInitPage();
-
-        ListingGridHandlerObj.actionHandler.setOptions(M2ePro);
     });
 JS
         );

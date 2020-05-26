@@ -218,14 +218,9 @@ class Attribute extends AbstractHelper
         $idsSelect->columns($attributeCollection->getResource()->getIdFieldName(), 'main_table');
 
         /**
-         * Magento >= 2.2.4 (and Magento >= 2.1.12 && < 2.2.0) uses HAVING on COUNT
-         * so we need to add COUNT after resetting columns
+         * Magento >= 2.2.4 uses HAVING on COUNT so we need to add COUNT after resetting columns
          */
-
-        if (version_compare($this->getHelper('Magento')->getVersion(), '2.2.4', '>=') ||
-            (version_compare($this->getHelper('Magento')->getVersion(), '2.1.12', '>=') &&
-             version_compare($this->getHelper('Magento')->getVersion(), '2.2.0', '<'))
-        ) {
+        if (version_compare($this->getHelper('Magento')->getVersion(), '2.2.4', '>=')) {
             $idsSelect->columns(
                 ['count' => new \Zend_Db_Expr('COUNT(*)')],
                 'main_table'

@@ -18,7 +18,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     protected $activeRecordFactory;
     protected $walmartFactory;
 
-    // ########################################
+    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -32,7 +32,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
-    // ########################################
+    //########################################
 
     /**
      * @param int $action
@@ -67,7 +67,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return (int)$this->logsActionId;
     }
 
-    // ########################################
+    //########################################
 
     /**
      * @param array $sortedProductsData
@@ -143,7 +143,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         }
     }
 
-    // ########################################
+    //########################################
 
     protected function prepareProducts($products)
     {
@@ -305,7 +305,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return $logAction;
     }
 
-    // ########################################
+    //########################################
 
     private function getActionNick($action)
     {
@@ -330,5 +330,5 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         }
     }
 
-    // ########################################
+    //########################################
 }

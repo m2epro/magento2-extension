@@ -14,17 +14,17 @@ use \Ess\M2ePro\Model\Connector\Connection\Multiple\RequestContainer;
 /**
  * Class \Ess\M2ePro\Model\Connector\Connection\Multiple
  */
-class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
+class Multiple extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Connector\Connection\Multiple\RequestContainer[] $request */
-    private $requestsContainers = [];
+    protected $requestsContainers = [];
 
     /** @var \Ess\M2ePro\Model\Connector\Connection\Response[] $response */
-    private $responses = [];
+    protected $responses = [];
 
     protected $asynchronous = false;
 
-    // ########################################
+    //########################################
 
     protected function sendRequest()
     {
@@ -109,7 +109,7 @@ class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
         }
     }
 
-    // ########################################
+    //########################################
 
     private function createFailedResponse($errorMessage)
     {
@@ -127,7 +127,7 @@ class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
         return $failedResponse;
     }
 
-    // ########################################
+    //########################################
 
     /**
      * @param $key
@@ -196,7 +196,7 @@ class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
         return $this->asynchronous;
     }
 
-    // ########################################
+    //########################################
 
     public function getHeaders(\Ess\M2ePro\Model\Connector\Connection\Request $request)
     {
@@ -215,9 +215,10 @@ class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
         return [
             'api_version' => self::API_VERSION,
             'request'     => $this->getHelper('Data')->jsonEncode($request->getInfo()),
-            'data'        => $this->getHelper('Data')->jsonEncode($request->getData())
+            'data'        => $this->getHelper('Data')->jsonEncode($request->getData()),
+            'raw_data'    => $request->getRawData()
         ];
     }
 
-    // ########################################
+    //########################################
 }

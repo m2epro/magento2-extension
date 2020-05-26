@@ -40,29 +40,9 @@ class Tables extends AbstractHelper
     public function getCurrentEntities()
     {
         $result = [];
-        $currentTables = $this->helperFactory->getObject('Module_Database_Structure')->getMySqlTables();
+        $currentTables = $this->helperFactory->getObject('Module_Database_Structure')->getModuleTables();
 
         foreach ($currentTables as $table) {
-            $result[$table] = $this->getFullName($table);
-        }
-
-        return $result;
-    }
-
-    // ---------------------------------------
-
-    public function getCurrentConfigEntities()
-    {
-        $result = [];
-
-        $currentConfigTables = [
-            'primary_config',
-            'module_config',
-            'cache_config',
-            'synchronization_config'
-        ];
-
-        foreach ($currentConfigTables as $table) {
             $result[$table] = $this->getFullName($table);
         }
 
@@ -78,7 +58,30 @@ class Tables extends AbstractHelper
 
     public function getFullName($tableName)
     {
-        return $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(self::PREFIX.$tableName);
+        if (strpos($tableName, self::PREFIX) === false) {
+            $tableName = self::PREFIX . $tableName;
+        }
+
+        return $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName);
+    }
+
+    //########################################
+
+    public function renameTable($oldTable, $newTable)
+    {
+        $oldTable = $this->getFullName($oldTable);
+        $newTable = $this->getFullName($newTable);
+
+        if ($this->resourceConnection->getConnection()->isTableExists($oldTable) &&
+            !$this->resourceConnection->getConnection()->isTableExists($newTable)) {
+            $this->resourceConnection->getConnection()->renameTable(
+                $oldTable,
+                $newTable
+            );
+            return true;
+        }
+
+        return false;
     }
 
     //########################################

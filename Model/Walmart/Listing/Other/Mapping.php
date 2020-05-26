@@ -70,7 +70,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
             $otherListingsFiltered[] = $otherListing;
         }
 
-        if (count($otherListingsFiltered) <= 0) {
+        if (empty($otherListingsFiltered)) {
             return false;
         }
 
@@ -140,7 +140,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            $otherListing->mapProduct($magentoProductId, \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
+            $otherListing->mapProduct($magentoProductId);
 
             return true;
         }
@@ -193,7 +193,8 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
             $productObj = $this->productFactory->create()->setStoreId($storeId);
             $productObj = $productObj->loadByAttribute($attributeCode, $attributeValue);
 
-            if ($productObj && $productObj->getId()) {
+            if ($productObj && $productObj->getId() &&
+                $this->isMagentoProductTypeAllowed($productObj->getTypeId())) {
                 return $productObj->getId();
             }
         }
@@ -217,7 +218,8 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
             $productObj = $this->productFactory->create()->setStoreId($storeId);
             $productObj = $productObj->loadByAttribute($attributeCode, $attributeValue);
 
-            if ($productObj && $productObj->getId()) {
+            if ($productObj && $productObj->getId() &&
+                $this->isMagentoProductTypeAllowed($productObj->getTypeId())) {
                 return $productObj->getId();
             }
         }
@@ -241,7 +243,8 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
             $productObj = $this->productFactory->create()->setStoreId($storeId);
             $productObj = $productObj->loadByAttribute($attributeCode, $attributeValue);
 
-            if ($productObj && $productObj->getId()) {
+            if ($productObj && $productObj->getId() &&
+                $this->isMagentoProductTypeAllowed($productObj->getTypeId())) {
                 return $productObj->getId();
             }
         }
@@ -271,7 +274,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
             $product = $this->productFactory->create()->load($productId);
 
-            if ($product->getId()) {
+            if ($product->getId() && $this->isMagentoProductTypeAllowed($product->getTypeId())) {
                 return $product->getId();
             }
 
@@ -298,7 +301,8 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
         $productObj = $this->productFactory->create()->setStoreId($storeId);
         $productObj = $productObj->loadByAttribute($attributeCode, $attributeValue);
 
-        if ($productObj && $productObj->getId()) {
+        if ($productObj && $productObj->getId() &&
+            $this->isMagentoProductTypeAllowed($productObj->getTypeId())) {
             return $productObj->getId();
         }
 
@@ -338,7 +342,8 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
         $productObj = $this->productFactory->create()->setStoreId($storeId);
         $productObj = $productObj->loadByAttribute($attributeCode, $attributeValue);
 
-        if ($productObj && $productObj->getId()) {
+        if ($productObj && $productObj->getId() &&
+            $this->isMagentoProductTypeAllowed($productObj->getTypeId())) {
             return $productObj->getId();
         }
 
@@ -347,12 +352,21 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
             $attributeValue = trim(str_replace($tempMatches[1], '', $attributeValue));
             $productObj = $this->productFactory->create()->setStoreId($storeId);
             $productObj = $productObj->loadByAttribute($attributeCode, $attributeValue);
-            if ($productObj && $productObj->getId()) {
+            if ($productObj && $productObj->getId() &&
+                $this->isMagentoProductTypeAllowed($productObj->getTypeId())) {
                 return $productObj->getId();
             }
         }
 
         return null;
+    }
+
+    //########################################
+
+    protected function isMagentoProductTypeAllowed($type)
+    {
+        $knownTypes = $this->getHelper('Magento\Product')->getOriginKnownTypes();
+        return in_array($type, $knownTypes);
     }
 
     //########################################

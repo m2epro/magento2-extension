@@ -51,8 +51,8 @@ class Manage extends Main
         if ($isVariationProductMatched) {
             $listingProduct = $this->duplicateListingProduct($listingProduct);
         } else {
-            $listingProduct->setData('search_settings_status', null);
-            $listingProduct->setData('search_settings_data', null);
+            $listingProduct->getChildObject()->setData('search_settings_status', null);
+            $listingProduct->getChildObject()->setData('search_settings_data', null);
             $listingProduct->save();
         }
 

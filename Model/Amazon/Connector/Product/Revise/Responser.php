@@ -13,12 +13,25 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Product\Revise;
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 {
-    // ########################################
+    //########################################
 
     protected function getSuccessfulMessage()
     {
         return $this->getResponseObject()->getSuccessfulMessage();
     }
 
-    // ########################################
+    public function eventAfterExecuting()
+    {
+        parent::eventAfterExecuting();
+
+        if ($this->isSuccess) {
+            return;
+        }
+
+        $additionalData = $this->listingProduct->getAdditionalData();
+        $additionalData['need_full_synchronization_template_recheck'] = true;
+        $this->listingProduct->setSettings('additional_data', $additionalData)->save();
+    }
+
+    //########################################
 }

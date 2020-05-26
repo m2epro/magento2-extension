@@ -16,17 +16,20 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     private $cachedParamsObjects = [];
 
     protected $walmartFactory;
+    protected $activeRecordFactory;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params = []
     ) {
         $this->walmartFactory = $walmartFactory;
+        $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($response, $helperFactory, $modelFactory, $params);
     }
 

@@ -15,9 +15,6 @@ use Ess\M2ePro\Helper\Factory;
  */
 class ControlPanel extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    // M2ePro_TRANSLATIONS
-    // Control Panel (M2E Pro)
-
     const NICK                 = 'control_panel';
 
     const TAB_OVERVIEW         = 'overview';
@@ -26,6 +23,7 @@ class ControlPanel extends \Ess\M2ePro\Helper\AbstractHelper
     const TAB_DATABASE         = 'database';
     const TAB_TOOLS_GENERAL    = 'tools_general';
     const TAB_TOOLS_MODULE     = 'tools_module';
+    const TAB_CRON             = 'cron';
     const TAB_DEBUG            = 'debug';
 
     private $backendUrlBuilder;

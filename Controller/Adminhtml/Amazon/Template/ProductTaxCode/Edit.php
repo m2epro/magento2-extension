@@ -27,8 +27,8 @@ class Edit extends Template
 
         $this->getHelper('Data\GlobalData')->setValue('tmp_template', $model);
 
-        $headerTextEdit = $this->__('Edit Product Tax Code Policies');
-        $headerTextAdd = $this->__('Add Product Tax Code Policies');
+        $headerTextEdit = $this->__('Edit Product Tax Code Policy');
+        $headerTextAdd = $this->__('Add Product Tax Code Policy');
 
         if ($model !== null
             && $model->getId()

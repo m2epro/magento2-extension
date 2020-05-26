@@ -14,11 +14,6 @@ class AmazonMarketplaces extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['amazon_marketplace'];
-    }
-
     public function execute()
     {
         $this->getTableModifier('amazon_marketplace')

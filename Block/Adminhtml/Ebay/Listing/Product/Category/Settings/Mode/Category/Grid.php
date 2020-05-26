@@ -309,10 +309,17 @@ HTML;
 
     protected function _toHtml()
     {
+        $categoriesData = $this->getCategoriesData();
+        $isAlLeasOneCategorySelected = (int)!$this->isAlLeasOneCategorySelected($categoriesData);
+        $showErrorMessage = (int)!empty($categoriesData);
+
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
                 <<<JS
     EbayListingProductCategorySettingsModeCategoryGridObj.afterInitPage();
+    EbayListingProductCategorySettingsModeCategoryGridObj.validateCategories(
+            '{$isAlLeasOneCategorySelected}', '{$showErrorMessage}'
+        );
 JS
             );
 
@@ -334,6 +341,12 @@ JS
         // ---------------------------------------
         $this->jsTranslator->add('Done', $this->__('Done'));
         $this->jsTranslator->add('Set eBay Categories', $this->__('Set eBay Categories'));
+        $this->jsTranslator->add('Set eBay Category', $this->__('Set eBay Category'));
+        $this->jsTranslator->add('select_relevant_category', $this->__(
+            "To proceed, the category data must be specified.
+            Please select a relevant Primary eBay Category for at least one product."
+        ));
+
         // ---------------------------------------
 
         // ---------------------------------------
@@ -342,26 +355,20 @@ JS
         );
         // ---------------------------------------
 
-        $disableContinue = '';
-        if ($this->getCollection()->getSize() === 0) {
-            $disableContinue = <<<JS
-$('ebay_listing_category_continue_btn').addClassName('disabled').onclick = function() {
-    return null;
-};
-JS;
-        }
-
         $this->js->addOnReadyJs(
             <<<JS
     require([
+        'M2ePro/Plugin/Messages',
         'M2ePro/Ebay/Listing/Product/Category/Settings/Mode/Category/Grid'
-    ], function(){
-        {$disableContinue}
-
+    ], function(MessageObj){
         EbayListingProductCategorySettingsModeCategoryGridObj =
             new EbayListingProductCategorySettingsModeCategoryGrid('{$this->getId()}');
 
         EbayListingProductCategorySettingsModeCategoryGridObj.afterInitPage();
+        
+        EbayListingProductCategorySettingsModeCategoryGridObj.validateCategories(
+            '{$isAlLeasOneCategorySelected}', '{$showErrorMessage}'
+        );
     });
 JS
         );
@@ -369,6 +376,23 @@ JS
         $this->css->add('.grid-listing-column-actions { width:100px; }');
 
         return parent::_toHtml();
+    }
+
+    //########################################
+
+    protected function isAlLeasOneCategorySelected($categoriesData)
+    {
+        if (empty($categoriesData)) {
+            return false;
+        }
+
+        foreach ($categoriesData as $productId => $categoryData) {
+            if ($categoryData['category_main_mode'] != \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     //########################################

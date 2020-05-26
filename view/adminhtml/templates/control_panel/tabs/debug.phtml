@@ -11,54 +11,22 @@
 
 <div id="magento_block_control_panel_debug_commands" class="debug-test-commands">
 
-    <?php foreach ($block->commands as $command) : ?>
-        <table class="simple_commands_list">
+    <table class="simple_commands_list">
 
-            <tr>
-                <td>
+        <tr>
+            <td>
+                <a href="<?php echo $block->getUrl('*/controlPanel_debug/debug', ['action' => 'firstTest']) ?>" target="_blank">First Test</a>
+                <p>Command for quick development</p>
+            </td>
+        </tr>
 
-                    <a href="<?php echo $command['url']; ?>" <?php if ($command['confirm'] != '') :
-                        ?>onclick="return confirm('<?php echo $command['confirm']; ?>');"<?php
-                             endif; ?> <?php if ($command['new_window']) :
-    ?>target="_blank"<?php
-                             endif; ?> title="<?php echo $command['description']; ?>" alt="<?php echo $command['description']; ?>"><?php echo $command['title']; ?></a>
-                    <p style="font-size: 0.9em; color: grey;"><?php echo $command['description']; ?></p>
+        <tr>
+            <td>
+                <a href="<?php echo $block->getUrl('*/controlPanel_debug/debug', ['action' => 'secondTest']) ?>" target="_blank">Second Test</a>
+                <p>Command for quick development</p>
+            </td>
+        </tr>
 
-                </td>
-            </tr>
-
-        </table>
-
-    <?php endforeach; ?>
-
-</div>
-
-<div id="block_notice_control_panel_tab_debug_magento_development" class="debug-mode-switcher">
-
-    <?php if ($block->isMagentoDevelopmentModeEnabled) : ?>
-        <b><?php echo $block->__('Magento Development Mode is <span style="color:red;">Enabled</span> now.'); ?></b>
-    <?php endif; ?>
-
-    <?php if (!$block->isMagentoDevelopmentModeEnabled) : ?>
-        <b><?php echo $block->__('Magento Development Mode is <span style="color:green;">Disabled</span> now.'); ?></b>
-    <?php endif; ?>
-
-</div>
-
-<div id="block_notice_control_panel_tab_development_mode" class="debug-mode-switcher">
-
-    <?php if ($block->isDevelopmentModeEnabled) : ?>
-        <b><?php echo $block->__('M2E Pro Development Mode is <span style="color:red;">Enabled</span> now.'); ?></b>
-        <div style="float: right; margin-top: -9px;">
-            <?php echo $block->getChildHtml('disable_development_mode'); ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if (!$block->isDevelopmentModeEnabled) : ?>
-        <b><?php echo $block->__('M2E Pro Development Mode is <span style="color:green;">Disabled</span> now.'); ?></b>
-        <div style="float: right; margin-top: -9px;">
-            <?php echo $block->getChildHtml('enable_development_mode'); ?>
-        </div>
-    <?php endif; ?>
+    </table>
 
 </div>

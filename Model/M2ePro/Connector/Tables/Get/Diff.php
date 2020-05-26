@@ -24,7 +24,7 @@ class Diff extends \Ess\M2ePro\Model\Connector\Command\RealTime
     const PROBLEM_COLUMN_REDUNDANT = 'column_redundant';
     const PROBLEM_COLUMN_DIFFERENT = 'column_different';
 
-    // ########################################
+    //########################################
 
     protected function getCommand()
     {
@@ -35,7 +35,7 @@ class Diff extends \Ess\M2ePro\Model\Connector\Command\RealTime
     {
         return [
             'tables_info' => $this->getHelper('Data')->jsonEncode(
-                $this->getHelper('Module_Database_Structure')->getTablesInfo()
+                $this->getHelper('Module_Database_Structure')->getModuleTablesInfo()
             )
         ];
     }
@@ -45,5 +45,5 @@ class Diff extends \Ess\M2ePro\Model\Connector\Command\RealTime
         return true;
     }
 
-    // ########################################
+    //########################################
 }

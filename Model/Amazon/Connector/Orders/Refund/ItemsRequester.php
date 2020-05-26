@@ -15,7 +15,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 {
     protected $activeRecordFactory;
 
-    // ########################################
+    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -33,14 +33,14 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
         );
     }
 
-    // ########################################
+    //########################################
 
     public function getCommand()
     {
         return ['orders','refund','entities'];
     }
 
-    // ########################################
+    //########################################
 
     public function process()
     {
@@ -48,11 +48,11 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
         $this->getProcessingRunner()->start();
     }
 
-    // ########################################
+    //########################################
 
     protected function getProcessingRunnerModelName()
     {
-        return 'Amazon_Connector_Orders_Refund_ProcessingRunner';
+        return 'Amazon_Connector_Orders_ProcessingRunner';
     }
 
     protected function getProcessingParams()
@@ -63,14 +63,16 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
                 'request_data' => $this->getRequestData(),
                 'order_id'     => $this->params['order']['order_id'],
                 'change_id'    => $this->params['order']['change_id'],
+                'action_type'  => \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_REFUND,
+                'lock_name'    => 'refund_order',
                 'start_date'   => $this->getHelper('Data')->getCurrentGmtDate(),
             ]
         );
     }
 
-    // ########################################
+    //########################################
 
-    protected function getRequestData()
+    public function getRequestData()
     {
         return [
             'order_id' => $this->params['order']['amazon_order_id'],
@@ -80,5 +82,5 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
         ];
     }
 
-    // ########################################
+    //########################################
 }

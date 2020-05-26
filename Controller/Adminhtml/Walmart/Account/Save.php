@@ -208,7 +208,6 @@ class Save extends Account
         $data['magento_orders_settings'][$tempKey]['source'] = $tempSettings['source'];
 
         $prefixKeys = [
-            'mode',
             'prefix',
         ];
         $tempSettings = !empty($tempSettings['prefix']) ? $tempSettings['prefix'] : [];
@@ -285,21 +284,17 @@ class Save extends Account
 
         // invoice/shipment settings
         // ---------------------------------------
-        $temp = \Ess\M2ePro\Model\Walmart\Account::MAGENTO_ORDERS_INVOICE_MODE_YES;
-        $data['magento_orders_settings']['invoice_mode'] = $temp;
-        $temp = \Ess\M2ePro\Model\Walmart\Account::MAGENTO_ORDERS_SHIPMENT_MODE_YES;
-        $data['magento_orders_settings']['shipment_mode'] = $temp;
+        $data['magento_orders_settings']['invoice_mode'] = 1;
+        $data['magento_orders_settings']['shipment_mode'] = 1;
 
         $temp = \Ess\M2ePro\Model\Walmart\Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM;
         if (!empty($data['magento_orders_settings']['status_mapping']['mode']) &&
             $data['magento_orders_settings']['status_mapping']['mode'] == $temp) {
-            $temp = \Ess\M2ePro\Model\Walmart\Account::MAGENTO_ORDERS_INVOICE_MODE_NO;
             if (!isset($post['magento_orders_settings']['invoice_mode'])) {
-                $data['magento_orders_settings']['invoice_mode'] = $temp;
+                $data['magento_orders_settings']['invoice_mode'] = 0;
             }
-            $temp = \Ess\M2ePro\Model\Walmart\Account::MAGENTO_ORDERS_SHIPMENT_MODE_NO;
             if (!isset($post['magento_orders_settings']['shipment_mode'])) {
-                $data['magento_orders_settings']['shipment_mode'] = $temp;
+                $data['magento_orders_settings']['shipment_mode'] = 0;
             }
         }
         // ---------------------------------------
@@ -387,9 +382,6 @@ class Save extends Account
             // ---------------------------------------
         } catch (\Exception $exception) {
             $this->getHelper('Module\Exception')->process($exception);
-
-            // M2ePro_TRANSLATIONS
-            // The Walmart access obtaining is currently unavailable.<br/>Reason: %error_message%
 
             $error = 'The Walmart access obtaining is currently unavailable.<br/>Reason: %error_message%';
             $error = $this->__($error, $exception->getMessage());

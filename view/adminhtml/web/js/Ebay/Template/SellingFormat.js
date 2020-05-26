@@ -74,6 +74,20 @@ define([
                 return value >= 0 && value <= 30;
             }, M2ePro.translator.translate('wrong_value_more_than_30'));
 
+            jQuery.validator.addMethod('M2ePro-lot-size', function(value) {
+
+                if (!value) {
+                    return true;
+                }
+
+                var numValue = parseNumber(value);
+                if (isNaN(numValue)) {
+                    return false;
+                }
+
+                return numValue >= 2 && numValue <= 100000;
+            }, M2ePro.translator.translate('Wrong value. Lot Size must be from 2 to 100000 Items.'));
+
             jQuery.validator.addMethod('M2ePro-validation-charity-percentage', function (value, element) {
 
                 if (value == 0) {
@@ -95,10 +109,6 @@ define([
                 .observe('change', EbayTemplateSellingFormatObj.listing_type_change)
                 .simulate('change');
 
-            $('duration_mode')
-                .observe('change', EbayTemplateSellingFormatObj.duration_mode_change)
-                .simulate('change');
-
             $('duration_attribute')
                 .observe('change', EbayTemplateSellingFormatObj.duration_attribute_change)
                 .simulate('change');
@@ -109,6 +119,10 @@ define([
 
             $('qty_modification_mode')
                 .observe('change', EbayTemplateSellingFormatObj.qtyPostedMode_change)
+                .simulate('change');
+
+            $('lot_size_mode')
+                .observe('change', EbayTemplateSellingFormatObj.lotSizeMode_change)
                 .simulate('change');
 
             if ($('tax_category_mode')) {
@@ -228,26 +242,12 @@ define([
             self.updateQtyMode();
             self.updateQtyPercentage();
             self.updateIgnoreVariations();
+            self.updateLotSize();
             self.updateListingDuration();
             self.updateFixedPrice();
             self.updatePriceDiscountStpVisibility();
             self.updatePriceDiscountMapVisibility();
             self.updateVariationPriceTrVisibility();
-        },
-
-        duration_mode_change: function () {
-            var outOfStockControlTr = $('out_of_stock_control_tr'),
-                outOfStockControlMode = $('out_of_stock_control_mode');
-
-            outOfStockControlTr.hide();
-
-            if ($('listing_type').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::LISTING_TYPE_FIXED') &&
-                this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Helper\\Component\\Ebay::LISTING_DURATION_GTC')) {
-                outOfStockControlTr.show();
-                outOfStockControlMode.value = M2ePro.formData.outOfStockControl;
-            } else {
-                outOfStockControlMode.value = 0;
-            }
         },
 
         duration_attribute_change: function () {
@@ -298,31 +298,38 @@ define([
             }
         },
 
+        updateLotSize: function()
+        {
+            var lotSizeCustomValueTr = $('lot_size_cv_tr');
+
+            if ($('lot_size_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::LOT_SIZE_MODE_CUSTOM_VALUE')) {
+                lotSizeCustomValueTr.show();
+            } else {
+                lotSizeCustomValueTr.hide();
+                $('lot_size_custom_value').value = '';
+            }
+        },
+
         updateListingDuration: function () {
             var durationMode = $('duration_mode_container'),
                 durationModeValue = $('duration_mode'),
-                durationAttribute = $('duration_attribute_container'),
-                durationAttributeNote = $('duration_attribute_note');
+                durationAttribute = $('duration_attribute_container');
 
-            var outOfStockControlTr = $('out_of_stock_control_tr'),
-                outOfStockControlMode = $('out_of_stock_control_mode');
-
-            $('durationId1', 'durationId30', 'durationId100').invoke('show');
-
-            durationMode.show();
+            $$('.durationId').invoke('show');
+            $$('.duration_note').invoke('hide');
             durationAttribute.hide();
-            durationAttributeNote.hide();
+            durationMode.show();
+
+            durationModeValue.removeClassName('disabled');
 
             if ($('listing_type').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::LISTING_TYPE_FIXED')) {
 
-                durationModeValue.value = 3;
+                $$('.durationId').invoke('hide');
+                $('durationId100').show();
 
-                $('durationId1').hide();
-                if (M2ePro.formData.duration_mode && M2ePro.formData.duration_mode != 1) {
-                    durationModeValue.value = M2ePro.formData.duration_mode;
-                }
-
-                durationModeValue.simulate('change');
+                durationModeValue.addClassName('disabled');
+                durationModeValue.value = 100;
+                $$('.duration_fixed_note').invoke('show');
             }
 
             if ($('listing_type').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::LISTING_TYPE_AUCTION')) {
@@ -334,16 +341,13 @@ define([
                     durationModeValue.value = M2ePro.formData.duration_mode;
                 }
 
-                outOfStockControlTr.hide();
-                outOfStockControlMode.value = 0;
+                $$('.duration_auction_note').invoke('show');
             }
 
             if ($('listing_type').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::LISTING_TYPE_ATTRIBUTE')) {
                 durationMode.hide();
                 durationAttribute.show();
-                durationAttributeNote.show();
-                outOfStockControlTr.hide();
-                outOfStockControlMode.value = 0;
+                $$('.duration_attribute_note').invoke('show');
             }
         },
 
@@ -468,6 +472,27 @@ define([
             if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::QTY_MODIFICATION_MODE_ON')) {
                 minPosterValueTr.show();
                 maxPosterValueTr.show();
+            }
+        },
+
+        lotSizeMode_change: function()
+        {
+            var self = EbayTemplateSellingFormatObj,
+
+                lotSizeCustomValueTr = $('lot_size_cv_tr'),
+                attributeElement   = $('lot_size_attribute');
+
+            lotSizeCustomValueTr.hide();
+            attributeElement.value = '';
+
+            if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::LOT_SIZE_MODE_CUSTOM_VALUE')) {
+                lotSizeCustomValueTr.show();
+            } else if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::LOT_SIZE_MODE_ATTRIBUTE')) {
+                self.selectMagentoAttribute(this, attributeElement);
+            }
+
+            if (this.value != M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::LOT_SIZE_MODE_CUSTOM_VALUE')) {
+                $('lot_size_custom_value').value = '';
             }
         },
 
@@ -784,7 +809,6 @@ define([
                 nick = M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Manager::TEMPLATE_SELLING_FORMAT'),
                 storeId = EbayListingTemplateSwitcherObj.storeId,
                 marketplaceId = EbayListingTemplateSwitcherObj.marketplaceId,
-                checkAttributesAvailability = EbayListingTemplateSwitcherObj.checkAttributesAvailability,
                 callback = function () {
                     var refresh = $(container).down('a.refresh-messages');
                     if (refresh) {
@@ -800,7 +824,6 @@ define([
                 data,
                 storeId,
                 marketplaceId,
-                checkAttributesAvailability,
                 container,
                 callback
             );
@@ -1014,43 +1037,6 @@ define([
             if (charityData.percentage) {
                 percentageEl.value = charityData.percentage;
             }
-        },
-
-        // ---------------------------------------
-
-        charityOrganizationCustomModeChange: function (organizationEl, charityData) {
-            var self = this,
-                percentageEl = organizationEl.up('.charity-row').down('.charity-percentage'),
-                marketplaceEl = organizationEl.up('.charity-row').down('.charity-marketplace_id');
-
-            if (organizationEl[organizationEl.selectedIndex].hasClassName('searchNewCharity')) {
-                self.openPopUpCharity(organizationEl, marketplaceEl.value);
-
-                if (typeof self.charitySelectedHistory != 'undefined') {
-                    organizationEl.selectedIndex = self.charitySelectedHistory;
-                }
-
-                return;
-            }
-
-            var optgroup = organizationEl[organizationEl.selectedIndex].up('optgroup')
-
-            if (optgroup && optgroup.hasClassName('customCharity')) {
-                organizationEl.up('.charity-row').select('input.organization_custom')[0].value = 1;
-            } else {
-                organizationEl.up('.charity-row').select('input.organization_custom')[0].value = 0;
-            }
-
-            self.charitySelectedHistory = organizationEl.selectedIndex;
-
-            organizationEl.up('.charity-row').select('input.organization_name')[0].value = organizationEl[organizationEl.selectedIndex].innerHTML;
-
-            if (organizationEl.value == '') {
-                $('charity_percentage').hide();
-            } else {
-                $('charity_percentage').show();
-            }
-            percentageEl.value = '';
         },
 
         // ---------------------------------------

@@ -13,9 +13,10 @@ namespace Ess\M2ePro\Model\Listing\Product\Action;
  */
 abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
 {
-    //########################################
+    const MODE_INCLUDING = 'including';
+    const MODE_EXCLUDING = 'excluding';
 
-    protected $isDefaultMode = true;
+    protected $mode = self::MODE_EXCLUDING;
 
     protected $allowedDataTypes = [];
 
@@ -39,18 +40,54 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function reset()
+    public function enableAll()
     {
-        $this->isDefaultMode    = false;
+        $this->mode             = self::MODE_EXCLUDING;
+        $this->allowedDataTypes = $this->getAllDataTypes();
+
+        return $this;
+    }
+
+    public function disableAll()
+    {
+        $this->mode             = self::MODE_INCLUDING;
         $this->allowedDataTypes = [];
+
+        return $this;
     }
 
     //########################################
 
-    public function isDefaultMode()
+    public function getMode()
     {
-        return $this->isDefaultMode;
+        return $this->mode;
     }
+
+    public function isExcludingMode()
+    {
+        return $this->mode == self::MODE_EXCLUDING;
+    }
+
+    public function isIncludingMode()
+    {
+        return $this->mode == self::MODE_INCLUDING;
+    }
+
+    // ---------------------------------------
+
+    public function setModeExcluding()
+    {
+        $this->mode = self::MODE_EXCLUDING;
+        return $this;
+    }
+
+    public function setModeIncluding()
+    {
+        $this->mode = self::MODE_INCLUDING;
+        return $this;
+    }
+
+    //########################################
 
     /**
      * @return array
@@ -120,10 +157,6 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isDataConsists(\Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator)
     {
-        if ($this->isDefaultMode() != $configurator->isDefaultMode()) {
-            return false;
-        }
-
         return !array_diff($configurator->getAllowedDataTypes(), $this->getAllowedDataTypes());
     }
 
@@ -144,8 +177,8 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
      */
     public function mergeData(\Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator)
     {
-        if ($configurator->isDefaultMode()) {
-            $this->isDefaultMode = true;
+        if ($configurator->isExcludingMode()) {
+            $this->mode = self::MODE_EXCLUDING;
         }
 
         $this->allowedDataTypes = array_unique(array_merge(
@@ -178,7 +211,7 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
     public function getSerializedData()
     {
         return [
-            'is_default_mode'    => $this->isDefaultMode,
+            'mode'               => $this->mode,
             'allowed_data_types' => $this->allowedDataTypes,
             'params'             => $this->params,
         ];
@@ -191,13 +224,18 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
      */
     public function setUnserializedData(array $data)
     {
-        $this->isDefaultMode = $data['is_default_mode'];
+        if (!empty($data['mode'])) {
+            $this->mode = $data['mode'];
+        }
 
         if (!empty($data['allowed_data_types'])) {
             if (!is_array($data['allowed_data_types']) ||
                 array_diff($data['allowed_data_types'], $this->getAllDataTypes())
             ) {
-                throw new \InvalidArgumentException('Allowed data types are invalid.');
+                throw new \Ess\M2ePro\Model\Exception\Logic(
+                    'Allowed data types are invalid.',
+                    ['allowed_data_types' => $data['allowed_data_types']]
+                );
             }
 
             $this->allowedDataTypes = $data['allowed_data_types'];
@@ -219,7 +257,10 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
     protected function validateDataType($dataType)
     {
         if (!in_array($dataType, $this->getAllDataTypes())) {
-            throw new \Ess\M2ePro\Model\Exception\Logic('Data type is invalid');
+            throw new \Ess\M2ePro\Model\Exception\Logic(
+                'Data type is invalid',
+                ['data_type' => $dataType]
+            );
         }
     }
 

@@ -14,11 +14,6 @@ class OtherListingProductUpdate extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['synchronization_config'];
-    }
-
     public function execute()
     {
         $this->getConfigModifier('synchronization')->insert(

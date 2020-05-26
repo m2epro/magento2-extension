@@ -84,14 +84,10 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getOrderNumberPrefix()
     {
-        if (!$this->order->getWalmartAccount()->isMagentoOrdersNumberPrefixEnable()) {
-            return '';
-        }
-
         return $this->order->getWalmartAccount()->getMagentoOrdersNumberRegularPrefix();
     }
 

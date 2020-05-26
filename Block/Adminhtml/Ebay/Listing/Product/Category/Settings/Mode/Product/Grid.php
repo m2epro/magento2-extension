@@ -583,11 +583,21 @@ HTML;
     {
         $allIdsStr = $this->getGridIdsJson();
 
+        $categoriesData = $this->getHelper('Data\Session')->getValue(
+            'ebay_listing_product_category_settings/mode_product'
+        );
+        $isAlLeasOneCategorySelected = (int)!$this->isAlLeasOneCategorySelected($categoriesData);
+        $showErrorMessage = (int)!empty($categoriesData);
+
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->addOnReadyJs(
                 <<<JS
     EbayListingProductCategorySettingsModeProductGridObj.afterInitPage();
     EbayListingProductCategorySettingsModeProductGridObj.getGridMassActionObj().setGridIds('{$allIdsStr}');
+    
+    EbayListingProductCategorySettingsModeProductGridObj.validateCategories(
+        '{$isAlLeasOneCategorySelected}', '{$showErrorMessage}'
+    );
 JS
             );
 
@@ -621,34 +631,24 @@ JS
 
         // ---------------------------------------
         $translations = [];
-        // M2ePro_TRANSLATIONS
-        // You have not selected the Primary eBay Category for some Products.
         $text = 'You have not selected the Primary eBay Category for some Products.';
         $translations[$text] = $this->__($text);
-        // M2ePro_TRANSLATIONS
-        // Are you sure?
         $text = 'Are you sure?';
         $translations[$text] = $this->__($text);
-        // M2ePro_TRANSLATIONS
-        // eBay could not assign Categories for %product_tite% Products.
         $text = 'eBay could not assign Categories for %product_title% Products.';
         $translations[$text] = $this->__($text);
-        // M2ePro_TRANSLATIONS
-        // Suggested Categories were successfully Received for %product_title% Product(s).
         $text = 'Suggested Categories were successfully Received for %product_title% Product(s).';
         $translations[$text] = $this->__($text);
-        // M2ePro_TRANSLATIONS
-        // Set eBay Category
         $text = 'Set eBay Category';
         $translations[$text] = $this->__($text);
-        // M2ePro_TRANSLATIONS
-        // Set eBay Category for Product(s)
         $text = 'Set eBay Category for Product(s)';
         $translations[$text] = $this->__($text);
-        // M2ePro_TRANSLATIONS
-        // Set eBay Catalog Primary Category for Product(s)
         $text = 'Set eBay Catalog Primary Category for Product(s)';
         $translations[$text] = $this->__($text);
+        $translations['select_relevant_category'] = $this->__(
+            "To proceed, the category data must be specified.
+            Please select a relevant Primary eBay Category for at least one product."
+        );
 
         $this->jsTranslator->addTranslations($translations);
         // ---------------------------------------
@@ -686,6 +686,10 @@ require([
     if ({$getSuggested}) {
         EbayListingProductCategorySettingsModeProductGridObj.getSuggestedCategoriesForAll();
     }
+    
+    EbayListingProductCategorySettingsModeProductGridObj.validateCategories(
+            '{$isAlLeasOneCategorySelected}', '{$showErrorMessage}'
+        );
 })
 JS
         );
@@ -709,6 +713,23 @@ JS
         $connection = $this->getCollection()->getConnection();
 
         return implode(',', $connection->fetchCol($select));
+    }
+
+    //########################################
+
+    protected function isAlLeasOneCategorySelected($categoriesData)
+    {
+        if (empty($categoriesData)) {
+            return false;
+        }
+
+        foreach ($categoriesData as $productId => $categoryData) {
+            if ($categoryData['category_main_mode'] != \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     //########################################

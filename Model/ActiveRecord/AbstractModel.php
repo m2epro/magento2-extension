@@ -63,7 +63,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
     public function getObjectModelName()
     {
         $className = $this->getHelper('Client')->getClassName($this);
-        return str_replace('Ess\M2ePro\Model\\', '', $className);
+        return str_replace(['Ess\M2ePro\Model\\','\\'], ['','_'], $className);
     }
 
     //########################################

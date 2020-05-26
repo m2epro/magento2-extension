@@ -23,11 +23,11 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
             [
                 'sku' => $this->getAmazonListingProduct()->getSku()
             ],
-            $this->getRequestQty()->getRequestData(),
-            $this->getRequestPrice()->getRequestData(),
-            $this->getRequestDetails()->getRequestData(),
-            $this->getRequestImages()->getRequestData(),
-            $this->getRequestShippingOverride()->getRequestData()
+            $this->getQtyData(),
+            $this->getRegularPriceData(),
+            $this->getBusinessPriceData(),
+            $this->getDetailsData(),
+            $this->getImagesData()
         );
 
         if ($this->getVariationManager()->isRelationChildType()) {

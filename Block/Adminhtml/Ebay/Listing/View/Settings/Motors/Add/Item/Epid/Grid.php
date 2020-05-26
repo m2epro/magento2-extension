@@ -47,7 +47,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
         ]);
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $collection->getSelect()->columns([
-            'epid', 'product_type', 'make', 'model', 'year', 'trim', 'engine', 'submodel', 'is_custom'
+            'epid', 'product_type', 'make', 'model', 'year', 'trim', 'engine', 'submodel', 'street_name', 'is_custom'
         ]);
         $collection->setScope($this->getHelper('Component_Ebay_Motors')->getEpidsScopeByType($this->getMotorsType()));
 
@@ -133,6 +133,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
             'index'  => 'engine',
             'width'  => '100px',
             'frame_callback' => [$this, 'callbackNullableColumn']
+        ]);
+
+        $this->addColumn('street_name', [
+                'header' => $this->__('Street Name'),
+                'align'  => 'left',
+                'type'   => 'text',
+                'index'  => 'street_name',
+                'width'  => '100px',
+                'frame_callback' => [$this, 'callbackNullableColumn']
         ]);
 
         return parent::_prepareColumns();

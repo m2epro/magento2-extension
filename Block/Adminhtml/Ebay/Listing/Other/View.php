@@ -50,18 +50,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         // ---------------------------------------
 
-        $accountId = $this->getRequest()->getParam('account');
-        $marketplaceId = $this->getRequest()->getParam('marketplace');
-
-        $this->addButton('view_logs', [
-            'label'   => $this->__('View Log'),
-            'onclick' => 'window.open(\''.$this->getUrl('*/ebay_log_listing_other/index', [
-                'ebayAccount' => $accountId,
-                'ebayMarketplace' => $marketplaceId,
-                'listings' => true
-            ]) . '\');',
-        ]);
-
         if ($this->getRequest()->getParam('back') !== null) {
             $url = $this->getHelper('Data')->getBackUrl();
             $this->buttonList->add('back', [
@@ -121,44 +109,24 @@ HTML
 
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
 
-        $logViewUrl = $this->getUrl('*/ebay_log_listing_other/index', [
-            'back'=>$helper->makeBackUrlParam('*/listing_other/index')
-        ]);
-
         $someProductsWereNotMappedMessage = 'No matches were found. Please change the Mapping Attributes in <strong>';
         $someProductsWereNotMappedMessage .= 'Configuration > Account > 3rd Party Listings</strong> ';
         $someProductsWereNotMappedMessage .= 'or try to map manually.';
         $someProductsWereNotMappedMessage = $helper->escapeJs($this->__($someProductsWereNotMappedMessage));
 
-        // M2ePro_TRANSLATIONS
-        // "%task_title%" Task has completed with warnings. <a target="_blank" href="%url%">View Log</a> for details.
-        $temp = '"%task_title%" Task has completed with warnings. ';
-        $temp .= '<a target="_blank" href="%url%">View Log</a> for details.';
-        $taskCompletedWarningMessage = $this->__($temp);
-
-        // M2ePro_TRANSLATIONS
-        // "%task_title%" Task has completed with errors. <a target="_blank" href="%url%">View Log</a> for details.
-        $temp = '"%task_title%" Task has completed with errors. ';
-        $temp .= '<a target="_blank" href="%url%">View Log</a> for details.';
-        $taskCompletedErrorMessage = $this->__($temp);
-
         $this->jsUrl->addUrls($helper->getControllerActions('Listing\Other'));
         $this->jsUrl->addUrls([
-            'ebay_log_listing_other/index' => $this->getUrl('*/ebay_log_listing_other/index'),
             'listing_other_mapping/map' => $this->getUrl('*/listing_other_mapping/map'),
-            'logViewUrl' => $logViewUrl,
-            'getErrorsSummary' => $this->getUrl('*/listing_other/getErrorsSummary'),
-            'runReviseProducts' => $this->getUrl('*/ebay_listing_other/runReviseProducts'),
-            'runRelistProducts' => $this->getUrl('*/ebay_listing_other/runRelistProducts'),
-            'runStopProducts' => $this->getUrl('*/ebay_listing_other/runStopProducts'),
             'mapAutoToProduct' => $this->getUrl('*/listing_other_mapping/autoMap'),
+
             'prepareData' => $this->getUrl('*/listing_other_moving/prepareMoveToListing'),
-            'moveToListingGridHtml' => $this->getUrl('*/ebay_listing_other_moving/moveToListingGrid'),
-            'getFailedProductsHtml' => $this->getUrl('*/listing_other_moving/getFailedProducts'),
-            'tryToMoveToListing' => $this->getUrl('*/listing_other_moving/tryToMoveToListing'),
-            'moveToListing' => $this->getUrl('*/listing_other_moving/moveToListing'),
+            'moveToListingGridHtml' => $this->getUrl('*/listing_other_moving/moveToListingGrid'),
+            'moveToListing' => $this->getUrl('*/ebay_listing_other/moveToListing'),
+            'categorySettings' => $this->getUrl('*/ebay_listing_product_category_settings/index'),
+
             'removingProducts' => $this->getUrl('*/ebay_listing_other/removing'),
             'unmappingProducts' => $this->getUrl('*/listing_other_mapping/unmapping')
+
         ]);
 
         $this->jsTranslator->addTranslations([
@@ -182,43 +150,16 @@ HTML
             'automap_progress_title' => $this->__('Map Item(s) to Products'),
             'processing_data_message' => $this->__('Processing %product_title% Product(s).'),
             'popup_title' => $this->__('Moving eBay Items'),
-            'popup_title_single' => $this->__('Move Item "%product_title%" to the M2E Pro Listing'),
-            'failed_products_popup_title' => $this->__('Product(s) failed to move'),
-            'successfully_moved' => $this->__('Product(s) was successfully Moved.'),
-            'products_were_not_moved' => $this->__(
-                'Products were not Moved. <a target="_blank" href="%url%">View Log</a> for details.',
-                $logViewUrl
-            ),
-            'some_products_were_not_moved' => $this->__(
-                'Some of the Products were not Moved. <a target="_blank" href="%url%">View Log</a> for details.',
-                $logViewUrl
-            ),
             'not_enough_data' => $this->__('Not enough data.'),
             'successfully_unmapped' => $this->__('Product(s) was successfully Unmapped.'),
             'successfully_removed' => $this->__('Product(s) was successfully Removed.'),
             'task_completed_message' => $this->__('Task completed. Please wait ...'),
-            'task_completed_success_message' => $this->__('"%task_title%" Task has successfully completed.'),
-            'task_completed_warning_message' => $taskCompletedWarningMessage,
-            'task_completed_error_message' => $taskCompletedErrorMessage,
             'sending_data_message' => $this->__('Sending %product_title% Product(s) data on eBay.'),
-            'view_all_product_log_message' => $this->__('View Full Product Log.'),
             'listing_locked_message' => $this->__('The Listing was locked by another process. Please try again later.'),
             'listing_empty_message' => $this->__('Listing is empty.'),
 
-            'listing_all_items_message' => $this->__('Listing All Items On eBay'),
-            'listing_selected_items_message' => $this->__('Listing Selected Items On eBay'),
-            'revising_selected_items_message' => $this->__('Revising Selected Items On eBay'),
-            'relisting_selected_items_message' => $this->__('Relisting Selected Items On eBay'),
-            'stopping_selected_items_message' => $this->__('Stopping Selected Items On eBay'),
-            'stopping_and_removing_selected_items_message' => $this->__(
-                'Stopping On eBay And Removing From Listing Selected Items'
-            ),
-
             'select_items_message' => $this->__('Please select the Products you want to perform the Action on.'),
             'select_action_message' => $this->__('Please select Action.'),
-
-            'select_only_mapped_products' => $this->__('Only Mapped Products must be selected.'),
-            'select_the_same_type_products' => $this->__('Selected Items must belong to the same Account and Site.')
         ]);
 
         $this->js->addRequireJs([
@@ -238,26 +179,20 @@ HTML
         M2ePro.customData.componentMode = '{$component}';
         M2ePro.customData.gridId = 'ebayListingOtherGrid';
 
-        window.ListingProgressBarObj = new ProgressBar('listing_other_progress_bar');
-        window.GridWrapperObj = new AreaWrapper('listing_other_content_container');
-
         window.EbayListingOtherGridObj = new EbayListingOtherGrid('ebayListingOtherViewGrid');
         window.EbayListingOtherMappingObj = new ListingOtherMapping(EbayListingOtherGridObj,'ebay');
 
-        EbayListingOtherGridObj.movingHandler.setOptions(M2ePro);
-        EbayListingOtherGridObj.autoMappingHandler.setOptions(M2ePro);
-        EbayListingOtherGridObj.removingHandler.setOptions(M2ePro);
-        EbayListingOtherGridObj.unmappingHandler.setOptions(M2ePro);
+        EbayListingOtherGridObj.movingHandler.setProgressBar('listing_other_progress_bar');
+        EbayListingOtherGridObj.movingHandler.setGridWrapper('listing_other_content_container');
+
+        EbayListingOtherGridObj.autoMappingHandler.setProgressBar('listing_other_progress_bar');
+        EbayListingOtherGridObj.autoMappingHandler.setGridWrapper('listing_other_content_container');
 
         jQuery(function() {
             EbayListingOtherGridObj.afterInitPage();
         });
 JS
         );
-
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid::class
-        ));
 
         $mapToProductBlock = $this->createBlock('Listing_Other_Mapping');
 

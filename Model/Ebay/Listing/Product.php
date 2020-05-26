@@ -14,13 +14,9 @@ namespace Ess\M2ePro\Model\Ebay\Listing;
 
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
-    const TRANSLATION_STATUS_NONE                     = 0;
-    const TRANSLATION_STATUS_PENDING                  = 1;
-    const TRANSLATION_STATUS_PENDING_PAYMENT_REQUIRED = 2;
-    const TRANSLATION_STATUS_IN_PROGRESS              = 3;
-    const TRANSLATION_STATUS_TRANSLATED               = 4;
-
-    //########################################
+    const INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED = 'channel_status_changed';
+    const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED    = 'channel_qty_changed';
+    const INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED  = 'channel_price_changed';
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Item
@@ -639,6 +635,21 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getData('online_title');
     }
 
+    public function getOnlineSubTitle()
+    {
+        return $this->getData('online_sub_title');
+    }
+
+    public function getOnlineDescription()
+    {
+        return $this->getData('online_description');
+    }
+
+    public function getOnlineImages()
+    {
+        return $this->getSettings('online_images');
+    }
+
     public function getOnlineDuration()
     {
         return $this->getData('online_duration');
@@ -704,77 +715,54 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return (int)$this->getData('online_bids');
     }
 
-    public function getOnlineCategory()
+    public function getOnlineMainCategory()
     {
-        return $this->getData('online_category');
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return int
-     */
-    public function getTranslationStatus()
-    {
-        return (int)$this->getData('translation_status');
+        return $this->getData('online_main_category');
     }
 
     /**
-     * @return bool
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isTranslationStatusNone()
+    public function getOnlineCategoriesData()
     {
-        return $this->getTranslationStatus() == self::TRANSLATION_STATUS_NONE;
+        return $this->getSettings('online_categories_data');
     }
 
     /**
-     * @return bool
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isTranslationStatusPending()
+    public function getOnlineShippingData()
     {
-        return $this->getTranslationStatus() == self::TRANSLATION_STATUS_PENDING;
+        return $this->getSettings('online_shipping_data');
     }
 
     /**
-     * @return bool
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isTranslationStatusPendingPaymentRequired()
+    public function getOnlinePaymentData()
     {
-        return $this->getTranslationStatus() == self::TRANSLATION_STATUS_PENDING_PAYMENT_REQUIRED;
+        return $this->getSettings('online_payment_data');
     }
 
     /**
-     * @return bool
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isTranslationStatusInProgress()
+    public function getOnlineReturnData()
     {
-        return $this->getTranslationStatus() == self::TRANSLATION_STATUS_IN_PROGRESS;
+        return $this->getSettings('online_return_data');
     }
 
     /**
-     * @return bool
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isTranslationStatusTranslated()
+    public function getOnlineOtherData()
     {
-        return $this->getTranslationStatus() == self::TRANSLATION_STATUS_TRANSLATED;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTranslatable()
-    {
-        return $this->isTranslationStatusPending() || $this->isTranslationStatusPendingPaymentRequired();
-    }
-
-    public function getTranslationService()
-    {
-        return $this->getData('translation_service');
-    }
-
-    public function getTranslatedDate()
-    {
-        return $this->getData('translated_date');
+        return $this->getSettings('online_other_data');
     }
 
     // ---------------------------------------
@@ -1070,25 +1058,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     //########################################
 
-    public function getOutOfStockControl($returnRealValue = false)
-    {
-        $additionalData = $this->getParentObject()->getAdditionalData();
-
-        if (isset($additionalData['out_of_stock_control'])) {
-            return (bool)$additionalData['out_of_stock_control'];
-        }
-
-        return $returnRealValue ? null : false;
-    }
-
     public function isOutOfStockControlEnabled()
     {
         if ($this->getOnlineDuration() && !$this->isOnlineDurationGtc()) {
             return false;
-        }
-
-        if ($this->getOutOfStockControl()) {
-            return true;
         }
 
         if ($this->getEbayAccount()->getOutOfStockControl()) {
@@ -1183,152 +1156,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         }
 
         return round($price, 2);
-    }
-
-    //########################################
-
-    public function listAction(array $params = [])
-    {
-        return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $params);
-    }
-
-    public function relistAction(array $params = [])
-    {
-        return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_RELIST, $params);
-    }
-
-    public function reviseAction(array $params = [])
-    {
-        return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $params);
-    }
-
-    public function stopAction(array $params = [])
-    {
-        return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_STOP, $params);
-    }
-
-    // ---------------------------------------
-
-    protected function processDispatcher($action, array $params = [])
-    {
-        return $this->modelFactory->getObject('Ebay_Connector_Item_Dispatcher')
-            ->process($action, $this->getId(), $params);
-    }
-
-    //########################################
-
-    /**
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception
-     */
-    public function getTrackingAttributes()
-    {
-        $attributes = $this->getListing()->getTrackingAttributes();
-
-        $trackingAttributesTemplates = $this->modelFactory->getObject('Ebay_Template_Manager')
-            ->getTrackingAttributesTemplates();
-
-        foreach ($trackingAttributesTemplates as $template) {
-            $templateManager = $this->getTemplateManager($template);
-            $resultObjectTemp = $templateManager->getResultObject();
-            if ($resultObjectTemp) {
-                $attributes = array_merge($attributes, $resultObjectTemp->getTrackingAttributes());
-            }
-        }
-
-        if ($this->isSetCategoryTemplate()) {
-            $attributes = array_merge($attributes, $this->getCategoryTemplate()->getTrackingAttributes());
-        }
-
-        if ($this->getEbayAccount()->isPickupStoreEnabled()) {
-            $listingProductPickupStoreCollection = $this->activeRecordFactory
-                ->getObject('Ebay_Listing_Product_PickupStore')
-                ->getCollection()
-                ->addFieldToFilter('listing_product_id', $this->getId());
-
-            foreach ($listingProductPickupStoreCollection as $listingProductPickupStore) {
-                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\PickupStore $listingProductPickupStore */
-                $tempAttributes = $listingProductPickupStore->getAccountPickupStore()->getTrackingAttributes();
-                $attributes = array_merge($attributes, $tempAttributes);
-            }
-        }
-
-        return array_unique($attributes);
-    }
-
-    public function setSynchStatusNeed($newData, $oldData)
-    {
-        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
-
-        $newTemplates = $templateManager->getTemplatesFromData($newData);
-        $oldTemplates = $templateManager->getTemplatesFromData($oldData);
-
-        $listingProductData = array_merge(
-            $this->getParentObject()->getData(),
-            $this->getData()
-        );
-
-        foreach ($templateManager->getAllTemplates() as $template) {
-            $templateManager->setTemplate($template);
-
-            $templateManager->getTemplateModel(true)->getResource()->setSynchStatusNeed(
-                $newTemplates[$template]->getDataSnapshot(),
-                $oldTemplates[$template]->getDataSnapshot(),
-                [$listingProductData]
-            );
-        }
-        $this->getResource()->setSynchStatusNeedByCategoryTemplate($newData, $oldData, $listingProductData);
-        $this->getResource()->setSynchStatusNeedByOtherCategoryTemplate($newData, $oldData, $listingProductData);
-    }
-
-    // ---------------------------------------
-
-    public function clearParentIndexer()
-    {
-        $manager = $this->modelFactory->getObject('Indexer_Listing_Product_VariationParent_Manager', [
-            'listing' => $this->getListing()
-        ]);
-        $manager->markInvalidated();
-    }
-
-    //########################################
-
-    public function beforeSave()
-    {
-        if ($this->isObjectCreatingState()) {
-            $this->setData('item_uuid', $this->generateItemUUID());
-        }
-
-        return parent::beforeSave();
-    }
-
-    public function afterSave()
-    {
-        if ($this->isObjectCreatingState()) {
-            $this->clearParentIndexer();
-        } else {
-
-            /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Indexer\Listing\Product\VariationParent $resource */
-            $resource = $this->activeRecordFactory->getObject(
-                'Ebay_Indexer_Listing_Product_VariationParent'
-            )->getResource();
-
-            foreach ($resource->getTrackedFields() as $fieldName) {
-                if ($this->getData($fieldName) != $this->getOrigData($fieldName)) {
-                    $this->clearParentIndexer();
-                    break;
-                }
-            }
-        }
-
-        return parent::afterSave();
-    }
-
-    public function beforeDelete()
-    {
-        $this->clearParentIndexer();
-
-        parent::beforeDelete();
     }
 
     //########################################

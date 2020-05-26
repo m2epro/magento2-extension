@@ -64,7 +64,6 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
             'walmart_start_date'           => $translation->__('Start Date'),
             'walmart_end_date'             => $translation->__('End Date'),
             'walmart_status'               => $translation->__('Status'),
-            'walmart_details_data_changed' => $translation->__('Item Details need to be updated'),
             'walmart_online_price_invalid' => $translation->__('Pricing Rules violated'),
         ];
     }

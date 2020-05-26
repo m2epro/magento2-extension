@@ -19,7 +19,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 
     protected $cacheConfig;
 
-    // ########################################
+    //########################################
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -32,14 +32,14 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
         parent::__construct($helperFactory, $modelFactory, $account, $params);
     }
 
-    // ########################################
+    //########################################
 
     public function getCommand()
     {
         return ['orders','get','items'];
     }
 
-    protected function getRequestData()
+    public function getRequestData()
     {
         $accountsAccessTokens = [];
         foreach ($this->params['accounts'] as $account) {
@@ -59,7 +59,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
         return $data;
     }
 
-    // ########################################
+    //########################################
 
     public function process()
     {
@@ -97,7 +97,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
         return $connection;
     }
 
-    // ########################################
+    //########################################
 
     protected function getRequestTimeOut()
     {
@@ -109,7 +109,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
         return 300 + $rise;
     }
 
-    // ########################################
+    //########################################
 
     protected function prepareResponseData()
     {
@@ -141,6 +141,9 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 
                 $order['amazon_order_id'] = trim($orderData['id']);
                 $order['status'] = trim($orderData['status']);
+
+                $sellerOrderId = trim($orderData['seller_id']);
+                $order['seller_order_id'] = empty($sellerOrderId) ? null : $sellerOrderId;
 
                 $order['marketplace_id'] = $marketplace->getId();
                 $order['is_afn_channel'] = (int)$orderData['channel']['is_afn'];
@@ -217,7 +220,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
         }
     }
 
-    private function parseShippingAddress(array $shippingData, \Ess\M2ePro\Model\Marketplace $marketplace)
+    protected function parseShippingAddress(array $shippingData, \Ess\M2ePro\Model\Marketplace $marketplace)
     {
         $location = isset($shippingData['location']) ? $shippingData['location'] : [];
         $address  = isset($shippingData['address']) ? $shippingData['address'] : [];
@@ -251,5 +254,5 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
         return $parsedAddress;
     }
 
-    // ########################################
+    //########################################
 }

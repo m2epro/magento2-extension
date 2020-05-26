@@ -32,22 +32,6 @@ abstract class Order extends Main
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Orders'));
     }
 
-    protected function processConnector($action, array $params = [])
-    {
-        $ids = $this->getRequestIds();
-
-        if (count($ids) == 0) {
-            $this->messageManager->addError($this->__('Please select Order(s).'));
-            return false;
-        }
-
-        return $this->modelFactory->getObject('Ebay_Connector_Order_Dispatcher')->process(
-            $action,
-            $ids,
-            $params
-        );
-    }
-
     protected function sendInStorePickupNotifications($type)
     {
         $ids = $this->getRequestIds();

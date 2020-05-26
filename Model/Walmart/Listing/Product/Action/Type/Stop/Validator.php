@@ -27,6 +27,10 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
             return false;
         }
 
+        if (!$this->validateSku()) {
+            return false;
+        }
+
         if (!$this->validateCategory()) {
             return false;
         }
@@ -36,7 +40,7 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
             return false;
         }
 
-        if ($this->getVariationManager()->isRelationParentType() && !$this->validateParentListingProductFlags()) {
+        if ($this->getVariationManager()->isRelationParentType() && !$this->validateParentListingProduct()) {
             return false;
         }
 
@@ -46,46 +50,13 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
 
         if (!$this->getListingProduct()->isListed() || !$this->getListingProduct()->isStoppable()) {
             if (empty($params['remove'])) {
-                // M2ePro\TRANSLATIONS
-                // Item is not Listed or not available
                 $this->addMessage('Item is not active or not available');
             } else {
-                $variationManager = $this->getWalmartListingProduct()->getVariationManager();
-
-                if ($variationManager->isRelationChildType()) {
-
-                    /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $parentWalmartListingProduct */
-                    $parentWalmartListingProduct = $variationManager
-                        ->getTypeModel()
-                        ->getWalmartParentListingProduct();
-
-                    $this->parentWalmartListingProductForProcess = $parentWalmartListingProduct;
-
-                    /** @var Child $childTypeModel */
-                    $childTypeModel = $variationManager->getTypeModel();
-
-                    if ($childTypeModel->isVariationProductMatched()) {
-                        $parentWalmartListingProduct->getVariationManager()->getTypeModel()->addRemovedProductOptions(
-                            $variationManager->getTypeModel()->getProductOptions()
-                        );
-                    }
-                }
-
-                if (!$this->getListingProduct()->isNotListed()) {
-                    $this->getListingProduct()->setData(
-                        'status',
-                        \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
-                    )->save();
-                }
-
-                $this->getListingProduct()->delete();
-                $this->getListingProduct()->isDeleted(true);
+                $removeHandler = $this->modelFactory->getObject('Walmart_Listing_Product_RemoveHandler');
+                $removeHandler->setListingProduct($this->getListingProduct());
+                $removeHandler->process();
             }
 
-            return false;
-        }
-
-        if (!$this->validateSku()) {
             return false;
         }
 

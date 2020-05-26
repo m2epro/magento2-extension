@@ -28,8 +28,6 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     const RENDER_TYPE_SELECT_ONE_OR_TEXT = 'select_one_or_text';
     const RENDER_TYPE_SELECT_MULTIPLE_OR_TEXT = 'select_multiple_or_text';
 
-    //########################################
-
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Category
      */
@@ -201,15 +199,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @return array
      */
-    public function getTrackingAttributes()
-    {
-        return $this->getUsedAttributes();
-    }
-
-    /**
-     * @return array
-     */
-    public function getUsedAttributes()
+    public function getValueAttributes()
     {
         $attributes = [];
 

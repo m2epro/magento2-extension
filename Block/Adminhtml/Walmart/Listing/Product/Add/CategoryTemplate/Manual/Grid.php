@@ -88,7 +88,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         );
         $wlpTable = $this->activeRecordFactory->getObject('Walmart_Listing_Product')->getResource()->getMainTable();
         $collection->joinTable(
-            ['alp' => $wlpTable],
+            ['wlp' => $wlpTable],
             'listing_product_id=id',
             [
                 'listing_product_id'        => 'listing_product_id',
@@ -309,6 +309,33 @@ HTML;
 
     protected function _toHtml()
     {
+        $errorMessage = $this
+            ->__(
+                "To proceed, the category data must be specified.
+                  Please select a relevant Category Policy for at least one product."
+            );
+        $isNotExistProductsWithDescriptionTemplate = (int)$this->isNotExistProductsWithCategoryTemplate();
+
+        $this->js->add(
+            <<<JS
+    require([
+        'M2ePro/Plugin/Messages'
+    ],function(MessageObj) {
+        
+        var button = $('walmart_listing_category_continue_btn');
+        if ({$isNotExistProductsWithDescriptionTemplate}) {
+            button.addClassName('disabled');
+            button.disable();
+            MessageObj.addErrorMessage(`{$errorMessage}`);
+        } else {
+            button.removeClassName('disabled');
+            button.enable();
+            MessageObj.clear();
+        }
+    });
+JS
+        );
+
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
                 <<<JS
@@ -318,6 +345,24 @@ JS
         }
 
         return parent::_toHtml();
+    }
+
+    //########################################
+
+    protected function isNotExistProductsWithCategoryTemplate()
+    {
+        /** @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection $collection */
+        $collection = $this->getCollection();
+        $countSelect = clone $collection->getSelect();
+        $countSelect->reset(\Zend_Db_Select::ORDER);
+        $countSelect->reset(\Zend_Db_Select::LIMIT_COUNT);
+        $countSelect->reset(\Zend_Db_Select::LIMIT_OFFSET);
+        $countSelect->reset(\Zend_Db_Select::COLUMNS);
+
+        $countSelect->columns('COUNT(*)');
+        $countSelect->where('wlp.template_category_id > 0');
+
+        return !$collection->getConnection()->fetchOne($countSelect);
     }
 
     //########################################

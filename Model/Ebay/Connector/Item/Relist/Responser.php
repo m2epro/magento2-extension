@@ -29,8 +29,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         if (!empty($data['already_active'])) {
             $this->getResponseObject()->processAlreadyActive($data, $params);
 
-            // M2ePro\TRANSLATIONS
-            // Item was already started on eBay
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 'Item was already started on eBay',
@@ -56,6 +55,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
             $this->isEbayApplicationErrorAppeared($responseMessages)) {
             $this->markAsPotentialDuplicate();
 
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 'An error occurred while Listing the Item. The Item has been blocked.
@@ -67,6 +67,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         }
 
         if ($this->isConditionErrorAppeared($responseMessages)) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 $this->getHelper('Module\Translation')->__(
@@ -92,6 +93,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
                 $itemId = $this->params['product']['request']['item_id'];
             }
 
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 $this->getHelper('Module\Translation')->__(
@@ -112,8 +114,9 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         }
 
         if ($this->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH &&
-            !$this->getConfigurator()->isDefaultMode() &&
+            $this->getConfigurator()->isIncludingMode() &&
             $this->isNewRequiredSpecificNeeded($responseMessages)) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromPreparedData(
                 $this->getHelper('Module\Translation')->__(
@@ -127,6 +130,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
             $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
 
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
             $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
             $this->processAdditionalAction($this->getActionType(), $configurator);
         }
@@ -147,6 +151,26 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         if ($message = $this->isDuplicateErrorByEbayEngineAppeared($responseMessages)) {
             $this->processDuplicateByEbayEngine($message);
         }
+
+        $additionalData = $this->listingProduct->getAdditionalData();
+        if (empty($additionalData['skipped_action_configurator_data'])) {
+            return;
+        }
+
+        $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
+        $configurator->setUnserializedData($additionalData['skipped_action_configurator_data']);
+
+        /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction\Manager $configurator */
+        $scheduledActionManager = $this->modelFactory->getObject('Listing_Product_ScheduledAction_Manager');
+        $scheduledActionManager->addReviseAction(
+            $this->listingProduct,
+            $configurator,
+            false,
+            $this->params['params']
+        );
+
+        unset($additionalData['skipped_action_configurator_data']);
+        $this->listingProduct->setSettings('additional_data', $additionalData)->save();
 
         parent::eventAfterExecuting();
     }

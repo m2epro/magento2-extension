@@ -15,7 +15,10 @@ class Set extends \Ess\M2ePro\Model\Response\Message\Set
 {
     //########################################
 
-    /** @return \Ess\M2ePro\Model\Connector\Connection\Response\Message */
+    /**
+     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function getEntityModel()
     {
         return $this->modelFactory->getObject('Connector_Connection_Response_Message');

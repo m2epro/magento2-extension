@@ -48,18 +48,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         // ---------------------------------------
 
-        $accountId = $this->getRequest()->getParam('account');
-        $marketplaceId = $this->getRequest()->getParam('marketplace');
-
-        $this->addButton('view_logs', [
-            'label'   => $this->__('View Log'),
-            'onclick' => 'window.open(\''.$this->getUrl('*/walmart_log_listing_other/index', [
-                'walmartAccount' => $accountId,
-                'walmartMarketplace' => $marketplaceId,
-                'listings' => true
-            ]) . '\');',
-        ]);
-
         if ($this->getRequest()->getParam('back') !== null) {
             $url = $this->getHelper('Data')->getBackUrl();
             $this->buttonList->add('back', [
@@ -118,16 +106,12 @@ HTML
         $componentMode = \Ess\M2ePro\Helper\Component\Walmart::NICK;
 
         $this->jsUrl->addUrls([
-            'walmart_log_listing_other/index' => $this->getUrl('*/walmart_log_listing_other/index'),
-
             'listing_other_mapping/map' => $this->getUrl('*/listing_other_mapping/map'),
 
             'prepareData' => $this->getUrl('*/listing_other_moving/prepareMoveToListing'),
-            'createDefaultListing' => $this->getUrl('*/listing_other_moving/createDefaultListing'),
-            'moveToListingGridHtml' => $this->getUrl('*/walmart_listing_other_moving/moveToListingGrid'),
-            'getFailedProductsHtml' => $this->getUrl('*/listing_other_moving/getFailedProducts'),
-            'tryToMoveToListing' => $this->getUrl('*/listing_other_moving/tryToMoveToListing'),
-            'moveToListing' => $this->getUrl('*/listing_other_moving/moveToListing'),
+            'moveToListingGridHtml' => $this->getUrl('*/listing_other_moving/moveToListingGrid'),
+            'moveToListing' => $this->getUrl('*/walmart_listing_other/moveToListing'),
+            'categorySettings' => $this->getUrl('*/walmart_listing_product_add/index', ['step' => 3]),
 
             'mapAutoToProduct' => $this->getUrl('*/listing_other_mapping/autoMap'),
 
@@ -165,16 +149,8 @@ HTML
 
             'create_listing' => $createListing,
             'popup_title' => $this->__('Moving Walmart Items'),
-            'popup_title_single' => $this->__('Move Item "%product_title%" to the M2E Pro Listing'),
-            'failed_products_popup_title' => $this->__('Products failed to move'),
             'confirm' => $this->__('Are you sure?'),
-            'successfully_moved' => $this->__('Product(s) was successfully Moved.'),
-            'products_were_not_moved' => $this->__(
-                'Products were not Moved. <a target="_blank" href="%url%">View Log</a> for details.'
-            ),
-            'some_products_were_not_moved' => $this->__(
-                'Some of the Products were not Moved. <a target="_blank" href="%url%">View Log</a> for details.'
-            ),
+
             'not_enough_data' => $this->__('Not enough data'),
             'successfully_unmapped' => $this->__('Product(s) was successfully Unmapped.'),
             'successfully_removed' => $this->__('Product(s) was successfully Removed.'),
@@ -186,13 +162,6 @@ HTML
             'processing_data_message' => $this->__('Processing %product_title% Product(s).'),
             'successfully_mapped' => $this->__('Product was successfully Mapped.'),
             'failed_mapped' => $someProductsWereNotMappedMessage,
-
-            'select_only_mapped_products' => $this->__('Only Mapped Products must be selected.'),
-            'select_the_same_type_products' => $this->__(
-                'Selected Items must belong to the same Account and Marketplace.'
-            ),
-
-            'view_all_product_log_message' => $this->__('View Full Product Log.'),
 
             'success_word' => $this->__('Success'),
             'notice_word' => $this->__('Notice'),
@@ -220,26 +189,20 @@ HTML
         M2ePro.customData.componentMode = '{$componentMode}';
         M2ePro.customData.gridId = 'walmartListingOtherGrid';
 
-        window.ListingProgressBarObj = new ProgressBar('listing_other_progress_bar');
-        window.GridWrapperObj = new AreaWrapper('listing_other_content_container');
-
         window.WalmartListingOtherGridObj = new WalmartListingOtherGrid('walmartListingOtherGrid');
         window.WalmartListingOtherMappingObj = new ListingOtherMapping(WalmartListingOtherGridObj, 'walmart');
 
-        WalmartListingOtherGridObj.movingHandler.setOptions(M2ePro);
-        WalmartListingOtherGridObj.autoMappingHandler.setOptions(M2ePro);
-        WalmartListingOtherGridObj.removingHandler.setOptions(M2ePro);
-        WalmartListingOtherGridObj.unmappingHandler.setOptions(M2ePro);
+        WalmartListingOtherGridObj.movingHandler.setProgressBar('listing_other_progress_bar');
+        WalmartListingOtherGridObj.movingHandler.setGridWrapper('listing_other_content_container');
+
+        WalmartListingOtherGridObj.autoMappingHandler.setProgressBar('listing_other_progress_bar');
+        WalmartListingOtherGridObj.autoMappingHandler.setGridWrapper('listing_other_content_container');
 
         jQuery(function() {
             WalmartListingOtherGridObj.afterInitPage();
         });
 JS
         );
-
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(
-            '\Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid'
-        ));
 
         return '<div id="listing_other_progress_bar"></div>' .
                '<div id="listing_container_errors_summary" class="errors_summary" style="display: none;"></div>' .

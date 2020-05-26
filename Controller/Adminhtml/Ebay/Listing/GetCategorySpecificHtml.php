@@ -91,11 +91,24 @@ class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
             $template = $this->getCategoryTemplate($templateId);
         } else {
             $isDifferent = false;
+            $templateNext = null;
             for ($i = 0; $i < $countTemplates - 1; $i++) {
                 $templateCurr = $this->getCategoryTemplate($templateIds[$i]);
                 $templateNext = $this->getCategoryTemplate($templateIds[$i + 1]);
 
-                if ($this->isDifferentSpecifics($templateCurr->getSpecifics(), $templateNext->getSpecifics())) {
+                /** @var \Ess\M2ePro\Model\Ebay\Template\Category\SnapshotBuilder $currentSnapshotBuilder */
+                $currentSnapshotBuilder = $this->modelFactory->getObject('Ebay_Template_Category_SnapshotBuilder')
+                    ->setModel($templateCurr);
+                /** @var \Ess\M2ePro\Model\Ebay\Template\Category\SnapshotBuilder $currentSnapshotBuilder */
+                $nextSnapshotBuilder = $this->modelFactory->getObject('Ebay_Template_Category_SnapshotBuilder')
+                    ->setModel($templateNext);
+
+                /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Diff $diff */
+                $diff = $this->modelFactory->getObject('Ebay_Template_Category_Diff');
+                $diff->setOldSnapshot($currentSnapshotBuilder->getSnapshot());
+                $diff->setNewSnapshot($nextSnapshotBuilder->getSnapshot());
+
+                if ($diff->isDifferent()) {
                     $isDifferent = true;
                     break;
                 }
@@ -173,14 +186,5 @@ class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
                                     ->getItemsByPrimaryCategories([$templateData]);
 
         return reset($existingTemplates);
-    }
-
-    private function isDifferentSpecifics(array $firstSpecifics, array $secondSpecifics)
-    {
-        $model = $this->activeRecordFactory->getObject('Ebay_Template_Category')->getResource();
-        return $model->isDifferent(
-            ['specifics' => $firstSpecifics],
-            ['specifics' => $secondSpecifics]
-        );
     }
 }

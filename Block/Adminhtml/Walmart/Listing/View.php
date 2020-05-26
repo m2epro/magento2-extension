@@ -71,7 +71,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         // ---------------------------------------
         $this->addButton('view_logs', [
-            'label'   => $this->__('View Log'),
+            'label'   => $this->__('Logs & Events'),
             'onclick' => 'window.open(\''.$this->getUrl('*/walmart_log_listing_product/index', [
                 \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD =>
                     $this->listing->getId()
@@ -199,16 +199,8 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             $this->getHelper('Data')->getControllerActions('Walmart_Listing_Product_Variation_Individual')
         );
 
-        $this->jsUrl->add(
-            $this->getUrl(
-                '*/walmart_listing_view_settings_moving/moveToListingGrid',
-                ['listing_view' => true]
-            ),
-            'moveToListingGridHtml'
-        );
+        $this->jsUrl->add($this->getUrl('*/listing_moving/moveToListingGrid'), 'moveToListingGridHtml');
         $this->jsUrl->add($this->getUrl('*/listing_moving/prepareMoveToListing'), 'prepareData');
-        $this->jsUrl->add($this->getUrl('*/listing_moving/getFailedProducts'), 'getFailedProductsHtml');
-        $this->jsUrl->add($this->getUrl('*/listing_moving/tryToMoveToListing'), 'tryToMoveToListing');
         $this->jsUrl->add($this->getUrl('*/listing_moving/moveToListing'), 'moveToListing');
 
         $this->jsUrl->add($this->getUrl('*/walmart_marketplace/index'), 'marketplaceSynchUrl');
@@ -233,8 +225,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $templateCategoryPopupTitle = $this->__('Assign Category Policy');
 
         $popupTitle = $this->__('Moving Walmart Items');
-        $popupTitleSingle = $this->__('Moving Walmart Item');
-        $failedProductsPopupTitle = $this->__('Products failed to move');
 
         $taskCompletedMessage = $this->__('Task completed. Please wait ...');
         $taskCompletedSuccessMessage = $this->__('"%task_title%" Task has successfully submitted to be processed.');
@@ -245,7 +235,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             '"%task_title%" Task has completed with errors. <a target="_blank" href="%url%">View Log</a> for details.'
         );
 
-        $lockedObjNoticeMessage = $this->__('Some Walmart request(s) are being processed now.');
         $sendingDataToWalmartMessage = $this->__('Sending %product_title% Product(s) data on Walmart.');
         $viewAllProductLogMessage = $this->__('View Full Product Log');
 
@@ -264,14 +253,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $removingSelectedItemsMessage = $this->__('Removing From Listing Selected Items');
 
         $resetBlockedProductsMessage = $this->__('Reset Inactive (Blocked) Items');
-
-        $successfullyMovedMessage = $this->__('Product(s) was successfully Moved.');
-        $productsWereNotMovedMessage = $this->__(
-            'Product(s) was not Moved. <a target="_blank" href="%url%">View Log</a> for details.'
-        );
-        $someProductsWereNotMovedMessage = $this->__(
-            'Some Product(s) was not Moved. <a target="_blank" href="%url%">View Log</a> for details.'
-        );
 
         $selectItemsMessage = $this->__('Please select the Products you want to perform the Action on.');
         $selectActionMessage = $this->__('Please select Action.');
@@ -309,15 +290,12 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'Add New Listing' => $this->__('Add New Listing'),
 
             'popup_title' => $popupTitle,
-            'popup_title_single' => $popupTitleSingle,
-            'failed_products_popup_title' => $failedProductsPopupTitle,
 
             'task_completed_message' => $taskCompletedMessage,
             'task_completed_success_message' => $taskCompletedSuccessMessage,
             'task_completed_warning_message' => $taskCompletedWarningMessage,
             'task_completed_error_message' => $taskCompletedErrorMessage,
 
-            'locked_obj_notice' => $lockedObjNoticeMessage,
             'sending_data_message' => $sendingDataToWalmartMessage,
             'view_all_product_log_message' => $viewAllProductLogMessage,
 
@@ -333,10 +311,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'deleting_and_removing_selected_items_message' => $deletingAndRemovingSelectedItemsMessage,
             'removing_selected_items_message' => $removingSelectedItemsMessage,
             'reset_blocked_products_message' => $resetBlockedProductsMessage,
-
-            'successfully_moved' => $successfullyMovedMessage,
-            'products_were_not_moved' => $productsWereNotMovedMessage,
-            'some_products_were_not_moved' => $someProductsWereNotMovedMessage,
 
             'select_items_message' => $selectItemsMessage,
             'select_action_message' => $selectActionMessage,
@@ -409,7 +383,8 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             {$this->listing['id']}
         );
 
-        ListingGridHandlerObj.movingHandler.setOptions(M2ePro);
+        ListingGridHandlerObj.movingHandler.setProgressBar('listing_view_progress_bar');
+        ListingGridHandlerObj.movingHandler.setGridWrapper('listing_view_content_container');
 
         WalmartListingProductVariationObj = new WalmartListingProductVariation(ListingGridHandlerObj);
 

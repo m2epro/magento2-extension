@@ -32,6 +32,10 @@ class PageActions extends AbstractBlock
             'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'controller' => 'amazon_order'
         ]);
+
+        $invoiceCreditmemoFilterBlock = $this->createBlock('Amazon_Order_Grid_InvoiceCreditmemoFilter')->setData([
+            'controller' => 'amazon_order'
+        ]);
         // ---------------------------------------
 
         return
@@ -39,6 +43,7 @@ class PageActions extends AbstractBlock
             . $accountSwitcherBlock->toHtml()
             . $marketplaceSwitcherBlock->toHtml()
             . $orderStateSwitcherBlock->toHtml()
+            . $invoiceCreditmemoFilterBlock->toHtml()
             . '</div>'
             . parent::_toHtml();
     }

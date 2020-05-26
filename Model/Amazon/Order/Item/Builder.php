@@ -15,14 +15,14 @@ use Ess\M2ePro\Model\AbstractModel;
  */
 class Builder extends AbstractModel
 {
-    private $amazonFactory;
+    protected $amazonFactory;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         array $data = []
     ) {
         $this->amazonFactory = $amazonFactory;
@@ -68,9 +68,11 @@ class Builder extends AbstractModel
 
     /**
      * @return \Ess\M2ePro\Model\Order\Item
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     private function createOrderItem()
     {
+        /** @var \Ess\M2ePro\Model\Order\Item $existItem */
         $existItem = $this->amazonFactory->getObject('Order\Item')->getCollection()
             ->addFieldToFilter('amazon_order_item_id', $this->getData('amazon_order_item_id'))
             ->addFieldToFilter('order_id', $this->getData('order_id'))

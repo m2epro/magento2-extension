@@ -6,16 +6,6 @@ define([
 
         // ---------------------------------------
 
-        options: {},
-
-        setOptions: function(options)
-        {
-            this.options = Object.extend(this.options, options);
-            return this;
-        },
-
-        // ---------------------------------------
-
         run: function()
         {
             this.removingProducts(
@@ -25,10 +15,10 @@ define([
 
         removingProducts: function(productsString)
         {
-            new Ajax.Request(this.options.url.get('removingProducts'), {
+            new Ajax.Request(M2ePro.url.get('removingProducts'), {
                 method: 'post',
                 parameters: {
-                    componentMode: this.options.customData.componentMode,
+                    componentMode: M2ePro.customData.componentMode,
                     product_ids: productsString
                 },
                 onSuccess: (function(transport) {
@@ -36,9 +26,9 @@ define([
                     MessagesObj.clear();
 
                     if (transport.responseText == '1') {
-                        MessagesObj.addSuccessMessage(this.options.translator.translate('successfully_removed'));
+                        MessagesObj.addSuccessMessage(M2ePro.translator.translate('successfully_removed'));
                     } else {
-                        MessagesObj.addErrorMessage(this.options.translator.translate('not_enough_data'));
+                        MessagesObj.addErrorMessage(M2ePro.translator.translate('not_enough_data'));
                     }
 
                     this.gridHandler.unselectAllAndReload();

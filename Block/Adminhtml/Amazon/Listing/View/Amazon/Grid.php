@@ -19,6 +19,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     private $lockedDataCache = [];
 
     private $childProductsWarningsData;
+    private $parentAndChildReviseScheduledCache = [];
 
     private $hideSwitchToIndividualConfirm;
     private $hideSwitchToParentConfirm;
@@ -137,15 +138,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 )',
                 'online_regular_sale_price_start_date'   => 'online_regular_sale_price_start_date',
                 'online_regular_sale_price_end_date'     => 'online_regular_sale_price_end_date',
-                'online_business_price'            => 'online_business_price',
-                'online_business_discounts'        => 'online_business_discounts',
-                'is_repricing'                     => 'is_repricing',
-                'is_afn_channel'                   => 'is_afn_channel',
-                'is_general_id_owner'              => 'is_general_id_owner',
-                'is_variation_parent'              => 'is_variation_parent',
+                'online_business_price'          => 'online_business_price',
+                'online_business_discounts'      => 'online_business_discounts',
+                'is_repricing'                   => 'is_repricing',
+                'is_afn_channel'                 => 'is_afn_channel',
+                'is_general_id_owner'            => 'is_general_id_owner',
+                'is_variation_parent'            => 'is_variation_parent',
+                'defected_messages'              => 'defected_messages',
                 'variation_parent_afn_state'       => 'variation_parent_afn_state',
                 'variation_parent_repricing_state' => 'variation_parent_repricing_state',
-                'defected_messages'                => 'defected_messages',
             ],
             '{{table}}.variation_parent_id is NULL'
         );
@@ -157,6 +158,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             '(`alp`.`listing_product_id` = `malpr`.`listing_product_id`)',
             [
                 'is_repricing_disabled' => 'is_online_disabled',
+                'is_repricing_inactive' => 'is_online_inactive',
             ]
         );
 
@@ -169,6 +171,36 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
+    }
+
+    protected function _afterLoadCollection()
+    {
+        $collection = $this->amazonFactory->getObject('Listing_Product')->getCollection();
+        $collection->getSelect()->join(
+            ['lps' => $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
+                ->getResource()->getMainTable()],
+            'lps.listing_product_id=main_table.id',
+            []
+        );
+
+        $collection->addFieldToFilter('is_variation_parent', 0);
+        $collection->addFieldToFilter('variation_parent_id', ['in' => $this->getCollection()->getColumnValues('id')]);
+        $collection->addFieldToFilter('lps.action_type', \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE);
+
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->columns(
+            [
+                'variation_parent_id' => 'second_table.variation_parent_id',
+                'count'               => new \Zend_Db_Expr('COUNT(lps.id)')
+            ]
+        );
+        $collection->getSelect()->group('variation_parent_id');
+
+        foreach ($collection->getItems() as $item) {
+            $this->parentAndChildReviseScheduledCache[$item->getData('variation_parent_id')] = true;
+        }
+
+        return parent::_afterLoadCollection();
     }
 
     protected function _prepareColumns()
@@ -449,6 +481,7 @@ HTML;
 
                 $linkContent = $this->__('Manage Variations');
                 $vpmt = $this->__('Manage Variations of &quot;%s%&quot; ', $productTitle);
+                // @codingStandardsIgnoreLine
                 $vpmt = addslashes($vpmt);
 
                 if (!empty($generalId)) {
@@ -580,12 +613,22 @@ HTML;
 
     public function callbackColumnAmazonSku($value, $row, $column, $isExport)
     {
+        if ((!$row->getData('is_variation_parent') &&
+            $row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
+            ($row->getData('is_variation_parent') && $row->getData('general_id') == '')) {
+            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
+        }
+
         if ($value === null || $value === '') {
             $value = $this->__('N/A');
         }
 
-        if (!$row->getData('is_variation_parent') && $row->getData('defected_messages')) {
+        if (!$row->getData('is_variation_parent') && $row->getData('defected_messages')
+        ) {
             $defectedMessages = $this->getHelper('Data')->jsonDecode($row->getData('defected_messages'));
+            if (empty($defectedMessages)) {
+                $defectedMessages = [];
+            }
 
             $msg = '';
             foreach ($defectedMessages as $message) {
@@ -628,6 +671,10 @@ HTML;
 
     public function callbackColumnAvailableQty($value, $row, $column, $isExport)
     {
+        if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
+            return $this->__('N/A');
+        }
+
         $listingProductId = $row->getData('id');
 
         if (!$row->getData('is_variation_parent')) {
@@ -698,6 +745,10 @@ HTML;
         }
 
         if (!(bool)$row->getData('is_afn_channel')) {
+            if ($value <= 0) {
+                return '<span style="color: red;">0</span>';
+            }
+
             return $value;
         }
 
@@ -708,6 +759,7 @@ HTML;
 
         $productTitle = $this->getHelper('Data')->escapeHtml($row->getData('name'));
         $vpmt = $this->__('Manage Variations of &quot;%s%&quot; ', $productTitle);
+        // @codingStandardsIgnoreLine
         $vpmt = addslashes($vpmt);
 
         $linkTitle = $this->__('Show AFN Child Products.');
@@ -729,6 +781,10 @@ HTML;
 
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
+        if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
+            return $this->__('N/A');
+        }
+
         if ((!$row->getData('is_variation_parent') &&
             $row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
             ($row->getData('is_variation_parent') && $row->getData('general_id') == '')) {
@@ -743,34 +799,37 @@ HTML;
             if ($row->getData('is_variation_parent')) {
                 $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
 
-                $enabledCount = isset($additionalData['repricing_enabled_count'])
-                    ? $additionalData['repricing_enabled_count'] : null;
+                $repricingManagedCount = isset($additionalData['repricing_managed_count'])
+                    ? $additionalData['repricing_managed_count'] : null;
 
-                $disabledCount = isset($additionalData['repricing_disabled_count'])
-                    ? $additionalData['repricing_disabled_count'] : null;
+                $repricingNotManagedCount = isset($additionalData['repricing_not_managed_count'])
+                    ? $additionalData['repricing_not_managed_count'] : null;
 
-                if ($enabledCount && $disabledCount) {
+                if ($repricingManagedCount && $repricingNotManagedCount) {
                     $icon = 'repricing-enabled-disabled';
-                    $countHtml = '['.$enabledCount.'/'.$disabledCount.']';
+                    $countHtml = '['.$repricingManagedCount.'/'.$repricingNotManagedCount.']';
                     $text = $this->__(
-                        'This Parent has either Enabled and Disabled for dynamic repricing Child Products. <br>
-                        <strong>Please note</strong> that the Price value(s) shown in the grid might be
-                        different from the actual one from Amazon. It is caused by the delay in the values
-                        updating made via the Repricing Service.'
+                        'Some Child Products of this Parent ASIN are disabled or unable to be repriced
+                        on Amazon Repricing Tool.<br>
+                        <strong>Note:</strong> the Price values shown in the grid may differ from Amazon ones.
+                        It is caused by some delay in data synchronization between M2E Pro and Repricing Tool.'
                     );
-                } elseif ($enabledCount) {
-                    $icon = 'repricing-enabled';
-                    $countHtml = '['.$enabledCount.']';
+                } elseif ($repricingManagedCount) {
+                    $icon = 'enabled';
+                    $countHtml = '['.$repricingManagedCount.']';
                     $text = $this->__(
                         'All Child Products of this Parent are Enabled for dynamic repricing. <br>
                         <strong>Please note</strong> that the Price value(s) shown in the grid might be different
                         from the actual one from Amazon. It is caused by the delay in the values updating
                         made via the Repricing Service.'
                     );
-                } elseif ($disabledCount) {
+                } elseif ($repricingNotManagedCount) {
                     $icon = 'repricing-disabled';
-                    $countHtml = '['.$disabledCount.']';
-                    $text = $this->__('All Child Products of this Parent are Disabled for Repricing.');
+                    $countHtml = '['.$repricingNotManagedCount.']';
+                    $text = $this->__(
+                        'The Child Products of this Parent ASIN are disabled or
+                                                       unable to be repriced on Amazon Repricing Tool.'
+                    );
                 } else {
                     $icon = 'repricing-enabled';
                     $countHtml = $this->__('[show]');
@@ -786,6 +845,7 @@ HTML;
 
                 $productTitle = $this->getHelper('Data')->escapeHtml($row->getData('name'));
                 $vpmt = $this->__('Manage Variations of &quot;%s%&quot; ', $productTitle);
+                // @codingStandardsIgnoreLine
                 $vpmt = addslashes($vpmt);
 
                 $generalId = $row->getData('general_id');
@@ -818,11 +878,12 @@ HTML;
                     updating made via the Repricing Service.'
                 );
 
-                if ((int)$row->getData('is_repricing_disabled') == 1) {
+                if ((int)$row->getData('is_repricing_disabled') == 1 ||
+                    (int)$row->getData('is_repricing_inactive') == 1) {
                     $icon = 'repricing-disabled';
                     $text = $this->__(
-                        'This product is disabled on Amazon Repricing Tool.
-                     The Price is updated through the M2E Pro.'
+                        'This Item is disabled or unable to be repriced on Amazon Repricing Tool.
+                        Its Price is updated via M2E Pro.'
                     );
                 }
 
@@ -883,6 +944,7 @@ HTML;
 
         if ($row->getData('is_repricing') &&
             !$row->getData('is_repricing_disabled') &&
+            !$row->getData('is_repricing_inactive') &&
             !$row->getData('is_variation_parent')
         ) {
             $accountId = $this->listing['account_id'];
@@ -1001,7 +1063,8 @@ HTML;
         }
 
         if (!$isVariationParent) {
-            return $html . $this->getProductStatus($row->getData('amazon_status')). $this->getLockedTag($row);
+            return $html . $this->getProductStatus($row->getData('amazon_status'))
+                .$this->getScheduledTag($row).$this->getLockedTag($row);
         } else {
             $statusUnknown   = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
             $statusNotListed = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
@@ -1012,8 +1075,10 @@ HTML;
             $generalId = $row->getData('general_id');
             $variationChildStatuses = $row->getData('variation_child_statuses');
             if (empty($generalId) || empty($variationChildStatuses)) {
-                return $html . $this->getProductStatus($statusNotListed) .
-                    $this->getLockedTag($row);
+                return $html .
+                       $this->getProductStatus($statusNotListed) .
+                       $this->getScheduledTag($row) .
+                       $this->getLockedTag($row);
             }
 
             $variationChildStatuses = $this->getHelper('Data')->jsonDecode($variationChildStatuses);
@@ -1046,6 +1111,7 @@ HTML;
 
                 $productTitle = $this->getHelper('Data')->escapeHtml($row->getData('name'));
                 $vpmt = $this->__('Manage Variations of &quot;%s%&quot; ', $productTitle);
+                // @codingStandardsIgnoreLine
                 $vpmt = addslashes($vpmt);
 
                 $generalId = $row->getData('general_id');
@@ -1063,7 +1129,7 @@ HTML;
                 $html .= $this->getProductStatus($status) . '&nbsp;'. $productsCount . '<br/>';
             }
 
-            $html .= $this->getLockedTag($row);
+            $html .= $this->getScheduledTag($row) . $this->getLockedTag($row);
         }
 
         return $html;
@@ -1146,6 +1212,85 @@ HTML;
 
         if ($childCount > 0) {
             $html .= '<br/><span style="color: #605fff">[Child(s) in Action...]</span>';
+        }
+
+        return $html;
+    }
+
+    protected function getScheduledTag($row)
+    {
+        $html = '';
+
+        /**
+         * @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $scheduledActionsCollection
+         */
+        $scheduledActionsCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
+            ->getCollection();
+        $scheduledActionsCollection->addFieldToFilter('listing_product_id', $row['id']);
+
+        /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction */
+        $scheduledAction = $scheduledActionsCollection->getFirstItem();
+
+        if (!$scheduledAction->getId()) {
+            return $html;
+        }
+
+        switch ($scheduledAction->getActionType()) {
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_LIST:
+                $html .= '<br/><span style="color: #605fff">[List is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST:
+                $html .= '<br/><span style="color: #605fff">[Relist is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE:
+                $reviseParts = [];
+
+                $additionalData = $scheduledAction->getAdditionalData();
+                if (!empty($additionalData['configurator']) &&
+                !isset($this->parentAndChildReviseScheduledCache[$row->getData('id')])) {
+                    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator */
+                    $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
+                    $configurator->setUnserializedData($additionalData['configurator']);
+
+                    if ($configurator->isIncludingMode()) {
+                        if ($configurator->isQtyAllowed()) {
+                            $reviseParts[] = 'QTY';
+                        }
+
+                        if ($configurator->isRegularPriceAllowed() || $configurator->isBusinessPriceAllowed()) {
+                            $reviseParts[] = 'Price';
+                        }
+
+                        if ($configurator->isDetailsAllowed()) {
+                            $reviseParts[] = 'Details';
+                        }
+
+                        if ($configurator->isImagesAllowed()) {
+                            $reviseParts[] = 'Images';
+                        }
+                    }
+                }
+
+                if (!empty($reviseParts)) {
+                    $html .= '<br/><span style="color: #605fff">[Revise of '.implode(', ', $reviseParts)
+                             .' is Scheduled...]</span>';
+                } else {
+                    $html .= '<br/><span style="color: #605fff">[Revise is Scheduled...]</span>';
+                }
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_STOP:
+                $html .= '<br/><span style="color: #605fff">[Stop is Scheduled...]</span>';
+                break;
+
+            case \Ess\M2ePro\Model\Listing\Product::ACTION_DELETE:
+                $html .= '<br/><span style="color: #605fff">[Delete is Scheduled...]</span>';
+                break;
+
+            default:
+                break;
         }
 
         return $html;

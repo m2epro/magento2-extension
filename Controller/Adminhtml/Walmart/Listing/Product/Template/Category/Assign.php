@@ -34,10 +34,6 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Te
         $this->setCategoryTemplateForProducts($productsIds, $templateId);
         $this->runProcessorForParents($productsIds);
 
-        /** @var \Ess\M2ePro\Model\Walmart\Template\Category $template */
-        $template = $this->activeRecordFactory->getObjectLoaded('Walmart_Template_Category', $templateId);
-        $template->setSynchStatusNeed($template->getDataSnapshot(), []);
-
         $messages[] = $this->__(
             'Category Policy was successfully assigned to %count% Products',
             count($productsIds)

@@ -22,7 +22,6 @@ class View extends Main
             $listing = $this->walmartFactory->getCachedObjectLoaded('Listing', $id);
 
             $this->getHelper('Data\GlobalData')->setValue('view_listing', $listing);
-//            Mage::helper('M2ePro/Data_Global')->setValue('marketplace_id', $model->getMarketplaceId());
 
             $listingView = $this->createBlock('Walmart_Listing_View');
 
@@ -80,7 +79,7 @@ class View extends Main
         $this->setPageHelpLink('x/OwBhAQ');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
-            $this->__('Listing "%listing_title%"', $listing->getTitle())
+            $this->__('M2E Pro Listing "%listing_title%"', $listing->getTitle())
         );
 
         $this->addContent($this->createBlock('Walmart_Listing_View'));

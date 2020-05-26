@@ -27,25 +27,12 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         $additionalData = $this->getListingProduct()->getAdditionalData();
 
         unset($additionalData['synch_template_list_rules_note']);
-        unset($additionalData['add_to_schedule']);
         unset($additionalData['item_duplicate_action_required']);
 
         $this->getListingProduct()->setSettings('additional_data', $additionalData);
-
-        $this->getListingProduct()->setData('synch_status', \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_OK);
-        $this->getListingProduct()->setData('synch_reasons', null);
         $this->getListingProduct()->getChildObject()->setData('is_duplicate', 0);
 
         $this->getListingProduct()->save();
-    }
-
-    protected function afterBuildDataEvent(array $data)
-    {
-        $this->getConfigurator()->setPriority(
-            \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::PRIORITY_LIST
-        );
-
-        parent::afterBuildDataEvent($data);
     }
 
     //########################################
@@ -61,21 +48,27 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         }
 
         $data = array_merge(
-
             [
                 'sku'       => $this->getEbayListingProduct()->getSku(),
                 'item_uuid' => $uuid,
             ],
-            $this->getRequestVariations()->getRequestData(),
-            $this->getRequestCategories()->getRequestData(),
-            $this->getRequestPayment()->getRequestData(),
-            $this->getRequestReturn()->getRequestData(),
-            $this->getRequestShipping()->getRequestData(),
-            $this->getRequestSelling()->getRequestData(),
-            $this->getRequestDescription()->getRequestData()
+            $this->getGeneralData(),
+            $this->getQtyData(),
+            $this->getPriceData(),
+            $this->getTitleData(),
+            $this->getSubtitleData(),
+            $this->getDescriptionData(),
+            $this->getImagesData(),
+            $this->getCategoriesData(),
+            $this->getPaymentData(),
+            $this->getReturnData(),
+            $this->getShippingData(),
+            $this->getVariationsData(),
+            $this->getOtherData()
         );
 
         $this->isVerifyCall && $data['verify_call'] = true;
+
         return $data;
     }
 

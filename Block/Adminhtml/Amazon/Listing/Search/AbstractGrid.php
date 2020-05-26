@@ -211,6 +211,12 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
     public function callbackColumnAmazonSku($value, $row, $column, $isExport)
     {
+        if ((!$row->getData('is_variation_parent') &&
+            $row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
+            ($row->getData('is_variation_parent') && $row->getData('general_id') == '')) {
+            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
+        }
+
         if ($value === null || $value === '') {
             return $this->__('N/A');
         }
@@ -238,6 +244,10 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
     public function callbackColumnAvailableQty($value, $row, $column, $isExport)
     {
+        if ($row->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
+            return $this->__('N/A');
+        }
+
         if (!$row->getData('is_variation_parent')) {
             if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
                 return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
@@ -323,6 +333,10 @@ HTML;
 
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
+        if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
+            return $this->__('N/A');
+        }
+
         if ((!$row->getData('is_variation_parent') &&
             $row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
             ($row->getData('is_variation_parent') && $row->getData('general_id') == '')) {
@@ -337,11 +351,11 @@ HTML;
             if ($row->getData('is_variation_parent')) {
                 $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
 
-                $enabledCount = isset($additionalData['repricing_enabled_count'])
-                    ? $additionalData['repricing_enabled_count'] : null;
+                $enabledCount = isset($additionalData['repricing_managed_count'])
+                    ? $additionalData['repricing_managed_count'] : null;
 
-                $disabledCount = isset($additionalData['repricing_disabled_count'])
-                    ? $additionalData['repricing_disabled_count'] : null;
+                $disabledCount = isset($additionalData['repricing_not_managed_count'])
+                    ? $additionalData['repricing_not_managed_count'] : null;
 
                 if ($enabledCount && $disabledCount) {
                     $icon = 'repricing-enabled-disabled';
@@ -420,7 +434,7 @@ HTML;
         $currentOnlinePrice = (float)$row->getData('online_current_price');
         $onlineBusinessPrice = (float)$row->getData('online_business_price');
 
-        if (($currentOnlinePrice === null || $currentOnlinePrice === '') && empty($onlineBusinessPrice)) {
+        if (empty($currentOnlinePrice) && empty($onlineBusinessPrice)) {
             if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED ||
                 $row->getData('is_variation_parent')
             ) {
@@ -438,7 +452,6 @@ HTML;
 
         if ($row->getData('is_variation_parent')) {
             $noticeText = $this->__('The value is calculated as minimum price of all Child Products.');
-
             $priceHtml = <<<HTML
 <div class="m2epro-field-tooltip admin__field-tooltip" style="display: inline;">
     <a class="admin__field-tooltip-action" href="javascript://"></a>

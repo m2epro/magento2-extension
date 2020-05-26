@@ -13,13 +13,11 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action;
  */
 class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
 {
-    const DATA_TYPE_QTY               = 'qty';
-    const DATA_TYPE_REGULAR_PRICE     = 'regular_price';
-    const DATA_TYPE_BUSINESS_PRICE    = 'business_price';
-    const DATA_TYPE_IMAGES            = 'images';
-    const DATA_TYPE_DETAILS           = 'details';
-    const DATA_TYPE_SHIPPING_OVERRIDE = 'shipping_override';
-    const DATA_TYPE_SHIPPING_TEMPLATE = 'shipping_template';
+    const DATA_TYPE_QTY            = 'qty';
+    const DATA_TYPE_REGULAR_PRICE  = 'regular_price';
+    const DATA_TYPE_BUSINESS_PRICE = 'business_price';
+    const DATA_TYPE_IMAGES         = 'images';
+    const DATA_TYPE_DETAILS        = 'details';
 
     //########################################
 
@@ -34,8 +32,6 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
             self::DATA_TYPE_BUSINESS_PRICE,
             self::DATA_TYPE_DETAILS,
             self::DATA_TYPE_IMAGES,
-            self::DATA_TYPE_SHIPPING_OVERRIDE,
-            self::DATA_TYPE_SHIPPING_TEMPLATE
         ];
     }
 
@@ -167,58 +163,6 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
     public function disallowImages()
     {
         return $this->disallow(self::DATA_TYPE_IMAGES);
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return bool
-     */
-    public function isShippingOverrideAllowed()
-    {
-        return $this->isAllowed(self::DATA_TYPE_SHIPPING_OVERRIDE);
-    }
-
-    /**
-     * @return $this
-     */
-    public function allowShippingOverride()
-    {
-        return $this->allow(self::DATA_TYPE_SHIPPING_OVERRIDE);
-    }
-
-    /**
-     * @return $this
-     */
-    public function disallowShippingOverride()
-    {
-        return $this->disallow(self::DATA_TYPE_SHIPPING_OVERRIDE);
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return bool
-     */
-    public function isShippingTemplateAllowed()
-    {
-        return $this->isAllowed(self::DATA_TYPE_SHIPPING_TEMPLATE);
-    }
-
-    /**
-     * @return $this
-     */
-    public function allowShippingTemplate()
-    {
-        return $this->allow(self::DATA_TYPE_SHIPPING_TEMPLATE);
-    }
-
-    /**
-     * @return $this
-     */
-    public function disallowShippingTemplate()
-    {
-        return $this->disallow(self::DATA_TYPE_SHIPPING_TEMPLATE);
     }
 
     //########################################

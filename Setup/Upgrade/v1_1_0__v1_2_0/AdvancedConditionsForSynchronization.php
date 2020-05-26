@@ -14,14 +14,6 @@ class AdvancedConditionsForSynchronization extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return [
-            'amazon_template_synchronization',
-            'ebay_template_synchronization'
-        ];
-    }
-
     public function execute()
     {
         $this->getTableModifier('amazon_template_synchronization')

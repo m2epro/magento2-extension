@@ -348,47 +348,39 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     //########################################
 
     /**
-     * Using model from controller
+     *  $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
+     *      [
+     *          'store_id' => 0,
+     *          'prefix'   => 'your_prefix'
+     *      ]
+     * );
      *
-     *      get serialized data for saving to database ($serializedData):
-     *          $ruleModel = $this->modelFactory->getObject('Magento\Product\Rule')->setPrefix('your_prefix')
-     * ->setStoreId(0);
-     *          $serializedData = $ruleModel->getSerializedFromPost($post);
+     *   get serialized data for saving to database ($serializedData):
+     *   $serializedData = $ruleModel->getSerializedFromPost($post);
      *
-     *      set model to block for view rules from database ($serializedData):
-     *          $ruleModel = $this->modelFactory->getObject('Magento\Product\Rule')->setPrefix('your_prefix')
-     * ->setStoreId(0);
-     *          $ruleModel->loadFromSerialized($serializedData);
-     *
-     *          $ruleBlock = $this->getLayout()
-     *                            ->createBlock('M2ePro/adminhtml_magento_product_rule')
-     *                            ->setData('rule_model', $ruleModel);
+     *  set model to block for view rules from database ($serializedData):
+     *      $ruleModel->loadFromSerialized($serializedData);
+     *      $ruleBlock = $this->getLayout()
+     *                        ->createBlock('M2ePro/adminhtml_magento_product_rule')
+     *                        ->setData('rule_model', $ruleModel);
      *
      * Using model for check magento product with rule
      *
      *      using serialized data:
-     *          $ruleModel = $this->modelFactory->getObject('Magento\Product\Rule')->setPrefix('your_prefix')
-     * ->setStoreId(0);
      *          $ruleModel->loadFromSerialized($serializedData);
      *          $checkingResult = $ruleModel->validate($magentoProductInstance);
      *
      *      using post array data:
-     *          $ruleModel = $this->modelFactory->getObject('Magento\Product\Rule')->setPrefix('your_prefix')
-     * ->setStoreId(0);
      *          $ruleModel->loadFromPost($post);
      *          $checkingResult = $ruleModel->validate($magentoProductInstance);
      *
      * Using model for filter magento product collection with rule
      *
      *      using serialized data:
-     *          $ruleModel = $this->modelFactory->getObject('Magento\Product\Rule')->setPrefix('your_prefix')
-     * ->setStoreId(0);
      *          $ruleModel->loadFromSerialized($serializedData);
      *          $ruleModel->setAttributesFilterToCollection($magentoProductCollection);
      *
      *      using post array data:
-     *          $ruleModel = $this->modelFactory->getObject('Magento\Product\Rule')->setPrefix('your_prefix')
-     * ->setStoreId(0);
      *          $ruleModel->loadFromPost($post);
      *          $ruleModel->setAttributesFilterToCollection($magentoProductCollection);
      *

@@ -17,8 +17,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     const TEMPLATE_SELLING_FORMAT    = 'selling_format';
     const TEMPLATE_SYNCHRONIZATION   = 'synchronization';
-    const TEMPLATE_SHIPPING_OVERRIDE = 'shipping_override';
-    const TEMPLATE_SHIPPING_TEMPLATE = 'shipping_template';
+    const TEMPLATE_SHIPPING          = 'shipping';
     const TEMPLATE_DESCRIPTION       = 'description';
     const TEMPLATE_PRODUCT_TAX_CODE  = 'product_tax_code';
 
@@ -111,36 +110,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
         // ---------------------------------------
 
-        // Prepare shipping override collection
+        // Prepare Shipping collection
         // ---------------------------------------
-        $collectionShippingOverride = $this->activeRecordFactory->getObject('Amazon_Template_ShippingOverride')
+        $collectionShipping = $this->activeRecordFactory->getObject('Amazon_Template_Shipping')
             ->getCollection();
-        $collectionShippingOverride->getSelect()->reset(Select::COLUMNS);
-        $collectionShippingOverride->getSelect()->columns(
+        $collectionShipping->getSelect()->reset(Select::COLUMNS);
+        $collectionShipping->getSelect()->columns(
             [
                 'id as template_id',
                 'title',
-                new \Zend_Db_Expr('\''.self::TEMPLATE_SHIPPING_OVERRIDE.'\' as `type`'),
-                'marketplace_id',
-                'create_date',
-                'update_date',
-                new \Zend_Db_Expr('NULL as `category_path`'),
-                new \Zend_Db_Expr('NULL as `browsenode_id`'),
-                new \Zend_Db_Expr('NULL as `is_new_asin_accepted`')
-            ]
-        );
-        // ---------------------------------------
-
-        // Prepare Shipping Template collection
-        // ---------------------------------------
-        $collectionShippingTemplate = $this->activeRecordFactory->getObject('Amazon_Template_ShippingTemplate')
-            ->getCollection();
-        $collectionShippingTemplate->getSelect()->reset(Select::COLUMNS);
-        $collectionShippingTemplate->getSelect()->columns(
-            [
-                'id as template_id',
-                'title',
-                new \Zend_Db_Expr('\''.self::TEMPLATE_SHIPPING_TEMPLATE.'\' as `type`'),
+                new \Zend_Db_Expr('\''.self::TEMPLATE_SHIPPING.'\' as `type`'),
                 new \Zend_Db_Expr('\'0\' as `marketplace_id`'),
                 'create_date',
                 'update_date',
@@ -151,7 +130,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
         // ---------------------------------------
 
-        // Prepare shipping override collection
+        // Prepare Description collection
         // ---------------------------------------
         $collectionDescription = $this->amazonFactory->getObject('Template\Description')->getCollection();
 
@@ -179,7 +158,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
         // ---------------------------------------
 
-        // Prepare description collection
+        // Prepare Product Tax Code collection
         // ---------------------------------------
         $collectionProductTaxCode = $this->activeRecordFactory->getObject('Amazon_Template_ProductTaxCode')
             ->getCollection();
@@ -206,8 +185,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $collectionSellingFormat->getSelect(),
             $collectionSynchronization->getSelect(),
             $collectionDescription->getSelect(),
-            $collectionShippingOverride->getSelect(),
-            $collectionShippingTemplate->getSelect(),
+            $collectionShipping->getSelect(),
             $collectionProductTaxCode->getSelect()
         ];
 
@@ -336,12 +314,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         parent::_prepareColumns();
 
         $options = [
-            self::TEMPLATE_SELLING_FORMAT    => $this->__('Selling'),
-            self::TEMPLATE_DESCRIPTION       => $this->__('Description'),
-            self::TEMPLATE_SYNCHRONIZATION   => $this->__('Synchronization'),
-            self::TEMPLATE_SHIPPING_TEMPLATE => $this->__('Shipping Template'),
-            self::TEMPLATE_SHIPPING_OVERRIDE => $this->__('Shipping Override'),
-            self::TEMPLATE_PRODUCT_TAX_CODE  => $this->__('Product Tax Code'),
+            self::TEMPLATE_SELLING_FORMAT   => $this->__('Selling'),
+            self::TEMPLATE_DESCRIPTION      => $this->__('Description'),
+            self::TEMPLATE_SYNCHRONIZATION  => $this->__('Synchronization'),
+            self::TEMPLATE_SHIPPING         => $this->__('Shipping'),
+            self::TEMPLATE_PRODUCT_TAX_CODE => $this->__('Product Tax Code'),
         ];
 
         $this->getColumn('type')->setData('options', $options);

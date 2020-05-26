@@ -58,10 +58,10 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $this->buildTaxRule(
             $rate,
             $countryId,
-            $customerTaxClassId,
             self::TAX_RATE_CODE_PRODUCT,
             self::TAX_RULE_CODE_PRODUCT,
-            self::TAX_CLASS_NAME_PRODUCT
+            self::TAX_CLASS_NAME_PRODUCT,
+            $customerTaxClassId
         );
     }
 
@@ -70,20 +70,20 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $this->buildTaxRule(
             $rate,
             $countryId,
-            $customerTaxClassId,
             self::TAX_RATE_CODE_SHIPPING,
             self::TAX_RULE_CODE_SHIPPING,
-            self::TAX_CLASS_NAME_SHIPPING
+            self::TAX_CLASS_NAME_SHIPPING,
+            $customerTaxClassId
         );
     }
 
     private function buildTaxRule(
         $rate,
         $countryId,
-        $customerTaxClassId = null,
         $taxRateCode,
         $taxRuleCode,
-        $taxClassName
+        $taxClassName,
+        $customerTaxClassId = null
     ) {
         // Init product tax class
         // ---------------------------------------

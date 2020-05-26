@@ -14,11 +14,6 @@ class EbayEpidsDeUk extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['ebay_marketplace', 'ebay_listing'];
-    }
-
     public function execute()
     {
         $this->getTableModifier('ebay_dictionary_motor_epid')

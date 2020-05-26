@@ -22,12 +22,10 @@ use Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion as Promotion;
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     const INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED = 'channel_status_changed';
-    const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED = 'channel_qty_changed';
-    const INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED = 'channel_price_changed';
+    const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED    = 'channel_qty_changed';
+    const INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED  = 'channel_price_changed';
 
     const PROMOTIONS_MAX_ALLOWED_COUNT = 10;
-
-    //########################################
 
     /**
      * @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager
@@ -256,7 +254,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         if ($this->getMagentoProduct()->isConfigurableType() ||
             $this->getMagentoProduct()->isGroupedType()) {
             $variations = $this->getVariations(true);
-            if (count($variations) <= 0) {
+            if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception\Logic(
                     'There are no variations for a variation product.',
                     [
@@ -265,8 +263,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
                 );
             }
             $variation = reset($variations);
-            $options = $variation->getOptions(true);
-            $option = reset($options);
+            $options   = $variation->getOptions(true);
+            $option    = reset($options);
 
             return $option->getMagentoProduct();
         }
@@ -433,16 +431,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     /**
      * @return string
      */
-    public function getChannelUrl()
-    {
-        return $this->getData('channel_url');
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return string
-     */
     public function getPublishStatus()
     {
         return $this->getData('publish_status');
@@ -520,14 +508,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return $this->getSettings('online_details_data');
     }
 
-    /**
-     * @return bool
-     */
-    public function isDetailsDataChanged()
-    {
-        return (bool)$this->getData('is_details_data_changed');
-    }
-
     // ---------------------------------------
 
     /**
@@ -579,7 +559,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
             $variations = $this->getVariations(true);
-            if (count($variations) <= 0) {
+            if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception\Logic(
                     'There are no variations for a variation product.',
                     [
@@ -613,7 +593,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
             $variations = $this->getVariations(true);
-            if (count($variations) <= 0) {
+            if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception\Logic(
                     'There are no variations for a variation product.',
                     [
@@ -648,7 +628,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
             $variations = $this->getVariations(true);
-            if (count($variations) <= 0) {
+            if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception\Logic(
                     'There are no variations for a variation product.',
                     [
@@ -656,6 +636,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
                     ]
                 );
             }
+
             /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
             $variation = reset($variations);
 
@@ -685,7 +666,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
             $variations = $this->getVariations(true);
-            if (count($variations) <= 0) {
+            if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception\Logic(
                     'There are no variations for a variation product.',
                     [
@@ -722,9 +703,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
             /** @var $comparisonPriceCalculator \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator */
             $comparisonPriceCalculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
-            $comparisonPriceCalculator->setSource(
-                $promotion->getComparisonPriceSource()
-            )->setProduct($this->getParentObject());
+            $comparisonPriceCalculator->setSource($promotion->getComparisonPriceSource())
+                ->setProduct($this->getParentObject());
             $comparisonPriceCalculator->setSourceModeMapping([
                 PriceCalculator::MODE_PRODUCT   => Promotion::COMPARISON_PRICE_MODE_PRODUCT,
                 PriceCalculator::MODE_SPECIAL   => Promotion::COMPARISON_PRICE_MODE_SPECIAL,
@@ -749,53 +729,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         }
 
         return $resultPromotions;
-    }
-
-    //########################################
-
-    public function listAction(array $params = [])
-    {
-        return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $params);
-    }
-
-    public function relistAction(array $params = [])
-    {
-        return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_RELIST, $params);
-    }
-
-    public function reviseAction(array $params = [])
-    {
-        return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $params);
-    }
-
-    public function stopAction(array $params = [])
-    {
-        return $this->processDispatcher(\Ess\M2ePro\Model\Listing\Product::ACTION_STOP, $params);
-    }
-
-    // ---------------------------------------
-
-    protected function processDispatcher($action, array $params = [])
-    {
-        $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Product_Dispatcher');
-        return $dispatcherObject->process($action, $this->getId(), $params);
-    }
-
-    //########################################
-
-    public function getTrackingAttributes()
-    {
-        $attributes = $this->getListing()->getTrackingAttributes();
-
-        $categoryTemplate = $this->getCategoryTemplate();
-        if ($categoryTemplate !== null) {
-            $attributes = array_merge($attributes, $categoryTemplate->getTrackingAttributes());
-        }
-
-        $attributes = array_merge($attributes, $this->getDescriptionTemplate()->getTrackingAttributes());
-        $attributes = array_merge($attributes, $this->getSellingFormatTemplate()->getTrackingAttributes());
-
-        return array_unique($attributes);
     }
 
     //########################################

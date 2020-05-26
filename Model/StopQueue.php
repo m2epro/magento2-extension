@@ -23,39 +23,19 @@ class StopQueue extends ActiveRecord\AbstractModel
 
     //########################################
 
-    public function getItemData()
-    {
-        return $this->getData('item_data');
-    }
-
-    public function getDecodedItemData()
-    {
-        return $this->getHelper('Data')->jsonDecode($this->getItemData());
-    }
-
-    // ---------------------------------------
-
-    public function getAccountHash()
-    {
-        return $this->getData('account_hash');
-    }
-
-    public function getMarketplaceId()
-    {
-        return $this->getData('marketplace_id');
-    }
-
     public function getComponentMode()
     {
         return $this->getData('component_mode');
     }
 
-    /**
-     * @return bool
-     */
     public function isProcessed()
     {
         return (bool)$this->getData('is_processed');
+    }
+
+    public function getAdditionalData()
+    {
+        return $this->getSettings('additional_data');
     }
 
     //########################################
@@ -71,21 +51,19 @@ class StopQueue extends ActiveRecord\AbstractModel
             return false;
         }
 
-        $itemData = $this->getItemDataByListingProduct($listingProduct);
-
-        if ($itemData === null) {
+        $requestData = $this->getRequestData($listingProduct);
+        if (empty($requestData)) {
             return false;
         }
 
-        $marketplaceNativeId = $listingProduct->isComponentModeEbay() ?
-                                        $listingProduct->getMarketplace()->getNativeId() : null;
+        $additionalData = [
+            'request_data' => $requestData,
+        ];
 
         $addedData = [
-            'item_data' => $this->getHelper('Data')->jsonEncode($itemData),
-            'account_hash' => $listingProduct->getAccount()->getChildObject()->getServerHash(),
-            'marketplace_id' => $marketplaceNativeId,
-            'component_mode' => $listingProduct->getComponentMode(),
-            'is_processed' => 0
+            'component_mode'  => $listingProduct->getComponentMode(),
+            'is_processed'    => 0,
+            'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData),
         ];
 
         $this->activeRecordFactory->getObject('StopQueue')->setData($addedData)->save();
@@ -93,37 +71,48 @@ class StopQueue extends ActiveRecord\AbstractModel
         return true;
     }
 
-    private function getItemDataByListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    // ---------------------------------------
+
+    private function getRequestData(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
-        $connectorName = ucfirst($listingProduct->getComponentMode()).'\Connector\\';
-        $connectorName .= $listingProduct->isComponentModeEbay() ? 'Item' : 'Product';
-        $connectorName .= '\Stop\Requester';
+        $data = [];
 
-        $connectorParams = [
-            'logs_action_id' => 0,
-            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN,
-        ];
+        if ($listingProduct->isComponentModeEbay()) {
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+            $ebayListingProduct = $listingProduct->getChildObject();
+            $ebayAccount        = $ebayListingProduct->getEbayAccount();
 
-        try {
-
-            /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcher */
-            $dispatcher = $this->modelFactory->getObject(
-                ucfirst($listingProduct->getComponentMode()).'\Connector\Dispatcher'
-            );
-
-            $connector = $dispatcher->getCustomConnector($connectorName, $connectorParams);
-            $connector->setListingProduct($listingProduct);
-
-            $itemData = $connector->getRequestDataPackage();
-        } catch (\Exception $exception) {
-            return null;
+            $data = [
+                'account'     => $ebayAccount->getServerHash(),
+                'marketplace' => $ebayListingProduct->getMarketplace()->getNativeId(),
+                'item_id'     => $ebayListingProduct->getEbayItem()->getItemId(),
+            ];
         }
 
-        if (!isset($itemData['data'])) {
-            return null;
+        if ($listingProduct->isComponentModeAmazon()) {
+            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+            $amazonListingProduct = $listingProduct->getChildObject();
+            $amazonAccount        = $amazonListingProduct->getAmazonAccount();
+
+            $data = [
+                'account' => $amazonAccount->getServerHash(),
+                'sku'     => $amazonListingProduct->getSku(),
+            ];
         }
 
-        return $itemData['data'];
+        if ($listingProduct->isComponentModeWalmart()) {
+            /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
+            $walmartListingProduct = $listingProduct->getChildObject();
+            $walmartAccount        = $walmartListingProduct->getWalmartAccount();
+
+            $data = [
+                'account' => $walmartAccount->getServerHash(),
+                'sku'     => $walmartListingProduct->getSku(),
+                'wpid'    => $walmartListingProduct->getWpid()
+            ];
+        }
+
+        return $data;
     }
 
     //########################################

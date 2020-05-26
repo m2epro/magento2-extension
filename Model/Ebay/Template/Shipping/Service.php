@@ -254,26 +254,4 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     }
 
     //########################################
-
-    /**
-     * @return array
-     */
-    public function getTrackingAttributes()
-    {
-        return $this->getUsedAttributes();
-    }
-
-    /**
-     * @return array
-     */
-    public function getUsedAttributes()
-    {
-        return array_unique(array_merge(
-            $this->getCostAttributes(),
-            $this->getCostAdditionalAttributes(),
-            $this->getCostSurchargeAttributes()
-        ));
-    }
-
-    //########################################
 }

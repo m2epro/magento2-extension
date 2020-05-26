@@ -68,12 +68,12 @@ class Order extends AbstractForm
         $defaults = [
             'magento_orders_settings' => [
                 'listing' => [
-                    'mode' => Account::MAGENTO_ORDERS_LISTINGS_MODE_YES,
+                    'mode' => 1,
                     'store_mode' => Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
                     'store_id' => null
                 ],
                 'listing_other' => [
-                    'mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES,
+                    'mode' => 1,
                     'product_mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
                     'store_id' => $this->getHelper('Magento\Store')->getDefaultStoreId(),
@@ -81,12 +81,12 @@ class Order extends AbstractForm
                 'number' => [
                     'source' => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
                     'prefix' => [
-                        'mode'   => Account::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_NO,
                         'prefix'       => '',
                         'afn-prefix'   => '',
                         'prime-prefix' => '',
                         'b2b-prefix'   => '',
                     ],
+                    'apply_to_amazon'  => 0
                 ],
                 'tax' => [
                     'mode' => Account::MAGENTO_ORDERS_TAX_MODE_MIXED
@@ -96,7 +96,7 @@ class Order extends AbstractForm
                     'id' => null,
                     'website_id' => null,
                     'group_id' => null,
-//                'subscription_mode' => Account::MAGENTO_ORDERS_CUSTOMER_NEW_SUBSCRIPTION_MODE_NO,
+//                'subscription_mode' => 0,
                     'notifications' => [
 //                    'customer_created' => false,
                         'invoice_created' => false,
@@ -116,11 +116,11 @@ class Order extends AbstractForm
                     'refund_mode' => 1,
                 ],
                 'fba' => [
-                    'mode' => Account::MAGENTO_ORDERS_FBA_MODE_YES,
-                    'stock_mode' => Account::MAGENTO_ORDERS_FBA_STOCK_MODE_NO
+                    'mode' => 1,
+                    'stock_mode' => 0
                 ],
-                'invoice_mode' => Account::MAGENTO_ORDERS_INVOICE_MODE_YES,
-                'shipment_mode' => Account::MAGENTO_ORDERS_SHIPMENT_MODE_YES
+                'invoice_mode' => 1,
+                'shipment_mode' => 1
             ]
         ];
 
@@ -172,8 +172,8 @@ HTML
                 'name' => 'magento_orders_settings[listing][mode]',
                 'label' => $this->__('Create Order in Magento'),
                 'values' => [
-                    Account::MAGENTO_ORDERS_LISTINGS_MODE_YES => $this->__('Yes'),
-                    Account::MAGENTO_ORDERS_LISTINGS_MODE_NO => $this->__('No'),
+                    1 => $this->__('Yes'),
+                    0 => $this->__('No'),
                 ],
                 'value' => $formData['magento_orders_settings']['listing']['mode'],
                 'tooltip' => $this->__(
@@ -232,8 +232,8 @@ HTML
                 'name' => 'magento_orders_settings[listing_other][mode]',
                 'label' => $this->__('Create Order in Magento'),
                 'values' => [
-                    Account::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_NO => $this->__('No'),
-                    Account::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES => $this->__('Yes'),
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
                 ],
                 'value' => $formData['magento_orders_settings']['listing_other']['mode'],
                 'tooltip' => $this->__(
@@ -327,21 +327,6 @@ HTML
         );
 
         $fieldset->addField(
-            'magento_orders_number_prefix_mode',
-            'select',
-            [
-                'name' => 'magento_orders_settings[number][prefix][mode]',
-                'label' => $this->__('Use Prefix'),
-                'values' => [
-                    Account::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_NO => $this->__('No'),
-                    Account::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_YES => $this->__('Yes'),
-                ],
-                'value' => $formData['magento_orders_settings']['number']['prefix']['mode'],
-                'tooltip' => $this->__('Choose to set the prefix before Magento Order number.')
-            ]
-        );
-
-        $fieldset->addField(
             'magento_orders_number_prefix_container',
             self::CUSTOM_CONTAINER,
             [
@@ -350,6 +335,23 @@ HTML
                                 ->toHtml(),
                 'css_class' => 'm2epro-fieldset-table',
                 'style' => 'padding: 0 !important;'
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_number_apply_to_amazon',
+            'select',
+            [
+                'name' => 'magento_orders_settings[number][apply_to_amazon]',
+                'label' => $this->__('Use as Your Seller Order ID'),
+                'values' => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'value' => $formData['magento_orders_settings']['number']['apply_to_amazon'],
+                'tooltip' => $this->__(
+                    'Set "Yes" to use Magento Order number as Your Seller Order ID in Amazon Order details.'
+                )
             ]
         );
 
@@ -448,8 +450,8 @@ HTML
                 'name' => 'magento_orders_settings[fba][mode]',
                 'label' => $this->__('Create Order in Magento'),
                 'values' => [
-                    Account::MAGENTO_ORDERS_FBA_MODE_NO => $this->__('No'),
-                    Account::MAGENTO_ORDERS_FBA_MODE_YES => $this->__('Yes'),
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
                 ],
                 'value' => $formData['magento_orders_settings']['fba']['mode'],
                 'tooltip' => $this->__(
@@ -466,8 +468,8 @@ HTML
                 'name' => 'magento_orders_settings[fba][stock_mode]',
                 'label' => $this->__('Manage Stock'),
                 'values' => [
-                    Account::MAGENTO_ORDERS_FBA_STOCK_MODE_NO => $this->__('No'),
-                    Account::MAGENTO_ORDERS_FBA_STOCK_MODE_YES => $this->__('Yes'),
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
                 ],
                 'value' => $formData['magento_orders_settings']['fba']['stock_mode'],
                 'tooltip' => $this->__('If <i>Yes</i>, after Magento Order Creation QTY of Magento Product reduces.')
@@ -693,8 +695,8 @@ HTML
             $formData['magento_orders_settings']['status_mapping']['shipped']
                 = Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED;
 
-            $formData['magento_orders_settings']['invoice_mode'] = Account::MAGENTO_ORDERS_INVOICE_MODE_YES;
-            $formData['magento_orders_settings']['shipment_mode'] = Account::MAGENTO_ORDERS_SHIPMENT_MODE_YES;
+            $formData['magento_orders_settings']['invoice_mode'] = 1;
+            $formData['magento_orders_settings']['shipment_mode'] = 1;
         }
 
         $statusList = $this->orderConfig->getStatuses();
@@ -702,9 +704,7 @@ HTML
         $invoiceModeDisabled = $isDisabledStatusStyle ? 'disabled="disabled"' : '';
         $invoiceModeChecked = $formData['magento_orders_settings']['status_mapping']['mode']
                                              == Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT ||
-                              $formData['magento_orders_settings']['invoice_mode']
-                                             == Account::MAGENTO_ORDERS_INVOICE_MODE_YES
-            ? 'checked="checked"' : '';
+                              $formData['magento_orders_settings']['invoice_mode'] == 1 ? 'checked="checked"' : '';
 
         $fieldset->addField(
             'magento_orders_status_mapping_processing',
@@ -728,9 +728,7 @@ HTML
         $shipmentModeDisabled = $isDisabledStatusStyle ? 'disabled="disabled"' : '';
         $shipmentModeChecked = $formData['magento_orders_settings']['status_mapping']['mode']
                                     == Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT ||
-                               $formData['magento_orders_settings']['shipment_mode']
-                                    == Account::MAGENTO_ORDERS_SHIPMENT_MODE_YES
-            ? 'checked="checked"' : '';
+                               $formData['magento_orders_settings']['shipment_mode'] == 1 ? 'checked="checked"' : '';
 
         $fieldset->addField(
             'magento_orders_status_mapping_shipped',

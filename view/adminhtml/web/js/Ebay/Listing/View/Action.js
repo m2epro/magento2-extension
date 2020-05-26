@@ -26,7 +26,7 @@ define([
                 return;
             }
 
-            var requestParams = {'is_realtime': (this.gridHandler.getSelectedProductsArray().length <= 100)};
+            var requestParams = {'is_realtime': (this.gridHandler.getSelectedProductsArray().length <= 10)};
 
             this.startActions(
                 M2ePro.translator.translate('stopping_selected_items_message'),
@@ -43,7 +43,7 @@ define([
                 return;
             }
 
-            var requestParams = {'is_realtime': (this.gridHandler.getSelectedProductsArray().length <= 100)};
+            var requestParams = {'is_realtime': (this.gridHandler.getSelectedProductsArray().length <= 10)};
 
             this.startActions(
                 M2ePro.translator.translate('stopping_and_removing_selected_items_message'),

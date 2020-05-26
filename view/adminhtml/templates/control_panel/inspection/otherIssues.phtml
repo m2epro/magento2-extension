@@ -13,17 +13,6 @@
 
 <table class="form-list" cellspacing="0" cellpadding="0">
 
-    <?php if ($block->isMagicQuotesEnabled()) : ?>
-        <tr>
-            <td class="label">
-                <label><?php echo $block->__('PHP Magic Quotes'); ?>: </label>
-            </td>
-            <td class="value">
-                <span style="color: red"><b>Enabled</b></span>
-            </td>
-        </tr>
-    <?php endif; ?>
-
     <?php if ($block->isGdLibraryUnAvailable()) : ?>
         <tr>
             <td class="label">

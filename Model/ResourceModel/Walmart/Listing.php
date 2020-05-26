@@ -31,10 +31,8 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     {
         $this->updateStatisticCountColumns();
 
-        $listingTable = $this->activeRecordFactory
-            ->getObject('Listing')->getResource()->getMainTable();
-        $listingProductTable = $this->activeRecordFactory
-            ->getObject('Listing\Product')->getResource()->getMainTable();
+        $listingTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
+        $listingProductTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
         $walmartListingProductTable = $this->activeRecordFactory
             ->getObject('Walmart_Listing_Product')->getResource()->getMainTable();
 
@@ -61,10 +59,8 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     private function updateStatisticCountColumns()
     {
-        $listingTable = $this->activeRecordFactory
-            ->getObject('Listing')->getResource()->getMainTable();
-        $listingProductTable = $this->activeRecordFactory
-            ->getObject('Listing\Product')->getResource()->getMainTable();
+        $listingTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
+        $listingProductTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
         $walmartListingProductTable = $this->activeRecordFactory
             ->getObject('Walmart_Listing_Product')->getResource()->getMainTable();
 
@@ -158,76 +154,6 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
             $this->getConnection()->query($query);
         }
-    }
-
-    //########################################
-
-    public function setSynchStatusNeed($newData, $oldData, $listingProducts)
-    {
-        $this->setSynchStatusNeedBySellingFormatTemplate($newData, $oldData, $listingProducts);
-        $this->setSynchStatusNeedByDescriptionTemplate($newData, $oldData, $listingProducts);
-    }
-
-    // ---------------------------------------
-
-    public function setSynchStatusNeedBySellingFormatTemplate($newData, $oldData, $listingsProducts)
-    {
-        $newSellingFormatTemplate = $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'Template\SellingFormat',
-            $newData['template_selling_format_id']
-        );
-
-        $oldSellingFormatTemplate = $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'Template\SellingFormat',
-            $oldData['template_selling_format_id']
-        );
-
-        $this->activeRecordFactory->getObject('Walmart_Template_SellingFormat')->getResource()->setSynchStatusNeed(
-            $newSellingFormatTemplate->getDataSnapshot(),
-            $oldSellingFormatTemplate->getDataSnapshot(),
-            $listingsProducts
-        );
-    }
-
-    public function setSynchStatusNeedByDescriptionTemplate($newData, $oldData, $listingsProducts)
-    {
-        $newSellingFormatTemplate = $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'Template\Description',
-            $newData['template_description_id']
-        );
-
-        $oldSellingFormatTemplate = $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'Template\Description',
-            $oldData['template_description_id']
-        );
-
-        $this->activeRecordFactory->getObject('Walmart_Template_Description')->getResource()->setSynchStatusNeed(
-            $newSellingFormatTemplate->getDataSnapshot(),
-            $oldSellingFormatTemplate->getDataSnapshot(),
-            $listingsProducts
-        );
-    }
-
-    // ---------------------------------------
-
-    public function isDifferent($newData, $oldData)
-    {
-        $ignoreFields = [
-            $this->getIdFieldName(),
-            'id', 'title',
-            'component_mode',
-            'create_date', 'update_date'
-        ];
-
-        foreach ($ignoreFields as $ignoreField) {
-            unset($newData[$ignoreField], $oldData[$ignoreField]);
-        }
-
-        return !empty(array_diff_assoc($newData, $oldData));
     }
 
     //########################################

@@ -141,16 +141,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     /**
      * @return string
      */
-    public function getChannelUrl()
-    {
-        return $this->getData('channel_url');
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return string
-     */
     public function getPublishStatus()
     {
         return $this->getData('publish_status');

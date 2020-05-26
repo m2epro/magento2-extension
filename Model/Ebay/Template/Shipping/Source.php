@@ -120,4 +120,20 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     }
 
     //########################################
+
+    /**
+     * @return string
+     */
+    public function getDispatchTime()
+    {
+        $src = $this->getShippingTemplate()->getDispatchTimeSource();
+
+        if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\Shipping::DISPATCH_TIME_MODE_ATTRIBUTE) {
+            return $this->getMagentoProduct()->getAttributeValue($src['attribute']);
+        }
+
+        return $src['value'];
+    }
+
+    //########################################
 }

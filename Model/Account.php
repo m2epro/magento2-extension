@@ -8,8 +8,12 @@
 
 namespace Ess\M2ePro\Model;
 
+use \Ess\M2ePro\Model\Amazon\Account as AmazonAccount;
+use \Ess\M2ePro\Model\Ebay\Account as EbayAccount;
+use \Ess\M2ePro\Model\Walmart\Account as WalmartAccount;
+
 /**
- * @method \Ess\M2ePro\Model\Ebay\Account|\Ess\M2ePro\Model\Amazon\Account getChildObject()
+ * @method AmazonAccount|EbayAccount|WalmartAccount getChildObject()
  */
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {

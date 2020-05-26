@@ -22,7 +22,7 @@
     </event>
     <event name="controller_action_postdispatch_adminhtml_order_creditmemo_view">
         <observer name="m2epro_observer_creditmemo_view"
-                  instance="Ess\M2ePro\Observer\CreditMemo\View"
+                  instance="Ess\M2ePro\Observer\Creditmemo\View"
                   shared="false" />
     </event>
 

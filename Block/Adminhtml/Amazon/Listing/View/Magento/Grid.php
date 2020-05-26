@@ -107,12 +107,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ['alp' => $alpTable],
             'listing_product_id=id',
             [
-                'general_id'        => 'general_id',
-                'amazon_sku'        => 'sku',
-                'online_qty'        => 'online_qty',
+                'general_id'                => 'general_id',
+                'amazon_sku'                => 'sku',
+                'online_qty'                => 'online_qty',
                 'online_regular_price'      => 'online_regular_price',
                 'online_regular_sale_price' => 'online_regular_sale_price',
-                'is_afn_channel'    => 'is_afn_channel'
+                'is_afn_channel'            => 'is_afn_channel',
             ],
             null,
             'left'

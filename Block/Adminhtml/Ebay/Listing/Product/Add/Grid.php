@@ -350,7 +350,7 @@ JS
         // ---------------------------------------
 
         // ---------------------------------------
-        $showAutoActionPopup = !$this->getHelper('Module')->getConfig()->getGroupValue(
+        $showAutoActionPopup = !$this->getHelper('Module')->getCacheConfig()->getGroupValue(
             '/view/ebay/advanced/autoaction_popup/',
             'shown'
         );

@@ -57,7 +57,7 @@ class Grid extends WidgetGrid
 //        $this->setVarNameFilter('item_filter');
     }
 
-    // ########################################
+    //########################################
 
     protected function _prepareCollection()
     {

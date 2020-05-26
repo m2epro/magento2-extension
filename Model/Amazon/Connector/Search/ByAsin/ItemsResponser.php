@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Search\ByAsin;
  */
 abstract class ItemsResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
 {
-    // ########################################
+    //########################################
 
     protected function validateResponse()
     {
@@ -25,7 +25,7 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command
         return true;
     }
 
-    // ########################################
+    //########################################
 
     protected function prepareResponseData()
     {
@@ -77,5 +77,5 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command
         $this->preparedResponseData = $product;
     }
 
-    // ########################################
+    //########################################
 }

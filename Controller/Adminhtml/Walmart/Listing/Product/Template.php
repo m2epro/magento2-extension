@@ -27,7 +27,7 @@ abstract class Template extends Main
         foreach ($productsIdsParam as $productsIdsParamChunk) {
             $select = $connection->select();
             $select->from(['lo' => $table], ['object_id'])
-                ->where('model_name = "Listing\Product"')
+                ->where('model_name = "Listing_Product"')
                 ->where('object_id IN (?)', $productsIdsParamChunk)
                 ->where('tag IS NOT NULL');
 

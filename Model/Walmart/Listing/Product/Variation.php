@@ -29,20 +29,20 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
 
     //########################################
 
-    protected function _afterSave()
+    public function afterSave()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues(
             "listing_product_{$this->getListingProduct()->getId()}_variations"
         );
-        return parent::_afterSave();
+        return parent::afterSave();
     }
 
-    protected function _beforeDelete()
+    public function beforeDelete()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues(
             "listing_product_{$this->getListingProduct()->getId()}_variations"
         );
-        return parent::_beforeDelete();
+        return parent::beforeDelete();
     }
 
     //########################################
@@ -207,45 +207,39 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
             }
 
             // Bundle product
-        } else {
-            if ($this->getListingProduct()->getMagentoProduct()->isBundleType()) {
-                foreach ($options as $option) {
-                    /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+        } elseif ($this->getListingProduct()->getMagentoProduct()->isBundleType()) {
+            foreach ($options as $option) {
+                /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
 
-                    if (!$option->getProductId()) {
-                        continue;
-                    }
-
-                    $sku != '' && $sku .= '-';
-                    $sku .= $option->getChildObject()->getSku();
+                if (!$option->getProductId()) {
+                    continue;
                 }
 
-                // Simple with options product
-            } else {
-                if ($this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions()) {
-                    foreach ($options as $option) {
-                        /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
-                        $sku != '' && $sku .= '-';
-                        $tempSku = $option->getChildObject()->getSku();
-                        if ($tempSku == '') {
-                            $sku .= $this->getHelper('Data')->convertStringToSku($option->getOption());
-                        } else {
-                            $sku .= $tempSku;
-                        }
-                    }
+                $sku != '' && $sku .= '-';
+                $sku .= $option->getChildObject()->getSku();
+            }
 
-                    // Downloadable with separated links product
+            // Simple with options product
+        } elseif ($this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions()) {
+            foreach ($options as $option) {
+                /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+                $sku != '' && $sku .= '-';
+                $tempSku = $option->getChildObject()->getSku();
+                if ($tempSku == '') {
+                    $sku .= $this->getHelper('Data')->convertStringToSku($option->getOption());
                 } else {
-                    if ($this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()) {
-
-                        /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
-
-                        $option = reset($options);
-                        $sku = $option->getMagentoProduct()->getSku() . '-'
-                            . $this->getHelper('Data')->convertStringToSku($option->getOption());
-                    }
+                    $sku .= $tempSku;
                 }
             }
+
+            // Downloadable with separated links product
+        } elseif ($this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()) {
+
+            /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+
+            $option = reset($options);
+            $sku = $option->getMagentoProduct()->getSku() . '-'
+                . $this->getHelper('Data')->convertStringToSku($option->getOption());
         }
 
         return $sku;

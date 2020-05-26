@@ -670,7 +670,7 @@ JS
             $this->ebayListingProduct->getShippingTemplateSource()->getAddress(),
             $this->getCountryHumanTitle($this->ebayListingProduct->getShippingTemplateSource()->getCountry())
         ];
-        return implode($itemLocation, ', ');
+        return implode(', ', $itemLocation);
     }
 
     public function getShippingDispatchTime()
@@ -680,7 +680,7 @@ JS
         if ($this->ebayListingProduct->getShippingTemplate()->isLocalShippingFlatEnabled() ||
             $this->ebayListingProduct->getShippingTemplate()->isLocalShippingCalculatedEnabled()
         ) {
-            $dispatchTimeId = $this->ebayListingProduct->getShippingTemplate()->getDispatchTime();
+            $dispatchTimeId = $this->ebayListingProduct->getShippingTemplateSource()->getDispatchTime();
 
             if ($dispatchTimeId == 0) {
                 return $this->__('Same Business Day');
@@ -872,24 +872,26 @@ JS
         return $this->ebayListingProduct->getShippingTemplate()->isGlobalShippingProgramEnabled();
     }
 
+    // ---------------------------------------
+
     public function getReturnPolicy()
     {
-        $returnPolicyInfo = $this->ebayListingProduct->getEbayMarketplace()->getReturnPolicyInfo();
-
-        $returnAccepted = $this->ebayListingProduct->getReturnTemplate()->getAccepted();
-        if ($returnAccepted === 'ReturnsNotAccepted') {
-            return [];
-        }
-
         $returnPolicyTitles = [
             'returns_accepted'      => '',
             'returns_within'        => '',
             'refund'                => '',
             'shipping_cost_paid_by' => '',
-            'restocking_fee_value'  => ''
+
+            'international_returns_accepted'      => '',
+            'international_returns_within'        => '',
+            'international_refund'                => '',
+            'international_shipping_cost_paid_by' => '',
+
+            'description' => ''
         ];
 
-        foreach ($returnPolicyInfo['returns_accepted'] as $returnAcceptedId) {
+        $returnAccepted = $this->ebayListingProduct->getReturnTemplate()->getAccepted();
+        foreach ($this->getDictionaryInfo('returns_accepted') as $returnAcceptedId) {
             if ($returnAccepted === $returnAcceptedId['ebay_id']) {
                 $returnPolicyTitles['returns_accepted'] = $this->__($returnAcceptedId['title']);
                 break;
@@ -897,7 +899,7 @@ JS
         }
 
         $returnWithin = $this->ebayListingProduct->getReturnTemplate()->getWithin();
-        foreach ($returnPolicyInfo['returns_within'] as $returnWithinId) {
+        foreach ($this->getDictionaryInfo('returns_within') as $returnWithinId) {
             if ($returnWithin === $returnWithinId['ebay_id']) {
                 $returnPolicyTitles['returns_within'] = $this->__($returnWithinId['title']);
                 break;
@@ -905,7 +907,7 @@ JS
         }
 
         $returnRefund = $this->ebayListingProduct->getReturnTemplate()->getOption();
-        foreach ($returnPolicyInfo['refund'] as $returnRefundId) {
+        foreach ($this->getDictionaryInfo('refund') as $returnRefundId) {
             if ($returnRefund === $returnRefundId['ebay_id']) {
                 $returnPolicyTitles['refund'] = $this->__($returnRefundId['title']);
                 break;
@@ -913,30 +915,86 @@ JS
         }
 
         $returnShippingCost = $this->ebayListingProduct->getReturnTemplate()->getShippingCost();
-        foreach ($returnPolicyInfo['shipping_cost_paid_by'] as $returnShippingCostId) {
+        foreach ($this->getDictionaryInfo('shipping_cost_paid_by') as $returnShippingCostId) {
             if ($returnShippingCost === $returnShippingCostId['ebay_id']) {
-                $returnPolicyTitles['shipping_cost_paid_by'] =
-                    $this->__($returnShippingCostId['title']);
+                $returnPolicyTitles['shipping_cost_paid_by'] = $this->__($returnShippingCostId['title']);
                 break;
             }
         }
 
-        $returnRestockingFee = $this->ebayListingProduct->getReturnTemplate()->getRestockingFee();
-        if ($returnRestockingFee === "NoRestockingFee") {
-            $returnPolicyTitles['restocking_fee_value'] = '';
-        } else {
-            foreach ($returnPolicyInfo['restocking_fee_value'] as $returnRestockingFeeId) {
-                if ($returnRestockingFee === $returnRestockingFeeId['ebay_id']) {
-                    $returnPolicyTitles['restocking_fee_value'] =
-                        $this->__($returnRestockingFeeId['title']);
-                    break;
-                }
+        // ---------------------------------------
+
+        $returnAccepted = $this->ebayListingProduct->getReturnTemplate()->getInternationalAccepted();
+        foreach ($this->getInternationalDictionaryInfo('returns_accepted') as $returnAcceptedId) {
+            if ($returnAccepted === $returnAcceptedId['ebay_id']) {
+                $returnPolicyTitles['international_returns_accepted'] = $this->__($returnAcceptedId['title']);
+                break;
             }
         }
 
-        $returnPolicyTitles['is_holiday_enabled'] = $this->ebayListingProduct->getReturnTemplate()->isHolidayEnabled();
+        $returnWithin = $this->ebayListingProduct->getReturnTemplate()->getInternationalWithin();
+        foreach ($this->getInternationalDictionaryInfo('returns_within') as $returnWithinId) {
+            if ($returnWithin === $returnWithinId['ebay_id']) {
+                $returnPolicyTitles['international_returns_within'] = $this->__($returnWithinId['title']);
+                break;
+            }
+        }
+
+        $returnRefund = $this->ebayListingProduct->getReturnTemplate()->getInternationalOption();
+        foreach ($this->getInternationalDictionaryInfo('refund') as $returnRefundId) {
+            if ($returnRefund === $returnRefundId['ebay_id']) {
+                $returnPolicyTitles['international_refund'] = $this->__($returnRefundId['title']);
+                break;
+            }
+        }
+
+        $returnShippingCost = $this->ebayListingProduct->getReturnTemplate()->getInternationalShippingCost();
+        foreach ($this->getInternationalDictionaryInfo('shipping_cost_paid_by') as $shippingCostId) {
+            if ($returnShippingCost === $shippingCostId['ebay_id']) {
+                $returnPolicyTitles['international_shipping_cost_paid_by'] = $this->__($shippingCostId['title']);
+                break;
+            }
+        }
+
+        // ---------------------------------------
+
         $returnPolicyTitles['description'] = $this->ebayListingProduct->getReturnTemplate()->getDescription();
 
         return $returnPolicyTitles;
     }
+
+    public function isDomesticReturnsAccepted()
+    {
+        $template = $this->ebayListingProduct->getReturnTemplate();
+        return $template->getAccepted() === \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy::RETURNS_ACCEPTED;
+    }
+
+    public function isInternationalReturnsAccepted()
+    {
+        $template = $this->ebayListingProduct->getReturnTemplate();
+
+        return $this->isDomesticReturnsAccepted() &&
+               $template->getInternationalAccepted() === \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy::RETURNS_ACCEPTED;
+    }
+
+    //########################################
+
+    protected function getDictionaryInfo($key)
+    {
+        $returnPolicyInfo = $this->ebayListingProduct->getEbayMarketplace()->getReturnPolicyInfo();
+        return !empty($returnPolicyInfo[$key]) ? $returnPolicyInfo[$key] : [];
+    }
+
+    protected function getInternationalDictionaryInfo($key)
+    {
+        $returnPolicyInfo = $this->ebayListingProduct->getEbayMarketplace()->getReturnPolicyInfo();
+
+        if (!empty($returnPolicyInfo['international_'.$key])) {
+            return $returnPolicyInfo['international_'.$key];
+        }
+
+        return $this->getDictionaryInfo($key);
+    }
+
+    //########################################
 }

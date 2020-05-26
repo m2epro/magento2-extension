@@ -63,10 +63,7 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
             return true;
         }
 
-        // M2ePro\TRANSLATIONS
-        // SKU generating is not successful.
         $this->addMessage('SKU generating is not successful.');
-
         return false;
     }
 
@@ -180,7 +177,7 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         }
 
         $processingActionListSkuCollection = $this->activeRecordFactory
-                                                  ->getObject('Amazon_Processing_Action_ListAction_Sku')
+                                                  ->getObject('Amazon_Listing_Product_Action_ProcessingListSku')
                                                   ->getCollection();
         $processingActionListSkuCollection->addFieldToFilter('account_id', $this->getListing()->getAccountId());
 

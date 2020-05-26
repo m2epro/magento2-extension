@@ -13,9 +13,6 @@ namespace Ess\M2ePro\Helper\View;
  */
 class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    // M2ePro_TRANSLATIONS
-    // Configuration
-
     const NICK  = 'configuration';
 
     const EBAY_SECTION_COMPONENT     = 'm2epro_ebay_integration';

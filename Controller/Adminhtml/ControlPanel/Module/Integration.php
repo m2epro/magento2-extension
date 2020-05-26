@@ -19,7 +19,6 @@ use Ess\M2ePro\Helper\Component\Ebay;
  */
 class Integration extends Command
 {
-    private $synchConfig;
     private $formKey;
     private $csvParser;
     private $phpEnvironmentRequest;
@@ -28,14 +27,12 @@ class Integration extends Command
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Synchronization $synchConfig,
         \Magento\Framework\Data\Form\FormKey $formKey,
         \Magento\Framework\File\Csv $csvParser,
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         Context $context
     ) {
-        $this->synchConfig = $synchConfig;
         $this->formKey = $formKey;
         $this->csvParser = $csvParser;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
@@ -44,118 +41,6 @@ class Integration extends Command
     }
 
     //########################################
-
-    /**
-     * @title "Revise Total"
-     * @description "Full Force Revise"
-     */
-    public function reviseTotalAction()
-    {
-        $html = '';
-        foreach ($this->getHelper('Component')->getEnabledComponents() as $component) {
-            $reviseAllStartDate = $this->synchConfig->getGroupValue(
-                "/{$component}/templates/synchronization/revise/total/",
-                'start_date'
-            );
-
-            $reviseAllEndDate = $this->synchConfig->getGroupValue(
-                "/{$component}/templates/synchronization/revise/total/",
-                'end_date'
-            );
-
-            $reviseAllInProcessingState = $this->synchConfig->getGroupValue(
-                "/{$component}/templates/synchronization/revise/total/",
-                'last_listing_product_id'
-            ) !== null;
-
-            $runNowUrl = $this->getUrl('*/*/*', ['action' => 'processReviseTotal', 'component' => $component]);
-            $resetUrl = $this->getUrl('*/*/*', ['action' => 'resetReviseTotal', 'component' => $component]);
-
-            $html .= <<<HTML
-<div>
-    <span style="display:inline-block; width: 100px;">{$component}</span>
-    <span style="display:inline-block; width: 150px;">
-        <button onclick="window.location='{$runNowUrl}'">turn on</button>
-        <button onclick="window.location='{$resetUrl}'">stop</button>
-    </span>
-    <span id="{$component}_start_date" style="color: indianred; display: none;">
-        Started at - {$reviseAllStartDate}
-    </span>
-    <span id="{$component}_end_date" style="color: green; display: none;">
-        Finished at - {$reviseAllEndDate}
-    </span>
-</div>
-
-HTML;
-            $html.= "<script type=\"text/javascript\">";
-            if ($reviseAllInProcessingState) {
-                $html .= "document.getElementById('{$component}_start_date').style.display = 'inline-block';";
-            } else {
-                if ($reviseAllEndDate) {
-                    $html .= "document.getElementById('{$component}_end_date').style.display = 'inline-block';";
-                }
-            }
-            $html.= "</script>";
-        }
-
-        return $html;
-    }
-
-    /**
-     * @title "Process Revise Total for Component"
-     * @hidden
-     */
-    public function processReviseTotalAction()
-    {
-        $component = $this->getRequest()->getParam('component', false);
-
-        if (!$component) {
-            $this->getMessageManager()->addError('Component is not presented.');
-            $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
-        }
-
-        $this->synchConfig->setGroupValue(
-            "/{$component}/templates/synchronization/revise/total/",
-            'start_date',
-            $this->getHelper('Data')->getCurrentGmtDate()
-        );
-
-        $this->synchConfig->setGroupValue(
-            "/{$component}/templates/synchronization/revise/total/",
-            'end_date',
-            null
-        );
-
-        $this->synchConfig->setGroupValue(
-            "/{$component}/templates/synchronization/revise/total/",
-            'last_listing_product_id',
-            0
-        );
-
-        $this->_redirect('*/*/*', ['action' => 'reviseTotal']);
-    }
-
-    /**
-     * @title "Reset Revise Total for Component"
-     * @hidden
-     */
-    public function resetReviseTotalAction()
-    {
-        $component = $this->getRequest()->getParam('component', false);
-
-        if (!$component) {
-            $this->getMessageManager()->addError('Component is not presented.');
-            return $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
-        }
-
-        $this->synchConfig->setGroupValue(
-            "/{$component}/templates/synchronization/revise/total/",
-            'last_listing_product_id',
-            null
-        );
-
-        return $this->_redirect('*/*/*', ['action' => 'reviseTotal']);
-    }
 
     /**
      * @title "Print Request Data"
@@ -170,39 +55,23 @@ HTML;
             $requestType      = $this->getRequest()->getParam('request_type');
 
             if ($componentMode == 'ebay') {
-                $elp = $lp->getChildObject();
-
                 $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
 
-                $request = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Type\\'.$requestType.'\Request');
+                $request = $this->modelFactory->getObject(
+                    'Ebay_Listing_Product_Action_Type_'.$requestType.'_Request'
+                );
                 $request->setListingProduct($lp);
                 $request->setConfigurator($configurator);
 
-                if ($requestType == 'Revise') {
-                    $outOfStockControlCurrentState  = $elp->getOutOfStockControl();
-                    $outOfStockControlTemplateState = $elp->getEbaySellingFormatTemplate()->getOutOfStockControl();
-
-                    if (!$outOfStockControlCurrentState && $outOfStockControlTemplateState) {
-                        $outOfStockControlCurrentState = true;
-                    }
-
-                    $outOfStockControlResult = $outOfStockControlCurrentState ||
-                        $elp->getEbayAccount()->getOutOfStockControl();
-
-                    $request->setParams([
-                        'out_of_stock_control_current_state' => $outOfStockControlCurrentState,
-                        'out_of_stock_control_result'        => $outOfStockControlResult,
-                    ]);
-                }
-
-                return '<pre>' . print_r($request->getRequestData(), true);
+                // @codingStandardsIgnoreLine
+                return '<pre>' . print_r($request->getBuilderData(), true);
             }
 
             if ($componentMode == 'amazon') {
                 $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
 
                 $request = $this->modelFactory->getObject(
-                    'Amazon\Listing\Product\Action\Type\\'.$requestType.'\Request'
+                    'Amazon_Listing_Product_Action_Type_'.$requestType.'_Request'
                 );
                 $request->setParams([]);
                 $request->setListingProduct($lp);
@@ -216,20 +85,22 @@ HTML;
                     ]);
                 }
 
-                return '<pre>' . print_r($request->getRequestData(), true);
+                // @codingStandardsIgnoreLine
+                return '<pre>' . print_r($request->getBuilderData(), true);
             }
 
             if ($componentMode == 'walmart') {
                 $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
 
                 $request = $this->modelFactory->getObject(
-                    'Walmart\Listing\Product\Action\Type\\'.$requestType.'\Request'
+                    'Walmart_Listing_Product_Action_Type_'.$requestType.'_Request'
                 );
                 $request->setParams([]);
                 $request->setListingProduct($lp);
                 $request->setConfigurator($configurator);
 
-                return '<pre>' . print_r($request->getRequestData(), true);
+                // @codingStandardsIgnoreLine
+                return '<pre>' . print_r($request->getBuilderData(), true);
             }
 
             return '';
@@ -277,108 +148,222 @@ HTML;
         if ($this->getRequest()->getParam('print')) {
             $listingProductId = $this->getRequest()->getParam('listing_product_id');
 
+            $instructionCollection = $this->activeRecordFactory->getObject(
+                'Listing_Product_Instruction'
+            )->getCollection();
+            $instructionCollection->applySkipUntilFilter();
+            $instructionCollection->addFieldToFilter('listing_product_id', $listingProductId);
+
             if ($this->getRequest()->getParam('component_mode') == 'ebay') {
+
+                /**@var \Ess\M2ePro\Model\Listing\Product $lp */
                 $lp = $this->parentFactory->getObjectLoaded(Ebay::NICK, 'Listing\Product', $listingProductId);
-                $elp = $lp->getChildObject();
 
-                $insp = $this->modelFactory->getObject('Ebay_Synchronization_Templates_Synchronization_Inspector');
+                $checkerInput = $this->modelFactory->getObject(
+                    'Listing_Product_Instruction_SynchronizationTemplate_Checker_Input'
+                );
+                $checkerInput->setListingProduct($lp);
 
-                $html = '';
-
-                $html .= '<pre>isMeetListRequirements: ' .$insp->isMeetListRequirements($lp). '<br>';
-                $html .= '<pre>isMeetRelistRequirements: ' .$insp->isMeetRelistRequirements($lp). '<br>';
-                $html .= '<pre>isMeetStopRequirements: ' .$insp->isMeetStopRequirements($lp). '<br>';
-                $html .= '<pre>isMeetReviseGeneralRequirements: ' .$insp->isMeetReviseGeneralRequirements($lp). '<br>';
-                $html .= '<pre>isMeetRevisePriceRequirements: ' .$insp->isMeetRevisePriceRequirements($lp). '<br>';
-                $html .= '<pre>isMeetReviseQtyRequirements: ' .$insp->isMeetReviseQtyRequirements($lp). '<br>';
-                $html .= '<pre>isMeetAdvancedListRequirements: ' .$insp->isMeetAdvancedListRequirements($lp). '<br>';
-                $html .= '<pre>isMeetAdvancedRelistRequirements: '.$insp->isMeetAdvancedRelistRequirements($lp).'<br>';
-                $html .= '<pre>isMeetAdvancedStopRequirements: ' .$insp->isMeetAdvancedStopRequirements($lp). '<br>';
-
-                $html .= '<br>';
-                $html .= '<pre>isSetCategoryTemplate: ' .$elp->isSetCategoryTemplate(). '<br>';
-                $html .= '<pre>isInAction: ' .$lp->isSetProcessingLock('in_action'). '<br>';
-
-                $html .= '<pre>isStatusEnabled: ' .($lp->getMagentoProduct()->isStatusEnabled()). '<br>';
-                $html .= '<pre>isStockAvailability: ' .($lp->getMagentoProduct()->isStockAvailability()). '<br>';
-
-                $html .= '<pre>onlineQty: ' .($elp->getOnlineQty() - $elp->getOnlineQtySold()). '<br>';
-
-                $totalQty = 0;
-
-                if (!$elp->isVariationsReady()) {
-                    $totalQty = $elp->getQty();
-                } else {
-                    foreach ($lp->getVariations(true) as $variation) {
-                        $ebayVariation = $variation->getChildObject();
-                        $totalQty += $ebayVariation->getQty();
-                    }
+                $instructions = [];
+                foreach ($instructionCollection->getItems() as $instruction) {
+                    /**@var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
+                    $instruction->setListingProduct($lp);
+                    $instructions[$instruction->getId()] = $instruction;
                 }
+                $checkerInput->setInstructions($instructions);
 
-                $html .= '<pre>productQty: ' .$totalQty. '<br>';
+                $html = '<pre>';
 
-                $html .= '<br>';
-                $html .= '<pre>onlineCurrentPrice: '.($elp->getOnlineCurrentPrice()).'<br>';
-                $html .= '<pre>currentPrice: '.($elp->getFixedPrice()).'<br>';
+                //--
+                $checker = $this->modelFactory->getObject(
+                    'Ebay_Listing_Product_Instruction_SynchronizationTemplate_Checker_NotListed'
+                );
+                $checker->setInput($checkerInput);
 
-                $html .= '<br>';
-                $html .= '<pre>onlineStartPrice: '.($elp->getOnlineStartPrice()).'<br>';
-                $html .= '<pre>startPrice: '.($elp->getStartPrice()).'<br>';
+                $html .= '<b>NotListed</b><br>';
+                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
+                $html .= 'isMeetList: '.json_encode($checker->isMeetListRequirements()).'<br><br>';
+                //--
 
-                $html .= '<br>';
-                $html .= '<pre>onlineReservePrice: '.($elp->getOnlineReservePrice()).'<br>';
-                $html .= '<pre>reservePrice: '.($elp->getReservePrice()).'<br>';
+                //--
+                $checker = $this->modelFactory->getObject(
+                    'Ebay_Listing_Product_Instruction_SynchronizationTemplate_Checker_Inactive'
+                );
+                $checker->setInput($checkerInput);
 
-                $html .= '<br>';
-                $html .= '<pre>onlineBuyItNowPrice: '.($elp->getOnlineBuyItNowPrice()).'<br>';
-                $html .= '<pre>buyItNowPrice: '.($elp->getBuyItNowPrice()).'<br>';
+                $html .= '<b>Inactive</b><br>';
+                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
+                $html .= 'isMeetRelist: '.json_encode($checker->isMeetRelistRequirements()).'<br><br>';
+                //--
 
-                return $html;
+                //--
+                $checker = $this->modelFactory->getObject(
+                    'Ebay_Listing_Product_Instruction_SynchronizationTemplate_Checker_Active'
+                );
+                $checker->setInput($checkerInput);
+
+                $html .= '<b>Active</b><br>';
+                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
+                $html .= 'isMeetStop: '.json_encode($checker->isMeetStopRequirements()).'<br><br>';
+
+                $html .= 'isMeetReviseQty: '.json_encode($checker->isMeetReviseQtyRequirements()).'<br>';
+                $html .= 'isMeetRevisePrice: '.json_encode($checker->isMeetRevisePriceRequirements()).'<br>';
+                $html .= 'isMeetReviseTitle: '.json_encode($checker->isMeetReviseTitleRequirements()).'<br>';
+                $html .= 'isMeetReviseSubtitle: '.json_encode($checker->isMeetReviseSubtitleRequirements()).'<br>';
+                $html .='isMeetReviseDescription: '.json_encode($checker->isMeetReviseDescriptionRequirements()).'<br>';
+                $html .= 'isMeetReviseImages: '.json_encode($checker->isMeetReviseImagesRequirements()).'<br>';
+                $html .= 'isMeetReviseCategories: '.json_encode($checker->isMeetReviseCategoriesRequirements()).'<br>';
+                $html .= 'isMeetRevisePayment: '.json_encode($checker->isMeetRevisePaymentRequirements()).'<br>';
+                $html .= 'isMeetReviseShipping: '.json_encode($checker->isMeetReviseShippingRequirements()).'<br>';
+                $html .= 'isMeetReviseReturn: '.json_encode($checker->isMeetReviseReturnRequirements()).'<br>';
+                $html .= 'isMeetReviseOther: '.json_encode($checker->isMeetReviseOtherRequirements()).'<br><br>';
+
+                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $elp */
+                $elp = $lp->getChildObject();
+                $html .= 'isSetCategoryTemplate: ' .json_encode($elp->isSetCategoryTemplate()).'<br>';
+                $html .= 'isInAction: ' .json_encode($lp->isSetProcessingLock('in_action')). '<br><br>';
+
+                $magentoProduct = $lp->getMagentoProduct();
+                $html .= 'isStatusEnabled: ' .json_encode($magentoProduct->isStatusEnabled()).'<br>';
+                $html .= 'isStockAvailability: ' .json_encode($magentoProduct->isStockAvailability()).'<br>';
+                //--
+
+                return $this->getResponse()->setBody($html);
             }
 
             if ($this->getRequest()->getParam('component_mode') == 'amazon') {
+
+                /**@var \Ess\M2ePro\Model\Listing\Product $lp */
                 $lp = $this->parentFactory->getObjectLoaded(Amazon::NICK, 'Listing\Product', $listingProductId);
 
-                $insp = $this->modelFactory->getObject('Amazon_Synchronization_Templates_Synchronization_Inspector');
+                $checkerInput = $this->modelFactory->getObject(
+                    'Listing_Product_Instruction_SynchronizationTemplate_Checker_Input'
+                );
+                $checkerInput->setListingProduct($lp);
 
-                $html = '';
+                $instructions = [];
+                foreach ($instructionCollection->getItems() as $instruction) {
+                    /**@var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
+                    $instruction->setListingProduct($lp);
+                    $instructions[$instruction->getId()] = $instruction;
+                }
+                $checkerInput->setInstructions($instructions);
 
-                $html .= '<pre>isMeetList: ' .$insp->isMeetListRequirements($lp). '<br>';
-                $html .= '<pre>isMeetRelist: ' .$insp->isMeetRelistRequirements($lp). '<br>';
-                $html .= '<pre>isMeetStop: ' .$insp->isMeetStopRequirements($lp). '<br>';
-                $html .= '<pre>isMeetReviseGeneral: ' .$insp->isMeetReviseGeneralRequirements($lp). '<br>';
-                $html .= '<pre>isMeetReviseRegularPrice: '.$insp->isMeetReviseRegularPriceRequirements($lp).'<br>';
-                $html .= '<pre>isMeetReviseBusinessPrice: '.$insp->isMeetReviseBusinessPriceRequirements($lp).'<br>';
-                $html .= '<pre>isMeetReviseQty: ' .$insp->isMeetReviseQtyRequirements($lp). '<br>';
-                $html .= '<pre>isMeetAdvancedListRequirements: ' .$insp->isMeetAdvancedListRequirements($lp). '<br>';
-                $html .= '<pre>isMeetAdvancedRelistRequirements: '.$insp->isMeetAdvancedRelistRequirements($lp).'<br>';
-                $html .= '<pre>isMeetAdvancedStopRequirements: ' .$insp->isMeetAdvancedStopRequirements($lp). '<br>';
+                $html = '<pre>';
 
-                $html .= '<pre>isStatusEnabled: ' .($lp->getMagentoProduct()->isStatusEnabled()). '<br>';
-                $html .= '<pre>isStockAvailability: ' .($lp->getMagentoProduct()->isStockAvailability()). '<br>';
+                //--
+                $checker = $this->modelFactory->getObject(
+                    'Amazon_Listing_Product_Instruction_SynchronizationTemplate_Checker_NotListed'
+                );
+                $checker->setInput($checkerInput);
 
-                return $html;
+                $html .= '<b>NotListed</b><br>';
+                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
+                $html .= 'isMeetList: '.json_encode($checker->isMeetListRequirements()).'<br><br>';
+                //--
+
+                //--
+                $checker = $this->modelFactory->getObject(
+                    'Amazon_Listing_Product_Instruction_SynchronizationTemplate_Checker_Inactive'
+                );
+                $checker->setInput($checkerInput);
+
+                $html .= '<b>Inactive</b><br>';
+                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
+                $html .= 'isMeetRelist: '.json_encode($checker->isMeetRelistRequirements()).'<br><br>';
+                //--
+
+                //--
+                $checker = $this->modelFactory->getObject(
+                    'Amazon_Listing_Product_Instruction_SynchronizationTemplate_Checker_Active'
+                );
+                $checker->setInput($checkerInput);
+
+                $html .= '<b>Active</b><br>';
+                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
+                $html .= 'isMeetStop: '.json_encode($checker->isMeetStopRequirements()).'<br><br>';
+
+                $html .= 'isMeetReviseQty: '.json_encode($checker->isMeetReviseQtyRequirements()).'<br>';
+                $html .= 'isMeetRevisePriceReg: '.json_encode($checker->isMeetRevisePriceRegularRequirements()).'<br>';
+                $html .= 'isMeetRevisePriceBus: '.json_encode($checker->isMeetRevisePriceBusinessRequirements()).'<br>';
+                $html .= 'isMeetReviseDetails: '.json_encode($checker->isMeetReviseDetailsRequirements()).'<br>';
+                $html .= 'isMeetReviseImages: '.json_encode($checker->isMeetReviseImagesRequirements()).'<br><br>';
+                //--
+
+                //--
+                $magentoProduct = $lp->getMagentoProduct();
+                $html .= 'isStatusEnabled: '.json_encode($magentoProduct->isStatusEnabled()).'<br>';
+                $html .= 'isStockAvailability: '.json_encode($magentoProduct->isStockAvailability()).'<br>';
+                //--
+
+                return $this->getResponse()->setBody($html);
             }
 
             if ($this->getRequest()->getParam('component_mode') == 'walmart') {
+
+                /**@var \Ess\M2ePro\Model\Listing\Product $lp */
                 $lp = $this->parentFactory->getObjectLoaded(Walmart::NICK, 'Listing\Product', $listingProductId);
 
-                $insp = $this->modelFactory->getObject('Walmart_Synchronization_Templates_Synchronization_Inspector');
+                $checkerInput = $this->modelFactory->getObject(
+                    'Listing_Product_Instruction_SynchronizationTemplate_Checker_Input'
+                );
+                $checkerInput->setListingProduct($lp);
 
-                $html = '';
+                $instructions = [];
+                foreach ($instructionCollection->getItems() as $instruction) {
+                    /**@var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
+                    $instruction->setListingProduct($lp);
+                    $instructions[$instruction->getId()] = $instruction;
+                }
+                $checkerInput->setInstructions($instructions);
 
-                $html .= '<pre>isMeetList: ' .$insp->isMeetListRequirements($lp). '<br>';
-                $html .= '<pre>isMeetRelist: ' .$insp->isMeetRelistRequirements($lp). '<br>';
-                $html .= '<pre>isMeetStop: ' .$insp->isMeetStopRequirements($lp). '<br>';
-                $html .= '<pre>isMeetReviseGeneral: ' .$insp->isMeetReviseGeneralRequirements($lp). '<br>';
-                $html .= '<pre>isMeetRevisePrice: '.$insp->isMeetRevisePriceRequirements($lp).'<br>';
-                $html .= '<pre>isMeetRevisePromotions: '.$insp->isMeetRevisePromotionsPriceRequirements($lp).'<br>';
-                $html .= '<pre>isMeetReviseQty: ' .$insp->isMeetReviseQtyRequirements($lp). '<br>';
+                $html = '<pre>';
 
-                $html .= '<pre>isStatusEnabled: ' .($lp->getMagentoProduct()->isStatusEnabled()). '<br>';
-                $html .= '<pre>isStockAvailability: ' .($lp->getMagentoProduct()->isStockAvailability()). '<br>';
+                //--
+                $checker = $this->modelFactory->getObject(
+                    'Walmart_Listing_Product_Instruction_SynchronizationTemplate_Checker_NotListed'
+                );
+                $checker->setInput($checkerInput);
 
-                return $html;
+                $html .= '<b>NotListed</b><br>';
+                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
+                $html .= 'isMeetList: '.json_encode($checker->isMeetListRequirements()).'<br><br>';
+                //--
+
+                //--
+                $checker = $this->modelFactory->getObject(
+                    'Walmart_Listing_Product_Instruction_SynchronizationTemplate_Checker_Inactive'
+                );
+                $checker->setInput($checkerInput);
+
+                $html .= '<b>Inactive</b><br>';
+                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
+                $html .= 'isMeetRelist: '.json_encode($checker->isMeetRelistRequirements()).'<br><br>';
+                //--
+
+                //--
+                $checker = $this->modelFactory->getObject(
+                    'Walmart_Listing_Product_Instruction_SynchronizationTemplate_Checker_Active'
+                );
+                $checker->setInput($checkerInput);
+
+                $html .= '<b>Active</b><br>';
+                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
+                $html .= 'isMeetStop: '.json_encode($checker->isMeetStopRequirements()).'<br><br>';
+
+                $html .= 'isMeetReviseQty: '.json_encode($checker->isMeetReviseQtyRequirements()).'<br>';
+                $html .= 'isMeetRevisePrice: '.json_encode($checker->isMeetRevisePriceRequirements()).'<br>';
+                $html .= 'isMeetRevisePromotions: '.json_encode($checker->isMeetRevisePromotionsRequirements()).'<br>';
+                $html .= 'isMeetReviseDetails: '.json_encode($checker->isMeetReviseDetailsRequirements()).'<br>';
+                //--
+
+                //--
+                $magentoProduct = $lp->getMagentoProduct();
+                $html .= 'isStatusEnabled: '.json_encode($magentoProduct->isStatusEnabled()).'<br>';
+                $html .= 'isStockAvailability: '.json_encode($magentoProduct->isStockAvailability()).'<br>';
+                //--
+
+                return $this->getResponse()->setBody($html);
             }
 
             return '';
@@ -401,6 +386,7 @@ HTML;
             <option style="display: none;"></option>
             <option value="ebay">eBay</option>
             <option value="amazon">Amazon</option>
+            <option value="walmart">Walmart</option>
         </select>
     </div>
 

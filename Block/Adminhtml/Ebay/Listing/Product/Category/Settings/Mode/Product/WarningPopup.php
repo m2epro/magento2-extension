@@ -19,10 +19,7 @@ class WarningPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('ebayListingCategoryWarningPopup');
-        // ---------------------------------------
 
         $this->setTemplate('ebay/listing/product/category/settings/mode/product/warning_popup.phtml');
     }

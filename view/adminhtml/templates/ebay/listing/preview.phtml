@@ -523,55 +523,100 @@ $variations = $block->getVariations();
             </table>
         <?php endif; ?>
     </div>
+
     <div class="return_container tab_container">
         <?php if (!empty($return)) : ?>
-            <?php if ($return['returns_accepted']) : ?>
-            <div>
-                <span class="field_title"><?php echo $block->__('Return Policy'); ?>:</span>
-                <?php echo $return['returns_accepted']; ?>
-            </div>
-            <?php endif; ?>
-            <?php if ($return['refund']) : ?>
-            <div>
-                <span class="field_title"><?php echo $block->__('Refund Will Be Given As'); ?>:</span>
-                <?php echo $return['refund']; ?>
-            </div>
-            <?php endif; ?>
-            <?php if ($return['returns_within']) : ?>
-            <div>
-                <span class="field_title"><?php echo $block->__('Item Must Be Returned Within'); ?>:</span>
-                <?php echo $return['returns_within']; ?>
-            </div>
-            <?php endif; ?>
-            <?php if ($return['is_holiday_enabled']) : ?>
-            <div>
-                <span class="field_title"><?php echo $block->__('Extended Holiday Returns'); ?>:</span>
-                <?php echo $block->__('Yes'); ?>
-            </div>
-            <?php endif; ?>
-            <?php if ($return['shipping_cost_paid_by']) : ?>
-            <div>
-                <span class="field_title"><?php echo $block->__('Return Shipping Will Be Paid By'); ?>:</span>
-                <?php echo $return['shipping_cost_paid_by']; ?>
-            </div>
-            <?php endif; ?>
-            <?php if ($return['restocking_fee_value']) : ?>
-            <div>
-                <span class="field_title"><?php echo $block->__('Restocking Fee Value'); ?>:</span>
-                <?php echo $return['restocking_fee_value']; ?>
-            </div>
-            <?php endif; ?>
-            <?php if ($return['description']) : ?>
+
+            <div class="field_group"><?php echo $block->__('Domestic Returns'); ?></div>
+
+            <?php if (!empty($return['returns_accepted'])): ?>
                 <div>
-                    <span class="field_title"><?php echo $block->__('Refund Description'); ?>:</span>
-                    <?php echo $return['description']; ?>
+                    <span class="field_title"><?php echo $block->__('Return Policy'); ?>:</span>
+                    <?php echo $return['returns_accepted']; ?>
                 </div>
             <?php endif; ?>
+
+            <?php if ($this->isDomesticReturnsAccepted()) : ?>
+
+                <?php if (!empty($return['refund'])): ?>
+                    <div>
+                        <span class="field_title"><?php echo $block->__('Refund Will Be Given As'); ?>:</span>
+                        <?php echo $return['refund']; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($return['returns_within'])): ?>
+                    <div>
+                        <span class="field_title"><?php echo $block->__('Item Must Be Returned Within'); ?>:</span>
+                        <?php echo $return['returns_within']; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($return['shipping_cost_paid_by'])): ?>
+                    <div>
+                        <span class="field_title"><?php echo $block->__('Return Shipping Will Be Paid By'); ?>:</span>
+                        <?php echo $return['shipping_cost_paid_by']; ?>
+                    </div>
+                <?php endif; ?>
+
+            <?php endif; ?>
+
+            <?php if ($this->isDomesticReturnsAccepted()) : ?>
+
+                <div class="field_group"><?php echo $block->__('International Returns'); ?></div>
+
+                <?php if (!empty($return['international_returns_accepted'])): ?>
+                    <div>
+                        <span class="field_title"><?php echo $block->__('Return  Policy'); ?>:</span>
+                        <?php echo $return['international_returns_accepted']; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($this->isInternationalReturnsAccepted()) : ?>
+
+                    <?php if (!empty($return['international_refund'])): ?>
+                        <div>
+                            <span class="field_title"><?php echo $block->__('Refund Will Be Given As'); ?>:</span>
+                            <?php echo $return['international_refund']; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($return['international_returns_within'])): ?>
+                        <div>
+                            <span class="field_title"><?php echo $block->__('Item Must Be Returned Within'); ?>:</span>
+                            <?php echo $return['international_returns_within']; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($return['international_shipping_cost_paid_by'])): ?>
+                        <div>
+                            <span class="field_title"><?php echo $block->__('Return Shipping Will Be Paid By'); ?>:</span>
+                            <?php echo $return['international_shipping_cost_paid_by']; ?>
+                        </div>
+                    <?php endif; ?>
+
+                <?php endif; ?>
+
+                <?php if(!empty($return['description'])): ?>
+
+                    <div class="field_group"><?php echo $block->__('Additional'); ?></div>
+
+                    <div>
+                        <span class="field_title"><?php echo $block->__('Description'); ?>:</span>
+                        <?php echo $return['description']; ?>
+                    </div>
+
+                <?php endif; ?>
+
+            <?php endif; ?>
+
         <?php endif; ?>
+
     </div>
+
     <div class="other_container tab_container">
         <?php if (isset($otherCategories['secondary'])) : ?>
-            <div class="field_group"><?php echo $block->__('eBay Catalog'); ?></div>
+            <div class="field_group"><?php echo $block->__('eBay Catalog Categories'); ?></div>
             <div>
                 <span class="field_title"><?php echo $block->__('Secondary Category'); ?>:</span>
                 <span class="category_breadcrumbs_black">

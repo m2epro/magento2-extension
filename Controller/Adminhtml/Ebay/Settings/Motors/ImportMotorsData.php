@@ -151,6 +151,7 @@ class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
             'trim'         => (isset($csvRow['trim']) ? $csvRow['trim'] : null),
             'engine'       => (isset($csvRow['engine']) ? $csvRow['engine'] : null),
             'submodel'     => (isset($csvRow['submodel']) ? $csvRow['submodel'] : null),
+            'street_name'  => (isset($csvRow['street_name']) ? $csvRow['street_name'] : null),
             'is_custom'    => 1,
             'scope'        => $helper->getEpidsScopeByType($motorsType)
         ];

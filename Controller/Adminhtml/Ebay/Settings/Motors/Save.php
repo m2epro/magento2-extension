@@ -30,6 +30,9 @@ class Save extends Settings
         if ($motorsEpidsDeAttribute = $this->getRequest()->getParam('motors_epids_de_attribute')) {
             $motorsAttributes[] = $motorsEpidsDeAttribute;
         }
+        if ($motorsEpidsDeAttribute = $this->getRequest()->getParam('motors_epids_au_attribute')) {
+            $motorsAttributes[] = $motorsEpidsDeAttribute;
+        }
         if ($motorsKtypesAttribute = $this->getRequest()->getParam('motors_ktypes_attribute')) {
             $motorsAttributes[] = $motorsKtypesAttribute;
         }
@@ -57,6 +60,11 @@ class Save extends Settings
         $this->getHelper('Module')->getConfig()->setGroupValue(
             '/ebay/motors/',
             'epids_de_attribute',
+            $motorsEpidsDeAttribute
+        );
+        $this->getHelper('Module')->getConfig()->setGroupValue(
+            '/ebay/motors/',
+            'epids_au_attribute',
             $motorsEpidsDeAttribute
         );
         $this->getHelper('Module')->getConfig()->setGroupValue(

@@ -33,12 +33,12 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
+        \Ess\M2ePro\Model\Factory $modelFactory
     ) {
-        parent::__construct($helperFactory, $modelFactory);
         $this->activeRecordFactory = $activeRecordFactory;
+        parent::__construct($helperFactory, $modelFactory);
     }
 
     //########################################
@@ -191,7 +191,7 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @return \Ess\M2ePro\Model\Listing\Log
      */
-    private function getListingLog()
+    protected function getListingLog()
     {
         if ($this->listingLog === null) {
 

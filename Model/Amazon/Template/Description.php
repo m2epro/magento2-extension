@@ -86,7 +86,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
         }
 
         $processingLockCollection = $this->activeRecordFactory->getObject('Processing\Lock')->getCollection();
-        $processingLockCollection->addFieldToFilter('model_name', 'Listing\Product');
+        $processingLockCollection->addFieldToFilter('model_name', 'Listing_Product');
         $lockedListingProductsIds = $processingLockCollection->getColumnValues('object_id');
 
         $mysqlIds = implode(',', array_map('intval', $lockedListingProductsIds));
@@ -349,106 +349,6 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     public function getRegisteredParameter()
     {
         return $this->getData('registered_parameter');
-    }
-
-    //########################################
-
-    /**
-     * @return array
-     */
-    public function getTrackingAttributes()
-    {
-        $attributes = $this->getDefinitionTemplate()->getTrackingAttributes();
-
-        $specifics = $this->getSpecifics(true);
-        foreach ($specifics as $specific) {
-            $attributes = array_merge($attributes, $specific->getTrackingAttributes());
-        }
-
-        return array_unique($attributes);
-    }
-
-    /**
-     * @return array
-     */
-    public function getUsedAttributes()
-    {
-        $attributes = $this->getDefinitionTemplate()->getUsedAttributes();
-
-        $specifics = $this->getSpecifics(true);
-        foreach ($specifics as $specific) {
-            $attributes = array_merge($attributes, $specific->getUsedAttributes());
-        }
-
-        return array_unique(array_merge(
-            $attributes,
-            $this->getWorldwideIdAttributes()
-        ));
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return array
-     */
-    public function getDataSnapshot()
-    {
-        $data = parent::getDataSnapshot();
-
-        $data['specifics'] = $this->getSpecifics();
-        $data['definition'] = $this->getDefinitionTemplate() ? $this->getDefinitionTemplate()->getData() : [];
-
-        foreach ($data['specifics'] as &$specificsData) {
-            foreach ($specificsData as &$value) {
-                $value !== null && !is_array($value) && $value = (string)$value;
-            }
-        }
-        unset($value);
-
-        foreach ($data['definition'] as &$value) {
-            $value !== null && !is_array($value) && $value = (string)$value;
-        }
-
-        return $data;
-    }
-
-    //########################################
-
-    /**
-     * @param bool $asArrays
-     * @param string|array $columns
-     * @param bool $onlyPhysicalUnits
-     * @return array
-     */
-    public function getAffectedListingsProducts($asArrays = true, $columns = '*', $onlyPhysicalUnits = false)
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
-        $listingProductCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'Listing\Product'
-        )->getCollection();
-        $listingProductCollection->addFieldToFilter('template_description_id', $this->getId());
-
-        if ($onlyPhysicalUnits) {
-            $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
-        }
-
-        if (is_array($columns) && !empty($columns)) {
-            $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $listingProductCollection->getSelect()->columns($columns);
-        }
-
-        return $asArrays ? (array)$listingProductCollection->getData() : (array)$listingProductCollection->getItems();
-    }
-
-    public function setSynchStatusNeed($newData, $oldData)
-    {
-        $listingsProducts = $this->getAffectedListingsProducts(true, ['id'], true);
-        if (empty($listingsProducts)) {
-            return;
-        }
-
-        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

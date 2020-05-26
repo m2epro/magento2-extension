@@ -42,13 +42,14 @@ JS
             ])
         ));
 
+        $this->jsUrl->addUrls([
+            'ebay_marketplace/synchGetExecutingInfo'    => $this->getUrl('*/ebay_marketplace/synchGetExecutingInfo'),
+            'amazon_marketplace/synchGetExecutingInfo'  => $this->getUrl('*/amazon_marketplace/synchGetExecutingInfo'),
+            'walmart_marketplace/synchGetExecutingInfo' => $this->getUrl('*/walmart_marketplace/synchGetExecutingInfo'),
+        ]);
         $this->jsTranslator->add(
             'Please wait while Synchronization is finished.',
             $this->__('Please wait while Synchronization is finished.')
-        );
-        $this->jsTranslator->add(
-            'Preparing to start. Please wait ...',
-            $this->__('Preparing to start. Please wait ...')
         );
 
         $stepsBlock = $this->createBlock(

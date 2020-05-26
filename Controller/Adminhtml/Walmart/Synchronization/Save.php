@@ -19,10 +19,10 @@ class Save extends Settings
 
     public function execute()
     {
-        $this->modelFactory->getObject('Config_Manager_Synchronization')->setGroupValue(
-            '/walmart/templates/',
+        $this->getHelper('Module')->getConfig()->setGroupValue(
+            '/cron/task/walmart/listing/product/process_instructions/',
             'mode',
-            (int)$this->getRequest()->getParam('templates_mode')
+            (int)$this->getRequest()->getParam('instructions_mode')
         );
 
         $this->setJsonContent(['success' => true]);

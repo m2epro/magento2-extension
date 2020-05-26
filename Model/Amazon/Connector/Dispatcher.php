@@ -142,7 +142,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     //####################################
 
-    private function getProtocol()
+    protected function getProtocol()
     {
         return $this->modelFactory->getObject('Amazon_Connector_Protocol');
     }

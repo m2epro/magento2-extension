@@ -163,10 +163,11 @@ abstract class Main extends Base
             }
 
             $this->addServerNotifications();
+            $this->addServerMaintenanceInfo();
 
             if (!$muteMessages) {
                 $this->addCronErrorMessage();
-                $this->getCustomViewControllerHelper()->addMessages($this);
+                $this->getCustomViewControllerHelper()->addMessages();
             }
         }
     }
@@ -297,6 +298,37 @@ abstract class Main extends Base
 
     // ---------------------------------------
 
+    protected function addServerMaintenanceInfo()
+    {
+        $helper = $this->helperFactory->getObject('Server_Maintenance');
+
+        if ($helper->isNow()) {
+            $message = 'M2E Pro server is currently under the planned maintenance. The process is scheduled to last';
+            $message .= ' %from% to %to%. Please do not apply any actions during this time frame.';
+
+            $this->getMessageManager()->addNotice(
+                $this->__(
+                    $message,
+                    $helper->getDateEnabledFrom()->format('Y-m-d H:i:s'),
+                    $helper->getDateEnabledTo()->format('Y-m-d H:i:s')
+                )
+            );
+        } elseif ($helper->isScheduled()) {
+            $message = 'The preventive server maintenance has been scheduled. The Service will be unavailable';
+            $message .= ' %from% to %to%. All product updates will processed after the technical works are finished.';
+
+            $this->getMessageManager()->addWarning(
+                $this->__(
+                    $message,
+                    $helper->getDateEnabledFrom()->format('Y-m-d H:i:s'),
+                    $helper->getDateEnabledTo()->format('Y-m-d H:i:s')
+                )
+            );
+        }
+    }
+
+    // ---------------------------------------
+
     protected function addCronErrorMessage()
     {
         if ($this->getHelper('Module')->isReadyToWork() &&
@@ -365,8 +397,6 @@ abstract class Main extends Base
             $this->getBlockerWizardNick() && $params['wizard'] = '1';
             $url = $this->getHelper('View\Configuration')->getLicenseUrl($params);
 
-// M2ePro_TRANSLATIONS
-// M2E Pro License Key Validation is failed for this IP. Go to the <a href="%url%" target="_blank">License Page</a>.
             $message = 'M2E Pro License Key Validation is failed for this IP. ';
             $message .= 'Go to the <a href="%url%" target="_blank">License Page</a>.';
             $message = $this->__($message, $url);
@@ -419,19 +449,6 @@ abstract class Main extends Base
 
         $deployDate = $this->getHelper('Magento')->getLastStaticContentDeployDate();
         if (!$deployDate) {
-            return;
-        }
-
-        $lastModificationDate = $this->getHelper('Module')->getPublicVersionLastModificationDate();
-        if (empty($lastModificationDate)) {
-            return;
-        }
-
-        $lastModificationDate = new \DateTime($lastModificationDate, new \DateTimeZone('UTC'));
-        $deployDate = new \DateTime($deployDate, new \DateTimeZone('UTC'));
-
-        // we are reducing some safe interval
-        if ($deployDate > $lastModificationDate->modify('- 30 minutes')) {
             return;
         }
 

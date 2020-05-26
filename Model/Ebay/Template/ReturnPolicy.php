@@ -9,6 +9,7 @@
 /**
  * @method \Ess\M2ePro\Model\ResourceModel\Ebay\Template\ReturnPolicy getResource()
  */
+
 namespace Ess\M2ePro\Model\Ebay\Template;
 
 use Ess\M2ePro\Model\ActiveRecord\Factory;
@@ -18,17 +19,20 @@ use Ess\M2ePro\Model\ActiveRecord\Factory;
  */
 class ReturnPolicy extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    private $ebayParentFactory;
+    const RETURNS_ACCEPTED = 'ReturnsAccepted';
+    const RETURNS_NOT_ACCEPTED = 'ReturnsNotAccepted';
 
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
     private $marketplaceModel = null;
 
+    protected $ebayFactory;
+
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayParentFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -38,7 +42,7 @@ class ReturnPolicy extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMode
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        $this->ebayParentFactory = $ebayParentFactory;
+        $this->ebayFactory = $ebayFactory;
 
         parent::__construct(
             $modelFactory,
@@ -81,28 +85,28 @@ class ReturnPolicy extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMode
         }
 
         return (bool)$this->activeRecordFactory->getObject('Ebay\Listing')
-                            ->getCollection()
-                            ->addFieldToFilter(
-                                'template_return_policy_mode',
-                                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
-                            )
-                            ->addFieldToFilter('template_return_policy_id', $this->getId())
-                            ->getSize() ||
-               (bool)$this->activeRecordFactory->getObject('Ebay_Listing_Product')
-                            ->getCollection()
-                            ->addFieldToFilter(
-                                'template_return_policy_mode',
-                                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
-                            )
-                            ->addFieldToFilter('template_return_policy_id', $this->getId())
-                            ->getSize();
+                ->getCollection()
+                ->addFieldToFilter(
+                    'template_return_policy_mode',
+                    \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                )
+                ->addFieldToFilter('template_return_policy_id', $this->getId())
+                ->getSize() ||
+            (bool)$this->activeRecordFactory->getObject('Ebay_Listing_Product')
+                ->getCollection()
+                ->addFieldToFilter(
+                    'template_return_policy_mode',
+                    \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                )
+                ->addFieldToFilter('template_return_policy_id', $this->getId())
+                ->getSize();
     }
 
     //########################################
 
     public function save()
     {
-        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_return');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_returnpolicy');
         return parent::save();
     }
 
@@ -113,7 +117,7 @@ class ReturnPolicy extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMode
         $temp = parent::delete();
         $temp && $this->marketplaceModel = null;
 
-        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_return');
+        $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_returnpolicy');
 
         return $temp;
     }
@@ -126,7 +130,7 @@ class ReturnPolicy extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMode
     public function getMarketplace()
     {
         if ($this->marketplaceModel === null) {
-            $this->marketplaceModel = $this->ebayParentFactory->getCachedObjectLoaded(
+            $this->marketplaceModel = $this->ebayFactory->getCachedObjectLoaded(
                 'Marketplace',
                 $this->getMarketplaceId()
             );
@@ -140,7 +144,7 @@ class ReturnPolicy extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMode
      */
     public function setMarketplace(\Ess\M2ePro\Model\Marketplace $instance)
     {
-         $this->marketplaceModel = $instance;
+        $this->marketplaceModel = $instance;
     }
 
     //########################################
@@ -195,23 +199,34 @@ class ReturnPolicy extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMode
         return $this->getData('within');
     }
 
-    /**
-     * @return bool
-     */
-    public function isHolidayEnabled()
-    {
-        return (bool)$this->getData('holiday_mode');
-    }
-
     public function getShippingCost()
     {
         return $this->getData('shipping_cost');
     }
 
-    public function getRestockingFee()
+    // ---------------------------------------
+
+    public function getInternationalAccepted()
     {
-        return $this->getData('restocking_fee');
+        return $this->getData('international_accepted');
     }
+
+    public function getInternationalOption()
+    {
+        return $this->getData('international_option');
+    }
+
+    public function getInternationalWithin()
+    {
+        return $this->getData('international_within');
+    }
+
+    public function getInternationalShippingCost()
+    {
+        return $this->getData('international_shipping_cost');
+    }
+
+    // ---------------------------------------
 
     public function getDescription()
     {
@@ -223,96 +238,21 @@ class ReturnPolicy extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMode
     /**
      * @return array
      */
-    public function getTrackingAttributes()
-    {
-        return [];
-    }
-
-    /**
-     * @return array
-     */
-    public function getUsedAttributes()
-    {
-        return [];
-    }
-
-    //########################################
-
-    /**
-     * @return array
-     */
-    public function getDefaultSettingsSimpleMode()
+    public function getDefaultSettings()
     {
         return [
-            'accepted'       => 'ReturnsAccepted',
-            'option'         => '',
-            'within'         => '',
-            'holiday_mode'   => 0,
-            'shipping_cost'  => '',
-            'restocking_fee' => '',
-            'description'    => ''
+            'accepted' => 'ReturnsAccepted',
+            'option' => '',
+            'within' => '',
+            'shipping_cost' => '',
+
+            'international_accepted' => self::RETURNS_NOT_ACCEPTED,
+            'international_option' => '',
+            'international_within' => '',
+            'international_shipping_cost' => '',
+
+            'description' => ''
         ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getDefaultSettingsAdvancedMode()
-    {
-        return $this->getDefaultSettingsSimpleMode();
-    }
-
-    //########################################
-
-    /**
-     * @param bool $asArrays
-     * @param string|array $columns
-     * @return array
-     */
-    public function getAffectedListingsProducts($asArrays = true, $columns = '*')
-    {
-        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
-        $templateManager->setTemplate(\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY);
-
-        $listingsProducts = $templateManager->getAffectedOwnerObjects(
-            \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING_PRODUCT,
-            $this->getId(),
-            $asArrays,
-            $columns
-        );
-
-        $listings = $templateManager->getAffectedOwnerObjects(
-            \Ess\M2ePro\Model\Ebay\Template\Manager::OWNER_LISTING,
-            $this->getId(),
-            false
-        );
-
-        foreach ($listings as $listing) {
-            $tempListingsProducts = $listing->getChildObject()
-                                            ->getAffectedListingsProductsByTemplate(
-                                                \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY,
-                                                $asArrays,
-                                                $columns
-                                            );
-
-            foreach ($tempListingsProducts as $listingProduct) {
-                if (!isset($listingsProducts[$listingProduct['id']])) {
-                    $listingsProducts[$listingProduct['id']] = $listingProduct;
-                }
-            }
-        }
-
-        return $listingsProducts;
-    }
-
-    public function setSynchStatusNeed($newData, $oldData)
-    {
-        $listingsProducts = $this->getAffectedListingsProducts(true, ['id']);
-        if (empty($listingsProducts)) {
-            return;
-        }
-
-        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
     }
 
     //########################################

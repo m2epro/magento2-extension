@@ -23,11 +23,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     const STATUS_SHIPPED_PARTIALLY = 'shippedPartially';
     const STATUS_CANCELLED = 'cancelled';
 
-    // M2ePro\TRANSLATIONS
-    // Product Import is disabled in Walmart Account Settings.
-    // Product for Walmart Item "%id%" was Created in Magento Catalog.
-    // Product for Walmart Item "%title%" was Created in Magento Catalog.
-
     /** @var $channelItem \Ess\M2ePro\Model\Walmart\Item */
     private $channelItem = null;
 

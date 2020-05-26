@@ -14,11 +14,6 @@ class SupportURLs extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['module_config'];
-    }
-
     public function execute()
     {
         $this->getConfigModifier('module')->getEntity('/support/', 'community')->updateKey('forum_url');

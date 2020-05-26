@@ -91,6 +91,10 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
         $postalCode = null,
         $phone = null
     ) {
+        if ($this->getHelper('Server_Maintenance')->isNow()) {
+            return false;
+        }
+
         $requestParams = [
             'domain' => $this->getHelper('Client')->getDomain(),
             'directory' => $this->getHelper('Client')->getBaseDirectory()
@@ -104,56 +108,16 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
         $city !== null && $requestParams['city'] = $city;
         $postalCode !== null && $requestParams['postal_code'] = $postalCode;
 
-        try {
-            $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector('license', 'add', 'record', $requestParams);
-            $dispatcherObject->process($connectorObj);
-            $response = $connectorObj->getResponseData();
-        } catch (\Exception $e) {
-            return false;
-        }
+        $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
+        $connectorObj = $dispatcherObject->getVirtualConnector('license', 'add', 'record', $requestParams);
+        $dispatcherObject->process($connectorObj);
+        $response = $connectorObj->getResponseData();
 
         if (!isset($response['key'])) {
             return false;
         }
 
         $this->primaryConfig->setGroupValue('/license/', 'key', (string)$response['key']);
-
-        $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
-            $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
-        );
-
-        return true;
-    }
-
-    public function setTrial($component)
-    {
-        if ($this->getKey() === '') {
-            return false;
-        }
-
-        if (!$this->isNoneMode($component)) {
-            return true;
-        }
-
-        try {
-            $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector(
-                'license',
-                'set',
-                'trial',
-                ['key' => $this->getKey(),
-                'component' => $component]
-            );
-            $dispatcherObject->process($connectorObj);
-            $response = $connectorObj->getResponseData();
-        } catch (\Exception $exception) {
-            return false;
-        }
-
-        if (!isset($response['status']) || !$response['status']) {
-            return false;
-        }
 
         $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
             $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()

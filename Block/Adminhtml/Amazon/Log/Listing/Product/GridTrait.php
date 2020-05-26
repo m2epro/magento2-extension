@@ -22,9 +22,7 @@ trait GridTrait
 
     protected function getExcludedActionTitles()
     {
-        return [
-            \Ess\M2ePro\Model\Listing\Log::ACTION_TRANSLATE_PRODUCT => '',
-        ];
+        return [];
     }
 
     //########################################

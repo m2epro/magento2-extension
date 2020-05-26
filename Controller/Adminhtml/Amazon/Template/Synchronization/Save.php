@@ -64,25 +64,21 @@ class Save extends Template
         // tab: revise
         // ---------------------------------------
         $keys = [
-            'revise_update_qty',
             'revise_update_qty_max_applied_value_mode',
             'revise_update_qty_max_applied_value',
             'revise_update_price',
             'revise_update_price_max_allowed_deviation_mode',
             'revise_update_price_max_allowed_deviation',
             'revise_update_details',
-            'revise_update_images',
-            'revise_change_selling_format_template',
-            'revise_change_description_template',
-            'revise_change_shipping_template',
-            'revise_change_product_tax_code_template',
-            'revise_change_listing'
+            'revise_update_images'
         ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
             }
         }
+
+        $data['revise_update_qty'] = 1;
         // ---------------------------------------
 
         // tab: relist
@@ -90,7 +86,6 @@ class Save extends Template
         $keys = [
             'relist_mode',
             'relist_filter_user_lock',
-            'relist_send_data',
             'relist_status_enabled',
             'relist_is_in_stock',
             'relist_qty_magento',
@@ -115,6 +110,7 @@ class Save extends Template
         // tab: stop
         // ---------------------------------------
         $keys = [
+            'stop_mode',
             'stop_status_disabled',
             'stop_out_off_stock',
             'stop_qty_magento',
@@ -145,10 +141,10 @@ class Save extends Template
         if ($id) {
             $model->load($id);
 
-            $oldData = array_merge(
-                $model->getDataSnapshot(),
-                $model->getChildObject()->getDataSnapshot()
-            );
+            /** @var \Ess\M2ePro\Model\Amazon\Template\Synchronization\SnapshotBuilder $snapshotBuilder */
+            $snapshotBuilder = $this->modelFactory->getObject('Amazon_Template_Synchronization_SnapshotBuilder');
+            $snapshotBuilder->setModel($model);
+            $oldData = $snapshotBuilder->getSnapshot();
         }
 
         $model->addData($data)->save();
@@ -159,8 +155,28 @@ class Save extends Template
 
         $model->save();
 
-        $newData = array_merge($model->getDataSnapshot(), $model->getChildObject()->getDataSnapshot());
-        $model->getChildObject()->setSynchStatusNeed($newData, $oldData);
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Synchronization\SnapshotBuilder $snapshotBuilder */
+        $snapshotBuilder = $this->modelFactory->getObject('Amazon_Template_Synchronization_SnapshotBuilder');
+        $snapshotBuilder->setModel($model);
+        $newData = $snapshotBuilder->getSnapshot();
+
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Synchronization\Diff $diff */
+        $diff = $this->modelFactory->getObject('Amazon_Template_Synchronization_Diff');
+        $diff->setNewSnapshot($newData);
+        $diff->setOldSnapshot($oldData);
+
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Synchronization\AffectedListingsProducts $affectedListingsProducts */
+        $affectedListingsProducts = $this->modelFactory->getObject(
+            'Amazon_Template_Synchronization_AffectedListingsProducts'
+        );
+        $affectedListingsProducts->setModel($model);
+
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Synchronization\ChangeProcessor $changeProcessor */
+        $changeProcessor = $this->modelFactory->getObject('Amazon_Template_Synchronization_ChangeProcessor');
+        $changeProcessor->process(
+            $diff,
+            $affectedListingsProducts->getObjectsData(['id', 'status'])
+        );
 
         if ($this->isAjax()) {
             $this->setJsonContent([

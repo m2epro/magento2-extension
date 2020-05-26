@@ -19,17 +19,12 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 
     public function getMessages()
     {
-        $messages = [];
+        $messages = parent::getMessages();
 
-        // ---------------------------------------
         $message = $this->getCurrencyConversionMessage();
-
         if ($message !== null) {
             $messages[self::TYPE_CURRENCY_CONVERSION] = $message;
         }
-        // ---------------------------------------
-
-        $messages = array_merge($messages, parent::getMessages());
 
         return $messages;
     }
@@ -121,6 +116,15 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
             return false;
         }
 
+        $isPriceConvertEnabled = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
+            '/magento/attribute/',
+            'price_type_converting'
+        );
+
+        if (!$isPriceConvertEnabled) {
+            return false;
+        }
+
         $template = $this->activeRecordFactory->getObject('Ebay_Template_Shipping');
         $template->addData($this->getTemplateData());
 
@@ -129,7 +133,12 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
         if ($template->getId()) {
             foreach ($template->getServices(true) as $service) {
                 /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Service $service */
-                $attributes = array_merge($attributes, $service->getUsedAttributes());
+                $attributes = array_merge(
+                    $attributes,
+                    $service->getCostAttributes(),
+                    $service->getCostAdditionalAttributes(),
+                    $service->getCostSurchargeAttributes()
+                );
             }
         } else {
             $shippingCostAttributes = $template->getData('shipping_cost_attribute');
@@ -158,11 +167,7 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
             ['price']
         );
 
-        if (!empty($attributes)) {
-            return true;
-        }
-
-        return false;
+        return !empty($attributes);
     }
 
     //########################################

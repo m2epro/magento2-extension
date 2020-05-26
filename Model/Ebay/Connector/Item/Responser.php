@@ -8,11 +8,8 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Item;
 
-use Ess\M2ePro\Model\ActiveRecord\Factory;
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
-use Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization\Inspector;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator;
-use Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner;
 use Ess\M2ePro\Model\Exception\Logic;
 use Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection;
 use Ess\M2ePro\Model\Listing\Product\Variation;
@@ -23,9 +20,6 @@ use Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
  */
 abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Responser
 {
-    /** @var Factory */
-    protected $activeRecordFactory = null;
-
     /** @var \Ess\M2ePro\Model\Listing\Product */
     protected $listingProduct = null;
 
@@ -47,15 +41,13 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         array $params = []
     ) {
-        parent::__construct($ebayFactory, $response, $helperFactory, $modelFactory, $params);
-
-        $this->activeRecordFactory = $activeRecordFactory;
+        parent::__construct($ebayFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
 
         $listingProductId = $this->params['product']['id'];
         $this->listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $listingProductId);
@@ -68,10 +60,13 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         return true;
     }
 
+    //########################################
+
     public function failDetected($messageText)
     {
         parent::failDetected($messageText);
 
+        /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
         $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
             $messageText,
@@ -85,192 +80,27 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         );
     }
 
-    public function eventAfterExecuting()
-    {
-        parent::eventAfterExecuting();
-
-        if (empty($this->params['is_realtime'])) {
-            $this->inspectProduct();
-        }
-    }
-
-    protected function inspectProduct()
-    {
-        if (!$this->isSuccess && !$this->listingProduct->needSynchRulesCheck()) {
-            return;
-        }
-
-        /** @var Runner $runner */
-        $runner = $this->modelFactory->getObject('Synchronization_Templates_Synchronization_Runner');
-        $runner->setConnectorModel('Ebay_Connector_Item_Dispatcher');
-        $runner->setMaxProductsPerStep(100);
-
-        /** @var Inspector $inspector */
-        $inspector = $this->modelFactory->getObject('Ebay_Synchronization_Templates_Synchronization_Inspector');
-
-        if (empty($responseData['request_time']) && $this->listingProduct->needSynchRulesCheck()) {
-            $configurator = $this->getConfigurator();
-        } else {
-            $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
-        }
-
-        $responseData = $this->getPreparedResponseData();
-        if (empty($responseData['request_time']) && !empty($responseData['start_processing_date'])) {
-            $configurator->setParams(['start_processing_date' => $responseData['start_processing_date']]);
-        }
-
-        $result = $this->inspectStopRequirements($inspector, $runner, $configurator);
-        !$result && $result = $this->inspectReviseRequirements($inspector, $runner, $configurator);
-        !$result && $result = $this->inspectRelistRequirements($inspector, $runner, $configurator);
-    }
-
-    //----------------------------------------
-
-    protected function inspectStopRequirements(Inspector $inspector, Runner $runner, Configurator $configurator)
-    {
-        if (!$this->listingProduct->isListed()) {
-            return false;
-        }
-
-        if (!$inspector->isMeetStopGeneralRequirements($this->listingProduct)) {
-            return false;
-        }
-
-        if ($inspector->isMeetStopRequirements($this->listingProduct) ||
-            $inspector->isMeetAdvancedStopRequirements($this->listingProduct)) {
-
-            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-            $ebayListingProduct = $this->listingProduct->getChildObject();
-
-            $action = \Ess\M2ePro\Model\Listing\Product::ACTION_STOP;
-
-            if ($ebayListingProduct->isOutOfStockControlEnabled()) {
-                $action = \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE;
-
-                $configuratorParams = $configurator->getParams();
-                $configuratorParams['replaced_action'] = \Ess\M2ePro\Model\Listing\Product::ACTION_STOP;
-                $configurator->setParams($configuratorParams);
-
-                $configurator->reset();
-                $configurator->allowQty();
-                $configurator->allowVariations();
-            }
-
-            $runner->addProduct(
-                $this->listingProduct,
-                $action,
-                $configurator
-            );
-
-            $runner->execute();
-            return true;
-        }
-
-        return false;
-    }
-
-    protected function inspectReviseRequirements(Inspector $inspector, Runner $runner, Configurator $configurator)
-    {
-        if (!$this->listingProduct->isListed()) {
-            return false;
-        }
-
-        $configurator->reset();
-        $needRevise = false;
-
-        if ($inspector->isMeetReviseQtyRequirements($this->listingProduct)) {
-            $configurator->allowQty();
-            $needRevise = true;
-        }
-
-        if ($inspector->isMeetRevisePriceRequirements($this->listingProduct)) {
-            $configurator->allowPrice();
-            $needRevise = true;
-        }
-
-        if (!$needRevise) {
-            return false;
-        }
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $this->listingProduct->getChildObject();
-
-        if ($ebayListingProduct->isVariationsReady()) {
-            $configurator->allowVariations();
-        }
-
-        $runner->addProduct(
-            $this->listingProduct,
-            \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
-            $configurator
-        );
-
-        $runner->execute();
-        return true;
-    }
-
-    protected function inspectRelistRequirements(Inspector $inspector, Runner $runner, Configurator $configurator)
-    {
-        if (!$this->listingProduct->isStopped() && !$this->listingProduct->isHidden()) {
-            return false;
-        }
-
-        if (!$inspector->isMeetRelistRequirements($this->listingProduct)) {
-            return false;
-        }
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $this->listingProduct->getChildObject();
-
-        $action = \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST;
-
-        if ($this->listingProduct->isHidden()) {
-            $configuratorParams = $configurator->getParams();
-            $configuratorParams['replaced_action'] = \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST;
-            $configurator->setParams($configuratorParams);
-
-            $action = \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE;
-        }
-
-        if (!$ebayListingProduct->getEbaySynchronizationTemplate()->isRelistSendData()) {
-            $configurator->reset();
-            $configurator->allowQty();
-            $configurator->allowPrice();
-            $configurator->allowVariations();
-        }
-
-        if ($ebayListingProduct->getEbaySynchronizationTemplate()->isRelistAdvancedRulesEnabled()) {
-            if ($inspector->isMeetAdvancedRelistRequirements($this->listingProduct)) {
-                $runner->addProduct(
-                    $this->listingProduct,
-                    $action,
-                    $configurator
-                );
-
-                $runner->execute();
-                return true;
-            }
-        } else {
-            $runner->addProduct(
-                $this->listingProduct,
-                $action,
-                $configurator
-            );
-
-            $runner->execute();
-            return true;
-        }
-
-        return false;
-    }
-
     //########################################
 
     protected function processResponseMessages()
     {
         parent::processResponseMessages();
 
-        $this->processMessages($this->getResponse()->getMessages()->getEntities());
+        $messages = [];
+
+        $requestLogMessages = isset($this->params['product']['request_metadata']['log_messages'])
+            ? $this->params['product']['request_metadata']['log_messages'] : [];
+
+        foreach ($requestLogMessages as $messageData) {
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
+            $message->initFromPreparedData($messageData['text'], $messageData['type']);
+
+            $messages[] = $message;
+        }
+
+        $messages = array_merge($messages, $this->getResponse()->getMessages()->getEntities());
+
+        $this->processMessages($messages);
     }
 
     protected function processResponseData()
@@ -282,9 +112,12 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         $responseData = $this->getPreparedResponseData();
         $responseMessages = $this->getResponse()->getMessages()->getEntities();
 
-        $this->processCompleted($responseData, [
-            'is_images_upload_error' => $this->isImagesUploadFailed($responseMessages)
-        ]);
+        $this->processCompleted(
+            $responseData,
+            [
+                'is_images_upload_error' => $this->isImagesUploadFailed($responseMessages)
+            ]
+        );
     }
 
     protected function processMessages(array $messages)
@@ -298,6 +131,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
     {
         $this->getResponseObject()->processSuccess($data, $params);
 
+        /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
         $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
             $this->getSuccessfulMessage(),
@@ -501,6 +335,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
             $this->fillVariationMpnValues($variationMpnValues);
         }
 
+        /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
         $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
             $this->getHelper('Module\Translation')->__(
@@ -521,14 +356,14 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
             return true;
         }
 
-        $getItemCallsCount   = 0;
+        $getItemCallsCount = 0;
         $getItemLastCallDate = null;
 
         $maxAllowedGetItemCallsCount = 2;
 
         $additionalData = $this->listingProduct->getAdditionalData();
         if (!empty($additionalData['get_item_calls_statistic'])) {
-            $getItemCallsCount   = $additionalData['get_item_calls_statistic']['count'];
+            $getItemCallsCount = $additionalData['get_item_calls_statistic']['count'];
             $getItemLastCallDate = $additionalData['get_item_calls_statistic']['last_call_date'];
         }
 
@@ -544,9 +379,9 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         }
 
         $getItemCallsCount++;
-        $getItemLastCallDate = $this->helperFactory->getObject('Data')->getCurrentGmtDate();
+        $getItemLastCallDate = $this->getHelper('Data')->getCurrentGmtDate();
 
-        $additionalData['get_item_calls_statistic']['count']          = $getItemCallsCount;
+        $additionalData['get_item_calls_statistic']['count'] = $getItemCallsCount;
         $additionalData['get_item_calls_statistic']['last_call_date'] = $getItemLastCallDate;
 
         $this->listingProduct->setSettings('additional_data', $additionalData);
@@ -598,8 +433,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
             unset($variation['specifics']['MPN']);
 
             $variationMpnValues[] = [
-                'mpn'       => $mpnValue,
-                'sku'       => $variation['sku'],
+                'mpn' => $mpnValue,
+                'sku' => $variation['sku'],
                 'specifics' => $variation['specifics'],
             ];
         }
@@ -680,11 +515,15 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         }
 
         $this->listingProduct->getChildObject()->setData('is_duplicate', 1);
-        $this->listingProduct->setSetting('additional_data', 'item_duplicate_action_required', [
-            'item_id' => $duplicateItemId,
-            'source'  => 'uuid',
-            'message' => $message->getText()
-        ]);
+        $this->listingProduct->setSetting(
+            'additional_data',
+            'item_duplicate_action_required',
+            [
+                'item_id' => $duplicateItemId,
+                'source' => 'uuid',
+                'message' => $message->getText()
+            ]
+        );
         $this->listingProduct->save();
     }
 
@@ -697,11 +536,15 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         }
 
         $this->listingProduct->getChildObject()->setData('is_duplicate', 1);
-        $this->listingProduct->setSetting('additional_data', 'item_duplicate_action_required', [
-            'item_id' => $duplicateItemId,
-            'source'  => 'ebay_engine',
-            'message' => $message->getText()
-        ]);
+        $this->listingProduct->setSetting(
+            'additional_data',
+            'item_duplicate_action_required',
+            [
+                'item_id' => $duplicateItemId,
+                'source' => 'ebay_engine',
+                'message' => $message->getText()
+            ]
+        );
         $this->listingProduct->save();
     }
 
@@ -727,7 +570,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         if (empty($this->responseObject)) {
             /** @var $response \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response */
             $response = $this->modelFactory->getObject(
-                'Ebay\Listing\Product\Action\Type\\'.$this->getOrmActionType().'\Response'
+                'Ebay\Listing\Product\Action\Type\\' . $this->getOrmActionType() . '\Response'
             );
 
             $response->setParams($this->params['params']);
@@ -779,7 +622,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         ];
 
         $this->listingProduct->addData([
-            'status'          => \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
+            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
             'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData),
         ])->save();
 
@@ -800,7 +643,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
             $params,
             [
                 'status_changer' => $this->getStatusChanger(),
-                'is_realtime'    => true,
+                'is_realtime' => true,
             ]
         );
 
@@ -914,7 +757,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         return (int)$this->params['status_changer'];
     }
 
-    // ########################################
+    //########################################
 
     protected function getOrmActionType()
     {

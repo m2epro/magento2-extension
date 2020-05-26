@@ -22,11 +22,7 @@ class Tabs extends AbstractTabs
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('controlPanelToolsModuleTabs');
-        // ---------------------------------------
-
         $this->setDestElementId('tools_module_tabs');
     }
 
@@ -34,40 +30,6 @@ class Tabs extends AbstractTabs
 
     protected function _beforeToHtml()
     {
-        $this->addTab(
-            'module',
-            [
-                'label' => __('Module'),
-                'title' => __('Module'),
-                'content' => $this->createBlock(
-                    'ControlPanel_Tabs_Command_Group',
-                    '',
-                    [
-                        'data' => [
-                            'controller_name' => Command::CONTROLLER_MODULE_MODULE
-                        ]
-                    ]
-                )->toHtml()
-            ]
-        );
-
-        $this->addTab(
-            'synchronization',
-            [
-                'label' => __('Synchronization'),
-                'title' => __('Synchronization'),
-                'content' => $this->createBlock(
-                    'ControlPanel_Tabs_Command_Group',
-                    '',
-                    [
-                        'data' => [
-                            'controller_name' => Command::CONTROLLER_MODULE_SYNCHRONIZATION
-                        ]
-                    ]
-                )->toHtml()
-            ]
-        );
-
         $this->addTab(
             'integration',
             [
@@ -130,23 +92,6 @@ class Tabs extends AbstractTabs
                     [
                         'data' => [
                             'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION_WALMART
-                        ]
-                    ]
-                )->toHtml()
-            ]
-        );
-
-        $this->addTab(
-            'servicing',
-            [
-                'label' => __('Servicing'),
-                'title' => __('Servicing'),
-                'content' => $this->createBlock(
-                    'ControlPanel_Tabs_Command_Group',
-                    '',
-                    [
-                        'data' => [
-                            'controller_name' => Command::CONTROLLER_MODULE_SERVICING
                         ]
                     ]
                 )->toHtml()

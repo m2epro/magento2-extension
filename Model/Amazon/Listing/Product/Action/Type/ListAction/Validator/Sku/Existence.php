@@ -257,8 +257,6 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
         $linkingObject->setSku($sku);
 
         if ($linkingObject->link()) {
-// M2ePro\TRANSLATIONS
-// Product has been found by SKU "%sku%" in your Inventory and successfully linked.
             $this->addMessage(
                 $this->getHelper('Module\Log')->encodeDescription(
                     'Product has been found by SKU "%sku%" in your Inventory and successfully linked.',

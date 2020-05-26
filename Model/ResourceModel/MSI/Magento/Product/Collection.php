@@ -53,7 +53,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
         \Magento\Framework\Stdlib\DateTime $dateTime,
         \Magento\Customer\Api\GroupManagementInterface $groupManagement,
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Magento\Framework\DB\Adapter\AdapterInterface $connection = NULL
+        \Magento\Framework\DB\Adapter\AdapterInterface $connection = null
     ) {
         parent::__construct(
             $helperFactory,
@@ -145,7 +145,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
 
     //########################################
 
-    public function addAttributeToFilter($attribute, $condition = NULL, $joinType = 'inner')
+    public function addAttributeToFilter($attribute, $condition = null, $joinType = 'inner')
     {
         if (in_array($attribute, $this->getHavingConditionColumns(), true)) {
             $this->getSelect()->having($this->_getConditionSql($attribute, $condition));

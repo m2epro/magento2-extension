@@ -95,29 +95,39 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
     //########################################
 
     /**
+     * LagTime and Qty always should be sent together for Canada(ONLY) Marketplace
      * @return array
      */
     public function getQtyData()
     {
+        if ($this->getMarketplace()->getCode() === 'CA' && $this->getConfigurator()->isLagTimeAllowed()) {
+            $this->getConfigurator()->allowQty();
+        }
+
         if (!$this->getConfigurator()->isQtyAllowed()) {
             return [];
         }
 
         $dataBuilder = $this->getDataBuilder('qty');
-        return $dataBuilder->getRequestData();
+        return $dataBuilder->getBuilderData();
     }
 
     /**
+     * LagTime and Qty always should be sent together for Canada(ONLY) Marketplace
      * @return array
      */
     public function getLagTimeData()
     {
+        if ($this->getMarketplace()->getCode() === 'CA' && $this->getConfigurator()->isQtyAllowed()) {
+            $this->getConfigurator()->allowLagTime();
+        }
+
         if (!$this->getConfigurator()->isLagTimeAllowed()) {
             return [];
         }
 
         $dataBuilder = $this->getDataBuilder('lagTime');
-        return $dataBuilder->getRequestData();
+        return $dataBuilder->getBuilderData();
     }
 
     /**
@@ -130,7 +140,7 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
         }
 
         $dataBuilder = $this->getDataBuilder('price');
-        return $dataBuilder->getRequestData();
+        return $dataBuilder->getBuilderData();
     }
 
     /**
@@ -143,7 +153,7 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
         }
 
         $dataBuilder = $this->getDataBuilder('promotions');
-        $data = $dataBuilder->getRequestData();
+        $data = $dataBuilder->getBuilderData();
 
         $this->addMetaData('promotions_data', $data);
 
@@ -160,7 +170,7 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
         }
 
         $dataBuilder = $this->getDataBuilder('details');
-        $data = $dataBuilder->getRequestData();
+        $data = $dataBuilder->getBuilderData();
 
         $this->addMetaData('details_data', $data);
 

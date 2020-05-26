@@ -55,7 +55,7 @@ class Form extends AbstractForm
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
 
         $attributesByTypes = [
-            'text' => $magentoAttributeHelper->filterByInputTypes($this->getData('general_attributes'), ['text'])
+            'text' => $magentoAttributeHelper->filterByInputTypes($this->getData('all_attributes'), ['text'])
         ];
         $formData = $this->getListingData();
 
@@ -247,8 +247,8 @@ class Form extends AbstractForm
         $data = $this->getListingData();
 
         $this->setData(
-            'general_attributes',
-            $this->getHelper('Magento\Attribute')->getGeneralFromAllAttributeSets()
+            'all_attributes',
+            $this->getHelper('Magento\Attribute')->getAll()
         );
 
         foreach ($data as $key => $value) {

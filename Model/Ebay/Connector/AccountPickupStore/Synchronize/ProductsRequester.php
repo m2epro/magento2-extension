@@ -32,15 +32,15 @@ class ProductsRequester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\Marketplace $marketplace,
-        \Ess\M2ePro\Model\Account $account,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        array $params
+        \Ess\M2ePro\Model\Marketplace $marketplace = null,
+        \Ess\M2ePro\Model\Account $account = null,
+        array $params = []
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $params['logs_action_id'] = $this->getLog()->getResource()->getNextActionId();
-        parent::__construct($marketplace, $account, $helperFactory, $modelFactory, $params);
+        parent::__construct($helperFactory, $modelFactory, $marketplace, $account, $params);
     }
 
     //########################################

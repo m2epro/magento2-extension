@@ -25,8 +25,6 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
      */
     protected $account = null;
 
-    protected $logsActionId = null;
-
     protected $resourceConnection;
     protected $activeRecordFactory;
     protected $ebayFactory;
@@ -65,10 +63,6 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $responseData['items'] = $this->filterReceivedOnlyOtherListings($responseData['items']);
-
-        /** @var $logModel \Ess\M2ePro\Model\Listing\Other\Log */
-        $logModel = $this->activeRecordFactory->getObject('Listing_Other_Log');
-        $logModel->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
 
         /** @var $mappingModel \Ess\M2ePro\Model\Ebay\Listing\Other\Mapping */
         $mappingModel = $this->modelFactory->getObject('Ebay_Listing_Other_Mapping');
@@ -122,14 +116,15 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
                 )->getId();
             }
 
-            $tempListingType = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Selling::LISTING_TYPE_AUCTION;
+            $tempListingType = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General::LISTING_TYPE_AUCTION;
             if ($receivedItem['listingType'] == $tempListingType) {
                 $newData['online_qty'] = 1;
             }
 
             if (($receivedItem['listingStatus'] == self::EBAY_STATUS_COMPLETED ||
                  $receivedItem['listingStatus'] == self::EBAY_STATUS_ENDED) &&
-                 $newData['online_qty'] == $newData['online_qty_sold']) {
+                 $newData['online_qty'] == $newData['online_qty_sold']
+            ) {
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD;
             } elseif ($receivedItem['listingStatus'] == self::EBAY_STATUS_COMPLETED) {
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
@@ -142,109 +137,29 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
             }
 
-            $accountOutOfStockControl = $this->getAccount()->getChildObject()->getOutOfStockControl(true);
-
-            if (isset($receivedItem['out_of_stock'])) {
-                $newData['additional_data'] = ['out_of_stock_control' => (bool)$receivedItem['out_of_stock']];
-                $newData['additional_data'] = $this->getHelper('Data')->jsonEncode($newData['additional_data']);
-            } elseif ($newData['status'] == \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN &&
-                      $accountOutOfStockControl !== null && !$accountOutOfStockControl) {
+            if ($newData['status'] == \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN) {
                 // Listed Hidden Status can be only for GTC items
                 if (!$existsId || $existObject->getChildObject()->getOnlineDuration() === null) {
                     $newData['online_duration'] = \Ess\M2ePro\Helper\Component\Ebay::LISTING_DURATION_GTC;
                 }
-
-                if ($existsId) {
-                    $additionalData = $existObject->getAdditionalData();
-                    empty($additionalData['out_of_stock_control']) && $additionalData['out_of_stock_control'] = true;
-                } else {
-                    $additionalData = ['out_of_stock_control' => true];
-                }
-
-                $newData['additional_data'] = $this->getHelper('Data')->jsonEncode($additionalData);
             }
 
             if ($existsId) {
-                $tempLogMessages = [];
-
-                if ($newData['online_price'] != $existObject->getChildObject()->getOnlinePrice()) {
-                    // M2ePro\TRANSLATIONS
-                    // Item Price was successfully changed from %from% to %to% .
-                    $tempLogMessages[] = $this->getHelper('Module\Translation')->__(
-                        'Item Price was successfully changed from %from% to %to% .',
-                        $existObject->getChildObject()->getOnlinePrice(),
-                        $newData['online_price']
-                    );
-                }
-
-                if ($existObject->getChildObject()->getOnlineQty() != $newData['online_qty'] ||
-                    $existObject->getChildObject()->getOnlineQtySold() != $newData['online_qty_sold']) {
-                    // M2ePro\TRANSLATIONS
-                    // Item QTY was successfully changed from %from% to %to% .
-                    $tempLogMessages[] = $this->getHelper('Module\Translation')->__(
-                        'Item QTY was successfully changed from %from% to %to% .',
-                        ($existObject->getChildObject()->getOnlineQty() - $existObject->getChildObject()
-                                                                                      ->getOnlineQtySold()),
-                        ($newData['online_qty'] - $newData['online_qty_sold'])
-                    );
-                }
-
                 if ($newData['status'] != $existObject->getStatus()) {
                     $newData['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT;
 
-                    $statusChangedFrom = $this->getHelper('Component\Ebay')
-                        ->getHumanTitleByListingProductStatus($existObject->getStatus());
-                    $statusChangedTo = $this->getHelper('Component\Ebay')
-                        ->getHumanTitleByListingProductStatus($newData['status']);
-
-                    if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
-                        // M2ePro\TRANSLATIONS
-                        // Item Status was successfully changed from "%from%" to "%to%" .
-                        $tempLogMessages[] = $this->getHelper('Module\Translation')->__(
-                            'Item Status was successfully changed from "%from%" to "%to%" .',
-                            $statusChangedFrom,
-                            $statusChangedTo
-                        );
-                    }
-                }
-
-                foreach ($tempLogMessages as $tempLogMessage) {
-                    $logModel->addProductMessage(
-                        (int)$newData['id'],
-                        \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-                        $this->getLogsActionId(),
-                        \Ess\M2ePro\Model\Listing\Other\Log::ACTION_CHANNEL_CHANGE,
-                        $tempLogMessage,
-                        \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
-                        \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
-                    );
+                    $existObject->addData($newData);
+                    $existObject->getChildObject()->addData($newData);
                 }
             } else {
                 $newData['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT;
-            }
 
-            if ($existsId) {
-                $existObject->addData($newData);
-                $existObject->getChildObject()->addData($newData);
-            } else {
                 $existObject->setData($newData);
             }
 
             $existObject->save();
 
             if (!$existsId) {
-                $logModel->addProductMessage(
-                    $existObject->getId(),
-                    \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-                    null,
-                    \Ess\M2ePro\Model\Listing\Other\Log::ACTION_ADD_ITEM,
-                    // M2ePro\TRANSLATIONS
-                    // Item was successfully Added
-                     'Item was successfully Added',
-                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
-                );
-
                 if (!$this->getAccount()->getChildObject()->isOtherListingsMappingEnabled()) {
                     continue;
                 }
@@ -338,16 +253,6 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
     protected function getAccount()
     {
         return $this->account;
-    }
-
-    protected function getLogsActionId()
-    {
-        if ($this->logsActionId !== null) {
-            return $this->logsActionId;
-        }
-
-        return $this->logsActionId = $this->activeRecordFactory->getObject('Listing_Other_Log')
-                                          ->getResource()->getNextActionId();
     }
 
     //########################################

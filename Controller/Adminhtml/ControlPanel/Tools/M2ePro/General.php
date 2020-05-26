@@ -266,6 +266,7 @@ HTML;
         }
 
         $html = $this->getStyleHtml();
+        $removedStoresCount = count($removedStoreIds);
 
         $removedStoreIds = implode(', ', $removedStoreIds);
         $repairStoresAction = $this->getUrl('*/*/*', ['action' => 'repairRemovedMagentoStore']);
@@ -286,7 +287,7 @@ HTML;
 </form>
 HTML;
 
-        return str_replace('%count%', count($removedStoreIds), $html);
+        return str_replace('%count%', $removedStoresCount, $html);
     }
 
     /**

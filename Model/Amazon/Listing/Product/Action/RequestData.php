@@ -11,31 +11,8 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action;
 /**
  * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData
  */
-class RequestData extends \Ess\M2ePro\Model\AbstractModel
+class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
 {
-    /**
-     * @var \Ess\M2ePro\Model\Listing\Product
-     */
-    private $listingProduct = null;
-
-    //########################################
-
-    /**
-     * @param \Ess\M2ePro\Model\Listing\Product $object
-     */
-    public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $object)
-    {
-        $this->listingProduct = $object;
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Listing\Product
-     */
-    public function getListingProduct()
-    {
-        return $this->listingProduct;
-    }
-
     //########################################
 
     /**
@@ -146,6 +123,62 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
     public function hasConditionNote()
     {
         return isset($this->getData()['condition_note']);
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function hasGiftWrap()
+    {
+        return isset($this->getData()['gift_wrap']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasGiftMessage()
+    {
+        return isset($this->getData()['gift_message']);
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function hasShippingData()
+    {
+        return isset($this->getData()['shipping_data']);
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function hasTaxCode()
+    {
+        return isset($this->getData()['tax_code']);
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function hasNumberOfItems()
+    {
+        return isset($this->getData()['number_of_items']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasItemPackageQuantity()
+    {
+        return isset($this->getData()['item_package_quantity']);
     }
 
     // ---------------------------------------
@@ -355,6 +388,62 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
     public function getConditionNote()
     {
         return $this->hasConditionNote() ? $this->getData('condition_note') : null;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function getGiftWrap()
+    {
+        return $this->hasGiftWrap() ? $this->getData()['gift_wrap'] : null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getGiftMessage()
+    {
+        return $this->hasGiftMessage() ? $this->getData()['gift_message'] : null;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function getShippingData()
+    {
+        return $this->hasShippingData() ? $this->getData()['shipping_data'] : null;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function getTaxCode()
+    {
+        return $this->hasTaxCode() ? $this->getData()['tax_code'] : null;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function getNumberOfItems()
+    {
+        return $this->hasNumberOfItems() ? $this->getData()['number_of_items'] : null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getItemPackageQuantity()
+    {
+        return $this->hasItemPackageQuantity() ? $this->getData()['item_package_quantity'] : null;
     }
 
     // ---------------------------------------

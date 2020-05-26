@@ -246,28 +246,4 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     }
 
     //########################################
-
-    /**
-     * @return array
-     */
-    public function getTrackingAttributes()
-    {
-        return $this->getUsedAttributes();
-    }
-
-    /**
-     * @return array
-     */
-    public function getUsedAttributes()
-    {
-        $attribute = $this->getCustomAttribute();
-
-        if (empty($attribute)) {
-            return [];
-        }
-
-        return [$attribute];
-    }
-
-    //########################################
 }

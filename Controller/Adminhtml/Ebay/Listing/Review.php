@@ -25,13 +25,26 @@ class Review extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         if (empty($ids) && !$this->getRequest()->getParam('disable_list')) {
             return $this->_redirect('*/*/view', ['id' => $listingId]);
         }
-
-        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Congratulations'));
-        $this->addContent($this->createBlock('Ebay_Listing_Product_Review', '', [
+        $blockReview = $this->createBlock('Ebay_Listing_Product_Review', '', [
             'data' => [
                 'products_count' => count($ids)
             ]
-        ]));
+        ]);
+
+        $additionalData = $listing->getSettings('additional_data');
+
+        if (isset($additionalData['source']) && $source = $additionalData['source']) {
+            $blockReview->setSource($source);
+        }
+
+        unset($additionalData['source']);
+        $listing->setSettings('additional_data', $additionalData);
+        $listing->getChildObject()->setData('product_add_ids', $this->getHelper('Data')->jsonEncode([]));
+        $listing->getChildObject()->save();
+        $listing->save();
+
+        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Congratulations'));
+        $this->addContent($blockReview);
 
         return $this->getResult();
     }

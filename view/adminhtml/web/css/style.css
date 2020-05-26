@@ -575,4 +575,19 @@ a.walmart-listing-view-switch-variation-mode:before {
     margin-left: 2rem;
 }
 
+.admin__field-tooltip-note-action:before {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 2.2rem;
+    line-height: 1;
+    color: #514943;
+    content: url(../images/fam_book_open.png);
+    vertical-align: middle;
+    display: inline-block;
+    font-weight: normal;
+    overflow: hidden;
+    speak: none;
+    text-align: center;
+}
+
 /* ================================================ */

@@ -13,11 +13,11 @@ namespace Ess\M2ePro\Model\Connector;
  */
 abstract class Protocol extends \Ess\M2ePro\Model\AbstractModel
 {
-    // ########################################
+    //########################################
 
     abstract public function getComponent();
 
     abstract public function getComponentVersion();
 
-    // ########################################
+    //########################################
 }

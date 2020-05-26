@@ -16,7 +16,6 @@ class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
     public function execute()
     {
         $productsIds = $this->getRequest()->getParam('products_ids');
-        $shippingMode = $this->getRequest()->getParam('shipping_mode');
 
         if (empty($productsIds)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
@@ -46,7 +45,7 @@ class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
                 'text' => $this->__('Shipping Policy was successfully unassigned.')
             ];
 
-            $this->setShippingTemplateForProducts($productsIdsLocked, null, $shippingMode);
+            $this->setShippingTemplateForProducts($productsIdsLocked, null);
             $this->runProcessorForParents($productsIdsLocked);
         }
 

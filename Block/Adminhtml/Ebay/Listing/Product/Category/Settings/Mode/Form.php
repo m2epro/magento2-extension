@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
+use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode as CategoryTemplateBlock;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Form
@@ -64,7 +65,7 @@ CSS
                 'field_extra_attributes' => 'style="margin: 4px 0 0 0; font-weight: bold"',
                 'values' => [
                     [
-                        'value' => 'same',
+                        'value' => CategoryTemplateBlock::MODE_SAME,
                         'label' => 'All Products same Category'
                     ]
                 ],
@@ -96,7 +97,7 @@ CSS
                 'field_extra_attributes' => 'style="margin: 4px 0 0 0; font-weight: bold"',
                 'values' => [
                     [
-                        'value' => 'category',
+                        'value' => CategoryTemplateBlock::MODE_CATEGORY,
                         'label' => 'Based on Magento Categories'
                     ]
                 ],
@@ -113,7 +114,7 @@ CSS
                 'field_extra_attributes' => 'style="margin: 4px 0 0 0; font-weight: bold"',
                 'values' => [
                     [
-                        'value' => 'product',
+                        'value' => CategoryTemplateBlock::MODE_PRODUCT,
                         'label' => 'Get suggested Categories'
                     ]
                 ],
@@ -132,7 +133,7 @@ CSS
                 'field_extra_attributes' => 'style="margin: 4px 0 0 0; font-weight: bold"',
                 'values' => [
                     [
-                        'value' => 'manually',
+                        'value' => CategoryTemplateBlock::MODE_MANUALLY,
                         'label' => 'Set Manually for each Product'
                     ]
                 ],

@@ -13,16 +13,16 @@ namespace Ess\M2ePro\Model\Connector\Connection;
  */
 class Response extends \Ess\M2ePro\Model\AbstractModel
 {
-    private $data = [];
+    protected $data = [];
 
     /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messages */
-    private $messages = null;
+    protected $messages = null;
 
-    private $resultType = \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS;
+    protected $resultType = \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS;
 
-    private $requestTime = null;
+    protected $requestTime = null;
 
-    // ########################################
+    //########################################
 
     public function initFromRawResponse($response)
     {
@@ -50,7 +50,7 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
         $this->initResultType($resultType);
     }
 
-    // ########################################
+    //########################################
 
     public function getResult()
     {
@@ -67,7 +67,7 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
         return $this->data;
     }
 
-    // ########################################
+    //########################################
 
     public function isResultError()
     {
@@ -89,7 +89,7 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
         return $this->resultType == \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_NOTICE;
     }
 
-    // ########################################
+    //########################################
 
     public function setRequestTime($requestTime)
     {
@@ -102,7 +102,7 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
         return $this->requestTime;
     }
 
-    // ########################################
+    //########################################
 
     public function isServerInMaintenanceMode()
     {
@@ -123,15 +123,15 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
         return false;
     }
 
-    // ########################################
+    //########################################
 
-    private function initMessages(array $messagesData)
+    protected function initMessages(array $messagesData)
     {
         $this->messages = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
         $this->messages->init($messagesData);
     }
 
-    private function initResultType($resultType = null)
+    protected function initResultType($resultType = null)
     {
         if ($resultType !== null) {
             $this->resultType = $resultType;
@@ -151,5 +151,5 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
         $this->resultType = \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS;
     }
 
-    // ########################################
+    //########################################
 }

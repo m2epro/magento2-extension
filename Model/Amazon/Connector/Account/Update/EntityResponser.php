@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Account\Update;
  */
 class EntityResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
 {
-    // ########################################
+    //########################################
 
     protected function validateResponse()
     {
@@ -39,7 +39,7 @@ class EntityResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending
         $amazonAccount->addData($dataForUpdate)->save();
     }
 
-    // ########################################
+    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Account
@@ -49,5 +49,5 @@ class EntityResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending
         return $this->getObjectByParam('Account', 'account_id');
     }
 
-    // ########################################
+    //########################################
 }

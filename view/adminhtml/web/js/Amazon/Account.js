@@ -83,7 +83,7 @@ define([
 
             jQuery.validator.addMethod('M2ePro-require-select-attribute', function(value, el) {
 
-                if ($('other_listings_mapping_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::OTHER_LISTINGS_MAPPING_MODE_NO')) {
+                if ($('other_listings_mapping_mode').value == 0) {
                     return true;
                 }
 
@@ -155,15 +155,12 @@ define([
             $('mapping_title_mode')
                 .observe('change', AmazonAccountObj.mapping_title_mode_change)
                 .simulate('change');
-            $('other_listings_move_mode')
-                .observe('change', AmazonAccountObj.move_mode_change)
-                .simulate('change');
 
             //$('amazonAccountEditTabs_listingOther').removeClassName('changed');
 
-            if ($('is_vat_calculation_service_enabled')) {
-                $('is_vat_calculation_service_enabled')
-                    .observe('change', AmazonAccountObj.vatCalculationModeChange)
+            if ($('auto_invoicing')) {
+                $('auto_invoicing')
+                    .observe('change', AmazonAccountObj.autoInvoicingModeChange)
                     .simulate('change');
             }
 
@@ -175,10 +172,6 @@ define([
             $('magento_orders_listings_other_product_mode').observe('change', AmazonAccountObj.magentoOrdersListingsOtherProductModeChange);
 
             $('magento_orders_number_source').observe('change', AmazonAccountObj.magentoOrdersNumberSourceChange).simulate('change');
-
-            $('magento_orders_number_prefix_mode')
-                .observe('change', AmazonAccountObj.magentoOrdersNumberPrefixModeChange)
-                .simulate('change');
 
             $('magento_orders_number_prefix_prefix').observe('keyup', AmazonAccountObj.magentoOrdersNumberPrefixPrefixChange);
             $('magento_orders_number_prefix_afn').observe('keyup', AmazonAccountObj.magentoOrdersNumberPrefixPrefixChange);
@@ -280,11 +273,11 @@ define([
 
         other_listings_synchronization_change: function()
         {
-            if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES')) {
+            if (this.value == 1) {
                 $('other_listings_mapping_mode_tr').show();
                 $('other_listings_store_view_tr').show();
             } else {
-                $('other_listings_mapping_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::OTHER_LISTINGS_MAPPING_MODE_NO');
+                $('other_listings_mapping_mode').value = 0;
                 $('other_listings_mapping_mode').simulate('change');
                 $('other_listings_mapping_mode_tr').hide();
                 $('other_listings_store_view_tr').hide();
@@ -293,14 +286,11 @@ define([
 
         other_listings_mapping_mode_change: function()
         {
-            if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::OTHER_LISTINGS_MAPPING_MODE_YES')) {
+            if (this.value == 1) {
                 $('magento_block_amazon_accounts_other_listings_product_mapping').show();
-                $('magento_block_amazon_accounts_other_listings_move_mode').show();
             } else {
                 $('magento_block_amazon_accounts_other_listings_product_mapping').hide();
-                $('magento_block_amazon_accounts_other_listings_move_mode').hide();
 
-                $('other_listings_move_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::OTHER_LISTINGS_MOVE_TO_LISTINGS_DISABLED');
                 $('mapping_general_id_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_NONE');
                 $('mapping_sku_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::OTHER_LISTINGS_MAPPING_SKU_MODE_NONE');
                 $('mapping_title_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE');
@@ -309,8 +299,6 @@ define([
             $('mapping_general_id_mode').simulate('change');
             $('mapping_sku_mode').simulate('change');
             $('mapping_title_mode').simulate('change');
-
-            $('other_listings_move_mode').simulate('change');
         },
 
         // ---------------------------------------
@@ -365,22 +353,11 @@ define([
 
         // ---------------------------------------
 
-        move_mode_change: function()
-        {
-            if ($('other_listings_move_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::OTHER_LISTINGS_MOVE_TO_LISTINGS_ENABLED')) {
-                $('other_listings_move_synch_tr').show();
-            } else {
-                $('other_listings_move_synch_tr').hide();
-            }
-        },
-
-        // ---------------------------------------
-
         magentoOrdersListingsModeChange: function()
         {
             var self = AmazonAccountObj;
 
-            if ($('magento_orders_listings_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_LISTINGS_MODE_YES')) {
+            if ($('magento_orders_listings_mode').value == 1) {
                 $('magento_orders_listings_store_mode_container').show();
             } else {
                 $('magento_orders_listings_store_mode_container').hide();
@@ -405,7 +382,7 @@ define([
         {
             var self = AmazonAccountObj;
 
-            if ($('magento_orders_listings_other_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES')) {
+            if ($('magento_orders_listings_other_mode').value == 1) {
                 $('magento_orders_listings_other_product_mode_container').show();
                 $('magento_orders_listings_other_store_id_container').show();
             } else {
@@ -436,19 +413,6 @@ define([
             self.renderOrderNumberExample();
         },
 
-        magentoOrdersNumberPrefixModeChange: function()
-        {
-            var self = AmazonAccountObj;
-
-            if ($('magento_orders_number_prefix_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_YES')) {
-                $('magento_orders_number_prefix_container').show();
-            } else {
-                $('magento_orders_number_prefix_container').hide();
-            }
-
-            self.renderOrderNumberExample();
-        },
-
         magentoOrdersNumberPrefixPrefixChange: function()
         {
             var self = AmazonAccountObj;
@@ -467,13 +431,11 @@ define([
                 prime = orderNumber,
                 b2b = orderNumber;
 
-            if ($('magento_orders_number_prefix_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_YES')) {
-                var regularPrefix = $('magento_orders_number_prefix_prefix').value;
-                regular = regularPrefix + regular;
-                afn = regularPrefix + $('magento_orders_number_prefix_afn').value + afn;
-                prime = regularPrefix + $('magento_orders_number_prefix_prime').value + prime;
-                b2b = regularPrefix + $('magento_orders_number_prefix_b2b').value + b2b;
-            }
+            var regularPrefix = $('magento_orders_number_prefix_prefix').value;
+            regular = regularPrefix + regular;
+            afn = regularPrefix + $('magento_orders_number_prefix_afn').value + afn;
+            prime = regularPrefix + $('magento_orders_number_prefix_prime').value + prime;
+            b2b = regularPrefix + $('magento_orders_number_prefix_b2b').value + b2b;
 
             $('order_number_example_container_regular').update(regular);
             $('order_number_example_container_afn').update(afn);
@@ -483,9 +445,9 @@ define([
 
         magentoOrdersFbaModeChange: function()
         {
-            if ($('magento_orders_fba_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_FBA_MODE_NO')) {
+            if ($('magento_orders_fba_mode').value == 0) {
                 $('magento_orders_fba_stock_mode_container').hide();
-                $('magento_orders_fba_stock_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_FBA_STOCK_MODE_NO');
+                $('magento_orders_fba_stock_mode').value = 0;
             } else {
                 $('magento_orders_fba_stock_mode_container').show();
             }
@@ -535,17 +497,14 @@ define([
         {
             var self = AmazonAccountObj;
 
-            if ($('magento_orders_listings_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_LISTINGS_MODE_NO') &&
-                $('magento_orders_listings_other_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_NO')) {
+            if ($('magento_orders_listings_mode').value == 0 && $('magento_orders_listings_other_mode').value == 0) {
 
                 $('magento_block_amazon_accounts_magento_orders_number-wrapper').hide();
                 $('magento_orders_number_source').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO');
-                $('magento_orders_number_prefix_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_NUMBER_PREFIX_MODE_NO');
-                self.magentoOrdersNumberPrefixModeChange();
 
                 $('magento_block_amazon_accounts_magento_orders_fba-wrapper').hide();
-                $('magento_orders_fba_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_FBA_MODE_YES');
-                $('magento_orders_fba_stock_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_FBA_STOCK_MODE_YES');
+                $('magento_orders_fba_mode').value = 1;
+                $('magento_orders_fba_stock_mode').value = 1;
 
                 $('magento_block_amazon_accounts_magento_orders_refund_and_cancellation-wrapper').hide();
                 $('magento_orders_refund').value = 1;
@@ -576,11 +535,11 @@ define([
             }
         },
 
-        vatCalculationModeChange: function()
+        autoInvoicingModeChange: function()
         {
             $('is_magento_invoice_creation_disabled_tr').hide();
 
-            if ($('is_vat_calculation_service_enabled').value == 1) {
+            if ($('auto_invoicing').value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::MAGENTO_ORDERS_AUTO_INVOICING_VAT_CALCULATION_SERVICE')) {
                 $('is_magento_invoice_creation_disabled_tr').show();
             }
         },

@@ -124,7 +124,7 @@ class Set extends \Ess\M2ePro\Model\AbstractModel
         return $messages;
     }
 
-    // ########################################
+    //########################################
 
     public function hasErrorEntities()
     {
@@ -146,7 +146,7 @@ class Set extends \Ess\M2ePro\Model\AbstractModel
         return !empty($this->getNoticeEntities());
     }
 
-    // ########################################
+    //########################################
 
     public function getCombinedErrorsString()
     {

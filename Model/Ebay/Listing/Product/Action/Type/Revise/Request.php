@@ -24,27 +24,26 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
             [
                 'item_id' => $this->getEbayListingProduct()->getEbayItemIdReal()
             ],
-            $this->getRequestVariations()->getRequestData()
+            $this->getGeneralData(),
+            $this->getQtyData(),
+            $this->getPriceData(),
+            $this->getTitleData(),
+            $this->getSubtitleData(),
+            $this->getDescriptionData(),
+            $this->getImagesData(),
+            $this->getCategoriesData(),
+            $this->getPaymentData(),
+            $this->getReturnData(),
+            $this->getShippingData(),
+            $this->getVariationsData(),
+            $this->getOtherData()
         );
 
         if ($this->getConfigurator()->isGeneralAllowed()) {
-            $data['sku'] = $this->getEbayListingProduct()->getSku();
-
-            $data = array_merge(
-
-                $data,
-                $this->getRequestPayment()->getRequestData(),
-                $this->getRequestReturn()->getRequestData()
-            );
+            $data['sku'] = $this->getSku();
         }
 
-        return array_merge(
-            $data,
-            $this->getRequestCategories()->getRequestData(),
-            $this->getRequestShipping()->getRequestData(),
-            $this->getRequestSelling()->getRequestData(),
-            $this->getRequestDescription()->getRequestData()
-        );
+        return $data;
     }
 
     /**
@@ -56,62 +55,17 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         $data = $this->processingReplacedAction($data);
 
         $data = $this->insertHasSaleFlagToVariations($data);
-        $data = $this->removeImagesIfThereAreNoChanges($data);
         $data = $this->removeNodesIfItemHasTheSaleOrBid($data);
         $data = $this->removeDurationIfItCanNotBeChanged($data);
+
+        $data = $this->removePriceFromVariationsIfNotAllowed($data);
 
         return parent::prepareFinalData($data);
     }
 
-    protected function afterBuildDataEvent(array $data)
-    {
-        $params = $this->getConfigurator()->getParams();
-
-        if (!isset($params['replaced_action'])) {
-            parent::afterBuildDataEvent($data);
-            return;
-        }
-
-        if ($params['replaced_action'] == \Ess\M2ePro\Model\Listing\Product::ACTION_STOP) {
-            $this->getConfigurator()->setPriority(
-                \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::PRIORITY_REVISE_INSTEAD_OF_STOP
-            );
-        } elseif ($params['replaced_action'] == \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST) {
-            $this->getConfigurator()->setPriority(
-                \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::PRIORITY_REVISE_INSTEAD_OF_RELIST
-            );
-        }
-
-        parent::afterBuildDataEvent($data);
-    }
-
     //########################################
 
-    protected function insertOutOfStockControl(array $data)
-    {
-        $params = $this->getParams();
-
-        $outOfStockControlCurrentState = $this->getEbayListingProduct()->getOutOfStockControl();
-        $outOfStockControlTemplateState = $this->getEbayListingProduct()
-                                               ->getEbaySellingFormatTemplate()
-                                               ->getOutOfStockControl();
-
-        if ($outOfStockControlCurrentState && !$outOfStockControlTemplateState) {
-            $this->addWarningMessage(
-                'Although the Out of Stock Control option is disabled in Selling Policy settings,
-                for this eBay Item it is remain enabled. Disabling of the Out of Stock Control during the Revise action
-                is not supported by eBay. That is why the Out of Stock Control option will still be enabled for
-                this Item on eBay.'
-            );
-        }
-
-        $data['out_of_stock_control'] = $params['out_of_stock_control_current_state'];
-        $data['out_of_stock_control_result'] = $params['out_of_stock_control_result'];
-
-        return $data;
-    }
-
-    private function processingReplacedAction($data)
+    protected function processingReplacedAction($data)
     {
         $params = $this->getConfigurator()->getParams();
 
@@ -125,13 +79,13 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         return $data;
     }
 
-    private function insertReplacedActionMessage($replacedAction)
+    protected function insertReplacedActionMessage($replacedAction)
     {
         switch ($replacedAction) {
             case \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST:
                 $this->addWarningMessage(
                     'Revise was executed instead of Relist because \'Out Of Stock Control\' Option is enabled '.
-                    'in the \'Selling\' Policy'
+                    'for this item.'
                 );
 
                 break;
@@ -139,14 +93,14 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
             case \Ess\M2ePro\Model\Listing\Product::ACTION_STOP:
                 $this->addWarningMessage(
                     'Revise was executed instead of Stop because \'Out Of Stock Control\' Option is enabled '.
-                    'in the \'Selling\' Policy'
+                    'for this item.'
                 );
 
                 break;
         }
     }
 
-    private function modifyQtyByReplacedAction($replacedAction, array $data)
+    protected function modifyQtyByReplacedAction($replacedAction, array $data)
     {
         if ($replacedAction != \Ess\M2ePro\Model\Listing\Product::ACTION_STOP) {
             return $data;
@@ -170,7 +124,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
     // ---------------------------------------
 
-    private function insertHasSaleFlagToVariations(array $data)
+    protected function insertHasSaleFlagToVariations(array $data)
     {
         if (!isset($data['variation']) || !is_array($data['variation'])) {
             return $data;
@@ -191,7 +145,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         return $data;
     }
 
-    private function removeNodesIfItemHasTheSaleOrBid(array $data)
+    protected function removeNodesIfItemHasTheSaleOrBid(array $data)
     {
         if (!isset($data['title']) && !isset($data['subtitle']) &&
             !isset($data['duration']) && !isset($data['is_private'])) {
@@ -208,14 +162,17 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
             $warningMessageReasons[] = $this->getHelper('Module\Translation')->__('Title');
             unset($data['title']);
         }
+
         if (isset($data['subtitle']) && $deleteByAuctionFlag) {
             $warningMessageReasons[] = $this->getHelper('Module\Translation')->__('Subtitle');
             unset($data['subtitle']);
         }
+
         if (isset($data['duration']) && ($deleteByAuctionFlag || $deleteByFixedFlag)) {
             $warningMessageReasons[] = $this->getHelper('Module\Translation')->__('Duration');
             unset($data['duration']);
         }
+
         if (isset($data['is_private']) && ($deleteByAuctionFlag || $deleteByFixedFlag)) {
             $warningMessageReasons[] = $this->getHelper('Module\Translation')->__('Private Listing');
             unset($data['is_private']);
@@ -224,8 +181,8 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         if (!empty($warningMessageReasons)) {
             $this->addWarningMessage(
                 $this->getHelper('Module\Translation')->__(
-                    '%field_title% field(s) were ignored because eBay doesn\'t allow Revise the Item if it has sales, '.
-                    'bids for Auction Type or less than 12 hours remain before the Item end.',
+                    '%field_title% field(s) were ignored because eBay doesn\'t allow Revise the Item if it has ' .
+                    'sales, bids for Auction Type or less than 12 hours remain before the Item end.',
                     implode(', ', $warningMessageReasons)
                 )
             );
@@ -234,7 +191,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         return $data;
     }
 
-    private function removeDurationIfItCanNotBeChanged(array $data)
+    protected function removeDurationIfItCanNotBeChanged(array $data)
     {
         if (isset($data['duration']) && isset($data['bestoffer_mode']) && $data['bestoffer_mode']) {
             $this->addWarningMessage(
@@ -251,8 +208,8 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
             !$this->getEbayListingProduct()->isOnlineDurationGtc()) {
             $this->addWarningMessage(
                 $this->getHelper('Module\Translation')->__(
-                    'Duration value was not sent to eBay, because you are trying to change the Duration
-                    of your Listing to \'Goot Till Cancelled\' which is not allowed by eBay.'
+                    'Duration value was not sent to eBay, because you are trying to change the Duration of your
+                    Listing to \'Goot Till Cancelled\' which is not allowed by eBay.'
                 )
             );
             unset($data['duration']);

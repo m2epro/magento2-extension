@@ -107,12 +107,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'ean'                            => 'ean',
                 'isbn'                           => 'isbn',
                 'wpid'                           => 'wpid',
-                'channel_url'                    => 'channel_url',
                 'item_id'                        => 'item_id',
                 'online_qty'                     => 'online_qty',
                 'online_price'                   => 'online_price',
                 'is_variation_parent'            => 'is_variation_parent',
-                'is_details_data_changed'        => 'is_details_data_changed',
                 'is_online_price_invalid'        => 'is_online_price_invalid',
                 'online_start_date'              => 'online_start_date',
                 'online_end_date'                => 'online_end_date',
@@ -369,7 +367,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         $gtinHtml = $this->getHelper('Data')->escapeHtml($gtin);
-        $channelUrl = $row->getData('channel_url');
+
+        $walmartHelper = $this->getHelper('Component\Walmart');
+        $marketplaceId = $this->listing->getMarketplaceId();
+        $channelUrl = $walmartHelper->getItemUrl(
+            $row->getData($walmartHelper->getIdentifierForItemUrl($marketplaceId)),
+            $marketplaceId
+        );
 
         if (!empty($channelUrl)) {
             $gtinHtml = <<<HTML

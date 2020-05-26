@@ -46,20 +46,14 @@ class Tabs extends AbstractTabs
             'content' => $this->createBlock('Amazon_Account_Edit_Tabs_Order')->toHtml(),
         ]);
 
-        $this->addTab('shipping_settings', [
-            'label'   => $this->__('Shipping Settings'),
-            'title'   => $this->__('Shipping Settings'),
-            'content' => $this->createBlock('Amazon_Account_Edit_Tabs_ShippingSettings')->toHtml(),
-        ]);
-
         if ($account !== null
             && $account->getId()
             && $account->getChildObject()->getMarketplace()->getChildObject()->isVatCalculationServiceAvailable()
         ) {
-            $this->addTab('vat_calculation_service', [
-                'label'   => $this->__('VAT Calculation Service'),
-                'title'   => $this->__('VAT Calculation Service'),
-                'content' => $this->createBlock('Amazon_Account_Edit_Tabs_VatCalculationService')->toHtml(),
+            $this->addTab('vcs_upload_invoices', [
+                'label'   => $this->__('VCS / Upload Invoices'),
+                'title'   => $this->__('VCS / Upload Invoices'),
+                'content' => $this->createBlock('Amazon_Account_Edit_Tabs_VCSUploadInvoices')->toHtml(),
             ]);
         }
 

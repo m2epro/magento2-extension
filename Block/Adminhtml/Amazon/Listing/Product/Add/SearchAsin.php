@@ -207,14 +207,8 @@ HTML
         ]);
 
         $this->js->add(<<<JS
-    require([
-        'M2ePro/Plugin/ProgressBar',
-        'M2ePro/Plugin/AreaWrapper'
-    ],function() {
+    require([],function() {
         Common.prototype.scrollPageToTop = function() { return; }
-
-        ListingProgressBarObj = new ProgressBar('search_asin_progress_bar');
-        GridWrapperObj = new AreaWrapper('search_asin_products_container');
     });
 JS
         );

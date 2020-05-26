@@ -148,6 +148,11 @@ class Index extends \Magento\Backend\App\Action
     <div style="float: left; width: 45%; margin-right: 15px;">
 
         <div class="item-block">
+            <h3>Versions</h3>
+            {$this->getVersionsBlockHtml()}
+        </div>
+        
+        <div class="item-block">
             <h3>Core Magento Info</h3>
             {$this->getCoreMagentoInfoBlockHtml()}
         </div>
@@ -158,16 +163,6 @@ class Index extends \Magento\Backend\App\Action
         </div>
 
         <div class="item-block">
-            <h3>Core Magento Setup</h3>
-            {$this->getCoreMagentoSetupBlockHtml()}
-        </div>
-
-        <div class="item-block">
-            <h3>M2E Pro Physical Versions</h3>
-            {$this->getM2eProPhysicalVersionsBlockHtml()}
-        </div>
-
-        <div class="item-block">
             <h3>Core Magento Upgrade Cron</h3>
             {$this->getCoreMagentoUpgradeBlockHtml()}
         </div>
@@ -175,11 +170,6 @@ class Index extends \Magento\Backend\App\Action
         <div class="item-block">
             <h3>M2E Pro Setup Versions</h3>
             {$this->getM2eProSetupBlockHtml()}
-        </div>
-
-        <div class="item-block">
-            <h3>M2E Pro Public Versions</h3>
-            {$this->getM2eProFilesVersionsHistoryBlock()}
         </div>
 
         <div class="item-block">
@@ -405,8 +395,9 @@ HTML;
         return $html;
     }
 
-    private function getCoreMagentoSetupBlockHtml()
+    private function getVersionsBlockHtml()
     {
+        $composerVersion = $this->packageInfo->getVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER);
         $schemaVersion = $this->moduleResource->getDbVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER);
         $dataVersion   = $this->moduleResource->getDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER);
         $setupVersion  = $this->moduleList->getOne(\Ess\M2ePro\Helper\Module::IDENTIFIER)['setup_version'];
@@ -414,7 +405,8 @@ HTML;
         $html = "<div>";
 
         $html .= <<<HTML
-<span>Config setup version: <span></span>{$setupVersion}</span><br>
+<span>Composer version: <span></span>{$composerVersion}</span><br>
+<span>Setup version: <span></span>{$setupVersion}</span><br>
 HTML;
 
         $className = '';
@@ -485,19 +477,6 @@ HTML;
         $url = $this->_url->getUrl('*/*/*', ['action' => 'addMagentoCoreUpgradeTask']);
         $html .= <<<HTML
 <br><a href="{$url}">[create cron upgrade task]</a><br>
-HTML;
-
-        $html .= "</div>";
-        return $html;
-    }
-
-    private function getM2eProPhysicalVersionsBlockHtml()
-    {
-        $html = '<div>';
-
-        $composerVersion = $this->packageInfo->getVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER);
-        $html .= <<<HTML
-<span>Composer version: <span></span>{$composerVersion}</span><br>
 HTML;
 
         $html .= "</div>";
@@ -644,55 +623,6 @@ HTML;
         <a href="javascript:void(0);"
            onclick="return handlerObj.confirmImportantAction('This row will be DROPPED.', '{$dropUrl}');">[drop]</a>
     </div>
-</div>
-HTML;
-        }
-
-        $html .= "</div>";
-        return $html;
-    }
-
-    private function getM2eProFilesVersionsHistoryBlock()
-    {
-        $html = "<div>";
-
-        $tableName = $this->helperFactory->getObject('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_versions_history');
-        if (!$this->resourceConnection->getConnection()->isTableExists($tableName)) {
-            $html .= <<<HTML
-<span class="feature-enabled">m2epro_versions_history table is not installed.</span>
-HTML;
-            $html .= "</div>";
-            return $html;
-        }
-
-        $queryStmt = $this->resourceConnection->getConnection()
-            ->select()
-            ->from($tableName)
-            ->order('id DESC')
-            ->query();
-
-        $html .= <<<HTML
-<div class="m2epro-files-versions-grid-container">
-    <div><span>id</span></div>
-    <div style="width: 100px;"><span>from</span></div>
-    <div style="width: 100px;"><span>to</span></div>
-    <div style="width: 300px;"><span>create_date</span></div>
-</div>
-HTML;
-
-        while ($row = $queryStmt->fetch()) {
-            $html .= <<<HTML
-<div class="m2epro-files-versions-grid-container">
-    <div>
-        <input type="hidden" name="id" value="{$row['id']}">
-        <span>{$row['id']}</span>
-    </div>
-
-    <div style="width: 100px;"><span>{$row['version_from']}</span></div>
-    <div style="width: 100px;"><span>{$row['version_to']}</span></div>
-
-    <div style="width: 300px;"><span>{$row['create_date']}</span></div>
 </div>
 HTML;
         }

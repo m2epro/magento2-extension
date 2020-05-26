@@ -18,7 +18,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     protected $activeRecordFactory;
     protected $ebayFactory;
 
-    // ########################################
+    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -31,7 +31,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         parent::__construct($helperFactory, $modelFactory);
     }
 
-    // ########################################
+    //########################################
 
     /**
      * @param int $action
@@ -45,8 +45,13 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN
         ], $params);
 
-        $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId();
-        $params['logs_action_id'] = $this->logsActionId;
+        if (empty($params['logs_action_id'])) {
+            $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getResource()
+                ->getNextActionId();
+            $params['logs_action_id'] = $this->logsActionId;
+        } else {
+            $this->logsActionId = $params['logs_action_id'];
+        }
 
         $isRealTime = !empty($params['is_realtime']);
 
@@ -61,7 +66,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return (int)$this->logsActionId;
     }
 
-    // ########################################
+    //########################################
 
     /**
      * @param array $sortedProducts
@@ -106,10 +111,11 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return $this->getHelper('Data')->getMainStatus($results);
     }
 
-    // ########################################
+    //########################################
 
     protected function processProducts(array $products, $action, $isRealTime = false, array $params = [])
     {
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcher */
         $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorName = 'Ebay\Connector\Item\\'.$this->getActionNick($action).'\Requester';
 
@@ -129,8 +135,8 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                 $result = $connector->getStatus();
 
                 $logsActionId = $connector->getLogsActionId();
-
-                if (is_array($logsActionId)) {
+                // When additional action runs using processing, there is no status for it
+                if (is_array($logsActionId) && $isRealTime) {
                     $this->logsActionId = max($logsActionId);
                     $listingLog = $this->activeRecordFactory->getObject('Listing\Log');
                     $result = $listingLog->getResource()->getStatusByActionId(
@@ -153,7 +159,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return $this->getHelper('Data')->getMainStatus($results);
     }
 
-    // ########################################
+    //########################################
 
     protected function prepareProducts($products)
     {
@@ -245,7 +251,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     protected function recognizeActionForLogging($action, array $params)
     {
-        $logAction =\Ess\M2ePro\Model\Listing\Log::ACTION_UNKNOWN;
+        $logAction = \Ess\M2ePro\Model\Listing\Log::ACTION_UNKNOWN;
 
         switch ($action) {
             case \Ess\M2ePro\Model\Listing\Product::ACTION_LIST:
@@ -269,7 +275,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return $logAction;
     }
 
-    // ########################################
+    //########################################
 
     private function getActionNick($action)
     {
@@ -291,5 +297,5 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         }
     }
 
-    // ########################################
+    //########################################
 }

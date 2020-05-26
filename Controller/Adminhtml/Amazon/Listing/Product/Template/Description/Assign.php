@@ -68,10 +68,6 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
         $this->setDescriptionTemplateForProducts($filteredProductsIdsByType, $templateId);
         $this->runProcessorForParents($filteredProductsIdsByType);
 
-        /** @var \Ess\M2ePro\Model\Amazon\Template\Description $template */
-        $template = $this->activeRecordFactory->getObjectLoaded('Amazon_Template_Description', $templateId);
-        $template->setSynchStatusNeed($template->getDataSnapshot(), []);
-
         $messages[] = $this->__(
             'Description Policy was successfully assigned to %count% Products',
             count($filteredProductsIdsByType)

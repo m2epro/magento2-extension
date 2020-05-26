@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Amazon\Connector;
  */
 class Protocol extends \Ess\M2ePro\Model\Connector\Protocol
 {
-    // ########################################
+    //########################################
 
     public function getComponent()
     {
@@ -22,8 +22,8 @@ class Protocol extends \Ess\M2ePro\Model\Connector\Protocol
 
     public function getComponentVersion()
     {
-        return 8;
+        return 12;
     }
 
-    // ########################################
+    //########################################
 }

@@ -14,11 +14,6 @@ class ModuleInPrimaryConfig extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['primary_config'];
-    }
-
     public function execute()
     {
         $primaryConfigModifier = $this->getConfigModifier('primary');

@@ -59,7 +59,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         //------------------------------
     }
 
-    // ########################################
+    //########################################
 
     protected function getExistingItems(array $ids)
     {
@@ -179,7 +179,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return $value;
     }
 
-    // ####################################
+    //####################################
 
     protected function _addColumnFilterToCollection($column)
     {
@@ -222,7 +222,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setCollection($filteredCollection);
     }
 
-    // ####################################
+    //####################################
 
     protected function _setCollectionOrder($column)
     {
@@ -261,7 +261,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setCollection($sortedCollection);
     }
 
-    // ####################################
+    //####################################
 
     protected function _toHtml()
     {

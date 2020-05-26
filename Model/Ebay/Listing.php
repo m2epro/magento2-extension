@@ -561,7 +561,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             ->addFieldToFilter('item_id', $listingOtherProduct->getChildObject()->getItemId());
 
         $ebayItem = $collection->getLastItem();
-
         if (!$ebayItem->getId()) {
             $ebayItem->setData([
                 'account_id'     => $listingOtherProduct->getAccount()->getId(),
@@ -593,22 +592,53 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             'status_changer'       => $listingOtherProduct->getStatusChanger()
         ];
 
-        $listingOtherAdditionalData = $listingOtherProduct->getAdditionalData();
-
-        if (!empty($listingOtherAdditionalData['out_of_stock_control'])) {
-            $listingProductAdditionalData = $listingProduct->getAdditionalData();
-            $additionalDataForUpdate = array_merge(
-                $listingProductAdditionalData,
-                ['out_of_stock_control' => true]
-            );
-            $dataForUpdate['additional_data'] = $this->getHelper('Data')->jsonEncode($additionalDataForUpdate);
-        }
-
         $listingProduct->addData($dataForUpdate)
                        ->getChildObject()->addData($dataForUpdate);
+        $listingProduct->setSetting(
+            'additional_data',
+            $listingProduct::MOVING_LISTING_OTHER_SOURCE_KEY,
+            $listingOtherProduct->getId()
+        );
         $listingProduct->save();
 
+        $listingOtherProduct->setSetting(
+            'additional_data',
+            $listingOtherProduct::MOVING_LISTING_PRODUCT_DESTINATION_KEY,
+            $listingProduct->getId()
+        );
+        $listingOtherProduct->save();
+
+        $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
+        $instruction->setData([
+            'listing_product_id' => $listingProduct->getId(),
+            'component'          => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'type'               => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
+            'initiator'          => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_OTHER,
+            'priority'           => 20,
+        ]);
+        $instruction->save();
+
         return $listingProduct;
+    }
+
+    public function addProductFromListing(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        \Ess\M2ePro\Model\Listing $sourceListing
+    ) {
+        if (!$this->getParentObject()->addProductFromListing($listingProduct, $sourceListing, true)) {
+            return false;
+        }
+
+        if ($this->getParentObject()->getStoreId() != $sourceListing->getStoreId()) {
+            if (!$listingProduct->isNotListed()) {
+                if ($item = $listingProduct->getChildObject()->getEbayItem()) {
+                    $item->setData('store_id', $this->getParentObject()->getStoreId());
+                    $item->save();
+                }
+            }
+        }
+
+        return true;
     }
 
     //########################################
@@ -621,69 +651,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $ids = $this->getData('product_add_ids');
         $ids = array_filter((array)$this->getHelper('Data')->jsonDecode($ids));
         return array_values(array_unique($ids));
-    }
-
-    //########################################
-
-    /**
-     * @return array
-     */
-    public function getTrackingAttributes()
-    {
-        return [];
-    }
-
-    //########################################
-
-    /**
-     * @param string $template
-     * @param bool $asArrays
-     * @param string|array $columns
-     * @return array
-     */
-    public function getAffectedListingsProductsByTemplate($template, $asArrays = true, $columns = '*')
-    {
-        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
-        $templateManager->setTemplate($template);
-
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
-        $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Listing\Product')
-            ->getCollection();
-        $collection->addFieldToFilter('listing_id', $this->getId());
-        $collection->addFieldToFilter(
-            $templateManager->getModeColumnName(),
-            \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_PARENT
-        );
-
-        if (is_array($columns) && !empty($columns)) {
-            $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $collection->getSelect()->columns($columns);
-        }
-
-        return $asArrays ? (array)$collection->getData() : (array)$collection->getItems();
-    }
-
-    public function setSynchStatusNeed($newData, $oldData)
-    {
-        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
-
-        $newTemplates = $templateManager->getTemplatesFromData($newData);
-        $oldTemplates = $templateManager->getTemplatesFromData($oldData);
-
-        foreach ($templateManager->getAllTemplates() as $template) {
-            $templateManager->setTemplate($template);
-
-            $templateManager->getTemplateModel(true)->getResource()->setSynchStatusNeed(
-                $newTemplates[$template]->getDataSnapshot(),
-                $oldTemplates[$template]->getDataSnapshot(),
-                $this->getAffectedListingsProductsByTemplate(
-                    $template,
-                    true,
-                    $template == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION ?
-                        ['id', 'synch_status', 'synch_reasons'] : ['id']
-                )
-            );
-        }
     }
 
     //########################################

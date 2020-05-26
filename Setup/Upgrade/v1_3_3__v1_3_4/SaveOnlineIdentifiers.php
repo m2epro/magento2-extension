@@ -11,11 +11,6 @@ use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
 
 class SaveOnlineIdentifiers extends AbstractFeature
 {
-    public function getBackupTables()
-    {
-        return ['listing_product_variation'];
-    }
-
     public function execute()
     {
         $queryStmt = $this->getConnection()

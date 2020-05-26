@@ -94,6 +94,10 @@ class Tabs extends AbstractTabs
             $this->getUrl('*/ebay_account/beforeGetToken', ['_current' => true]),
             'ebay_account/beforeGetToken'
         );
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_account/BeforeGetSellApiToken', ['_current' => true]),
+            'ebay_account/beforeGetSellApiToken'
+        );
         $this->jsUrl->addUrls([
             'formSubmit' => $this->getUrl(
                 '*/ebay_account/save',

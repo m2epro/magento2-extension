@@ -98,7 +98,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
         $select = $connRead->select();
         $select->from(['pl' => $table], ['object_id'])
-            ->where('model_name = "Listing\Product"')
+            ->where('model_name = "Listing_Product"')
             ->where('object_id IN (?)', $productsIds)
             ->where('tag IS NULL');
 

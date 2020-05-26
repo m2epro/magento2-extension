@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Account\Update;
  */
 class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {
-    // ########################################
+    //########################################
 
     protected function getRequestData()
     {
@@ -25,12 +25,12 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending
         return ['account','update','entity'];
     }
 
-    // ########################################
+    //########################################
 
     protected function getProcessingRunnerModelName()
     {
         return 'Amazon_Connector_Account_Update_ProcessingRunner';
     }
 
-    // ########################################
+    //########################################
 }

@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Walmart\Connector\Account\Update;
  */
 class EntityResponser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Responser
 {
-    // ########################################
+    //########################################
 
     protected function validateResponse()
     {
@@ -39,7 +39,7 @@ class EntityResponser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pendin
         $walmartAccount->addData($dataForUpdate)->save();
     }
 
-    // ########################################
+    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Account
@@ -49,5 +49,5 @@ class EntityResponser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pendin
         return $this->getObjectByParam('Account', 'account_id');
     }
 
-    // ########################################
+    //########################################
 }

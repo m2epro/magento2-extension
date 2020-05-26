@@ -60,6 +60,11 @@ class General extends Magento\AbstractBlock
             (bool)$this->getHelper('Module')->getConfig()->getGroupValue('/view/ebay/notice/', 'disable_collapse')
         );
 
+        $synchWarningMessage = 'Marketplace synchronization was completed with warnings. '
+            . '<a target="_blank" href="%url%">View Log</a> for the details.';
+        $synchErrorMessage = 'Marketplace synchronization was completed with errors. '
+            . '<a target="_blank" href="%url%">View Log</a> for the details.';
+
         $this->jsTranslator->addTranslations([
             'Are you sure?' => $this->__('Are you sure?'),
             'Confirmation'  => $this->__('Confirmation'),
@@ -118,6 +123,18 @@ class General extends Magento\AbstractBlock
             'Insert Magento Attribute in %s%' => $this->__('Insert Magento Attribute in %s%'),
             'Attribute' => $this->__('Attribute'),
             'Insert' => $this->__('Insert'),
+
+            'Settings have been saved.' => $this->__('Settings have been saved.'),
+            'You must select at least one Site you will work with.' =>
+                $this->__('You must select at least one Site you will work with.'),
+
+            'Preparing to start. Please wait ...' => $this->__('Preparing to start. Please wait ...'),
+
+            'Marketplace synchronization was completed successfully.' =>
+                $this->__('Marketplace synchronization was completed successfully.'),
+            $synchWarningMessage => $this->__($synchWarningMessage),
+            $synchErrorMessage => $this->__($synchErrorMessage),
+            'Unauthorized! Please login again' => $this->__('Unauthorized! Please login again')
         ]);
 
         return parent::_beforeToHtml();

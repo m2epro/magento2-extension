@@ -237,7 +237,7 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
         $collection->getSelect()->joinLeft(
             [
-                'lpv' => $this->activeRecordFactory->getObject('Listing\Product\Variation')
+                'lpv' => $this->activeRecordFactory->getObject('Listing_Product_Variation')
                                                     ->getResource()->getMainTable()
             ],
             'lpv.listing_product_id = main_table.id',
@@ -245,7 +245,7 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         );
         $collection->getSelect()->joinLeft(
             [
-                'lpvo' => $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')
+                'lpvo' => $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')
                                                     ->getResource()->getMainTable()
             ],
             'lpvo.listing_product_variation_id = lpv.id',

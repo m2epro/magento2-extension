@@ -14,11 +14,6 @@ class AmazonNewReportsLogic extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['synchronization_config', 'amazon_listing_other'];
-    }
-
     public function execute()
     {
         $this->getConnection()->update(

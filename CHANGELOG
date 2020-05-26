@@ -1,3 +1,99 @@
+* 1.6.0 (r3775) (26/05/2020) 
+
+Common: [Improved] Move Issue locators engine from M1
+Common: [Improved] Always throw an exception on duplicate key while using Magento registry
+Common: [Improved] Improve Cron tasks runner
+Common: [Improved] Improve ModuleInstaller and remove VersionHistory
+Common: [Improved] Show all attributes in MagentoAttribute dropdowns
+Common: [Improved] Eliminate mentioning of version in DEVELOP branch
+Common: [Improved] 3rd Party Listing Move to M2E Pro Listing was reworked
+Common: [Improved] Magmi plugin for new synchronization
+Common: [Improved] Remove global variable initialization through setOption()
+Common: [Improved] Get rid of using shipment observer
+Common: [Fixed] Email notification about created order is sent even if it is disabled in account settings
+Common: [Fixed] Synchronization lock item isn't deleted if synchronization fails
+Common: [Fixed] Options finder does not work on options with numeric labels
+Common: [Fixed] Invalid argument supplied for foreach() in Model/Magento/Product/Rule/Condition/Combine.php
+Common: [Fixed] Error in Logs when Manual Mark Order as Shipped
+Common: [Fixed] Data imported by partial runner may be lost in case of fatal error
+Common: [Fixed] Fatal error in case of invalid response from server
+Common: [Fixed] SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid default value
+eBay: [Added] Automatically revise an Item if Magento static block was changed
+eBay: [Fixed] Incorrect behavior when select Based on Magento Categories
+eBay: [Fixed] Error on New Listing Creation when Move product to another listing on eBay
+Amazon: [Added] Add Amazon NL Marketplace
+Amazon: [Added] Upload Invoices/Credit Memos on Amazon
+Amazon: [Added] Add Tax Percent column in Order Items grid
+Amazon: [Fixed] Incorrect Specific's value is applied in Amazon -> Description Policy
+Amazon: [Fixed] Problem with throttling (trolling manager feed counts were not considered for the price on Relist action)
+Walmart: [Improved] Reset Inactive (Blocked) Item(s)
+Walmart: [Fixed] Cron task Ess_M2ePro_Model_Cron_Task_Walmart_Order_CreateFailed is not exists
+Walmart: [Fixed] Fatal Error: Call to undefined method Ess\M2ePro\Helper\Data::__() on list action
+Walmart: [Fixed] Error message: "Class Ess\M2ePro\Model\Walmart\Connector\Product\List\Responser does not exist" on list action
+Walmart: [Fixed] Error log: "Internal Server Error (s) [Items was not updated.]" in some cases on stop action
+Walmart: [Fixed] There is no Walmart Task in Task filter of Synchronization Log
+Walmart: [Fixed] Problem with throttling (promotions will not be sent on Relist action)
+Walmart: [Fixed] Problem with throttling (trolling manager feed counts were not considered for the price on Relist action)
+Walmart: [Fixed] Problem with throttling (request was repeated on connection error)
+
+* 1.5.1 (r3512) (25/03/2020)
+
+Common: [Fixed] License is not created if more than 50 symbols are used
+Common: [Fixed] Tracking number is not sent to Channels on some Magento versions <= 2.2.7
+Common: [Fixed] Incorrect initiator on manual Order actions
+Common: [Fixed] Product isn't stopped on Channel after it is removed from Magento
+Common: [Fixed] renameTable() fails on the second upgrade attempt
+Common: [Fixed] Stop rules get disabled after the upgrade
+Common: [Fixed] Incorrect last order synchronization date was used
+Common: [Fixed] Fatal error: Call to undefined function forceRemove() during process processing results
+Common: [Fixed] Base table or view not found: 1146 Table 'm2ePro_ebay_order_item' doesn't exist
+Common: [Fixed] Type Error occurred when creating object: Magento\Cms\Model\Wysiwyg\CompositeConfigProvider on product actions
+Common: [Improved] Generate more detailed instructions during the upgrade to the new synchronization
+eBay: [Improved] New eBay Orders IDs
+eBay: [Improved] Generate external transaction id if it is empty
+eBay: [Fixed] Revise doesn't work if Lot Size selected from Attribute
+eBay: [Fixed] Images, Categories/Specifics, Payment, Shipping, Return are revised without reason
+eBay: [Fixed] Incorrect values are displayed in some fields in Shipping Policy
+eBay: [Fixed] Dispatch time in Shipping Policy gets reset after the upgrade
+Amazon: [Added] B2B feature for France, Spain, and Italy Marketplaces
+Amazon: [Fixed] OrdersUpdateAcknowledgement processing was not added after Credit Memo was created in Magento Order
+Walmart: [Fixed] Product link is incorrect on Canada marketplace
+Walmart: [Fixed] Error log: "Internal Server Error (s) [Items was not updated.]" in some cases on Stop action
+Walmart: [Fixed] Error message: "Class Ess\M2ePro\Model\Walmart\Connector\Product\List\Responser does not exist" on List action
+Walmart: [Fixed] Fatal Error: Call to undefined method Ess\M2ePro\Helper\Data::__() on List action
+
+* 1.5.0 (r3484) (10/03/2020)
+
+Common: [Added] Ability to add custom notes in Order
+Common: [Added] Migration from M2E Pro v6.5.8 Magento v.1 to M2E Pro v1.5.0 Magento v.2
+Common: [Added] Mapped filter for 3rd party listings
+Common: [Added] Track Magento Product Websites updates
+Common: [Fixed] Escape data in the License form
+Common: [Fixed] Inventory Synchronization worked after the upgrade if it was disabled beforehand
+Common: [Fixed] Send last tracking number to Channel instead of the first one
+Common: [Fixed] Cron runner is not switching in some cases
+Common: [Fixed] Do not make an unnecessary update to Magento orders
+Common: [Improved] Add support for Magento Stock Sources import
+Common: [Improved] PHP Compatibility — code standard fixes (now compatible with PHP 7.4)
+Common: [Improved] Enhancements to Synchronization
+Common: [Removed] Support for Magento 2.1.x and lower
+eBay: [Added] eBay Lot Size functionality
+eBay: [Added] eBay Guaranteed Delivery
+eBay: [Fixed] "Please enter a valid price for your item (e.g. the US $0.99)" on Revise when Child product was deleted in Magento
+eBay: [Improved] GTC listing duration review
+eBay: [Improved] Support for new eBay Order IDs
+eBay: [Removed] "Immediate" / "Checkout is Completed, Payment is Received" Magento Orders Creation options
+Amazon: [Added] Ability to revise a Parent Product
+Amazon: [Added] Ability to use Magento Order number as “Your Seller Order ID” in Amazon Order
+Amazon: [Fixed] Do not send gift data on List action if it is not specified
+Amazon: [Fixed] JS error occurs if Vocabulary was used
+Amazon: [Improved] Token update — automatic save
+Amazon: [Improved] Import Fulfillment Center ID for each Order Item
+Walmart: [Added] Add Details option to Revise Rules
+Walmart: [Improved] Add ability to Reset Child products
+Walmart: [Fixed] Order ID filter in Order logs does not work
+Walmart: [Fixed] Undefined index: item_id in Model/Walmart/Order/Action/Handler/Shipping.php
+
 * 1.4.3 (r3232) (20/12/2019)
 
 Common: [Fixed] JS error while adding a new child product in Manage Variations pop-up

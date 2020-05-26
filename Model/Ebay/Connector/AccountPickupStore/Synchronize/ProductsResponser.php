@@ -13,8 +13,6 @@ namespace Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize;
  */
 class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Responser
 {
-    protected $activeRecordFactory;
-
     /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore\State[] $pickupStoreStateItems */
     private $pickupStoreStateItems = [];
 
@@ -24,15 +22,14 @@ class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params = []
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        parent::__construct($ebayFactory, $response, $helperFactory, $modelFactory, $params);
+        parent::__construct($ebayFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
 
         $collection = $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')->getCollection();
         $collection->addFieldToFilter('id', array_keys($this->params['pickup_store_state_items']));
@@ -46,6 +43,7 @@ class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending
     {
         parent::failDetected($messageText);
 
+        /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
         $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
             $messageText,
@@ -189,6 +187,7 @@ class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending
                 throw new \Ess\M2ePro\Model\Exception\Logic('Unknown logs action type');
         }
 
+        /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
         $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
             $encodedDescription,
@@ -216,7 +215,7 @@ class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending
 
     // ---------------------------------------
 
-    private function getLogsAction($stateItemData)
+    protected function getLogsAction($stateItemData)
     {
         if ($stateItemData['is_added']) {
             return \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_ADD_PRODUCT;
@@ -229,7 +228,7 @@ class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending
         return \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_UPDATE_QTY;
     }
 
-    private function getLogsMessageType(\Ess\M2ePro\Model\Connector\Connection\Response\Message $message)
+    protected function getLogsMessageType(\Ess\M2ePro\Model\Connector\Connection\Response\Message $message)
     {
         if ($message->isError()) {
             return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
@@ -250,7 +249,7 @@ class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending
         return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
     }
 
-    private function getLogsPriority(\Ess\M2ePro\Model\Connector\Connection\Response\Message $message)
+    protected function getLogsPriority(\Ess\M2ePro\Model\Connector\Connection\Response\Message $message)
     {
         if ($message->isError()) {
             return \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH;
@@ -265,7 +264,7 @@ class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending
 
     //########################################
 
-    private function getLog()
+    protected function getLog()
     {
         if ($this->log !== null) {
             return $this->log;

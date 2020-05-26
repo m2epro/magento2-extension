@@ -537,67 +537,6 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     //########################################
 
-    /**
-     * @return array
-     */
-    public function getTrackingAttributes()
-    {
-        return $this->getUsedAttributes();
-    }
-
-    /**
-     * @return array
-     */
-    public function getUsedAttributes()
-    {
-        return array_unique(array_merge(
-            $this->getRegularPriceAttributes(),
-            $this->getMinPriceAttributes(),
-            $this->getMaxPriceAttributes(),
-            $this->getDisableAttributes()
-        ));
-    }
-
-    //########################################
-
-    /**
-     * @param bool $asArrays
-     * @param string|array $columns
-     * @param bool $onlyPhysicalUnits
-     * @return array
-     */
-    public function getAffectedListingsProducts($asArrays = true, $columns = '*')
-    {
-        $listingCollection = $this->amazonFactory->getObject('Listing')->getCollection();
-        $listingCollection->addFieldToFilter('account_id', $this->getAccountId());
-        $listingCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-        $listingCollection->getSelect()->columns('id');
-
-        $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
-        $listingProductCollection->addFieldToFilter('is_repricing', 1);
-        $listingProductCollection->addFieldToFilter('listing_id', ['in' => $listingCollection->getSelect()]);
-
-        if (is_array($columns) && !empty($columns)) {
-            $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $listingProductCollection->getSelect()->columns($columns);
-        }
-
-        return $asArrays ? (array)$listingProductCollection->getData() : (array)$listingProductCollection->getItems();
-    }
-
-    public function setProcessRequired($newData, $oldData)
-    {
-        $listingsProducts = $this->getAffectedListingsProducts(true, ['id']);
-        if (empty($listingsProducts)) {
-            return;
-        }
-
-        $this->getResource()->setProcessRequired($newData, $oldData, $listingsProducts);
-    }
-
-    //########################################
-
     public function isCacheEnabled()
     {
         return true;

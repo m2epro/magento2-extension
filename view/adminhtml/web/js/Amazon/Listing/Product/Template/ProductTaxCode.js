@@ -16,16 +16,6 @@ define([
 
         // ---------------------------------------
 
-        options: {},
-
-        setOptions: function(options)
-        {
-            this.options = Object.extend(this.options,options);
-            return this;
-        },
-
-        // ---------------------------------------
-
         openPopUp: function(productsIds)
         {
             var self = this;

@@ -76,7 +76,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
         if (isset($groups['module_mode']['fields']['module_mode_field']['value'])) {
             $this->helperFactory->getObject('Module')->getConfig()->setGroupValue(
-                null,
+                '/',
                 'is_disabled',
                 (int)$groups['module_mode']['fields']['module_mode_field']['value']
             );

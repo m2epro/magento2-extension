@@ -45,7 +45,7 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
             return '';
         }
 
-        if ($string{0} != '{') {
+        if ($string[0] != '{') {
             return $this->getHelper('Module\Translation')->__($string);
         }
 
@@ -68,12 +68,12 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
     protected function addPlaceholdersToMessage($string, $params)
     {
         foreach ($params as $key => $value) {
-            if (isset($value{0}) && $value{0} == '{') {
+            if (isset($value[0]) && $value[0] == '{') {
                 $tempValueArray = $this->getHelper('Data')->jsonDecode($value);
                 is_array($tempValueArray) && $value = $this->decodeDescription($value);
             }
 
-            if ($key{0} == '!') {
+            if ($key[0] == '!') {
                 $key = substr($key, 1);
             } else {
                 $value = $this->getHelper('Module\Translation')->__($value);
@@ -150,7 +150,6 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
     {
         switch ($class) {
             case 'Ess\M2ePro\Model\Listing\Log':
-            case 'Ess\M2ePro\Model\Listing\Other\Log':
             case 'Ess\M2ePro\Model\Ebay\Account\PickupStore\Log':
                 $prefix = 'ACTION_';
                 break;

@@ -13,9 +13,6 @@ namespace Ess\M2ePro\Helper\View;
  */
 class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    // M2ePro_TRANSLATIONS
-    // Sell On Walmart
-
     const NICK  = 'walmart';
 
     const WIZARD_INSTALLATION_NICK = 'installationWalmart';
@@ -84,26 +81,22 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function isResetFilterShouldBeShown($listingId, $isVariation = false)
+    public function isResetFilterShouldBeShown($key, $id)
     {
-        $sessionKey = 'is_reset_filter_should_be_shown_' . (int)$listingId . '_' . (int)$isVariation;
+        $sessionKey = "is_reset_filter_should_be_shown_{$key}_" . (int)$id;
+
         $sessionCache = $this->getHelper('Data_Cache_Runtime');
-
-        if ($sessionCache->getValue($sessionKey) === null) {
-
-            /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
-            $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
-            $collection->addFieldToFilter('is_online_price_invalid', 0)
-                ->addFieldToFilter('status', \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED)
-                ->addFieldToFilter('listing_id', $listingId);
-
-            if ($isVariation) {
-                $collection->addFieldToFilter('is_variation_product', 1);
-            }
-            $sessionCache->setValue($sessionKey, (bool)$collection->getSize());
+        if ($sessionCache->getValue($sessionKey) !== null) {
+            return $sessionCache->getValue($sessionKey);
         }
 
-        return $sessionCache->getValue($sessionKey);
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
+        $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
+        $collection->addFieldToFilter($key, $id)
+            ->addFieldToFilter('status', \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED)
+            ->addFieldToFilter('is_online_price_invalid', 0);
+
+        return $sessionCache->setValue($sessionKey, (bool)$collection->getSize());
     }
 
     //########################################

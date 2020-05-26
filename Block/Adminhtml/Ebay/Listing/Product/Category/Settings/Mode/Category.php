@@ -53,7 +53,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             'id'        => 'ebay_listing_category_continue_btn',
             'label'     => $this->__('Continue'),
             'class'     => 'action-primary forward',
-            'onclick'   => "EbayListingProductCategorySettingsModeCategoryGridObj.validate()"
+            'onclick'   => "EbayListingProductCategorySettingsModeCategoryGridObj.completeCategoriesDataStep()"
         ]);
         // ---------------------------------------
     }
@@ -73,6 +73,27 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         ]);
 
         return $viewHeaderBlock->toHtml() . parent::getGridHtml();
+    }
+
+    //########################################
+
+    protected function _toHtml()
+    {
+        $parentHtml = parent::_toHtml();
+        $popupsHtml = $this->getPopupsHtml();
+
+        return <<<HTML
+<div id="products_progress_bar"></div>
+<div id="products_container">{$parentHtml}</div>
+<div style="display: none">{$popupsHtml}</div>
+HTML;
+    }
+
+    //########################################
+
+    private function getPopupsHtml()
+    {
+        return $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Product_WarningPopup')->toHtml();
     }
 
     //########################################

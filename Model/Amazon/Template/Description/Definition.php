@@ -1698,69 +1698,6 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     //########################################
 
-    /**
-     * @return array
-     */
-    public function getTrackingAttributes()
-    {
-        return $this->getUsedAttributes();
-    }
-
-    /**
-     * @return array
-     */
-    public function getUsedAttributes()
-    {
-        return array_unique(array_merge(
-            $this->getUsedDetailsAttributes(),
-            $this->getUsedImagesAttributes()
-        ));
-    }
-
-    /**
-     * @return array
-     */
-    public function getUsedDetailsAttributes()
-    {
-        return array_unique(array_merge(
-
-            $this->getTitleAttributes(),
-            $this->getBrandAttributes(),
-            $this->getNumberOfItemsAttributes(),
-            $this->getItemPackageQuantityAttributes(),
-            $this->getDescriptionAttributes(),
-            $this->getBulletPointsAttributes(),
-            $this->getSearchTermsAttributes(),
-            $this->getTargetAudienceAttributes(),
-            $this->getManufacturerAttributes(),
-            $this->getManufacturerPartNumberAttributes(),
-            $this->getItemDimensionsVolumeAttributes(),
-            $this->getItemDimensionsVolumeUnitOfMeasureAttributes(),
-            $this->getItemDimensionsWeightAttributes(),
-            $this->getItemDimensionsWeightUnitOfMeasureAttributes(),
-            $this->getPackageDimensionsVolumeAttributes(),
-            $this->getPackageDimensionsVolumeUnitOfMeasureAttributes(),
-            $this->getPackageWeightAttributes(),
-            $this->getPackageWeightUnitOfMeasureAttributes(),
-            $this->getShippingWeightAttributes(),
-            $this->getShippingWeightUnitOfMeasureAttributes()
-        ));
-    }
-
-    /**
-     * @return array
-     */
-    public function getUsedImagesAttributes()
-    {
-        return array_unique(array_merge(
-            $this->getImageMainAttributes(),
-            $this->getImageVariationDifferenceAttributes(),
-            $this->getGalleryImagesAttributes()
-        ));
-    }
-
-    //########################################
-
     public function getCacheGroupTags()
     {
         return array_merge(parent::getCacheGroupTags(), ['template']);

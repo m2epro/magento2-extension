@@ -14,11 +14,6 @@ class UUIDRegenerate extends AbstractFeature
 {
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['ebay_listing_product'];
-    }
-
     public function execute()
     {
         $lpTable = $this->getFullTableName('listing_product');

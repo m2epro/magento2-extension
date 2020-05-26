@@ -199,59 +199,6 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     //########################################
 
-    public function getTrackingAttributes()
-    {
-        return $this->getUsedAttributes();
-    }
-
-    public function getUsedAttributes()
-    {
-        $attributes = [];
-
-        foreach ($this->getSpecifics(true) as $specific) {
-            $attributes = array_merge($attributes, $specific->getUsedAttributes());
-        }
-
-        return array_unique($attributes);
-    }
-
-    //########################################
-
-    /**
-     * @param bool $asArrays
-     * @param string|array $columns
-     * @param bool $onlyPhysicalUnits
-     * @return array
-     */
-    public function getAffectedListingsProducts($asArrays = true, $columns = '*', $onlyPhysicalUnits = false)
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
-        $listingProductCollection = $this->walmartFactory->getObject('Listing\Product')
-                                                         ->getCollection();
-        $listingProductCollection->addFieldToFilter('template_category_id', $this->getId());
-
-        if ($onlyPhysicalUnits) {
-            $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
-        }
-
-        if (is_array($columns) && !empty($columns)) {
-            $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $listingProductCollection->getSelect()->columns($columns);
-        }
-
-        return $asArrays ? (array)$listingProductCollection->getData() : (array)$listingProductCollection->getItems();
-    }
-
-    public function setSynchStatusNeed($newData, $oldData)
-    {
-        $listingsProducts = $this->getAffectedListingsProducts(true, ['id'], true);
-        if (empty($listingsProducts)) {
-            return;
-        }
-
-        $this->getResource()->setSynchStatusNeed($newData, $oldData, $listingsProducts);
-    }
-
     public function isCacheEnabled()
     {
         return true;

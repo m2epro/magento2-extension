@@ -80,6 +80,7 @@ abstract class AbstractModel implements \Magento\Framework\Event\ObserverInterfa
     {
         return null;
     }
+
     public function afterProcess()
     {
         return null;

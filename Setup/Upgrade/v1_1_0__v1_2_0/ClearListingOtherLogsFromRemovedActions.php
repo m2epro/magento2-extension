@@ -14,15 +14,6 @@ class ClearListingOtherLogsFromRemovedActions extends AbstractFeature
 {
     //########################################
 
-    /**
-     * Backup is not required due to possible huge size of the table
-     * @return array
-     */
-    public function getBackupTables()
-    {
-        return [];
-    }
-
     public function execute()
     {
         $this->getConnection()->delete($this->getFullTableName('listing_other_log'), [

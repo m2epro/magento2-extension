@@ -36,21 +36,8 @@ class Removing extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other
             );
 
             if ($listingOther->getProductId() !== null) {
-                $listingOther->unmapProduct(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
+                $listingOther->unmapProduct();
             }
-
-            /** @var \Ess\M2ePro\Model\Listing\Other\Log $tempLog */
-            $tempLog = $this->activeRecordFactory->getObject('Listing_Other_Log');
-            $tempLog->setComponentMode($listingOther->getComponentMode());
-            $tempLog->addProductMessage(
-                $listingOther->getId(),
-                \Ess\M2ePro\Helper\Data::INITIATOR_USER,
-                null,
-                \Ess\M2ePro\Model\Listing\Other\Log::ACTION_DELETE_ITEM,
-                'Item was successfully Deleted',
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
-            );
 
             $listingOther->delete();
         }

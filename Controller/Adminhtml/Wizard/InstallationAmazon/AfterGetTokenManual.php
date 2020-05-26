@@ -31,8 +31,6 @@ class AfterGetTokenManual extends AfterGetTokenAbstract
 
         foreach ($requiredFields as $requiredField) {
             if (!isset($params[$requiredField])) {
-                // M2ePro_TRANSLATIONS
-                // The Amazon token obtaining is currently unavailable.
                 $message = $this->__('The Amazon token obtaining is currently unavailable.');
                 throw new \Exception($message);
             }

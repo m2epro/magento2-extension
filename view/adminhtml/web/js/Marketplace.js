@@ -7,7 +7,8 @@ define([
 
         // ---------------------------------------
 
-        initialize: function (synchProgressObj, storedStatuses) {
+        initialize: function (synchProgressObj, storedStatuses)
+        {
             this.synchProgressObj = synchProgressObj;
 
             this.marketplacesForUpdate = new Array();
@@ -21,11 +22,13 @@ define([
 
         // ---------------------------------------
 
-        getStoredStatuses: function () {
+        getStoredStatuses: function ()
+        {
             return this.storedStatuses;
         },
 
-        getStoredStatusByMarketplaceId: function (marketplaceId) {
+        getStoredStatusByMarketplaceId: function (marketplaceId)
+        {
             if (marketplaceId == '') {
                 return;
             }
@@ -37,7 +40,8 @@ define([
             }
         },
 
-        getCurrentStatuses: function () {
+        getCurrentStatuses: function ()
+        {
             var allStatuses = [];
             $$('select.marketplace_status_select').each(function (element) {
                 var elementId = element.getAttribute('marketplace_id');
@@ -52,7 +56,8 @@ define([
 
         // ---------------------------------------
 
-        moveChildBlockContent: function (childBlockId, destinationBlockId) {
+        moveChildBlockContent: function (childBlockId, destinationBlockId)
+        {
             if (childBlockId == '' || destinationBlockId == '') {
                 return;
             }
@@ -63,7 +68,8 @@ define([
 
         // ---------------------------------------
 
-        saveAction: function () {
+        saveAction: function ()
+        {
             MessageObj.clear();
             CommonObj.scrollPageToTop();
 
@@ -78,13 +84,15 @@ define([
             MessageObj.addSuccessMessage(M2ePro.translator.translate('Settings have been saved.'));
         },
 
-        updateAction: function () {
+        updateAction: function ()
+        {
             MessageObj.clear();
             CommonObj.scrollPageToTop();
             this.runAllSynchronization();
         },
 
-        completeStepAction: function () {
+        completeStepAction: function ()
+        {
             var self = this;
 
             if (self.runAllSynchronization(self.getCurrentStatuses())) {
@@ -106,7 +114,8 @@ define([
 
         // ---------------------------------------
 
-        saveSettings: function () {
+        saveSettings: function ()
+        {
             new Ajax.Request(M2ePro.url.get('formSubmit', $('edit_form').serialize(true)), {
                 method: 'get',
                 asynchronous: true,
@@ -117,7 +126,8 @@ define([
 
         // ---------------------------------------
 
-        runSingleSynchronization: function (runNowButton) {
+        runSingleSynchronization: function (runNowButton)
+        {
             MessageObj.clear();
             CommonObj.scrollPageToTop();
 
@@ -135,7 +145,8 @@ define([
             return true;
         },
 
-        runEnabledSynchronization: function () {
+        runEnabledSynchronization: function ()
+        {
             var currentStatuses = this.getCurrentStatuses();
             var storedStatuses = this.getStoredStatuses();
             var changedStatuses = new Array();
@@ -169,7 +180,8 @@ define([
             return changedStatuses;
         },
 
-        runAllSynchronization: function (statuses) {
+        runAllSynchronization: function (statuses)
+        {
             var statusesForSynch = statuses || this.getStoredStatuses();
 
             this.marketplacesForUpdate = new Array();
@@ -207,7 +219,8 @@ define([
 
         // ---------------------------------------
 
-        runNextMarketplaceNow: function () {
+        runNextMarketplaceNow: function ()
+        {
             var self = this;
 
             if (self.marketplacesForUpdateCurrentIndex > 0) {
@@ -215,39 +228,6 @@ define([
                 $('synch_info_wait_' + self.marketplacesForUpdate[self.marketplacesForUpdateCurrentIndex - 1]).hide();
                 $('synch_info_process_' + self.marketplacesForUpdate[self.marketplacesForUpdateCurrentIndex - 1]).hide();
                 $('synch_info_complete_' + self.marketplacesForUpdate[self.marketplacesForUpdateCurrentIndex - 1]).show();
-
-                var tempEndFlag = 0;
-                if (self.marketplacesForUpdateCurrentIndex >= self.marketplacesForUpdate.length) {
-                    tempEndFlag = 1;
-                }
-
-                new Ajax.Request(M2ePro.url.get('general/synchGetLastResult'), {
-                    method: 'get',
-                    asynchronous: true,
-                    onSuccess: function (transport) {
-
-                        if (transport.responseText == self.synchProgressObj.resultTypeError) {
-                            self.synchErrors++;
-                        } else if (transport.responseText == self.synchProgressObj.resultTypeWarning) {
-                            self.synchWarnings++;
-                        } else {
-                            self.synchSuccess++;
-                        }
-
-                        if (tempEndFlag == 1) {
-                            if (self.synchErrors > 0) {
-                                self.synchProgressObj.printFinalMessage(self.synchProgressObj.resultTypeError);
-                            } else if (self.synchWarnings > 0) {
-                                self.synchProgressObj.printFinalMessage(self.synchProgressObj.resultTypeWarning);
-                            } else {
-                                self.synchProgressObj.printFinalMessage(self.synchProgressObj.resultTypeSuccess);
-                            }
-                            self.synchErrors = 0;
-                            self.synchWarnings = 0;
-                            self.synchSuccess = 0;
-                        }
-                    }
-                });
             }
 
             if (self.marketplacesForUpdateCurrentIndex >= self.marketplacesForUpdate.length) {
@@ -258,6 +238,9 @@ define([
 
                 self.synchProgressObj.end();
 
+                self.synchSuccess++;
+
+                self.synchProgressObj.printFinalMessage(self.synchProgressObj.resultTypeSuccess);
                 return;
             }
 
@@ -286,7 +269,8 @@ define([
 
         // ---------------------------------------
 
-        changeStatus: function (element) {
+        changeStatus: function (element)
+        {
             var marketplaceId = element.readAttribute('marketplace_id');
             var runSingleButton = $('run_single_button_' + marketplaceId);
 
@@ -303,7 +287,8 @@ define([
             }
         },
 
-        markChangedStatus: function (marketplaceId, status) {
+        markChangedStatus: function (marketplaceId, status)
+        {
             var storedStatus = this.getStoredStatusByMarketplaceId(marketplaceId);
             var changedStatus = $('changed_' + marketplaceId);
 
@@ -314,7 +299,8 @@ define([
             }
         },
 
-        changeStatusInfo: function (marketplaceId, status) {
+        changeStatusInfo: function (marketplaceId, status)
+        {
             if (status == 1) {
                 $('synch_info_wait_' + marketplaceId).show();
                 $('synch_info_process_' + marketplaceId).hide();

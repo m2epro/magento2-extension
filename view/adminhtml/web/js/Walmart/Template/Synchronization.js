@@ -56,6 +56,10 @@ define([
                     return true;
                 }
 
+                if (WalmartTemplateSynchronizationObj.isStopModeDisabled()) {
+                    return true;
+                }
+
                 if ($('stop_status_disabled').value == 1 && $('relist_status_enabled').value == 0) {
                     return false;
                 }
@@ -66,6 +70,10 @@ define([
             jQuery.validator.addMethod('M2ePro-validate-stop-relist-conditions-stock-availability', function(value, el) {
 
                 if (WalmartTemplateSynchronizationObj.isRelistModeDisabled()) {
+                    return true;
+                }
+
+                if (WalmartTemplateSynchronizationObj.isStopModeDisabled()) {
                     return true;
                 }
 
@@ -82,6 +90,10 @@ define([
                     return true;
                 }
 
+                if (WalmartTemplateSynchronizationObj.isStopModeDisabled()) {
+                    return true;
+                }
+
                 var stopMaxQty = 0,
                     relistMinQty = 0;
 
@@ -89,27 +101,27 @@ define([
 
                 switch (parseInt($('stop_qty_' + qtyType).value)) {
 
-                    case M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::STOP_QTY_NONE'):
+                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_NONE'):
                         return true;
                         break;
 
-                    case M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::STOP_QTY_LESS'):
+                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_LESS'):
                         stopMaxQty = parseInt($('stop_qty_' + qtyType + '_value').value);
                         break;
 
-                    case M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::STOP_QTY_BETWEEN'):
+                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_BETWEEN'):
                         stopMaxQty = parseInt($('stop_qty_' + qtyType + '_value_max').value);
                         break;
                 }
 
                 switch (parseInt($('relist_qty_' + qtyType).value)) {
 
-                    case M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::RELIST_QTY_NONE'):
+                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_NONE'):
                         return false;
                         break;
 
-                    case M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::RELIST_QTY_MORE'):
-                    case M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::RELIST_QTY_BETWEEN'):
+                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_MORE'):
+                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_BETWEEN'):
                         relistMinQty = parseInt($('relist_qty_' + qtyType + '_value').value);
                         break;
                 }
@@ -166,6 +178,11 @@ define([
             return $('relist_mode').value == 0;
         },
 
+        isStopModeDisabled: function()
+        {
+            return $('stop_mode').value == 0;
+        },
+
         // ---------------------------------------
 
         duplicateClick: function($super, $headId)
@@ -191,13 +208,13 @@ define([
             valueContainer.hide();
             valueMaxContainer.hide();
 
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::STOP_QTY_LESS') ||
-                this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::STOP_QTY_MORE')) {
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_LESS') ||
+                this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_MORE')) {
                 item.innerHTML = M2ePro.translator.translate('Quantity');
                 valueContainer.show();
             }
 
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::STOP_QTY_BETWEEN')) {
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_BETWEEN')) {
                 item.innerHTML = M2ePro.translator.translate('Min Quantity');
                 valueContainer.show();
                 valueMaxContainer.show();
@@ -222,12 +239,15 @@ define([
 
         listMode_change: function()
         {
-            if ($('list_mode').value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::LIST_MODE_NONE')) {
-            $('magento_block_walmart_template_synchronization_list_rules').hide();
-            } else if ($('list_mode').value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::LIST_MODE_YES')) {
-                $('magento_block_walmart_template_synchronization_list_rules').show();
-            } else {
-                $('magento_block_walmart_template_synchronization_list_rules').hide();
+            var rulesContainer         = $('magento_block_walmart_template_synchronization_list_rules'),
+                advancedRulesContainer = $('magento_block_walmart_template_synchronization_list_advanced_filters');
+
+            rulesContainer.hide();
+            advancedRulesContainer.hide();
+
+            if ($('list_mode').value == 1) {
+                rulesContainer.show();
+                advancedRulesContainer.show();
             }
         },
 
@@ -242,13 +262,13 @@ define([
             valueContainer.hide();
             valueMaxContainer.hide();
 
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::LIST_QTY_LESS') ||
-                this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::LIST_QTY_MORE')) {
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_LESS') ||
+                this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_MORE')) {
                 item.innerHTML = M2ePro.translator.translate('Quantity');
                 valueContainer.show();
             }
 
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::LIST_QTY_BETWEEN')) {
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_BETWEEN')) {
                 item.innerHTML = M2ePro.translator.translate('Min Quantity');
                 valueContainer.show();
                 valueMaxContainer.show();
@@ -273,15 +293,18 @@ define([
 
         relistMode_change: function()
         {
-            if ($('relist_mode').value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::RELIST_MODE_NONE')) {
-                $('relist_filter_user_lock_tr_container').hide();
-                $('magento_block_walmart_template_synchronization_relist_rules').hide();
-            } else if ($('relist_mode').value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::RELIST_MODE_YES')) {
-                $('relist_filter_user_lock_tr_container').show();
-                $('magento_block_walmart_template_synchronization_relist_rules').show();
-            } else {
-                $('relist_filter_user_lock_tr_container').hide();
-                $('magento_block_walmart_template_synchronization_relist_rules').hide();
+            var rulesContainer         = $('magento_block_walmart_template_synchronization_relist_rules'),
+                advancedRulesContainer = $('magento_block_walmart_template_synchronization_relist_advanced_filters'),
+                userLockContainer      = $('relist_filter_user_lock_tr_container');
+
+            userLockContainer.hide();
+            rulesContainer.hide();
+            advancedRulesContainer.hide();
+
+            if ($('relist_mode').value == 1) {
+                userLockContainer.show();
+                rulesContainer.show();
+                advancedRulesContainer.show();
             }
         },
 
@@ -296,13 +319,13 @@ define([
             valueContainer.hide();
             valueMaxContainer.hide();
 
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::RELIST_QTY_LESS') ||
-                this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::RELIST_QTY_MORE')) {
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_LESS') ||
+                this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_MORE')) {
                 item.innerHTML = M2ePro.translator.translate('Quantity');
                 valueContainer.show();
             }
 
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::RELIST_QTY_BETWEEN')) {
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_BETWEEN')) {
                 item.innerHTML = M2ePro.translator.translate('Min Quantity');
                 valueContainer.show();
                 valueMaxContainer.show();
@@ -327,7 +350,7 @@ define([
 
         reviseQty_change: function()
         {
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::REVISE_UPDATE_QTY_YES')) {
+            if (this.value == 1) {
                 $('revise_update_qty_max_applied_value_mode_tr').show();
                 $('revise_update_qty_max_applied_value_line_tr').show();
                 $('revise_update_qty_max_applied_value_mode').simulate('change');
@@ -335,7 +358,7 @@ define([
                 $('revise_update_qty_max_applied_value_mode_tr').hide();
                 $('revise_update_qty_max_applied_value_line_tr').hide();
                 $('revise_update_qty_max_applied_value_tr').hide();
-                $('revise_update_qty_max_applied_value_mode').value = M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::REVISE_MAX_AFFECTED_QTY_MODE_OFF');
+                $('revise_update_qty_max_applied_value_mode').value = 0;
             }
         },
 
@@ -345,7 +368,7 @@ define([
 
             $('revise_update_qty_max_applied_value_tr').hide();
 
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::REVISE_MAX_AFFECTED_QTY_MODE_ON')) {
+            if (this.value == 1) {
                 $('revise_update_qty_max_applied_value_tr').show();
             } else if (!event.cancelable) {
                 self.openReviseMaxAppliedQtyDisableConfirmationPopUp();
@@ -396,14 +419,14 @@ define([
 
         revisePrice_change: function()
         {
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::REVISE_UPDATE_PRICE_YES')) {
+            if (this.value == 1) {
                 $('revise_update_price_max_allowed_deviation_mode_tr').show();
                 $('revise_update_price_max_allowed_deviation_tr').show();
                 $('revise_update_price_max_allowed_deviation_mode').simulate('change');
             } else {
                 $('revise_update_price_max_allowed_deviation_mode_tr').hide();
                 $('revise_update_price_max_allowed_deviation_tr').hide();
-                $('revise_update_price_max_allowed_deviation_mode').value = M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::REVISE_MAX_ALLOWED_PRICE_DEVIATION_MODE_OFF');
+                $('revise_update_price_max_allowed_deviation_mode').value = 0;
             }
         },
 
@@ -413,7 +436,7 @@ define([
 
             $('revise_update_price_max_allowed_deviation_tr').hide();
 
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::REVISE_MAX_ALLOWED_PRICE_DEVIATION_MODE_ON')) {
+            if (this.value == 1) {
                 $('revise_update_price_max_allowed_deviation_tr').show();
             } else if (!event.cancelable) {
                 self.openReviseMaxAllowedDeviationPriceDisableConfirmationPopUp();
@@ -464,10 +487,15 @@ define([
 
         stopMode_change: function ()
         {
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Synchronization::STOP_MODE_YES')) {
-                $('magento_block_walmart_template_synchronization_stop_rules').show();
-            } else {
-                $('magento_block_walmart_template_synchronization_stop_rules').hide();
+            var rulesContainer         = $('magento_block_walmart_template_synchronization_stop_rules'),
+                advancedRulesContainer = $('magento_block_walmart_template_synchronization_stop_advanced_filters');
+
+            rulesContainer.hide();
+            advancedRulesContainer.hide();
+
+            if ($('stop_mode').value == 1) {
+                rulesContainer.show();
+                advancedRulesContainer.show();
             }
         }
 

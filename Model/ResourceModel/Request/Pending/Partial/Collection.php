@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Request\Pending\Partial;
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
-    // ########################################
+    //########################################
 
     public function _construct()
     {
@@ -24,7 +24,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         );
     }
 
-    // ########################################
+    //########################################
 
     public function setOnlyExpiredItemsFilter()
     {
@@ -38,5 +38,5 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         return $this;
     }
 
-    // ########################################
+    //########################################
 }

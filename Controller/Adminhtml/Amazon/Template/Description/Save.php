@@ -61,10 +61,11 @@ class Save extends Description
 
         $oldData = [];
         if ($descriptionTemplate->getId()) {
-            $oldData = array_merge(
-                $descriptionTemplate->getDataSnapshot(),
-                $descriptionTemplate->getChildObject()->getDataSnapshot()
-            );
+            /** @var \Ess\M2ePro\Model\Amazon\Template\Description\SnapshotBuilder $snapshotBuilder */
+            $snapshotBuilder = $this->modelFactory->getObject('Amazon_Template_Description_SnapshotBuilder');
+            $snapshotBuilder->setModel($descriptionTemplate);
+
+            $oldData = $snapshotBuilder->getSnapshot();
         }
 
         $descriptionTemplate->addData($dataForAdd)->save();
@@ -257,16 +258,33 @@ class Save extends Description
 
         // Is Need Synchronize
         // ---------------------------------------
-        $newData = array_merge(
-            $descriptionTemplate->getDataSnapshot(),
-            $amazonDescriptionTemplate->getDataSnapshot()
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Description\SnapshotBuilder $snapshotBuilder */
+        $snapshotBuilder = $this->modelFactory->getObject('Amazon_Template_Description_SnapshotBuilder');
+        $snapshotBuilder->setModel($amazonDescriptionTemplate->getParentObject());
+        $newData = $snapshotBuilder->getSnapshot();
+
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Description\Diff $diff */
+        $diff = $this->modelFactory->getObject('Amazon_Template_Description_Diff');
+        $diff->setNewSnapshot($newData);
+        $diff->setOldSnapshot($oldData);
+
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Description\AffectedListingsProducts $affectedListingsProducts */
+        $affectedListingsProducts = $this->modelFactory->getObject(
+            'Amazon_Template_Description_AffectedListingsProducts'
         );
-        $amazonDescriptionTemplate->setSynchStatusNeed($newData, $oldData);
+        $affectedListingsProducts->setModel($amazonDescriptionTemplate);
+
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Description\ChangeProcessor $changeProcessor */
+        $changeProcessor = $this->modelFactory->getObject('Amazon_Template_Description_ChangeProcessor');
+        $changeProcessor->process(
+            $diff,
+            $affectedListingsProducts->getObjectsData(['id', 'status'])
+        );
         // ---------------------------------------
 
         // Run Processor for Variation Relation Parents
         // ---------------------------------------
-        if ($amazonDescriptionTemplate->getResource()->isDifferent($newData, $oldData)) {
+        if ($diff->isDetailsDifferent() || $diff->isImagesDifferent()) {
             $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection()
                 ->addFieldToFilter('template_description_id', $id)
                 ->addFieldToFilter(

@@ -20,11 +20,14 @@ class Config extends AbstractConfig
     public function getFeaturesList()
     {
         return [
+            'dev' => [
+                'ChangeDevelopVersion',
+                'ReinstallHookWithFix'
+            ],
             'y19_m01' => [
                 'NewUpgradesEngine',
                 'AmazonOrdersUpdateDetails',
-                'NewCronRunner',
-                'ChangeDevelopVersion',
+                'NewCronRunner'
             ],
             'y19_m04' => [
                 'Walmart',
@@ -40,9 +43,57 @@ class Config extends AbstractConfig
             'y19_m07' => [
                 'WalmartSynchAdvancedConditions'
             ],
+            'y19_m10' => [
+                'ConfigsNoticeRemoved',
+                'RemoveAmazonShippingOverride',
+                'NewSynchronization',
+                'EnvironmentToConfigs',
+                'CronTaskRemovedFromConfig',
+                'EbayInStorePickup',
+                'DropAutoMove',
+                'Configs',
+                'ProductVocabulary'
+            ],
             'y19_m11' => [
+                'AddEpidsAu',
+                'RemoveListingOtherLog',
                 'ProductsStatisticsImprovements',
-                'WalmartProductIdOverride'
+                'WalmartProductIdOverride',
+            ],
+            'y19_m12' => [
+                'RemoveReviseTotal',
+                'RemoveEbayTranslation',
+                'SynchDataFromM1',
+                'RenameTableIndexerVariationParent',
+                'WalmartReviseDescription',
+                'EbayReturnPolicyM1'
+            ],
+            'y20_m01' => [
+                'WebsitesActions',
+                'FulfillmentCenter',
+                'WalmartRemoveChannelUrl',
+                'RemoveOutOfStockControl',
+                'EbayLotSize',
+                'EbayOrderUpdates'
+            ],
+            'y20_m02' => [
+                'RepricingCount',
+                'OrderNote',
+                'ReviewPriorityCoefficients',
+                'Configs'
+            ],
+            'y20_m03' => [
+                'CronStrategy',
+                'RemoveModePrefixFromChannelAccounts',
+                'AmazonSendInvoice',
+                'AmazonNL',
+                'RemoveVersionsHistory'
+            ],
+            'y20_m04' => [
+                'BrowsenodeIdFix'
+            ],
+            'y20_m05' => [
+                'DisableUploadInvoicesAvailableNl'
             ]
         ];
     }

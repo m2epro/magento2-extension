@@ -74,7 +74,7 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
         $storeId = (int)$data['store_id'];
 
         $attributeSets = $data['attribute_sets'];
-        $attributes = $this->getHelper('Magento\Attribute')->getGeneralFromAttributeSets($attributeSets);
+        $attributes = $this->getHelper('Magento\Attribute')->getAll();
 
         $displayUseDefaultOption = $data['display_use_default_option'];
 

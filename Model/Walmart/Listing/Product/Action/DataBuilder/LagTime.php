@@ -18,7 +18,7 @@ class LagTime extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
     /**
      * @return array
      */
-    public function getRequestData()
+    public function getBuilderData()
     {
         if (!isset($this->cachedData['lag_time'])) {
             $lagTime = $this->getWalmartListingProduct()->getSellingFormatTemplateSource()->getLagTime();

@@ -67,9 +67,6 @@ abstract class Base extends Action
     /** @var \Magento\Framework\View\Result\Page $resultPage  */
     protected $resultPage = null;
 
-    /** @var \Ess\M2ePro\Model\Setup\PublicVersionsChecker $publicVersionsChecker */
-    private $publicVersionsChecker = null;
-
     private $generalBlockWasAppended = false;
 
     //########################################
@@ -86,7 +83,6 @@ abstract class Base extends Action
         $this->cssRenderer = $context->getCssRenderer();
         $this->resourceConnection = $context->getResourceConnection();
         $this->magentoConfig = $context->getMagentoConfig();
-        $this->publicVersionsChecker = $context->getPublicVersionsChecker();
 
         parent::__construct($context);
     }
@@ -168,8 +164,6 @@ abstract class Base extends Action
         if (($preDispatchResult = $this->preDispatch($request)) !== true) {
             return $preDispatchResult;
         }
-
-        $this->publicVersionsChecker->doCheck();
 
         $this->getHelper('Module\Exception')->setFatalErrorHandler();
 
@@ -363,6 +357,11 @@ abstract class Base extends Action
         $this->appendGeneralBlock();
 
         return $this->_addContent($block);
+    }
+
+    protected function setRawContent($content)
+    {
+        return $this->getRawResult()->setContents($content);
     }
 
     protected function setAjaxContent($blockData, $appendGeneralBlock = true)

@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Account\Delete;
 /**
  * Class \Ess\M2ePro\Model\Amazon\Connector\Account\Delete\ProcessingRunner
  */
-class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
+class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Single\Runner
 {
     //########################################
 
@@ -51,6 +51,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
             $account->deleteProcessingLocks('server_synchronize', $this->getProcessingObject()->getId());
             $account->deleteProcessingLocks('deleting_from_server', $this->getProcessingObject()->getId());
         } catch (\Exception $exception) {
+            $this->helperFactory->getObject('Module\Exception')->process($exception);
         }
     }
 

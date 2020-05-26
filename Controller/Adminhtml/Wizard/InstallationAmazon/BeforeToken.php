@@ -39,8 +39,6 @@ class BeforeToken extends InstallationAmazon
             $response = $connectorObj->getResponseData();
         } catch (\Exception $exception) {
             $this->getHelper('Module\Exception')->process($exception);
-            // M2ePro_TRANSLATIONS
-            // The Amazon token obtaining is currently unavailable.<br/>Reason: %error_message%
             $error = 'The Amazon token obtaining is currently unavailable.<br/>Reason: %error_message%';
             $error = $this->__($error, $exception->getMessage());
 

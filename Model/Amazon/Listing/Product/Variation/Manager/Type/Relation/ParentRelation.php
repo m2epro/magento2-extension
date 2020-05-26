@@ -869,14 +869,26 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
             'is_variation_parent'     => 0,
             'variation_parent_id'     => $this->getListingProduct()->getId(),
             'template_description_id' => $this->getAmazonListingProduct()->getTemplateDescriptionId(),
-            'template_shipping_template_id' => $this->getAmazonListingProduct()->getTemplateShippingTemplateId(),
-            'template_shipping_override_id' => $this->getAmazonListingProduct()->getTemplateShippingOverrideId(),
+            'template_shipping_id'    => $this->getAmazonListingProduct()->getTemplateShippingId(),
             'template_product_tax_code_id'  => $this->getAmazonListingProduct()->getTemplateProductTaxCodeId(),
         ];
 
         /** @var \Ess\M2ePro\Model\Listing\Product $childListingProduct */
         $childListingProduct = $this->amazonFactory->getObject('Listing\Product')->setData($data);
         $childListingProduct->save();
+
+        /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
+        $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
+        $instruction->setData(
+            [
+                'listing_product_id' => $childListingProduct->getId(),
+                'component'          => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                'type'               => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_ADDED,
+                'initiator'          => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_ADDING_PRODUCT,
+                'priority'           => 70,
+            ]
+        );
+        $instruction->save();
 
         if ($this->isCacheEnabled()) {
             $this->childListingsProducts[$childListingProduct->getId()] = $childListingProduct;

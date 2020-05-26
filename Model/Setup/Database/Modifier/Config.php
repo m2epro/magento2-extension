@@ -90,7 +90,7 @@ class Config extends AbstractModifier
      * @param string $group
      * @param string $key
      * @param string|null $value
-     * @param string|null $notice
+     * @param NULL $notice is not supported. left for backward compatibility
      * @return $this|int
      */
     public function insert($group, $key, $value = null, $notice = null)
@@ -105,7 +105,6 @@ class Config extends AbstractModifier
         ];
 
         $value !== null && $preparedData['value'] = $value;
-        $notice !== null && $preparedData['notice'] = $notice;
 
         $preparedData['update_date'] = $this->getCurrentDateTime();
         $preparedData['create_date'] = $this->getCurrentDateTime();
@@ -225,11 +224,11 @@ class Config extends AbstractModifier
 
     private function prepareGroup($group)
     {
-        if ($group === null) {
+        if ($group === null || $group === '/') {
             return $group;
         }
 
-        return '/' . trim($group, '/ ') . '/';
+        return '/' . trim($group, '/') . '/';
     }
 
     private function prepareKey($key)
@@ -238,7 +237,7 @@ class Config extends AbstractModifier
             return $key;
         }
 
-        return trim($key, '/ ');
+        return strtolower($key);
     }
 
     //########################################

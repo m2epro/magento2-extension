@@ -8,79 +8,14 @@
 
 namespace Ess\M2ePro\Model\Walmart\Template;
 
+use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
+
 /**
  * @method \Ess\M2ePro\Model\Template\Synchronization getParentObject()
  * @method \Ess\M2ePro\Model\ResourceModel\Walmart\Template\Synchronization getResource()
  */
 class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
-    const LIST_MODE_NONE = 0;
-    const LIST_MODE_YES = 1;
-
-    const LIST_STATUS_ENABLED_NONE = 0;
-    const LIST_STATUS_ENABLED_YES = 1;
-
-    const LIST_IS_IN_STOCK_NONE = 0;
-    const LIST_IS_IN_STOCK_YES = 1;
-
-    const LIST_QTY_NONE = 0;
-    const LIST_QTY_LESS = 1;
-    const LIST_QTY_BETWEEN = 2;
-    const LIST_QTY_MORE = 3;
-
-    const REVISE_UPDATE_QTY_NONE = 0;
-    const REVISE_UPDATE_QTY_YES = 1;
-
-    const REVISE_MAX_AFFECTED_QTY_MODE_OFF = 0;
-    const REVISE_MAX_AFFECTED_QTY_MODE_ON = 1;
-
-    const REVISE_UPDATE_QTY_MAX_APPLIED_VALUE_DEFAULT = 5;
-
-    const REVISE_UPDATE_PRICE_NONE = 0;
-    const REVISE_UPDATE_PRICE_YES = 1;
-
-    const REVISE_MAX_ALLOWED_PRICE_DEVIATION_MODE_OFF = 0;
-    const REVISE_MAX_ALLOWED_PRICE_DEVIATION_MODE_ON = 1;
-
-    const REVISE_UPDATE_PRICE_MAX_ALLOWED_DEVIATION_DEFAULT = 3;
-
-    const REVISE_UPDATE_PROMOTIONS_NONE = 0;
-    const REVISE_UPDATE_PROMOTIONS_YES = 1;
-
-    const RELIST_FILTER_USER_LOCK_NONE = 0;
-    const RELIST_FILTER_USER_LOCK_YES = 1;
-
-    const RELIST_MODE_NONE = 0;
-    const RELIST_MODE_YES = 1;
-
-    const RELIST_STATUS_ENABLED_NONE = 0;
-    const RELIST_STATUS_ENABLED_YES = 1;
-
-    const RELIST_IS_IN_STOCK_NONE = 0;
-    const RELIST_IS_IN_STOCK_YES = 1;
-
-    const RELIST_QTY_NONE = 0;
-    const RELIST_QTY_LESS = 1;
-    const RELIST_QTY_BETWEEN = 2;
-    const RELIST_QTY_MORE = 3;
-
-    const STOP_MODE_NONE = 0;
-    const STOP_MODE_YES = 1;
-
-    const STOP_STATUS_DISABLED_NONE = 0;
-    const STOP_STATUS_DISABLED_YES = 1;
-
-    const STOP_OUT_OFF_STOCK_NONE = 0;
-    const STOP_OUT_OFF_STOCK_YES = 1;
-
-    const STOP_QTY_NONE = 0;
-    const STOP_QTY_LESS = 1;
-    const STOP_QTY_BETWEEN = 2;
-    const STOP_QTY_MORE = 3;
-
-    const ADVANCED_RULES_MODE_NONE = 0;
-    const ADVANCED_RULES_MODE_YES  = 1;
-
     const LIST_ADVANCED_RULES_PREFIX   = 'walmart_template_synchronization_list_advanced_rules';
     const RELIST_ADVANCED_RULES_PREFIX = 'walmart_template_synchronization_relist_advanced_rules';
     const STOP_ADVANCED_RULES_PREFIX   = 'walmart_template_synchronization_stop_advanced_rules';
@@ -114,24 +49,11 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
     //########################################
 
     /**
-     * @param bool $asObjects
-     * @param array $filters
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function getListings($asObjects = false, array $filters = [])
-    {
-        return $this->getRelatedComponentItems('Listing', 'template_synchronization_id', $asObjects, $filters);
-    }
-
-    //########################################
-
-    /**
      * @return bool
      */
     public function isListMode()
     {
-        return $this->getData('list_mode') != self::LIST_MODE_NONE;
+        return $this->getData('list_mode') != 0;
     }
 
     /**
@@ -139,7 +61,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isListStatusEnabled()
     {
-        return $this->getData('list_status_enabled') != self::LIST_STATUS_ENABLED_NONE;
+        return $this->getData('list_status_enabled') != 0;
     }
 
     /**
@@ -147,7 +69,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isListIsInStock()
     {
-        return $this->getData('list_is_in_stock') != self::LIST_IS_IN_STOCK_NONE;
+        return $this->getData('list_is_in_stock') != 0;
     }
 
     /**
@@ -155,7 +77,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isListWhenQtyMagentoHasValue()
     {
-        return $this->getData('list_qty_magento') != self::LIST_QTY_NONE;
+        return $this->getData('list_qty_magento') != TemplateSynchronization::QTY_MODE_NONE;
     }
 
     /**
@@ -163,7 +85,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isListWhenQtyCalculatedHasValue()
     {
-        return $this->getData('list_qty_calculated') != self::LIST_QTY_NONE;
+        return $this->getData('list_qty_calculated') != TemplateSynchronization::QTY_MODE_NONE;
     }
 
     /**
@@ -171,8 +93,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isListAdvancedRulesEnabled()
     {
-        return $this->getData('list_advanced_rules_mode') != self::ADVANCED_RULES_MODE_NONE &&
-            !empty($this->getListAdvancedRulesFilters());
+        return $this->getData('list_advanced_rules_mode') != 0 && !empty($this->getListAdvancedRulesFilters());
     }
 
     // ---------------------------------------
@@ -190,7 +111,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isReviseUpdateQtyMaxAppliedValueModeOn()
     {
-        return $this->getReviseUpdateQtyMaxAppliedValueMode() == self::REVISE_MAX_AFFECTED_QTY_MODE_ON;
+        return $this->getReviseUpdateQtyMaxAppliedValueMode() == 1;
     }
 
     /**
@@ -198,7 +119,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isReviseUpdateQtyMaxAppliedValueModeOff()
     {
-        return $this->getReviseUpdateQtyMaxAppliedValueMode() == self::REVISE_MAX_AFFECTED_QTY_MODE_OFF;
+        return $this->getReviseUpdateQtyMaxAppliedValueMode() == 0;
     }
 
     // ---------------------------------------
@@ -226,7 +147,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isReviseUpdatePriceMaxAllowedDeviationModeOn()
     {
-        return $this->getReviseUpdatePriceMaxAllowedDeviationMode() == self::REVISE_MAX_ALLOWED_PRICE_DEVIATION_MODE_ON;
+        return $this->getReviseUpdatePriceMaxAllowedDeviationMode() == 1;
     }
 
     /**
@@ -234,8 +155,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isReviseUpdatePriceMaxAllowedDeviationModeOff()
     {
-        return $this->getReviseUpdatePriceMaxAllowedDeviationMode()
-            == self::REVISE_MAX_ALLOWED_PRICE_DEVIATION_MODE_OFF;
+        return $this->getReviseUpdatePriceMaxAllowedDeviationMode() == 0;
     }
 
     // ---------------------------------------
@@ -276,7 +196,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isReviseUpdateQty()
     {
-        return $this->getData('revise_update_qty') != self::REVISE_UPDATE_QTY_NONE;
+        return $this->getData('revise_update_qty') != 0;
     }
 
     /**
@@ -284,7 +204,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isReviseUpdatePrice()
     {
-        return $this->getData('revise_update_price') != self::REVISE_UPDATE_PRICE_NONE;
+        return $this->getData('revise_update_price') != 0;
     }
 
     /**
@@ -292,7 +212,15 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isReviseUpdatePromotions()
     {
-        return $this->getData('revise_update_promotions') != self::REVISE_UPDATE_PROMOTIONS_NONE;
+        return $this->getData('revise_update_promotions') != 0;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReviseUpdateDetails()
+    {
+        return $this->getData('revise_update_details') != 0;
     }
 
     // ---------------------------------------
@@ -302,7 +230,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isRelistMode()
     {
-        return $this->getData('relist_mode') != self::RELIST_MODE_NONE;
+        return $this->getData('relist_mode') != 0;
     }
 
     /**
@@ -310,7 +238,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isRelistFilterUserLock()
     {
-        return $this->getData('relist_filter_user_lock') != self::RELIST_FILTER_USER_LOCK_NONE;
+        return $this->getData('relist_filter_user_lock') != 0;
     }
 
     /**
@@ -318,7 +246,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isRelistStatusEnabled()
     {
-        return $this->getData('relist_status_enabled') != self::RELIST_STATUS_ENABLED_NONE;
+        return $this->getData('relist_status_enabled') != 0;
     }
 
     /**
@@ -326,7 +254,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isRelistIsInStock()
     {
-        return $this->getData('relist_is_in_stock') != self::RELIST_IS_IN_STOCK_NONE;
+        return $this->getData('relist_is_in_stock') != 0;
     }
 
     /**
@@ -334,7 +262,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isRelistWhenQtyMagentoHasValue()
     {
-        return $this->getData('relist_qty_magento') != self::RELIST_QTY_NONE;
+        return $this->getData('relist_qty_magento') != TemplateSynchronization::QTY_MODE_NONE;
     }
 
     /**
@@ -342,7 +270,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isRelistWhenQtyCalculatedHasValue()
     {
-        return $this->getData('relist_qty_calculated') != self::RELIST_QTY_NONE;
+        return $this->getData('relist_qty_calculated') != TemplateSynchronization::QTY_MODE_NONE;
     }
 
     /**
@@ -350,8 +278,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isRelistAdvancedRulesEnabled()
     {
-        return $this->getData('relist_advanced_rules_mode') != self::ADVANCED_RULES_MODE_NONE &&
-            !empty($this->getRelistAdvancedRulesFilters());
+        return $this->getData('relist_advanced_rules_mode') != 0 && !empty($this->getRelistAdvancedRulesFilters());
     }
 
     // ---------------------------------------
@@ -361,7 +288,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isStopMode()
     {
-        return $this->getData('stop_mode') != self::STOP_MODE_NONE;
+        return $this->getData('stop_mode') != 0;
     }
 
     /**
@@ -369,7 +296,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isStopStatusDisabled()
     {
-        return $this->getData('stop_status_disabled') != self::STOP_STATUS_DISABLED_NONE;
+        return $this->getData('stop_status_disabled') != 0;
     }
 
     /**
@@ -377,7 +304,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isStopOutOfStock()
     {
-        return $this->getData('stop_out_off_stock') != self::STOP_OUT_OFF_STOCK_NONE;
+        return $this->getData('stop_out_off_stock') != 0;
     }
 
     /**
@@ -385,7 +312,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isStopWhenQtyMagentoHasValue()
     {
-        return $this->getData('stop_qty_magento') != self::STOP_QTY_NONE;
+        return $this->getData('stop_qty_magento') != TemplateSynchronization::QTY_MODE_NONE;
     }
 
     /**
@@ -393,7 +320,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isStopWhenQtyCalculatedHasValue()
     {
-        return $this->getData('stop_qty_calculated') != self::STOP_QTY_NONE;
+        return $this->getData('stop_qty_calculated') != TemplateSynchronization::QTY_MODE_NONE;
     }
 
     /**
@@ -401,8 +328,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
      */
     public function isStopAdvancedRulesEnabled()
     {
-        return $this->getData('stop_advanced_rules_mode') != self::ADVANCED_RULES_MODE_NONE &&
-            !empty($this->getStopAdvancedRulesFilters());
+        return $this->getData('stop_advanced_rules_mode') != 0 && !empty($this->getStopAdvancedRulesFilters());
     }
 
     //########################################

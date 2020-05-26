@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account;
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
 {
-    protected $WalmartFactory;
+    protected $walmartFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $WalmartFactory,
@@ -21,7 +21,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->WalmartFactory = $WalmartFactory;
+        $this->walmartFactory = $WalmartFactory;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -29,14 +29,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
 
     protected function _prepareCollection()
     {
-        $collection = $this->WalmartFactory->getObject('Account')->getCollection();
+        $collection = $this->walmartFactory->getObject('Account')->getCollection();
 
         $collection->getSelect()->joinLeft(
             [
-            'm' => $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable(),
+                'm' => $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable(),
             ],
             '(`m`.`id` = `second_table`.`marketplace_id`)',
-            ['marketplace_title'=>'title']
+            ['marketplace_title' => 'title']
         );
 
         $this->setCollection($collection);
@@ -73,25 +73,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
+        /** @var \Ess\M2ePro\Model\Account $row */
         $marketplaceLabel = $this->__('Marketplace');
         $marketplaceTitle = $row->getData('marketplace_title');
 
         $consumerLabel = $this->__('Consumer ID');
         $consumerId = $row->getChildObject()->getData('consumer_id');
 
-        $value = <<<HTML
-            <div>
-                {$value}<br/>
-                <span style="font-weight: bold">{$consumerLabel}</span>:
-                <span style="color: #505050">{$consumerId}</span>
-                <br/>
-                <span style="font-weight: bold">{$marketplaceLabel}</span>:
-                <span style="color: #505050">{$marketplaceTitle}</span>
-                <br/>
-            </div>
+        return <<<HTML
+<div>
+    {$value}<br/>
+    <span style="font-weight: bold">{$consumerLabel}</span>:
+    <span style="color: #505050">{$consumerId}</span>
+    <br/>
+    <span style="font-weight: bold">{$marketplaceLabel}</span>:
+    <span style="color: #505050">{$marketplaceTitle}</span>
+    <br/>
+</div>
 HTML;
-
-        return $value;
     }
 
     //########################################
@@ -105,9 +104,7 @@ HTML;
         }
 
         $collection->getSelect()->where(
-            'main_table.title LIKE ?
-            OR m.title LIKE ?
-            OR second_table.consumer_id LIKE ?',
+            'main_table.title LIKE ? OR m.title LIKE ? OR second_table.consumer_id LIKE ?',
             '%'. $value .'%'
         );
     }

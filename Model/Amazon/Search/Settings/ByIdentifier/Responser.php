@@ -13,23 +13,6 @@ namespace Ess\M2ePro\Model\Amazon\Search\Settings\ByIdentifier;
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByIdentifier\ItemsResponser
 {
-    protected $activeRecordFactory;
-
-    // ########################################
-
-    public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
-        \Ess\M2ePro\Model\Connector\Connection\Response $response,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        array $params = []
-    ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-
-        parent::__construct($amazonFactory, $response, $helperFactory, $modelFactory, $params);
-    }
-
     //########################################
 
     /**

@@ -22,20 +22,27 @@ abstract class Account extends Main
     {
         // Add or update server
         // ---------------------------------------
-        $requestMode = $data['mode'] == \Ess\M2ePro\Model\Ebay\Account::MODE_PRODUCTION ? 'production' : 'sandbox';
+        $requestData = [
+            'mode' => $data['mode'] == \Ess\M2ePro\Model\Ebay\Account::MODE_PRODUCTION ? 'production' : 'sandbox',
+            'token_session' => $data['token_session']
+        ];
+
+        if (isset($data['sell_api_token_session'])) {
+            $requestData['sell_api_token_session'] = $data['sell_api_token_session'];
+        }
 
         $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
 
         if ((bool)$id) {
+            /** @var \Ess\M2ePro\Model\Account $model */
             $model = $this->ebayFactory->getObjectLoaded('Account', $id);
+            $requestData['title'] = $model->getTitle();
 
             $connectorObj = $dispatcherObject->getVirtualConnector(
                 'account',
                 'update',
                 'entity',
-                ['title'         => $model->getTitle(),
-                    'mode'          => $requestMode,
-                    'token_session' => $data['token_session']],
+                $requestData,
                 null,
                 null,
                 $id
@@ -45,17 +52,21 @@ abstract class Account extends Main
                 'account',
                 'add',
                 'entity',
-                ['mode' => $requestMode,
-                    'token_session' => $data['token_session']],
+                $requestData,
                 null,
                 null,
                 null
             );
         }
 
-        $dispatcherObject->process($connectorObj);
-        $response = $connectorObj->getResponseData();
+        try {
+            $dispatcherObject->process($connectorObj);
+            $response = $connectorObj->getResponseData();
+        } catch (\Exception $e) {
+            $response = [];
+        }
 
+        // ---------------------------------------
         if (!isset($response['token_expired_date'])) {
             throw new \Ess\M2ePro\Model\Exception('Account is not added or updated. Try again later.');
         }
@@ -65,6 +76,13 @@ abstract class Account extends Main
 
         $data['info'] = $this->getHelper('Data')->jsonEncode($response['info']);
         $data['token_expired_date'] = $response['token_expired_date'];
+        // ---------------------------------------
+
+        // ---------------------------------------
+        if (isset($response['sell_api_token_expired_date'])) {
+            $data['sell_api_token_expired_date'] = $response['sell_api_token_expired_date'];
+        }
+
         // ---------------------------------------
 
         return $data;
@@ -90,7 +108,6 @@ abstract class Account extends Main
 
         // Add or update model
         // ---------------------------------------
-
         $model = $this->ebayFactory->getObject('Account');
         if ($id === null) {
             $model->setData($data);

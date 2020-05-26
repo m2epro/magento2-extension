@@ -11,11 +11,6 @@ use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
 
 class MsrpRrp extends AbstractFeature
 {
-    public function getBackupTables()
-    {
-        return ['amazon_template_description_definition'];
-    }
-
     public function execute()
     {
         $this->getTableModifier('amazon_template_description_definition')

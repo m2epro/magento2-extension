@@ -13,6 +13,8 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type;
  */
 abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 {
+    protected $activeRecordFactory;
+
     /**
      * @var array
      */
@@ -32,6 +34,23 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
      * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData
      */
     protected $requestData = null;
+
+    /**
+     * @var array
+     */
+    protected $requestMetaData = [];
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        $this->activeRecordFactory = $activeRecordFactory;
+        parent::__construct($helperFactory, $modelFactory, $data);
+    }
 
     //########################################
 
@@ -104,6 +123,19 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     protected function getRequestData()
     {
         return $this->requestData;
+    }
+
+    // ---------------------------------------
+
+    public function getRequestMetaData()
+    {
+        return $this->requestMetaData;
+    }
+
+    public function setRequestMetaData($value)
+    {
+        $this->requestMetaData = $value;
+        return $this;
     }
 
     //########################################
@@ -195,16 +227,22 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
     protected function appendQtyValues($data)
     {
-        if (!$this->getRequestData()->hasQty()) {
-            return $data;
+        if ($this->getRequestData()->hasQty()) {
+            $data['online_qty'] = (int)$this->getRequestData()->getQty();
+
+            if ((int)$data['online_qty'] > 0) {
+                $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
+            } else {
+                $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+            }
         }
 
-        $data['online_qty'] = (int)$this->getRequestData()->getQty();
+        if ($this->getRequestData()->hasHandlingTime()) {
+            $data['online_handling_time'] = $this->getRequestData()->getHandlingTime();
+        }
 
-        if ((int)$data['online_qty'] > 0) {
-            $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
-        } else {
-            $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+        if ($this->getRequestData()->hasRestockDate()) {
+            $data['online_restock_date'] = $this->getRequestData()->getRestockDate();
         }
 
         return $data;
@@ -250,6 +288,51 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             $data['online_business_discounts'] = $this->getHelper('Data')->jsonEncode($businessDiscounts['values']);
         } else {
             $data['online_business_discounts'] = null;
+        }
+
+        return $data;
+    }
+
+    protected function appendDetailsValues($data)
+    {
+        $requestMetadata = $this->getRequestMetaData();
+        if (!isset($requestMetadata['details_data'])) {
+            return $data;
+        }
+
+        $data['online_details_data'] = $this->getHelper('Data')->jsonEncode($requestMetadata['details_data']);
+
+        return $data;
+    }
+
+    protected function appendImagesValues($data)
+    {
+        $requestMetadata = $this->getRequestMetaData();
+        if (!isset($requestMetadata['images_data'])) {
+            return $data;
+        }
+
+        $data['online_images_data'] = $this->getHelper('Data')->jsonEncode($requestMetadata['images_data']);
+
+        return $data;
+    }
+
+    //########################################
+
+    protected function appendGiftSettingsStatus($data)
+    {
+        if (!$this->getRequestData()->hasGiftWrap() && !$this->getRequestData()->hasGiftMessage()) {
+            return $data;
+        }
+
+        if (!isset($data['additional_data'])) {
+            $data['additional_data'] = $this->getListingProduct()->getAdditionalData();
+        }
+
+        if (!$this->getRequestData()->getGiftWrap() && !$this->getRequestData()->getGiftMessage()) {
+            $data['additional_data']['online_gift_settings_disabled'] = true;
+        } else {
+            $data['additional_data']['online_gift_settings_disabled'] = false;
         }
 
         return $data;

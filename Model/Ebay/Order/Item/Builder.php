@@ -15,14 +15,14 @@ use Ess\M2ePro\Model\AbstractModel;
  */
 class Builder extends AbstractModel
 {
-    private $ebayFactory;
+    protected $ebayFactory;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         array $data = []
     ) {
         $this->ebayFactory = $ebayFactory;
@@ -74,7 +74,7 @@ class Builder extends AbstractModel
     /**
      * @return \Ess\M2ePro\Model\Order\Item
      */
-    private function createOrderItem()
+    protected function createOrderItem()
     {
         /** @var \Ess\M2ePro\Model\Order\Item $item */
         $item = $this->ebayFactory->getObject('Order\Item')->getCollection()

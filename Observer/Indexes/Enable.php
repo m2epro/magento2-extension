@@ -60,8 +60,6 @@ class Enable extends \Ess\M2ePro\Observer\AbstractModel
             return;
         }
 
-        // M2ePro\TRANSLATIONS
-        // Product reindex was executed.
         $this->activeRecordFactory->getObject('Synchronization\Log')->addMessage(
             $this->getHelper('Module\Translation')->__('Product reindex was executed.'),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,

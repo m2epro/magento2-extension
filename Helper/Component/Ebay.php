@@ -15,9 +15,11 @@ use \Ess\M2ePro\Model\Listing\Product as ListingProduct;
  */
 class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    const NICK  = 'ebay';
+    const NICK = 'ebay';
 
-    const MARKETPLACE_US     = 1;
+    const MARKETPLACE_SYNCHRONIZATION_LOCK_ITEM_NICK = 'ebay_marketplace_synchronization';
+
+    const MARKETPLACE_US = 1;
     const MARKETPLACE_MOTORS = 9;
     const MARKETPLACE_AU = 4;
     const MARKETPLACE_UK = 3;
@@ -26,6 +28,8 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
     const LISTING_DURATION_GTC = 100;
     const MAX_LENGTH_FOR_OPTION_VALUE = 50;
+    const VARIATION_SKU_MAX_LENGTH = 80;
+    const ITEM_SKU_MAX_LENGTH = 50;
 
     private $ebayFactory;
     private $activeRecordFactory;
@@ -64,12 +68,12 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $statuses = [
             ListingProduct::STATUS_NOT_LISTED => $this->getHelper('Module\Translation')->__('Not Listed'),
-            ListingProduct::STATUS_LISTED     => $this->getHelper('Module\Translation')->__('Listed'),
-            ListingProduct::STATUS_HIDDEN     => $this->getHelper('Module\Translation')->__('Listed (Hidden)'),
-            ListingProduct::STATUS_SOLD       => $this->getHelper('Module\Translation')->__('Sold'),
-            ListingProduct::STATUS_STOPPED    => $this->getHelper('Module\Translation')->__('Stopped'),
-            ListingProduct::STATUS_FINISHED   => $this->getHelper('Module\Translation')->__('Finished'),
-            ListingProduct::STATUS_BLOCKED    => $this->getHelper('Module\Translation')->__('Pending')
+            ListingProduct::STATUS_LISTED => $this->getHelper('Module\Translation')->__('Listed'),
+            ListingProduct::STATUS_HIDDEN => $this->getHelper('Module\Translation')->__('Listed (Hidden)'),
+            ListingProduct::STATUS_SOLD => $this->getHelper('Module\Translation')->__('Sold'),
+            ListingProduct::STATUS_STOPPED => $this->getHelper('Module\Translation')->__('Stopped'),
+            ListingProduct::STATUS_FINISHED => $this->getHelper('Module\Translation')->__('Finished'),
+            ListingProduct::STATUS_BLOCKED => $this->getHelper('Module\Translation')->__('Pending')
         ];
 
         if (!isset($statuses[$status])) {
@@ -83,7 +87,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isEnabled()
     {
-        return (bool)$this->moduleConfig->getGroupValue('/component/'.self::NICK.'/', 'mode');
+        return (bool)$this->moduleConfig->getGroupValue('/component/' . self::NICK . '/', 'mode');
     }
 
     //########################################
@@ -103,17 +107,17 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         $domain = $marketplace->getUrl();
 
         return $accountMode == \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX
-            ? 'http://cgi.sandbox.' .$domain. '/ws/eBayISAPI.dll?ViewItem&item=' .(double)$ebayItemId
-            : 'http://www.' .$domain. '/itm/'.(double)$ebayItemId;
+            ? 'http://cgi.sandbox.' . $domain . '/ws/eBayISAPI.dll?ViewItem&item=' . (double)$ebayItemId
+            : 'http://www.' . $domain . '/itm/' . (double)$ebayItemId;
     }
 
     public function getMemberUrl($ebayMemberId, $accountMode = \Ess\M2ePro\Model\Ebay\Account::MODE_PRODUCTION)
     {
         $domain = 'ebay.com';
         if ($accountMode == \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX) {
-            $domain = 'sandbox.'.$domain;
+            $domain = 'sandbox.' . $domain;
         }
-        return 'http://myworld.'.$domain.'/'.(string)$ebayMemberId;
+        return 'http://myworld.' . $domain . '/' . (string)$ebayMemberId;
     }
 
     //########################################
@@ -144,7 +148,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         /** @var $collection \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection */
         $collection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
 
-        $ebayItem  = $collection->getConnection()->quoteInto('?', $ebayItem);
+        $ebayItem = $collection->getConnection()->quoteInto('?', $ebayItem);
         $accountId = $collection->getConnection()->quoteInto('?', $accountId);
 
         $collection->getSelect()->join(
@@ -187,10 +191,10 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     public function getCarriers()
     {
         return [
-            'dhl'   => 'DHL',
+            'dhl' => 'DHL',
             'fedex' => 'FedEx',
-            'ups'   => 'UPS',
-            'usps'  => 'USPS'
+            'ups' => 'UPS',
+            'usps' => 'USPS'
         ];
     }
 
@@ -275,34 +279,12 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getTranslationServices()
-    {
-        return [
-            'silver'   => $this->getHelper('Module\Translation')->__('Silver Product Translation'),
-            'gold'     => $this->getHelper('Module\Translation')->__('Gold Product Translation'),
-            'platinum' => $this->getHelper('Module\Translation')->__('Platinum Product Translation'),
-        ];
-    }
-
-    public function getDefaultTranslationService()
-    {
-        return 'silver';
-    }
-
-    public function isAllowedTranslationService($service)
-    {
-        $translationServices = $this->getTranslationServices();
-        return isset($translationServices[$service]);
-    }
-
-    //########################################
-
     public function clearCache()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagsValues(self::NICK);
     }
 
-    // ########################################
+    //########################################
 
     /**
      * @param $time
@@ -337,7 +319,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
             $dateTime = clone $time;
             $dateTime->setTimezone(new \DateTimeZone('UTC'));
         } else {
-            is_int($time) && $time = '@'.$time;
+            is_int($time) && $time = '@' . $time;
             $dateTime = new \DateTime($time, new \DateTimeZone('UTC'));
         }
 

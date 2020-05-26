@@ -280,7 +280,7 @@ class Table extends AbstractModifier
     private function buildColumnDefinition($type, $default = null, $after = null, $autoCommit = true)
     {
         if ($autoCommit) {
-            $pattern = "#^(?P<type>[a-z]+(?:\(\d+\))?)";
+            $pattern = "#^(?P<type>[a-z]+(?:\([\d\s,]+\))?)";
             $pattern .= "(?:(?P<unsigned>\sUNSIGNED)?(?P<nullable>\s(?:NOT\s)?NULL)?)?#i";
 
             $matches = [];
@@ -400,15 +400,15 @@ class Table extends AbstractModifier
         }
 
         $default = '';
-        if ($columnInfo['DEFAULT'] !== false) {
-            $this->connection->quoteInto('DEFAULT ?', $columnInfo['DEFAULT']);
+        if ($columnInfo['DEFAULT'] !== null) {
+            $default = $this->connection->quoteInto('DEFAULT ?', $columnInfo['DEFAULT']);
         }
 
         return sprintf(
             '%s %s %s %s %s',
             $type,
             $columnInfo['UNSIGNED'] ? 'UNSIGNED' : '',
-            $columnInfo['NULLABLE'] ? 'NULL' : 'NOT NULL',
+            !$columnInfo['NULLABLE'] ? 'NOT NULL' : 'DEFAULT NULL',
             $default,
             $columnInfo['IDENTITY'] ? 'AUTO_INCREMENT' : ''
         );

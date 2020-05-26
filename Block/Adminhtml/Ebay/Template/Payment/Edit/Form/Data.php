@@ -227,7 +227,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     public function getDefault()
     {
-        $default = $this->activeRecordFactory->getObject('Ebay_Template_Payment')->getDefaultSettingsAdvancedMode();
+        $default = $this->activeRecordFactory->getObject('Ebay_Template_Payment')->getDefaultSettings();
 
         // populate payment fields with the data from magento configuration
         // ---------------------------------------

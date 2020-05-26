@@ -395,10 +395,12 @@ define([
         changeChannelAttributes: function(el)
         {
             $('channel_attributes_view').hide();
-
             $('variation_manager_channel_attributes_form').show();
 
-            $('M2ePro-walmart-required-channel-attribute-error').hide();
+            var errorChannelAttribute = $('M2ePro-walmart-required-channel-attribute-error');
+            if (errorChannelAttribute) {
+                errorChannelAttribute.hide();
+            }
         },
 
         setChannelAttributes: function()
@@ -432,9 +434,10 @@ define([
             } else {
 
                 var errorChannelAttribute = $('M2ePro-walmart-required-channel-attribute-error');
-
-                errorChannelAttribute.show();
-                errorChannelAttribute.update(M2ePro.translator.translate('At least one Variant Attribute must be selected.'))
+                if (errorChannelAttribute) {
+                    errorChannelAttribute.show();
+                    errorChannelAttribute.update(M2ePro.translator.translate('At least one Variant Attribute must be selected.'))
+                }
             }
         },
 

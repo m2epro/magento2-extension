@@ -23,11 +23,6 @@ class LogsImprovements extends AbstractFeature
 
     //########################################
 
-    public function getBackupTables()
-    {
-        return ['module_config'];
-    }
-
     public function execute()
     {
         foreach ($this->getProcessSubjects() as $subject) {

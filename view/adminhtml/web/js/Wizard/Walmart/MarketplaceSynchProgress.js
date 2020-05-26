@@ -9,65 +9,46 @@ define([
 
         // ---------------------------------------
 
-        start: function ($super, title, status) {
+        start: function ($super, title, status)
+        {
             $super(title, status);
             this.runningNow = true;
         },
 
-        end: function ($super) {
+        end: function ($super)
+        {
             $super();
             this.runningNow = false;
         },
 
-        runTask: function (title, url, callBackWhenEnd) {
+        runTask: function (title, url, callBackWhenEnd)
+        {
             title = title || '';
             url = url || '';
             callBackWhenEnd = callBackWhenEnd || function () {};
 
-                if (url == '') {
+            if (url == '') {
                 return;
             }
 
             var self = this;
-            new Ajax.Request(M2ePro.url.get('general/synchCheckState'), {
-                method: 'get',
-                asynchronous: true,
-                onSuccess: function (transport) {
+            self.start(title, M2ePro.translator.translate('Preparing to start. Please wait ...'));
 
-                    if (transport.responseText == self.stateExecuting) {
-
-                        self.start(
-                            M2ePro.translator.translate('Another Synchronization Is Already Running.'),
-                            M2ePro.translator.translate('Getting information. Please wait ...')
-                        );
-
-                        setTimeout(function () {
-                            self.startGetExecutingInfo(function () {
-                                self.runTask(title, url, callBackWhenEnd);
-                            });
-                        }, 2000);
-
-                    } else {
-
-                        self.start(title, M2ePro.translator.translate('Preparing to start. Please wait ...'));
-
-                        new Ajax.Request(url, {
-                            method: 'get', asynchronous: true
-                        });
-
-                        setTimeout(function () {
-                            self.startGetExecutingInfo(callBackWhenEnd);
-                        }, 2000);
-                    }
-                }
+            new Ajax.Request(url, {
+                method: 'get', asynchronous: true
             });
+
+            setTimeout(function () {
+                self.startGetExecutingInfo(callBackWhenEnd);
+            }, 2000);
         },
 
-        startGetExecutingInfo: function (callBackWhenEnd) {
+        startGetExecutingInfo: function (callBackWhenEnd)
+        {
             callBackWhenEnd = callBackWhenEnd || function () {};
 
             var self = this;
-            new Ajax.Request(M2ePro.url.get('general/synchGetExecutingInfo'), {
+            new Ajax.Request(M2ePro.url.get('walmart_marketplace/synchGetExecutingInfo'), {
                 method: 'get',
                 asynchronous: true,
                 onSuccess: function (transport) {

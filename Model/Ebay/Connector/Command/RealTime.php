@@ -23,22 +23,22 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
      */
     protected $account = null;
 
-    // ########################################
+    //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\Marketplace $marketplace,
-        \Ess\M2ePro\Model\Account $account,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        array $params
+        \Ess\M2ePro\Model\Marketplace $marketplace = null,
+        \Ess\M2ePro\Model\Account $account = null,
+        array $params = []
     ) {
-        $this->marketplace = ($marketplace->getId() !== null) ? $marketplace : null;
-        $this->account = ($account->getId() !== null) ? $account : null;
+        $this->marketplace = $marketplace;
+        $this->account = $account;
 
         parent::__construct($helperFactory, $modelFactory, $params);
     }
 
-    // ########################################
+    //########################################
 
     protected function buildRequestInstance()
     {
@@ -58,5 +58,5 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
         return $request;
     }
 
-    // ########################################
+    //########################################
 }

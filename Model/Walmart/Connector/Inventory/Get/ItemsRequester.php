@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Walmart\Connector\Inventory\Get;
  */
 abstract class ItemsRequester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Requester
 {
-    // ########################################
+    //########################################
 
     public function getRequestData()
     {
@@ -25,5 +25,5 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Walmart\Connector\Comman
         return ['inventory', 'get', 'items'];
     }
 
-    // ########################################
+    //########################################
 }

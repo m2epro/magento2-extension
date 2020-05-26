@@ -97,7 +97,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type'   => 'number',
             'index'  => 'product_id',
             'filter_index' => 'product_id',
-            'frame_callback' => [$this, 'callbackColumnProductId']
+            'frame_callback' => [$this, 'callbackColumnProductId'],
+            'filter' => 'Ess\M2ePro\Block\Adminhtml\Grid\Column\Filter\ProductId',
+            'filter_condition_callback' => [$this, 'callbackFilterProductId']
         ]);
 
         $this->addColumn('title', [
@@ -237,9 +239,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                                         (int)$row->getId().
                                     ');">' . $this->__('Map') . '</a>';
 
-            if ($this->getHelper('Module')->isDevelopmentMode()) {
-                $htmlValue .= '<br/>' . $row->getId();
-            }
             return $htmlValue;
         }
 
@@ -258,10 +257,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                       .')">'
                       .$this->__('Move')
                       .'</a>';
-
-        if ($this->getHelper('Module')->isDevelopmentMode()) {
-            $htmlValue .= '<br/>' . $row->getId();
-        }
 
         return $htmlValue;
     }
@@ -413,10 +408,47 @@ HTML;
             $value = '<span style="color: '.$coloredStstuses[$status].';">' . $value . '</span>';
         }
 
-        return $value.$this->getViewLogIconHtml($row->getId());
+        return $value;
     }
 
     //########################################
+
+    protected function callbackFilterProductId($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+
+        if (empty($value)) {
+            return;
+        }
+
+        $where = '';
+
+        if (isset($value['from']) && $value['from'] != '') {
+            $where .= 'product_id >= ' . (int)$value['from'];
+        }
+
+        if (isset($value['to']) && $value['to'] != '') {
+            if (isset($value['from']) && $value['from'] != '') {
+                $where .= ' AND ';
+            }
+
+            $where .= 'product_id <= ' . (int)$value['to'];
+        }
+
+        if (isset($value['is_mapped']) && $value['is_mapped'] !== '') {
+            if (!empty($where)) {
+                $where = '(' . $where . ') AND ';
+            }
+
+            if ($value['is_mapped']) {
+                $where .= 'product_id IS NOT NULL';
+            } else {
+                $where .= 'product_id IS NULL';
+            }
+        }
+
+        $collection->getSelect()->where($where);
+    }
 
     protected function callbackFilterTitle($collection, $column)
     {
@@ -490,53 +522,6 @@ HTML;
         }
 
         $collection->getSelect()->where($where);
-    }
-
-    //########################################
-
-    public function getViewLogIconHtml($listingOtherId)
-    {
-        $listingOtherId = (int)$listingOtherId;
-        $availableActionsId = array_keys($this->getAvailableActions());
-
-        // Get last messages
-        // ---------------------------------------
-        $connection = $this->resourceConnection->getConnection();
-
-        $dbSelect = $connection->select()
-            ->from(
-                $this->activeRecordFactory->getObject('Listing_Other_Log')->getResource()->getMainTable(),
-                ['action_id','action','type','description','create_date','initiator']
-            )
-            ->where('`listing_other_id` = ?', $listingOtherId)
-            ->where('`action` IN (?)', $availableActionsId)
-            ->order(['id DESC'])
-            ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::PRODUCTS_LIMIT);
-
-        $logs = $connection->fetchAll($dbSelect);
-
-        if (empty($logs)) {
-            return '';
-        }
-
-        // ---------------------------------------
-
-        $summary = $this->createBlock('Listing_Log_Grid_LastActions')->setData([
-            'entity_id' => $listingOtherId,
-            'logs'      => $logs,
-            'available_actions' => $this->getAvailableActions(),
-            'view_help_handler' => 'AmazonListingOtherGridObj.viewItemHelp',
-            'hide_help_handler' => 'AmazonListingOtherGridObj.hideItemHelp',
-        ]);
-
-        return $summary->toHtml();
-    }
-
-    private function getAvailableActions()
-    {
-        return [
-            \Ess\M2ePro\Model\Listing\Other\Log::ACTION_CHANNEL_CHANGE => $this->__('Channel Change')
-        ];
     }
 
     //########################################

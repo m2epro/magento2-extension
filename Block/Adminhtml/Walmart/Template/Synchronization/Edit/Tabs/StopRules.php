@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Walmart\Template\Synchronization;
+use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs\StopRules
@@ -23,20 +24,20 @@ class StopRules extends AbstractForm
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
         $defaults = [
-            'stop_mode' => Synchronization::STOP_MODE_YES,
+            'stop_mode' => 1,
 
-            'stop_status_disabled' => Synchronization::STOP_STATUS_DISABLED_YES,
-            'stop_out_off_stock'   => Synchronization::STOP_OUT_OFF_STOCK_YES,
+            'stop_status_disabled' => 1,
+            'stop_out_off_stock'   => 1,
 
-            'stop_qty_magento'           => Synchronization::STOP_QTY_NONE,
+            'stop_qty_magento'           => TemplateSynchronization::QTY_MODE_NONE,
             'stop_qty_magento_value'     => '0',
             'stop_qty_magento_value_max' => '10',
 
-            'stop_qty_calculated'           => Synchronization::STOP_QTY_NONE,
+            'stop_qty_calculated'           => TemplateSynchronization::QTY_MODE_NONE,
             'stop_qty_calculated_value'     => '0',
             'stop_qty_calculated_value_max' => '10',
 
-            'stop_advanced_rules_mode'    => Synchronization::ADVANCED_RULES_MODE_NONE,
+            'stop_advanced_rules_mode'    => 0,
             'stop_advanced_rules_filters' => null
         ];
         $formData = array_merge($defaults, $formData);
@@ -77,8 +78,8 @@ Rules will not take effect.</p>'
                 'label' => $this->__('Stop Action'),
                 'value' => $formData['stop_mode'],
                 'values' => [
-                    Synchronization::STOP_MODE_NONE => $this->__('No'),
-                    Synchronization::STOP_MODE_YES => $this->__('Yes'),
+                    0 => $this->__('Disabled'),
+                    1 => $this->__('Enabled'),
                 ],
                 'tooltip' => $this->__(
                     'Enable to automatically stop the Item(s) when the Stop Conditions are met.'
@@ -102,8 +103,8 @@ Rules will not take effect.</p>'
                 'label' => $this->__('Stop When Status Disabled'),
                 'value' => $formData['stop_status_disabled'],
                 'values' => [
-                    Synchronization::STOP_STATUS_DISABLED_NONE => $this->__('No'),
-                    Synchronization::STOP_STATUS_DISABLED_YES => $this->__('Yes'),
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
                     'Automatically stops the Items on Walmart when their Magento status is changed to Disabled.'
@@ -119,8 +120,8 @@ Rules will not take effect.</p>'
                 'label' => $this->__('Stop When Out Of Stock'),
                 'value' => $formData['stop_out_off_stock'],
                 'values' => [
-                    Synchronization::STOP_OUT_OFF_STOCK_NONE => $this->__('No'),
-                    Synchronization::STOP_OUT_OFF_STOCK_YES => $this->__('Yes'),
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
                     'Automatically stops the Items on Walmart when their Magento Stock Availability
@@ -137,9 +138,9 @@ Rules will not take effect.</p>'
                 'label' => $this->__('Stop When Magento Quantity Is'),
                 'value' => $formData['stop_qty_magento'],
                 'values' => [
-                    Synchronization::STOP_QTY_NONE => $this->__('No Action'),
-                    Synchronization::STOP_QTY_LESS => $this->__('Less or Equal'),
-                    Synchronization::STOP_QTY_BETWEEN => $this->__('Between'),
+                    TemplateSynchronization::QTY_MODE_NONE => $this->__('No Action'),
+                    TemplateSynchronization::QTY_MODE_LESS => $this->__('Less or Equal'),
+                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
                 ],
                 'tooltip' => $this->__(
                     'Automatically stops the Items on Walmart when their Magento Quantity reaches the specified value.'
@@ -181,9 +182,9 @@ Rules will not take effect.</p>'
                 'label' => $this->__('Stop When Calculated Quantity Is'),
                 'value' => $formData['stop_qty_calculated'],
                 'values' => [
-                    Synchronization::STOP_QTY_NONE => $this->__('No Action'),
-                    Synchronization::STOP_QTY_LESS => $this->__('Less or Equal'),
-                    Synchronization::STOP_QTY_BETWEEN => $this->__('Between'),
+                    TemplateSynchronization::QTY_MODE_NONE => $this->__('No Action'),
+                    TemplateSynchronization::QTY_MODE_LESS => $this->__('Less or Equal'),
+                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
                 ],
                 'tooltip' => $this->__(
                     'Automatically stops the Items on Walmart when their Quantity calculated based on
@@ -256,8 +257,8 @@ Rules will not take effect.</p>'
                 'label' => $this->__('Stop When Meet'),
                 'value' => $formData['stop_advanced_rules_mode'],
                 'values' => [
-                    Synchronization::ADVANCED_RULES_MODE_NONE => $this->__('No'),
-                    Synchronization::ADVANCED_RULES_MODE_YES  => $this->__('Yes'),
+                    0 => $this->__('No'),
+                    1  => $this->__('Yes'),
                 ],
             ]
         );

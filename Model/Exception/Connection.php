@@ -15,9 +15,90 @@ class Connection extends \Ess\M2ePro\Model\Exception
 {
     //########################################
 
-    public function __construct($message, $additionalData = [])
-    {
+    const CONNECTION_ERROR_REPEAT_TIMEOUT = 180;
+
+    protected $activeRecordFactory;
+    protected $helperFactory;
+
+    //########################################
+
+    public function __construct(
+        $message,
+        $additionalData = []
+    ) {
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+        $this->activeRecordFactory = $objectManager->get(\Ess\M2ePro\Model\ActiveRecord\Factory::class);
+        $this->helperFactory = $objectManager->get(\Ess\M2ePro\Helper\Factory::class);
+
         parent::__construct($message, $additionalData, 0, false);
+    }
+
+    //########################################
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function handleRepeatTimeout($key)
+    {
+        $currentDate = $this->helperFactory->getObject('Data')->getCurrentGmtDate();
+
+        $firstConnectionErrorDate = $this->getFirstConnectionErrorDate($key);
+        if (empty($firstConnectionErrorDate)) {
+            $this->setFirstConnectionErrorDate($key, $currentDate);
+
+            return true;
+        }
+
+        $currentDateTimeStamp = strtotime($currentDate);
+        $errorDateTimeStamp   = strtotime($firstConnectionErrorDate);
+        if ($currentDateTimeStamp - $errorDateTimeStamp < self::CONNECTION_ERROR_REPEAT_TIMEOUT) {
+            return true;
+        }
+
+        if (!empty($firstConnectionErrorDate)) {
+            $this->removeFirstConnectionErrorDate($key);
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return string|null
+     */
+    protected function getFirstConnectionErrorDate($key)
+    {
+        return $this->activeRecordFactory->getObject('Registry')
+            ->loadByKey($key)
+            ->getValue();
+    }
+
+    /**
+     * @param string $key
+     * @param string $date
+     *
+     */
+    protected function setFirstConnectionErrorDate($key, $date)
+    {
+        $this->activeRecordFactory->getObject('Registry')
+            ->loadByKey($key)
+            ->setValue($date)
+            ->save();
+    }
+
+    /**
+     * @param string $key
+     *
+     */
+    protected function removeFirstConnectionErrorDate($key)
+    {
+        $this->activeRecordFactory->getObject('Registry')
+            ->loadByKey($key)
+            ->delete();
     }
 
     //########################################

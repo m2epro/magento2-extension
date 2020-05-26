@@ -30,17 +30,17 @@ class StockDataResolver extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-   public function resolve(array $variationsProductsIds, $storeId)
-   {
-       $productsIds = [];
-       foreach ($variationsProductsIds as $variationProductsIds) {
-           foreach ($variationProductsIds as $variationProductId) {
-               $productsIds[] = $variationProductId;
-           }
-       }
-       $productsIds = array_values(array_unique($productsIds));
+    public function resolve(array $variationsProductsIds, $storeId)
+    {
+        $productsIds = [];
+        foreach ($variationsProductsIds as $variationProductsIds) {
+            foreach ($variationProductsIds as $variationProductId) {
+                $productsIds[] = $variationProductId;
+            }
+        }
+        $productsIds = array_values(array_unique($productsIds));
 
-       $select = $this->resourceConnection->getConnection()
+        $select = $this->resourceConnection->getConnection()
            ->select()
            ->from(
                [
@@ -53,8 +53,8 @@ class StockDataResolver extends \Ess\M2ePro\Model\AbstractModel
            ->where('cisi.stock_id = ?', $this->helperFactory->getObject('Magento\Stock')->getStockId($storeId))
            ->where('cisi.website_id = ?', $this->helperFactory->getObject('Magento\Stock')->getWebsiteId($storeId));
 
-       return $select->query()->fetchAll();
-   }
+        return $select->query()->fetchAll();
+    }
 
     //########################################
 }

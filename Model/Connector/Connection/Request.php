@@ -13,15 +13,14 @@ namespace Ess\M2ePro\Model\Connector\Connection;
  */
 class Request extends \Ess\M2ePro\Model\AbstractModel
 {
-    // ########################################
+    protected $component = null;
+    protected $componentVersion = null;
+    protected $command = null;
 
-    private $component = null;
-    private $componentVersion = null;
-    private $command = null;
+    protected $infoRewrites = [];
+    protected $rawData      = null;
 
-    private $infoRewrites = [];
-
-    // ########################################
+    //########################################
 
     public function setComponent($value)
     {
@@ -54,7 +53,7 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
         $value = array_values($value);
 
         if (count($value) != 3) {
-            throw new \Exception('Invalid Command Format.');
+            throw new \Ess\M2ePro\Model\Exception('Invalid Command Format.');
         }
 
         $this->command = $value;
@@ -66,7 +65,7 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
         return $this->command;
     }
 
-    // ########################################
+    //########################################
 
     public function getInfo()
     {
@@ -74,14 +73,12 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
             'client' => [
                 'platform' => [
                     'name' => $this->getHelper('Magento')->getName().
-                                ' ('.$this->getHelper('Magento')->getEditionName().')',
+                        ' ('.$this->getHelper('Magento')->getEditionName().')',
                     'version' => $this->getHelper('Magento')->getVersion(),
-                    'revision' => $this->getHelper('Magento')->getRevision(),
                 ],
                 'module' => [
                     'name' => $this->getHelper('Module')->getName(),
                     'version' => $this->getHelper('Module')->getPublicVersion(),
-                    'revision' => $this->getHelper('Module')->getRevision()
                 ],
                 'location' => [
                     'domain' => $this->getHelper('Client')->getDomain(),
@@ -123,7 +120,20 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    // ########################################
+    // ---------------------------------------
+
+    public function setRawData($value)
+    {
+        $this->rawData = $value;
+        return $this;
+    }
+
+    public function getRawData()
+    {
+        return $this->rawData;
+    }
+
+    //########################################
 
     public function getPackage()
     {
@@ -133,5 +143,5 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
         ];
     }
 
-    // ########################################
+    //########################################
 }

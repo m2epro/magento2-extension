@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Walmart\Connector\Account\Update;
  */
 class EntityRequester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Requester
 {
-    // ########################################
+    //########################################
 
     public function getRequestData()
     {
@@ -25,12 +25,12 @@ class EntityRequester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pendin
         return ['account', 'update', 'entity'];
     }
 
-    // ########################################
+    //########################################
 
     protected function getProcessingRunnerModelName()
     {
         return 'Walmart_Connector_Account_Update_ProcessingRunner';
     }
 
-    // ########################################
+    //########################################
 }

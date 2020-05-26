@@ -32,10 +32,9 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data = $this->appendOnlinePriceValues($data);
         $data = $this->appendOnlineInfoDataValues($data);
 
-        $data = $this->appendOutOfStockValues($data);
         $data = $this->appendItemFeesValues($data, $response);
         $data = $this->appendStartDateEndDateValues($data, $response);
-        $data = $this->appendGalleryImagesValues($data, $response, $responseParams);
+        $data = $this->appendGalleryImagesValues($data, $response);
 
         $data = $this->appendSpecificsReplacementValues($data);
         $data = $this->appendWithoutVariationMpnIssueFlag($data);
@@ -43,6 +42,13 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
         $data = $this->appendIsVariationValue($data);
         $data = $this->appendIsAuctionType($data);
+
+        $data = $this->appendImagesValues($data);
+        $data = $this->appendCategoriesValues($data);
+        $data = $this->appendPaymentValues($data);
+        $data = $this->appendShippingValues($data);
+        $data = $this->appendReturnValues($data);
+        $data = $this->appendOtherValues($data);
 
         if (isset($data['additional_data'])) {
             $data['additional_data'] = $this->getHelper('Data')->jsonEncode($data['additional_data']);

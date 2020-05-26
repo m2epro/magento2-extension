@@ -9,8 +9,9 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
-use Ess\M2ePro\Model\Listing\Product;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
+use Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\AbstractModel;
+use Ess\M2ePro\Model\Walmart\Template\Description\ChangeProcessor;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage\SetSwatchImagesAttribute
@@ -39,22 +40,17 @@ class SetSwatchImagesAttribute extends Main
         $typeModel = $walmartListingProduct->getVariationManager()->getTypeModel();
 
         foreach ($typeModel->getChildListingsProducts() as $childListingProduct) {
-            /** @var Product $childListingProduct */
-            $synchReasons = $childListingProduct->getData('synch_reasons');
-
-            if ($synchReasons) {
-                $childListingProduct->setData(
-                    'synch_reasons',
-                    $synchReasons . ',' . \Ess\M2ePro\Model\ResourceModel\Walmart\Template\Description::SYNCH_REASON
-                );
-            } else {
-                $childListingProduct->setData(
-                    'synch_reasons',
-                    \Ess\M2ePro\Model\ResourceModel\Walmart\Template\Description::SYNCH_REASON
-                );
-            }
-
-            $childListingProduct->save();
+            $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
+            $instruction->setData(
+                [
+                    'listing_product_id' => $childListingProduct->getId(),
+                    'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                    'type'               => AbstractModel::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
+                    'initiator'          => ChangeProcessor::INSTRUCTION_INITIATOR,
+                    'priority'           => 10,
+                ]
+            );
+            $instruction->save();
         }
 
         $this->setJsonContent([

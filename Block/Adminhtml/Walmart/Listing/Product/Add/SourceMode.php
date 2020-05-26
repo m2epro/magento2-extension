@@ -13,9 +13,9 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add;
  */
 class SourceMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
-    const MODE_PRODUCT = 'product';
+    const MODE_PRODUCT  = 'product';
     const MODE_CATEGORY = 'category';
-    const MODE_OTHER = 'other';
+    const MODE_OTHER    = 'other';
 
     //########################################
 

@@ -19,7 +19,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected function _prepareForm()
     {
-        /** @var \Ess\M2ePro\Model\Amazon\Template\ShippingTemplate $model */
+        /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode $model */
         $model = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
 
         $formData = [];
@@ -40,7 +40,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
 
-        $attributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
+        $attributes = $magentoAttributeHelper->getAll();
 
         $attributesByInputTypes = [
             'text_select' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select'])
