@@ -9,9 +9,9 @@
 namespace Ess\M2ePro\Observer;
 
 /**
- * Class \Ess\M2ePro\Observer\CreditMemo
+ * Class \Ess\M2ePro\Observer\Creditmemo
  */
-class CreditMemo extends AbstractModel
+class Creditmemo extends AbstractModel
 {
     protected $amazonFactory;
     protected $urlBuilder;
@@ -35,107 +35,41 @@ class CreditMemo extends AbstractModel
 
     //########################################
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function process()
     {
+        /** @var \Magento\Sales\Model\Order\Creditmemo $creditmemo */
+        $creditmemo = $this->getEvent()->getCreditmemo();
+        $magentoOrderId = $creditmemo->getOrderId();
+
         try {
-
-            /** @var \Magento\Sales\Model\Order\Creditmemo $creditmemo */
-            $creditmemo = $this->getEvent()->getCreditmemo();
-            $magentoOrderId = $creditmemo->getOrderId();
-
-            try {
-                /** @var $order \Ess\M2ePro\Model\Order */
-                $order = $this->activeRecordFactory->getObjectLoaded('Order', $magentoOrderId, 'magento_order_id');
-            } catch (\Exception $e) {
-                return;
-            }
-
-            if ($order === null) {
-                return;
-            }
-
-            if ($order->getComponentMode() == \Ess\M2ePro\Helper\Component\Walmart::NICK) {
-                $this->modelFactory->getObject('Walmart_Order_CreditMemo_Handler')->handle($order, $creditmemo);
-                return;
-            }
-
-            if ($order->getComponentMode() != \Ess\M2ePro\Helper\Component\Amazon::NICK) {
-                return;
-            }
-
-            /** @var \Ess\M2ePro\Model\Amazon\Order $amazonOrder */
-            $amazonOrder = $order->getChildObject();
-
-            if (!$amazonOrder->canRefund()) {
-                return;
-            }
-
-            $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
-
-            $itemsForCancel = [];
-
-            foreach ($creditmemo->getAllItems() as $creditmemoItem) {
-                /** @var \Magento\Sales\Model\Order\Creditmemo\Item $creditmemoItem */
-
-                $additionalData = $creditmemoItem->getOrderItem()->getAdditionalData();
-                if (!is_string($additionalData)) {
-                    continue;
-                }
-
-                $additionalData = $this->getHelper('Data')->unserialize($additionalData);
-                if (empty($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items'])) {
-                    continue;
-                }
-
-                foreach ($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items'] as $item) {
-                    $amazonOrderItemId = $item['order_item_id'];
-
-                    if (in_array($amazonOrderItemId, $itemsForCancel)) {
-                        continue;
-                    }
-
-                    $amazonOrderItemCollection = $this->amazonFactory
-                                                      ->getObject('Order\Item')
-                                                      ->getCollection();
-                    $amazonOrderItemCollection->addFieldToFilter('amazon_order_item_id', $amazonOrderItemId);
-
-                    /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
-                    $orderItem = $amazonOrderItemCollection->getFirstItem();
-
-                    if ($orderItem === null || !$orderItem->getId()) {
-                        continue;
-                    }
-
-                    /** @var \Ess\M2ePro\Model\Amazon\Order\Item $amazonOrderItem */
-                    $amazonOrderItem = $orderItem->getChildObject();
-
-                    $price = $creditmemoItem->getPriceInclTax();
-                    if ($price > $amazonOrderItem->getPrice()) {
-                        $price = $amazonOrderItem->getPrice();
-                    }
-
-                    $tax = $creditmemoItem->getTaxAmount();
-                    if ($tax > $amazonOrderItem->getTaxAmount()) {
-                        $tax = $amazonOrderItem->getTaxAmount();
-                    }
-
-                    $itemsForCancel[] = [
-                        'item_id'  => $amazonOrderItemId,
-                        'qty'      => $creditmemoItem->getQty(),
-                        'prices'   => [
-                            'product' => $price,
-                        ],
-                        'taxes'    => [
-                            'product' => $tax,
-                        ],
-                    ];
-                }
-            }
-
-            $amazonOrder->refund($itemsForCancel);
-        } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
+            /** @var $order \Ess\M2ePro\Model\Order */
+            $order = $this->activeRecordFactory->getObjectLoaded('Order', $magentoOrderId, 'magento_order_id');
+        } catch (\Exception $e) {
+            return;
         }
+
+        if ($order === null) {
+            return;
+        }
+
+        $components = array_intersect(
+            $this->getHelper('Component')->getEnabledComponents(),
+            [\Ess\M2ePro\Helper\Component\Amazon::NICK, \Ess\M2ePro\Helper\Component\Walmart::NICK]
+        );
+
+        if (!in_array($order->getComponentMode(), $components)) {
+            return;
+        }
+
+        $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
+
+        $componentMode = ucfirst($order->getComponentMode());
+        /** @var \Ess\M2ePro\Model\Order\Creditmemo\Handler $handler */
+        $handler = $this->modelFactory->getObject("{$componentMode}_Order_Creditmemo_Handler");
+        $handler->handle($order, $creditmemo);
     }
 
     //########################################

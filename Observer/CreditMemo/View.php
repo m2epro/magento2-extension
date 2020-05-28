@@ -6,10 +6,10 @@
  * @license    Commercial use is forbidden
  */
 
-namespace Ess\M2ePro\Observer\CreditMemo;
+namespace Ess\M2ePro\Observer\Creditmemo;
 
 /**
- * Class \Ess\M2ePro\Observer\CreditMemo\View
+ * Class \Ess\M2ePro\Observer\Creditmemo\View
  */
 class View extends \Ess\M2ePro\Observer\AbstractModel
 {
@@ -34,9 +34,9 @@ class View extends \Ess\M2ePro\Observer\AbstractModel
 
     public function process()
     {
-        /** @var \Magento\Sales\Model\Order\Creditmemo $creditMemo */
-        $creditMemo = $this->registry->registry('current_creditmemo');
-        if (empty($creditMemo) || !$creditMemo->getId()) {
+        /** @var \Magento\Sales\Model\Order\Creditmemo $creditmemo */
+        $creditmemo = $this->registry->registry('current_creditmemo');
+        if (empty($creditmemo) || !$creditmemo->getId()) {
             return;
         }
 
@@ -44,7 +44,7 @@ class View extends \Ess\M2ePro\Observer\AbstractModel
             /** @var \Ess\M2ePro\Model\Order $order */
             $order = $this->activeRecordFactory->getObjectLoaded(
                 'Order',
-                $creditMemo->getOrderId(),
+                $creditmemo->getOrderId(),
                 'magento_order_id'
             );
         } catch (\Exception $exception) {
@@ -55,14 +55,14 @@ class View extends \Ess\M2ePro\Observer\AbstractModel
             return;
         }
 
-        $customerId = $creditMemo->getOrder()->getCustomerId();
-        if (empty($customerId) || $creditMemo->getOrder()->getCustomerIsGuest()) {
+        $customerId = $creditmemo->getOrder()->getCustomerId();
+        if (empty($customerId) || $creditmemo->getOrder()->getCustomerIsGuest()) {
             return;
         }
 
         $customer = $this->customerFactory->create()->load($customerId);
 
-        $creditMemo->getOrder()->setData(
+        $creditmemo->getOrder()->setData(
             'customer_'.\Ess\M2ePro\Model\Ebay\Order\ProxyObject::USER_ID_ATTRIBUTE_CODE,
             $customer->getData(\Ess\M2ePro\Model\Ebay\Order\ProxyObject::USER_ID_ATTRIBUTE_CODE)
         );

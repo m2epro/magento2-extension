@@ -6,17 +6,13 @@
  * @license    Commercial use is forbidden
  */
 
-namespace Ess\M2ePro\Model\Walmart\Order\CreditMemo;
+namespace Ess\M2ePro\Model\Walmart\Order\Creditmemo;
 
 /**
- * Class \Ess\M2ePro\Model\Walmart\Order\CreditMemo\Handler
+ * Class \Ess\M2ePro\Model\Walmart\Order\Creditmemo\Handler
  */
-class Handler extends \Ess\M2ePro\Model\AbstractModel
+class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
 {
-    const HANDLE_RESULT_FAILED    = -1;
-    const HANDLE_RESULT_SKIPPED   = 0;
-    const HANDLE_RESULT_SUCCEEDED = 1;
-
     protected $activeRecordFactory = null;
 
     //########################################
@@ -34,24 +30,16 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function handle(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Creditmemo $creditmemo)
-    {
-        if (!$order->isComponentModeWalmart()) {
-            throw new \InvalidArgumentException('Invalid component mode.');
-        }
-
-        if (!$order->getChildObject()->canRefund()) {
-            return self::HANDLE_RESULT_SKIPPED;
-        }
-
-        $items = $this->getItemsToRefund($order, $creditmemo);
-        return $order->getChildObject()->refund($items) ? self::HANDLE_RESULT_SUCCEEDED : self::HANDLE_RESULT_FAILED;
-    }
-
-    //########################################
-
-    private function getItemsToRefund(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Creditmemo $creditmemo)
-    {
+    /**
+     * @param \Ess\M2ePro\Model\Order $order
+     * @param \Magento\Sales\Model\Order\Creditmemo $creditmemo
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function getItemsToRefund(
+        \Ess\M2ePro\Model\Order $order,
+        \Magento\Sales\Model\Order\Creditmemo $creditmemo
+    ) {
         $itemsForCancel = [];
 
         foreach ($creditmemo->getAllItems() as $creditmemoItem) {
@@ -103,7 +91,7 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
                 }
 
                 /**
-                 * - Extension stores Refunded QTY for each item starting from v6.5.4.0
+                 * - Extension stores Refunded QTY for each item starting from v1.4.0
                  * - Walmart Order Item QTY is always equals 1
                  */
                 $itemQtyRef = isset($data['refunded_qty'][$orderItemId]) ? $data['refunded_qty'][$orderItemId] : 0;
@@ -145,6 +133,14 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $itemsForCancel;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getComponentMode()
+    {
+        return \Ess\M2ePro\Helper\Component\Walmart::NICK;
     }
 
     //########################################
