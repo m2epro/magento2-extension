@@ -479,10 +479,8 @@ class Attribute extends AbstractHelper
             return $attributeValue;
         }
 
-        $isPriceConvertEnabled = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/magento/attribute/',
-            'price_type_converting'
-        );
+        $isPriceConvertEnabled = $this->getHelper('Module_Configuration')
+            ->isEnableMagentoAttributePriceTypeConvertingMode();
 
         if ($isPriceConvertEnabled && $this->isAttributeInputTypePrice($attributeCode)) {
             $attributeValue = $this->modelFactory->getObject('Currency')->convertPrice(

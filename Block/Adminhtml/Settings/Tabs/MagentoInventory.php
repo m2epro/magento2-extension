@@ -49,19 +49,16 @@ HTML
         );
 
         $fieldset->addField(
-            'force_qty_mode',
+            'product_force_qty_mode',
             self::SELECT,
             [
-                'name' => 'force_qty_mode',
+                'name' => 'product_force_qty_mode',
                 'label' => $this->__('Manage Stock "No", Backorders'),
                 'values' => [
                     0 => $this->__('Disallow'),
                     1 => $this->__('Allow')
                 ],
-                'value' => (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/product/force_qty/',
-                    'mode'
-                ),
+                'value' => $this->getHelper('Module_Configuration')->isEnableProductForceQtyMode(),
                 'tooltip' => $this->__(
                     'Choose whether M2E Pro is allowed to List Products with unlimited stock or that are
                     temporarily out of stock.<br>
@@ -71,20 +68,17 @@ HTML
         );
 
         $fieldset->addField(
-            'force_qty_value',
+            'product_force_qty_value',
             'text',
             [
-                'name' => 'force_qty_value',
+                'name' => 'product_force_qty_value',
                 'label' => $this->__('Quantity To Be Listed'),
-                'value' => (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/product/force_qty/',
-                    'value'
-                ),
+                'value' => $this->getHelper('Module_Configuration')->getProductForceQtyValue(),
                 'tooltip' => $this->__(
                     'Set a number to List, e.g. if you have Manage Stock "No" in Magento Product and set this Value
                     to 10, 10 will be sent as available Quantity to the Channel.'
                 ),
-                'field_extra_attributes' => 'id="force_qty_value_tr"',
+                'field_extra_attributes' => 'id="product_force_qty_value_tr"',
                 'class' => 'validate-greater-than-zero',
                 'required' => true
             ]
@@ -102,19 +96,16 @@ HTML
         );
 
         $fieldset->addField(
-            'price_type_converting_mode',
+            'magento_attribute_price_type_converting_mode',
             self::SELECT,
             [
-                'name' => 'price_type_converting_mode',
+                'name' => 'magento_attribute_price_type_converting_mode',
                 'label' => $this->__('Convert Magento Price Attribute'),
                 'values' => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes')
                 ],
-                'value' => (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/magento/attribute/',
-                    'price_type_converting'
-                ),
+                'value' => $this->getHelper('Module_Configuration')->getMagentoAttributePriceTypeConvertingMode(),
                 'tooltip' => $this->__(
                     '<p>Choose whether Magento Price Attribute values should be converted automatically.
                     With this option enabled, M2E Pro will provide currency conversion based on Magento
@@ -146,11 +137,11 @@ HTML
 
         $this->js->addRequireJs([], <<<JS
 
-        $('force_qty_mode').observe('change', function() {
-            if($('force_qty_mode').value == 1) {
-                $('force_qty_value_tr').show();
+        $('product_force_qty_mode').observe('change', function() {
+            if($('product_force_qty_mode').value == 1) {
+                $('product_force_qty_value_tr').show();
             } else {
-                $('force_qty_value_tr').hide();
+                $('product_force_qty_value_tr').hide();
             }
         }).simulate('change');
 JS

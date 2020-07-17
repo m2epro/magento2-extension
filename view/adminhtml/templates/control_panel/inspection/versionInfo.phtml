@@ -1,0 +1,80 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+use Ess\M2ePro\Controller\Adminhtml\SetupManagement\Index;
+
+/** @var \Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\VersionInfo $block */
+?>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Current Version'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->currentVersion; ?>
+        </td>
+    </tr>
+
+    <?php if ($this->latestPublicVersion) : ?>
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Latest Public Version'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->latestPublicVersion; ?>
+            <a href="<?php echo $block->getHelper('Module_Support')->getDocumentationArticleUrl("display/RNMagento2/M2E+Pro+Version+-+{$this->latestPublicVersion}"); ?>" target="_blank"><?php echo $block->__('[release notes]'); ?></a>
+        </td>
+    </tr>
+    <?php endif; ?>
+
+    <?php if (!$block->getData('is_support_mode') && $this->latestVersion) : ?>
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Latest Available Build Version'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->latestVersion; ?>
+            <a href="<?php echo $block->getHelper('Module_Support')->getDocumentationArticleUrl("display/RNMagento2/M2E+Pro+Version+-+{$this->latestVersion}"); ?>" target="_blank"><?php echo $block->__('[release notes]'); ?></a>
+        </td>
+    </tr>
+    <?php endif; ?>
+
+    <?php if (!$block->getData('is_support_mode')) : ?>
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('History'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php $url = $block->getUrl(
+                '*/controlPanel_database/manageTable',
+                ['table' => 'm2epro_setup']
+            ); ?>
+            <a target="_blank" href="<?php echo $url; ?>"><?php echo $block->__('show'); ?></a>
+        </td>
+    </tr>
+    <?php endif; ?>
+
+    <?php if (!$block->getData('is_support_mode')) : ?>
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Setup Management Tool'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php $url = $block->getUrl(
+                '*/setupManagement/index',
+                [Index::AUTHORIZATION_COOKIE_NAME => Index::AUTHORIZATION_COOKIE_VALUE]
+            ); ?>
+            <a target="_blank" href="<?php echo $url; ?>"><?php echo $block->__('manage'); ?></a>
+        </td>
+    </tr>
+    <?php endif; ?>
+
+</table>

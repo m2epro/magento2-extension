@@ -504,8 +504,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
         foreach ($this->getStoredLogMessages() as $message) {
             $this->getLogger()->logListingProductMessage(
                 $this->listingProduct,
-                $message,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+                $message
             );
         }
     }

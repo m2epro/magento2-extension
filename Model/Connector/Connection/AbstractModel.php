@@ -22,6 +22,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected $tryToResendOnError = true;
     protected $tryToSwitchEndpointOnError = true;
+    protected $canIgnoreMaintenance       = false;
 
     //########################################
 
@@ -111,6 +112,32 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function isTryToSwitchEndpointOnError()
     {
         return $this->tryToSwitchEndpointOnError;
+    }
+
+    //----------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isCanIgnoreMaintenance()
+    {
+        return $this->canIgnoreMaintenance;
+    }
+
+    /**
+     * @param bool $canIgnoreMaintenance
+     */
+    public function setCanIgnoreMaintenance($canIgnoreMaintenance)
+    {
+        $this->canIgnoreMaintenance = $canIgnoreMaintenance;
+    }
+
+    protected function getConnectionErrorMessage()
+    {
+        return $this->helperFactory->getObject('Module_Translation')->__(
+            'M2E Pro Server connection failed. Find the solution <a target="_blank" href="%url%">here</a>',
+            $this->helperFactory->getObject('Module_Support')->getKnowledgebaseArticleUrl('664870')
+        );
     }
 
     //########################################

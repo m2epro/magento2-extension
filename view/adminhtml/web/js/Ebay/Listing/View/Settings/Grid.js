@@ -9,8 +9,16 @@ define([
 
         // ---------------------------------------
 
-        initialize: function($super,gridId,listingId)
+        marketplaceId: null,
+        accountId: null,
+
+        // ---------------------------------------
+
+        initialize: function($super, gridId, listingId, marketplaceId, accountId)
         {
+            this.marketplaceId = marketplaceId;
+            this.accountId = accountId;
+
             jQuery.validator.addMethod('M2ePro-validate-ebay-template-switcher', function(value, $element) {
 
                var mode = base64_decode(value).evalJSON().mode;
@@ -18,7 +26,7 @@ define([
                return mode !== null;
             }, M2ePro.translator.translate('This is a required field.'));
 
-            $super(gridId);
+            $super(gridId, listingId);
         },
 
         // ---------------------------------------
@@ -30,14 +38,6 @@ define([
             this.movingHandler = new ListingMoving(this);
 
             this.actions = Object.extend(this.actions, {
-
-                editPrimaryCategorySettingsAction: function(id) {
-                    this.editCategorySettings(id);
-                }.bind(this),
-                editStorePrimaryCategorySettingsAction: function(id) {
-                    this.editCategorySettings(id);
-                }.bind(this),
-
                 editPriceQuantityFormatSettingsAction: function(id) {
                     this.editSettings(id,
                         M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_SELLING_FORMAT')
@@ -67,6 +67,10 @@ define([
                     this.editSettings(id,
                         M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_RETURN_POLICY')
                     );
+                }.bind(this),
+
+                editCategorySettingsAction: function(id) {
+                    EbayListingCategoryObj.editCategorySettings(id, 'both');
                 }.bind(this),
 
                 editMotorsAction: function(id) {
@@ -105,8 +109,8 @@ define([
                 method: 'post',
                 asynchronous: true,
                 parameters: {
-                    ids: this.selectedProductsIds.join(','),
-                    templateNick: templateNick
+                    products_ids : this.selectedProductsIds.join(','),
+                    templateNick : templateNick
                 },
                 onSuccess: function(transport) {
 
@@ -190,7 +194,7 @@ define([
             // ---------------------------------------
 
             // ---------------------------------------
-            requestParams['ids'] = this.selectedProductsIds.join(',');
+            requestParams['products_ids'] = this.selectedProductsIds.join(',');
             // ---------------------------------------
 
             new Ajax.Request(M2ePro.url.get('ebay_template/saveListingProductsPolicy'), {

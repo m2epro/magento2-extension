@@ -10,8 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
-use Ess\M2ePro\Helper\Component\Amazon as AmazonHelper;
-use Ess\M2ePro\Model\Amazon\Account;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration\Amazon
@@ -40,52 +38,6 @@ class Amazon extends Command
     }
 
     //########################################
-
-    /**
-     * @title "Reset 3rd Party"
-     * @description "Clear all 3rd party items for all Accounts"
-     */
-    public function resetOtherListingsAction()
-    {
-        $listingOther = $this->parentFactory->getObject(AmazonHelper::NICK, 'Listing\Other');
-        $amazonListingOther = $this->activeRecordFactory->getObject('Amazon_Listing_Other');
-
-        $stmt = $listingOther->getResourceCollection()->getSelect()->query();
-
-        $SKUs = [];
-        foreach ($stmt as $row) {
-            $listingOther->setData($row);
-            $amazonListingOther->setData($row);
-
-            $listingOther->setChildObject($amazonListingOther);
-            $amazonListingOther->setParentObject($listingOther);
-            $SKUs[] = $amazonListingOther->getSku();
-
-            $listingOther->delete();
-        }
-
-        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_amazon_item');
-        foreach (array_chunk($SKUs, 1000) as $chunkSKUs) {
-            $this->resourceConnection->getConnection()->delete($tableName, ['sku IN (?)' => $chunkSKUs]);
-        }
-
-        $accountsCollection = $this->parentFactory->getObject(AmazonHelper::NICK, 'Account')->getCollection();
-        $accountsCollection->addFieldToFilter('other_listings_synchronization', 1);
-
-        foreach ($accountsCollection->getItems() as $account) {
-            $additionalData = (array)$this->getHelper('Data')
-                ->jsonDecode($account->getAdditionalData());
-
-            unset($additionalData['is_amazon_other_listings_full_items_data_already_received'],
-                $additionalData['last_other_listing_products_synchronization']
-            );
-
-            $account->setSettings('additional_data', $additionalData)->save();
-        }
-
-        $this->getMessageManager()->addSuccess('Successfully removed.');
-        $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
-    }
 
     /**
      * @title "Show Duplicates"

@@ -26,7 +26,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
     {
         $connection = $this->getConnection();
 
-        $table = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_module_config');
+        $table = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_config');
         $groupConfig = '/logs/'.$this->getConfigGroupSuffix().'/';
 
         $lastActionId = (int)$connection->select()

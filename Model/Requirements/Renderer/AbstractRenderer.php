@@ -16,6 +16,9 @@ abstract class AbstractRenderer extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Ess\M2ePro\Model\Requirements\Checks\AbstractCheck */
     protected $checkObject;
 
+    /** @var bool */
+    protected $hideIfMeet = false;
+
     //########################################
 
     public function __construct(
@@ -41,6 +44,14 @@ abstract class AbstractRenderer extends \Ess\M2ePro\Model\AbstractModel
     abstract public function getTitle();
     abstract public function getMin();
     abstract public function getReal();
+    abstract public function getAdditional();
+
+    //########################################
+
+    public function getHideIfMeet()
+    {
+        return $this->hideIfMeet;
+    }
 
     //########################################
 }

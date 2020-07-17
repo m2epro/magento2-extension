@@ -8,13 +8,19 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
+use \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode as CategoryTemplateBlock;
 use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
+use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
+use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings\Index
  */
 class Index extends Settings
 {
+    /** @var \Ess\M2ePro\Model\Listing */
+    protected $listing;
+
     //########################################
 
     public function execute()
@@ -23,14 +29,12 @@ class Index extends Settings
             throw new \Ess\M2ePro\Model\Exception('Listing is not defined');
         }
 
-        $listing = $this->getListing();
+        $this->listing = $this->getListingFromRequest();
 
-        if (count($listing->getChildObject()->getAddedListingProductsIds()) === 0) {
-            return $this->_redirect('*/ebay_listing_product_add', ['id' => $listingId,
-                '_current' => true]);
+        $addedIds = $this->listing->getChildObject()->getAddedListingProductsIds();
+        if (empty($addedIds)) {
+            return $this->_redirect('*/ebay_listing_product_add', ['id' => $listingId, '_current' => true]);
         }
-
-        $this->getHelper('Data\GlobalData')->setValue('listing_for_products_category_settings', $listing);
 
         $step = (int)$this->getRequest()->getParam('step');
 
@@ -61,31 +65,62 @@ class Index extends Settings
 
     private function stepOne()
     {
-        if ($builderData = $this->getListing()->getSetting('additional_data', 'mode_same_category_data')) {
-            $categoryTemplate = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build($builderData);
-            $otherCategoryTemplate = $this->modelFactory->getObject('Ebay_Template_OtherCategory_Builder')
-                ->build($builderData);
+        $builderData = $this->listing->getSetting('additional_data', 'mode_same_category_data');
+        if ($builderData) {
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Category $categoryTpl */
+            $categoryTpl = $this->activeRecordFactory->getObject('Ebay_Template_Category');
+            if (!empty($builderData[eBayCategory::TYPE_EBAY_MAIN])) {
+                $categoryTpl->load($builderData[eBayCategory::TYPE_EBAY_MAIN]['template_id']);
+            }
 
-            $this->saveModeSame($categoryTemplate, $otherCategoryTemplate, false);
-            return $this->_redirect(
-                '*/ebay_listing/review',
-                ['id' => $this->getRequest()->getParam('id')]
-            );
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Category $categorySecondaryTpl */
+            $categorySecondaryTpl = $this->activeRecordFactory->getObject('Ebay_Template_Category');
+            if (!empty($builderData[eBayCategory::TYPE_EBAY_SECONDARY])) {
+                $categorySecondaryTpl->load($builderData[eBayCategory::TYPE_EBAY_SECONDARY]['template_id']);
+            }
+
+            /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory $storeTpl */
+            $storeTpl = $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory');
+            if (!empty($builderData[eBayCategory::TYPE_STORE_MAIN])) {
+                $storeTpl->load($builderData[eBayCategory::TYPE_STORE_MAIN]['template_id']);
+            }
+
+            /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory $storeSecondaryTpl */
+            $storeSecondaryTpl = $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory');
+            if (!empty($builderData[eBayCategory::TYPE_STORE_SECONDARY])) {
+                $storeSecondaryTpl->load($builderData[eBayCategory::TYPE_STORE_SECONDARY]['template_id']);
+            }
+
+            if ($categoryTpl->getId()) {
+                $this->saveModeSame(
+                    $categoryTpl,
+                    $categorySecondaryTpl,
+                    $storeTpl,
+                    $storeSecondaryTpl,
+                    false
+                );
+
+                return $this->_redirect(
+                    '*/ebay_listing/review',
+                    ['id' => $this->getRequest()->getParam('id')]
+                );
+            }
         }
+
+        $source = $this->listing->getSetting('additional_data', 'source');
 
         if ($this->getRequest()->isPost()) {
             $mode = $this->getRequest()->getParam('mode');
-
             $this->setSessionValue('mode', $mode);
 
-            if ($mode == 'same') {
+            if ($mode == CategoryTemplateBlock::MODE_SAME) {
                 $temp = $this->getSessionValue($this->getSessionDataKey());
                 $temp['remember'] = (bool)$this->getRequest()->getParam('mode_same_remember_checkbox', false);
                 $this->setSessionValue($this->getSessionDataKey(), $temp);
             }
 
-            if ($source = $this->getRequest()->getParam('source')) {
-                $this->getListing()->setSetting(
+            if ($source) {
+                $this->getListingFromRequest()->setSetting(
                     'additional_data',
                     ['ebay_category_settings_mode',$source],
                     $mode
@@ -101,33 +136,37 @@ class Index extends Settings
 
         $this->setWizardStep('categoryStepOne');
 
-        $defaultMode = 'same';
-        if ($this->getRequest()->getParam('source') == 'category') {
-            $defaultMode = 'category';
+        $defaultMode = CategoryTemplateBlock::MODE_SAME;
+        if ($source == CategoryTemplateBlock::MODE_CATEGORY) {
+            $defaultMode = CategoryTemplateBlock::MODE_CATEGORY;
         }
 
         $mode = null;
-
-        $temp = $this->getListing()->getSetting(
-            'additional_data',
-            ['ebay_category_settings_mode',$this->getRequest()->getParam('source')]
-        );
+        $temp = $this->listing->getSetting('additional_data', ['ebay_category_settings_mode', $source]);
         $temp && $mode = $temp;
-
         $temp = $this->getSessionValue('mode');
         $temp && $mode = $temp;
 
+        $allowedModes = [
+            CategoryTemplateBlock::MODE_SAME,
+            CategoryTemplateBlock::MODE_CATEGORY,
+            CategoryTemplateBlock::MODE_PRODUCT,
+            CategoryTemplateBlock::MODE_MANUALLY
+        ];
+
         if ($mode) {
-            !in_array($mode, ['same','category','product','manually']) && $mode = $defaultMode;
+            !in_array($mode, $allowedModes) && $mode = $defaultMode;
         } else {
             $mode = $defaultMode;
         }
 
+        $this->clearSession();
+
         $block = $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode');
         $block->setData('mode', $mode);
-        $this->addContent($block);
 
-        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Set eBay Categories'));
+        $this->addContent($block);
+        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Set Your eBay Categories'));
         $this->setPageHelpLink('x/lAItAQ');
 
         return $this->getResult();
@@ -138,81 +177,45 @@ class Index extends Settings
     private function stepTwoModeSame()
     {
         if ($this->getRequest()->isPost()) {
-            $categoryParam = $this->getRequest()->getParam('category_data');
             $categoryData = [];
-            if (!empty($categoryParam)) {
-                $categoryData = $this->getHelper('Data')->jsonDecode($categoryParam);
+            if ($param = $this->getRequest()->getParam('category_data')) {
+                $categoryData = $this->getHelper('Data')->jsonDecode($param);
             }
 
-            $sessionData = $this->getHelper('Data\Session')->getValue($this->sessionKey);
+            $sessionData = $this->getSessionValue();
+            $sessionData['mode_same']['category'] = $categoryData;
+            $this->setSessionValue(null, $sessionData);
 
-            $data = [];
-            $keys = [
-                'category_main_mode',
-                'category_main_id',
-                'category_main_attribute',
-
-                'category_secondary_mode',
-                'category_secondary_id',
-                'category_secondary_attribute',
-
-                'store_category_main_mode',
-                'store_category_main_id',
-                'store_category_main_attribute',
-
-                'store_category_secondary_mode',
-                'store_category_secondary_id',
-                'store_category_secondary_attribute',
-            ];
-            foreach ($categoryData as $key => $value) {
-                if (!in_array($key, $keys)) {
-                    continue;
-                }
-
-                $data[$key] = $value;
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter $converter */
+            $converter = $this->modelFactory->getObject('Ebay_Template_Category_Chooser_Converter');
+            $converter->setAccountId($this->listing->getAccountId());
+            $converter->setMarketplaceId($this->listing->getMarketplaceId());
+            foreach ($categoryData as $type => $templateData) {
+                $converter->setCategoryDataFromChooser($templateData, $type);
             }
 
-            $listing = $this->getListing();
-
-            $this->addCategoriesPath($data, $listing);
-            $data['marketplace_id'] = $listing->getMarketplaceId();
-
-            $templates = $this->activeRecordFactory->getObject('Ebay_Template_Category')->getCollection()
-                ->getItemsByPrimaryCategories([$data]);
-
-            $templateExists = (bool)$templates;
-
-            $specifics = [];
-            /** @var $categoryTemplate \Ess\M2ePro\Model\Ebay\Template\Category */
-            if ($categoryTemplate = reset($templates)) {
-                $specifics = $categoryTemplate->getSpecifics();
-            }
-
-            $useLastSpecifics = $this->useLastSpecifics();
-
-            $sessionData['mode_same']['category'] = $data;
-            $sessionData['mode_same']['specific'] = $specifics;
-
-            $this->getHelper('Data\Session')->setValue($this->sessionKey, $sessionData);
-
-            if (!$useLastSpecifics || !$templateExists) {
-                return $this->_redirect(
-                    '*/*',
-                    ['_current' => true, 'step' => 3]
-                );
-            }
-
-            $builderData = $data;
-            $builderData['account_id'] = $this->getListing()->getAccountId();
-            $builderData['marketplace_id'] = $this->getListing()->getMarketplaceId();
-
-            $otherCategoryTemplate = $this->modelFactory->getObject('Ebay_Template_OtherCategory_Builder')->build(
-                $builderData
+            $categoryTpl = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build(
+                $this->activeRecordFactory->getObject('Ebay_Template_Category'),
+                $converter->getCategoryDataForTemplate(eBayCategory::TYPE_EBAY_MAIN)
+            );
+            $categorySecondaryTpl = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build(
+                $this->activeRecordFactory->getObject('Ebay_Template_Category'),
+                $converter->getCategoryDataForTemplate(eBayCategory::TYPE_EBAY_SECONDARY)
+            );
+            $storeTpl = $this->modelFactory->getObject('Ebay_Template_StoreCategory_Builder')->build(
+                $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory'),
+                $converter->getCategoryDataForTemplate(eBayCategory::TYPE_STORE_MAIN)
+            );
+            $storeSecondaryTpl = $this->modelFactory->getObject('Ebay_Template_StoreCategory_Builder')->build(
+                $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory'),
+                $converter->getCategoryDataForTemplate(eBayCategory::TYPE_STORE_SECONDARY)
             );
 
             $this->saveModeSame(
-                $categoryTemplate,
-                $otherCategoryTemplate,
+                $categoryTpl,
+                $categorySecondaryTpl,
+                $storeTpl,
+                $storeSecondaryTpl,
                 !empty($sessionData['mode_same']['remember'])
             );
 
@@ -224,28 +227,72 @@ class Index extends Settings
 
         $this->setWizardStep('categoryStepTwo');
 
-        $listing = $this->getListing();
-        $sessionData = $this->getHelper('Data\Session')->getValue($this->sessionKey);
+        $ebayListing = $this->listing->getChildObject();
+        $sessionData = $this->getSessionValue();
 
-        $internalData = [];
+        $categoriesData = [];
 
-        $internalData = array_merge(
-            $internalData,
-            $listing->getChildObject()->getLastPrimaryCategory(['ebay_primary_category','mode_same'])
-        );
-        $internalData = array_merge(
-            $internalData,
-            $listing->getChildObject()->getLastPrimaryCategory(['ebay_store_primary_category','mode_same'])
-        );
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter $converter */
+        $converter = $this->modelFactory->getObject('Ebay_Template_Category_Chooser_Converter');
+        $converter->setAccountId($this->listing->getAccountId());
+        $converter->setMarketplaceId($this->listing->getMarketplaceId());
 
-        !empty($sessionData['mode_same']['category']) && $internalData = $sessionData['mode_same']['category'];
+        $sameData = $ebayListing->getLastPrimaryCategory(['ebay_primary_category', 'mode_same']);
+        if (!empty($sameData['mode']) && !empty($sameData['value']) && !empty($sameData['path'])) {
+            $template = $this->activeRecordFactory->getObject('Ebay_Template_Category');
+            $template->loadByCategoryValue(
+                $sameData['value'],
+                $sameData['mode'],
+                $this->listing->getMarketplaceId(),
+                0
+            );
+
+            if ($template->getId()) {
+                $converter->setCategoryDataFromTemplate($template->getData(), eBayCategory::TYPE_EBAY_MAIN);
+                $categoriesData[eBayCategory::TYPE_EBAY_MAIN] = $converter->getCategoryDataForChooser(
+                    eBayCategory::TYPE_EBAY_MAIN
+                );
+            } else {
+                $categoriesData[eBayCategory::TYPE_EBAY_MAIN] = [
+                    'mode'  => $sameData['mode'],
+                    'value' => $sameData['value'],
+                    'path'  => $sameData['path']
+                ];
+            }
+        }
+
+        $sameData = $ebayListing->getLastPrimaryCategory(['ebay_store_primary_category', 'mode_same']);
+        if (!empty($sameData['mode']) && !empty($sameData['value']) && !empty($sameData['path'])) {
+            $template = $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory');
+            $template->loadByCategoryValue(
+                $sameData['value'],
+                $sameData['mode'],
+                $this->listing->getAccountId()
+            );
+
+            if ($template->getId()) {
+                $converter->setCategoryDataFromTemplate($template->getData(), eBayCategory::TYPE_STORE_MAIN);
+                $categoriesData[eBayCategory::TYPE_STORE_MAIN] = $converter->getCategoryDataForChooser(
+                    eBayCategory::TYPE_STORE_MAIN
+                );
+            } else {
+                $categoriesData[eBayCategory::TYPE_STORE_MAIN] = [
+                    'mode'  => $sameData['mode'],
+                    'value' => $sameData['value'],
+                    'path'  => $sameData['path']
+                ];
+            }
+        }
+
+        !empty($sessionData['mode_same']['category']) && $categoriesData = $sessionData['mode_same']['category'];
 
         $block = $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Same_Chooser', '', [
-            'data' => ['internal_data' => $internalData]
+            'data' => ['categories_data' => $categoriesData]
         ]);
         $this->addContent($block);
 
-        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Set eBay Categories'));
+        $this->getResultPage()->getConfig()->getTitle()
+             ->prepend($this->__('Set Category (All Products same Category)'));
 
         return $this->getResult();
     }
@@ -253,7 +300,7 @@ class Index extends Settings
     private function stepTwoModeCategory()
     {
         $categoriesIds = $this->getCategoriesIdsByListingProductsIds(
-            $this->getListing()->getChildObject()->getAddedListingProductsIds()
+            $this->listing->getChildObject()->getAddedListingProductsIds()
         );
 
         if (empty($categoriesIds) && !$this->getRequest()->isXmlHttpRequest()) {
@@ -263,51 +310,16 @@ class Index extends Settings
             ));
         }
 
-        $this->initSessionData($categoriesIds);
-
-        $listing = $this->getListing();
-
-        $previousCategoriesData = [];
-
-        $tempData = $listing->getChildObject()->getLastPrimaryCategory(['ebay_primary_category','mode_category']);
-        foreach ($tempData as $categoryId => $data) {
-            !isset($previousCategoriesData[$categoryId]) && $previousCategoriesData[$categoryId] = [];
-            $previousCategoriesData[$categoryId] += $data;
-        }
-
-        $tempData = $listing->getChildObject()->getLastPrimaryCategory(
-            ['ebay_store_primary_category','mode_category']
-        );
-        foreach ($tempData as $categoryId => $data) {
-            !isset($previousCategoriesData[$categoryId]) && $previousCategoriesData[$categoryId] = [];
-            $previousCategoriesData[$categoryId] += $data;
+        if (!$this->getRequest()->isAjax()) {
+            $this->initSessionDataCategories($categoriesIds);
         }
 
         $categoriesData = $this->getSessionValue($this->getSessionDataKey());
 
-        foreach ($categoriesData as $magentoCategoryId => &$data) {
-            if (!isset($previousCategoriesData[$magentoCategoryId])) {
-                continue;
-            }
-
-            $listingProductsIds = $this->getSelectedListingProductsIdsByCategoriesIds([$magentoCategoryId]);
-            $data['listing_products_ids'] = $listingProductsIds;
-
-            if ($data['category_main_mode'] != \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE) {
-                continue;
-            }
-
-            $this->addCategoriesPath($previousCategoriesData[$magentoCategoryId], $listing);
-
-            $data = array_merge($data, $previousCategoriesData[$magentoCategoryId]);
-        }
-
-        $this->setSessionValue($this->getSessionDataKey(), $categoriesData);
-
         $this->setWizardStep('categoryStepTwo');
 
         $block = $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Category');
-        $block->getChildBlock('grid')->setStoreId($listing->getStoreId());
+        $block->getChildBlock('grid')->setStoreId($this->listing->getStoreId());
         $block->getChildBlock('grid')->setCategoriesData($categoriesData);
 
         if ($this->getRequest()->isXmlHttpRequest()) {
@@ -318,9 +330,8 @@ class Index extends Settings
 
         $this->addContent($block);
 
-        $this->getResultPage()->getConfig()->getTitle()->prepend(
-            $this->__('Set eBay Categories (Based On Magento Categories)')
-        );
+        $this->getResultPage()->getConfig()->getTitle()
+            ->prepend($this->__('Set Category (Based On Magento Categories)'));
 
         return $this->getResult();
     }
@@ -334,37 +345,30 @@ class Index extends Settings
     {
         $this->setWizardStep('categoryStepTwo');
 
-        // ---------------------------------------
-        $listing = $this->getListing();
-        $listingProductAddIds = (array)$this->getHelper('Data')->jsonDecode(
-            $listing->getChildObject()->getData('product_add_ids')
-        );
-        // ---------------------------------------
-
-        // ---------------------------------------
         if (!$this->getRequest()->getParam('skip_get_suggested')) {
             $this->getHelper('Data\GlobalData')->setValue('get_suggested', $getSuggested);
         }
-        $this->initSessionData($listingProductAddIds);
-        // ---------------------------------------
 
-        if ($this->getRequest()->isXmlHttpRequest()) {
-            $this->setAjaxContent(
-                $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Product_Grid')->toHtml()
-            );
-
-            return $this->getResult();
-        }
-
-        $this->addContent($this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Product'));
+        $this->initSessionDataProducts(
+            $this->listing->getChildObject()->getAddedListingProductsIds()
+        );
 
         if ($getSuggested) {
-            $title = $this->__('Set eBay Categories (Get Suggested Categories)');
+            $block = $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Product');
+            $this->getResultPage()->getConfig()->getTitle()->prepend(
+                $this->__('Set Category (Suggested Categories)')
+            );
         } else {
-            $title = $this->__('Set eBay Categories (Set Manually for each Product)');
+            $block = $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Manually');
+            $this->getResultPage()->getConfig()->getTitle()->prepend(
+                $this->__('Set Category (Manually for each Product)')
+            );
         }
 
-        $this->getResultPage()->getConfig()->getTitle()->prepend($title);
+        $categoriesData = $this->getSessionValue($this->getSessionDataKey());
+        $block->getChildBlock('grid')->setCategoriesData($categoriesData);
+        $this->addContent($block);
+
         return $this->getResult();
     }
 
@@ -372,163 +376,123 @@ class Index extends Settings
 
     private function stepThreeModeSame()
     {
-        if ($this->getRequest()->isPost()) {
-            $specifics = $this->getRequest()->getParam('specific_data');
-
-            if ($specifics) {
-                $specifics = $this->getHelper('Data')->jsonDecode($specifics);
-                $specifics = $specifics['specifics'];
-            } else {
-                $specifics = [];
-            }
-
-            $sessionData = $this->getSessionValue($this->getSessionDataKey());
-
-            // save category template & specifics
-            // ---------------------------------------
-            $builderData = $sessionData['category'];
-            $builderData['specifics'] = $specifics;
-            $builderData['account_id'] = $this->getListing()->getAccountId();
-            $builderData['marketplace_id'] = $this->getListing()->getMarketplaceId();
-
-            $categoryTemplate = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build($builderData);
-            $otherCategoryTemplate = $this->modelFactory->getObject('Ebay_Template_OtherCategory_Builder')->build(
-                $builderData
-            );
-
-            $this->saveModeSame($categoryTemplate, $otherCategoryTemplate, !empty($sessionData['remember']));
-
-            return $this->_redirect(
-                '*/ebay_listing/review',
-                ['id' => $this->getRequest()->getParam('id')]
-            );
-        }
-
-        $this->setWizardStep('categoryStepThree');
-
-        $sessionData = $this->getHelper('Data\Session')->getValue($this->sessionKey);
-        $selectedCategoryMode = $sessionData['mode_same']['category']['category_main_mode'];
-        if ($selectedCategoryMode == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY) {
-            $selectedCategoryValue = $sessionData['mode_same']['category']['category_main_id'];
-        } else {
-            $selectedCategoryValue = $sessionData['mode_same']['category']['category_main_attribute'];
-        }
-
-        $specificBlock = $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Same_Specific', '', [
-            'data' => [
-                'category_mode' => $selectedCategoryMode,
-                'category_value' => $selectedCategoryValue,
-                'specifics' => $sessionData['mode_same']['specific']
-            ]
-        ]);
-
-        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Set eBay Specifics'));
-        $this->setPageHelpLink('x/7gMtAQ');
-
-        $this->addContent($specificBlock);
-
-        return $this->getResult();
+        return $this->_redirect(
+            '*/ebay_listing/view',
+            ['id' => $this->getRequest()->getParam('id')]
+        );
     }
 
     private function stepThreeModeCategory()
     {
-        return $this->stepThree();
+        $this->setWizardStep('categoryStepThree');
+        $this->_forward('save');
     }
 
     private function stepThreeModeProduct()
     {
-        return $this->stepThree();
+        $this->setWizardStep('categoryStepThree');
+        return $this->stepThreeSelectSpecifics();
     }
 
     private function stepThreeModeManually()
     {
-        return $this->stepThree();
-    }
-
-    private function stepThree()
-    {
         $this->setWizardStep('categoryStepThree');
-
-        $listing = $this->getListing();
-
-        $templatesData = $this->getTemplatesData();
-
-        if (count($templatesData) <= 0) {
-            $this->save($this->getSessionValue($this->getSessionDataKey()));
-
-            return $this->_redirect('*/ebay_listing/review', [
-                'disable_list' => true,
-                '_current' => true
-            ]);
-        }
-
-        $this->initSpecificsSessionData($templatesData);
-
-        $useLastSpecifics = $this->useLastSpecifics();
-
-        $templatesExistForAll = true;
-        foreach ($this->getSessionValue('specifics') as $categoryId => $specificsData) {
-            if ($specificsData['template_exists'] && $useLastSpecifics) {
-                unset($templatesData[$categoryId]);
-            } else {
-                $templatesExistForAll = false;
-            }
-        }
-
-        if ($templatesExistForAll && $useLastSpecifics) {
-            $this->save($this->getSessionValue($this->getSessionDataKey()));
-            return $this->_redirect('*/ebay_listing/review', ['_current' => true]);
-        }
-
-        $currentPrimaryCategory = $this->getCurrentPrimaryCategory();
-
-        $this->setSessionValue('current_primary_category', $currentPrimaryCategory);
-
-        $wrapper = $this->createBlock('Ebay_Listing_Product_Category_Settings_Specific_Wrapper');
-        $wrapper->setData('store_id', $listing->getStoreId());
-        $wrapper->setData('categories', $templatesData);
-        $wrapper->setData('current_category', $currentPrimaryCategory);
-
-        $wrapper->setChild('specific', $this->getSpecificBlock());
-
-        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Set eBay Specifics'));
-        $this->setPageHelpLink('x/7gMtAQ');
-
-        $this->addContent($wrapper);
-
-        return $this->getResult();
+        return $this->stepThreeSelectSpecifics();
     }
 
-    //########################################
-
-    private function initSpecificsSessionData($templatesData)
+    private function stepThreeSelectSpecifics()
     {
-        $specificsData = $this->getSessionValue('specifics');
-        $specificsData === null && $specificsData = [];
+        $primaryData = [];
+        $defaultHashes = [];
 
-        $existingTemplates = $this->activeRecordFactory->getObject('Ebay_Template_Category')->getCollection()
-            ->getItemsByPrimaryCategories($templatesData);
-
-        foreach ($templatesData as $id => $templateData) {
-            if (!empty($specificsData[$id])) {
+        $sessionData = $this->getSessionValue($this->getSessionDataKey());
+        foreach ($sessionData as $id => $categoryData) {
+            if (!isset($categoryData[eBayCategory::TYPE_EBAY_MAIN]) ||
+                $categoryData[eBayCategory::TYPE_EBAY_MAIN]['mode'] === TemplateCategory::CATEGORY_MODE_NONE
+            ) {
                 continue;
             }
 
-            $specifics = [];
-            $templateExists = false;
+            $primaryCategory = $categoryData[eBayCategory::TYPE_EBAY_MAIN];
 
-            if (isset($existingTemplates[$id])) {
-                $specifics = $existingTemplates[$id]->getSpecifics();
-                $templateExists = true;
+            if ($primaryCategory['is_custom_template'] !== null && $primaryCategory['is_custom_template'] == 0) {
+                list($mainHash, $hash) = $this->getCategoryHashes($categoryData[eBayCategory::TYPE_EBAY_MAIN]);
+
+                if (!isset($defaultHashes[$mainHash])) {
+                    $defaultHashes[$mainHash] = $hash;
+                }
+
+                if (!isset($primaryData[$hash])) {
+                    $primaryData[$hash][eBayCategory::TYPE_EBAY_MAIN] = $primaryCategory;
+                    $primaryData[$hash]['listing_products_ids'] = [];
+                }
             }
-
-            $specificsData[$id] = [
-                'specifics' => $specifics,
-                'template_exists' => $templateExists
-            ];
         }
 
-        $this->setSessionValue('specifics', $specificsData);
+        $canBeSkipped = !$this->getRequest()->isAjax();
+        $listing = $this->getListingFromRequest();
+
+        foreach ($sessionData as $id => &$categoryData) {
+            if (!isset($categoryData[eBayCategory::TYPE_EBAY_MAIN]) ||
+                $categoryData[eBayCategory::TYPE_EBAY_MAIN]['mode'] === TemplateCategory::CATEGORY_MODE_NONE
+            ) {
+                continue;
+            }
+
+            $primaryCategory = $categoryData[eBayCategory::TYPE_EBAY_MAIN];
+            list($mainHash, $hash) = $this->getCategoryHashes($categoryData[eBayCategory::TYPE_EBAY_MAIN]);
+
+            $hasRequiredSpecifics = $this->getHelper('Component_Ebay_Category_Ebay')->hasRequiredSpecifics(
+                $categoryData[eBayCategory::TYPE_EBAY_MAIN]['value'],
+                $listing->getMarketplaceId()
+            );
+
+            if ($primaryCategory['is_custom_template'] === null) {
+                if (isset($defaultHashes[$mainHash])) {
+                    /** set default settings for the same category and not selected specifics */
+                    $hash = $defaultHashes[$mainHash];
+                    if (isset($primaryData[$hash][eBayCategory::TYPE_EBAY_MAIN])) {
+                        $categoryData[eBayCategory::TYPE_EBAY_MAIN] = $primaryData[$hash][eBayCategory::TYPE_EBAY_MAIN];
+                    }
+                } elseif ($hasRequiredSpecifics) {
+                    $canBeSkipped = false;
+                }
+            }
+
+            if (!isset($primaryData[$hash])) {
+                $primaryData[$hash][eBayCategory::TYPE_EBAY_MAIN] = $categoryData[eBayCategory::TYPE_EBAY_MAIN];
+                $primaryData[$hash]['listing_products_ids'] = $categoryData['listing_products_ids'];
+            } else {
+                // @codingStandardsIgnoreLine
+                $primaryData[$hash]['listing_products_ids'] = array_merge(
+                    $primaryData[$hash]['listing_products_ids'],
+                    $categoryData['listing_products_ids']
+                );
+            }
+        }
+
+        unset($categoryData);
+        $this->setSessionValue($this->getSessionDataKey(), $sessionData);
+
+        if ($canBeSkipped) {
+            $this->_forward('save');
+        }
+
+        $block = $this->createBlock('Ebay_Listing_Product_Category_Settings_Specific');
+        $block->getChildBlock('grid')->setCategoriesData($primaryData);
+
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $this->setAjaxContent($block->getChildBlock('grid')->toHtml());
+
+            return $this->getResult();
+        }
+
+        $this->addContent($block);
+
+        $this->getResultPage()->getConfig()->getTitle()
+            ->prepend($this->__('Set Category Specifics'));
+
+        return $this->getResult();
     }
 
     //########################################
@@ -542,37 +506,53 @@ class Index extends Settings
         foreach ($listingProductCollection->getData() as $item) {
             $productsIds[] = $item['product_id'];
         }
-        $productsIds = array_unique($productsIds);
 
-        $listing = $this->getListing();
+        $productsIds = array_unique($productsIds);
 
         return $this->getHelper('Magento\Category')->getLimitedCategoriesByProducts(
             $productsIds,
-            $listing->getStoreId()
+            $this->listing->getStoreId()
         );
     }
 
     //########################################
 
-    protected function saveModeSame($categoryTemplate, $otherCategoryTemplate, $remember)
-    {
+    protected function saveModeSame(
+        \Ess\M2ePro\Model\Ebay\Template\Category $categoryTpl,
+        \Ess\M2ePro\Model\Ebay\Template\Category $categorySecondaryTpl,
+        \Ess\M2ePro\Model\Ebay\Template\StoreCategory $storeTpl,
+        \Ess\M2ePro\Model\Ebay\Template\StoreCategory $storeSecondaryTpl,
+        $remember
+    ) {
         $this->assignTemplatesToProducts(
-            $categoryTemplate->getId(),
-            $otherCategoryTemplate->getId(),
-            $this->getListing()->getChildObject()->getAddedListingProductsIds()
+            $categoryTpl->getId(),
+            $categorySecondaryTpl->getId(),
+            $storeTpl->getId(),
+            $storeSecondaryTpl->getId(),
+            $this->getEbayListingFromRequest()->getAddedListingProductsIds()
         );
 
         if ($remember) {
-            $this->getListing()->setSetting(
-                'additional_data',
-                'mode_same_category_data',
-                array_merge(
-                    $categoryTemplate->getData(),
-                    $otherCategoryTemplate->getData(),
-                    ['specifics' => $categoryTemplate->getSpecifics()]
-                )
-            )
-                ->save();
+            $sameData = [];
+
+            if ($categoryTpl->getId()) {
+                $sameData[EbayCategory::TYPE_EBAY_MAIN]['template_id'] = $categoryTpl->getId();
+            }
+
+            if ($categorySecondaryTpl->getId()) {
+                $sameData[EbayCategory::TYPE_EBAY_SECONDARY]['template_id'] = $categorySecondaryTpl->getId();
+            }
+
+            if ($storeTpl->getId()) {
+                $sameData[EbayCategory::TYPE_STORE_MAIN]['template_id'] = $storeTpl->getId();
+            }
+
+            if ($storeSecondaryTpl->getId()) {
+                $sameData[EbayCategory::TYPE_STORE_SECONDARY]['template_id'] = $storeSecondaryTpl->getId();
+            }
+
+            $this->listing->setSetting('additional_data', 'mode_same_category_data', $sameData);
+            $this->listing->save();
         }
 
         $this->endWizard();

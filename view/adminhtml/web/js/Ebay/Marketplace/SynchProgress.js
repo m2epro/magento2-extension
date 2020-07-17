@@ -1,61 +1,27 @@
 define([
+    'M2ePro/Plugin/Messages',
     'M2ePro/SynchProgress'
-], function() {
+], function(MessageObj) {
     window.EbayMarketplaceSynchProgress = Class.create(SynchProgress, {
 
         // ---------------------------------------
 
-        runningNow: false,
-
-        // ---------------------------------------
-
-        startGetExecutingInfo: function (callBackWhenEnd)
+        printFinalMessage: function($super)
         {
-            callBackWhenEnd = callBackWhenEnd || '';
-
-            var self = this;
-            new Ajax.Request(M2ePro.url.get('ebay_marketplace/synchGetExecutingInfo'), {
-                method: 'get',
+            new Ajax.Request(M2ePro.url.get('ebay_marketplace/isExistDeletedCategories'), {
+                method: 'post',
                 asynchronous: true,
-                onSuccess: function (transport) {
+                onSuccess: function(transport) {
 
-                    var data = transport.responseText.evalJSON(true);
-
-                    if (data.ajaxExpired && response.ajaxRedirect) {
-
-                        alert(M2ePro.translator.translate('Unauthorized! Please login again.'));
-                        setLocation(response.ajaxRedirect);
+                    if (transport.responseText == 1) {
+                        MessageObj.addWarning(str_replace(
+                            '%url%',
+                            M2ePro.url.get('ebay_category/index', {filter: base64_encode('state=0')}),
+                            M2ePro.translator.translate('Some eBay Categories were deleted from eBay. Click <a target="_blank" href="%url%">here</a> to check.')
+                        ));
                     }
 
-                    if (data.mode == self.stateExecuting) {
-
-                        self.progressBarObj.setTitle(data.title);
-                        if (data.percents <= 0) {
-                            self.progressBarObj.setPercents(0, 0);
-                        } else if (data.percents >= 100) {
-                            self.progressBarObj.setPercents(100, 0);
-                        } else {
-                            self.progressBarObj.setPercents(data.percents, 1);
-                        }
-                        self.progressBarObj.setStatus(data.status);
-
-                        self.wrapperObj.lock();
-                        $$('.loading-mask').invoke('setStyle', {visibility: 'hidden'});
-
-                        setTimeout(function () {
-                            self.startGetExecutingInfo(callBackWhenEnd);
-                        }, 3000);
-
-                    } else {
-
-                        self.progressBarObj.setPercents(100, 0);
-
-                        // ---------------------------------------
-                        setTimeout(function () {
-                                eval(callBackWhenEnd);
-                        }, 1500);
-                        // ---------------------------------------
-                    }
+                    $super();
                 }
             });
         }

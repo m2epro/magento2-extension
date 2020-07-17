@@ -14,12 +14,12 @@ namespace Ess\M2ePro\Model\Ebay\Template\Category\Specific;
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
-     * @var $magentoProduct \Ess\M2ePro\Model\Magento\Product
+     * @var \Ess\M2ePro\Model\Magento\Product
      */
     private $magentoProduct = null;
 
     /**
-     * @var $categorySpecificTemplateModel \Ess\M2ePro\Model\Ebay\Template\Category\Specific
+     * @var  \Ess\M2ePro\Model\Ebay\Template\Category\Specific
      */
     private $categorySpecificTemplateModel = null;
 
@@ -129,7 +129,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $attributeCode = $this->getCategorySpecificTemplate()->getData('value_custom_attribute');
         $valueTemp = $this->getAttributeValue($attributeCode);
 
-        $categoryId = $this->getCategoryTemplate()->getCategoryMainId();
+        $categoryId = $this->getCategoryTemplate()->getCategoryId();
         $marketplaceId = $this->getCategoryTemplate()->getMarketplaceId();
 
         if (empty($categoryId) || empty($marketplaceId) || strpos($valueTemp, ',') === false ||

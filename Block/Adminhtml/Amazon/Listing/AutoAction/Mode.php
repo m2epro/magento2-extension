@@ -9,9 +9,9 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction;
 
 /**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode
+ * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\AbstractMode
  */
-class Mode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode
+class Mode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\AbstractMode
 {
     //########################################
 

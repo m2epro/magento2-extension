@@ -139,7 +139,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
             'Amazon_Listing_AutoAction',
-            ['id' => $this->getRequest()->getParam('id')]
+            ['listing_id' => $this->getRequest()->getParam('id')]
         ));
 
         $path = 'amazon_listing_autoAction/getDescriptionTemplatesList';
@@ -296,7 +296,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $this->jsTranslator->addTranslations([
             'Remove Category' => $this->__('Remove Category'),
-            'Add New Group' => $this->__('Add New Group'),
+            'Add New Rule' => $this->__('Add New Rule'),
             'Add/Edit Categories Rule' => $this->__('Add/Edit Categories Rule'),
             'Auto Add/Remove Rules' => $this->__('Auto Add/Remove Rules'),
             'Based on Magento Categories' => $this->__('Based on Magento Categories'),
@@ -388,23 +388,23 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         M2ePro.customData.marketplace = {$marketplace};
         M2ePro.customData.isNewAsinAvailable = {$isNewAsinAvailable};
 
-        ListingGridHandlerObj = new AmazonListingViewGrid(
+        ListingGridObj = new AmazonListingViewGrid(
             '{$gridId}',
             {$this->listing['id']}
         );
-        ListingGridHandlerObj.afterInitPage();
+        ListingGridObj.afterInitPage();
 
-        ListingGridHandlerObj.movingHandler.setProgressBar('listing_view_progress_bar');
-        ListingGridHandlerObj.movingHandler.setGridWrapper('listing_view_content_container');
-        
-        ListingGridHandlerObj.actionHandler.setProgressBar('listing_view_progress_bar');
-        ListingGridHandlerObj.actionHandler.setGridWrapper('listing_view_content_container');
+        ListingGridObj.movingHandler.setProgressBar('listing_view_progress_bar');
+        ListingGridObj.movingHandler.setGridWrapper('listing_view_content_container');
 
-        AmazonListingProductVariationObj = new AmazonListingProductVariation(ListingGridHandlerObj);
+        ListingGridObj.actionHandler.setProgressBar('listing_view_progress_bar');
+        ListingGridObj.actionHandler.setGridWrapper('listing_view_content_container');
+
+        AmazonListingProductVariationObj = new AmazonListingProductVariation(ListingGridObj);
 
         if (M2ePro.productsIdsForList) {
-            ListingGridHandlerObj.getGridMassActionObj().checkedString = M2ePro.productsIdsForList;
-            ListingGridHandlerObj.actionHandler.listAction();
+            ListingGridObj.getGridMassActionObj().checkedString = M2ePro.productsIdsForList;
+            ListingGridObj.actionHandler.listAction();
         }
 
         window.ListingAutoActionObj = new AmazonListingAutoAction();
@@ -496,6 +496,7 @@ JS
             'source' => \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_PRODUCT
         ]);
         $items[] = [
+            'id' => 'add_products_mode_product',
             'label' => $this->__('From Products List'),
             'onclick' => "setLocation('" . $url . "')",
             'default' => true
@@ -512,6 +513,7 @@ JS
             'source' => \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_CATEGORY
         ]);
         $items[] = [
+            'id' => 'add_products_mode_category',
             'label' => $this->__('From Categories'),
             'onclick' => "setLocation('" . $url . "')"
         ];

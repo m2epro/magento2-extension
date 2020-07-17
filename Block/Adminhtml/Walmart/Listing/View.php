@@ -139,7 +139,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
             'Walmart_Listing_AutoAction',
-            ['id' => $this->getRequest()->getParam('id')]
+            ['listing_id' => $this->getRequest()->getParam('id')]
         ));
 
         $path = 'walmart_listing_autoAction/getCategoryTemplatesList';
@@ -277,7 +277,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $this->jsTranslator->addTranslations([
             'Remove Category' => $this->__('Remove Category'),
-            'Add New Group' => $this->__('Add New Group'),
+            'Add New Rule' => $this->__('Add New Rule'),
             'Add/Edit Categories Rule' => $this->__('Add/Edit Categories Rule'),
             'Auto Add/Remove Rules' => $this->__('Auto Add/Remove Rules'),
             'Based on Magento Categories' => $this->__('Based on Magento Categories'),
@@ -378,25 +378,25 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         M2ePro.customData.marketplace = {$marketplace};
 
-        ListingGridHandlerObj = new WalmartListingViewGrid(
+        ListingGridObj = new WalmartListingViewGrid(
             '{$gridId}',
             {$this->listing['id']}
         );
 
-        ListingGridHandlerObj.movingHandler.setProgressBar('listing_view_progress_bar');
-        ListingGridHandlerObj.movingHandler.setGridWrapper('listing_view_content_container');
+        ListingGridObj.movingHandler.setProgressBar('listing_view_progress_bar');
+        ListingGridObj.movingHandler.setGridWrapper('listing_view_content_container');
 
-        WalmartListingProductVariationObj = new WalmartListingProductVariation(ListingGridHandlerObj);
+        WalmartListingProductVariationObj = new WalmartListingProductVariation(ListingGridObj);
 
         jQuery(function() {
-            ListingGridHandlerObj.afterInitPage();
+            ListingGridObj.afterInitPage();
 
-            ListingGridHandlerObj.actionHandler.setProgressBar('listing_view_progress_bar');
-            ListingGridHandlerObj.actionHandler.setGridWrapper('listing_view_content_container');
+            ListingGridObj.actionHandler.setProgressBar('listing_view_progress_bar');
+            ListingGridObj.actionHandler.setGridWrapper('listing_view_content_container');
 
             if (M2ePro.productsIdsForList) {
-                ListingGridHandlerObj.getGridMassActionObj().checkedString = M2ePro.productsIdsForList;
-                ListingGridHandlerObj.actionHandler.listAction();
+                ListingGridObj.getGridMassActionObj().checkedString = M2ePro.productsIdsForList;
+                ListingGridObj.actionHandler.listAction();
             }
 
             window.ListingAutoActionObj = new WalmartListingAutoAction();
@@ -469,6 +469,7 @@ JS
             'source' => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_PRODUCT
         ]);
         $items[] = [
+            'id' => 'add_products_mode_product',
             'label' => $this->__('From Products List'),
             'onclick' => "setLocation('" . $url . "')",
             'default' => true
@@ -485,6 +486,7 @@ JS
             'source' => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_CATEGORY
         ]);
         $items[] = [
+            'id' => 'add_products_mode_category',
             'label' => $this->__('From Categories'),
             'onclick' => "setLocation('" . $url . "')"
         ];

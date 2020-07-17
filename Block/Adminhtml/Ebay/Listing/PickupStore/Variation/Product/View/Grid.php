@@ -303,7 +303,9 @@ class Grid extends AbstractGrid
 
     public function callbackColumnLog($value, $row, $column, $isExport)
     {
-        $logIcon = $this->getViewLogIconHtml($row->getData('state_id'), $row->getData('id'));
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ViewLogIcon\PickupStore $viewLogIcon */
+        $viewLogIcon = $this->createBlock('Ebay_Grid_Column_Renderer_ViewLogIcon_Listing');
+        $logIcon = $viewLogIcon->render($row);
 
         if (!empty($logIcon)) {
             $logIcon .= '<input type="hidden"
@@ -313,64 +315,6 @@ class Grid extends AbstractGrid
         }
 
         return $logIcon;
-    }
-
-    public function getViewLogIconHtml($stateId, $columnId)
-    {
-        $stateId = (int)$stateId;
-        $availableActionsId = array_keys($this->getAvailableActions());
-
-        // Get last messages
-        // ---------------------------------------
-
-        $dbSelect = $this->resourceConnection->getConnection()->select()
-            ->from(
-                $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_Log')
-                                          ->getResource()->getMainTable(),
-                ['action_id','action','type','description','create_date']
-            )
-            ->where('`account_pickup_store_state_id` = ?', $stateId)
-            ->where('`action` IN (?)', $availableActionsId)
-            ->order(['id DESC'])
-            ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::PRODUCTS_LIMIT);
-
-        $logs = $this->resourceConnection->getConnection()->fetchAll($dbSelect);
-
-        if (empty($logs)) {
-            return '';
-        }
-
-        foreach ($logs as &$log) {
-            $log['initiator'] = \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION;
-        }
-
-        // ---------------------------------------
-
-        $summary = $this->createBlock('Listing_Log_Grid_LastActions')->setData([
-            'entity_id' => (int)$columnId,
-            'logs'      => $logs,
-            'available_actions' => $this->getAvailableActions(),
-            'view_help_handler' => 'EbayListingPickupStoreVariationGridObj.viewItemHelp',
-            'hide_help_handler' => 'EbayListingPickupStoreVariationGridObj.hideItemHelp',
-        ]);
-
-        $pickupStoreState = $this->activeRecordFactory->getObjectLoaded('Ebay_Account_PickupStore_State', $stateId);
-
-        $this->jsTranslator->addTranslations([
-            'Log For SKU '.$stateId => $this->__('Log For SKU (%s%)', $pickupStoreState->getSku())
-        ]);
-
-        return $summary->toHtml();
-    }
-
-    private function getAvailableActions()
-    {
-        return [
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_UNKNOWN        => $this->__('Unknown'),
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_ADD_PRODUCT    => $this->__('Add'),
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_UPDATE_QTY     => $this->__('Update'),
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_DELETE_PRODUCT => $this->__('Delete'),
-        ];
     }
 
     //########################################

@@ -1,0 +1,20 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Tabs\Search $block */
+
+?>
+
+<div id="chooser_search_input_container">
+    <input id="query" type="text" placeholder="<?php echo $block->__('Enter keyword(s) or Category ID...'); ?>" onkeypress="EbayTemplateCategoryChooserObj.keyPressQuery(event)">
+    <button class="action primary" onclick="EbayTemplateCategoryChooserObj.search()"><?php echo $block->__('Search'); ?></button>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <a onclick="EbayTemplateCategoryChooserObj.searchReset()"><?php echo $block->__('Reset'); ?></a>
+</div>
+<div id="chooser_search_results"></div>

@@ -26,18 +26,15 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
     const MARKETPLACE_CN = 32;
 
     protected $amazonFactory;
-    protected $moduleConfig;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
         $this->amazonFactory = $amazonFactory;
-        $this->moduleConfig = $moduleConfig;
         parent::__construct($helperFactory, $context);
     }
 
@@ -76,7 +73,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isEnabled()
     {
-        return (bool)$this->moduleConfig->getGroupValue('/component/'.self::NICK.'/', 'mode');
+        return (bool)$this->getHelper('Module')->getConfig()->getGroupValue('/component/'.self::NICK.'/', 'mode');
     }
 
     //########################################
@@ -135,7 +132,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getApplicationName()
     {
-        return $this->moduleConfig->getGroupValue('/amazon/', 'application_name');
+        return $this->getHelper('Module')->getConfig()->getGroupValue('/amazon/', 'application_name');
     }
 
     // ----------------------------------------

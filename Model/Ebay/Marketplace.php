@@ -15,36 +15,6 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 {
     private $info = null;
 
-    protected $moduleConfig;
-
-    //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFacory,
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = []
-    ) {
-        $this->moduleConfig = $moduleConfig;
-        parent::__construct(
-            $parentFactory,
-            $modelFactory,
-            $activeRecordFactory,
-            $helperFacory,
-            $context,
-            $registry,
-            $resource,
-            $resourceCollection,
-            $data
-        );
-    }
-
     //########################################
 
     public function _construct()

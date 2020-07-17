@@ -32,8 +32,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResp
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($message->getText()),
-                $logType,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+                $logType
             );
         }
     }
@@ -59,8 +58,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResp
 
         $this->getSynchronizationLog()->addMessage(
             $this->getHelper('Module\Translation')->__($messageText),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
         );
     }
 
@@ -74,15 +72,9 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResp
             $updatingModel = $this->modelFactory->getObject('Ebay_Listing_Other_Updating');
             $updatingModel->initialize($this->getAccount());
             $updatingModel->processResponseData($this->getPreparedResponseData());
-        } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
-
-            $this->getSynchronizationLog()->addMessage(
-                $this->getHelper('Module\Translation')->__($exception->getMessage()),
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
-            )
-            ;
+        } catch (\Exception $e) {
+            $this->getHelper('Module\Exception')->process($e);
+            $this->getSynchronizationLog()->addMessageFromException($e);
         }
     }
 

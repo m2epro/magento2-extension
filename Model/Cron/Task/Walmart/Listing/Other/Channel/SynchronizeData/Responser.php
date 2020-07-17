@@ -48,8 +48,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module_Translation')->__($message->getText()),
-                $logType,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+                $logType
             );
         }
     }
@@ -75,8 +74,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
 
         $this->getSynchronizationLog()->addMessage(
             $this->getHelper('Module_Translation')->__($messageText),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
         );
     }
 
@@ -89,14 +87,9 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
         try {
             $this->updateReceivedOtherListings($receivedItems);
             $this->createNotExistedOtherListings($receivedItems);
-        } catch (\Exception $exception) {
-            $this->getHelper('Module_Exception')->process($exception);
-
-            $this->getSynchronizationLog()->addMessage(
-                $this->getHelper('Module_Translation')->__($exception->getMessage()),
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
-            );
+        } catch (\Exception $e) {
+            $this->getHelper('Module_Exception')->process($e);
+            $this->getSynchronizationLog()->addMessageFromException($e);
         }
     }
 

@@ -13,6 +13,9 @@ namespace Ess\M2ePro\Model\Requirements\Renderer;
  */
 class MagentoVersion extends AbstractRenderer
 {
+    /** @var bool */
+    protected $hideIfMeet = true;
+
     //########################################
 
     public function getTitle()
@@ -39,6 +42,11 @@ HTML;
     <span>{$this->getCheckObject()->getReal()}</span>&nbsp;
 </span>
 HTML;
+    }
+
+    public function getAdditional()
+    {
+        return '';
     }
 
     //########################################

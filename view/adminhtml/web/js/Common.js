@@ -1,14 +1,13 @@
 define([
     'M2ePro/Plugin/Confirm',
     'M2ePro/Plugin/Alert',
+    'M2ePro/Plugin/Messages',
     'prototype',
     'jquery/validate',
     'mage/backend/form',
     'mage/backend/validation'
-], function (confirm, alert) {
-
-    window.Common = Class.create();
-    Common.prototype = {
+], function (confirm, alert, MessageObj) {
+    window.Common = Class.create({
 
         // ---------------------------------------
 
@@ -240,11 +239,23 @@ define([
 
         // ---------------------------------------
 
-        openWindow: function(url)
+        openWindow: function(url, callback)
         {
-            var w = window.open(url);
-            w.focus();
-            return w;
+            var win = window.open(url);
+            win.focus();
+
+            var intervalId = setInterval(function() {
+
+                if (!win.closed) {
+                    return;
+                }
+
+                clearInterval(intervalId);
+                callback && callback();
+
+            }, 1000);
+
+            return win;
         },
 
         // ---------------------------------------
@@ -322,6 +333,29 @@ define([
             }, 50);
         },
 
+        processJsonResponse: function(responseText)
+        {
+            if (!responseText.isJSON()) {
+                alert(responseText);
+                return false;
+            }
+
+            var response = responseText.evalJSON();
+            if (typeof response.result === 'undefined') {
+                alert('Invalid response.');
+                return false;
+            }
+
+            MessageObj.clearAll();
+            if (typeof response.messages !== 'undefined') {
+                response.messages.each(function(msg) {
+                    MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1)](msg.text);
+                });
+            }
+
+            return response;
+        },
+
         // ---------------------------------------
 
         updateFloatingHeader: function ()
@@ -368,5 +402,5 @@ define([
         }
 
         // ---------------------------------------
-    }
+    });
 });

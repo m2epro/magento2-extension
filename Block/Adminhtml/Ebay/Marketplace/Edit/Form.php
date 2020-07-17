@@ -27,11 +27,6 @@ class Form extends AbstractForm
 
     protected function _prepareForm()
     {
-        $componentName = '';
-        if (count($this->getHelper('Component')->getEnabledComponents()) > 1) {
-            $componentName = $this->getHelper('Component\Ebay')->getTitle();
-        }
-
         $form = $this->_formFactory->create(
             ['data' => ['id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post']]
         );
@@ -72,6 +67,12 @@ HTML;
 
                     <div id="synch_info_complete_{$marketplace['instance']->getId()}"
                         class="value" style="display: none; color: green;">{$this->__('Completed')}</div>
+                        
+                    <div id="synch_info_error_{$marketplace['instance']->getId()}"
+                        class="value" style="display: none; color: red;">{$this->__('Error')}</div>
+                        
+                    <div id="synch_info_skip_{$marketplace['instance']->getId()}"
+                        class="value" style="display: none; color: gray;">{$this->__('Skipped')}</div>
 
                     <div id="marketplace_title_{$marketplace['instance']->getId()}"
                         class="value" style="display: none;">{$marketplace['instance']->getTitle()}</div>
@@ -117,7 +118,8 @@ HTML;
                     self::SELECT,
                     $selectData
                 )->addCustomAttribute('marketplace_id', $marketplace['instance']->getId())
-                 ->addCustomAttribute('markeptlace_component_name', $componentName)
+                 ->addCustomAttribute('component_name', \Ess\M2ePro\Helper\Component\Ebay::NICK)
+                 ->addCustomAttribute('component_title', $this->getHelper('Component\Ebay')->getTitle())
                  ->addCustomAttribute('onchange', 'MarketplaceObj.changeStatus(this);');
             }
         }
@@ -208,13 +210,11 @@ HTML;
     protected function _toHtml()
     {
         $this->jsUrl->addUrls([
-            'formSubmit' => $this->getUrl('m2epro/ebay_marketplace/save'),
+            'formSubmit' => $this->getUrl('*/ebay_marketplace/save'),
             'logViewUrl' => $this->getUrl(
                 '*/ebay_synchronization_log/index',
-                ['back'=>$this->getHelper('Data')
-                ->makeBackUrlParam('*/ebay_synchronization/index')]
+                ['back'=>$this->getHelper('Data')->makeBackUrlParam('*/ebay_synchronization/index')]
             ),
-
             'runSynchNow' => $this->getUrl('*/ebay_marketplace/runSynchNow'),
         ]);
 
@@ -226,7 +226,7 @@ HTML;
             'Some eBay Categories were deleted from eBay. Click <a target="_blank" href="%url%">here</a> to check.' =>
                 $this->__(
                     'Some eBay Categories were deleted from eBay.
-                    Click <a target="_blank" href="%url%">here</a> to check.'
+                 Click <a target="_blank" href="%url%">here</a> to check.'
                 )
         ]);
 
@@ -238,11 +238,10 @@ HTML;
                 'M2ePro/Plugin/ProgressBar',
                 'M2ePro/Plugin/AreaWrapper'
             ], function() {
-                window.MarketplaceProgressBarObj = new ProgressBar('marketplaces_progress_bar');
-                window.MarketplaceWrapperObj = new AreaWrapper('marketplaces_content_container');
-
-                window.MarketplaceProgressObj =
-                    new EbayMarketplaceSynchProgress(MarketplaceProgressBarObj, MarketplaceWrapperObj );
+                window.MarketplaceProgressObj = new EbayMarketplaceSynchProgress(
+                    new ProgressBar('marketplaces_progress_bar'),
+                    new AreaWrapper('marketplaces_content_container')
+                );
                 window.MarketplaceObj = new Marketplace(MarketplaceProgressObj, $storedStatuses);
             });
 JS

@@ -13,6 +13,9 @@ namespace Ess\M2ePro\Model\Amazon\Order\Creditmemo;
  */
 class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
 {
+    const AMAZON_REFUND_REASON_CUSTOMER_RETURN = 'CustomerReturn';
+    const AMAZON_REFUND_REASON_NO_INVENTORY    = 'NoInventory';
+
     //########################################
 
     /**
@@ -25,7 +28,11 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
         \Ess\M2ePro\Model\Order $order,
         \Magento\Sales\Model\Order\Creditmemo $creditmemo
     ) {
-        $itemsForCancel = [];
+        $itemsForRefund = [];
+
+        $refundReason = $this->isOrderStatusShipped($order) || $order->isOrderStatusUpdatingToShipped() ?
+                        self::AMAZON_REFUND_REASON_CUSTOMER_RETURN :
+                        self::AMAZON_REFUND_REASON_NO_INVENTORY;
 
         foreach ($creditmemo->getAllItems() as $creditmemoItem) {
             /** @var \Magento\Sales\Model\Order\Creditmemo\Item $creditmemoItem */
@@ -50,7 +57,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                 }
 
                 $orderItemId = $data['order_item_id'];
-                if (in_array($orderItemId, $itemsForCancel)) {
+                if (in_array($orderItemId, $itemsForRefund)) {
                     continue;
                 }
 
@@ -87,8 +94,9 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                     $tax = $item->getChildObject()->getTaxAmount();
                 }
 
-                $itemsForCancel[] = [
+                $itemsForRefund[] = [
                     'item_id'  => $orderItemId,
+                    'reason'   => $refundReason,
                     'qty'      => $itemQty,
                     'prices'   => [
                         'product' => $price,
@@ -110,7 +118,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
             $creditmemoItem->getOrderItem()->save();
         }
 
-        return $itemsForCancel;
+        return $itemsForRefund;
     }
 
     /**
@@ -119,6 +127,16 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
     protected function getComponentMode()
     {
         return \Ess\M2ePro\Helper\Component\Amazon::NICK;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Order $order
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function isOrderStatusShipped(\Ess\M2ePro\Model\Order $order)
+    {
+        return $order->getChildObject()->isShipped() || $order->getChildObject()->isPartiallyShipped();
     }
 
     //########################################

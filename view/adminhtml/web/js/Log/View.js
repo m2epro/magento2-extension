@@ -14,7 +14,7 @@ define([
                 && !_.isUndefined(M2ePro.formData.maxAllowedLogsCountExceededNotification)
             ) {
                 LogViewObj.notificationWasAdded = true;
-                MessagesObj.addNoticeMessage(M2ePro.formData.maxAllowedLogsCountExceededNotification);
+                MessagesObj.addNotice(M2ePro.formData.maxAllowedLogsCountExceededNotification);
             }
 
             jQuery('.data-grid tbody tr:not(.data-grid-tr-no-data)').each(function () {

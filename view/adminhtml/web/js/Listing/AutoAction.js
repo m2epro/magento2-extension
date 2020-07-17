@@ -6,20 +6,24 @@ define([
     'M2ePro/Common',
     'prototype'
 ], function (jQuery, modal, _) {
-
     window.ListingAutoAction = Class.create(Common, {
 
         // ---------------------------------------
 
-        controller: 'adminhtml_common_listing_autoAction',
-
         internalData: {},
 
         popupMode: '',
-        currentPopup: {},
+        currentkPopup: {},
 
         magentoCategoryIdsFromOtherGroups: {},
         magentoCategoryTreeChangeEventInProgress: false,
+
+    // ---------------------------------------
+
+        getController: function()
+        {
+            throw Error('Method should be overrided and return controller')
+        },
 
         // ---------------------------------------
 
@@ -29,7 +33,7 @@ define([
                 return $$('input[name="auto_mode"]').any(function(el) {
                     return el.checked;
                 })
-            }, jQuery.mage.__('Please select one of the options.'));
+            }, M2ePro.translator.translate('This is a required field.'));
 
             jQuery.validator.addMethod('M2ePro-validate-category-selection', function() {
                 return categories_selected_items.length > 0
@@ -39,7 +43,7 @@ define([
 
                 var unique = true;
 
-                new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.controller + '/isCategoryGroupTitleUnique'), {
+                new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.getController() + '/isCategoryGroupTitleUnique'), {
                     method: 'get',
                     asynchronous: false,
                     parameters: {
@@ -85,15 +89,15 @@ define([
 
         // ---------------------------------------
 
-        loadAutoActionHtml: function(mode, callback)
+        loadAutoActionHtml: function(mode)
         {
             mode = mode || null;
 
-            new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.controller + '/index'), {
+            new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.getController() + '/index'), {
                 method: 'get',
                 asynchronous: true,
                 parameters: {
-                    auto_mode: mode
+                    auto_mode: mode || null
                 },
                 onSuccess: function(transport) {
 
@@ -107,10 +111,6 @@ define([
                         this.setPopupMode(responseData.mode);
                     }
                     this.openPopUp(title, responseData.html);
-
-                    if (typeof callback == 'function') {
-                        callback();
-                    }
                 }.bind(this)
             });
         },
@@ -184,7 +184,7 @@ define([
                     },
                     {
                         label: M2ePro.translator.translate('Back'),
-                        attr: {style: 'display:none', id: popupMode+'cancel_button'},
+                        attr: {id: popupMode+'cancel_button'},
                         class: 'back',
                         callback: function() {
                             ListingAutoActionObj.reset(true);
@@ -201,7 +201,7 @@ define([
                         }
                     },
                     {
-                        label: M2ePro.translator.translate('Add New Group'),
+                        label: M2ePro.translator.translate('Add New Rule'),
                         class: 'add_button add primary',
                         attr: {id: 'add_button'},
                         callback: function() {
@@ -293,10 +293,8 @@ define([
             self[mode+'popup'].modal('openModal');
             self.currentPopup = self[mode+'popup'];
 
-            try {
-                modalDialogMessage.innerHTML = content;
-                modalDialogMessage.innerHTML.evalScripts();
-            } catch (ignored) {}
+            modalDialogMessage.innerHTML = content;
+            modalDialogMessage.innerHTML.evalScripts();
 
             var additionalTitleEl = $('additional_autoaction_title_text');
 
@@ -324,7 +322,7 @@ define([
         {
             var popupMode = this.getPopupMode();
 
-            new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.controller + '/getAutoCategoryFormHtml'), {
+            new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.getController() + '/getAutoCategoryFormHtml'), {
                 method: 'get',
                 asynchronous: true,
                 parameters: {
@@ -348,7 +346,10 @@ define([
                         {
                             label: M2ePro.translator.translate('Continue'),
                             class: 'next continue_button primary forward',
-                            attr: {style: 'display: none',id: popupMode+'continue_button'}
+                            attr: {style: 'display: none', id: popupMode+'continue_button'},
+                            callback: function() {
+                                ListingAutoActionObj.categoryStepTwo();
+                            },
                         },
                         {
                             label: M2ePro.translator.translate('Complete'),
@@ -402,7 +403,7 @@ define([
                 title: M2ePro.translator.translate('Remove Category'),
                 actions: {
                     confirm: function() {
-                        new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.controller + '/deleteCategory'), {
+                        new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.getController() + '/deleteCategory'), {
                             method: 'post',
                             asynchronous: true,
                             parameters: {
@@ -441,85 +442,6 @@ define([
 
         // ---------------------------------------
 
-        highlightBreadcrumbStep: function(step)
-        {
-            $$('[id$="breadcrumb_container"] .breadcrumb').each(function(element) { element.removeClassName('selected'); });
-
-            $('step_' + step).addClassName('selected');
-        },
-
-        // ---------------------------------------
-
-        globalStepTwo: function()
-        {
-            ListingAutoActionObj.collectData();
-
-            var callback = function() {
-                jQuery('#continue_button')
-                    .off('click')
-                    .on('click', ListingAutoActionObj.globalStepThree);
-
-                ListingAutoActionObj.highlightBreadcrumbStep(2);
-            };
-
-            ListingAutoActionObj.loadCategoryChooser(callback);
-        },
-
-        globalStepThree: function()
-        {
-            if (!ListingCategoryChooserHandlerObj.validate()) {
-                return;
-            }
-
-            ListingAutoActionObj.collectData();
-
-            var callback = function() {
-                ListingAutoActionObj.highlightBreadcrumbStep(3);
-
-                $('confirm_button').show();
-                $('continue_button').hide();
-            };
-
-            ListingAutoActionObj.loadSpecific(callback);
-        },
-
-        // ---------------------------------------
-
-        websiteStepTwo: function()
-        {
-            ListingAutoActionObj.collectData();
-
-            var callback = function() {
-                jQuery('#'+ListingAutoActionObj.getPopupMode() + 'continue_button')
-                    .off('click')
-                    .on('click', ListingAutoActionObj.websiteStepThree);
-
-                ListingAutoActionObj.highlightBreadcrumbStep(2);
-            };
-
-            ListingAutoActionObj.loadCategoryChooser(callback);
-        },
-
-        websiteStepThree: function()
-        {
-            if (!ListingCategoryChooserHandlerObj.validate()) {
-                return;
-            }
-
-            ListingAutoActionObj.collectData();
-
-            var callback = function() {
-                ListingAutoActionObj.highlightBreadcrumbStep(3);
-
-                $(ListingAutoActionObj.getPopupMode() + 'confirm_button').show();
-                $(ListingAutoActionObj.getPopupMode() + 'continue_button').hide();
-            };
-
-            ListingAutoActionObj.loadSpecific(callback);
-        },
-
-        // ---------------------------------------
-
         isCategoryAlreadyUsed: function(categoryId)
         {
             return this.magentoCategoryUsedIds.indexOf(categoryId) != -1;
@@ -542,46 +464,13 @@ define([
             });
         },
 
-        categoryStepTwo: function()
-        {
-            if (!ListingAutoActionObj.validate()) {
-                return;
-            }
-
-            ListingAutoActionObj.collectData();
-
-            var mode = ListingAutoActionObj.getPopupMode();
-            var callback = function() {
-                jQuery('#' + mode+ 'continue_button')
-                    .off('click')
-                    .on('click', ListingAutoActionObj.categoryStepThree);
-
-                ListingAutoActionObj.highlightBreadcrumbStep(2);
-            };
-
-            ListingAutoActionObj.loadCategoryChooser(callback);
-        },
-
-        categoryStepThree: function()
-        {
-            ListingAutoActionObj.collectData();
-
-            var mode = ListingAutoActionObj.getPopupMode();
-            var callback = function() {
-                ListingAutoActionObj.highlightBreadcrumbStep(3);
-
-                $(mode+'confirm_button').show();
-                $(mode+'continue_button').hide();
-            };
-        },
-
         // ---------------------------------------
 
         categoryDeleteGroup: function(groupId)
         {
             this.confirmPopup(M2ePro.translator.translate('Are you sure?'), {
                 confirmCallback: function() {
-                    new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.controller + '/deleteCategoryGroup'), {
+                    new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.getController() + '/deleteCategoryGroup'), {
                         method: 'post',
                         asynchronous: true,
                         parameters: {
@@ -640,7 +529,7 @@ define([
                         ListingAutoActionObj.internalData = {
                             auto_mode: $('auto_mode').value,
                             auto_global_adding_mode: $('auto_global_adding_mode').value,
-                            auto_global_adding_add_not_visible: $('auto_global_adding_add_not_visible').value,
+                            auto_global_adding_add_not_visible: $('auto_global_adding_add_not_visible').value
                         };
                         break;
 
@@ -672,7 +561,7 @@ define([
         {
             var data = this.internalData;
 
-            new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.controller + '/save'), {
+            new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.getController() + '/save'), {
                 method: 'post',
                 asynchronous: true,
                 parameters: {
@@ -691,7 +580,7 @@ define([
             skipConfirmation = skipConfirmation || false;
 
             var confirmCallback = function() {
-                new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.controller + '/reset'), {
+                new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.getController() + '/reset'), {
                     method: 'post',
                     asynchronous: true,
                     parameters: {},

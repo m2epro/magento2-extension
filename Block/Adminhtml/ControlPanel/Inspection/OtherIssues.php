@@ -34,11 +34,7 @@ class OtherIssues extends AbstractInspection
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('controlPanelInspectionOtherIssues');
-        // ---------------------------------------
-
         $this->setTemplate('control_panel/inspection/otherIssues.phtml');
     }
 
@@ -60,25 +56,6 @@ class OtherIssues extends AbstractInspection
     public function isZendOpcacheAvailable()
     {
         return $this->getHelper('Client\Cache')->isZendOpcacheAvailable();
-    }
-
-    public function isSystemLogNotEmpty()
-    {
-        $table = $this->activeRecordFactory->getObject('Log\System')->getResource()->getMainTable();
-
-        if (!$this->getHelper('Module_Database_Structure')->isTableExists($table)) {
-            return false;
-        }
-
-        $totalCount = $this->resourceConnection->getConnection()
-            ->select()
-            ->from(
-                ['log'   => $table],
-                ['count' => new \Zend_Db_Expr('COUNT(*)')]
-            )
-            ->query()->fetchColumn();
-
-        return (bool)(int)$totalCount;
     }
 
     //########################################

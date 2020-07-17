@@ -15,7 +15,7 @@ class Client extends AbstractHelper
 {
     const API_APACHE_HANDLER = 'apache2handler';
 
-    protected $cacheConfig;
+    protected $activeRecordFactory;
     protected $filesystem;
     protected $resource;
     protected $phpEnvironmentRequest;
@@ -23,14 +23,14 @@ class Client extends AbstractHelper
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\Filesystem $filesystem,
         \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest
     ) {
-        $this->cacheConfig = $cacheConfig;
+        $this->activeRecordFactory = $activeRecordFactory;
         $this->filesystem = $filesystem;
         $this->resource = $resource;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
@@ -39,101 +39,87 @@ class Client extends AbstractHelper
 
     //########################################
 
-    public function getHost()
-    {
-        $domain = $this->getDomain();
-        return empty($domain) ? $this->getIp() : $domain;
-    }
-
-    // ---------------------------------------
-
     public function getDomain()
     {
-        $domain = $this->cacheConfig->getGroupValue('/location_info/', 'domain');
-
-        if (!empty($domain)) {
-            return strtolower(trim($domain));
+        $domain = $this->getHelper('Module')->getConfig()->getGroupValue('/location/', 'domain');
+        if (empty($domain)) {
+            $domain = $this->getServerDomain();
         }
 
-        $domain = rtrim($this->phpEnvironmentRequest->getServer('HTTP_HOST'), '/');
-
-        if (!empty($domain)) {
-            return strtolower(trim($domain));
+        if (empty($domain)) {
+            throw new \Ess\M2ePro\Model\Exception('Server Domain is not defined');
         }
 
-        throw new \Ess\M2ePro\Model\Exception('Server Domain is not defined');
+        return $domain;
     }
 
     public function getIp()
     {
-        $ip = $this->cacheConfig->getGroupValue('/location_info/', 'ip');
-
-        if (!empty($ip)) {
-            return strtolower(trim($ip));
+        $ip = $this->getHelper('Module')->getConfig()->getGroupValue('/location/', 'ip');
+        if (empty($ip)) {
+            $ip = $this->getServerIp();
         }
 
-        $ip = $this->phpEnvironmentRequest->getServer('SERVER_ADDR');
-        empty($ip) && $ip = $this->phpEnvironmentRequest->getServer('LOCAL_ADDR');
-
-        if (!empty($ip)) {
-            return strtolower(trim($ip));
+        if (empty($ip)) {
+            throw new \Ess\M2ePro\Model\Exception('Server IP is not defined');
         }
 
-        throw new \Ess\M2ePro\Model\Exception('Server IP is not defined');
+        return $ip;
     }
 
     public function getBaseDirectory()
     {
-        $directory = $this->cacheConfig->getGroupValue('/location_info/', 'directory');
-
-        if (!empty($directory)) {
-            return trim($directory);
-        }
-
-        $directory = $this->filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::ROOT)
-                                      ->getAbsolutePath();
-
-        if (!empty($directory)) {
-            return trim($directory);
-        }
-
-        throw new \Ess\M2ePro\Model\Exception('Server Directory is not defined');
+        return $this->filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::ROOT)
+              ->getAbsolutePath();
     }
 
     // ---------------------------------------
 
-    public function updateBackupConnectionData($forceUpdate = false)
+    public function updateLocationData($forceUpdate = false)
     {
-        $dateLastCheck = $this->cacheConfig->getGroupValue('/location_info/', 'date_last_check');
-
-        if (empty($dateLastCheck)) {
-            $dateLastCheck = $this->getHelper('Data')->getCurrentGmtDate(true) - 60*60*365;
-        } else {
+        $dateLastCheck = $this->getHelper('Module')->getRegistry()->getValue('/location/date_last_check/');
+        if ($dateLastCheck !== null) {
             $dateLastCheck = strtotime($dateLastCheck);
+
+            if (!$forceUpdate && $this->getHelper('Data')->getCurrentGmtDate(true) < $dateLastCheck + 60*60*24) {
+                return;
+            }
         }
 
-        if (!$forceUpdate && $this->getHelper('Data')->getCurrentGmtDate(true) < $dateLastCheck + 60*60*24) {
-            return;
+        $this->getHelper('Module')->getRegistry()->setValue(
+            '/location/date_last_check/',
+            $this->getHelper('Data')->getCurrentGmtDate()
+        );
+
+        $domain = $this->getServerDomain();
+        if (null === $domain) {
+            $domain = '127.0.0.1';
         }
 
+        $ip = $this->getServerIp();
+        if (null === $ip) {
+            $ip = '127.0.0.1';
+        }
+
+        $this->getHelper('Module')->getConfig()->setGroupValue('/location/', 'domain', $domain);
+        $this->getHelper('Module')->getConfig()->setGroupValue('/location/', 'ip', $ip);
+    }
+
+    protected function getServerDomain()
+    {
         $domain = rtrim($this->phpEnvironmentRequest->getServer('HTTP_HOST'), '/');
         empty($domain) && $domain = '127.0.0.1';
         strpos($domain, 'www.') === 0 && $domain = substr($domain, 4);
-        $this->cacheConfig->setGroupValue('/location_info/', 'domain', $domain);
 
+        return strtolower(trim((string)$domain));
+    }
+
+    protected function getServerIp()
+    {
         $ip = $this->phpEnvironmentRequest->getServer('SERVER_ADDR');
         empty($ip) && $ip = $this->phpEnvironmentRequest->getServer('LOCAL_ADDR');
-        empty($ip) && $ip = '127.0.0.1';
-        $this->cacheConfig->setGroupValue('/location_info/', 'ip', $ip);
 
-        $directory = $this->filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::ROOT);
-        $this->cacheConfig->setGroupValue('/location_info/', 'directory', $directory->getAbsolutePath());
-
-        $this->cacheConfig->setGroupValue(
-            '/location_info/',
-            'date_last_check',
-            $this->getHelper('Data')->getCurrentGmtDate()
-        );
+        return strtolower(trim((string)$ip));
     }
 
      //########################################
@@ -323,11 +309,6 @@ class Client extends AbstractHelper
         return PHP_OS;
     }
 
-    public function isBrowserIE()
-    {
-        return strpos($this->phpEnvironmentRequest->getServer('HTTP_USER_AGENT'), 'MSIE') !== false;
-    }
-
     // ---------------------------------------
 
     public function getMemoryLimit($inMegabytes = true)
@@ -371,6 +352,7 @@ class Client extends AbstractHelper
             return false;
         }
 
+        // @codingStandardsIgnoreStart
         for ($i=$minSize; $i<=$maxSize; $i*=2) {
             if (ini_set('memory_limit', "{$i}M") === false) {
                 if ($i == $minSize) {
@@ -380,19 +362,70 @@ class Client extends AbstractHelper
                 }
             }
         }
+        // @codingStandardsIgnoreEnd
 
         return true;
+    }
+
+    public function testMemoryLimit($bytes = null)
+    {
+        $this->getHelper('Module')->getRegistry()->setValue('/tools/memory-limit/test/', null);
+
+        $i = 0;
+        $array = [];
+
+        // @codingStandardsIgnoreStart
+        while (($usage = memory_get_usage(true)) < $bytes || $bytes === null) {
+            $array[] = $array;
+            if (++$i % 100 === 0) {
+                $this->getHelper('Module')->getRegistry()->setValue('/tools/memory-limit/test/', $usage);
+            }
+        }
+        // @codingStandardsIgnoreEnd
+
+        return $usage;
+    }
+
+    public function getTestedMemoryLimit()
+    {
+        return $this->getHelper('Module')->getRegistry()->getValue('/tools/memory-limit/test/');
     }
 
     // ---------------------------------------
 
     public function getExecutionTime()
     {
-        if (!$this->isPhpApiApacheHandler()) {
+        if ($this->isPhpApiFastCgi()) {
             return null;
         }
 
+        // @codingStandardsIgnoreLine
         return ini_get('max_execution_time');
+    }
+
+    public function testExecutionTime($seconds)
+    {
+        $this->getHelper('Module')->getRegistry()->setValue('/tools/execution-time/test/', null);
+
+        $i = 0;
+
+        // @codingStandardsIgnoreStart
+        while ($i < $seconds) {
+            sleep(1);
+            if (++$i % 10 === 0) {
+                $this->getHelper('Module')->getRegistry()->setValue('/tools/execution-time/test/', $i);
+            }
+        }
+        // @codingStandardsIgnoreEnd
+
+        $this->getHelper('Module')->getRegistry()->setValue('/tools/execution-time/test/', $seconds);
+
+        return $i;
+    }
+
+    public function getTestedExecutionTime()
+    {
+        return $this->getHelper('Module')->getRegistry()->getValue('/tools/execution-time/test/');
     }
 
     //########################################

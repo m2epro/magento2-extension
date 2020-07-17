@@ -33,16 +33,4 @@
         </tr>
     <?php endforeach; ?>
 
-    <?php foreach ($block->crashedTables as $table) :?>
-        <tr>
-            <td class="label">
-                <?php echo $table?>
-            </td>
-            <td class="value">
-                <span style="color: red;">table is crashed</span>
-                <a style="margin-left: 10px;" href="<?php echo $block->getUrl('*/controlPanel_inspection/repairCrashedTable', ['table_name' => $table]); ?>">Repair</a>
-            </td>
-        </tr>
-    <?php endforeach; ?>
-
 </table>

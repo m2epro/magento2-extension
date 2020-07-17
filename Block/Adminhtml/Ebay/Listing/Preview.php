@@ -370,6 +370,19 @@ JS
         return $attributeLabels;
     }
 
+    protected function getBundleImagesAttributeLabels()
+    {
+        $variations = $this->ebayListingProduct->getMagentoProduct()
+            ->getVariationInstance()
+            ->getVariationsTypeStandard();
+
+        if (!empty($variations['set'])) {
+            return [(string)key($variations['set'])];
+        }
+
+        return [];
+    }
+
     private function getImagesDataByAttributeLabels(array $attributeLabels)
     {
         $images = [];
@@ -459,6 +472,10 @@ JS
                 $attributeLabels = [\Ess\M2ePro\Model\Magento\Product\Variation::GROUPED_PRODUCT_ATTRIBUTE_LABEL];
             }
 
+            if ($this->ebayListingProduct->getMagentoProduct()->isBundleType()) {
+                $attributeLabels = $this->getBundleImagesAttributeLabels();
+            }
+
             if (!empty($attributeLabels)) {
                 $images['variations'] = $this->getImagesDataByAttributeLabels($attributeLabels);
             }
@@ -487,7 +504,7 @@ JS
             return $finalCategory;
         }
 
-        $categoryId = $this->ebayListingProduct->getCategoryTemplateSource()->getMainCategory();
+        $categoryId = $this->ebayListingProduct->getCategoryTemplateSource()->getCategoryId();
         $categoryTitle = $this->getHelper('Component_Ebay_Category_Ebay')->getPath($categoryId, $marketplaceId);
 
         if (!$categoryTitle) {
@@ -501,41 +518,52 @@ JS
 
     public function getOtherCategories()
     {
-        $otherCategoriesFinalTitles = [];
+        $categoriesTitles = [];
 
         $marketplaceId = $this->ebayListingProduct->getMarketplace()->getId();
         $accountId = $this->ebayListingProduct->getEbayAccount()->getId();
 
-        $otherCategoryTemplateSource = $this->ebayListingProduct->getOtherCategoryTemplateSource();
-
-        if ($otherCategoryTemplateSource === null) {
-            return $otherCategoriesFinalTitles;
-        }
-
-        $otherCategoriesIds = [
-            'secondary' => $otherCategoryTemplateSource->getSecondaryCategory(),
-            'primary_store' => $otherCategoryTemplateSource->getStoreCategoryMain(),
-            'secondary_store' => $otherCategoryTemplateSource->getStoreCategorySecondary()
-        ];
-
-        $otherCategoriesTitles = [
-            'secondary' => $this->getHelper('Component_Ebay_Category_Ebay')
-                ->getPath($otherCategoriesIds['secondary'], $marketplaceId),
-            'primary_store' => $this->getHelper('Component_Ebay_Category_Store')
-                ->getPath($otherCategoriesIds['primary_store'], $accountId),
-            'secondary_store' => $this->getHelper('Component_Ebay_Category_Store')
-                ->getPath($otherCategoriesIds['secondary_store'], $accountId)
-        ];
-
-        foreach ($otherCategoriesTitles as $otherCategoryType => $otherCategoryTitle) {
-            if ($otherCategoryTitle) {
-                $otherCategoriesFinalTitles[$otherCategoryType] =
-                    '<a>' . str_replace('>', '</a> > <a>', $otherCategoryTitle)
-                    . '</a> (' . $otherCategoriesIds[$otherCategoryType] . ')';
+        $source = $this->ebayListingProduct->getCategorySecondaryTemplateSource();
+        if ($source !== null) {
+            $title = $this->getHelper('Component_Ebay_Category_Ebay')->getPath(
+                $source->getCategoryId(),
+                $marketplaceId
+            );
+            if (empty($title)) {
+                $categoriesTitles['secondary'] = [$source->getCategoryId(), $title];
             }
         }
 
-        return $otherCategoriesFinalTitles;
+        $source = $this->ebayListingProduct->getStoreCategoryTemplateSource();
+        if ($source !== null) {
+            $title = $this->getHelper('Component_Ebay_Category_Store')->getPath(
+                $source->getCategoryId(),
+                $accountId
+            );
+            if (empty($title)) {
+                $categoriesTitles['primary_store'] = [$source->getCategoryId(), $title];
+            }
+        }
+
+        $source = $this->ebayListingProduct->getStoreCategorySecondaryTemplateSource();
+        if ($source !== null) {
+            $title = $this->getHelper('Component_Ebay_Category_Store')->getPath(
+                $source->getCategoryId(),
+                $accountId
+            );
+            if (empty($title)) {
+                $categoriesTitles['secondary_store'] = [$source->getCategoryId(), $title];
+            }
+        }
+
+        foreach ($categoriesTitles as $categoryType => &$categoryData) {
+            list($id, $title) = $categoryData;
+            $categoryData = '<a>' . str_replace('>', '</a> > <a>', $title) . '</a> (' . $id . ')';
+        }
+
+        unset($categoryData);
+
+        return $categoriesTitles;
     }
 
     public function getSpecifics()

@@ -103,7 +103,9 @@ class InspectDirectChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function getLastListingProductId($component)
     {
-        $configValue = $this->getRegistryValue(self::KEY_PREFIX.'/'.$component.'/last_listing_product_id/');
+        $configValue = $this->getHelper('Module')->getRegistry()->getValue(
+            self::KEY_PREFIX.'/'.$component.'/last_listing_product_id/'
+        );
 
         if ($configValue === null) {
             return 0;
@@ -114,7 +116,10 @@ class InspectDirectChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function setLastListingProductId($component, $listingProductId)
     {
-        $this->setRegistryValue(self::KEY_PREFIX.'/'.$component.'/last_listing_product_id/', (int)$listingProductId);
+        $this->getHelper('Module')->getRegistry()->setValue(
+            self::KEY_PREFIX.'/'.$component.'/last_listing_product_id/',
+            (int)$listingProductId
+        );
     }
 
     //########################################

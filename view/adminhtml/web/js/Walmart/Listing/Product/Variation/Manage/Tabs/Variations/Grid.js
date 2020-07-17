@@ -276,7 +276,7 @@ define([
                         var response = self.parseResponse(transport);
 
                         if (response['vocabulary_attribute_options']) {
-                            ListingGridHandlerObj.variationProductManageHandler.openVocabularyOptionsPopUp(response['vocabulary_attribute_options']);
+                            ListingGridObj.variationProductManageHandler.openVocabularyOptionsPopUp(response['vocabulary_attribute_options']);
                             return;
                         }
 
@@ -523,11 +523,11 @@ define([
                     var response = self.parseResponse(transport);
                     if (response.msg) {
                         self.messageObj.clear();
-                        self.messageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](response.msg);
+                        self.messageObj['add' + response.type[0].toUpperCase() + response.type.slice(1)](response.msg);
                     }
 
                     if (response['vocabulary_attribute_options']) {
-                        ListingGridHandlerObj.variationProductManageHandler.openVocabularyOptionsPopUp(response['vocabulary_attribute_options']);
+                        ListingGridObj.variationProductManageHandler.openVocabularyOptionsPopUp(response['vocabulary_attribute_options']);
                         return;
                     }
 
@@ -583,8 +583,8 @@ define([
         {
             $super();
 
-            ListingGridHandlerObj.variationProductManageHandler.reloadSettings(null);
-            ListingGridHandlerObj.variationProductManageHandler.reloadVocabulary(null);
+            ListingGridObj.variationProductManageHandler.reloadSettings(null);
+            ListingGridObj.variationProductManageHandler.reloadVocabulary(null);
         }
 
         // ---------------------------------------

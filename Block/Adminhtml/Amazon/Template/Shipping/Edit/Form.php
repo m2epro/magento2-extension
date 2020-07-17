@@ -29,13 +29,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $this->formData = $model->toArray();
         }
 
-        $default = [
-            'title'         => '',
-
-            'template_name_mode' => '',
-            'template_name_value' => '',
-            'template_name_attribute' => '',
-        ];
+        $default = $this->modelFactory->getObject('Amazon_Template_Shipping_Builder')->getDefaultData();
 
         $this->formData = array_merge($default, $this->formData);
 

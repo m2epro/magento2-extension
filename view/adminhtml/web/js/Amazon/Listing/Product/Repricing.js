@@ -41,7 +41,7 @@ define([
                     var response = transport.responseText.evalJSON();
 
                     if(response.products_ids.length === 0) {
-                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](response.message);
+                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1)](response.message);
                         return;
                     }
 

@@ -1,8 +1,5 @@
 <?php
 
-/**
- * Model factory
- */
 namespace Ess\M2ePro\Model\ActiveRecord;
 
 /**
@@ -10,17 +7,14 @@ namespace Ess\M2ePro\Model\ActiveRecord;
  */
 class Factory
 {
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
+
+    /** @var \Magento\Framework\ObjectManagerInterface */
     protected $objectManager;
 
     //########################################
 
-    /**
-     * Construct
-     *
-     * @param \Ess\M2ePro\Helper\Factory $helperFactory
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     */
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\ObjectManagerInterface $objectManager
@@ -43,13 +37,26 @@ class Factory
 
         $model = $this->objectManager->create('\Ess\M2ePro\Model\\'.$modelName);
 
-        if (!$model instanceof \Ess\M2ePro\Model\ActiveRecord\AbstractModel) {
+        if (!$model instanceof \Ess\M2ePro\Model\ActiveRecord\AbstractModel &&
+            !$model instanceof \Ess\M2ePro\Model\ActiveRecord\ActiveRecordAbstract
+        ) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
-                __('%1 doesn\'t extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel', $modelName)
+                __('%1 doesn\'t extends \Ess\M2ePro\Model\ActiveRecord\ActiveRecordAbstract', $modelName)
             );
         }
 
         return $model;
+    }
+
+    /**
+     * @param string $modelName
+     *
+     * @return  \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getObjectCollection($modelName)
+    {
+        return $this->getObject($modelName)->getCollection();
     }
 
     /**
@@ -62,13 +69,13 @@ class Factory
      */
     public function getObjectLoaded($modelName, $value, $field = null, $throwException = true)
     {
-        if ($throwException) {
-            return $this->getObject($modelName)->load($value, $field);
-        }
-
         try {
             return $this->getObject($modelName)->load($value, $field);
         } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
+            if ($throwException) {
+                throw $e;
+            }
+
             return null;
         }
     }
@@ -84,7 +91,7 @@ class Factory
     public function getCachedObjectLoaded($modelName, $value, $field = null, $throwException = true)
     {
         if ($this->helperFactory->getObject('Module')->isDevelopmentEnvironment()) {
-            return $this->getObjectLoaded($modelName, $value, $field);
+            return $this->getObjectLoaded($modelName, $value, $field, $throwException);
         }
 
         $model = $this->getObject($modelName);
@@ -94,8 +101,6 @@ class Factory
                 __('%1 can\'t be cached', $modelName)
             );
         }
-
-        $model->setCacheLoading(true);
 
         $cacheKey = strtoupper($modelName.'_data_'.$field.'_'.$value);
 
@@ -107,14 +112,14 @@ class Factory
             return $model;
         }
 
-        if ($throwException) {
+        try {
             $model->load($value, $field);
-        } else {
-            try {
-                $model->load($value, $field);
-            } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
-                return null;
+        } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
+            if ($throwException) {
+                throw $e;
             }
+
+            return null;
         }
 
         $tags = $model->getCacheGroupTags();

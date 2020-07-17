@@ -11,20 +11,8 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode;
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Category
  */
-class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category
+class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\AbstractCategory
 {
-    //########################################
-
-    public function _construct()
-    {
-        parent::_construct();
-
-        // Initialization block
-        // ---------------------------------------
-        $this->setId('ebayListingAutoActionModeCategory');
-        // ---------------------------------------
-    }
-
     //########################################
 
     protected function prepareGroupsGrid()

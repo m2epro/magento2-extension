@@ -61,7 +61,7 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('save_and_go_to_listing_view', [
+        $this->addButton('add_products_mode_product_continue', [
             'label'     => $this->__('Continue'),
             'onclick'   => 'ListingProductGridObj.saveClick(\'view\')',
             'class'     => 'action-primary forward'
@@ -92,7 +92,7 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
             'Walmart_Listing_AutoAction',
-            ['id' => $this->getRequest()->getParam('id')]
+            ['listing_id' => $this->getRequest()->getParam('id')]
         ));
 
         $path = 'walmart_listing_autoAction/getCategoryTemplatesList';
@@ -103,7 +103,7 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $this->jsTranslator->addTranslations([
             'Remove Category' => $this->__('Remove Category'),
-            'Add New Group' => $this->__('Add New Group'),
+            'Add New Rule' => $this->__('Add New Rule'),
             'Add/Edit Categories Rule' => $this->__('Add/Edit Categories Rule'),
             'Auto Add/Remove Rules' => $this->__('Auto Add/Remove Rules'),
             'Based on Magento Categories' => $this->__('Based on Magento Categories'),

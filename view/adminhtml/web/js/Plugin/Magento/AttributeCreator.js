@@ -5,8 +5,7 @@ define([
     'prototype'
 ], function (MessagesObj, jQuery, modal) {
 
-    window.AttributeCreator = Class.create();
-    AttributeCreator.prototype = {
+    window.AttributeCreator = Class.create({
 
         id: null,
 
@@ -186,13 +185,13 @@ define([
 
         defaultOnSuccessCallback: function (attributeParams, result)
         {
-            MessagesObj.addSuccessMessage(M2ePro.translator.translate('Attribute has been created.'));
+            MessagesObj.addSuccess(M2ePro.translator.translate('Attribute has been created.'));
             this.chooseNewlyCreatedAttribute(attributeParams, result);
         },
 
         defaultOnFailedCallback: function (attributeParams, result)
         {
-            MessagesObj.addErrorMessage(result['error']);
+            MessagesObj.addError(result['error']);
             this.onCancelPopupCallback();
         },
 
@@ -425,6 +424,6 @@ define([
         }
 
         // ---------------------------------------
-    };
+    });
 
 });

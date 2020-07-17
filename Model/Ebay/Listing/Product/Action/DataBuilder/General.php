@@ -123,7 +123,7 @@ class General extends AbstractModel
             return $data;
         }
 
-        $categoryId = $this->getEbayListingProduct()->getCategoryTemplateSource()->getMainCategory();
+        $categoryId = $this->getEbayListingProduct()->getCategoryTemplateSource()->getCategoryId();
         $marketplaceId = $this->getMarketplace()->getId();
         $categoryFeatures = $this->getHelper('Component_Ebay_Category_Ebay')
             ->getFeatures($categoryId, $marketplaceId);

@@ -64,6 +64,8 @@ class Developer extends AbstractModel
         return $this;
     }
 
+    //########################################
+
     protected function isPossibleToRun()
     {
         return true;
@@ -72,6 +74,18 @@ class Developer extends AbstractModel
     protected function canProcessRunner()
     {
         return true;
+    }
+
+    //########################################
+
+    protected function updateLastRun()
+    {
+        return null;
+    }
+
+    protected function updateLastAccess()
+    {
+        return null;
     }
 
     //########################################

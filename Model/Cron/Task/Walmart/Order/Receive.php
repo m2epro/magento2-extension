@@ -47,20 +47,15 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
-        $permittedAccounts = $this->getPermittedAccounts();
-        if (empty($permittedAccounts)) {
-            return;
-        }
+        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+        $accountsCollection = $this->parentFactory->getObject(Walmart::NICK, 'Account')->getCollection();
 
-        foreach ($permittedAccounts as $account) {
+        /** @var \Ess\M2ePro\Model\Cron\Task\Walmart\Order\Creator $ordersCreator */
+        $ordersCreator = $this->modelFactory->getObject('Cron_Task_Walmart_Order_Creator');
+        $ordersCreator->setSynchronizationLog($this->getSynchronizationLog());
+
+        foreach ($accountsCollection->getItems() as $account) {
             /** @var $account \Ess\M2ePro\Model\Account **/
-
-            $this->getOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
-            $this->getOperationHistory()->addTimePoint(
-                __METHOD__.'process'.$account->getTitle(),
-                'Get Orders from Walmart '.$account->getTitle()
-            );
-            // ---------------------------------------
 
             try {
                 $responseData = $this->receiveWalmartOrdersData($account);
@@ -68,90 +63,8 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                     continue;
                 }
 
-                $this->getOperationHistory()->addTimePoint(
-                    __METHOD__.'create_magento_orders'.$account->getTitle(),
-                    'Create Magento Orders'
-                );
-
-                $processedWalmartOrders = [];
-
-                try {
-                    $accountCreateDate = new \DateTime($account->getData('create_date'), new \DateTimeZone('UTC'));
-                    foreach ($responseData['items'] as $orderData) {
-                        $orderCreateDate = new \DateTime($orderData['purchase_date'], new \DateTimeZone('UTC'));
-                        if ($orderCreateDate < $accountCreateDate) {
-                            continue;
-                        }
-
-                        /** @var $orderBuilder \Ess\M2ePro\Model\Walmart\Order\Builder */
-                        $orderBuilder = $this->modelFactory->getObject('Walmart_Order_Builder');
-                        $orderBuilder->initialize($account, $orderData);
-
-                        $order = $orderBuilder->process();
-
-                        if (!$order) {
-                            continue;
-                        }
-
-                        $processedWalmartOrders[] = $order;
-                    }
-                } catch (\Exception $exception) {
-                    $this->getSynchronizationLog()->addMessage(
-                        $this->getHelper('Module_Translation')->__($exception->getMessage()),
-                        \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                        \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
-                    );
-
-                    $this->getHelper('Module_Exception')->process($exception);
-                }
-
-                foreach ($processedWalmartOrders as $walmartOrder) {
-                    try {
-                        /** @var $walmartOrder \Ess\M2ePro\Model\Order */
-
-                        if ($this->isOrderChangedInParallelProcess($walmartOrder)) {
-                            continue;
-                        }
-
-                        $walmartOrder->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
-
-                        if ($walmartOrder->canCreateMagentoOrder()) {
-                            try {
-                                $message = 'Magento order creation rules are met.';
-                                $message .= ' M2E Pro will attempt to create Magento order.';
-
-                                $walmartOrder->addNoticeLog($message);
-                                $walmartOrder->createMagentoOrder();
-                            } catch (\Exception $exception) {
-                                continue;
-                            }
-                        }
-
-                        if ($walmartOrder->getReserve()->isNotProcessed() && $walmartOrder->isReservable()) {
-                            $walmartOrder->getReserve()->place();
-                        }
-
-                        if ($walmartOrder->getChildObject()->canCreateInvoice()) {
-                            $walmartOrder->createInvoice();
-                        }
-
-                        if ($walmartOrder->getChildObject()->canCreateShipments()) {
-                            $walmartOrder->createShipments();
-                        }
-
-                        if ($walmartOrder->getStatusUpdateRequired()) {
-                            $walmartOrder->updateMagentoOrderStatus();
-                        }
-                    } catch (\Exception $exception) {
-                        $this->getSynchronizationLog()->addMessage(
-                            $this->getHelper('Module_Translation')->__($exception->getMessage()),
-                            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
-                        );
-
-                        $this->getHelper('Module_Exception')->process($exception);
-                    }
-                }
+                $processedWalmartOrders = $ordersCreator->processWalmartOrders($account, $responseData['items']);
+                $ordersCreator->processMagentoOrders($processedWalmartOrders);
 
                 $account->getChildObject()->setData('orders_last_synchronization', $responseData['to_create_date']);
                 $account->getChildObject()->save();
@@ -164,21 +77,10 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 $this->processTaskAccountException($message, __FILE__, __LINE__);
                 $this->processTaskException($exception);
             }
-
-            $this->getOperationHistory()->saveTimePoint(__METHOD__.'process'.$account->getTitle());
         }
     }
 
     //########################################
-
-    protected function getPermittedAccounts()
-    {
-        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
-        $accountsCollection = $this->parentFactory->getObject(Walmart::NICK, 'Account')->getCollection();
-        return $accountsCollection->getItems();
-    }
-
-    // ---------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
@@ -222,7 +124,6 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             // ----------------------------------------
 
             $this->processResponseMessages($connectorObj->getResponseMessages());
-            $this->getOperationHistory()->saveTimePoint(__METHOD__ . 'get' . $account->getTitle());
 
             // ----------------------------------------
 
@@ -281,33 +182,9 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module_Translation')->__($message->getText()),
-                $logType,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+                $logType
             );
         }
-    }
-
-    // ---------------------------------------
-
-    /**
-     * This is going to protect from Magento Orders duplicates.
-     * (Is assuming that there may be a parallel process that has already created Magento Order)
-     *
-     * But this protection is not covering a cases when two parallel cron processes are isolated by mysql transactions
-     * @param \Ess\M2ePro\Model\Order $order
-     * @return bool
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    protected function isOrderChangedInParallelProcess(\Ess\M2ePro\Model\Order $order)
-    {
-        /** @var \Ess\M2ePro\Model\Order $dbOrder */
-        $dbOrder = $this->activeRecordFactory->getObjectLoaded('Order', $order->getId());
-
-        if ($dbOrder->getMagentoOrderId() != $order->getMagentoOrderId()) {
-            return true;
-        }
-
-        return false;
     }
 
     //########################################
@@ -402,7 +279,7 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      */
     protected function prepareToDate()
     {
-        $operationHistory = $this->getOperationHistory()->getParentObject('synchronization');
+        $operationHistory = $this->getOperationHistory()->getParentObject('cron_runner');
         $toDate = $operationHistory !== null ? $operationHistory->getData('start_date') : 'now';
 
         return new \DateTime($toDate, new \DateTimeZone('UTC'));

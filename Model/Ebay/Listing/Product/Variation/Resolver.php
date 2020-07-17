@@ -258,10 +258,8 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
                 $tempVariation['details']['mpn'] = $additionalData['online_product_details']['mpn'];
 
-                $isMpnCanBeChanged = $this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/component/ebay/variation/',
-                    'mpn_can_be_changed'
-                );
+                $isMpnCanBeChanged = $this->getHelper('Component_Ebay_Configuration')
+                    ->getVariationMpnCanBeChanged();
 
                 if (!$isMpnCanBeChanged) {
                     continue;
@@ -329,7 +327,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
         $ebayListingProduct = $this->listingProduct->getChildObject();
 
-        $categoryId = $ebayListingProduct->getCategoryTemplateSource()->getMainCategory();
+        $categoryId = $ebayListingProduct->getCategoryTemplateSource()->getCategoryId();
         $marketplaceId = $this->listingProduct->getMarketplace()->getId();
 
         $categoryFeatures = $this->getHelper('Component_Ebay_Category_Ebay')

@@ -17,9 +17,8 @@ use Magento\Framework\App\ResourceConnection;
  */
 class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    const CONFIG_PATH = 'm2epro/maintenance';
+    const MAINTENANCE_CONFIG_PATH = 'm2epro/maintenance';
     const MENU_ROOT_NODE_NICK = 'Ess_M2ePro::m2epro_maintenance';
-    const MENU_POSITION = 30;
 
     private $resourceConnection;
 
@@ -38,60 +37,57 @@ class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isEnabled()
     {
-        $select = $this->resourceConnection->getConnection()
-            ->select()
-            ->from($this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'), 'value')
-            ->where('scope = ?', 'default')
-            ->where('scope_id = ?', 0)
-            ->where('path = ?', self::CONFIG_PATH);
+        return (bool)$this->getConfig(self::MAINTENANCE_CONFIG_PATH);
+    }
 
-        return (bool)$this->resourceConnection->getConnection()->fetchOne($select);
+    public function enable()
+    {
+        $this->setConfig(self::MAINTENANCE_CONFIG_PATH, 1);
+    }
+
+    public function disable()
+    {
+        $this->setConfig(self::MAINTENANCE_CONFIG_PATH, 0);
     }
 
     //########################################
 
-    public function enable()
+    protected function getConfig($path)
     {
         $select = $this->resourceConnection->getConnection()
             ->select()
             ->from($this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'), 'value')
             ->where('scope = ?', 'default')
             ->where('scope_id = ?', 0)
-            ->where('path = ?', self::CONFIG_PATH);
+            ->where('path = ?', $path);
 
-        if ($this->resourceConnection->getConnection()->fetchOne($select) === false) {
-            $this->resourceConnection->getConnection()->insert(
+        return $this->resourceConnection->getConnection()->fetchOne($select);
+    }
+
+    protected function setConfig($path, $value)
+    {
+        $connection = $this->resourceConnection->getConnection();
+
+        if ($this->getConfig($path) === false) {
+            $connection->insert(
                 $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'),
                 [
-                    'scope' => 'default',
+                    'scope'    => 'default',
                     'scope_id' => 0,
-                    'path' => self::CONFIG_PATH,
-                    'value' => 1
+                    'path'     => $path,
+                    'value'    => $value
                 ]
             );
             return;
         }
 
-        $this->resourceConnection->getConnection()->update(
+        $connection->update(
             $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'),
-            ['value' => 1],
+            ['value' => $value],
             [
-                'scope = ?' => 'default',
+                'scope = ?'    => 'default',
                 'scope_id = ?' => 0,
-                'path = ?' => self::CONFIG_PATH,
-            ]
-        );
-    }
-
-    public function disable()
-    {
-        $this->resourceConnection->getConnection()->update(
-            $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'),
-            ['value' => 0],
-            [
-                'scope = ?' => 'default',
-                'scope_id = ?' => 0,
-                'path = ?' => self::CONFIG_PATH,
+                'path = ?'     => $path
             ]
         );
     }

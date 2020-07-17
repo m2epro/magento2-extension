@@ -44,7 +44,8 @@ class Multiple extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
             $this->getServerHostName(),
             $this->isTryToResendOnError(),
             $this->isTryToSwitchEndpointOnError(),
-            $this->isAsynchronous()
+            $this->isAsynchronous(),
+            $this->isCanIgnoreMaintenance()
         );
     }
 
@@ -53,21 +54,11 @@ class Multiple extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
         $responseError = false;
         $successResponses = [];
 
-        $connectionErrorMessage = 'The Action was not completed because connection with M2E Pro Server was not set.
-        There are several possible reasons:  temporary connection problem – please wait and try again later;
-        block of outgoing connection by firewall – please, ensure that connection to s1.m2epro.com and
-        s2.m2epro.com, port 443 is allowed; CURL library is not installed or it does not support HTTPS Protocol –
-        please, install/update CURL library on your server and ensure it supports HTTPS Protocol.
-        More information you can find <a target="_blank" href="'.
-            $this->getHelper('Module\Support')
-            ->getKnowledgebaseArticleUrl('server-connection')
-        .'">here</a>';
-
         foreach ($result as $key => $response) {
             try {
                 if ($response['body'] === false) {
                     throw new \Ess\M2ePro\Model\Exception\Connection(
-                        $connectionErrorMessage,
+                        $this->getConnectionErrorMessage(),
                         [
                             'curl_error_number'  => $response['curl_error_number'],
                             'curl_error_message' => $response['curl_error_message'],
@@ -84,11 +75,11 @@ class Multiple extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
                 $successResponses[] = $responseObj;
             } catch (\Ess\M2ePro\Model\Exception\Connection\InvalidResponse $exception) {
                 $responseError = true;
-                $this->responses[$key] = $this->createFailedResponse($connectionErrorMessage);
+                $this->responses[$key] = $this->createFailedResponse($this->getConnectionErrorMessage());
                 $this->getHelper('Module\Logger')->process($response, 'Invalid Response Format', false);
             } catch (\Exception $exception) {
                 $responseError = true;
-                $this->responses[$key] = $this->createFailedResponse($connectionErrorMessage);
+                $this->responses[$key] = $this->createFailedResponse($this->getConnectionErrorMessage());
                 $this->getHelper('Module\Exception')->process($exception, false);
             }
         }
@@ -98,11 +89,20 @@ class Multiple extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
         }
 
         foreach ($successResponses as $response) {
+            if ($response->isServerInMaintenanceMode()) {
+                $this->getHelper('Server_Maintenance')->processUnexpectedMaintenance();
+            }
+
             if ($response->getMessages()->hasSystemErrorEntity()) {
-                $exception = new \Ess\M2ePro\Model\Exception($this->getHelper('Module\Translation')->__(
-                    "Internal Server Error(s) [%error_message%]",
-                    $response->getMessages()->getCombinedSystemErrorsString()
-                ), [], 0, !$response->isServerInMaintenanceMode());
+                $exception = new \Ess\M2ePro\Model\Exception(
+                    $this->getHelper('Module\Translation')->__(
+                        "Internal Server Error(s) [%error_message%]",
+                        $response->getMessages()->getCombinedSystemErrorsString()
+                    ),
+                    [],
+                    0,
+                    !$response->isServerInMaintenanceMode()
+                );
 
                 $this->getHelper('Module\Exception')->process($exception);
             }

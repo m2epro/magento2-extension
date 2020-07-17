@@ -19,7 +19,7 @@ class StopRules extends AbstractTab
 {
     protected function _prepareForm()
     {
-        $default = $this->activeRecordFactory->getObject('Ebay_Template_Synchronization')->getStopDefaultSettings();
+        $default = $this->modelFactory->getObject('Ebay_Template_Synchronization_Builder')->getDefaultData();
         $formData = $this->getFormData();
 
         $formData = array_merge($default, $formData);
@@ -131,94 +131,28 @@ class StopRules extends AbstractTab
         );
 
         $fieldset->addField(
-            'stop_qty_magento',
-            self::SELECT,
-            [
-                'name' => 'synchronization[stop_qty_magento]',
-                'label' => $this->__('Stop When Magento Quantity Is'),
-                'value' => $formData['stop_qty_magento'],
-                'values' => [
-                    TemplateSynchronization::QTY_MODE_NONE => $this->__('No Action'),
-                    TemplateSynchronization::QTY_MODE_LESS => $this->__('Less or Equal'),
-                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
-                ],
-                'tooltip' => $this->__(
-                    'Automatically stops an Item on eBay if Magento Quantity is changed <b>and</b> it
-                     meets the selected Conditions.'
-                )
-            ]
-        )->addCustomAttribute('qty_type', 'magento');
-
-        $fieldset->addField(
-            'stop_qty_magento_value',
-            'text',
-            [
-                'container_id' => 'stop_qty_magento_value_container',
-                'name' => 'synchronization[stop_qty_magento_value]',
-                'label' => $this->__('Quantity'),
-                'value' => $formData['stop_qty_magento_value'],
-                'class' => 'validate-digits',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
-            'stop_qty_magento_value_max',
-            'text',
-            [
-                'container_id' => 'stop_qty_magento_value_max_container',
-                'name' => 'synchronization[stop_qty_magento_value_max]',
-                'label' => $this->__('Max Quantity'),
-                'value' => $formData['stop_qty_magento_value_max'],
-                'class' => 'validate-digits M2ePro-validate-conditions-between',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
             'stop_qty_calculated',
             self::SELECT,
             [
                 'name' => 'synchronization[stop_qty_calculated]',
-                'label' => $this->__('Stop When Calculated Quantity Is'),
+                'label' => $this->__('Stop When Quantity Is'),
                 'value' => $formData['stop_qty_calculated'],
                 'values' => [
                     TemplateSynchronization::QTY_MODE_NONE => $this->__('No Action'),
-                    TemplateSynchronization::QTY_MODE_LESS => $this->__('Less or Equal'),
-                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
+                    TemplateSynchronization::QTY_MODE_YES => $this->__('Less or Equal'),
                 ],
                 'tooltip' => $this->__(
-                    'Automatically stops an Item on eBay if calculated Quantity according to the
+                    'Automatically stops an Item on eBay if Quantity according to the
                      Selling Policy is changed <b>and</b> it meets the selected Conditions.'
                 )
             ]
-        )->addCustomAttribute('qty_type', 'calculated');
-
-        $fieldset->addField(
-            'stop_qty_calculated_value',
-            'text',
-            [
-                'container_id' => 'stop_qty_calculated_value_container',
-                'name' => 'synchronization[stop_qty_calculated_value]',
-                'label' => $this->__('Quantity'),
-                'value' => $formData['stop_qty_calculated_value'],
-                'class' => 'validate-digits',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
-            'stop_qty_calculated_value_max',
-            'text',
-            [
-                'container_id' => 'stop_qty_calculated_value_max_container',
-                'name' => 'synchronization[stop_qty_calculated_value_max]',
-                'label' => $this->__('Max Quantity'),
-                'value' => $formData['stop_qty_calculated_value_max'],
-                'class' => 'validate-digits M2ePro-validate-conditions-between',
-                'required' => true
-            ]
-        );
+        )->setAfterElementHtml(<<<HTML
+<input name="synchronization[stop_qty_calculated_value]" id="stop_qty_calculated_value"
+       value="{$formData['stop_qty_calculated_value']}" type="text"
+       style="width: 72px; margin-left: 10px;"
+       class="input-text admin__control-text required-entry validate-digits _required" />
+HTML
+            );
 
         $fieldset = $form->addFieldset(
             'magento_block_ebay_template_synchronization_stop_advanced_filters',

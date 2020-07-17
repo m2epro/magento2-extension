@@ -97,7 +97,7 @@ HTML;
 <br/>
 <button class="action primary"
         style="margin-top: 10px;"
-        onclick="ListingGridHandlerObj.variationProductManageHandler.setGeneralIdOwner({$generalIdOwnerYes})">
+        onclick="ListingGridObj.variationProductManageHandler.setGeneralIdOwner({$generalIdOwnerYes})">
         {$this->__('I am the Creator')}</button>
 <div class="m2epro-field-tooltip m2epro-field-tooltip-right admin__field-tooltip" style="padding-top: 10px;">
     <a class="admin__field-tooltip-action" href="javascript://"></a>
@@ -121,7 +121,7 @@ HTML;
                 $generalIdOwnerNo = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO;
                 $html .= <<<HTML
         <a href="javascript:void(0);"
-           onclick="ListingGridHandlerObj.variationProductManageHandler.setGeneralIdOwner({$generalIdOwnerNo})">
+           onclick="ListingGridObj.variationProductManageHandler.setGeneralIdOwner({$generalIdOwnerNo})">
            {$this->__('I am not Creator')}</a>
 HTML;
             }
@@ -246,13 +246,13 @@ HTML;
                         'class' => 'action primary',
                         'style' => '    margin-left: 60px;',
                         'label' => $this->hasChannelTheme() ? $this->__('Change') : $this->__('Set Theme'),
-                        'onclick' => 'ListingGridHandlerObj.variationProductManageHandler.changeVariationTheme(this)'
+                        'onclick' => 'ListingGridObj.variationProductManageHandler.changeVariationTheme(this)'
                     ])->toHtml();
 
                     $confirmBtn = $this->createBlock('Magento\Button')->setData([
                         'class' => 'action primary',
                         'label' => $this->__('Confirm'),
-                        'onclick' => 'ListingGridHandlerObj.variationProductManageHandler.setVariationTheme()'
+                        'onclick' => 'ListingGridObj.variationProductManageHandler.setVariationTheme()'
                     ])->toHtml();
 
                     $html .= <<<HTML
@@ -267,7 +267,7 @@ HTML;
     &nbsp;&nbsp;
     <a href="javascript:void(0);"
        style="margin-left: 40px;"
-       onclick="ListingGridHandlerObj.variationProductManageHandler.cancelVariationTheme(this);">
+       onclick="ListingGridObj.variationProductManageHandler.cancelVariationTheme(this);">
        {$this->__('Cancel')}</a>
     &nbsp;&nbsp;
     {$confirmBtn}
@@ -292,8 +292,8 @@ HTML;
             (!$this->hasGeneralId() && $this->isGeneralIdOwner() && $this->hasChannelTheme())) {
             $this->js->add(
                 <<<JS
-    ListingGridHandlerObj.variationProductManageHandler.virtualAmazonMatchedAttributes = false;
-    ListingGridHandlerObj.variationProductManageHandler.amazonVariationSet = false;
+    ListingGridObj.variationProductManageHandler.virtualAmazonMatchedAttributes = false;
+    ListingGridObj.variationProductManageHandler.amazonVariationSet = false;
 JS
             );
 
@@ -384,14 +384,14 @@ HTML;
 
                     $this->js->add(
                         <<<JS
-    ListingGridHandlerObj.variationProductManageHandler.matchingType = ListingGridHandlerObj
+    ListingGridObj.variationProductManageHandler.matchingType = ListingGridObj
         .variationProductManageHandler.MATCHING_TYPE_VIRTUAL_AMAZON;
-    ListingGridHandlerObj.variationProductManageHandler.matchedAttributes = {$matchedAttriutes};
-    ListingGridHandlerObj.variationProductManageHandler.productAttributes = {$productAttributes};
-    ListingGridHandlerObj.variationProductManageHandler.destinationAttributes = {$destinationAttributes};
-    ListingGridHandlerObj.variationProductManageHandler.magentoVariationSet = {$magentoVariationSet};
+    ListingGridObj.variationProductManageHandler.matchedAttributes = {$matchedAttriutes};
+    ListingGridObj.variationProductManageHandler.productAttributes = {$productAttributes};
+    ListingGridObj.variationProductManageHandler.destinationAttributes = {$destinationAttributes};
+    ListingGridObj.variationProductManageHandler.magentoVariationSet = {$magentoVariationSet};
 
-    ListingGridHandlerObj.variationProductManageHandler.renderMatchedAttributesNotSetView();
+    ListingGridObj.variationProductManageHandler.renderMatchedAttributesNotSetView();
 JS
                     );
                 } elseif ($this->getMatcherAttributes()->isDestinationAmountGreater()) {
@@ -401,14 +401,14 @@ JS
 
                     $this->js->add(
                         <<<JS
-    ListingGridHandlerObj.variationProductManageHandler.matchingType = ListingGridHandlerObj
+    ListingGridObj.variationProductManageHandler.matchingType = ListingGridObj
         .variationProductManageHandler.MATCHING_TYPE_VIRTUAL_MAGENTO;
 
-    ListingGridHandlerObj.variationProductManageHandler.matchedAttributes = {$matchedAttriutes};
-    ListingGridHandlerObj.variationProductManageHandler.destinationAttributes = {$destinationAttributes};
-    ListingGridHandlerObj.variationProductManageHandler.amazonVariationSet = {$amazonVariationSet};
+    ListingGridObj.variationProductManageHandler.matchedAttributes = {$matchedAttriutes};
+    ListingGridObj.variationProductManageHandler.destinationAttributes = {$destinationAttributes};
+    ListingGridObj.variationProductManageHandler.amazonVariationSet = {$amazonVariationSet};
 
-    ListingGridHandlerObj.variationProductManageHandler.renderMatchedAttributesNotSetView();
+    ListingGridObj.variationProductManageHandler.renderMatchedAttributesNotSetView();
 JS
                     );
                 }
@@ -528,14 +528,14 @@ HTML;
                 $changeButton = $this->createBlock('Magento\Button')->setData([
                     'class' => 'action primary',
                     'label' => $this->hasMatchedAttributes() ? $this->__('Change') : $this->__('Set Attributes'),
-                    'onclick' => 'ListingGridHandlerObj.variationProductManageHandler.changeMatchedAttributes(this)'
+                    'onclick' => 'ListingGridObj.variationProductManageHandler.changeMatchedAttributes(this)'
                 ])->toHtml();
 
                 $confirmButton = $this->createBlock('Magento\Button')->setData([
                     'class' => 'action primary',
                     'style' => 'display: none;',
                     'label' => $this->__('Confirm'),
-                    'onclick' => 'ListingGridHandlerObj.variationProductManageHandler.setMatchedAttributes()'
+                    'onclick' => 'ListingGridObj.variationProductManageHandler.setMatchedAttributes()'
                 ])->toHtml();
 
                 $html .= <<<HTML
@@ -543,7 +543,7 @@ HTML;
             <td class="label" colspan="2" style="border: none; text-align: right; {$style}">
                 $changeButton
                 <a href="javascript:void(0);"
-                   onclick="ListingGridHandlerObj.variationProductManageHandler.cancelMatchedAttributes(this);"
+                   onclick="ListingGridObj.variationProductManageHandler.cancelMatchedAttributes(this);"
                    style="display: none;">{$this->__('Cancel')}</a>&nbsp;&nbsp;
                 {$confirmButton}
             </td>
@@ -626,7 +626,7 @@ CSS
                     <a href="%url%" onclick="%onclick%">"Add New Child Product"</a> Button on Child Products Tab.',
                     [
                         'url' => 'javascript:void(0);',
-                        'onclick' => 'ListingGridHandlerObj.variationProductManageHandler.openVariationsTab(' .
+                        'onclick' => 'ListingGridObj.variationProductManageHandler.openVariationsTab(' .
                             var_export(!$this->hasUnusedChannelVariations(), true) .
                             ', ' . $this->getListingProduct()->getId() .
                         ');'

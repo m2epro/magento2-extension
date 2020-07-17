@@ -3,7 +3,7 @@ define([
     'M2ePro/Action',
     'M2ePro/Plugin/ProgressBar',
     'M2ePro/Plugin/AreaWrapper'
-], function (MagentoMessageObj) {
+], function (MessageObj) {
 
     window.ListingViewAction = Class.create(Action, {
 
@@ -13,7 +13,7 @@ define([
         {
             $super(gridHandler);
 
-            this.magentoMessageObj = Object.create(MagentoMessageObj);
+            this.messageObj = Object.create(MessageObj);
         },
 
         // ---------------------------------------
@@ -36,14 +36,14 @@ define([
         },
 
         setActionMessagesContainer: function (containerId) {
-            this.magentoMessageObj.setContainer('#' + containerId);
+            this.messageObj.setContainer('#' + containerId);
         },
 
         // ---------------------------------------
 
         startActions: function (title, url, selectedProductsParts, requestParams) {
             var self = this;
-            self.magentoMessageObj.clear();
+            self.messageObj.clear();
 
             $(self.errorsSummaryContainerId).hide();
 
@@ -85,7 +85,7 @@ define([
                     message = message.replace('%task_title%', self.progressBarObj.getTitle());
                     message = message.replace('%url%', M2ePro.url.get('logViewUrl'));
 
-                    self.magentoMessageObj.addErrorMessage(message);
+                    self.messageObj.addError(message);
 
                     var actionIds = '';
                     for (var i = 0; i < self.sendPartsResponses.length; i++) {
@@ -108,12 +108,12 @@ define([
                     message = message.replace('%task_title%', self.progressBarObj.getTitle());
                     message = message.replace('%url%', M2ePro.url.get('logViewUrl'));
 
-                    self.magentoMessageObj.addWarningMessage(message);
+                    self.messageObj.addWarning(message);
                 } else {
                     var message = M2ePro.translator.translate('task_completed_success_message');
                     message = message.replace('%task_title%', self.progressBarObj.getTitle());
 
-                    self.magentoMessageObj.addSuccessMessage(message);
+                    self.messageObj.addSuccess(message);
                 }
 
                 self.progressBarObj.hide();

@@ -8,8 +8,14 @@
 
 namespace Ess\M2ePro\Model\Template;
 
+use \Ess\M2ePro\Model\Amazon\Template\Description as AmazonTemplateDescription;
+use \Ess\M2ePro\Model\Ebay\Template\Description as EbayTemplateDescription;
+use \Ess\M2ePro\Model\Walmart\Template\Description as WalmartTemplateDescription;
+
 /**
  * Class \Ess\M2ePro\Model\Template\Description
+ *
+ * @method AmazonTemplateDescription|EbayTemplateDescription|WalmartTemplateDescription getChildObject()
  */
 class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {

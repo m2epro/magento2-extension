@@ -37,20 +37,6 @@ class Tables extends AbstractHelper
 
     //########################################
 
-    public function getCurrentEntities()
-    {
-        $result = [];
-        $currentTables = $this->helperFactory->getObject('Module_Database_Structure')->getModuleTables();
-
-        foreach ($currentTables as $table) {
-            $result[$table] = $this->getFullName($table);
-        }
-
-        return $result;
-    }
-
-    //########################################
-
     public function isExists($tableName)
     {
         return $this->resourceConnection->getConnection()->isTableExists($this->getFullName($tableName));

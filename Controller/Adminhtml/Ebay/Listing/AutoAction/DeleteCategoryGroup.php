@@ -19,9 +19,7 @@ class DeleteCategoryGroup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\
     {
         $groupId = $this->getRequest()->getParam('group_id');
 
-        $this->activeRecordFactory->getObject('Listing_Auto_Category_Group')
-            ->load($groupId)
-            ->delete();
+        $this->activeRecordFactory->getObjectLoaded('Listing_Auto_Category_Group', $groupId)->delete();
     }
 
     //########################################

@@ -72,7 +72,10 @@ abstract class AbstractFeature
      */
     protected function getConfigModifier($configName)
     {
-        $tableName = $configName.'_config';
+        $tableName = $configName . '_config';
+        if ($this->getConnection()->isTableExists($this->getFullTableName('config'))) {
+            $tableName = 'config';
+        }
 
         return $this->modelFactory->getObject(
             'Setup_Database_Modifier_Config',

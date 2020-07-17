@@ -49,6 +49,7 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         ]);
         $buttonBlock = $this->createBlock('Magento\Button')
             ->setData([
+                'id'   => $this->__('go_to_the_listing'),
                 'label'   => $this->__('Go To The Listing'),
                 'onclick' => 'setLocation(\''.$url.'\');',
                 'class'   => 'primary'

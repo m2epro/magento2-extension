@@ -39,20 +39,17 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
 
     protected $activeRecordFactory;
     protected $ebayFactory;
-    protected $moduleConfig;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;
-        $this->moduleConfig = $moduleConfig;
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -121,10 +118,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
     protected function prepareFinalData(array $data)
     {
         $data['is_eps_ebay_images_mode'] = $this->getIsEpsImagesMode();
-        $data['upload_images_mode'] = (int)$this->moduleConfig->getGroupValue(
-            '/ebay/description/',
-            'upload_images_mode'
-        );
+        $data['upload_images_mode'] = $this->getHelper('Component_Ebay_Configuration')->getUploadImagesMode();
 
         $data = $this->replaceVariationSpecificsNames($data);
         $data = $this->resolveVariationAndItemSpecificsConflict($data);

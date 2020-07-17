@@ -32,7 +32,7 @@ class Inactive extends AbstractModel
             \Ess\M2ePro\Model\Walmart\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
             \Ess\M2ePro\Model\Walmart\Listing\Product::INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED,
             \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction\Response::INSTRUCTION_TYPE_CHECK_QTY,
-            \Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\AbstractModel::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+            \Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\ChangeProcessorAbstract::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_STATUS_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_QTY_CHANGED,
@@ -217,54 +217,12 @@ class Inactive extends AbstractModel
             }
         }
 
-        if ($walmartSynchronizationTemplate->isRelistWhenQtyMagentoHasValue()) {
-            $result = false;
-            $productQty = (int)$walmartListingProduct->getQty(true);
-
-            $typeQty = (int)$walmartSynchronizationTemplate->getRelistWhenQtyMagentoHasValueType();
-            $minQty = (int)$walmartSynchronizationTemplate->getRelistWhenQtyMagentoHasValueMin();
-            $maxQty = (int)$walmartSynchronizationTemplate->getRelistWhenQtyMagentoHasValueMax();
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_LESS &&
-                $productQty <= $minQty) {
-                $result = true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_MORE &&
-                $productQty >= $minQty) {
-                $result = true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_BETWEEN &&
-                $productQty >= $minQty && $productQty <= $maxQty) {
-                $result = true;
-            }
-
-            if (!$result) {
-                return false;
-            }
-        }
-
         if ($walmartSynchronizationTemplate->isRelistWhenQtyCalculatedHasValue()) {
             $result = false;
             $productQty = (int)$walmartListingProduct->getQty(false);
-
-            $typeQty = (int)$walmartSynchronizationTemplate->getRelistWhenQtyCalculatedHasValueType();
             $minQty = (int)$walmartSynchronizationTemplate->getRelistWhenQtyCalculatedHasValueMin();
-            $maxQty = (int)$walmartSynchronizationTemplate->getRelistWhenQtyCalculatedHasValueMax();
 
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_LESS &&
-                $productQty <= $minQty) {
-                $result = true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_MORE &&
-                $productQty >= $minQty) {
-                $result = true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_BETWEEN &&
-                $productQty >= $minQty && $productQty <= $maxQty) {
+            if ($productQty >= $minQty) {
                 $result = true;
             }
 

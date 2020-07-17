@@ -6,7 +6,8 @@ define([
     window.EbayTemplateSynchronization = Class.create(Common, {
         // ---------------------------------------
 
-        initialize: function () {
+        initialize: function ()
+        {
             var self = this;
             jQuery.validator.addMethod('M2ePro-validate-qty', function (value, el) {
 
@@ -82,32 +83,25 @@ define([
                 var stopMaxQty = 0,
                     relistMinQty = 0;
 
-                var qtyType = el.getAttribute('qty_type');
-
-                switch (parseInt($('stop_qty_' + qtyType).value)) {
+                switch (parseInt($('stop_qty_calculated').value)) {
 
                     case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_NONE'):
                         return true;
                         break;
 
-                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_LESS'):
-                        stopMaxQty = parseInt($('stop_qty_' + qtyType + '_value').value);
-                        break;
-
-                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_BETWEEN'):
-                        stopMaxQty = parseInt($('stop_qty_' + qtyType + '_value_max').value);
+                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_YES'):
+                        stopMaxQty = parseInt($('stop_qty_calculated_value').value);
                         break;
                 }
 
-                switch (parseInt($('relist_qty_' + qtyType).value)) {
+                switch (parseInt($('relist_qty_calculated').value)) {
 
                     case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_NONE'):
                         return false;
                         break;
 
-                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_MORE'):
-                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_BETWEEN'):
-                        relistMinQty = parseInt($('relist_qty_' + qtyType + '_value').value);
+                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_YES'):
+                        relistMinQty = parseInt($('relist_qty_calculated_value').value);
                         break;
                 }
 
@@ -120,46 +114,64 @@ define([
             // ---------------------------------------
         },
 
-        initObservers: function () {
+        initObservers: function ()
+        {
             //list
-            $('list_mode').observe('change', EbayTemplateSynchronizationObj.listMode_change).simulate('change');
-            $('list_qty_magento').observe('change', EbayTemplateSynchronizationObj.listQty_change).simulate('change');
-            $('list_qty_calculated').observe('change', EbayTemplateSynchronizationObj.listQty_change).simulate('change');
-            $('list_advanced_rules_mode').observe('change', EbayTemplateSynchronizationObj.listAdvancedRules_change).simulate('change');
+            $('list_mode')
+                .observe('change', EbayTemplateSynchronizationObj.listMode_change).simulate('change');
+
+            $('list_qty_calculated')
+                .observe('change', EbayTemplateSynchronizationObj.listQty_change)
+                .simulate('change');
+
+            $('list_advanced_rules_mode')
+                .observe('change', EbayTemplateSynchronizationObj.listAdvancedRules_change)
+                .simulate('change');
 
             //relist
-            $('relist_mode').observe('change', EbayTemplateSynchronizationObj.relistMode_change).simulate('change');
-            $('relist_qty_magento').observe('change', EbayTemplateSynchronizationObj.relistQty_change).simulate('change');
-            $('relist_qty_calculated').observe('change', EbayTemplateSynchronizationObj.relistQty_change).simulate('change');
-            $('relist_advanced_rules_mode').observe('change', EbayTemplateSynchronizationObj.relistAdvancedRules_change).simulate('change');
+            $('relist_mode')
+                .observe('change', EbayTemplateSynchronizationObj.relistMode_change)
+                .simulate('change');
+
+            $('relist_qty_calculated')
+                .observe('change', EbayTemplateSynchronizationObj.relistQty_change)
+                .simulate('change');
+
+            $('relist_advanced_rules_mode')
+                .observe('change', EbayTemplateSynchronizationObj.relistAdvancedRules_change)
+                .simulate('change');
 
             //revise
-            $('revise_update_qty').observe('change', EbayTemplateSynchronizationObj.reviseQty_change)
+            $('revise_update_qty')
+                .observe('change', EbayTemplateSynchronizationObj.reviseQty_change)
                 .simulate('change');
 
-            $('revise_update_qty_max_applied_value_mode').observe('change', EbayTemplateSynchronizationObj.reviseQtyMaxAppliedValueMode_change)
-                .simulate('change');
-
-            $('revise_update_price').observe('change', EbayTemplateSynchronizationObj.revisePrice_change)
-                .simulate('change');
-
-            $('revise_update_price_max_allowed_deviation_mode').observe('change', EbayTemplateSynchronizationObj.revisePriceMaxAllowedDeviationMode_change)
+            $('revise_update_qty_max_applied_value_mode')
+                .observe('change', EbayTemplateSynchronizationObj.reviseQtyMaxAppliedValueMode_change)
                 .simulate('change');
 
             //stop
-            $('stop_mode').observe('change', EbayTemplateSynchronizationObj.stopMode_change).simulate('change');
-            $('stop_qty_magento').observe('change', EbayTemplateSynchronizationObj.stopQty_change).simulate('change');
-            $('stop_qty_calculated').observe('change', EbayTemplateSynchronizationObj.stopQty_change).simulate('change');
-            $('stop_advanced_rules_mode').observe('change', EbayTemplateSynchronizationObj.stopAdvancedRules_change).simulate('change');
+            $('stop_mode').observe('change', EbayTemplateSynchronizationObj.stopMode_change)
+                .simulate('change');
+
+            $('stop_qty_calculated')
+                .observe('change', EbayTemplateSynchronizationObj.stopQty_change)
+                .simulate('change');
+
+            $('stop_advanced_rules_mode')
+                .observe('change', EbayTemplateSynchronizationObj.stopAdvancedRules_change)
+                .simulate('change');
         },
 
         // ---------------------------------------
 
-        isRelistModeDisabled: function () {
+        isRelistModeDisabled: function ()
+        {
             return $('relist_mode').value == 0;
         },
 
-        isStopModeDisabled: function () {
+        isStopModeDisabled: function ()
+        {
             return $('stop_mode').value == 0;
         },
 
@@ -179,32 +191,20 @@ define([
             }
         },
 
-        listQty_change: function () {
-            var qtyType = this.getAttribute('qty_type');
-
-            var valueContainer = $('list_qty_' + qtyType + '_value_container'),
-                valueMaxContainer = $('list_qty_' + qtyType + '_value_max_container'),
-                item = valueContainer.select('label span')[0];
-
+        listQty_change: function ()
+        {
+            var valueContainer = $('list_qty_calculated_value');
             valueContainer.hide();
-            valueMaxContainer.hide();
 
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_LESS') ||
-                this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_MORE')) {
-                item.innerHTML = M2ePro.translator.translate('Quantity');
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_YES')) {
                 valueContainer.show();
-            }
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_BETWEEN')) {
-                item.innerHTML = M2ePro.translator.translate('Min Quantity');
-                valueContainer.show();
-                valueMaxContainer.show();
             }
         },
 
         // ---------------------------------------
 
-        reviseQty_change: function () {
+        reviseQty_change: function ()
+        {
             if (this.value == 1) {
                 $('revise_update_qty_max_applied_value_mode_tr').show();
                 $('revise_update_qty_max_applied_value_line_tr').show();
@@ -212,24 +212,25 @@ define([
             } else {
                 $('revise_update_qty_max_applied_value_mode_tr').hide();
                 $('revise_update_qty_max_applied_value_line_tr').hide();
-                $('revise_update_qty_max_applied_value_tr').hide();
                 $('revise_update_qty_max_applied_value_mode').value = 0;
             }
         },
 
-        reviseQtyMaxAppliedValueMode_change: function (event) {
+        reviseQtyMaxAppliedValueMode_change: function (event)
+        {
             var self = EbayTemplateSynchronizationObj;
 
-            $('revise_update_qty_max_applied_value_tr').hide();
+            $('revise_update_qty_max_applied_value').hide();
 
             if (this.value == 1) {
-                $('revise_update_qty_max_applied_value_tr').show();
+                $('revise_update_qty_max_applied_value').show();
             } else if (!event.cancelable) {
                 self.openReviseMaxAppliedQtyDisableConfirmationPopUp();
             }
         },
 
-        openReviseMaxAppliedQtyDisableConfirmationPopUp: function () {
+        openReviseMaxAppliedQtyDisableConfirmationPopUp: function ()
+        {
             var self = this;
 
             var element = jQuery('#revise_qty_max_applied_value_confirmation_popup_template').clone();
@@ -256,79 +257,16 @@ define([
             });
         },
 
-        reviseQtyMaxAppliedValueDisableCancel: function () {
+        reviseQtyMaxAppliedValueDisableCancel: function ()
+        {
             $('revise_update_qty_max_applied_value_mode').selectedIndex = 1;
             $('revise_update_qty_max_applied_value_mode').simulate('change');
         },
 
-        reviseQtyMaxAppliedValueDisableConfirm: function () {
+        reviseQtyMaxAppliedValueDisableConfirm: function ()
+        {
             $('revise_update_qty_max_applied_value_mode').selectedIndex = 0;
             $('revise_update_qty_max_applied_value_mode').simulate('change');
-        },
-
-        // ---------------------------------------
-
-        revisePrice_change: function () {
-            if (this.value == 1) {
-                $('revise_update_price_max_allowed_deviation_mode_tr').show();
-                $('revise_update_price_max_allowed_deviation_tr').show();
-                $('revise_update_price_line').show();
-                $('revise_update_price_max_allowed_deviation_mode').simulate('change');
-            } else {
-                $('revise_update_price_max_allowed_deviation_mode_tr').hide();
-                $('revise_update_price_max_allowed_deviation_tr').hide();
-                $('revise_update_price_line').hide();
-                $('revise_update_price_max_allowed_deviation_mode').value = 0;
-            }
-        },
-
-        revisePriceMaxAllowedDeviationMode_change: function (event) {
-            var self = EbayTemplateSynchronizationObj;
-
-            $('revise_update_price_max_allowed_deviation_tr').hide();
-
-            if (this.value == 1) {
-                $('revise_update_price_max_allowed_deviation_tr').show();
-            } else if (!event.cancelable) {
-                self.openReviseMaxAllowedDeviationPriceDisableConfirmationPopUp();
-            }
-        },
-
-        openReviseMaxAllowedDeviationPriceDisableConfirmationPopUp: function () {
-            var self = this;
-
-            var element = jQuery('#revise_price_max_max_allowed_deviation_confirmation_popup_template').clone();
-
-            element.confirm({
-                title: M2ePro.translator.translate('Are you sure?'),
-                actions: {
-                    confirm: self.revisePriceMaxAllowedDeviationDisableConfirm,
-                    cancel: self.revisePriceMaxAllowedDeviationDisableCancel
-                },
-                buttons: [{
-                    text: M2ePro.translator.translate('Cancel'),
-                    class: 'action-secondary action-dismiss',
-                    click: function (event) {
-                        this.closeModal(event);
-                    }
-                }, {
-                    text: M2ePro.translator.translate('Confirm'),
-                    class: 'action-primary action-accept',
-                    click: function (event) {
-                        this.closeModal(event, true);
-                    }
-                }]
-            });
-        },
-
-        revisePriceMaxAllowedDeviationDisableCancel: function () {
-            $('revise_update_price_max_allowed_deviation_mode').selectedIndex = 1;
-            $('revise_update_price_max_allowed_deviation_mode').simulate('change');
-        },
-
-        revisePriceMaxAllowedDeviationDisableConfirm: function () {
-            $('revise_update_price_max_allowed_deviation_mode').selectedIndex = 0;
-            $('revise_update_price_max_allowed_deviation_mode').simulate('change');
         },
 
         // ---------------------------------------
@@ -350,52 +288,25 @@ define([
             }
         },
 
-        relistQty_change: function () {
-            var qtyType = this.getAttribute('qty_type');
-
-            var valueContainer = $('relist_qty_' + qtyType + '_value_container'),
-                valueMaxContainer = $('relist_qty_' + qtyType + '_value_max_container'),
-                item = valueContainer.select('label span')[0];
-
+        relistQty_change: function ()
+        {
+            var valueContainer = $('relist_qty_calculated_value');
             valueContainer.hide();
-            valueMaxContainer.hide();
 
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_LESS') ||
-                this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_MORE')) {
-                item.innerHTML = M2ePro.translator.translate('Quantity');
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_YES')) {
                 valueContainer.show();
-            }
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_BETWEEN')) {
-                item.innerHTML = M2ePro.translator.translate('Min Quantity');
-                valueContainer.show();
-                valueMaxContainer.show();
             }
         },
 
-
         // ---------------------------------------
 
-        stopQty_change: function () {
-            var qtyType = this.getAttribute('qty_type');
-
-            var valueContainer = $('stop_qty_' + qtyType + '_value_container'),
-                valueMaxContainer = $('stop_qty_' + qtyType + '_value_max_container'),
-                item = valueContainer.select('label span')[0];
-
+        stopQty_change: function ()
+        {
+            var valueContainer = $('stop_qty_calculated_value');
             valueContainer.hide();
-            valueMaxContainer.hide();
 
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_LESS') ||
-                this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_MORE')) {
-                item.innerHTML = M2ePro.translator.translate('Quantity');
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_YES')) {
                 valueContainer.show();
-            }
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_BETWEEN')) {
-                item.innerHTML = M2ePro.translator.translate('Min Quantity');
-                valueContainer.show();
-                valueMaxContainer.show();
             }
         },
 
@@ -417,7 +328,8 @@ define([
 
         // ---------------------------------------
 
-        listAdvancedRules_change: function () {
+        listAdvancedRules_change: function ()
+        {
             var rulesContainer = $('list_advanced_rules_filters_container'),
                 warningContainer = $('list_advanced_rules_filters_warning');
 
@@ -430,7 +342,8 @@ define([
             }
         },
 
-        relistAdvancedRules_change: function () {
+        relistAdvancedRules_change: function ()
+        {
             var rulesContainer = $('relist_advanced_rules_filters_container'),
                 warningContainer = $('relist_advanced_rules_filters_warning');
 
@@ -443,7 +356,8 @@ define([
             }
         },
 
-        stopAdvancedRules_change: function () {
+        stopAdvancedRules_change: function ()
+        {
             var rulesContainer = $('stop_advanced_rules_filters_container'),
                 warningContainer = $('stop_advanced_rules_filters_warning');
 

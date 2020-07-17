@@ -15,12 +15,8 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
  */
 class SystemRequirements extends AbstractBlock
 {
+    /** @var \Magento\Framework\Data\FormFactory */
     protected $formFactory;
-
-    protected $_template = 'developers/tabs/system_requirements.phtml';
-
-    public $requirements = [];
-    public $additionalInfo = null;
 
     //########################################
 
@@ -35,7 +31,20 @@ class SystemRequirements extends AbstractBlock
 
     //########################################
 
-    protected function _beforeToHtml()
+    public function toHtml()
+    {
+        $requirements = $this->createBlock('ControlPanel_Inspection_Requirements');
+        return $requirements->toHtml() .
+               $this->getAdditionalForm()->toHtml();
+    }
+
+    //########################################
+
+    /**
+     * @return \Magento\Framework\Data\Form
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    protected function getAdditionalForm()
     {
         $form = $this->formFactory->create();
 
@@ -172,15 +181,7 @@ class SystemRequirements extends AbstractBlock
             ]
         );
 
-        $this->additionalInfo = $form;
-        return parent::_beforeToHtml();
-    }
-
-    //########################################
-
-    public function getManager()
-    {
-        return $this->modelFactory->getObject('Requirements\Manager');
+        return $form;
     }
 
     //########################################

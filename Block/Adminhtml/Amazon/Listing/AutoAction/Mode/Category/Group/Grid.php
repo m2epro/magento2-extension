@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category\Gro
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category\Group\Grid
  */
-class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\Group\Grid
+class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\Group\AbstractGrid
 {
     //########################################
 

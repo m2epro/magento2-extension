@@ -9,13 +9,14 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
 use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
+use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
+use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings\StepTwoModeValidate
  */
 class StepTwoModeValidate extends Settings
 {
-
     //########################################
 
     public function execute()
@@ -23,22 +24,43 @@ class StepTwoModeValidate extends Settings
         $sessionData = $this->getSessionValue($this->getSessionDataKey());
         $sessionData = $this->convertCategoriesIdstoProductIds($sessionData);
 
-        $this->clearSpecificsSession();
+        $listing = $this->getListingFromRequest();
+        $validateSpecifics = $this->getRequest()->getParam('validate_specifics');
+        $validateCategory  = $this->getRequest()->getParam('validate_category');
 
         $failedProductsIds   = [];
         $succeedProducersIds = [];
         foreach ($sessionData as $listingProductId => $categoryData) {
-            if ($categoryData['category_main_mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY) {
-                $key = 'category_main_id';
-            } else {
-                $key = 'category_main_attribute';
+
+            if (!isset($categoryData[eBayCategory::TYPE_EBAY_MAIN]) ||
+                $categoryData[eBayCategory::TYPE_EBAY_MAIN]['mode'] === TemplateCategory::CATEGORY_MODE_NONE
+            ) {
+                $validateCategory ? $failedProductsIds[] = $listingProductId
+                    : $succeedProducersIds[] = $listingProductId;
+                continue;
             }
 
-            if (!$categoryData[$key]) {
-                $failedProductsIds[] = $listingProductId;
-            } else {
+            if (!$validateSpecifics) {
                 $succeedProducersIds[] = $listingProductId;
+                continue;
             }
+
+            if ($categoryData[eBayCategory::TYPE_EBAY_MAIN]['is_custom_template'] !== null) {
+                $succeedProducersIds[] = $listingProductId;
+                continue;
+            }
+
+            $hasRequiredSpecifics = $this->getHelper('Component_Ebay_Category_Ebay')->hasRequiredSpecifics(
+                $categoryData[eBayCategory::TYPE_EBAY_MAIN]['value'],
+                $listing->getMarketplaceId()
+            );
+
+            if (!$hasRequiredSpecifics) {
+                $succeedProducersIds[] = $listingProductId;
+                continue;
+            }
+
+            $failedProductsIds[] = $listingProductId;
         }
 
         $this->setJsonContent([

@@ -579,7 +579,7 @@ define([
                         options.data = response.data;
                     }
 
-                    var button = $(options.elementId).up('tr').down('td > a');
+                    var button = $(options.elementId).up().up().down('a.update_rate_table_button');
                     button.innerText = M2ePro.translator.translate("Refresh Rate Tables");
                     button.setAttribute('data-is-downloaded', '1');
 
@@ -600,7 +600,7 @@ define([
                         return;
                     }
 
-                    button = otherElement.up('tr').down('td > a');
+                    button = otherElement.up().up().down('a.update_rate_table_button');
 
                     if (!button.dataset.isDownloaded) {
                         button.simulate('click');
@@ -735,7 +735,7 @@ define([
                 modeElement.value = this.options[this.selectedIndex].getAttribute('mode');
             }
 
-            var note = this.up('tr').down('.m2epro-field-tooltip');
+            var note = this.up().down('.m2epro-field-tooltip');
 
             if (otherElement && +otherElement.getAttribute('sell-api')) {
                 note.down('.shipping_rate_table_note_accepted').hide();
@@ -1831,7 +1831,7 @@ define([
                     }
                 }.bind(this);
 
-            TemplateHandlerObj.checkMessages(
+            TemplateManagerObj.checkMessages(
                 id,
                 nick,
                 data,

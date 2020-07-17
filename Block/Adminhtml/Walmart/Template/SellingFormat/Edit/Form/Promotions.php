@@ -325,7 +325,7 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         ];
 
         return array_merge($optionsResult, $this->getMagentoAttributesOptions(
-            'text_date',
+            'text_price',
             Promotion::PRICE_MODE_ATTRIBUTE
         ));
     }
@@ -344,7 +344,7 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         ];
 
         return array_merge($optionsResult, $this->getMagentoAttributesOptions(
-            'text_date',
+            'text_price',
             Promotion::COMPARISON_PRICE_MODE_ATTRIBUTE
         ));
     }

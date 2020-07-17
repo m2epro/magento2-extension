@@ -17,18 +17,13 @@ class GetGlobalMessages extends Main
 
     public function execute()
     {
-        $muteMessages = $this->addBrowserNotifications();
-
-        if (!$muteMessages && $this->getCustomViewHelper()->isInstallationWizardFinished()) {
+        if ($this->getCustomViewHelper()->isInstallationWizardFinished()) {
             $this->addLicenseNotifications();
         }
 
         $this->addServerNotifications();
-
-        if (!$muteMessages) {
-            $this->addCronErrorMessage();
-            $this->getCustomViewControllerHelper()->addMessages();
-        }
+        $this->addCronErrorMessage();
+        $this->getCustomViewControllerHelper()->addMessages();
 
         $messages = $this->getMessageManager()->getMessages(
             true,

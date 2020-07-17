@@ -117,8 +117,7 @@ class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
                 'Status of the "%source%" Source changed [%from%] to [%to%].',
                 ['!from'=> $oldValue, '!to' => $newValue, '!source' => $source->getSourceCode()]
             ),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
     }
 

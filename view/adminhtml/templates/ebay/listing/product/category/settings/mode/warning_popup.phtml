@@ -1,0 +1,30 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<div id="next_step_warning_popup_content" style="display: none">
+
+    <div>
+        <?php echo $block->__(
+            'You have not specified full Category data for
+            <strong><span class="failed_count"></span></strong> of <strong><span class="total_count"></span></strong>
+            Product(s).<br><br>
+
+            Products without a Primary eBay Category and Item Specifics <b>will not be added to M2E Pro Listing</b>
+            as they cannot be listed on the Channel.
+            eBay requires submitting full Category data when listing a new Item.<br><br>
+
+            To set Primary eBay Category to <strong><span class="failed_count"></span></strong> Product(s) now,
+            click <i>Cancel</i> and complete the configurations. Otherwise, click <i>Continue</i>.
+            You will be able to add these Products later using the Add Products button on the View Listing page.'
+        ); ?>
+    </div>
+
+</div>

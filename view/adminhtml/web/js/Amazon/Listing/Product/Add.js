@@ -1,9 +1,7 @@
 define([
     'M2ePro/Common'
 ], function () {
-
-    window.AmazonListingProductAdd = Class.create();
-    AmazonListingProductAdd.prototype = Object.extend(new Common(), {
+    window.AmazonListingProductAdd = Class.create(Common, {
 
         // ---------------------------------------
 

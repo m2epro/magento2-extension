@@ -98,7 +98,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                                    'id'        => 'productTaxCode_template_refresh_btn',
                                    'label'     => $this->__('Refresh'),
                                    'class'     => 'action primary',
-                                   'onclick'   => "ListingGridHandlerObj.templateProductTaxCodeHandler.loadGrid()"
+                                   'onclick'   => "ListingGridObj.templateProductTaxCodeHandler.loadGrid()"
                              ])
         );
 
@@ -154,7 +154,7 @@ HTML;
     {
         $this->js->add(
             <<<JS
-ListingGridHandlerObj.templateProductTaxCodeHandler.newTemplateUrl='{$this->getNewTemplateProductTaxCodeUrl()}';
+ListingGridObj.templateProductTaxCodeHandler.newTemplateUrl='{$this->getNewTemplateProductTaxCodeUrl()}';
 JS
         );
 

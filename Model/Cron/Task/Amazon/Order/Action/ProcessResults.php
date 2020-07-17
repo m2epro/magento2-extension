@@ -140,17 +140,7 @@ class ProcessResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             $processing->save();
         } catch (\Exception $exception) {
-            $this->getOperationHistory()->addContentData(
-                'exceptions',
-                [
-                    'message' => $exception->getMessage(),
-                    'file'    => $exception->getFile(),
-                    'line'    => $exception->getLine(),
-                    'trace'   => $exception->getTraceAsString(),
-                ]
-            );
-
-            $this->getHelper('Module_Exception')->process($exception, false);
+            $this->processTaskException($exception);
         }
 
         $action->delete();

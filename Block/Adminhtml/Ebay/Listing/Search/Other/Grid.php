@@ -41,6 +41,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
 
         $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $listingOtherCollection->getSelect()->columns([
+            'id'                    =>'main_table.id',
             'store_id'              => new \Zend_Db_Expr(0),
             'account_id'            => 'main_table.account_id',
             'marketplace_id'        => 'main_table.marketplace_id',
@@ -138,13 +139,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
     <a title="{$altTitle}" target="_blank" href="{$manageUrl}"><img src="{$iconSrc}" /></a>
 </div>
 HTML;
-    }
-
-    protected function getProcessingLocks($row)
-    {
-        $objectId = $row->getData('listing_other_id');
-        $object   = $this->ebayFactory->getObjectLoaded('Listing\Other', $objectId);
-        return $object->getProcessingLocks();
     }
 
     //########################################

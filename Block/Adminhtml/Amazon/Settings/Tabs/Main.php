@@ -50,7 +50,7 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
                     0 => $this->__('Disabled'),
                     1 => $this->__('Enabled')
                 ],
-                'value' => $this->getHelper('Component_Amazon_Business')->isEnabled(),
+                'value' => $this->getHelper('Component_Amazon_Configuration')->isEnabledBusinessMode(),
                 'tooltip' => $this->__(
                     'After you <strong>Enable</strong> this option, you can provide the settings for
                     <strong>Business Price</strong> and <strong >Quantity Discounts</strong>

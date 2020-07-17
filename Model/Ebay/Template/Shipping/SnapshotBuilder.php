@@ -10,21 +10,22 @@ namespace Ess\M2ePro\Model\Ebay\Template\Shipping;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Template\Shipping\SnapshotBuilder
+ * @method \Ess\M2ePro\Model\Ebay\Template\Shipping getModel()
  */
-class SnapshotBuilder extends \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel
+class SnapshotBuilder extends \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder
 {
     //########################################
 
     public function getSnapshot()
     {
-        $data = $this->model->getData();
+        $data = $this->getModel()->getData();
         if (empty($data)) {
             return [];
         }
 
-        $data['services'] = $this->model->getServices();
-        $data['calculated_shipping'] = $this->model->getCalculatedShipping()
-            ? $this->model->getCalculatedShipping()->getData()
+        $data['services'] = $this->getModel()->getServices();
+        $data['calculated_shipping'] = $this->getModel()->getCalculatedShipping()
+            ? $this->getModel()->getCalculatedShipping()->getData()
             : [];
 
         $ignoredKeys = [
@@ -41,9 +42,9 @@ class SnapshotBuilder extends \Ess\M2ePro\Model\Template\SnapshotBuilder\Abstrac
 
                 $value !== null && !is_array($value) && $value = (string)$value;
             }
+            unset($value);
         }
-
-        unset($value);
+        unset($serviceData);
 
         foreach ($data['calculated_shipping'] as $key => &$value) {
             if (in_array($key, $ignoredKeys)) {
@@ -53,6 +54,7 @@ class SnapshotBuilder extends \Ess\M2ePro\Model\Template\SnapshotBuilder\Abstrac
 
             $value !== null && !is_array($value) && $value = (string)$value;
         }
+        unset($value);
 
         return $data;
     }

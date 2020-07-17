@@ -14,10 +14,6 @@ define([
             this.marketplacesForUpdate = new Array();
             this.marketplacesForUpdateCurrentIndex = 0;
             this.storedStatuses = storedStatuses || [];
-
-            this.synchErrors = 0;
-            this.synchWarnings = 0;
-            this.synchSuccess = 0;
         },
 
         // ---------------------------------------
@@ -56,18 +52,6 @@ define([
 
         // ---------------------------------------
 
-        moveChildBlockContent: function (childBlockId, destinationBlockId)
-        {
-            if (childBlockId == '' || destinationBlockId == '') {
-                return;
-            }
-
-            $(destinationBlockId).appendChild($(childBlockId));
-            return true;
-        },
-
-        // ---------------------------------------
-
         saveAction: function ()
         {
             MessageObj.clear();
@@ -81,7 +65,7 @@ define([
                 this.changeStatus($('status_' + changedStatuses[i].marketplace_id));
             }
 
-            MessageObj.addSuccessMessage(M2ePro.translator.translate('Settings have been saved.'));
+            MessageObj.addSuccess(M2ePro.translator.translate('Settings have been saved.'));
         },
 
         updateAction: function ()
@@ -89,27 +73,6 @@ define([
             MessageObj.clear();
             CommonObj.scrollPageToTop();
             this.runAllSynchronization();
-        },
-
-        completeStepAction: function ()
-        {
-            var self = this;
-
-            if (self.runAllSynchronization(self.getCurrentStatuses())) {
-
-                self.saveSettings();
-
-                var intervalId = setInterval(function () {
-                    if (typeof self.marketplacesUpdateFinished != 'undefined' && self.marketplacesUpdateFinished) {
-                        clearInterval(intervalId);
-                        window.opener.completeStep = 1;
-                        window.close();
-                    }
-                }, 1000);
-
-            } else {
-                MessageObj.addErrorMessage(M2ePro.translator.translate('You must select at least one Site you will work with.'));
-            }
         },
 
         // ---------------------------------------
@@ -136,10 +99,6 @@ define([
 
             self.marketplacesForUpdate = [marketplaceStatusSelect.readAttribute('marketplace_id')];
             self.marketplacesForUpdateCurrentIndex = 0;
-
-            self.synchErrors = 0;
-            self.synchWarnings = 0;
-            self.synchSuccess = 0;
 
             self.runNextMarketplaceNow();
             return true;
@@ -171,10 +130,6 @@ define([
                 }
             }
             this.marketplacesForUpdateCurrentIndex = 0;
-
-            this.synchErrors = 0;
-            this.synchWarnings = 0;
-            this.synchSuccess = 0;
 
             this.runNextMarketplaceNow();
             return changedStatuses;
@@ -209,10 +164,6 @@ define([
 
             this.marketplacesForUpdateCurrentIndex = 0;
 
-            this.synchErrors = 0;
-            this.synchWarnings = 0;
-            this.synchSuccess = 0;
-
             this.runNextMarketplaceNow();
             return true;
         },
@@ -222,6 +173,11 @@ define([
         runNextMarketplaceNow: function ()
         {
             var self = this;
+
+            if (self.synchProgressObj.result == self.synchProgressObj.resultTypeError) {
+                self.completeWithError();
+                return;
+            }
 
             if (self.marketplacesForUpdateCurrentIndex > 0) {
 
@@ -237,10 +193,8 @@ define([
                 self.marketplacesUpdateFinished = true;
 
                 self.synchProgressObj.end();
+                self.synchProgressObj.printFinalMessage();
 
-                self.synchSuccess++;
-
-                self.synchProgressObj.printFinalMessage(self.synchProgressObj.resultTypeSuccess);
                 return;
             }
 
@@ -252,19 +206,25 @@ define([
             $('synch_info_complete_' + marketplaceId).hide();
 
             var titleProgressBar = $('marketplace_title_' + marketplaceId).innerHTML;
-            var marketplaceComponentName = $('status_' + marketplaceId).readAttribute('markeptlace_component_name');
+            var componentTitle = $('status_'+marketplaceId).readAttribute('component_title');
+            var component      = $('status_'+marketplaceId).readAttribute('component_name');
 
-            if (marketplaceComponentName != '') {
-                titleProgressBar = marketplaceComponentName + ' ' + titleProgressBar;
+            if (componentTitle != '') {
+                titleProgressBar = componentTitle + ' ' + titleProgressBar;
             }
 
-            self.synchProgressObj.runTask(
+            self.runNextMarketplaceTask(titleProgressBar, marketplaceId, component);
+            return true;
+        },
+
+        runNextMarketplaceTask: function(titleProgressBar, marketplaceId, component)
+        {
+            this.synchProgressObj.runTask(
                 titleProgressBar,
                 M2ePro.url.get('runSynchNow', {'marketplace_id': marketplaceId}),
-                '', 'MarketplaceObj.runNextMarketplaceNow();'
+                M2ePro.url.get(component + '_marketplace/synchGetExecutingInfo'),
+                'MarketplaceObj.runNextMarketplaceNow();'
             );
-
-            return true;
         },
 
         // ---------------------------------------
@@ -310,6 +270,30 @@ define([
                 $('synch_info_process_' + marketplaceId).hide();
                 $('synch_info_complete_' + marketplaceId).hide();
             }
+        },
+
+        completeWithError: function()
+        {
+            var self = this;
+
+            $('synch_info_wait_'+self.marketplacesForUpdate[self.marketplacesForUpdateCurrentIndex-1]).hide();
+            $('synch_info_process_'+self.marketplacesForUpdate[self.marketplacesForUpdateCurrentIndex-1]).hide();
+            $('synch_info_complete_'+self.marketplacesForUpdate[self.marketplacesForUpdateCurrentIndex-1]).hide();
+            $('synch_info_error_'+self.marketplacesForUpdate[self.marketplacesForUpdateCurrentIndex-1]).show();
+
+            for (var i = self.marketplacesForUpdateCurrentIndex; i < self.marketplacesForUpdate.length; i++) {
+                $('synch_info_wait_'+self.marketplacesForUpdate[i]).hide();
+                $('synch_info_process_'+self.marketplacesForUpdate[i]).hide();
+                $('synch_info_complete_'+self.marketplacesForUpdate[i]).hide();
+                $('synch_info_skip_'+self.marketplacesForUpdate[i]).show();
+            }
+
+            self.marketplacesForUpdate = new Array();
+            self.marketplacesForUpdateCurrentIndex = 0;
+            self.marketplacesUpdateFinished = true;
+
+            self.synchProgressObj.end();
+            self.synchProgressObj.printFinalMessage();
         }
 
         // ---------------------------------------

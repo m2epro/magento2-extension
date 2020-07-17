@@ -9,7 +9,6 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
-use Magento\Backend\App\Action;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Save
@@ -105,6 +104,7 @@ class Save extends Template
             return null;
         }
 
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager */
         $templateManager = $this->templateManager->setTemplate($nick);
         $templateModel = $templateManager->getTemplateModel();
 
@@ -112,9 +112,8 @@ class Save extends Template
             $oldData = [];
         } else {
             $templateModel->load($data['id']);
-            $templateManager->isHorizontalTemplate() && $templateModel = $templateModel->getChildObject();
 
-            /** @var \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel $snapshotBuilder */
+            /** @var \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder $snapshotBuilder */
             if ($templateManager->isHorizontalTemplate()) {
                 $snapshotBuilder = $this->modelFactory->getObject(
                     'Ebay_'.$templateManager->getTemplateModelName().'_SnapshotBuilder'
@@ -125,14 +124,16 @@ class Save extends Template
                 );
             }
 
-            $snapshotBuilder->setModel($templateModel);
+            $snapshotBuilder->setModel(
+                $templateManager->isHorizontalTemplate() ? $templateModel->getChildObject() : $templateModel
+            );
 
             $oldData = $snapshotBuilder->getSnapshot();
         }
 
-        $template = $templateManager->getTemplateBuilder()->build($data);
+        $template = $templateManager->getTemplateBuilder()->build($templateModel, $data);
 
-        /** @var \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel $snapshotBuilder */
+        /** @var \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder $snapshotBuilder */
         if ($templateManager->isHorizontalTemplate()) {
             $snapshotBuilder = $this->modelFactory->getObject(
                 'Ebay_'.$templateManager->getTemplateModelName().'_SnapshotBuilder'
@@ -147,7 +148,7 @@ class Save extends Template
 
         $newData = $snapshotBuilder->getSnapshot();
 
-        /** @var \Ess\M2ePro\Model\Template\Diff\AbstractModel $diff */
+        /** @var \Ess\M2ePro\Model\ActiveRecord\Diff $diff */
         if ($templateManager->isHorizontalTemplate()) {
             $diff = $this->modelFactory->getObject('Ebay_'.$templateManager->getTemplateModelName().'_Diff');
         } else {
@@ -157,7 +158,7 @@ class Save extends Template
         $diff->setNewSnapshot($newData);
         $diff->setOldSnapshot($oldData);
 
-        /** @var \Ess\M2ePro\Model\Template\AffectedListingsProducts\AbstractModel $affectedListingsProducts */
+        /** @var \Ess\M2ePro\Model\Template\AffectedListingsProductsAbstract $affectedListingsProducts */
         if ($templateManager->isHorizontalTemplate()) {
             $affectedListingsProducts = $this->modelFactory->getObject(
                 'Ebay_'.$templateManager->getTemplateModelName().'_AffectedListingsProducts'
@@ -170,7 +171,7 @@ class Save extends Template
 
         $affectedListingsProducts->setModel($template);
 
-        /** @var \Ess\M2ePro\Model\Template\ChangeProcessor\AbstractModel $changeProcessor */
+        /** @var \Ess\M2ePro\Model\Template\ChangeProcessorAbstract $changeProcessor */
         if ($templateManager->isHorizontalTemplate()) {
             $changeProcessor = $this->modelFactory->getObject(
                 'Ebay_'.$templateManager->getTemplateModelName().'_ChangeProcessor'

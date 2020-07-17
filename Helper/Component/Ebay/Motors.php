@@ -30,19 +30,19 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 
     const MAX_ITEMS_COUNT_FOR_ATTRIBUTE = 3000;
 
-    private $moduleConfig;
     private $resourceConnection;
+    private $eBayFactory;
 
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $eBayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
-        $this->moduleConfig = $moduleConfig;
         $this->resourceConnection = $resourceConnection;
+        $this->eBayFactory = $eBayFactory;
         parent::__construct($helperFactory, $context);
     }
 
@@ -52,34 +52,19 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
     {
         switch ($type) {
             case self::TYPE_EPID_MOTOR:
-                return $this->moduleConfig->getGroupValue(
-                    '/ebay/motors/',
-                    'epids_motor_attribute'
-                );
+                return $this->getHelper('Component_Ebay_Configuration')->getMotorsEpidsAttribute();
 
             case self::TYPE_KTYPE:
-                return $this->moduleConfig->getGroupValue(
-                    '/ebay/motors/',
-                    'ktypes_attribute'
-                );
+                return $this->getHelper('Component_Ebay_Configuration')->getKTypesAttribute();
 
             case self::TYPE_EPID_UK:
-                return $this->moduleConfig->getGroupValue(
-                    '/ebay/motors/',
-                    'epids_uk_attribute'
-                );
+                return $this->getHelper('Component_Ebay_Configuration')->getUkEpidsAttribute();
 
             case self::TYPE_EPID_DE:
-                return $this->moduleConfig->getGroupValue(
-                    '/ebay/motors/',
-                    'epids_de_attribute'
-                );
+                return $this->getHelper('Component_Ebay_Configuration')->getDeEpidsAttribute();
 
             case self::TYPE_EPID_AU:
-                return $this->moduleConfig->getGroupValue(
-                    '/ebay/motors/',
-                    'epids_au_attribute'
-                );
+                return $this->getHelper('Component_Ebay_Configuration')->getAuEpidsAttribute();
         }
 
         return '';
@@ -328,6 +313,72 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
             default:
                 return null;
         }
+    }
+
+    //########################################
+
+    /**
+     * @param int $type
+     *
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Zend_Db_Statement_Exception
+     */
+    public function getDictionaryRecordCount($type)
+    {
+        $postfix = \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE == $type ? 'ktype' : 'epid';
+        $dbHelper = $this->getHelper('Module_Database_Structure');
+
+        $selectStmt = $this->resourceConnection->getConnection()
+            ->select()
+            ->from(
+                $dbHelper->getTableNameWithPrefix("m2epro_ebay_dictionary_motor_{$postfix}"),
+                [
+                    'count' => new \Zend_Db_Expr('COUNT(*)'),
+                    'is_custom'
+                ]
+            )
+            ->group('is_custom');
+
+        if ($this->isTypeBasedOnEpids($type)) {
+            $selectStmt->where('scope = ?', $this->getEpidsScopeByType($type));
+        }
+
+        $custom = $ebay = 0;
+        $queryStmt = $selectStmt->query();
+        while ($row = $queryStmt->fetch()) {
+            $row['is_custom'] == 1 ? $custom = $row['count'] : $ebay = $row['count'];
+        }
+
+        return [(int)$ebay, (int)$custom];
+    }
+
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isKTypeMarketplacesEnabled()
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\Collection $marketplaceCollection */
+        $marketplaceCollection = $this->eBayFactory->getObject('Marketplace')->getCollection();
+        $marketplaceCollection->addFieldToFilter('is_ktype', 1);
+        $marketplaceCollection->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
+
+        return (bool)$marketplaceCollection->getSize();
+    }
+
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isEPidMarketplacesEnabled()
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\Collection $marketplaceCollection */
+        $marketplaceCollection = $this->eBayFactory->getObject('Marketplace')->getCollection();
+        $marketplaceCollection->addFieldToFilter('is_epid', 1);
+        $marketplaceCollection->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
+
+        return (bool)$marketplaceCollection->getSize();
     }
 
     //########################################

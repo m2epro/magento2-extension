@@ -22,7 +22,7 @@ class CronJobDetails extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFo
     protected function _prepareLayout()
     {
         $form = $this->_formFactory->create();
-        $moduleConfig = $this->getHelper('Module')->getConfig();
+        $config = $this->getHelper('Module')->getConfig();
 
         $form->addField(
             'cron_job_details',
@@ -95,7 +95,7 @@ HTML
                 'note',
                 [
                     'label' => $this->__('Service Auth Key'),
-                    'text' => $moduleConfig->getGroupValue('/cron/service/', 'auth_key')
+                    'text' => $config->getGroupValue('/cron/service/', 'auth_key')
                 ]
             );
         }
@@ -118,7 +118,7 @@ HTML
             ]
         );
 
-        $isDisabled = (bool)(int)$moduleConfig->getGroupValue(
+        $isDisabled = (bool)(int)$config->getGroupValue(
             '/cron/'.CronHelper::RUNNER_SERVICE_CONTROLLER.'/',
             'disabled'
         );
@@ -134,7 +134,7 @@ HTML
             );
         }
 
-        $isDisabled = (bool)(int)$moduleConfig->getGroupValue(
+        $isDisabled = (bool)(int)$config->getGroupValue(
             '/cron/'.CronHelper::RUNNER_SERVICE_PUB.'/',
             'disabled'
         );
@@ -150,7 +150,7 @@ HTML
             );
         }
 
-        $isDisabled = (bool)(int)$moduleConfig->getGroupValue(
+        $isDisabled = (bool)(int)$config->getGroupValue(
             '/cron/'.CronHelper::RUNNER_MAGENTO.'/',
             'disabled'
         );
@@ -215,7 +215,7 @@ HTML
                         Extension Installation.
                         No additional Settings are required. Our Service does HTTP calls to your Magento from
                         IP address: <b>%server_ip%</b>.',
-                        gethostbyname($moduleConfig->getGroupValue('/cron/service/', 'hostname'))
+                        gethostbyname($config->getGroupValue('/cron/service/', 'hostname'))
                     )
                 ]
             );

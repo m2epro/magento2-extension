@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Template\Synchronization;
 /**
  * Class \Ess\M2ePro\Model\Ebay\Template\Synchronization\Diff
  */
-class Diff extends \Ess\M2ePro\Model\Template\Synchronization\Diff\AbstractModel
+class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
 {
     //########################################
 
@@ -22,7 +22,6 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\Diff\AbstractModel
                $this->isReviseQtySettingsChanged() ||
                $this->isRevisePriceEnabled() ||
                $this->isRevisePriceDisabled() ||
-               $this->isRevisePriceSettingsChanged() ||
                $this->isReviseTitleEnabled() ||
                $this->isReviseTitleDisabled() ||
                $this->isReviseSubtitleEnabled() ||
@@ -89,18 +88,6 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\Diff\AbstractModel
         $oldSnapshotData = $this->oldSnapshot;
 
         return !empty($oldSnapshotData['revise_update_price']) && empty($newSnapshotData['revise_update_price']);
-    }
-
-    // ---------------------------------------
-
-    public function isRevisePriceSettingsChanged()
-    {
-        $keys = [
-            'revise_update_price_max_allowed_deviation_mode',
-            'revise_update_price_max_allowed_deviation',
-        ];
-
-        return $this->isSettingsDifferent($keys);
     }
 
     //########################################

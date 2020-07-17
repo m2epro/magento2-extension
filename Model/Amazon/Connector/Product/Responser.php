@@ -73,8 +73,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
 
         $this->getLogger()->logListingProductMessage(
             $this->listingProduct,
-            $message,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            $message
         );
     }
 

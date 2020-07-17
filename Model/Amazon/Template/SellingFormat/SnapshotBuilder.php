@@ -10,24 +10,25 @@ namespace Ess\M2ePro\Model\Amazon\Template\SellingFormat;
 
 /**
  * Class \Ess\M2ePro\Model\Amazon\Template\SellingFormat\SnapshotBuilder
+ * @method \Ess\M2ePro\Model\Template\SellingFormat getModel()
  */
-class SnapshotBuilder extends \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel
+class SnapshotBuilder extends \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder
 {
     //########################################
 
     public function getSnapshot()
     {
-        $data = $this->model->getData();
+        $data = $this->getModel()->getData();
 
-        if ($this->model->getChildObject() !== null) {
-            $data = array_merge($data, $this->model->getChildObject()->getData());
+        if ($this->getModel()->getChildObject() !== null) {
+            $data = array_merge($data, $this->getModel()->getChildObject()->getData());
         }
 
         if (empty($data)) {
             return [];
         }
 
-        $data['business_discounts'] = $this->model->getChildObject()->getBusinessDiscounts();
+        $data['business_discounts'] = $this->getModel()->getChildObject()->getBusinessDiscounts();
 
         foreach ($data['business_discounts'] as &$businessDiscount) {
             foreach ($businessDiscount as &$value) {

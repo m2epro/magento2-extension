@@ -789,10 +789,8 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
     {
         $attributeHelper = $this->getHelper('Magento\Attribute');
 
-        $isPriceConvertEnabled = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/magento/attribute/',
-            'price_type_converting'
-        );
+        $isPriceConvertEnabled = $this->getHelper('Module_Configuration')
+            ->isEnableMagentoAttributePriceTypeConvertingMode();
 
         if ($this->isRegularCustomerAllowed()) {
             if ($this->isRegularPriceModeProduct() || $this->isRegularPriceModeSpecial()) {

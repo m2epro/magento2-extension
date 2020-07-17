@@ -80,10 +80,7 @@ class CreateLicense extends InstallationWalmart
             return $this->getResult();
         }
 
-        $registry = $this->activeRecordFactory->getObject('Registry');
-        $registry->setData('key', '/wizard/license_form_data/');
-        $registry->setData('value', $this->getHelper('Data')->jsonEncode($licenseData));
-        $registry->save();
+        $this->getHelper('Module')->getRegistry()->setValue('/wizard/license_form_data/', $licenseData);
 
         $this->setJsonContent(['status' => $licenseResult]);
         return $this->getResult();

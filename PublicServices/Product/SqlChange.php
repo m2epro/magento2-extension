@@ -185,13 +185,13 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 
     protected function getInstructionsData()
     {
-        if (empty($this->_changesData)) {
+        if (empty($this->changesData)) {
             return [];
         }
 
         $productInstructionTypes = [];
 
-        foreach ($this->_changesData as $changeData) {
+        foreach ($this->changesData as $changeData) {
             $productId = (int)$changeData['product_id'];
 
             $productInstructionTypes[$productId][] = $changeData['instruction_type'];

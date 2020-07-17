@@ -862,13 +862,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
         $orderId     = $this->getParentObject()->getId();
 
-        $changeCollection = $this->activeRecordFactory->getObject('Order\Change')->getCollection();
-        $changeCollection->addFieldToFilter('order_id', $orderId);
-        $changeCollection->addFieldToFilter('action', \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING);
-
         $action = \Ess\M2ePro\Model\Order\Change::ACTION_CANCEL;
-        if ($this->isShipped() || $this->isPartiallyShipped() || count($items) != $totalItemsCount ||
-            $this->isSetProcessingLock('update_shipping_status') || $changeCollection->getSize() > 0
+        if ($this->isShipped() || $this->isPartiallyShipped() ||
+            count($items) != $totalItemsCount || $this->getParentObject()->isOrderStatusUpdatingToShipped()
         ) {
             if (empty($items)) {
                 $this->getParentObject()->addErrorLog(

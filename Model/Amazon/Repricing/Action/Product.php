@@ -78,14 +78,10 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
                     'response_token' => $responseToken
                 ]
             );
-        } catch (\Exception $exception) {
-            $this->getSynchronizationLog()->addMessage(
-                $this->getHelper('Module\Translation')->__($exception->getMessage()),
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
-            );
+        } catch (\Exception $e) {
+            $this->getHelper('Module\Exception')->process($e, false);
+            $this->getSynchronizationLog()->addMessageFromException($e);
 
-            $this->getHelper('Module\Exception')->process($exception, false);
             return false;
         }
 
@@ -119,14 +115,10 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
                     ])
                 ]
             );
-        } catch (\Exception $exception) {
-            $this->getSynchronizationLog()->addMessage(
-                $this->getHelper('Module\Translation')->__($exception->getMessage()),
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
-            );
+        } catch (\Exception $e) {
+            $this->getHelper('Module\Exception')->process($e);
+            $this->getSynchronizationLog()->addMessageFromException($e);
 
-            $this->getHelper('Module\Exception')->process($exception);
             return false;
         }
 

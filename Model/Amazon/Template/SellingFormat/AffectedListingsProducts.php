@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Template\SellingFormat;
 /**
  * Class \Ess\M2ePro\Model\Amazon\Template\SellingFormat\AffectedListingsProducts
  */
-class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListingsProducts\AbstractModel
+class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListingsProductsAbstract
 {
     protected $amazonFactory;
 
@@ -27,10 +27,10 @@ class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListin
         $this->amazonFactory = $amazonFactory;
         parent::__construct($activeRecordFactory, $helperFactory, $modelFactory, $data);
     }
-    
+
     //########################################
 
-    public function getObjects(array $filters = [])
+    public function loadCollection(array $filters = [])
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Collection $listingCollection */
         $listingCollection = $this->amazonFactory->getObject('Listing')->getCollection();
@@ -46,50 +46,7 @@ class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListin
             $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
         }
 
-        return $listingProductCollection->getItems();
-    }
-
-    public function getObjectsData($columns = '*', array $filters = [])
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Collection $listingCollection */
-        $listingCollection = $this->amazonFactory->getObject('Listing')->getCollection();
-        $listingCollection->addFieldToFilter('template_selling_format_id', $this->model->getId());
-        $listingCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-        $listingCollection->getSelect()->columns('id');
-
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
-        $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('listing_id', ['in' => $listingCollection->getSelect()]);
-
-        if (!empty($filters['only_physical_units'])) {
-            $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
-        }
-
-        if (is_array($columns) && !empty($columns)) {
-            $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $listingProductCollection->getSelect()->columns($columns);
-        }
-
-        return $listingProductCollection->getData();
-    }
-
-    public function getIds(array $filters = [])
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Collection $listingCollection */
-        $listingCollection = $this->amazonFactory->getObject('Listing')->getCollection();
-        $listingCollection->addFieldToFilter('template_selling_format_id', $this->model->getId());
-        $listingCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-        $listingCollection->getSelect()->columns('id');
-
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
-        $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('listing_id', ['in' => $listingCollection->getSelect()]);
-
-        if (!empty($filters['only_physical_units'])) {
-            $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
-        }
-
-        return $listingProductCollection->getAllIds();
+        return $listingProductCollection;
     }
 
     //########################################

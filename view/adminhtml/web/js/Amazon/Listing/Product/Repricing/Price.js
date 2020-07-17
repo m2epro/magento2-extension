@@ -1,8 +1,7 @@
 define([
 ], function () {
 
-    window.AmazonListingProductRepricingPrice = Class.create();
-    AmazonListingProductRepricingPrice.prototype = {
+    window.AmazonListingProductRepricingPrice = Class.create({
 
         // ---------------------------------------
 
@@ -44,6 +43,6 @@ define([
             });
         }
 
-    };
+    });
 
 });

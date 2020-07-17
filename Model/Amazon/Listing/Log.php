@@ -32,7 +32,6 @@ class Log extends \Ess\M2ePro\Model\Listing\Log
      * @param null $action
      * @param null $description
      * @param null $type
-     * @param null $priority
      * @param array $additionalData
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -46,7 +45,6 @@ class Log extends \Ess\M2ePro\Model\Listing\Log
         $action = null,
         $description = null,
         $type = null,
-        $priority = null,
         array $additionalData = []
     ) {
         $dataForAdd = $this->makeDataForAdd(
@@ -58,7 +56,6 @@ class Log extends \Ess\M2ePro\Model\Listing\Log
             $action,
             $description,
             $type,
-            $priority,
             $additionalData
         );
 

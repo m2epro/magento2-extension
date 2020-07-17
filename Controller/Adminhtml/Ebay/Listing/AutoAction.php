@@ -15,21 +15,34 @@ abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     //########################################
 
-    protected function getCategoryTemplate($autoMode, $groupId, $listing)
+    /**
+     * @param \Ess\M2ePro\Model\Listing $listing
+     * @param int $categoryType
+     * @param $autoMode
+     * @param int $groupId
+     * @param int $magentoCategoryId
+     * @return \Ess\M2ePro\Model\Ebay\Template\Category|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function getCategoryTemplate($listing, $categoryType, $autoMode, $groupId, $magentoCategoryId)
     {
-        $template = null;
-
         switch ($autoMode) {
             case \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL:
-                $template = $listing->getChildObject()->getAutoGlobalAddingCategoryTemplate();
-                break;
+                if ($categoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN) {
+                    return $listing->getChildObject()->getAutoGlobalAddingCategoryTemplate();
+                }
+                return $listing->getChildObject()->getAutoGlobalAddingCategorySecondaryTemplate();
+
             case \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE:
-                $template = $listing->getChildObject()->getAutoWebsiteAddingCategoryTemplate();
-                break;
+                if ($categoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN) {
+                    return $listing->getChildObject()->getAutoWebsiteAddingCategoryTemplate();
+                }
+                return $listing->getChildObject()->getAutoWebsiteAddingCategorySecondaryTemplate();
+
             case \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY:
-                if ($magentoCategoryId = $this->getRequest()->getParam('magento_category_id')) {
-                    $autoCategory = $this->activeRecordFactory->getObject('Listing_Auto_Category')
-                        ->getCollection()
+                if ($magentoCategoryId) {
+                    /** @var \Ess\M2ePro\Model\Listing\Auto\Category $autoCategory */
+                    $autoCategory = $this->activeRecordFactory->getObject('Listing_Auto_Category')->getCollection()
                         ->addFieldToFilter('group_id', $groupId)
                         ->addFieldToFilter('category_id', $magentoCategoryId)
                         ->getFirstItem();
@@ -38,30 +51,48 @@ abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                         $template = $this->activeRecordFactory->getObjectLoaded(
                             'Ebay_Listing_Auto_Category_Group',
                             $groupId
-                        )->getCategoryTemplate();
+                        );
+                        if ($categoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN) {
+                            return $template->getCategoryTemplate();
+                        }
+
+                        return $template->getCategorySecondaryTemplate();
                     }
                 }
-                break;
+                return null;
         }
 
-        return $template;
+        return null;
     }
 
-    protected function getOtherCategoryTemplate($autoMode, $groupId, $listing)
+    /**
+     * @param \Ess\M2ePro\Model\Listing $listing
+     * @param int $categoryType
+     * @param $autoMode
+     * @param int $groupId
+     * @param int $magentoCategoryId
+     * @return \Ess\M2ePro\Model\Ebay\Template\StoreCategory|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function getStoreCategoryTemplate($listing, $categoryType, $autoMode, $groupId, $magentoCategoryId)
     {
-        $template = null;
-
         switch ($autoMode) {
             case \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL:
-                $template = $listing->getChildObject()->getAutoGlobalAddingOtherCategoryTemplate();
-                break;
+                if ($categoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN) {
+                    return $listing->getChildObject()->getAutoGlobalAddingStoreCategoryTemplate();
+                }
+                return $listing->getChildObject()->getAutoGlobalAddingStoreCategorySecondaryTemplate();
+
             case \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE:
-                $template = $listing->getChildObject()->getAutoWebsiteAddingOtherCategoryTemplate();
-                break;
+                if ($categoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN) {
+                    return $listing->getChildObject()->getAutoWebsiteAddingStoreCategoryTemplate();
+                }
+                return $listing->getChildObject()->getAutoWebsiteAddingStoreCategorySecondaryTemplate();
+
             case \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY:
-                if ($magentoCategoryId = $this->getRequest()->getParam('magento_category_id')) {
-                    $autoCategory = $this->activeRecordFactory->getObject('Listing_Auto_Category')
-                        ->getCollection()
+                if ($magentoCategoryId) {
+                    /** @var \Ess\M2ePro\Model\Listing\Auto\Category $autoCategory */
+                    $autoCategory = $this->activeRecordFactory->getObject('Listing_Auto_Category')->getCollection()
                         ->addFieldToFilter('group_id', $groupId)
                         ->addFieldToFilter('category_id', $magentoCategoryId)
                         ->getFirstItem();
@@ -70,14 +101,21 @@ abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                         $template = $this->activeRecordFactory->getObjectLoaded(
                             'Ebay_Listing_Auto_Category_Group',
                             $groupId
-                        )->getOtherCategoryTemplate();
+                        );
+                        if ($categoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN) {
+                            return $template->getStoreCategoryTemplate();
+                        }
+
+                        return $template->getStoreCategorySecondaryTemplate();
                     }
                 }
-                break;
+                return null;
         }
 
-        return $template;
+        return null;
     }
+
+
 
     //########################################
 }

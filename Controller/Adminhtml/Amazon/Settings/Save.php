@@ -19,15 +19,14 @@ class Save extends Settings
 
     public function execute()
     {
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/amazon/business/',
-            'mode',
-            (int)$this->getRequest()->getParam('business_mode')
-        );
+        $post = $this->getRequest()->getPostValue();
+        if (!$post) {
+            $this->setJsonContent(['success' => false]);
+            return $this->getResult();
+        }
 
-        $this->setJsonContent([
-            'success' => true
-        ]);
+        $this->getHelper('Component_Amazon_Configuration')->setConfigValues($this->getRequest()->getParams());
+        $this->setJsonContent(['success' => true]);
         return $this->getResult();
     }
 

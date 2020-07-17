@@ -44,19 +44,8 @@ class ThrottlingManager extends \Ess\M2ePro\Model\AbstractModel
 
     public function getAvailableRequestsCount($accountId, $requestType)
     {
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::REGISTRY_KEY . $accountId . '/',
-            'key',
-            false
-        );
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $lastRequestInfo = $registry->getValueFromJson();
+        $lastRequestInfo = $this->getHelper('Module')->getRegistry()
+            ->getValueFromJson(self::REGISTRY_KEY . $accountId . '/');
 
         $throttlingInfo = $this->getThrottlingInfo($requestType);
 
@@ -104,26 +93,15 @@ class ThrottlingManager extends \Ess\M2ePro\Model\AbstractModel
             'available_requests_count' => $availableRequestsCount,
         ];
 
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::REGISTRY_KEY . $accountId . '/',
-            'key',
-            false
-        );
+        $existedLastRequestInfo = $this->getHelper('Module')->getRegistry()
+            ->getValueFromJson(self::REGISTRY_KEY . $accountId . '/');
 
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $existedLastRequestInfo = $registry->getValueFromJson();
         $existedLastRequestInfo[$requestType] = $lastRequestInfo;
 
-        $registry->addData([
-            'key'   => self::REGISTRY_KEY . $accountId . '/',
-            'value' => $this->getHelper('Data')->jsonEncode($existedLastRequestInfo),
-        ]);
-        $registry->save();
+        $this->getHelper('Module')->getRegistry()->setValue(
+            self::REGISTRY_KEY . $accountId . '/',
+            $existedLastRequestInfo
+        );
     }
 
     //########################################

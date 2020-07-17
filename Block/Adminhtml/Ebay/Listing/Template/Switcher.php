@@ -18,6 +18,8 @@ class Switcher extends AbstractBlock
     const MODE_LISTING_PRODUCT = 1;
     const MODE_COMMON          = 2;
 
+    const MAX_TEMPLATE_ITEMS_COUNT  = 10000;
+
     protected $_template = 'ebay/listing/template/switcher.phtml';
 
     private $templates = null;
@@ -26,11 +28,7 @@ class Switcher extends AbstractBlock
 
     public function _construct()
     {
-        // Initialization block
-        // ---------------------------------------
         $this->setId('ebayListingTemplateSwitcher');
-        // ---------------------------------------
-
         parent::_construct();
     }
 
@@ -232,9 +230,7 @@ HTML;
 
     public function canDisplaySwitcher()
     {
-        $templates = $this->getTemplates();
-
-        if (count($templates) == 0 && !$this->canDisplayUseDefaultOption()) {
+        if (!$this->canDisplayUseDefaultOption() && $this->getTemplatesCount() === 0) {
             return false;
         }
 
@@ -260,6 +256,35 @@ HTML;
             return $this->templates;
         }
 
+        $collection = $this->getTemplatesCollection();
+        $collection->getSelect()->limit(self::MAX_TEMPLATE_ITEMS_COUNT);
+
+        $this->templates = $collection->getItems();
+
+        $currentTemplateOfListing = $this->getTemplateObject();
+        if (!$this->isExistTemplate($currentTemplateOfListing->getId())) {
+            $this->templates[$currentTemplateOfListing->getId()] = $currentTemplateOfListing;
+        }
+
+        return $this->templates;
+    }
+
+    protected function isExistTemplate($templateId)
+    {
+        if (array_key_exists($templateId, $this->templates)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getTemplatesCount()
+    {
+        return $this->getTemplatesCollection()->getSize();
+    }
+
+    protected function getTemplatesCollection()
+    {
         $manager = $this->modelFactory->getObject('Ebay_Template_Manager')->setTemplate($this->getTemplateNick());
 
         $collection = $manager->getTemplateModel()
@@ -272,9 +297,7 @@ HTML;
             $collection->addFieldToFilter('marketplace_id', $marketplace->getId());
         }
 
-        $this->templates = $collection->getItems();
-
-        return $this->templates;
+        return $collection;
     }
 
     //########################################

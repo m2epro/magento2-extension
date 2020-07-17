@@ -11,20 +11,8 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction;
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode
  */
-class Mode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode
+class Mode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\AbstractMode
 {
-    //########################################
-
-    public function _construct()
-    {
-        parent::_construct();
-
-        // Initialization block
-        // ---------------------------------------
-        $this->setId('ebayListingAutoActionMode');
-        // ---------------------------------------
-    }
-
     //########################################
 
     public function getHelpPageUrl()

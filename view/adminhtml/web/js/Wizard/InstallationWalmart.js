@@ -5,8 +5,6 @@ define([
 
     window.WizardInstallationWalmart = Class.create(Common, {
 
-        WizardWalmartMarketplaceSynchProgressObj: null,
-
         // ---------------------------------------
 
         continueStep: function ()
@@ -32,18 +30,6 @@ define([
                 return false;
             }
 
-            if (WizardWalmartMarketplaceSynchProgressObj.runningNow) {
-                alert({
-                    content: M2ePro.translator.translate('Please wait while Synchronization is finished.')
-                });
-                return;
-            }
-
-            this.synchronizeMarketplace($('marketplace_id').value);
-        },
-
-        accountStepContinue: function ()
-        {
             new Ajax.Request(M2ePro.url.get('wizard_installationWalmart/accountContinue'), {
                 method       : 'post',
                 parameters   : $('edit_form').serialize(true),
@@ -54,7 +40,7 @@ define([
                     MessagesObj.clear();
 
                     if (response && response['message']) {
-                        MessagesObj.addErrorMessage(response['message']);
+                        MessagesObj.addError(response['message']);
                         return CommonObj.scrollPageToTop();
                     }
 
@@ -91,45 +77,8 @@ define([
                 return;
             }
 
-            $('consumer_id').removeClassName('M2ePro-validate-consumer-id');
-            $$('label[for="consumer_id"] > span').first().innerHTML = M2ePro.translator.translate('Consumer ID');
-            if (marketplaceId == M2ePro.php.constant('\\Ess\\M2ePro\\Helper\\Component\\Walmart::MARKETPLACE_US')) {
-                $('consumer_id').addClassName('M2ePro-validate-consumer-id');
-                $$('label[for="consumer_id"] > span').first().innerHTML = M2ePro.translator.translate('Consumer ID / Partner ID');
-            }
-
             $$('.marketplace-required-field-id' + marketplaceId, '.marketplace-required-field-id-not-null').each(function(obj) {
                 obj.show();
-            });
-        },
-
-        // ---------------------------------------
-
-        synchronizeMarketplace: function (marketplaceId)
-        {
-            var self = this;
-
-            new Ajax.Request(M2ePro.url.get('wizard_installationWalmart/enableMarketplace'), {
-                method: 'get',
-                parameters: { marketplace_id: marketplaceId },
-                onSuccess: function(transport) {
-
-                    var result = transport.responseText.evalJSON();
-                    if (!result.success) {
-                        return;
-                    }
-
-                    var  title = 'Walmart ' + $$('#marketplace_id option').find(function(el){return !!el.selected}).innerHTML;
-
-                    WizardWalmartMarketplaceSynchProgressObj.runTask(
-                        title,
-                        M2ePro.url.get('walmart_marketplace/runSynchNow', {marketplace_id: marketplaceId}),
-                        function () {
-                            WizardWalmartMarketplaceSynchProgressObj.end();
-                            self.accountStepContinue();
-                        }
-                    );
-                }
             });
         }
 

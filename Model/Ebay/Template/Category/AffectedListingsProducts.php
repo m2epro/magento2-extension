@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Template\Category;
 /**
  * Class \Ess\M2ePro\Model\Ebay\Template\Category\AffectedListingsProducts
  */
-class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListingsProducts\AbstractModel
+class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListingsProductsAbstract
 {
     private $ebayFactory;
 
@@ -30,36 +30,19 @@ class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListin
 
     //########################################
 
-    public function getObjects(array $filters = [])
+    /**
+     * @inheritDoc
+     */
+    public function loadCollection(array $filters = [])
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
-        $listingProductCollection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('template_category_id', $this->model->getId());
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
+        $collection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
+        $collection->getSelect()->where(
+            'template_category_id = ? OR template_category_secondary_id = ?',
+            $this->model->getId()
+        );
 
-        return $listingProductCollection->getItems();
-    }
-
-    public function getObjectsData($columns = '*', array $filters = [])
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
-        $listingProductCollection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('template_category_id', $this->model->getId());
-
-        if (is_array($columns) && !empty($columns)) {
-            $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $listingProductCollection->getSelect()->columns($columns);
-        }
-
-        return $listingProductCollection->getData();
-    }
-
-    public function getIds(array $filters = [])
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
-        $listingProductCollection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('template_category_id', $this->model->getId());
-
-        return $listingProductCollection->getAllIds();
+        return $collection;
     }
 
     //########################################

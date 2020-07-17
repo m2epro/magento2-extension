@@ -48,14 +48,7 @@ class General extends AbstractForm
             );
         }
 
-        $defaults = [
-            'title'           => '',
-            'marketplace_id'  => 0,
-            'consumer_id'     => '',
-            'old_private_key' => '',
-            'client_id'       => '',
-            'client_secret'   => ''
-        ];
+        $defaults = $this->modelFactory->getObject('Walmart_Account_Builder')->getDefaultData();
 
         $formData = array_merge($defaults, $formData);
 
@@ -85,8 +78,8 @@ HTML
                 <<<HTML
 <div>
     Under this section, you can link your Walmart account to M2E Pro.
-    Read how to <a href="%url%" target="_blank">get the API credentials</a> or register on 
-    <a href="https://marketplace-apply.walmart.com/apply?id=00161000012XSxe" target="_blank">Walmart US</a> / 
+    Read how to <a href="%url%" target="_blank">get the API credentials</a> or register on
+    <a href="https://marketplace-apply.walmart.com/apply?id=00161000012XSxe" target="_blank">Walmart US</a> /
     <a href="https://marketplace.walmart.ca/apply?q=ca" target="_blank">Walmart CA</a>.
 </div>
 HTML
@@ -212,42 +205,26 @@ HTML
             [
                 'container_id' => 'marketplaces_consumer_id_container',
                 'name'         => 'consumer_id',
-                'label'        => $this->__('Consumer ID / Partner ID'),
-                'class'        => 'M2ePro-marketplace-consumer-id',
-                'css_class'    => 'marketplace-required-field marketplace-required-field-id-not-null',
+                'label'        => $this->__('Consumer ID'),
+                'css_class'    => "marketplace-required-field marketplace-required-field-id{$marketplaceCA}",
                 'required'     => true,
                 'value'        => $formData['consumer_id'],
                 'disabled'     => $isEdit,
-                'tooltip'      => $this->__(
-                    <<<HTML
-<span class="marketplace-required-field marketplace-required-field-id{$marketplaceCA}">
-    A unique seller identifier on the website.
-</span>
-<span class="marketplace-required-field marketplace-required-field-id{$marketplaceUS}">
-    A unique seller identifier on the website.<br>
-    <b>Note:</b> You can find the instruction on how to get the Consumer ID / Partner ID 
-    <a target="_blank" href="%url%">here</a>.
-</span>
-HTML
-                    ,
-                    $this->getHelper('Module_Support')->getSupportUrl(
-                        'how-to-guide/1570387-how-to-get-my-consumer-id-partner-id-to-auth-m2e-on-walmart-us'
-                    )
-                )
+                'tooltip'      => $this->__('A unique seller identifier on the website.'),
             ]
         );
 
         $fieldset->addField(
-            'old_private_key',
+            'private_key',
             'textarea',
             [
-                'container_id' => 'marketplaces_old_private_key_container',
-                'name'         => 'old_private_key',
+                'container_id' => 'marketplaces_private_key_container',
+                'name'         => 'private_key',
                 'label'        => $this->__('Private Key'),
                 'class'        => "M2ePro-marketplace-merchant",
                 'css_class'    => "marketplace-required-field marketplace-required-field-id{$marketplaceCA}",
                 'required'     => true,
-                'value'        => $formData['old_private_key'],
+                'value'        => $formData['private_key'],
                 'tooltip'      => $this->__('Walmart Private Key generated from your Seller Center Account.')
             ]
         );
@@ -282,6 +259,12 @@ HTML
             ]
         );
 
+        $id = $this->getRequest()->getParam('id');
+        $title = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml($formData['title']));
+
+        $this->js->add("M2ePro.formData.id = '$id';");
+        $this->js->add("M2ePro.formData.title = '$title';");
+
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(WalmartAccount::class));
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(Walmart::class));
 
@@ -296,8 +279,6 @@ HTML
                 ['id' => $this->getRequest()->getParam('id')]
             )
         ]);
-
-        $this->jsTranslator->add('Please enter correct value.', $this->__('Please enter correct value.'));
 
         $this->jsTranslator->add(
             'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
@@ -322,15 +303,6 @@ HTML
             'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%' => $this->__(
                 'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%'
             ),
-            'Consumer ID' => 'Consumer ID',
-            'Consumer ID / Partner ID' => 'Consumer ID / Partner ID',
-            'The specified Consumer ID / Partner ID is not valid' => $this->__(
-                'The specified Consumer ID / Partner ID is not valid.
-                Please find the instruction on how to get it <a target="_blank" href="%url%">here</a>.',
-                $this->getHelper('Module_Support')->getSupportUrl(
-                    'how-to-guide/1570387-how-to-get-my-consumer-id-partner-id-to-auth-m2e-on-walmart-us'
-                )
-            )
         ]);
 
         $this->js->add(<<<JS
@@ -339,16 +311,12 @@ HTML
     ], function(){
 
         window.WalmartAccountObj = new WalmartAccount();
+        WalmartAccountObj.initValidation();
+        WalmartAccountObj.initTokenValidation();
         WalmartAccountObj.initObservers();
     });
 JS
         );
-
-        $id = $this->getRequest()->getParam('id');
-        $title = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml($formData['title']));
-
-        $this->js->add("M2ePro.formData.id = '$id';");
-        $this->js->add("M2ePro.formData.title = '$title';");
 
         $this->setForm($form);
 

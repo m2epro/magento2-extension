@@ -41,8 +41,7 @@ class AddView extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
     public function wasInstructionShown()
     {
-        return $this->getHelper('Module')->getCacheConfig()
-            ->getGroupValue('/ebay/motors/', 'was_instruction_shown') != false;
+        return $this->getHelper('Module')->getRegistry()->getValue('/ebay/motors/instruction/is_shown/');
     }
 
     //########################################

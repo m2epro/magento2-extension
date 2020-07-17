@@ -96,6 +96,11 @@
                 type="Ess\M2ePro\Plugin\MSI\Magento\CatalogInventory\Model\Indexer\Stock\Processor" />
     </type>
 
+    <type name="Magento\InventoryReservations\Model\ResourceModel\GetReservationsQuantityCache">
+        <plugin name="m2epro_plugin_msi_magento_inventoryreservations_model_resourcemodel_getreservationsquantitycache"
+                type="Ess\M2ePro\Plugin\MSI\Magento\InventoryReservations\Model\ResourceModel\GetReservationsQuantityCache" />
+    </type>
+
     <!-- func_get_args() fix - see detailed explanation into the Plugin -->
 
     <type name="Ess\M2ePro\Helper\Module\Translation">

@@ -21,12 +21,11 @@ class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartParentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
         $this->walmartParentFactory = $walmartParentFactory;
-        parent::__construct($modelFactory, $activeRecordFactory, $moduleConfig, $helperFactory, $context);
+        parent::__construct($modelFactory, $activeRecordFactory, $helperFactory, $context);
     }
 
     //########################################

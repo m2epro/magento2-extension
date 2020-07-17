@@ -1,6 +1,5 @@
 define([], function () {
-    window.Attribute = Class.create();
-    Attribute.prototype = {
+    window.Attribute = Class.create({
 
         // ---------------------------------------
 
@@ -94,5 +93,5 @@ define([], function () {
         }
 
         // ---------------------------------------
-    };
+    });
 });

@@ -20,9 +20,10 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
         $serverBaseUrl = null,
         $serverHostName = null,
         $tryToResendOnError = true,
-        $tryToSwitchEndpointOnError = true
+        $tryToSwitchEndpointOnError = true,
+        $canIgnoreMaintenance = false
     ) {
-        if ($this->getHelper('Server_Maintenance')->isInRealRange()) {
+        if (!$canIgnoreMaintenance && $this->getHelper('Server_Maintenance')->isNow()) {
             throw new \Ess\M2ePro\Model\Exception\Connection(
                 'The action is temporarily unavailable. M2E Pro server is currently under the planned maintenance.
                 Please try again later.'
@@ -33,26 +34,34 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
         !$serverHostName && $serverHostName = $this->getServerHelper()->getCurrentHostName();
 
         $curlObject = $this->buildCurlObject($package, $serverBaseUrl, $serverHostName);
+        // @codingStandardsIgnoreLine
         $responseBody = curl_exec($curlObject);
 
+        // @codingStandardsIgnoreStart
         $response = [
             'body'               => $responseBody,
             'curl_error_number'  => curl_errno($curlObject),
             'curl_error_message' => curl_error($curlObject),
             'curl_info'          => curl_getinfo($curlObject)
         ];
+        // @codingStandardsIgnoreEnd
 
+        // @codingStandardsIgnoreLine
         curl_close($curlObject);
 
         if ($response['body'] === false) {
             $switchingResult = false;
             $tryToSwitchEndpointOnError && $switchingResult = $this->getServerHelper()->switchEndpoint();
 
-            $this->helperFactory->getObject('Module\Logger')->process([
-                'curl_error_number' => $response['curl_error_number'],
-                'curl_error_message' => $response['curl_error_message'],
-                'curl_info' => $response['curl_info']
-            ], 'Curl Empty Response', false);
+            $this->helperFactory->getObject('Module\Logger')->process(
+                [
+                    'curl_error_number' => $response['curl_error_number'],
+                    'curl_error_message' => $response['curl_error_message'],
+                    'curl_info' => $response['curl_info']
+                ],
+                'Curl Empty Response',
+                false
+            );
 
             if ($this->canRepeatRequest(
                 $response['curl_error_number'],
@@ -65,22 +74,16 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
                     $tryToSwitchEndpointOnError ? $this->getServerHelper()->getEndpoint() : $serverBaseUrl,
                     $tryToSwitchEndpointOnError ? $this->getServerHelper()->getCurrentHostName() : $serverHostName,
                     false,
-                    $tryToSwitchEndpointOnError
+                    $tryToSwitchEndpointOnError,
+                    $canIgnoreMaintenance
                 );
             }
 
-            $errorMsg = 'The Action was not completed because connection with M2E Pro Server was not set.
-            There are several possible reasons:  temporary connection problem – please wait and try again later;
-            block of outgoing connection by firewall – please, ensure that connection to s1.m2epro.com and
-            s2.m2epro.com, port 443 is allowed; CURL library is not installed or it does not support HTTPS Protocol –
-            please, install/update CURL library on your server and ensure it supports HTTPS Protocol.
-            More information you can find <a target="_blank" href="'.
-                $this->helperFactory->getObject('Module\Support')
-                    ->getKnowledgebaseArticleUrl('server-connection')
-                .'">here</a>';
-
             throw new \Ess\M2ePro\Model\Exception\Connection(
-                $errorMsg,
+                $this->helperFactory->getObject('Module_Translation')->__(
+                    'M2E Pro Server connection failed. Find the solution <a target="_blank" href="%url%">here</a>',
+                    $this->helperFactory->getObject('Module_Support')->getKnowledgebaseArticleUrl('664870')
+                ),
                 [
                     'curl_error_number'  => $response['curl_error_number'],
                     'curl_error_message' => $response['curl_error_message'],
@@ -98,9 +101,10 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
         $serverHostName = null,
         $tryToResendOnError = true,
         $tryToSwitchEndpointOnError = true,
-        $asynchronous = false
+        $asynchronous = false,
+        $canIgnoreMaintenance = false
     ) {
-        if ($this->getHelper('Server_Maintenance')->isInRealRange()) {
+        if (!$canIgnoreMaintenance && $this->getHelper('Server_Maintenance')->isNow()) {
             throw new \Ess\M2ePro\Model\Exception\Connection(
                 'The action is temporarily unavailable. M2E Pro server is currently under the planned maintenance.
                 Please try again later.'
@@ -119,35 +123,44 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
         if (count($packages) == 1 || !$asynchronous) {
             foreach ($packages as $key => $package) {
                 $curlObject = $this->buildCurlObject($package, $serverBaseUrl, $serverHostName);
+                // @codingStandardsIgnoreLine
                 $responseBody = curl_exec($curlObject);
 
+                // @codingStandardsIgnoreStart
                 $responses[$key] = [
                     'body'               => $responseBody,
                     'curl_error_number'  => curl_errno($curlObject),
                     'curl_error_message' => curl_error($curlObject),
                     'curl_info'          => curl_getinfo($curlObject)
                 ];
+                // @codingStandardsIgnoreEnd
 
+                // @codingStandardsIgnoreLine
                 curl_close($curlObject);
             }
         } else {
             $curlObjectsPool = [];
+            // @codingStandardsIgnoreLine
             $multiCurlObject = curl_multi_init();
 
             foreach ($packages as $key => $package) {
                 $curlObjectsPool[$key] = $this->buildCurlObject($package, $serverBaseUrl, $serverHostName);
+                // @codingStandardsIgnoreLine
                 curl_multi_add_handle($multiCurlObject, $curlObjectsPool[$key]);
             }
 
             do {
+                // @codingStandardsIgnoreLine
                 curl_multi_exec($multiCurlObject, $stillRunning);
 
                 if ($stillRunning) {
+                    // @codingStandardsIgnoreLine
                     curl_multi_select($multiCurlObject, 1); //sleep in sec.
                 }
             } while ($stillRunning > 0);
 
             foreach ($curlObjectsPool as $key => $curlObject) {
+                // @codingStandardsIgnoreStart
                 $responses[$key] = [
                     'body'               => curl_multi_getcontent($curlObject),
                     'curl_error_number'  => curl_errno($curlObject),
@@ -161,6 +174,7 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
 
             curl_multi_close($multiCurlObject);
         }
+        // @codingStandardsIgnoreEnd
 
         $isResponseFailed = false;
         $switchingResult = false;
@@ -170,11 +184,15 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
                 $isResponseFailed = true;
                 $tryToSwitchEndpointOnError && $switchingResult = $this->getServerHelper()->switchEndpoint();
 
-                $this->helperFactory->getObject('Module\Logger')->process([
-                    'curl_error_number' => $response['curl_error_number'],
-                    'curl_error_message' => $response['curl_error_message'],
-                    'curl_info' => $response['curl_info']
-                ], 'Curl Empty Response', false);
+                $this->helperFactory->getObject('Module\Logger')->process(
+                    [
+                        'curl_error_number'  => $response['curl_error_number'],
+                        'curl_error_message' => $response['curl_error_message'],
+                        'curl_info'          => $response['curl_info']
+                    ],
+                    'Curl Empty Response',
+                    false
+                );
                 break;
             }
         }
@@ -202,7 +220,8 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
                     $tryToSwitchEndpointOnError ? $this->getServerHelper()->getCurrentHostName() : $serverHostName,
                     false,
                     $tryToSwitchEndpointOnError,
-                    $asynchronous
+                    $asynchronous,
+                    $canIgnoreMaintenance
                 );
 
                 $responses = array_merge($responses, $secondAttemptResponses);
@@ -219,6 +238,7 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
         $serverBaseUrl,
         $serverHostName
     ) {
+        // @codingStandardsIgnoreLine
         $curlObject = curl_init();
 
         $preparedHeaders = [];
@@ -248,6 +268,7 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
             $sslVerifyHost = false;
         }
 
+        // @codingStandardsIgnoreLine
         curl_setopt_array(
             $curlObject,
             [

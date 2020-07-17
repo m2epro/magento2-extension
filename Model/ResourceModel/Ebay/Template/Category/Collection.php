@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category;
 
+use Magento\Framework\DB\Select;
+
 /**
  * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category\Collection
  */
@@ -27,46 +29,13 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     //########################################
 
     /**
-     * @param $primaryCategoriesData
-     * @return \Ess\M2ePro\Model\Ebay\Template\Category[]
+     * GroupBy fix
      */
-    public function getItemsByPrimaryCategories($primaryCategoriesData)
+    public function getSelectCountSql()
     {
-        $conn = $this->getConnection();
-
-        $where = '';
-        foreach ($primaryCategoriesData as $categoryData) {
-            $where && $where .= ' OR ';
-
-            $categoryData['category_main_id'] = (int)$categoryData['category_main_id'];
-            $categoryData['marketplace_id']   = (int)$categoryData['marketplace_id'];
-
-            $where .= "(marketplace_id  = {$categoryData['marketplace_id']} AND";
-            $where .= " category_main_id   = {$categoryData['category_main_id']} AND";
-            $where .= " category_main_mode = {$conn->quote($categoryData['category_main_mode'])} AND";
-            $where .= " category_main_attribute = {$conn->quote($categoryData['category_main_attribute'])}) ";
-        }
-
-        $this->getSelect()->where($where);
-        $this->getSelect()->order('create_date DESC');
-
-        $templates = [];
-        /** @var $template \Ess\M2ePro\Model\Ebay\Template\Category */
-        foreach ($this->getItems() as $template) {
-            if ($template['category_main_mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY) {
-                $key = $template['category_main_id'];
-            } else {
-                $key = $template['category_main_attribute'];
-            }
-
-            if (isset($templates[$key])) {
-                continue;
-            }
-
-            $templates[$key] = $template;
-        }
-
-        return $templates;
+        $sql = parent::getSelectCountSql();
+        $sql->reset(\Zend_Db_Select::GROUP);
+        return $sql;
     }
 
     //########################################

@@ -62,11 +62,17 @@ abstract class Account extends Main
         try {
             $dispatcherObject->process($connectorObj);
             $response = $connectorObj->getResponseData();
-        } catch (\Exception $e) {
-            $response = [];
+        } catch (\Exception $exception) {
+            $this->getHelper('Module_Exception')->process($exception);
+
+            $this->messageManager->addError(
+                $this->__(
+                    'The Ebay access obtaining is currently unavailable.<br/>Reason: %error_message%',
+                    $exception->getMessage()
+                )
+            );
         }
 
-        // ---------------------------------------
         if (!isset($response['token_expired_date'])) {
             throw new \Ess\M2ePro\Model\Exception('Account is not added or updated. Try again later.');
         }
@@ -76,14 +82,10 @@ abstract class Account extends Main
 
         $data['info'] = $this->getHelper('Data')->jsonEncode($response['info']);
         $data['token_expired_date'] = $response['token_expired_date'];
-        // ---------------------------------------
 
-        // ---------------------------------------
         if (isset($response['sell_api_token_expired_date'])) {
             $data['sell_api_token_expired_date'] = $response['sell_api_token_expired_date'];
         }
-
-        // ---------------------------------------
 
         return $data;
     }
@@ -104,21 +106,16 @@ abstract class Account extends Main
         } else {
             $isChangeTokenSession = true;
         }
-        // ---------------------------------------
 
         // Add or update model
         // ---------------------------------------
         $model = $this->ebayFactory->getObject('Account');
-        if ($id === null) {
-            $model->setData($data);
-        } else {
+        if ($id !== null) {
             $model->load($id);
-            $model->addData($data);
-            $model->getChildObject()->addData($data);
         }
-        // ---------------------------------------
+        $this->modelFactory->getObject('Ebay_Account_Builder')->build($model, $data);
 
-        $id = $model->save()->getId();
+        $id = $model->getId();
 
         // Update eBay store
         // ---------------------------------------
@@ -138,7 +135,10 @@ abstract class Account extends Main
                 );
             }
         }
+
+        // Update User Preferences
         // ---------------------------------------
+        $model->getChildObject()->updateUserPreferences();
 
         return $id;
     }

@@ -201,13 +201,12 @@ class Image extends AbstractModel
 
     private function getBaseMediaUrl()
     {
-        $shouldBeSecure = $this->getArea() == Area::AREA_FRONTEND
-            ? $this->getHelper('Component_Ebay_Images')->shouldBeUrlsSecure()
-            : null;
+        $secure = $this->getArea() == Area::AREA_FRONTEND
+            ? $this->getHelper('Module_Configuration')->getSecureImageUrlInItemDescriptionMode() : null;
 
         return $this->storeManager->getStore($this->storeId)->getBaseUrl(
             \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
-            $shouldBeSecure
+            $secure
         );
     }
 

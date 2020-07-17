@@ -39,6 +39,9 @@
 
                 <?php $display = $block->canDisplaySwitcher() ? '' : 'none'; ?>
                 <td class="template-switcher-td" style="display: <?php echo $display ?>;">
+                    <?php if ($block->getTemplatesCount() > $block::MAX_TEMPLATE_ITEMS_COUNT) :?>
+                        <span class="template" style="color: red; position: absolute; margin-top: 40px"><?php echo $block->__('Drop-down List Limit is exceeded. Only 10 000 records will be shown. Please contact Support at support@m2epro.com to resolve it.') ?></span>
+                    <?php endif; ?>
                     <select name="<?php echo $block->getSwitcherName() ?>" id="<?php echo $block->getSwitcherId() ?>" class="template-switcher M2ePro-validate-ebay-template-switcher select admin__control-select">
                         <?php if ($block->canDisplayUseDefaultOption() && $block->isTemplateModeParentForced()) : ?>
                             <option value="<?php echo base64_encode(json_encode(['mode' => null])) ?>" selected="selected" class="template-switcher-empty-option empty"></option>
@@ -75,11 +78,9 @@
                             </option>
                         <?php endif; ?>
 
-                        <?php $templates = $block->getTemplates(); ?>
-
-                        <?php if (!empty($templates)) : ?>
+                        <?php if ($block->getTemplatesCount() !== 0) : ?>
                             <optgroup label="<?php echo $block->getHelper('Data')->escapeHtml($block->__('Policies')) ?>" class="templates-group">
-                                <?php foreach ($templates as $template) : ?>
+                                <?php foreach ($block->getTemplates() as $template) : ?>
                                     <?php
                                     $value = base64_encode(json_encode([
                                         'id' => $template->getId(),

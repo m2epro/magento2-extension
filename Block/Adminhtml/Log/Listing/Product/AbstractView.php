@@ -13,71 +13,96 @@ namespace Ess\M2ePro\Block\Adminhtml\Log\Listing\Product;
  */
 abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\AbstractView
 {
+    /** @var \Ess\M2ePro\Model\Listing $listing */
+    protected $listing;
+
+    /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+    protected $listingProduct;
+
     //########################################
 
     protected function getFiltersHtml()
     {
-        $staticListingFilter = '';
-
-        $listingId = $this->getRequest()->getParam(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
-            false
-        );
-        $listingProductId = $this->getRequest()->getParam(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_PRODUCT_ID_FIELD,
-            false
-        );
-
-        /** @var \Ess\M2ePro\Model\Listing $listing */
-        $listing = null;
-
-        if ($listingId) {
-            $listing = $this->activeRecordFactory->getCachedObjectLoaded('Listing', $listingId, null, false);
-        }
-
-        if ($listingProductId) {
-            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-            $listingProduct = $this->activeRecordFactory->getObjectLoaded(
-                'Listing\Product',
-                $listingProductId,
-                null,
-                false
-            );
-
-            if ($listingProduct !== null) {
-                $listing = $listingProduct->getListing();
-                $listingTitle = $this->filterManager->truncate(
-                    $listing->getTitle(),
-                    ['length' => 15]
-                );
-                $staticListingFilter = $this->getStaticFilterHtml($this->__('Listing'), $listingTitle);
-            }
-        }
-
-        if ($listing !== null) {
-            $accountTitle = $this->filterManager->truncate(
-                $listing->getAccount()->getTitle(),
-                ['length' => 15]
-            );
-
-            return
-                '<div class="static-switcher-block">'
-                . $staticListingFilter
-                . $this->getStaticFilterHtml(
-                    $this->accountSwitcherBlock->getLabel(),
-                    $accountTitle
-                )
+        if ($this->getListingId()) {
+            $html = $this->getStaticFilterHtml(
+                $this->accountSwitcherBlock->getLabel(),
+                $this->getListing()->getAccount()->getTitle()
+            )
                 . $this->getStaticFilterHtml(
                     $this->marketplaceSwitcherBlock->getLabel(),
-                    $listing->getMarketplace()->getTitle()
-                )
-                . '</div>';
+                    $this->getListing()->getMarketplace()->getTitle()
+                );
+        } elseif ($this->getListingProductId()) {
+            $html = $this->getStaticFilterHtml(
+                $this->accountSwitcherBlock->getLabel(),
+                $this->getListingProduct()->getListing()->getAccount()->getTitle()
+            )
+                . $this->getStaticFilterHtml(
+                    $this->marketplaceSwitcherBlock->getLabel(),
+                    $this->getListingProduct()->getListing()->getMarketplace()->getTitle()
+                );
+        } else {
+            $html = $this->accountSwitcherBlock->toHtml()
+                . $this->marketplaceSwitcherBlock->toHtml();
         }
 
         return
               '<div class="switcher-separator"></div>'
-            . $this->accountSwitcherBlock->toHtml()
-            . $this->marketplaceSwitcherBlock->toHtml();
+            . $html;
+    }
+
+    //########################################
+
+    public function getListingId()
+    {
+        return $this->getRequest()->getParam(
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
+            false
+        );
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Listing
+     */
+    public function getListing()
+    {
+        if ($this->listing === null) {
+            $this->listing = $this->activeRecordFactory->getCachedObjectLoaded(
+                'Listing',
+                $this->getListingId(),
+                null,
+                false
+            );
+        }
+
+        return $this->listing;
+    }
+
+    //########################################
+
+    public function getListingProductId()
+    {
+        return $this->getRequest()->getParam(
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_PRODUCT_ID_FIELD,
+            false
+        );
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Listing\Product
+     */
+    public function getListingProduct()
+    {
+        if ($this->listingProduct === null) {
+            $this->listingProduct = $this->activeRecordFactory->getObjectLoaded(
+                'Listing\Product',
+                $this->getListingProductId(),
+                null,
+                false
+            );
+        }
+
+        return $this->listingProduct;
     }
 
     //########################################

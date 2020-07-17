@@ -124,18 +124,32 @@ HTML
 
         // ---------------------------------------
 
+        $isLockedMarketplace = !empty($this->formData['marketplace_id']);
+
         $fieldset->addField(
             'marketplace_id',
             'select',
             [
-                'name' => 'marketplace_id',
-                'label' => $this->__('Marketplace'),
-                'title' => $this->__('Marketplace'),
-                'values' => $this->getMarketplaceDataToOptions(),
-                'value' => $this->formData['marketplace_id'],
-                'required' => true
+                'name'     => 'marketplace_id',
+                'label'    => $this->__('Marketplace'),
+                'title'    => $this->__('Marketplace'),
+                'values'   => $this->getMarketplaceDataToOptions(),
+                'value'    => $this->formData['marketplace_id'],
+                'required' => true,
+                'disabled' => $isLockedMarketplace,
             ]
         );
+
+        if ($isLockedMarketplace) {
+            $fieldset->addField(
+                'marketplace_id_hidden',
+                'hidden',
+                [
+                    'name'  => 'marketplace_id',
+                    'value' => $this->formData['marketplace_id'],
+                ]
+            );
+        }
 
         // ---------------------------------------
 
@@ -583,6 +597,7 @@ HTML
                 'label' => $this->__('Product Tax Code Value'),
                 'value' => $this->formData['product_tax_code_custom_value'],
                 'class' => 'M2ePro-required-when-visible M2ePro-validation-int M2ePro-validation-walmart-tax-code',
+                'required' => true,
                 'style' => 'width: 65%',
                 'field_extra_attributes' => 'style="display: none;"',
                 'after_element_html' => '<span id="tax_codes">' . $this->createBlock('Magento\Button')
@@ -1461,74 +1476,19 @@ JS
                               ->where('`tax_codes` IS NOT NULL')
                               ->query();
 
-        return (array)$queryStmt->fetchColumn();
+        return (array)$queryStmt->fetchAll(\Zend_Db::FETCH_COLUMN);
     }
 
     //########################################
 
     public function getFormData()
     {
-        $default = [
-            'title' => '',
-            'marketplace_id' => $this->getRequest()->getParam('marketplace_id', ''),
-
-            'qty_mode' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT,
-            'qty_custom_value' => 1,
-            'qty_custom_attribute' => '',
-            'qty_percentage' => 100,
-            'qty_modification_mode' => SellingFormat::QTY_MODIFICATION_MODE_OFF,
-            'qty_min_posted_value' => SellingFormat::QTY_MIN_POSTED_DEFAULT_VALUE,
-            'qty_max_posted_value' => SellingFormat::QTY_MAX_POSTED_DEFAULT_VALUE,
-
-            'price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
-            'price_coefficient' => '',
-            'price_custom_attribute' => '',
-
-            'map_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
-            'map_price_custom_attribute' => '',
-
-            'price_variation_mode' => SellingFormat::PRICE_VARIATION_MODE_PARENT,
-
-            'promotions_mode' => SellingFormat::PROMOTIONS_MODE_NO,
-            'promotions' => [],
-
-            'sale_time_start_date_mode' => SellingFormat::DATE_NONE,
-            'sale_time_end_date_mode' => SellingFormat::DATE_NONE,
-
-            'sale_time_start_date_custom_attribute' => '',
-            'sale_time_end_date_custom_attribute' => '',
-
-            'sale_time_start_date_value' => $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d'),
-            'sale_time_end_date_value' => $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d'),
-
-            'item_weight_mode' => SellingFormat::WEIGHT_MODE_CUSTOM_VALUE,
-            'item_weight_custom_value' => '',
-            'item_weight_custom_attribute' => '',
-
-            'price_vat_percent' => 0,
-
-            'lag_time_mode' => SellingFormat::LAG_TIME_MODE_RECOMMENDED,
-            'lag_time_value' => '',
-            'lag_time_custom_attribute' => '',
-
-            'product_tax_code_mode' => SellingFormat::PRODUCT_TAX_CODE_MODE_VALUE,
-            'product_tax_code_custom_value' => '',
-            'product_tax_code_custom_attribute' => '',
-
-            'must_ship_alone_mode' => SellingFormat::MUST_SHIP_ALONE_MODE_NONE,
-            'must_ship_alone_value' => '',
-            'must_ship_alone_custom_attribute' => '',
-
-            'ships_in_original_packaging_mode' => SellingFormat::SHIPS_IN_ORIGINAL_PACKAGING_MODE_NONE,
-            'ships_in_original_packaging_value' => '',
-            'ships_in_original_packaging_custom_attribute' => '',
-
-            'attributes_mode' => SellingFormat::ATTRIBUTES_MODE_NONE,
-            'attributes' => [],
-
-            'shipping_override_rule_mode' => SellingFormat::SHIPPING_OVERRIDE_RULE_MODE_NO,
-            'shipping_override_rule' => []
-        ];
+        $default = array_merge(
+            $this->modelFactory->getObject('Walmart_Template_SellingFormat_Builder')->getDefaultData(),
+            [
+                'marketplace_id' => $this->getRequest()->getParam('marketplace_id', ''),
+            ]
+        );
 
         if (!$this->templateModel || !$this->templateModel->getId()) {
             return $default;

@@ -131,7 +131,7 @@ class Product extends \Ess\M2ePro\Helper\AbstractHelper
             throw new Exception('Unknown logic type.');
         }
 
-        $customTypes = $this->modelFactory->getObject('Config_Manager_Module')->getGroupValue(
+        $customTypes = $this->getHelper('Module')->getConfig()->getGroupValue(
             "/magento/product/{$byLogicType}_type/",
             "custom_types"
         );

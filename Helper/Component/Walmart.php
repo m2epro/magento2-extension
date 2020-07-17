@@ -41,20 +41,17 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 
     private $walmartFactory;
     private $activeRecordFactory;
-    private $moduleConfig;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
         $this->walmartFactory = $walmartFactory;
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->moduleConfig = $moduleConfig;
         parent::__construct($helperFactory, $context);
     }
 
@@ -98,17 +95,7 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isEnabled()
     {
-        return (bool)$this->moduleConfig->getGroupValue('/component/'.self::NICK.'/', 'mode');
-    }
-
-    public function isAllowed()
-    {
-        return (bool)$this->moduleConfig->getGroupValue('/component/'.self::NICK.'/', 'allowed');
-    }
-
-    public function isActive()
-    {
-        return $this->isEnabled() && $this->isAllowed();
+        return (bool)$this->getHelper('Module')->getConfig()->getGroupValue('/component/'.self::NICK.'/', 'mode');
     }
 
     //########################################
@@ -181,7 +168,7 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getApplicationName()
     {
-        return (bool)$this->moduleConfig->getGroupValue('/walmart/', 'application_name');
+        return (bool)$this->getHelper('Module')->getConfig()->getGroupValue('/walmart/', 'application_name');
     }
 
     // ----------------------------------------

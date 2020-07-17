@@ -28,11 +28,11 @@ define([
                     MessagesObj.clear();
 
                     if (transport.responseText == '1') {
-                        MessagesObj.addSuccessMessage(
+                        MessagesObj.addSuccess(
                             M2ePro.translator.translate('successfully_unmapped')
                         );
                     } else {
-                        MessagesObj.addErrorMessage(
+                        MessagesObj.addError(
                             M2ePro.translator.translate('not_enough_data')
                         );
                     }

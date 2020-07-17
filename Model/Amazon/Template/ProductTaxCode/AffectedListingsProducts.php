@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Template\ProductTaxCode;
 /**
  * Class \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode\AffectedListingsProducts
  */
-class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListingsProducts\AbstractModel
+class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListingsProductsAbstract
 {
     protected $amazonFactory;
 
@@ -27,10 +27,10 @@ class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListin
         $this->amazonFactory = $amazonFactory;
         parent::__construct($activeRecordFactory, $helperFactory, $modelFactory, $data);
     }
-    
+
     //########################################
 
-    public function getObjects(array $filters = [])
+    public function loadCollection(array $filters = [])
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
@@ -40,38 +40,7 @@ class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListin
             $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
         }
 
-        return $listingProductCollection->getItems();
-    }
-
-    public function getObjectsData($columns = '*', array $filters = [])
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
-        $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('template_product_tax_code_id', $this->model->getId());
-
-        if (!empty($filters['only_physical_units'])) {
-            $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
-        }
-
-        if (is_array($columns) && !empty($columns)) {
-            $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $listingProductCollection->getSelect()->columns($columns);
-        }
-
-        return $listingProductCollection->getData();
-    }
-
-    public function getIds(array $filters = [])
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
-        $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('template_product_tax_code_id', $this->model->getId());
-
-        if (!empty($filters['only_physical_units'])) {
-            $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
-        }
-
-        return $listingProductCollection->getAllIds();
+        return $listingProductCollection;
     }
 
     //########################################

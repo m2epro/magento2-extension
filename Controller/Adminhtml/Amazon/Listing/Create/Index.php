@@ -193,8 +193,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_LISTING,
             'Listing was successfully Added',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
         // ---------------------------------------
 

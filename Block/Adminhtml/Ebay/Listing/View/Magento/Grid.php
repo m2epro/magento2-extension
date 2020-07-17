@@ -185,45 +185,46 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header' => $this->__('ID'),
-            'align' => 'right',
-            'width' => '100px',
-            'type' => 'number',
-            'index' => 'entity_id',
+            'header'       => $this->__('ID'),
+            'align'        => 'right',
+            'width'        => '100px',
+            'type'         => 'number',
+            'index'        => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => [$this, 'callbackColumnProductId']
+            'store_id'     => $this->listing->getStoreId(),
+            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
         ]);
 
         $this->addColumn('name', [
-            'header' => $this->__('Title'),
-            'align' => 'left',
-            'type' => 'text',
-            'index' => 'name',
-            'filter_index' => 'name',
-            'escape' => false,
+            'header'         => $this->__('Title'),
+            'align'          => 'left',
+            'type'           => 'text',
+            'index'          => 'name',
+            'filter_index'   => 'name',
+            'escape'         => false,
             'frame_callback' => [$this, 'callbackColumnProductTitle']
         ]);
 
         $this->addColumn('type', [
-            'header' => $this->__('Type'),
-            'align' => 'left',
-            'width' => '90px',
-            'type' => 'options',
-            'sortable' => false,
-            'index' => 'type_id',
+            'header'       => $this->__('Type'),
+            'align'        => 'left',
+            'width'        => '90px',
+            'type'         => 'options',
+            'sortable'     => false,
+            'index'        => 'type_id',
             'filter_index' => 'type_id',
-            'options' => $this->getProductTypes()
+            'options'      => $this->getProductTypes()
         ]);
 
         $this->addColumn('is_in_stock', [
-            'header' => $this->__('Stock Availability'),
-            'align' => 'left',
-            'width' => '90px',
-            'type' => 'options',
-            'sortable' => false,
-            'index' => 'is_in_stock',
+            'header'       => $this->__('Stock Availability'),
+            'align'        => 'left',
+            'width'        => '90px',
+            'type'         => 'options',
+            'sortable'     => false,
+            'index'        => 'is_in_stock',
             'filter_index' => 'is_in_stock',
-            'options' => [
+            'options'      => [
                 '1' => $this->__('In Stock'),
                 '0' => $this->__('Out of Stock')
             ],
@@ -231,11 +232,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('sku', [
-            'header' => $this->__('SKU'),
-            'align' => 'left',
-            'width' => '90px',
-            'type' => 'text',
-            'index' => 'sku',
+            'header'       => $this->__('SKU'),
+            'align'        => 'left',
+            'width'        => '90px',
+            'type'         => 'text',
+            'index'        => 'sku',
             'filter_index' => 'sku'
         ]);
 
@@ -247,60 +248,60 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         $this->addColumn($priceAttributeAlias, [
-            'header' => $this->__('Price'),
-            'align' => 'right',
-            'width' => '100px',
-            'type' => 'price',
-            'filter' => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price',
-            'currency_code' => $store->getBaseCurrency()->getCode(),
-            'index' => $priceAttributeAlias,
-            'filter_index' => $priceAttributeAlias,
+            'header'         => $this->__('Price'),
+            'align'          => 'right',
+            'width'          => '100px',
+            'type'           => 'price',
+            'filter'         => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price',
+            'currency_code'  => $store->getBaseCurrency()->getCode(),
+            'index'          => $priceAttributeAlias,
+            'filter_index'   => $priceAttributeAlias,
             'frame_callback' => [$this, 'callbackColumnPrice']
         ]);
 
         $this->addColumn('qty', [
-            'header' => $this->__('QTY'),
-            'align' => 'right',
-            'width' => '100px',
-            'type' => 'number',
-            'index' => 'qty',
-            'filter_index' => 'qty',
+            'header'         => $this->__('QTY'),
+            'align'          => 'right',
+            'width'          => '100px',
+            'type'           => 'number',
+            'index'          => 'qty',
+            'filter_index'   => 'qty',
             'frame_callback' => [$this, 'callbackColumnQty']
         ]);
 
         $this->addColumn('visibility', [
-            'header' => $this->__('Visibility'),
-            'align' => 'left',
-            'width' => '90px',
-            'type' => 'options',
-            'sortable' => false,
-            'index' => 'visibility',
+            'header'       => $this->__('Visibility'),
+            'align'        => 'left',
+            'width'        => '90px',
+            'type'         => 'options',
+            'sortable'     => false,
+            'index'        => 'visibility',
             'filter_index' => 'visibility',
-            'options' => $this->visibility->getOptionArray()
+            'options'      => $this->visibility->getOptionArray()
         ]);
 
         $this->addColumn('status', [
-            'header' => $this->__('Status'),
-            'align' => 'left',
-            'width' => '90px',
-            'type' => 'options',
-            'sortable' => false,
-            'index' => 'status',
-            'filter_index' => 'status',
-            'options' => $this->status->getOptionArray(),
+            'header'         => $this->__('Status'),
+            'align'          => 'left',
+            'width'          => '90px',
+            'type'           => 'options',
+            'sortable'       => false,
+            'index'          => 'status',
+            'filter_index'   => 'status',
+            'options'        => $this->status->getOptionArray(),
             'frame_callback' => [$this, 'callbackColumnStatus']
         ]);
 
         if (!$this->_storeManager->isSingleStoreMode()) {
             $this->addColumn('websites', [
-                'header' => $this->__('Websites'),
-                'align' => 'left',
-                'width' => '90px',
-                'type' => 'options',
-                'sortable' => false,
-                'index' => 'websites',
+                'header'       => $this->__('Websites'),
+                'align'        => 'left',
+                'width'        => '90px',
+                'type'         => 'options',
+                'sortable'     => false,
+                'index'        => 'websites',
                 'filter_index' => 'websites',
-                'options' => $this->websiteFactory->create()->getCollection()->toOptionHash()
+                'options'      => $this->websiteFactory->create()->getCollection()->toOptionHash()
             ]);
         }
 

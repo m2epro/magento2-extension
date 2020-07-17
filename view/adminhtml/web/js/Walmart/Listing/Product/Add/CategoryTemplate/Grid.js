@@ -73,14 +73,14 @@ define([
                     try {
                         var response = transport.responseText.evalJSON();
 
-                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](response.message);
+                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1)](response.message);
 
                         if (response.type != 'error') {
                             this.unselectAllAndReload();
                         }
 
                     } catch (e) {
-                        MessageObj.addErrorMessage('Internal Error.');
+                        MessageObj.addError('Internal Error.');
                     }
                 }).bind(this)
             });
@@ -141,14 +141,14 @@ define([
                 method: 'post',
                 parameters: {
                     template_id: templateId,
-                    magento_categories_ids: ListingGridHandlerObj.templateCategoryHandler.templateCategoryPopup.magentoCategoriesIds
+                    magento_categories_ids: ListingGridObj.templateCategoryHandler.templateCategoryPopup.magentoCategoriesIds
                 },
                 onSuccess: function(transport) {
 
                     new Ajax.Request(M2ePro.url.get('walmart_listing_product_template_category/assign'), {
                         method: 'post',
                         parameters: {
-                            products_ids: ListingGridHandlerObj.templateCategoryHandler.templateCategoryPopup.productsIds,
+                            products_ids: ListingGridObj.templateCategoryHandler.templateCategoryPopup.productsIds,
                             template_id:  templateId
                         },
                         onSuccess: function(transport) {
@@ -164,7 +164,7 @@ define([
                             if (response.messages.length > 0) {
                                 MessageObj.clear();
                                 response.messages.each(function(msg) {
-                                    MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](msg);
+                                    MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1)](msg);
                                 });
                             }
                         }
@@ -172,7 +172,7 @@ define([
                 }
             });
 
-            ListingGridHandlerObj.templateCategoryHandler.templateCategoryPopup.modal('closeModal');
+            ListingGridObj.templateCategoryHandler.templateCategoryPopup.modal('closeModal');
         },
 
         // ---------------------------------------
@@ -198,7 +198,7 @@ define([
 
                     if (response['message']) {
                         MessageObj.clear();
-                        return MessageObj.addErrorMessage(response['message']);
+                        return MessageObj.addError(response['message']);
                     }
 
                     if ($('category_template_warning_popup_content')) {

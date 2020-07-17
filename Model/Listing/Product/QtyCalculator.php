@@ -30,19 +30,6 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
      */
     private $productValueCache = null;
 
-    protected $moduleConfig;
-
-    //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
-    ) {
-        $this->moduleConfig  = $moduleConfig;
-        parent::__construct($helperFactory, $modelFactory);
-    }
-
     //########################################
 
     /**
@@ -302,8 +289,8 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
             return $value;
         }
 
-        $roundingFunction = (bool)(int)$this->moduleConfig->getGroupValue('/qty/percentage/', 'rounding_greater')
-            ? 'ceil' : 'floor';
+        $roundingFunction = $this->getHelper('Module_Configuration')
+            ->getQtyPercentageRoundingGreater() ? 'ceil' : 'floor';
 
         return (int)$roundingFunction(($value/100) * $percents);
     }

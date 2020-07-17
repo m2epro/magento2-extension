@@ -44,7 +44,7 @@ class Inactive extends AbstractModel
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
             \Ess\M2ePro\Model\Ebay\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
             \Ess\M2ePro\Model\Ebay\Listing\Product::INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED,
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\AbstractModel::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_STATUS_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_QTY_CHANGED,
@@ -212,54 +212,12 @@ class Inactive extends AbstractModel
             }
         }
 
-        if ($ebaySynchronizationTemplate->isRelistWhenQtyMagentoHasValue()) {
-            $result = false;
-            $productQty = (int)$listingProduct->getMagentoProduct()->getQty(true);
-
-            $typeQty = (int)$ebaySynchronizationTemplate->getRelistWhenQtyMagentoHasValueType();
-            $minQty = (int)$ebaySynchronizationTemplate->getRelistWhenQtyMagentoHasValueMin();
-            $maxQty = (int)$ebaySynchronizationTemplate->getRelistWhenQtyMagentoHasValueMax();
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_LESS &&
-                $productQty <= $minQty) {
-                $result = true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_MORE &&
-                $productQty >= $minQty) {
-                $result = true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_BETWEEN &&
-                $productQty >= $minQty && $productQty <= $maxQty) {
-                $result = true;
-            }
-
-            if (!$result) {
-                return false;
-            }
-        }
-
         if ($ebaySynchronizationTemplate->isRelistWhenQtyCalculatedHasValue()) {
             $result = false;
             $productQty = (int)$ebayListingProduct->getQty();
-
-            $typeQty = (int)$ebaySynchronizationTemplate->getRelistWhenQtyCalculatedHasValueType();
             $minQty = (int)$ebaySynchronizationTemplate->getRelistWhenQtyCalculatedHasValueMin();
-            $maxQty = (int)$ebaySynchronizationTemplate->getRelistWhenQtyCalculatedHasValueMax();
 
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_LESS &&
-                $productQty <= $minQty) {
-                $result = true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_MORE &&
-                $productQty >= $minQty) {
-                $result = true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_BETWEEN &&
-                $productQty >= $minQty && $productQty <= $maxQty) {
+            if ($productQty >= $minQty) {
                 $result = true;
             }
 

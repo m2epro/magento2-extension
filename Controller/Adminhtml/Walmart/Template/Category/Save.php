@@ -9,7 +9,6 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
-use Ess\M2ePro\Model\Walmart\Template\Category\Specific;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category\Save
@@ -29,30 +28,6 @@ class Save extends Category
 
         $id = $this->getRequest()->getParam('id');
 
-        // Saving general data
-        // ---------------------------------------
-        $keys = [
-            'title',
-            'marketplace_id',
-
-            'category_path',
-            'product_data_nick',
-            'browsenode_id'
-        ];
-
-        $dataForAdd = [];
-        foreach ($keys as $key) {
-            if ($key === 'encoded_data') {
-                continue;
-            }
-
-            if (isset($post[$key])) {
-                $dataForAdd[$key] = $post[$key];
-            }
-        }
-
-        $dataForAdd['title'] = strip_tags($dataForAdd['title']);
-
         /** @var \Ess\M2ePro\Model\Walmart\Template\Category $categoryTemplate */
         $categoryTemplate = $this->activeRecordFactory->getObject('Walmart_Template_Category');
         $id && $categoryTemplate->load($id);
@@ -64,10 +39,9 @@ class Save extends Category
             $oldData = $snapshotBuilder->getSnapshot();
         }
 
-        $categoryTemplate->addData($dataForAdd)->save();
-        $id = $categoryTemplate->getId();
+        $this->modelFactory->getObject('Walmart_Template_Category_Builder')->build($categoryTemplate, $post);
 
-        // ---------------------------------------
+        $id = $categoryTemplate->getId();
 
         // Saving specifics info
         // ---------------------------------------
@@ -80,35 +54,20 @@ class Save extends Category
 
         $this->sortSpecifics($specifics, $post['product_data_nick'], $post['marketplace_id']);
 
+        /** @var \Ess\M2ePro\Model\Walmart\Template\Category\Specific\Builder $categorySpecificBuilder */
+        $categorySpecificBuilder = $this->modelFactory->getObject('Walmart_Template_Category_Specific_Builder');
+
         foreach ($specifics as $xpath => $specificData) {
             if (!$this->validateSpecificData($specificData)) {
                 continue;
             }
 
+            $specificData['xpath'] = $xpath;
+
+            /** @var \Ess\M2ePro\Model\Walmart\Template\Category\Specific $specificInstance */
             $specificInstance = $this->activeRecordFactory->getObject('Walmart_Template_Category_Specific');
-
-            $type       = isset($specificData['type']) ? $specificData['type'] : '';
-            $isRequired = isset($specificData['is_required']) ? $specificData['is_required'] : 0;
-            $attributes = isset($specificData['attributes'])
-                ? $this->getHelper('Data')->jsonEncode($specificData['attributes']) : '[]';
-
-            $customValue      = $specificData['mode'] == Specific::DICTIONARY_MODE_CUSTOM_VALUE
-                ? $specificData['custom_value'] : '';
-
-            $customAttribute  = $specificData['mode'] == Specific::DICTIONARY_MODE_CUSTOM_ATTRIBUTE
-                ? $specificData['custom_attribute'] : '';
-
-            $specificInstance->addData([
-                'template_category_id' => $id,
-                'xpath'                => $xpath,
-                'mode'                 => $specificData['mode'],
-                'is_required'          => $isRequired,
-                'custom_value'         => $customValue,
-                'custom_attribute'     => $customAttribute,
-                'type'                 => $type,
-                'attributes'           => $attributes
-            ]);
-            $specificInstance->save();
+            $categorySpecificBuilder->setTemplateCategoryId($id);
+            $categorySpecificBuilder->build($specificInstance, $specificData);
         }
         // ---------------------------------------
 

@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Account\Repricing;
 /**
  * Class \Ess\M2ePro\Model\Amazon\Account\Repricing\ChangeProcessor
  */
-class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\AbstractModel
+class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract
 {
     const INSTRUCTION_INITIATOR = 'account_repricing_change_processor';
 
@@ -26,7 +26,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\
 
     // ---------------------------------------
 
-    protected function getInstructionsData(\Ess\M2ePro\Model\Template\Diff\AbstractModel $diff, $status)
+    protected function getInstructionsData(\Ess\M2ePro\Model\ActiveRecord\Diff $diff, $status)
     {
         /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing\Diff $diff */
 

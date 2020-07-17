@@ -2,8 +2,7 @@ define([
            'Magento_Ui/js/modal/alert'
        ], function (alert) {
 
-    window.WalmartTemplateCategoryCategoriesSpecificRenderer = Class.create();
-    WalmartTemplateCategoryCategoriesSpecificRenderer.prototype = {
+    window.WalmartTemplateCategoryCategoriesSpecificRenderer = Class.create({
 
         // ---------------------------------------
 
@@ -285,5 +284,5 @@ define([
         }
 
         // ---------------------------------------
-    };
+    });
 });

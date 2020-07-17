@@ -17,33 +17,80 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
 
     public function execute()
     {
-        // ---------------------------------------
-        $listingId = $this->getRequest()->getParam('id');
-        $groupId = $this->getRequest()->getParam('group_id');
-        $autoMode  = $this->getRequest()->getParam('auto_mode');
-        $listing   = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId);
-        // ---------------------------------------
+        /** @var \Ess\M2ePro\Model\Listing $listing */
+        $listing = $this->ebayFactory->getCachedObjectLoaded(
+            'Listing',
+            $this->getRequest()->getParam('listing_id')
+        );
 
-        $template = $this->getCategoryTemplate($autoMode, $groupId, $listing);
-        $otherTemplate = $this->getOtherCategoryTemplate($autoMode, $groupId, $listing);
+        $magentoCategoryId = $this->getRequest()->getParam('magento_category_id');
 
-        /** @var $chooserBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser */
-        $chooserBlock = $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser');
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter $converter */
+        $converter = $this->modelFactory->getObject('Ebay_Template_Category_Chooser_Converter');
+        $converter->setAccountId($listing->getAccountId());
+        $converter->setMarketplaceId($listing->getMarketplaceId());
 
-        if ($autoMode == \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY) {
-            $chooserBlock->setDivId('category_child_data_container');
-        } else {
-            $chooserBlock->setDivId('data_container');
+        $categoryTemplate = $this->getCategoryTemplate(
+            $listing,
+            \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN,
+            $this->getRequest()->getParam('auto_mode'),
+            $this->getRequest()->getParam('group_id'),
+            $magentoCategoryId
+        );
+        if ($categoryTemplate !== null) {
+            $converter->setCategoryDataFromTemplate(
+                $categoryTemplate->getData(),
+                \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN
+            );
         }
+
+        $categorySecondaryTemplate = $this->getCategoryTemplate(
+            $listing,
+            \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY,
+            $this->getRequest()->getParam('auto_mode'),
+            $this->getRequest()->getParam('group_id'),
+            $magentoCategoryId
+        );
+        if ($categorySecondaryTemplate !== null) {
+            $converter->setCategoryDataFromTemplate(
+                $categorySecondaryTemplate->getData(),
+                \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY
+            );
+        }
+
+        $storeTemplate = $this->getStoreCategoryTemplate(
+            $listing,
+            \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN,
+            $this->getRequest()->getParam('auto_mode'),
+            $this->getRequest()->getParam('group_id'),
+            $magentoCategoryId
+        );
+        if ($storeTemplate !== null) {
+            $converter->setCategoryDataFromTemplate(
+                $storeTemplate->getData(),
+                \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN
+            );
+        }
+
+        $storeSecondaryTemplate = $this->getStoreCategoryTemplate(
+            $listing,
+            \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY,
+            $this->getRequest()->getParam('auto_mode'),
+            $this->getRequest()->getParam('group_id'),
+            $magentoCategoryId
+        );
+        if ($storeSecondaryTemplate !== null) {
+            $converter->setCategoryDataFromTemplate(
+                $storeSecondaryTemplate->getData(),
+                \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY
+            );
+        }
+
+        /** @var $chooserBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser */
+        $chooserBlock = $this->createBlock('Ebay_Template_Category_Chooser');
         $chooserBlock->setAccountId($listing->getAccountId());
         $chooserBlock->setMarketplaceId($listing->getMarketplaceId());
-
-        if ($template !== null) {
-            $data = $template->getData();
-            $otherTemplate && $data = array_merge($data, $otherTemplate->getData());
-
-            $chooserBlock->setInternalData($data);
-        }
+        $chooserBlock->setCategoriesData($converter->getCategoryDataForChooser());
 
         $this->setAjaxContent($chooserBlock);
         return $this->getResult();

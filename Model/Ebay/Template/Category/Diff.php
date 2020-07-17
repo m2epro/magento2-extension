@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Template\Category;
 /**
  * Class \Ess\M2ePro\Model\Ebay\Template\Category\Diff
  */
-class Diff extends \Ess\M2ePro\Model\Template\Diff\AbstractModel
+class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
 {
     //########################################
 
@@ -25,10 +25,10 @@ class Diff extends \Ess\M2ePro\Model\Template\Diff\AbstractModel
     public function isCategoriesDifferent()
     {
         $keys = [
-            'category_main_id',
-            'category_main_mode',
-            'category_main_path',
-            'category_main_attribute',
+            'category_id',
+            'category_mode',
+            'category_path',
+            'category_attribute',
             'specifics'
         ];
 

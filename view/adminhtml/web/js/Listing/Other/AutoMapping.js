@@ -65,9 +65,9 @@ define([
                 MessagesObj.clear();
 
                 if (isFailed == 1) {
-                    MessagesObj.addErrorMessage(M2ePro.translator.translate('failed_mapped'));
+                    MessagesObj.addError(M2ePro.translator.translate('failed_mapped'));
                 } else {
-                    MessagesObj.addSuccessMessage(M2ePro.translator.translate('successfully_mapped'));
+                    MessagesObj.addSuccess(M2ePro.translator.translate('successfully_mapped'));
                 }
 
                 this.progressBarObj.setStatus(M2ePro.translator.translate('task_completed_message'));

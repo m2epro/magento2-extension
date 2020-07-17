@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode;
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\GlobalMode
  */
-class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\GlobalMode
+class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\AbstractGlobalMode
 {
 
     //########################################
@@ -19,11 +19,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
     public function _construct()
     {
         parent::_construct();
-
-        // Initialization block
-        // ---------------------------------------
         $this->setId('ebayListingAutoActionModeGlobal');
-        // ---------------------------------------
     }
 
     //########################################
@@ -72,12 +68,9 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Glo
             ]
         );
 
-        $breadcrumb = $this->createBlock('Ebay_Listing_AutoAction_Mode_Breadcrumb', '', ['data' => [
-            'id_prefix' => 'global'
-        ]]);
-        $breadcrumb->setSelectedStep(1);
-
-        return $helpBlock->toHtml() . $breadcrumb->toHtml() . parent::_toHtml();
+        return $helpBlock->toHtml() .
+            parent::_toHtml() .
+            '<div id="ebay_category_chooser"></div>';
     }
 
     //########################################

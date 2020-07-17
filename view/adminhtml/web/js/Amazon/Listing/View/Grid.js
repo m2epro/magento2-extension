@@ -149,14 +149,14 @@ define([
                     try {
                         var response = transport.responseText.evalJSON();
 
-                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](response.message);
+                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1)](response.message);
 
                         if (response.type != 'error') {
                             this.unselectAllAndReload();
                         }
 
                     } catch (e) {
-                        MessageObj.addErrorMessage('Internal Error.');
+                        MessageObj.addError('Internal Error.');
                     }
                 }).bind(this)
             });

@@ -28,24 +28,12 @@ abstract class Account extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
         if (isset($id)) {
             $model->load($id);
-            $model->addData($data);
-            $model->getChildObject()->addData($data);
             $model->setData('isEdit', true);
         } else {
-            $model->setData($data);
             $model->setData('isEdit', false);
         }
 
-        if (isset($data['other_listings_move_synch'])) {
-            $model->getChildObject()->setSetting(
-                'other_listings_move_settings',
-                ['synch'],
-                $data['other_listings_move_synch']
-            );
-        }
-
-        $model->save();
-        $model->getChildObject()->save();
+        $this->modelFactory->getObject('Amazon_Account_Builder')->build($model, $data);
 
         return $model;
     }

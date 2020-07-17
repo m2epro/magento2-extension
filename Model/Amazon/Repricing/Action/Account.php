@@ -70,14 +70,10 @@ class Account extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
 
         try {
             $result = $this->getHelper('Component_Amazon_Repricing')->sendRequest($command, $requestData);
-        } catch (\Exception $exception) {
-            $this->getSynchronizationLog()->addMessage(
-                $this->getHelper('Module\Translation')->__($exception->getMessage()),
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
-            );
+        } catch (\Exception $e) {
+            $this->getHelper('Module\Exception')->process($e, false);
+            $this->getSynchronizationLog()->addMessageFromException($e);
 
-            $this->getHelper('Module\Exception')->process($exception, false);
             return false;
         }
 

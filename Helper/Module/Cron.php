@@ -21,20 +21,17 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
     const STRATEGY_SERIAL   = 'serial';
     const STRATEGY_PARALLEL = 'parallel';
 
-    protected $moduleConfig;
     protected $modelFactory;
     protected $activeRecordFactory;
 
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
-        $this->moduleConfig = $moduleConfig;
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $context);
@@ -192,12 +189,12 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function getConfigValue($key)
     {
-        return $this->moduleConfig->getGroupValue('/cron/', $key);
+        return $this->getHelper('Module')->getConfig()->getGroupValue('/cron/', $key);
     }
 
     private function setConfigValue($key, $value)
     {
-        return $this->moduleConfig->setGroupValue('/cron/', $key, $value);
+        return $this->getHelper('Module')->getConfig()->setGroupValue('/cron/', $key, $value);
     }
 
     //########################################

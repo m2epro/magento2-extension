@@ -68,9 +68,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @return string
      */
-    public function getMainCategory()
+    public function getCategoryId()
     {
-        $src = $this->getCategoryTemplate()->getCategoryMainSource();
+        $src = $this->getCategoryTemplate()->getCategorySource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE) {
             return $this->getMagentoProduct()->getAttributeValue($src['attribute']);

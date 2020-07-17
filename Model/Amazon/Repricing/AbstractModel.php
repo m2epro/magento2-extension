@@ -93,8 +93,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($message->getText()),
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
             );
 
             $exception = new \Ess\M2ePro\Model\Exception($message->getText());

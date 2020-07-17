@@ -17,11 +17,11 @@ class GetAutoCategoryFormHtml extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Li
 
     public function execute()
     {
-        // ---------------------------------------
-        $listingId = $this->getRequest()->getParam('id');
-        $listing = $this->amazonFactory->getCachedObjectLoaded('Listing', $listingId);
+        $listing = $this->amazonFactory->getCachedObjectLoaded(
+            'Listing',
+            $this->getRequest()->getParam('listing_id')
+        );
         $this->getHelper('Data\GlobalData')->setValue('amazon_listing', $listing);
-        // ---------------------------------------
 
         $block = $this->createBlock('Amazon_Listing_AutoAction_Mode_Category_Form');
 

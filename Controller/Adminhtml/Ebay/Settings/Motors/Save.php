@@ -19,63 +19,21 @@ class Save extends Settings
 
     public function execute()
     {
-        $motorsAttributes = [];
-
-        if ($motorsEpidsMotorAttribute = $this->getRequest()->getParam('motors_epids_motor_attribute')) {
-            $motorsAttributes[] = $motorsEpidsMotorAttribute;
-        }
-        if ($motorsEpidsUkAttribute = $this->getRequest()->getParam('motors_epids_uk_attribute')) {
-            $motorsAttributes[] = $motorsEpidsUkAttribute;
-        }
-        if ($motorsEpidsDeAttribute = $this->getRequest()->getParam('motors_epids_de_attribute')) {
-            $motorsAttributes[] = $motorsEpidsDeAttribute;
-        }
-        if ($motorsEpidsDeAttribute = $this->getRequest()->getParam('motors_epids_au_attribute')) {
-            $motorsAttributes[] = $motorsEpidsDeAttribute;
-        }
-        if ($motorsKtypesAttribute = $this->getRequest()->getParam('motors_ktypes_attribute')) {
-            $motorsAttributes[] = $motorsKtypesAttribute;
-        }
-
-        if (count($motorsAttributes) != count(array_unique($motorsAttributes))) {
-            $this->setJsonContent([
-                'success' => false,
-                'messages' => [
-                    ['error' => $this->__('Motors Attributes can not be the same.')]
-                ]
-            ]);
+        $post = $this->getRequest()->getPostValue();
+        if (!$post) {
+            $this->setJsonContent(['success' => false]);
             return $this->getResult();
         }
 
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/ebay/motors/',
-            'epids_motor_attribute',
-            $motorsEpidsMotorAttribute
-        );
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/ebay/motors/',
-            'epids_uk_attribute',
-            $motorsEpidsUkAttribute
-        );
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/ebay/motors/',
-            'epids_de_attribute',
-            $motorsEpidsDeAttribute
-        );
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/ebay/motors/',
-            'epids_au_attribute',
-            $motorsEpidsDeAttribute
-        );
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/ebay/motors/',
-            'ktypes_attribute',
-            $motorsKtypesAttribute
-        );
-
-        $this->setAjaxContent($this->getHelper('Data')->jsonEncode([
-            'success' => true
-        ]), false);
+        try {
+            $this->getHelper('Component_Ebay_Configuration')->setConfigValues($this->getRequest()->getParams());
+            $this->setJsonContent(['success' => true]);
+        } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
+            $this->setJsonContent([
+                'success' => false,
+                'message' => $this->__($e->getMessage())
+            ]);
+        }
 
         return $this->getResult();
     }

@@ -45,7 +45,7 @@ define([
                     var result = transport.responseText;
 
                     if (!result.isJSON()) {
-                        MessagesObj.addErrorMessage(result);
+                        MessagesObj.addError(result);
                     }
 
                     result = JSON.parse(result);
@@ -54,68 +54,9 @@ define([
                     self.appendGlobalMessages();
 
                     if (result.success) {
-                        MessagesObj.addSuccessMessage(result.message);
+                        MessagesObj.addSuccess(result.message);
                     } else {
-                        MessagesObj.addErrorMessage(result.message);
-                    }
-                    CommonObj.scrollPageToTop();
-                    self.reloadLicenseTab();
-                }
-            });
-
-            return true;
-        },
-
-        // ---------------------------------------
-
-        newLicenseKeyPopup: function()
-        {
-            var self = this;
-
-            new Ajax.Request(M2ePro.url.get('settings_license/create'), {
-                method: 'get',
-                asynchronous: true,
-                onSuccess: function(transport) {
-
-                    var content = transport.responseText;
-                    var title = M2ePro.translator.translate('Create New License');
-
-                    LicenseObj.openPopup(title, content, LicenseObj.newLicenseKey.bind(self), 'slide');
-                }
-            });
-        },
-
-        newLicenseKey: function()
-        {
-            var self = this;
-
-            if (!this.isValidForm()) {
-                return false;
-            }
-
-            new Ajax.Request(M2ePro.url.get('settings_license/create'), {
-                method: 'post',
-                asynchronous: true,
-                parameters: $('edit_form').serialize(true),
-                onSuccess: function(transport) {
-                    var result = transport.responseText;
-
-                    if (!result.isJSON()) {
-                        MessagesObj.addErrorMessage(result);
-                    }
-
-                    result = JSON.parse(result);
-
-                    MessagesObj.clear();
-                    self.appendGlobalMessages();
-
-                    if (result.success) {
-                        if (typeof result.license_key !== 'undefined') {
-                            $('license_text_key_container').innerHTML = result.license_key;
-                        }
-                        MessagesObj.addSuccessMessage(result.message);
-                    } else {
-                        MessagesObj.addErrorMessage(result.message);
+                        MessagesObj.addError(result.message);
                     }
                     CommonObj.scrollPageToTop();
                     self.reloadLicenseTab();
@@ -141,7 +82,7 @@ define([
                         window.opener.completeStep = 1;
                         window.close();
                     } else {
-                        MagentoMessageObj.addError(M2ePro.translator.translate('You must get valid Trial or Live License Key.'));
+                        MessageObj.addError(M2ePro.translator.translate('You must get valid Trial or Live License Key.'));
                     }
                 }
             });
@@ -212,7 +153,7 @@ define([
                     var result = transport.responseText;
 
                     if (!result.isJSON()) {
-                        MessagesObj.addErrorMessage(result);
+                        MessagesObj.addError(result);
                     }
 
                     result = JSON.parse(result);
@@ -220,9 +161,9 @@ define([
                     self.appendGlobalMessages();
 
                     if (result.success) {
-                        MessagesObj.addSuccessMessage(result.message);
+                        MessagesObj.addSuccess(result.message);
                     } else {
-                        MessagesObj.addErrorMessage(result.message);
+                        MessagesObj.addError(result.message);
                     }
 
                     CommonObj.scrollPageToTop();
@@ -251,7 +192,7 @@ define([
                         MessagesObj.clearGlobal();
                         result.forEach(function(item) {
                             var key = Object.keys(item)[0];
-                            MessagesObj['addGlobal'+key.capitalize()+'Message'](item[key]);
+                            MessagesObj['addGlobal'+key.capitalize()](item[key]);
                         });
                     }
                 }

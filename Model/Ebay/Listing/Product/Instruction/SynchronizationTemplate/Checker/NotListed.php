@@ -172,106 +172,21 @@ class NotListed extends AbstractModel
             }
         }
 
-        if ($ebaySynchronizationTemplate->isListWhenQtyMagentoHasValue()) {
-            $result = false;
-            $productQty = (int)$listingProduct->getMagentoProduct()->getQty(true);
-
-            $typeQty = (int)$ebaySynchronizationTemplate->getListWhenQtyMagentoHasValueType();
-            $minQty = (int)$ebaySynchronizationTemplate->getListWhenQtyMagentoHasValueMin();
-            $maxQty = (int)$ebaySynchronizationTemplate->getListWhenQtyMagentoHasValueMax();
-
-            $note = '';
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_LESS) {
-                if ($productQty <= $minQty) {
-                    $result = true;
-                } else {
-                    $note = $this->getHelper('Module\Log')->encodeDescription(
-                        'Product was not Listed as its Quantity is %product_qty% in Magento. The Magento Quantity
-                         condition in the List Rules was not met.',
-                        ['!product_qty' => $productQty]
-                    );
-                }
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_MORE) {
-                if ($productQty >= $minQty) {
-                    $result = true;
-                } else {
-                    $note = $this->getHelper('Module\Log')->encodeDescription(
-                        'Product was not Listed as its Quantity is %product_qty% in Magento. The Magento Quantity
-                         condition in the List Rules was not met.',
-                        ['!product_qty' => $productQty]
-                    );
-                }
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_BETWEEN) {
-                if ($productQty >= $minQty && $productQty <= $maxQty) {
-                    $result = true;
-                } else {
-                    $note = $this->getHelper('Module\Log')->encodeDescription(
-                        'Product was not Listed as its Quantity is %product_qty% in Magento. The Magento Quantity
-                         condition in the List Rules was not met.',
-                        ['!product_qty' => $productQty]
-                    );
-                }
-            }
-
-            if (!$result) {
-                if (!empty($note)) {
-                    $additionalData['synch_template_list_rules_note'] = $note;
-                    $listingProduct->setSettings('additional_data', $additionalData)->save();
-                }
-
-                return false;
-            }
-        }
-
         if ($ebaySynchronizationTemplate->isListWhenQtyCalculatedHasValue()) {
             $result = false;
             $productQty = (int)$ebayListingProduct->getQty();
-
-            $typeQty = (int)$ebaySynchronizationTemplate->getListWhenQtyCalculatedHasValueType();
-            $minQty = (int)$ebaySynchronizationTemplate->getListWhenQtyCalculatedHasValueMin();
-            $maxQty = (int)$ebaySynchronizationTemplate->getListWhenQtyCalculatedHasValueMax();
+            $minQty = (int)$ebaySynchronizationTemplate->getListWhenQtyCalculatedHasValue();
 
             $note = '';
 
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_LESS) {
-                if ($productQty <= $minQty) {
-                    $result = true;
-                } else {
-                    $note = $this->getHelper('Module\Log')->encodeDescription(
-                        'Product was not Listed as its Quantity is %product_qty% in Magento. The Calculated
-                         Quantity condition in the List Rules was not met.',
-                        ['!product_qty' => $productQty]
-                    );
-                }
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_MORE) {
-                if ($productQty >= $minQty) {
-                    $result = true;
-                } else {
-                    $note = $this->getHelper('Module\Log')->encodeDescription(
-                        'Product was not Listed as its Quantity is %product_qty% in Magento. The Calculated
-                         Quantity condition in the List Rules was not met.',
-                        ['!product_qty' => $productQty]
-                    );
-                }
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_BETWEEN) {
-                if ($productQty >= $minQty && $productQty <= $maxQty) {
-                    $result = true;
-                } else {
-                    $note = $this->getHelper('Module\Log')->encodeDescription(
-                        'Product was not Listed as its Quantity is %product_qty% in Magento. The Calculated
-                         Quantity condition in the List Rules was not met.',
-                        ['!product_qty' => $productQty]
-                    );
-                }
+            if ($productQty >= $minQty) {
+                $result = true;
+            } else {
+                $note = $this->getHelper('Module\Log')->encodeDescription(
+                    'Product was not Listed as its Quantity is %product_qty% in Magento. The Calculated
+                     Quantity condition in the List Rules was not met.',
+                    ['!product_qty' => $productQty]
+                );
             }
 
             if (!$result) {

@@ -9,7 +9,6 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
-use Ess\M2ePro\Model\Amazon\Template\Synchronization;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs\ReviseRules
@@ -22,16 +21,7 @@ class ReviseRules extends AbstractForm
         $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $defaults = [
-            'revise_update_qty'                              => 1,
-            'revise_update_qty_max_applied_value_mode'       => 1,
-            'revise_update_qty_max_applied_value'            => 5,
-            'revise_update_price'                            => 1,
-            'revise_update_price_max_allowed_deviation_mode' => 1,
-            'revise_update_price_max_allowed_deviation'      => 3,
-            'revise_update_details'                          => 0,
-            'revise_update_images'                           => 0,
-        ];
+        $defaults = $this->modelFactory->getObject('Amazon_Template_Synchronization_Builder')->getDefaultData();
 
         $formData = array_merge($defaults, $formData);
 
@@ -45,7 +35,7 @@ class ReviseRules extends AbstractForm
                     <<<HTML
 <p>Specify which Channel data should be automatically revised by M2E Pro.</p><br>
 
-<p>Selected Item Properties will be automatically updated based on the changes in related Magento Attributes or 
+<p>Selected Item Properties will be automatically updated based on the changes in related Magento Attributes or
 Policy Templates.</p><br>
 
 <p>More detailed information on how to work with this Page can be found
@@ -92,31 +82,20 @@ HTML
                 'label' => $this->__('Conditional Revise'),
                 'value' => $formData['revise_update_qty_max_applied_value_mode'],
                 'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
+                    0 => $this->__('Disabled'),
+                    1 => $this->__('Revise When Less or Equal to'),
                 ],
                 'tooltip' => $this->__(
-                    'Updates Amazon QTY only when the Condition you set below is met.
-                    <br/><br/><b>Note:</b> By using this Option you can significantly increase Synchronization
-                    performance.'
+                    'Set the Item Quantity limit at which the Revise Action should be triggered.
+                    It is recommended to keep this value relatively low, between 10 and 20 Items.'
                 )
             ]
-        );
-
-        $fieldset->addField(
-            'revise_update_qty_max_applied_value_',
-            'text',
-            [
-                'container_id' => 'revise_update_qty_max_applied_value_tr',
-                'name' => 'revise_update_qty_max_applied_value',
-                'label' => $this->__('Revise When Less or Equal to'),
-                'value' => $formData['revise_update_qty_max_applied_value'],
-                'class' => 'M2ePro-validate-qty',
-                'required' => true,
-                'tooltip' => $this->__(
-                    'The value should not be too high (i.e. 100). Recommended value is in range 10 - 20.'
-                )
-            ]
+        )->setAfterElementHtml(<<<HTML
+<input name="revise_update_qty_max_applied_value" id="revise_update_qty_max_applied_value"
+       value="{$formData['revise_update_qty_max_applied_value']}" type="text"
+       style="width: 72px; margin-left: 10px;"
+       class="input-text admin__control-text required-entry M2ePro-validate-qty _required" />
+HTML
         );
 
         $fieldset->addField(
@@ -141,65 +120,6 @@ HTML
                     in Amazon Listing when there are changes made in Magento to at least one mentioned parameter.'
                 )
             ]
-        );
-
-        $fieldset->addField(
-            'revise_update_price_max_allowed_deviation_mode',
-            self::SELECT,
-            [
-                'container_id' => 'revise_update_price_max_allowed_deviation_mode_tr',
-                'name' => 'revise_update_price_max_allowed_deviation_mode',
-                'label' => $this->__('Conditional Revise'),
-                'value' => $formData['revise_update_price_max_allowed_deviation_mode'],
-                'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
-                ],
-                'tooltip' => $this->__('Updates Amazon Price only when the Condition you set below is met.')
-            ]
-        );
-
-        $preparedValues = [];
-        $percentageStep = 0.5;
-        for ($priceDeviationValue = 0.5; $priceDeviationValue <= 20; $priceDeviationValue += $percentageStep) {
-            $preparedValues[] = [
-                'label' => $priceDeviationValue . ' %',
-                'value' => $priceDeviationValue
-            ];
-            $priceDeviationValue >= 5 && $percentageStep = 1;
-        }
-
-        $fieldset->addField(
-            'revise_update_price_max_allowed_deviation',
-            self::SELECT,
-            [
-                'container_id' => 'revise_update_price_max_allowed_deviation_tr',
-                'name' => 'revise_update_price_max_allowed_deviation',
-                'label' => $this->__('Revise When Deviation More or Equal than'),
-                'value' => $formData['revise_update_price_max_allowed_deviation'],
-                'values' => $preparedValues,
-                'tooltip' => $this->__('
-                    It is a Percent Value of Maximum possible Deviation between Magento Price
-                    (Selling Policy settings) and Amazon Item Price, that can be ignored.<br/><br/>
-                    <strong>For example</strong>, your Magento Price is 23.25$. According to
-                    Selling Policy Settings Item Price is equal to Magento Price.
-                    The "Revise When Deviation More or Equal than" Option is specified to 1%.<br/>
-                    1) If Magento Price was changed to 23.26$, possible Deviation Value (0.23$) is
-                    <strong>more</strong> than Price change (0.1$), so the Price <strong>will not be Revised</strong>
-                    on Amazon.<br/>
-                    2) If Magento Price was changed to 23.5$, possible Deviation Value (0.23$) is
-                    <strong>less</strong> than Price change (0.25$), so the Price
-                    <strong>will be Revised</strong> on Amazon.<br/><br/>
-                    After Successful Revise new Magento Price (in this case is 23.5$)
-                    will be used for further Deviation count.
-                ')
-            ]
-        );
-
-        $fieldset->addField(
-            'revise_update_price_line',
-            self::SEPARATOR,
-            []
         );
 
         $fieldset->addField(
@@ -262,18 +182,6 @@ HTML
              <a href="%url%" target="_blank">this article</a> before using the option.',
                     $this->getHelper('Module_Support')->getSupportUrl('knowledgebase/1580145/')
                 ),
-                'style' => 'display: none;'
-            ]
-        );
-
-        $form->addField(
-            'revise_price_max_max_allowed_deviation_confirmation_popup_template',
-            self::CUSTOM_CONTAINER,
-            [
-                'text' => $this->__('
-                    Disabling this option might affect synchronization performance.
-                     Please read this <a href="%url%" target="_blank">article</a> before using the option.
-                ', $this->getHelper('Module\Support')->getSupportUrl('knowledgebase/1587081/')),
                 'style' => 'display: none;'
             ]
         );

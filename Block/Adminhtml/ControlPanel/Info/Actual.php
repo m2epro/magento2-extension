@@ -15,6 +15,20 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
  */
 class Actual extends AbstractBlock
 {
+    protected $moduleResource;
+
+    //########################################
+
+    public function __construct(
+        \Magento\Framework\Model\ResourceModel\Db\Context $dbContext,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        $this->moduleResource = new \Magento\Framework\Module\ModuleResource($dbContext);
+
+        parent::__construct($context, $data);
+    }
+
     //########################################
 
     public function _construct()
@@ -29,6 +43,11 @@ class Actual extends AbstractBlock
 
     protected function _beforeToHtml()
     {
+        // ---------------------------------------
+        $this->systemName = $this->getHelper('Client')->getSystem();
+        $this->systemTime = $this->getHelper('Data')->getCurrentGmtDate();
+        // ---------------------------------------
+
         $this->magentoInfo = $this->__(ucwords($this->getHelper('Magento')->getEditionName())) .
             ' (' . $this->getHelper('Magento')->getVersion() . ')';
 
@@ -36,6 +55,12 @@ class Actual extends AbstractBlock
         $this->publicVersion = $this->getHelper('Module')->getPublicVersion();
         $this->setupVersion  = $this->getHelper('Module')->getSetupVersion();
         $this->moduleEnvironment = $this->getHelper('Module')->getEnvironment();
+        // ---------------------------------------
+
+        // ---------------------------------------
+        $this->maintenanceMode = $this->getHelper('Module_Maintenance')->isEnabled();
+        $this->coreResourceVersion = $this->moduleResource->getDbVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER);
+        $this->coreResourceDataVersion = $this->moduleResource->getDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER);
         // ---------------------------------------
 
         // ---------------------------------------
@@ -51,19 +76,8 @@ class Actual extends AbstractBlock
         // ---------------------------------------
         $this->mySqlVersion = $this->getHelper('Client')->getMysqlVersion();
         $this->mySqlDatabaseName = $this->getHelper('Magento')->getDatabaseName();
-        // ---------------------------------------
-
-        // ---------------------------------------
-        $this->cronLastRunTime = 'N/A';
-        $this->cronIsNotWorking = false;
-        $this->cronCurrentRunner = ucwords(str_replace('_', ' ', $this->getHelper('Module\Cron')->getRunner()));
-
-        $cronLastRunTime = $this->getHelper('Module\Cron')->getLastRun();
-
-        if ($cronLastRunTime !== null) {
-            $this->cronLastRunTime = $cronLastRunTime;
-            $this->cronIsNotWorking = $this->getHelper('Module\Cron')->isLastRunMoreThan(12, true);
-        }
+        $this->mySqlPrefix = $this->getHelper('Magento')->getDatabaseTablesPrefix();
+        empty($this->mySqlPrefix) && $this->mySqlPrefix = $this->__('disabled');
         // ---------------------------------------
 
         return parent::_beforeToHtml();

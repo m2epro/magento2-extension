@@ -19,7 +19,7 @@ define([
                     var response = transport.responseText.evalJSON();
 
                     MessageObj.clear();
-                    MessageObj['add' + response.msg.type[0].toUpperCase() + response.msg.type.slice(1) + 'Message'](response.msg.text);
+                    MessageObj['add' + response.msg.type[0].toUpperCase() + response.msg.type.slice(1)](response.msg.text);
                 }
             });
         },

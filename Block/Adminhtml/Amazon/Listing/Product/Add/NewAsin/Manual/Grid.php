@@ -114,13 +114,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'    => $this->__('Product ID'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'entity_id',
+            'header'   => $this->__('Product ID'),
+            'align'    => 'right',
+            'width'    => '100px',
+            'type'     => 'number',
+            'index'    => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => [$this, 'callbackColumnProductId']
+            'store_id' => $this->listing->getStoreId(),
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
         ]);
 
         $this->addColumn('name', [
@@ -167,12 +168,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             [
                 'caption' => $this->__('Set Description Policy'),
                 'field'   => 'id',
-                'onclick_action' => 'ListingGridHandlerObj.setDescriptionTemplateRowAction'
+                'onclick_action' => 'ListingGridObj.setDescriptionTemplateRowAction'
             ],
             [
                 'caption' => $this->__('Reset Description Policy'),
                 'field'   => 'id',
-                'onclick_action' => 'ListingGridHandlerObj.resetDescriptionTemplateRowAction'
+                'onclick_action' => 'ListingGridObj.resetDescriptionTemplateRowAction'
             ]
         ];
 
@@ -335,12 +336,12 @@ HTML;
     require([
         'M2ePro/Plugin/Messages'
     ],function(MessageObj) {
-        
-        var button = $('amazon_listing_category_continue_btn');
+
+        var button = $('add_products_new_asin_manual_continue');
         if ({$isNotExistProductsWithDescriptionTemplate}) {
             button.addClassName('disabled');
             button.disable();
-            MessageObj.addErrorMessage(`{$errorMessage}`);
+            MessageObj.addError(`{$errorMessage}`);
         } else {
             button.removeClassName('disabled');
             button.enable();
@@ -353,7 +354,7 @@ JS
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
                 <<<JS
-    ListingGridHandlerObj.afterInitPage();
+    ListingGridObj.afterInitPage();
 JS
             );
         }

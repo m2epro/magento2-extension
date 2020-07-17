@@ -53,4 +53,17 @@ ul.migration-notes li {
     list-style-type: square;
 }
 
+.wizard-note {
+    background: url(../images/wizard-note.png) 48px 38px #E7FFE5 no-repeat;
+    border: dashed 1px #04DD04;
+    border-radius: 5px;
+    margin: 0 0 20px 0;
+    width: 100%;
+}
+
+.wizard-note div {
+    font-size: 14px;
+    color: #555555;
+    padding: 50px 130px;
+}
 /* Congratulation */

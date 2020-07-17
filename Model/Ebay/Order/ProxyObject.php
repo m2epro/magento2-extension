@@ -48,48 +48,9 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
     //########################################
 
-    /**
-     * @return string
-     */
-    public function getCheckoutMethod()
-    {
-        if ($this->order->getEbayAccount()->isMagentoOrdersCustomerNew() ||
-            $this->order->getEbayAccount()->isMagentoOrdersCustomerPredefined()) {
-            return self::CHECKOUT_REGISTER;
-        }
-
-        return self::CHECKOUT_GUEST;
-    }
-
-    //########################################
-
-    /**
-     * @return bool
-     */
-    public function isOrderNumberPrefixSourceChannel()
-    {
-        return $this->order->getEbayAccount()->isMagentoOrdersNumberSourceChannel();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isOrderNumberPrefixSourceMagento()
-    {
-        return $this->order->getEbayAccount()->isMagentoOrdersNumberSourceMagento();
-    }
-
     public function getChannelOrderNumber()
     {
         return $this->order->getEbayOrderId();
-    }
-
-    /**
-     * @return string
-     */
-    public function getOrderNumberPrefix()
-    {
-        return $this->order->getEbayAccount()->getMagentoOrdersNumberRegularPrefix();
     }
 
     //########################################
@@ -247,13 +208,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         return parent::getAddressData();
-    }
-
-    //########################################
-
-    public function getCurrency()
-    {
-        return $this->order->getCurrency();
     }
 
     //########################################
@@ -469,48 +423,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     // ---------------------------------------
 
     /**
-     * @return bool|null
-     */
-    public function isProductPriceIncludeTax()
-    {
-        $configValue = $this->getHelper('Module')
-            ->getConfig()
-            ->getGroupValue('/ebay/order/tax/product_price/', 'is_include_tax');
-
-        if ($configValue !== null) {
-            return (bool)$configValue;
-        }
-
-        if ($this->isTaxModeChannel() || ($this->isTaxModeMixed() && $this->hasTax())) {
-            return $this->isVatTax();
-        }
-
-        return null;
-    }
-
-    /**
-     * @return bool|null
-     */
-    public function isShippingPriceIncludeTax()
-    {
-        $configValue = $this->getHelper('Module')
-            ->getConfig()
-            ->getGroupValue('/ebay/order/tax/shipping_price/', 'is_include_tax');
-
-        if ($configValue !== null) {
-            return (bool)$configValue;
-        }
-
-        if ($this->isTaxModeChannel() || ($this->isTaxModeMixed() && $this->hasTax())) {
-            return $this->isVatTax();
-        }
-
-        return null;
-    }
-
-    // ---------------------------------------
-
-    /**
      * @return bool
      */
     public function isTaxModeNone()
@@ -520,22 +432,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         return $this->order->getEbayAccount()->isMagentoOrdersTaxModeNone();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTaxModeChannel()
-    {
-        return $this->order->getEbayAccount()->isMagentoOrdersTaxModeChannel();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTaxModeMagento()
-    {
-        return $this->order->getEbayAccount()->isMagentoOrdersTaxModeMagento();
     }
 
     //########################################

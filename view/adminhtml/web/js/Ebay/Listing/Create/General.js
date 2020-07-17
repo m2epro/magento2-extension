@@ -6,8 +6,7 @@ define([
     'M2ePro/Plugin/AreaWrapper'
 ], function (_, alert) {
 
-    window.EbayListingCreateGeneral = Class.create();
-    EbayListingCreateGeneral.prototype = {
+    window.EbayListingCreateGeneral = Class.create({
 
         marketplaceSynchProgressObj: null,
         accounts: null,
@@ -193,9 +192,10 @@ define([
 
                             self.marketplaceSynchProgressObj.runTask(
                                 title,
-                                M2ePro.url.get('ebay_marketplace/runSynchNow', {marketplace_id: marketplaceId})
+                                M2ePro.url.get('ebay_marketplace/runSynchNow', {marketplace_id: marketplaceId}),
+                                M2ePro.url.get('ebay_marketplace/synchGetExecutingInfo'),
+                                'EbayListingCreateGeneralObj.marketplaceSynchProgressObj.end()'
                             );
-
                         }
                     });
                 }
@@ -217,5 +217,5 @@ define([
         }
 
         // ---------------------------------------
-    };
+    });
 });

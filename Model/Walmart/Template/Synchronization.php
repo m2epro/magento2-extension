@@ -75,14 +75,6 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
     /**
      * @return bool
      */
-    public function isListWhenQtyMagentoHasValue()
-    {
-        return $this->getData('list_qty_magento') != TemplateSynchronization::QTY_MODE_NONE;
-    }
-
-    /**
-     * @return bool
-     */
     public function isListWhenQtyCalculatedHasValue()
     {
         return $this->getData('list_qty_calculated') != TemplateSynchronization::QTY_MODE_NONE;
@@ -130,63 +122,6 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
     public function getReviseUpdateQtyMaxAppliedValue()
     {
         return (int)$this->getData('revise_update_qty_max_applied_value');
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return int
-     */
-    public function getReviseUpdatePriceMaxAllowedDeviationMode()
-    {
-        return (int)$this->getData('revise_update_price_max_allowed_deviation_mode');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isReviseUpdatePriceMaxAllowedDeviationModeOn()
-    {
-        return $this->getReviseUpdatePriceMaxAllowedDeviationMode() == 1;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isReviseUpdatePriceMaxAllowedDeviationModeOff()
-    {
-        return $this->getReviseUpdatePriceMaxAllowedDeviationMode() == 0;
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return int
-     */
-    public function getReviseUpdatePriceMaxAllowedDeviation()
-    {
-        return (int)$this->getData('revise_update_price_max_allowed_deviation');
-    }
-
-    // ---------------------------------------
-
-    public function isPriceChangedOverAllowedDeviation($onlinePrice, $currentPrice)
-    {
-        if ((float)$onlinePrice == (float)$currentPrice) {
-            return false;
-        }
-
-        if ((float)$onlinePrice <= 0) {
-            return true;
-        }
-
-        if ($this->isReviseUpdatePriceMaxAllowedDeviationModeOff()) {
-            return true;
-        }
-
-        $deviation = round(abs($onlinePrice - $currentPrice) / $onlinePrice * 100, 2);
-
-        return $deviation > $this->getReviseUpdatePriceMaxAllowedDeviation();
     }
 
     // ---------------------------------------
@@ -260,14 +195,6 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
     /**
      * @return bool
      */
-    public function isRelistWhenQtyMagentoHasValue()
-    {
-        return $this->getData('relist_qty_magento') != TemplateSynchronization::QTY_MODE_NONE;
-    }
-
-    /**
-     * @return bool
-     */
     public function isRelistWhenQtyCalculatedHasValue()
     {
         return $this->getData('relist_qty_calculated') != TemplateSynchronization::QTY_MODE_NONE;
@@ -310,14 +237,6 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
     /**
      * @return bool
      */
-    public function isStopWhenQtyMagentoHasValue()
-    {
-        return $this->getData('stop_qty_magento') != TemplateSynchronization::QTY_MODE_NONE;
-    }
-
-    /**
-     * @return bool
-     */
     public function isStopWhenQtyCalculatedHasValue()
     {
         return $this->getData('stop_qty_calculated') != TemplateSynchronization::QTY_MODE_NONE;
@@ -333,36 +252,9 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
 
     //########################################
 
-    public function getListWhenQtyMagentoHasValueType()
-    {
-        return $this->getData('list_qty_magento');
-    }
-
-    public function getListWhenQtyMagentoHasValueMin()
-    {
-        return $this->getData('list_qty_magento_value');
-    }
-
-    public function getListWhenQtyMagentoHasValueMax()
-    {
-        return $this->getData('list_qty_magento_value_max');
-    }
-
-    // ---------------------------------------
-
-    public function getListWhenQtyCalculatedHasValueType()
-    {
-        return $this->getData('list_qty_calculated');
-    }
-
-    public function getListWhenQtyCalculatedHasValueMin()
+    public function getListWhenQtyCalculatedHasValue()
     {
         return $this->getData('list_qty_calculated_value');
-    }
-
-    public function getListWhenQtyCalculatedHasValueMax()
-    {
-        return $this->getData('list_qty_calculated_value_max');
     }
 
     // ---------------------------------------
@@ -374,36 +266,9 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
 
     // ---------------------------------------
 
-    public function getRelistWhenQtyMagentoHasValueType()
-    {
-        return $this->getData('relist_qty_magento');
-    }
-
-    public function getRelistWhenQtyMagentoHasValueMin()
-    {
-        return $this->getData('relist_qty_magento_value');
-    }
-
-    public function getRelistWhenQtyMagentoHasValueMax()
-    {
-        return $this->getData('relist_qty_magento_value_max');
-    }
-
-    // ---------------------------------------
-
-    public function getRelistWhenQtyCalculatedHasValueType()
-    {
-        return $this->getData('relist_qty_calculated');
-    }
-
     public function getRelistWhenQtyCalculatedHasValueMin()
     {
         return $this->getData('relist_qty_calculated_value');
-    }
-
-    public function getRelistWhenQtyCalculatedHasValueMax()
-    {
-        return $this->getData('relist_qty_calculated_value_max');
     }
 
     // ---------------------------------------
@@ -415,36 +280,9 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
 
     // ---------------------------------------
 
-    public function getStopWhenQtyMagentoHasValueType()
-    {
-        return $this->getData('stop_qty_magento');
-    }
-
-    public function getStopWhenQtyMagentoHasValueMin()
-    {
-        return $this->getData('stop_qty_magento_value');
-    }
-
-    public function getStopWhenQtyMagentoHasValueMax()
-    {
-        return $this->getData('stop_qty_magento_value_max');
-    }
-
-    // ---------------------------------------
-
-    public function getStopWhenQtyCalculatedHasValueType()
-    {
-        return $this->getData('stop_qty_calculated');
-    }
-
     public function getStopWhenQtyCalculatedHasValueMin()
     {
         return $this->getData('stop_qty_calculated_value');
-    }
-
-    public function getStopWhenQtyCalculatedHasValueMax()
-    {
-        return $this->getData('stop_qty_calculated_value_max');
     }
 
     // ---------------------------------------

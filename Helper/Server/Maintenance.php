@@ -14,8 +14,6 @@ class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $_dateEnabledFrom;
     protected $_dateEnabledTo;
-    protected $_dateRealFrom;
-    protected $_dateRealTo;
 
     protected $activeRecordFactory;
 
@@ -36,23 +34,13 @@ class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $dateEnabledFrom = $this->getDateEnabledFrom();
         $dateEnabledTo = $this->getDateEnabledTo();
-        $dateRealFrom = $this->getDateRealFrom();
-        $dateRealTo = $this->getDateRealTo();
 
-        if ($dateEnabledFrom == false ||
-            $dateEnabledTo == false ||
-            $dateRealFrom == false ||
-            $dateRealTo == false
-        ) {
+        if ($dateEnabledFrom == false || $dateEnabledTo == false) {
             return false;
         }
 
-        $dateCurrent = $this->getDateCurrent();
-        if ($dateEnabledFrom < $dateRealFrom &&
-            $dateRealFrom < $dateRealTo &&
-            $dateRealTo <= $dateEnabledTo &&
-            $dateEnabledFrom > $dateCurrent
-        ) {
+        $dateCurrent = new \DateTime('now', new \DateTimeZone('UTC'));
+        if ($dateCurrent < $dateEnabledFrom && $dateCurrent < $dateEnabledTo) {
             return true;
         }
 
@@ -63,98 +51,86 @@ class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $dateEnabledFrom = $this->getDateEnabledFrom();
         $dateEnabledTo = $this->getDateEnabledTo();
-        $dateRealFrom = $this->getDateRealFrom();
-        $dateRealTo = $this->getDateRealTo();
 
-        if ($dateEnabledFrom == false ||
-            $dateEnabledTo == false ||
-            $dateRealFrom == false ||
-            $dateRealTo == false
-        ) {
+        if ($dateEnabledFrom == false || $dateEnabledTo == false) {
             return false;
         }
 
-        $dateCurrent = $this->getDateCurrent();
-        if ($dateCurrent > $dateEnabledFrom &&
-            $dateCurrent < $dateEnabledTo
-        ) {
+        $dateCurrent = new \DateTime('now', new \DateTimeZone('UTC'));
+        if ($dateCurrent > $dateEnabledFrom && $dateCurrent < $dateEnabledTo) {
             return true;
         }
 
         return false;
     }
 
-    public function isInRealRange()
-    {
-        if (!$this->isNow()) {
-            return false;
-        }
-
-        $dateCurrent = $this->getDateCurrent();
-        $dateRealFrom = $this->getDateRealFrom();
-        $dateRealTo = $this->getDateRealTo();
-
-        return $dateCurrent >= $dateRealFrom && $dateCurrent <= $dateRealTo;
-    }
-
     //########################################
-
-    public function getDateCurrent()
-    {
-        return new \DateTime('now', new \DateTimeZone('UTC'));
-    }
 
     public function getDateEnabledFrom()
     {
         if ($this->_dateEnabledFrom === null) {
-            $this->_dateEnabledFrom = $this->getDateByKey('/server/maintenance/schedule/date/enabled/from/');
+            $dateEnabledFrom = $this->getHelper('Module')->getRegistry()->getValue(
+                '/server/maintenance/schedule/date/enabled/from/'
+            );
+            $this->_dateEnabledFrom = $dateEnabledFrom
+                ? new \DateTime($dateEnabledFrom, new \DateTimeZone('UTC'))
+                : false;
         }
 
         return $this->_dateEnabledFrom;
     }
 
+    public function setDateEnabledFrom($date)
+    {
+        $this->getHelper('Module')->getRegistry()->setValue(
+            '/server/maintenance/schedule/date/enabled/from/',
+            $date
+        );
+
+        $this->_dateEnabledFrom = $date;
+        return $this;
+    }
+
     public function getDateEnabledTo()
     {
         if ($this->_dateEnabledTo === null) {
-            $this->_dateEnabledTo = $this->getDateByKey('/server/maintenance/schedule/date/enabled/to/');
+            $dateEnabledTo = $this->getHelper('Module')->getRegistry()->getValue(
+                '/server/maintenance/schedule/date/enabled/to/'
+            );
+            $this->_dateEnabledTo = $dateEnabledTo
+                ? new \DateTime($dateEnabledTo, new \DateTimeZone('UTC'))
+                : false;
         }
 
         return $this->_dateEnabledTo;
     }
 
-    public function getDateRealFrom()
+    public function setDateEnabledTo($date)
     {
-        if ($this->_dateRealFrom === null) {
-            $this->_dateRealFrom = $this->getDateByKey('/server/maintenance/schedule/date/real/from/');
-        }
+        $this->getHelper('Module')->getRegistry()->setValue(
+            '/server/maintenance/schedule/date/enabled/to/',
+            $date
+        );
 
-        return $this->_dateRealFrom;
-    }
-
-    public function getDateRealTo()
-    {
-        if ($this->_dateRealTo === null) {
-            $this->_dateRealTo = $this->getDateByKey('/server/maintenance/schedule/date/real/to/');
-        }
-
-        return $this->_dateRealTo;
+        $this->_dateEnabledTo = $date;
+        return $this;
     }
 
     //########################################
 
-    protected function getDateByKey($key)
+    public function processUnexpectedMaintenance()
     {
-        /** @var \Ess\M2ePro\Model\Registry $date */
-        $date = $this->activeRecordFactory->getObject('Registry');
-        $date->loadByKey($key);
-
-        $value = $date->getValue();
-
-        if (empty($value)) {
-            return false;
+        if ($this->isNow()) {
+            return;
         }
 
-        return new \DateTime($date->getValue(), new \DateTimeZone('UTC'));
+        $to = new \DateTime('now', new \DateTimeZone('UTC'));
+        $to->modify('+ 10 minutes');
+        // @codingStandardsIgnoreLine
+        $to->modify('+' . mt_rand(0, 300) . ' second');
+
+        $this->setDateEnabledFrom((new \DateTime('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s'));
+        $this->setDateEnabledTo($to->format('Y-m-d H:i:s'));
     }
 
     //########################################

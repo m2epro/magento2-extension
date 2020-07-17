@@ -56,17 +56,6 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getAutocompleteMaxItems()
-    {
-        $temp = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/view/walmart/autocomplete/',
-            'max_records_quantity'
-        );
-        return $temp <= 0 ? 100 : $temp;
-    }
-
-    //########################################
-
     public function getWizardInstallationNick()
     {
         return self::WIZARD_INSTALLATION_NICK;

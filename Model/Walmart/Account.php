@@ -162,9 +162,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return $this->getData('client_secret');
     }
 
-    public function getOldPrivateKey()
+    public function getPrivateKey()
     {
-        return $this->getData('old_private_key');
+        return $this->getData('private_key');
     }
 
     /**

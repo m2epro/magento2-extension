@@ -10,27 +10,11 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Listing\Product\SnapshotBuilder
+ * @method \Ess\M2ePro\Model\Listing\Product getModel()
  */
-class SnapshotBuilder extends \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel
+class SnapshotBuilder extends \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder
 {
     //########################################
-
-    public function getSnapshot()
-    {
-        $data = $this->model->getData();
-
-        if ($this->model->getChildObject() !== null) {
-            $data = array_merge($data, $this->model->getChildObject()->getData());
-        }
-
-        foreach ($data as &$value) {
-            if ($value !== null && !is_array($value)) {
-                $value = (string)$value;
-            }
-        }
-
-        return $data;
-    }
 
     //########################################
 }

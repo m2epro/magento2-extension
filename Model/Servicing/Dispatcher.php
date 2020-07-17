@@ -17,35 +17,9 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     const MAX_MEMORY_LIMIT = 256;
 
     private $params = [];
-    private $forceTasksRunning = false;
     private $initiator;
 
-    protected $cacheConfig;
-
     //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
-    ) {
-        $this->cacheConfig = $cacheConfig;
-        parent::__construct($helperFactory, $modelFactory);
-    }
-
-    //########################################
-
-    public function getForceTasksRunning()
-    {
-        return $this->forceTasksRunning;
-    }
-
-    public function setForceTasksRunning($value)
-    {
-        $this->forceTasksRunning = (bool)$value;
-    }
-
-    // ---------------------------------------
 
     public function setInitiator($initiator)
     {
@@ -78,13 +52,15 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function process($minInterval = null, $taskCodes = null)
+    public function process($taskCodes = null)
     {
-        $timeLastUpdate = $this->getLastUpdateTimestamp();
+        $lastUpdate = $this->getLastUpdateDate();
+        $currentDate = new \DateTime('now', new \DateTimeZone('UTC'));
 
         if ($this->getInitiator() !== \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER &&
-            $minInterval !== null &&
-            $timeLastUpdate + (int)$minInterval > $this->getHelper('Data')->getCurrentGmtDate(true)) {
+            $lastUpdate !== null &&
+            $lastUpdate->getTimestamp() + self::DEFAULT_INTERVAL > $currentDate->getTimestamp()
+        ) {
             return false;
         }
 
@@ -107,10 +83,10 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         $this->getHelper('Module\Exception')->setFatalErrorHandler();
 
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector(
+        $connectorObj = $dispatcherObject->getConnector(
+            'server',
             'servicing',
-            'update',
-            'data',
+            'updateData',
             $this->getRequestData($taskCodes)
         );
 
@@ -139,7 +115,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
             $taskModel = $this->getTaskModel($taskName);
 
-            if (!$this->getForceTasksRunning() && !$taskModel->isAllowed()) {
+            if (!$taskModel->isAllowed()) {
                 continue;
             }
 
@@ -198,6 +174,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             'marketplaces',
             'cron',
             'statistic',
+            'analytics',
             'maintenance_schedule',
             'product_variation_vocabulary'
         ];
@@ -210,7 +187,8 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     {
         return [
             'exceptions',
-            'statistic'
+            'statistic',
+            'analytics'
         ];
     }
 
@@ -224,25 +202,23 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     // ---------------------------------------
 
-    private function getLastUpdateTimestamp()
+    private function getLastUpdateDate()
     {
-        $lastUpdateDate = $this->cacheConfig->getGroupValue('/servicing/', 'last_update_time');
+        $lastUpdateDate = $this->getHelper('Module')->getRegistry()->getValue('/servicing/last_update_time/');
 
-        if ($lastUpdateDate === null) {
-            return $this->getHelper('Data')->getCurrentGmtDate(true) - 3600*24*30;
+        if ($lastUpdateDate !== null) {
+            $lastUpdateDate = new \DateTime($lastUpdateDate, new \DateTimeZone('UTC'));
         }
 
-        return $this->getHelper('Data')->getDate($lastUpdateDate, true);
+        return $lastUpdateDate;
     }
 
     private function setLastUpdateDateTime()
     {
-        $this->cacheConfig
-            ->setGroupValue(
-                '/servicing/',
-                'last_update_time',
-                $this->getHelper('Data')->getCurrentGmtDate()
-            );
+        $this->getHelper('Module')->getRegistry()->setValue(
+            '/servicing/last_update_time/',
+            $this->getHelper('Data')->getCurrentGmtDate()
+        );
     }
 
     //########################################

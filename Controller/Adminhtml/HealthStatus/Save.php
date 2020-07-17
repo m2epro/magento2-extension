@@ -16,18 +16,6 @@ use Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs;
  */
 class Save extends HealthStatus
 {
-    protected $moduleConfig;
-
-    //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
-        \Ess\M2ePro\Controller\Adminhtml\Context $context
-    ) {
-        $this->moduleConfig = $moduleConfig;
-        parent::__construct($context);
-    }
-
     //########################################
 
     public function execute()
@@ -36,7 +24,7 @@ class Save extends HealthStatus
         $postData = $this->getRequest()->getPost()->toArray();
 
         if (isset($postData['notification_mode'])) {
-            $this->moduleConfig->setGroupValue(
+            $this->getHelper('Module')->getConfig()->setGroupValue(
                 '/health_status/notification/',
                 'mode',
                 (int)$postData['notification_mode']
@@ -44,7 +32,7 @@ class Save extends HealthStatus
         }
 
         if (isset($postData['notification_email'])) {
-            $this->moduleConfig->setGroupValue(
+            $this->getHelper('Module')->getConfig()->setGroupValue(
                 '/health_status/notification/',
                 'email',
                 $postData['notification_email']
@@ -52,7 +40,7 @@ class Save extends HealthStatus
         }
 
         if (isset($postData['notification_level'])) {
-            $this->moduleConfig->setGroupValue(
+            $this->getHelper('Module')->getConfig()->setGroupValue(
                 '/health_status/notification/',
                 'level',
                 (int)$postData['notification_level']

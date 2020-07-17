@@ -9,7 +9,6 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
-use Ess\M2ePro\Model\Ebay\Account;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Store
@@ -22,12 +21,7 @@ class Store extends AbstractForm
             ? $this->getHelper('Data\GlobalData')->getValue('edit_account') : [];
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
-        $defaults = [
-            'ebay_store_title' => '',
-            'ebay_store_url' => '',
-            'ebay_store_subscription_level' => '',
-            'ebay_store_description' => ''
-        ];
+        $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
 
         $formData = array_merge($defaults, $formData);
 

@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Listing;
 /**
  * Class \Ess\M2ePro\Model\Amazon\Listing\ChangeProcessor
  */
-class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\AbstractModel
+class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract
 {
     const INSTRUCTION_TYPE_CONDITION_DATA_CHANGED = 'listing_condition_data_changed';
     const INSTRUCTION_TYPE_SKU_SETTINGS_CHANGED   = 'listing_sku_settings_changed';
@@ -27,7 +27,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\
 
     // ---------------------------------------
 
-    protected function getInstructionsData(\Ess\M2ePro\Model\Template\Diff\AbstractModel $diff, $status)
+    protected function getInstructionsData(\Ess\M2ePro\Model\ActiveRecord\Diff $diff, $status)
     {
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Diff $diff */
 

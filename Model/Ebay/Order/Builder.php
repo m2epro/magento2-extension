@@ -46,14 +46,12 @@ class Builder extends AbstractModel
 
     private $relatedOrders = [];
 
-    protected $moduleConfig;
     protected $activeRecordFactory;
     protected $ebayFactory;
 
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\Ebay\Order\Helper $orderHelper,
@@ -61,7 +59,6 @@ class Builder extends AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
-        $this->moduleConfig = $moduleConfig;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;
         $this->helper = $orderHelper;
@@ -70,6 +67,12 @@ class Builder extends AbstractModel
 
     //########################################
 
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     * @param array $data
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     public function initialize(\Ess\M2ePro\Model\Account $account, array $data = [])
     {
         $this->account = $account;
@@ -81,6 +84,9 @@ class Builder extends AbstractModel
 
     //########################################
 
+    /**
+     * @param array $data
+     */
     protected function initializeData(array $data = [])
     {
         // ---------------------------------------
@@ -179,6 +185,10 @@ class Builder extends AbstractModel
 
     //########################################
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     protected function initializeOrder()
     {
         $this->status = self::STATUS_NOT_MODIFIED;
@@ -213,7 +223,6 @@ class Builder extends AbstractModel
             $isDeleted = false;
 
             foreach ($existOrders as $key => $order) {
-                /** @var \Ess\M2ePro\Model\Order $order */
 
                 $magentoOrderId = $order->getData('magento_order_id');
                 if (!empty($magentoOrderId)) {
@@ -246,11 +255,51 @@ class Builder extends AbstractModel
         // ---------------------------------------
     }
 
+    /**
+     * @return \Ess\M2ePro\Model\Order[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     protected function getExistedOrders()
+    {
+        $orderIds = [$this->getData('ebay_order_id')];
+        if ($oldFormatId = $this->getOldFormatId()) {
+            $orderIds[] = $oldFormatId;
+        }
+
+        $existed = $this->ebayFactory->getObject('Order')->getCollection()
+            ->addFieldToFilter('account_id', $this->account->getId())
+            ->setOrder('id', \Magento\Framework\Data\Collection::SORT_ORDER_DESC);
+
+        $existed->getSelect()->where(
+            sprintf(
+                'ebay_order_id IN (%s) OR selling_manager_id = %s',
+                implode(',', $orderIds),
+                $this->getData('selling_manager_id')
+            )
+        );
+
+        return $existed->getItems();
+    }
+
+    /**
+     * @return string|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function getOldFormatId()
     {
         $transactionIds = [];
         foreach ($this->items as $item) {
             $transactionIds[] = $item['transaction_id'];
+        }
+
+        /**
+         * Transaction ID will be 0 for an auction item
+         */
+        $transactionIds = array_filter($transactionIds);
+        if (empty($transactionIds)) {
+            return null;
         }
 
         $collection = $this->ebayFactory->getObject('Order_Item')->getCollection();
@@ -262,21 +311,20 @@ class Builder extends AbstractModel
         $collection->addFieldToFilter('ebay_order_id', ['neq' => $this->getData('ebay_order_id')]);
         $collection->addFieldToFilter('transaction_id', ['in' => $transactionIds]);
         $possibleOldFormatIds = array_unique($collection->getColumnValues('ebay_order_id'));
-        //--
 
-        $orderIds = [$this->getData('ebay_order_id')];
-        count($possibleOldFormatIds) === 1 && $orderIds[] = reset($possibleOldFormatIds);
+        if (count($possibleOldFormatIds) === 1) {
+            return reset($possibleOldFormatIds);
+        }
 
-        $existed = $this->ebayFactory->getObject('Order')->getCollection()
-            ->addFieldToFilter('account_id', $this->account->getId())
-            ->addFieldToFilter('ebay_order_id', ['in' => $orderIds])
-            ->setOrder('id', \Magento\Framework\Data\Collection::SORT_ORDER_DESC);
-
-        return $existed->getItems();
+        return null;
     }
 
     //########################################
 
+    /**
+     * @return \Ess\M2ePro\Model\Order|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function process()
     {
         if (!$this->canCreateOrUpdateOrder()) {
@@ -294,15 +342,17 @@ class Builder extends AbstractModel
 
         if (!empty($finalFee) && !empty($magentoOrder)) {
 
-            $paymentAdditionalData = $this->getHelper('Data')->unserialize(
-                $magentoOrder->getPayment()->getAdditionalData()
-            );
-            if (!empty($paymentAdditionalData)) {
-                $paymentAdditionalData['channel_final_fee'] = $finalFee;
-                $magentoOrder->getPayment()->setAdditionalData(
-                    $this->getHelper('Data')->serialize($paymentAdditionalData)
+            if (!empty($magentoOrder->getPayment())) {
+                $paymentAdditionalData = $this->getHelper('Data')->unserialize(
+                    $magentoOrder->getPayment()->getAdditionalData()
                 );
-                $magentoOrder->getPayment()->save();
+                if (!empty($paymentAdditionalData)) {
+                    $paymentAdditionalData['channel_final_fee'] = $finalFee;
+                    $magentoOrder->getPayment()->setAdditionalData(
+                        $this->getHelper('Data')->serialize($paymentAdditionalData)
+                    );
+                    $magentoOrder->getPayment()->save();
+                }
             }
         }
 
@@ -320,6 +370,10 @@ class Builder extends AbstractModel
 
     //########################################
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Exception
+     */
     protected function createOrUpdateItems()
     {
         $itemsCollection = $this->order->getItemsCollection();
@@ -342,6 +396,10 @@ class Builder extends AbstractModel
 
     //########################################
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Exception
+     */
     protected function createOrUpdateExternalTransactions()
     {
         $externalTransactionsCollection = $this->order->getChildObject()->getExternalTransactionsCollection();
@@ -377,6 +435,9 @@ class Builder extends AbstractModel
 
     //########################################
 
+    /**
+     * @return mixed
+     */
     public function isRefund()
     {
         $paymentDetails = $this->getData('payment_details');
@@ -403,6 +464,9 @@ class Builder extends AbstractModel
 
     // ---------------------------------------
 
+    /**
+     * @return bool
+     */
     protected function hasExternalTransactions()
     {
         return !empty($this->externalTransactions);
@@ -428,6 +492,9 @@ class Builder extends AbstractModel
 
     //########################################
 
+    /**
+     * @return bool
+     */
     protected function canCreateOrUpdateOrder()
     {
         if ($this->isNew() && $this->isRefund()) {
@@ -486,6 +553,9 @@ class Builder extends AbstractModel
         }
     }
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     private function prepareShippingAddress()
     {
         $shippingDetails = $this->getData('shipping_details');
@@ -500,7 +570,8 @@ class Builder extends AbstractModel
         $shippingAddress['street'] = array_filter($shippingAddress['street']);
 
         $group = '/ebay/order/settings/marketplace_' . (int)$this->getData('marketplace_id') . '/';
-        $useFirstStreetLineAsCompany = $this->moduleConfig->getGroupValue($group, 'use_first_street_line_as_company');
+        $useFirstStreetLineAsCompany = $this->getHelper('Module')->getConfig()
+            ->getGroupValue($group, 'use_first_street_line_as_company');
 
         if ($useFirstStreetLineAsCompany && count($shippingAddress['street']) > 1) {
             $shippingAddress['company'] = array_shift($shippingAddress['street']);
@@ -512,6 +583,9 @@ class Builder extends AbstractModel
 
     //########################################
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function processNew()
     {
         if (!$this->isNew()) {
@@ -542,6 +616,9 @@ class Builder extends AbstractModel
         }
     }
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function processOrdersContainingItemsFromCurrentOrder()
     {
         /** @var $log \Ess\M2ePro\Model\Order\Log */
@@ -632,6 +709,10 @@ class Builder extends AbstractModel
 
     // ---------------------------------------
 
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function hasUpdatedCompletedCheckout()
     {
         if (!$this->isUpdated() || $this->order->getChildObject()->isCheckoutCompleted()) {
@@ -641,6 +722,10 @@ class Builder extends AbstractModel
         return $this->getData('checkout_status') == \Ess\M2ePro\Model\Ebay\Order::CHECKOUT_STATUS_COMPLETED;
     }
 
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function hasUpdatedBuyerMessage()
     {
         if (!$this->isUpdated()) {
@@ -656,6 +741,10 @@ class Builder extends AbstractModel
 
     // ---------------------------------------
 
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function hasUpdatedCompletedPayment()
     {
         if (!$this->isUpdated() || $this->order->getChildObject()->isPaymentCompleted()) {
@@ -667,6 +756,10 @@ class Builder extends AbstractModel
 
     // ---------------------------------------
 
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function hasUpdatedCompletedShipping()
     {
         if (!$this->isUpdated() || $this->order->getChildObject()->isShippingCompleted()) {
@@ -678,6 +771,10 @@ class Builder extends AbstractModel
 
     // ---------------------------------------
 
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function hasUpdatedPaymentData()
     {
         if (!$this->isUpdated()) {
@@ -699,6 +796,10 @@ class Builder extends AbstractModel
         return false;
     }
 
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function hasUpdatedShippingTaxData()
     {
         if (!$this->isUpdated()) {
@@ -725,6 +826,9 @@ class Builder extends AbstractModel
 
     // ---------------------------------------
 
+    /**
+     * @return bool
+     */
     protected function hasUpdatedItemsCount()
     {
         if (!$this->isUpdated()) {
@@ -736,6 +840,10 @@ class Builder extends AbstractModel
 
     // ---------------------------------------
 
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function hasUpdatedEmail()
     {
         if (!$this->isUpdated()) {
@@ -754,11 +862,18 @@ class Builder extends AbstractModel
 
     //########################################
 
+    /**
+     * @return bool
+     */
     protected function hasUpdates()
     {
         return !empty($this->updates);
     }
 
+    /**
+     * @param $update
+     * @return bool
+     */
     protected function hasUpdate($update)
     {
         return in_array($update, $this->updates);
@@ -798,6 +913,9 @@ class Builder extends AbstractModel
         }
     }
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function processMagentoOrderUpdates()
     {
         if (!$this->hasUpdates()) {

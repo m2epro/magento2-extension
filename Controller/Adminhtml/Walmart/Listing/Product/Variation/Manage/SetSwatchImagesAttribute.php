@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Mana
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
-use Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\AbstractModel;
+use Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\ChangeProcessorAbstract;
 use Ess\M2ePro\Model\Walmart\Template\Description\ChangeProcessor;
 
 /**
@@ -45,7 +45,7 @@ class SetSwatchImagesAttribute extends Main
                 [
                     'listing_product_id' => $childListingProduct->getId(),
                     'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                    'type'               => AbstractModel::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
+                    'type'               => ChangeProcessorAbstract::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
                     'initiator'          => ChangeProcessor::INSTRUCTION_INITIATOR,
                     'priority'           => 10,
                 ]

@@ -37,13 +37,13 @@ class AfterGetTokenManual extends AfterGetTokenAbstract
         }
 
         return array_merge(
+            $this->getAmazonAccountDefaultSettings(),
             [
                 'title'          => $params['merchant_id'],
                 'marketplace_id' => $params['marketplace_id'],
                 'merchant_id'    => $params['merchant_id'],
                 'token'          => $params['token'],
-            ],
-            $this->getAmazonAccountDefaultSettings()
+            ]
         );
     }
 

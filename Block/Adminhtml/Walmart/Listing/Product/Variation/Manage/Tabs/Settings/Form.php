@@ -122,7 +122,7 @@ HTML;
                 'class' => 'action primary',
                 'label' => $this->getListingProductTypeModel()->hasChannelAttributes() ?
                     $this->__('Change') : $this->__('Set Attributes'),
-                'onclick' => 'ListingGridHandlerObj.variationProductManageHandler.changeChannelAttributes(this)'
+                'onclick' => 'ListingGridObj.variationProductManageHandler.changeChannelAttributes(this)'
             ])->toHtml();
 
             $html .= <<<HTML
@@ -176,7 +176,7 @@ HTML;
         $buttonConfirm = $this->createBlock('Magento\Button')->setData([
             'class' => 'action primary',
             'label' => $this->__('Confirm'),
-            'onclick' => 'ListingGridHandlerObj.variationProductManageHandler.setChannelAttributes(this)'
+            'onclick' => 'ListingGridObj.variationProductManageHandler.setChannelAttributes(this)'
         ])->toHtml();
 
         $html .= <<<HTML
@@ -186,7 +186,7 @@ HTML;
             <tr id="change_channel_attributes_action">
                 <td class="label" style="border: none; text-align: right;">
                     <a href="javascript:void(0);"
-                       onclick="ListingGridHandlerObj.variationProductManageHandler.cancelChannelAttributes(this);">
+                       onclick="ListingGridObj.variationProductManageHandler.cancelChannelAttributes(this);">
                        {$this->__('Cancel')}</a>&nbsp;&nbsp;
                     {$buttonConfirm}
                 </td>
@@ -209,8 +209,8 @@ HTML;
         if ($this->getListingProductTypeModel()->hasChannelAttributes()) {
             $this->js->add(
                 <<<JS
-    ListingGridHandlerObj.variationProductManageHandler.virtualWalmartMatchedAttributes = false;
-    ListingGridHandlerObj.variationProductManageHandler.walmartVariationSet = false;
+    ListingGridObj.variationProductManageHandler.virtualWalmartMatchedAttributes = false;
+    ListingGridObj.variationProductManageHandler.walmartVariationSet = false;
 JS
             );
 
@@ -301,14 +301,14 @@ HTML;
 
                     $this->js->add(
                         <<<JS
-    ListingGridHandlerObj.variationProductManageHandler.matchingType = ListingGridHandlerObj
+    ListingGridObj.variationProductManageHandler.matchingType = ListingGridObj
         .variationProductManageHandler.MATCHING_TYPE_VIRTUAL_WALMART;
-    ListingGridHandlerObj.variationProductManageHandler.matchedAttributes = {$matchedAttriutes};
-    ListingGridHandlerObj.variationProductManageHandler.productAttributes = {$productAttributes};
-    ListingGridHandlerObj.variationProductManageHandler.destinationAttributes = {$destinationAttributes};
-    ListingGridHandlerObj.variationProductManageHandler.magentoVariationSet = {$magentoVariationSet};
+    ListingGridObj.variationProductManageHandler.matchedAttributes = {$matchedAttriutes};
+    ListingGridObj.variationProductManageHandler.productAttributes = {$productAttributes};
+    ListingGridObj.variationProductManageHandler.destinationAttributes = {$destinationAttributes};
+    ListingGridObj.variationProductManageHandler.magentoVariationSet = {$magentoVariationSet};
 
-    ListingGridHandlerObj.variationProductManageHandler.renderMatchedAttributesNotSetView();
+    ListingGridObj.variationProductManageHandler.renderMatchedAttributesNotSetView();
 JS
                     );
                 } elseif ($this->getMatcherAttributes()->isDestinationAmountGreater()) {
@@ -317,13 +317,13 @@ JS
 
                     $this->js->add(
                         <<<JS
-    ListingGridHandlerObj.variationProductManageHandler.matchingType = ListingGridHandlerObj
+    ListingGridObj.variationProductManageHandler.matchingType = ListingGridObj
         .variationProductManageHandler.MATCHING_TYPE_VIRTUAL_MAGENTO;
 
-    ListingGridHandlerObj.variationProductManageHandler.matchedAttributes = {$matchedAttriutes};
-    ListingGridHandlerObj.variationProductManageHandler.destinationAttributes = {$destinationAttributes};
+    ListingGridObj.variationProductManageHandler.matchedAttributes = {$matchedAttriutes};
+    ListingGridObj.variationProductManageHandler.destinationAttributes = {$destinationAttributes};
 
-    ListingGridHandlerObj.variationProductManageHandler.renderMatchedAttributesNotSetView();
+    ListingGridObj.variationProductManageHandler.renderMatchedAttributesNotSetView();
 JS
                     );
                 }
@@ -443,14 +443,14 @@ HTML;
                 $changeButton = $this->createBlock('Magento\Button')->setData([
                     'class' => 'action primary',
                     'label' => $this->hasMatchedAttributes() ? $this->__('Change') : $this->__('Set Attributes'),
-                    'onclick' => 'ListingGridHandlerObj.variationProductManageHandler.changeMatchedAttributes(this)'
+                    'onclick' => 'ListingGridObj.variationProductManageHandler.changeMatchedAttributes(this)'
                 ])->toHtml();
 
                 $confirmButton = $this->createBlock('Magento\Button')->setData([
                     'class' => 'action primary',
                     'style' => 'display: none;',
                     'label' => $this->__('Confirm'),
-                    'onclick' => 'ListingGridHandlerObj.variationProductManageHandler.setMatchedAttributes()'
+                    'onclick' => 'ListingGridObj.variationProductManageHandler.setMatchedAttributes()'
                 ])->toHtml();
 
                 $html .= <<<HTML
@@ -458,7 +458,7 @@ HTML;
             <td class="label" colspan="2" style="border: none; text-align: right; {$style}">
                 $changeButton
                 <a href="javascript:void(0);"
-                   onclick="ListingGridHandlerObj.variationProductManageHandler.cancelMatchedAttributes(this);"
+                   onclick="ListingGridObj.variationProductManageHandler.cancelMatchedAttributes(this);"
                    style="display: none;">{$this->__('Cancel')}</a>&nbsp;&nbsp;
                 {$confirmButton}
             </td>
@@ -495,7 +495,7 @@ HTML;
 
             $button = $this->createBlock('Magento\Button')->addData([
                 'label' => $this->__('Change'),
-                'onclick' => 'ListingGridHandlerObj.variationProductManageHandler.setSwatchImagesAttribute()',
+                'onclick' => 'ListingGridObj.variationProductManageHandler.setSwatchImagesAttribute()',
                 'class' => 'action-primary',
                 'style' => 'margin-left: 70px;'
             ]);

@@ -116,10 +116,8 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
             return false;
         }
 
-        $isPriceConvertEnabled = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/magento/attribute/',
-            'price_type_converting'
-        );
+        $isPriceConvertEnabled = $this->getHelper('Module_Configuration')
+            ->isEnableMagentoAttributePriceTypeConvertingMode();
 
         if (!$isPriceConvertEnabled) {
             return false;

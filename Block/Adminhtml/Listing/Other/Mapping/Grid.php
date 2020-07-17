@@ -79,7 +79,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'width'        => '100px',
             'index'        => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => [$this, 'callbackColumnProductId']
+            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
         ]);
 
         $this->addColumn('title', [
@@ -131,37 +131,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     }
 
     //########################################
-
-    public function callbackColumnProductId($productId, $product, $column, $isExport)
-    {
-        $url = $this->getUrl('catalog/product/edit', ['id' => $productId]);
-        $withoutImageHtml = '<a href="'.$url.'" target="_blank">'.$productId.'</a>&nbsp;';
-
-        $showProductsThumbnails = (bool)(int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/view/',
-            'show_products_thumbnails'
-        );
-        if (!$showProductsThumbnails) {
-            return $withoutImageHtml;
-        }
-
-        /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
-        $magentoProduct = $this->modelFactory->getObject('Magento\Product');
-        $magentoProduct->setProduct($product);
-
-        $imageUrlResized = $magentoProduct->getThumbnailImage();
-        if ($imageUrlResized === null) {
-            return $withoutImageHtml;
-        }
-
-        $imageUrlResizedUrl = $imageUrlResized->getUrl();
-
-        $imageHtml = $productId.'<div style="margin-top: 5px">'.
-            '<img style="max-width: 100px; max-height: 100px;" src="' .$imageUrlResizedUrl. '" /></div>';
-        $withImageHtml = str_replace('>'.$productId.'<', '>'.$imageHtml.'<', $withoutImageHtml);
-
-        return $withImageHtml;
-    }
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {

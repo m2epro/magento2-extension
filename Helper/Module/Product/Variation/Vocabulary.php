@@ -26,20 +26,17 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 
     protected $modelFactory;
     protected $activeRecordFactory;
-    protected $moduleConfig;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->moduleConfig = $moduleConfig;
         parent::__construct($helperFactory, $context);
     }
 
@@ -70,27 +67,14 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function addAttributeToLocalStorage($productAttribute, $channelAttribute)
     {
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::LOCAL_DATA_REGISTRY_KEY,
-            'key',
-            false
-        );
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $vocabularyData = $registry->getSettings('value');
+        $vocabularyData = $this->getHelper('Module')->getRegistry()->getValueFromJson(self::LOCAL_DATA_REGISTRY_KEY);
         $vocabularyData[$channelAttribute]['names'][] = $productAttribute;
 
         if (!isset($vocabularyData[$channelAttribute]['options'])) {
             $vocabularyData[$channelAttribute]['options'] = [];
         }
 
-        $registry->setData('key', self::LOCAL_DATA_REGISTRY_KEY);
-        $registry->setSettings('value', $vocabularyData)->save();
+        $this->getHelper('Module')->getRegistry()->setValue(self::LOCAL_DATA_REGISTRY_KEY, $vocabularyData);
 
         $this->removeLocalDataCache();
     }
@@ -122,19 +106,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function removeAttributeFromLocalStorage($productAttribute, $channelAttribute)
     {
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::LOCAL_DATA_REGISTRY_KEY,
-            'key',
-            false
-        );
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $vocabularyData = $registry->getSettings('value');
+        $vocabularyData = $this->getHelper('Module')->getRegistry()->getValueFromJson(self::LOCAL_DATA_REGISTRY_KEY);
         if (empty($vocabularyData[$channelAttribute]['names'])) {
             return;
         }
@@ -147,8 +119,10 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 
         $vocabularyData[$channelAttribute]['names'] = array_values($vocabularyData[$channelAttribute]['names']);
 
-        $registry->setData('key', self::LOCAL_DATA_REGISTRY_KEY);
-        $registry->setSettings('value', $vocabularyData)->save();
+        $this->getHelper('Module')->getRegistry()->setValue(
+            self::LOCAL_DATA_REGISTRY_KEY,
+            $vocabularyData
+        );
 
         $this->removeLocalDataCache();
     }
@@ -259,19 +233,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function addOptionToLocalStorage($productOption, $channelOption, $channelAttribute)
     {
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::LOCAL_DATA_REGISTRY_KEY,
-            'key',
-            false
-        );
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $vocabularyData = $registry->getSettings('value');
+        $vocabularyData = $this->getHelper('Module')->getRegistry()->getValueFromJson(self::LOCAL_DATA_REGISTRY_KEY);
 
         if (!isset($vocabularyData[$channelAttribute]['names'])) {
             $vocabularyData[$channelAttribute]['names'] = [];
@@ -298,8 +260,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
             ];
         }
 
-        $registry->setData('key', self::LOCAL_DATA_REGISTRY_KEY);
-        $registry->setSettings('value', $vocabularyData)->save();
+        $this->getHelper('Module')->getRegistry()->setValue(self::LOCAL_DATA_REGISTRY_KEY, $vocabularyData);
 
         $this->removeLocalDataCache();
     }
@@ -332,19 +293,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function removeOptionFromLocalStorage($productOption, $productOptionsGroup, $channelAttribute)
     {
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::LOCAL_DATA_REGISTRY_KEY,
-            'key',
-            false
-        );
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $vocabularyData = $registry->getSettings('value');
+        $vocabularyData = $this->getHelper('Module')->getRegistry()->getValueFromJson(self::LOCAL_DATA_REGISTRY_KEY);
         if (empty($vocabularyData[$channelAttribute]['options'])) {
             return;
         }
@@ -365,8 +314,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
             }
         }
 
-        $registry->setData('key', self::LOCAL_DATA_REGISTRY_KEY);
-        $registry->setSettings('value', $vocabularyData)->save();
+        $this->getHelper('Module')->getRegistry()->setValue(self::LOCAL_DATA_REGISTRY_KEY, $vocabularyData);
 
         $this->removeLocalDataCache();
     }
@@ -470,19 +418,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
             }
         }
 
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::LOCAL_DATA_REGISTRY_KEY,
-            'key',
-            false
-        );
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $vocabularyData = $registry->getSettings('value');
+        $vocabularyData = $this->getHelper('Module')->getRegistry()->getValueFromJson(self::LOCAL_DATA_REGISTRY_KEY);
 
         if (!$this->getHelper('Module')->isDevelopmentEnvironment()) {
             $this->setLocalDataCache($vocabularyData);
@@ -510,18 +446,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
             return $cacheData;
         }
 
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::SERVER_DATA_REGISTRY_KEY,
-            'key',
-            false
-        );
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-        $vocabularyData = $registry->getSettings('value');
+        $vocabularyData = $this->getHelper('Module')->getRegistry()->getValueFromJson(self::SERVER_DATA_REGISTRY_KEY);
 
         $this->setServerDataCache($vocabularyData);
 
@@ -547,18 +472,8 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
             return $cacheData;
         }
 
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::SERVER_METADATA_REGISTRY_KEY,
-            'key',
-            false
-        );
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-        $vocabularyData = $registry->getSettings('value');
+        $vocabularyData = $this->getHelper('Module')->getRegistry()
+            ->getValueFromJson(self::SERVER_METADATA_REGISTRY_KEY);
 
         $this->setServerMetadataCache($vocabularyData);
 
@@ -602,60 +517,21 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function setLocalData(array $data)
     {
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::LOCAL_DATA_REGISTRY_KEY,
-            'key',
-            false
-        );
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $registry->setData('key', self::LOCAL_DATA_REGISTRY_KEY);
-        $registry->setSettings('value', $data)->save();
+        $this->getHelper('Module')->getRegistry()->setValue(self::LOCAL_DATA_REGISTRY_KEY, $data);
 
         $this->removeLocalDataCache();
     }
 
     public function setServerData(array $data)
     {
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::SERVER_DATA_REGISTRY_KEY,
-            'key',
-            false
-        );
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $registry->setData('key', self::SERVER_DATA_REGISTRY_KEY);
-        $registry->setSettings('value', $data)->save();
+        $this->getHelper('Module')->getRegistry()->setValue(self::SERVER_DATA_REGISTRY_KEY, $data);
 
         $this->removeServerDataCache();
     }
 
     public function setServerMetadata(array $data)
     {
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::SERVER_METADATA_REGISTRY_KEY,
-            'key',
-            false
-        );
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $registry->setData('key', self::SERVER_METADATA_REGISTRY_KEY);
-        $registry->setSettings('value', $data)->save();
+        $this->getHelper('Module')->getRegistry()->setValue(self::SERVER_METADATA_REGISTRY_KEY, $data);
 
         $this->removeServerMetadataCache();
     }
@@ -724,17 +600,17 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 
     protected function getConfigValue($group, $key)
     {
-        return $this->moduleConfig->getGroupValue($group, $key);
+        return $this->getHelper('Module')->getConfig()->getGroupValue($group, $key);
     }
 
     protected function setConfigValue($group, $key, $value)
     {
-        return $this->moduleConfig->setGroupValue($group, $key, $value);
+        return $this->getHelper('Module')->getConfig()->setGroupValue($group, $key, $value);
     }
 
     protected function unsetConfigValue($group, $key)
     {
-        return $this->moduleConfig->deleteGroupValue($group, $key);
+        return $this->getHelper('Module')->getConfig()->deleteGroupValue($group, $key);
     }
 
     //########################################

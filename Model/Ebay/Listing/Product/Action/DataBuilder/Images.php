@@ -16,10 +16,6 @@ use Magento\Eav\Model\ResourceModel\Attribute;
  */
 class Images extends AbstractModel
 {
-    const UPLOAD_IMAGES_MODE_AUTO = 1;
-    const UPLOAD_IMAGES_MODE_SELF = 2;
-    const UPLOAD_IMAGES_MODE_EPS  = 3;
-
     //########################################
 
     public function getBuilderData()
@@ -72,6 +68,10 @@ class Images extends AbstractModel
 
         if ($this->getMagentoProduct()->isGroupedType()) {
             $attributeLabels = [\Ess\M2ePro\Model\Magento\Product\Variation::GROUPED_PRODUCT_ATTRIBUTE_LABEL];
+        }
+
+        if ($this->getMagentoProduct()->isBundleType()) {
+            $attributeLabels = $this->getBundleImagesAttributeLabels();
         }
 
         if (empty($attributeLabels)) {
@@ -147,6 +147,16 @@ class Images extends AbstractModel
         }
 
         return $attributeLabels;
+    }
+
+    protected function getBundleImagesAttributeLabels()
+    {
+        $variations = $this->getMagentoProduct()->getVariationInstance()->getVariationsTypeStandard();
+        if (!empty($variations['set'])) {
+            return [(string)key($variations['set'])];
+        }
+
+        return [];
     }
 
     protected function getImagesDataByAttributeLabels(array $attributeLabels)

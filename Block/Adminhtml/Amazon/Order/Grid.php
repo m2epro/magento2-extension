@@ -353,41 +353,15 @@ HTML;
             }
         }
 
-        $logIconHtml = $this->getViewLogIconHtml($row->getId());
+        /** @var \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIcon\Order $viewLogIcon */
+        $viewLogIcon = $this->createBlock('Grid_Column_Renderer_ViewLogIcon_Order');
+        $logIconHtml = $viewLogIcon->render($row);
 
         if ($logIconHtml !== '') {
             return '<div style="min-width: 100px">' . $returnString . $logIconHtml . '</div>';
         }
 
         return $returnString;
-    }
-
-    private function getViewLogIconHtml($orderId)
-    {
-        $orderId = (int)$orderId;
-
-        // Prepare collection
-        // ---------------------------------------
-        $orderLogsCollection = $this->activeRecordFactory->getObject('Order\Log')->getCollection()
-            ->addFieldToFilter('order_id', $orderId)
-            ->setOrder('id', 'DESC');
-        $orderLogsCollection->getSelect()
-            ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::ACTIONS_COUNT);
-
-        if (!$orderLogsCollection->getSize()) {
-            return '';
-        }
-
-        // ---------------------------------------
-
-        $summary = $this->createBlock('Order_Log_Grid_LastActions')->setData([
-            'entity_id' => $orderId,
-            'logs'      => $orderLogsCollection->getItems(),
-            'view_help_handler' => 'OrderObj.viewOrderHelp',
-            'hide_help_handler' => 'OrderObj.hideOrderHelp',
-        ]);
-
-        return $summary->toHtml();
     }
 
     // ---------------------------------------

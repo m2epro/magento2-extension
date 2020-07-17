@@ -177,7 +177,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
 
         $categoryTemplate = $this->getEbayListingProduct()->getCategoryTemplate();
 
-        return array_unique($categoryTemplate->getMainCategoryAttributes());
+        return array_unique($categoryTemplate->getCategoryAttributes());
     }
 
     public function getShippingTrackingAttributes()

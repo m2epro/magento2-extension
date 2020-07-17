@@ -44,7 +44,7 @@ class Active extends AbstractModel
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
             \Ess\M2ePro\Model\Ebay\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
             \Ess\M2ePro\Model\Ebay\Listing\Product::INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED,
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\AbstractModel::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_STATUS_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_QTY_CHANGED,
@@ -389,48 +389,11 @@ class Active extends AbstractModel
             }
         }
 
-        if ($ebaySynchronizationTemplate->isStopWhenQtyMagentoHasValue()) {
-            $productQty = (int)$listingProduct->getMagentoProduct()->getQty(true);
-
-            $typeQty = (int)$ebaySynchronizationTemplate->getStopWhenQtyMagentoHasValueType();
-            $minQty = (int)$ebaySynchronizationTemplate->getStopWhenQtyMagentoHasValueMin();
-            $maxQty = (int)$ebaySynchronizationTemplate->getStopWhenQtyMagentoHasValueMax();
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_LESS &&
-                $productQty <= $minQty) {
-                return true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_MORE &&
-                $productQty >= $minQty) {
-                return true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_BETWEEN &&
-                $productQty >= $minQty && $productQty <= $maxQty) {
-                return true;
-            }
-        }
-
         if ($ebaySynchronizationTemplate->isStopWhenQtyCalculatedHasValue()) {
             $productQty = (int)$ebayListingProduct->getQty();
-
-            $typeQty = (int)$ebaySynchronizationTemplate->getStopWhenQtyCalculatedHasValueType();
             $minQty = (int)$ebaySynchronizationTemplate->getStopWhenQtyCalculatedHasValueMin();
-            $maxQty = (int)$ebaySynchronizationTemplate->getStopWhenQtyCalculatedHasValueMax();
 
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_LESS &&
-                $productQty <= $minQty) {
-                return true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_MORE &&
-                $productQty >= $minQty) {
-                return true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_BETWEEN &&
-                $productQty >= $minQty && $productQty <= $maxQty) {
+            if ($productQty <= $minQty) {
                 return true;
             }
         }
@@ -526,41 +489,21 @@ class Active extends AbstractModel
 
         if (!$ebayListingProduct->isVariationsReady()) {
             if ($ebayListingProduct->isListingTypeFixed()) {
-                $needRevise = $ebaySynchronizationTemplate->isPriceChangedOverAllowedDeviation(
-                    $ebayListingProduct->getOnlineCurrentPrice(),
-                    $ebayListingProduct->getFixedPrice()
-                );
-
-                if ($needRevise) {
+                if ($ebayListingProduct->getOnlineCurrentPrice() != $ebayListingProduct->getFixedPrice()) {
                     return true;
                 }
             }
 
             if ($ebayListingProduct->isListingTypeAuction()) {
-                $needRevise = $ebaySynchronizationTemplate->isPriceChangedOverAllowedDeviation(
-                    $ebayListingProduct->getOnlineStartPrice(),
-                    $ebayListingProduct->getStartPrice()
-                );
-
-                if ($needRevise) {
+                if ($ebayListingProduct->getOnlineStartPrice() != $ebayListingProduct->getStartPrice()) {
                     return true;
                 }
 
-                $needRevise = $ebaySynchronizationTemplate->isPriceChangedOverAllowedDeviation(
-                    $ebayListingProduct->getOnlineReservePrice(),
-                    $ebayListingProduct->getReservePrice()
-                );
-
-                if ($needRevise) {
+                if ($ebayListingProduct->getOnlineReservePrice() != $ebayListingProduct->getReservePrice()) {
                     return true;
                 }
 
-                $needRevise = $ebaySynchronizationTemplate->isPriceChangedOverAllowedDeviation(
-                    $ebayListingProduct->getOnlineBuyItNowPrice(),
-                    $ebayListingProduct->getBuyItNowPrice()
-                );
-
-                if ($needRevise) {
+                if ($ebayListingProduct->getOnlineBuyItNowPrice() != $ebayListingProduct->getBuyItNowPrice()) {
                     return true;
                 }
             }
@@ -572,12 +515,7 @@ class Active extends AbstractModel
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $ebayVariation */
                 $ebayVariation = $variation->getChildObject();
 
-                $needRevise = $ebaySynchronizationTemplate->isPriceChangedOverAllowedDeviation(
-                    $ebayVariation->getOnlinePrice(),
-                    $ebayVariation->getPrice()
-                );
-
-                if ($needRevise) {
+                if ($ebayVariation->getOnlinePrice() != $ebayVariation->getPrice()) {
                     return true;
                 }
             }

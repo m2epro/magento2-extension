@@ -17,11 +17,11 @@ class GetAutoCategoryFormHtml extends \Ess\M2ePro\Controller\Adminhtml\Walmart\L
 
     public function execute()
     {
-        // ---------------------------------------
-        $listingId = $this->getRequest()->getParam('id');
-        $listing = $this->walmartFactory->getCachedObjectLoaded('Listing', $listingId);
+        $listing = $this->walmartFactory->getCachedObjectLoaded(
+            'Listing',
+            $this->getRequest()->getParam('listing_id')
+        );
         $this->getHelper('Data\GlobalData')->setValue('walmart_listing', $listing);
-        // ---------------------------------------
 
         $block = $this->createBlock('Walmart_Listing_AutoAction_Mode_Category_Form');
 

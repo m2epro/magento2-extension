@@ -105,7 +105,7 @@ define([
                             text: M2ePro.translator.translate('Confirm'),
                             class: 'action primary',
                             click: function () {
-                                ListingGridHandlerObj.saveSearchSettings();
+                                ListingGridObj.saveSearchSettings();
                                 self.searchSettnigsPopup.modal('closeModal');
                             }
                         }]
@@ -163,14 +163,14 @@ define([
                         title: M2ePro.translator.translate('new_asin_popup_title'),
                         type: 'popup',
                         buttons: [{
-                            class: 'action-secondary action-dismiss',
+                            class: 'action-secondary action-dismiss add_products_search_asin_new_asin_popup_no',
                             text: M2ePro.translator.translate('No'),
                             click: function () {
                                 self.showNewAsinPopup(0);
                             }
                         }, {
+                            class: 'action-primary action-accept add_products_search_asin_new_asin_popup_yes',
                             text: M2ePro.translator.translate('Yes'),
-                            class: 'action-primary action-accept',
                             click: function () {
                                 self.showNewAsinPopup(1);
                             }

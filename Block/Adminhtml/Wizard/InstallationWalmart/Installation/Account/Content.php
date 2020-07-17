@@ -125,35 +125,19 @@ HTML
             [
                 'container_id' => 'marketplaces_consumer_id_container',
                 'name'         => 'consumer_id',
-                'label'        => $this->__('Consumer ID / Partner ID'),
-                'class'        => 'M2ePro-marketplace-consumer-id',
-                'css_class'    => 'marketplace-required-field marketplace-required-field-id-not-null',
+                'label'        => $this->__('Consumer ID'),
+                'css_class'    => "marketplace-required-field marketplace-required-field-id{$marketplaceCA}",
                 'required'     => true,
-                'tooltip'      => $this->__(
-                    <<<HTML
-<span class="marketplace-required-field marketplace-required-field-id{$marketplaceCA}">
-    A unique seller identifier on the website.
-</span>
-<span class="marketplace-required-field marketplace-required-field-id{$marketplaceUS}">
-    A unique seller identifier on the website.<br>
-    <b>Note:</b> You can find the instruction on how to get the Consumer ID / Partner ID 
-    <a target="_blank" href="%url%">here</a>.
-</span>
-HTML
-                    ,
-                    $this->getHelper('Module_Support')->getSupportUrl(
-                        'how-to-guide/1570387-how-to-get-my-consumer-id-partner-id-to-auth-m2e-on-walmart-us'
-                    )
-                )
+                'tooltip'      => $this->__('A unique seller identifier on the website.'),
             ]
         );
 
         $fieldset->addField(
-            'old_private_key',
+            'private_key',
             'textarea',
             [
-                'container_id' => 'marketplaces_old_private_key_container',
-                'name'         => 'old_private_key',
+                'container_id' => 'marketplaces_private_key_container',
+                'name'         => 'private_key',
                 'label'        => $this->__('Private Key'),
                 'class'        => "M2ePro-marketplace-merchant",
                 'css_class'    => "marketplace-required-field marketplace-required-field-id{$marketplaceCA}",
@@ -194,28 +178,30 @@ HTML
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(Walmart::class));
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Wizard\InstallationWalmart'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Account'));
+
+        $this->js->addRequireJs(
+            [
+                'wa' => 'M2ePro/Walmart/Account'
+            ],
+            <<<JS
+
+WalmartAccountObj = new WalmartAccount();
+WalmartAccountObj.initTokenValidation();
+JS
+        );
 
         $this->js->addOnReadyJs(<<<JS
 
-        wait(function() {
-            return typeof InstallationWalmartWizardObj != 'undefined';
-        }, function() {
-            
-            $('marketplace_id').simulate('change');
-            
-            jQuery.validator.addMethod('M2ePro-validate-consumer-id', function(value, el) {
-
-                if (InstallationWalmartWizardObj.isElementHiddenFromPage(el)) {
-                    return true;
-                }
-
-                // Partner ID example: 10000004781
-                // Consumer ID Example: c2cfff2c-57a9-4f0a-b5ab-00b000dfe000
-                return /^[0-9]{11}$/.test(value) || /^[a-f0-9-]{36}$/.test(value);
-
-            }, M2ePro.translator.translate('The specified Consumer ID / Partner ID is not valid'));
-            
-        }, 50);
+        wait(
+            function() {
+                return typeof InstallationWalmartWizardObj != 'undefined';
+            }, 
+            function() {
+                $('marketplace_id').simulate('change');
+            },
+            50
+        );
 JS
         );
 
@@ -227,28 +213,17 @@ JS
 
     protected function _beforeToHtml()
     {
-        $this->jsTranslator->add(
-            'An error during of account creation.',
-            $this->__('An error during of account creation.')
-        );
-
-        $this->jsTranslator->add(
-            'Please wait while Synchronization is finished.',
-            $this->__('Please wait while Synchronization is finished.')
-        );
-
-        $this->jsTranslator->add('Consumer ID', 'Consumer ID');
-        $this->jsTranslator->add('Consumer ID / Partner ID', 'Consumer ID / Partner ID');
-        $this->jsTranslator->add(
-            'The specified Consumer ID / Partner ID is not valid',
-            $this->__(
-                'The specified Consumer ID / Partner ID is not valid.
-                Please find the instruction on how to get it <a target="_blank" href="%url%">here</a>.',
-                $this->getHelper('Module_Support')->getSupportUrl(
-                    'how-to-guide/1570387-how-to-get-my-consumer-id-partner-id-to-auth-m2e-on-walmart-us'
-                )
-            )
-        );
+        $this->jsTranslator->addTranslations([
+             'M2E Pro was not able to get access to the Walmart Account' => $this->__(
+                 'M2E Pro could not get access to your Walmart account. <br>
+                 For Walmart CA, please check if you entered valid Consumer ID and Private Key. <br>
+                 For Walmart US, please ensure to provide M2E Pro with full access permissions
+                 to all API sections and enter valid Consumer ID, Client ID, and Client Secret.'
+             ),
+             'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%' => $this->__(
+                 'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%'
+             ),
+        ]);
 
         return parent::_beforeToHtml();
     }

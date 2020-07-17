@@ -8,12 +8,12 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Synchronization;
 
-use Ess\M2ePro\Model\Ebay\Template\Synchronization as SynchronizationPolicy;
+use Ess\M2ePro\Model\Template\Synchronization;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Template\Synchronization\Builder
  */
-class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
+class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 {
     /** @var \Magento\Framework\App\RequestInterface */
     protected $request;
@@ -33,286 +33,201 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
     //########################################
 
-    public function build(array $data)
+    protected function prepareData()
     {
-        if (empty($data)) {
-            return null;
-        }
+        $this->validate();
 
-        $this->validate($data);
+        $data = parent::prepareData();
 
-        $data = $this->prepareData($data);
+        $this->rawData = $this->getHelper('Data')->arrayReplaceRecursive($this->getDefaultData(), $this->rawData);
 
-        $template = $this->ebayFactory->getObject('Template\Synchronization');
-
-        if (isset($data['id'])) {
-            $template->load($data['id']);
-            $template->addData($data);
-            $template->getChildObject()->addData($data);
-        } else {
-            $template->setData($data);
-        }
-
-        $template->save();
-
-        return $template;
-    }
-
-    //########################################
-
-    protected function prepareData(array &$data)
-    {
-        $prepared = parent::prepareData($data);
-
-        $defaultData = $this->activeRecordFactory->getObject('Ebay_Template_Synchronization')->getDefaultSettings();
-
-        $data = $this->getHelper('Data')->arrayReplaceRecursive($defaultData, $data);
-
-        $prepared = array_merge(
-            $prepared,
-            $this->prepareListData($data),
-            $this->prepareReviseData($data),
-            $this->prepareRelistData($data),
-            $this->prepareStopData($data)
+        $data = array_merge(
+            $data,
+            $this->prepareListData(),
+            $this->prepareReviseData(),
+            $this->prepareRelistData(),
+            $this->prepareStopData()
         );
 
-        return $prepared;
+        return $data;
     }
 
     // ---------------------------------------
 
-    private function prepareListData(array $data)
+    protected function prepareListData()
     {
-        $prepared = [];
+        $data = [];
 
-        if (isset($data['list_mode'])) {
-            $prepared['list_mode'] = (int)$data['list_mode'];
+        if (isset($this->rawData['list_mode'])) {
+            $data['list_mode'] = (int)$this->rawData['list_mode'];
         }
 
-        if (isset($data['list_status_enabled'])) {
-            $prepared['list_status_enabled'] = (int)$data['list_status_enabled'];
+        if (isset($this->rawData['list_status_enabled'])) {
+            $data['list_status_enabled'] = (int)$this->rawData['list_status_enabled'];
         }
 
-        if (isset($data['list_is_in_stock'])) {
-            $prepared['list_is_in_stock'] = (int)$data['list_is_in_stock'];
+        if (isset($this->rawData['list_is_in_stock'])) {
+            $data['list_is_in_stock'] = (int)$this->rawData['list_is_in_stock'];
         }
 
-        if (isset($data['list_qty_magento'])) {
-            $prepared['list_qty_magento'] = (int)$data['list_qty_magento'];
+        if (isset($this->rawData['list_qty_calculated'])) {
+            $data['list_qty_calculated'] = (int)$this->rawData['list_qty_calculated'];
         }
 
-        if (isset($data['list_qty_magento_value'])) {
-            $prepared['list_qty_magento_value'] = (int)$data['list_qty_magento_value'];
+        if (isset($this->rawData['list_qty_calculated_value'])) {
+            $data['list_qty_calculated_value'] = (int)$this->rawData['list_qty_calculated_value'];
         }
 
-        if (isset($data['list_qty_magento_value_max'])) {
-            $prepared['list_qty_magento_value_max'] = (int)$data['list_qty_magento_value_max'];
+        if (isset($this->rawData['list_advanced_rules_mode'])) {
+            $data['list_advanced_rules_mode'] = (int)$this->rawData['list_advanced_rules_mode'];
         }
 
-        if (isset($data['list_qty_calculated'])) {
-            $prepared['list_qty_calculated'] = (int)$data['list_qty_calculated'];
-        }
-
-        if (isset($data['list_qty_calculated_value'])) {
-            $prepared['list_qty_calculated_value'] = (int)$data['list_qty_calculated_value'];
-        }
-
-        if (isset($data['list_qty_calculated_value_max'])) {
-            $prepared['list_qty_calculated_value_max'] = (int)$data['list_qty_calculated_value_max'];
-        }
-
-        if (isset($data['list_advanced_rules_mode'])) {
-            $prepared['list_advanced_rules_mode'] = (int)$data['list_advanced_rules_mode'];
-        }
-
-        $prepared['list_advanced_rules_filters'] = $this->getRuleData(
-            SynchronizationPolicy::LIST_ADVANCED_RULES_PREFIX
+        $data['list_advanced_rules_filters'] = $this->getRuleData(
+            \Ess\M2ePro\Model\Ebay\Template\Synchronization::LIST_ADVANCED_RULES_PREFIX
         );
 
-        return $prepared;
+        return $data;
     }
 
-    private function prepareReviseData(array $data)
+    protected function prepareReviseData()
     {
-        $prepared = [
+        $data = [
             'revise_update_qty' => 1,
         ];
 
         $key = 'revise_update_qty_max_applied_value_mode';
-        if (isset($data[$key])) {
-            $prepared[$key] = (int)$data[$key];
+        if (isset($this->rawData[$key])) {
+            $data[$key] = (int)$this->rawData[$key];
         }
 
-        if (isset($data['revise_update_qty_max_applied_value'])) {
-            $prepared['revise_update_qty_max_applied_value'] = (int)$data['revise_update_qty_max_applied_value'];
+        if (isset($this->rawData['revise_update_qty_max_applied_value'])) {
+            $data['revise_update_qty_max_applied_value'] = (int)$this->rawData['revise_update_qty_max_applied_value'];
         }
 
-        if (isset($data['revise_update_price'])) {
-            $prepared['revise_update_price'] = (int)$data['revise_update_price'];
+        if (isset($this->rawData['revise_update_price'])) {
+            $data['revise_update_price'] = (int)$this->rawData['revise_update_price'];
         }
 
-        $key = 'revise_update_price_max_allowed_deviation_mode';
-        if (isset($data[$key])) {
-            $prepared[$key] = (int)$data[$key];
+        if (isset($this->rawData['revise_update_title'])) {
+            $data['revise_update_title'] = (int)$this->rawData['revise_update_title'];
         }
 
-        $key = 'revise_update_price_max_allowed_deviation';
-        if (isset($data[$key])) {
-            $prepared[$key] = (int)$data[$key];
+        if (isset($this->rawData['revise_update_sub_title'])) {
+            $data['revise_update_sub_title'] = (int)$this->rawData['revise_update_sub_title'];
         }
 
-        if (isset($data['revise_update_title'])) {
-            $prepared['revise_update_title'] = (int)$data['revise_update_title'];
+        if (isset($this->rawData['revise_update_description'])) {
+            $data['revise_update_description'] = (int)$this->rawData['revise_update_description'];
         }
 
-        if (isset($data['revise_update_sub_title'])) {
-            $prepared['revise_update_sub_title'] = (int)$data['revise_update_sub_title'];
+        if (isset($this->rawData['revise_update_images'])) {
+            $data['revise_update_images'] = (int)$this->rawData['revise_update_images'];
         }
 
-        if (isset($data['revise_update_description'])) {
-            $prepared['revise_update_description'] = (int)$data['revise_update_description'];
+        if (isset($this->rawData['revise_update_categories'])) {
+            $data['revise_update_categories'] = (int)$this->rawData['revise_update_categories'];
         }
 
-        if (isset($data['revise_update_images'])) {
-            $prepared['revise_update_images'] = (int)$data['revise_update_images'];
+        if (isset($this->rawData['revise_update_shipping'])) {
+            $data['revise_update_shipping'] = (int)$this->rawData['revise_update_shipping'];
         }
 
-        if (isset($data['revise_update_categories'])) {
-            $prepared['revise_update_categories'] = (int)$data['revise_update_categories'];
+        if (isset($this->rawData['revise_update_payment'])) {
+            $data['revise_update_payment'] = (int)$this->rawData['revise_update_payment'];
         }
 
-        if (isset($data['revise_update_shipping'])) {
-            $prepared['revise_update_shipping'] = (int)$data['revise_update_shipping'];
+        if (isset($this->rawData['revise_update_return'])) {
+            $data['revise_update_return'] = (int)$this->rawData['revise_update_return'];
         }
 
-        if (isset($data['revise_update_payment'])) {
-            $prepared['revise_update_payment'] = (int)$data['revise_update_payment'];
+        if (isset($this->rawData['revise_update_other'])) {
+            $data['revise_update_other'] = (int)$this->rawData['revise_update_other'];
         }
 
-        if (isset($data['revise_update_return'])) {
-            $prepared['revise_update_return'] = (int)$data['revise_update_return'];
-        }
-
-        if (isset($data['revise_update_other'])) {
-            $prepared['revise_update_other'] = (int)$data['revise_update_other'];
-        }
-
-        return $prepared;
+        return $data;
     }
 
-    private function prepareRelistData(array $data)
+    protected function prepareRelistData()
     {
-        $prepared = [];
+        $data = [];
 
-        if (isset($data['relist_mode'])) {
-            $prepared['relist_mode'] = (int)$data['relist_mode'];
+        if (isset($this->rawData['relist_mode'])) {
+            $data['relist_mode'] = (int)$this->rawData['relist_mode'];
         }
 
-        if (isset($data['relist_filter_user_lock'])) {
-            $prepared['relist_filter_user_lock'] = (int)$data['relist_filter_user_lock'];
+        if (isset($this->rawData['relist_filter_user_lock'])) {
+            $data['relist_filter_user_lock'] = (int)$this->rawData['relist_filter_user_lock'];
         }
 
-        if (isset($data['relist_status_enabled'])) {
-            $prepared['relist_status_enabled'] = (int)$data['relist_status_enabled'];
+        if (isset($this->rawData['relist_status_enabled'])) {
+            $data['relist_status_enabled'] = (int)$this->rawData['relist_status_enabled'];
         }
 
-        if (isset($data['relist_is_in_stock'])) {
-            $prepared['relist_is_in_stock'] = (int)$data['relist_is_in_stock'];
+        if (isset($this->rawData['relist_is_in_stock'])) {
+            $data['relist_is_in_stock'] = (int)$this->rawData['relist_is_in_stock'];
         }
 
-        if (isset($data['relist_qty_magento'])) {
-            $prepared['relist_qty_magento'] = (int)$data['relist_qty_magento'];
+        if (isset($this->rawData['relist_qty_calculated'])) {
+            $data['relist_qty_calculated'] = (int)$this->rawData['relist_qty_calculated'];
         }
 
-        if (isset($data['relist_qty_magento_value'])) {
-            $prepared['relist_qty_magento_value'] = (int)$data['relist_qty_magento_value'];
+        if (isset($this->rawData['relist_qty_calculated_value'])) {
+            $data['relist_qty_calculated_value'] = (int)$this->rawData['relist_qty_calculated_value'];
         }
 
-        if (isset($data['relist_qty_magento_value_max'])) {
-            $prepared['relist_qty_magento_value_max'] = (int)$data['relist_qty_magento_value_max'];
+        if (isset($this->rawData['relist_advanced_rules_mode'])) {
+            $data['relist_advanced_rules_mode'] = (int)$this->rawData['relist_advanced_rules_mode'];
         }
 
-        if (isset($data['relist_qty_calculated'])) {
-            $prepared['relist_qty_calculated'] = (int)$data['relist_qty_calculated'];
-        }
-
-        if (isset($data['relist_qty_calculated_value'])) {
-            $prepared['relist_qty_calculated_value'] = (int)$data['relist_qty_calculated_value'];
-        }
-
-        if (isset($data['relist_qty_calculated_value_max'])) {
-            $prepared['relist_qty_calculated_value_max'] = (int)$data['relist_qty_calculated_value_max'];
-        }
-
-        if (isset($data['relist_advanced_rules_mode'])) {
-            $prepared['relist_advanced_rules_mode'] = (int)$data['relist_advanced_rules_mode'];
-        }
-
-        $prepared['relist_advanced_rules_filters'] = $this->getRuleData(
-            SynchronizationPolicy::RELIST_ADVANCED_RULES_PREFIX
+        $data['relist_advanced_rules_filters'] = $this->getRuleData(
+            \Ess\M2ePro\Model\Ebay\Template\Synchronization::RELIST_ADVANCED_RULES_PREFIX
         );
 
-        return $prepared;
+        return $data;
     }
 
-    private function prepareStopData(array $data)
+    protected function prepareStopData()
     {
-        $prepared = [];
+        $data = [];
 
-        if (isset($data['stop_mode'])) {
-            $prepared['stop_mode'] = (int)$data['stop_mode'];
+        if (isset($this->rawData['stop_mode'])) {
+            $data['stop_mode'] = (int)$this->rawData['stop_mode'];
         }
 
-        if (isset($data['stop_status_disabled'])) {
-            $prepared['stop_status_disabled'] = (int)$data['stop_status_disabled'];
+        if (isset($this->rawData['stop_status_disabled'])) {
+            $data['stop_status_disabled'] = (int)$this->rawData['stop_status_disabled'];
         }
 
-        if (isset($data['stop_out_off_stock'])) {
-            $prepared['stop_out_off_stock'] = (int)$data['stop_out_off_stock'];
+        if (isset($this->rawData['stop_out_off_stock'])) {
+            $data['stop_out_off_stock'] = (int)$this->rawData['stop_out_off_stock'];
         }
 
-        if (isset($data['stop_qty_magento'])) {
-            $prepared['stop_qty_magento'] = (int)$data['stop_qty_magento'];
+        if (isset($this->rawData['stop_qty_calculated'])) {
+            $data['stop_qty_calculated'] = (int)$this->rawData['stop_qty_calculated'];
         }
 
-        if (isset($data['stop_qty_magento_value'])) {
-            $prepared['stop_qty_magento_value'] = (int)$data['stop_qty_magento_value'];
+        if (isset($this->rawData['stop_qty_calculated_value'])) {
+            $data['stop_qty_calculated_value'] = (int)$this->rawData['stop_qty_calculated_value'];
         }
 
-        if (isset($data['stop_qty_magento_value_max'])) {
-            $prepared['stop_qty_magento_value_max'] = (int)$data['stop_qty_magento_value_max'];
+        if (isset($this->rawData['stop_advanced_rules_mode'])) {
+            $data['stop_advanced_rules_mode'] = (int)$this->rawData['stop_advanced_rules_mode'];
         }
 
-        if (isset($data['stop_qty_calculated'])) {
-            $prepared['stop_qty_calculated'] = (int)$data['stop_qty_calculated'];
-        }
-
-        if (isset($data['stop_qty_calculated_value'])) {
-            $prepared['stop_qty_calculated_value'] = (int)$data['stop_qty_calculated_value'];
-        }
-
-        if (isset($data['stop_qty_calculated_value_max'])) {
-            $prepared['stop_qty_calculated_value_max'] = (int)$data['stop_qty_calculated_value_max'];
-        }
-
-        if (isset($data['stop_advanced_rules_mode'])) {
-            $prepared['stop_advanced_rules_mode'] = (int)$data['stop_advanced_rules_mode'];
-        }
-
-        $prepared['stop_advanced_rules_filters'] = $this->getRuleData(
-            SynchronizationPolicy::STOP_ADVANCED_RULES_PREFIX
+        $data['stop_advanced_rules_filters'] = $this->getRuleData(
+            \Ess\M2ePro\Model\Ebay\Template\Synchronization::STOP_ADVANCED_RULES_PREFIX
         );
 
-        return $prepared;
+        return $data;
     }
 
     //########################################
 
-    private function getRuleData($rulePrefix)
+    protected function getRuleData($rulePrefix)
     {
-        $postData = $this->request->getPost()->toArray();
+        $post = $this->request->getPost()->toArray();
 
-        if (empty($postData['rule'][$rulePrefix])) {
+        if (empty($post['rule'][$rulePrefix])) {
             return null;
         }
 
@@ -320,7 +235,64 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             ['prefix' => $rulePrefix]
         );
 
-        return $ruleModel->getSerializedFromPost($postData);
+        return $ruleModel->getSerializedFromPost($post);
+    }
+
+    //########################################
+
+    public function getDefaultData()
+    {
+        return [
+            // list
+            'list_mode'           => 1,
+            'list_status_enabled' => 1,
+            'list_is_in_stock'    => 1,
+
+            'list_qty_calculated'           => Synchronization::QTY_MODE_YES,
+            'list_qty_calculated_value'     => '1',
+
+            'list_advanced_rules_mode'    => 0,
+            'list_advanced_rules_filters' => null,
+
+            // relist
+            'relist_mode'             => 1,
+            'relist_filter_user_lock' => 1,
+            'relist_status_enabled'   => 1,
+            'relist_is_in_stock'      => 1,
+
+            'relist_qty_calculated'           => Synchronization::QTY_MODE_YES,
+            'relist_qty_calculated_value'     => '1',
+
+            'relist_advanced_rules_mode'    => 0,
+            'relist_advanced_rules_filters' => null,
+
+            // revise
+            'revise_update_qty'                              => 1,
+            'revise_update_qty_max_applied_value_mode'       => 1,
+            'revise_update_qty_max_applied_value'            => 5,
+            'revise_update_price'                            => 1,
+            'revise_update_title'                            => 0,
+            'revise_update_sub_title'                        => 0,
+            'revise_update_description'                      => 0,
+            'revise_update_images'                           => 0,
+            'revise_update_categories'                       => 0,
+            'revise_update_shipping'                         => 0,
+            'revise_update_payment'                          => 0,
+            'revise_update_return'                           => 0,
+            'revise_update_other'                            => 0,
+
+            // stop
+            'stop_mode' => 1,
+
+            'stop_status_disabled' => 1,
+            'stop_out_off_stock'   => 1,
+
+            'stop_qty_calculated'           => Synchronization::QTY_MODE_YES,
+            'stop_qty_calculated_value'     => '0',
+
+            'stop_advanced_rules_mode'    => 0,
+            'stop_advanced_rules_filters' => null
+        ];
     }
 
     //########################################

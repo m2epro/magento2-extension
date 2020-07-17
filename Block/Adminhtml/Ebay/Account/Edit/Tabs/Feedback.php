@@ -24,11 +24,7 @@ class Feedback extends AbstractForm
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
-        $defaults = [
-            'feedbacks_receive' => 0,
-            'feedbacks_auto_response' => \Ess\M2ePro\Model\Ebay\Account::FEEDBACKS_AUTO_RESPONSE_NONE,
-            'feedbacks_auto_response_only_positive' => 0
-        ];
+        $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
         $formData = array_merge($defaults, $formData);
         $this->setData('form_data', $formData);
 

@@ -8,8 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer;
 
-use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
+use Ess\M2ePro\Block\Adminhtml\Traits;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action
@@ -50,7 +50,7 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
             if (config.onclick_action) {
                 var method = config.onclick_action + '(';
                 if (id) {
-                    method = method + id;
+                    method = method + "'" +id+ "'";
                 }
                 method = method + ')';
                 eval(method);
@@ -101,16 +101,17 @@ JS
         if (!empty($field)) {
             $itemId = $row->getData($field);
         }
-        $itemId = (int)$itemId;
 
         if (!empty($groupOrder) && is_array($groupOrder)) {
             $actions = $this->sortActionsByGroupsOrder($groupOrder, $actions);
         }
 
-        return ' <select class="admin__control-select" onchange="M2eProVarienGridAction.execute(this, '.$itemId.');">'
-        . '<option value=""></option>'
-        . $this->renderOptions($actions, $row)
-        . '</select>';
+        return <<<HTML
+<select class="admin__control-select" onchange="M2eProVarienGridAction.execute(this, '{$itemId}');">
+    <option value=""></option>
+    {$this->renderOptions($actions, $row)}
+</select>
+HTML;
     }
 
     protected function sortActionsByGroupsOrder(array $groupOrder, array $actions)
@@ -170,7 +171,7 @@ JS
 
         if (isset($action['confirm'])) {
             $action['onclick'] = 'CommonObj.confirm({
-                content: \''.addslashes(htmlspecialchars($this->escapeHtml($action['confirm']))).'\',
+                content: \'' . addslashes(htmlspecialchars($this->escapeHtml($action['confirm']))) . '\',
                 actions: {
                     confirm: function () {
                         setLocation(this.href);
@@ -207,6 +208,19 @@ JS
                     $action['url']['params'][$paramKey] = $row->getData($paramValue);
                 }
             }
+        }
+
+        /**
+         * Magento since version 2.3.5 changed method _transformActionData
+         * this code copied from parent method because of array_merge
+         * link to commit github.com/magento/magento2/commit/6e1822d1b1243a293075e8eef2adc2d6b30d024d
+         */
+        if (isset($action['field']) && isset($action['url']['params'])) {
+            $this->getColumn()->setFormat(null);
+            $params = [$action['field'] => $this->_getValue($row)];
+            $params = array_merge($action['url']['params'], $params);
+            $action['href'] = $this->getUrl($action['url']['base'], $params);
+            unset($action['url'], $action['field']);
         }
 
         return parent::_transformActionData($action, $actionCaption, $row);

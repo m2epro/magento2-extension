@@ -187,7 +187,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'type' => 'number',
             'index' => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => [$this, 'callbackColumnProductId']
+            'store_id' => $this->_getStore()->getId(),
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
         ]);
 
         $this->addColumn('name', [

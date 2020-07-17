@@ -15,6 +15,8 @@ use Ess\M2ePro\Model\Magento\Quote\FailDuringEventProcessing;
  */
 class Order extends ActiveRecord\Component\Parent\AbstractModel
 {
+    const ADDITIONAL_DATA_KEY_IN_ORDER = 'm2epro_order';
+
     const MAGENTO_ORDER_CREATION_FAILED_NO  = 0;
     const MAGENTO_ORDER_CREATION_FAILED_YES = 1;
 
@@ -649,6 +651,10 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             $magentoQuoteBuilder = $this->modelFactory->getObject('Magento_Quote_Builder', ['proxyOrder' => $proxy]);
             $magentoQuote        = $magentoQuoteBuilder->build();
 
+
+            $this->getHelper('Data\GlobalData')->unsetValue(self::ADDITIONAL_DATA_KEY_IN_ORDER);
+            $this->getHelper('Data\GlobalData')->setValue(self::ADDITIONAL_DATA_KEY_IN_ORDER, $this);
+
             try {
                 $this->magentoOrder = $this->quoteManager->submit($magentoQuote);
             } catch (FailDuringEventProcessing $e) {
@@ -665,19 +671,21 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
                 $this->magentoOrder = $e->getOrder();
             }
 
-            $this->addData([
-                'magento_order_id'                           => $this->magentoOrder->getId(),
-                'magento_order_creation_failure'             => self::MAGENTO_ORDER_CREATION_FAILED_NO,
-                'magento_order_creation_latest_attempt_date' => $this->getHelper('Data')->getCurrentGmtDate()
-            ]);
+            $magentoOrderId = $this->getMagentoOrderId();
 
-            $this->setMagentoOrder($this->magentoOrder);
-            $this->save();
+            if (empty($magentoOrderId)) {
+                $this->addData([
+                    'magento_order_id'                           => $this->magentoOrder->getId(),
+                    'magento_order_creation_failure'             => self::MAGENTO_ORDER_CREATION_FAILED_NO,
+                    'magento_order_creation_latest_attempt_date' => $this->getHelper('Data')->getCurrentGmtDate()
+                ]);
+
+                $this->setMagentoOrder($this->magentoOrder);
+                $this->save();
+            }
 
             $this->afterCreateMagentoOrder();
-
             unset($magentoQuoteBuilder);
-            // ---------------------------------------
         } catch (\Exception $e) {
             unset($magentoQuoteBuilder);
 
@@ -712,13 +720,10 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             $this->save();
 
             $this->addErrorLog('Magento Order was not created. Reason: %msg%', ['msg' => $e->getMessage()]);
-            $this->helperFactory->getObject('Module\Exception')->process($e, false);
 
-            // ---------------------------------------
             if ($this->isReservable()) {
                 $this->getReserve()->place();
             }
-            // ---------------------------------------
 
             throw $e;
         }
@@ -850,6 +855,20 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         }
 
         return $shipments;
+    }
+
+    /**
+     * @return bool
+     * @throws Exception\Logic
+     */
+    public function isOrderStatusUpdatingToShipped()
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Order\Change\Collection $changes */
+        $changes = $this->activeRecordFactory->getObject('Order\Change')->getCollection();
+        $changes->addFieldToFilter('order_id', $this->getId());
+        $changes->addFieldToFilter('action', \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING);
+
+        return $this->getChildObject()->isSetProcessingLock('update_shipping_status') || $changes->getSize() > 0;
     }
 
     //########################################

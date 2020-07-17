@@ -46,23 +46,11 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 
         // ---------------------------------------
 
-        /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\Collection $epidsMarketplaceCollection */
-        $epidsMarketplaceCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'Marketplace'
-        )->getCollection();
-        $epidsMarketplaceCollection->addFieldToFilter('is_epid', 1);
-        $epidsMarketplaceCollection->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
-        $isMotorsEpidsMarketplaceEnabled = (bool)$epidsMarketplaceCollection->getSize();
+        $isMotorsEpidsMarketplaceEnabled = $this->getHelper('Component_Ebay_Motors')
+            ->isEPidMarketplacesEnabled();
 
-        /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\Collection $ktypeMarketplaceCollection */
-        $ktypeMarketplaceCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'Marketplace'
-        )->getCollection();
-        $ktypeMarketplaceCollection->addFieldToFilter('is_ktype', 1);
-        $ktypeMarketplaceCollection->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
-        $isMotorsKtypesMarketplaceEnabled = (bool)$ktypeMarketplaceCollection->getSize();
+        $isMotorsKtypesMarketplaceEnabled = $this->getHelper('Component_Ebay_Motors')
+            ->isKTypeMarketplacesEnabled();
 
         if ($isMotorsEpidsMarketplaceEnabled || $isMotorsKtypesMarketplaceEnabled) {
             $tab = [

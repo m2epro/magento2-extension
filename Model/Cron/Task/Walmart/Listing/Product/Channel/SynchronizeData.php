@@ -72,7 +72,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $synchronizationLog = parent::getSynchronizationLog();
 
         $synchronizationLog->setComponentMode(Walmart::NICK);
-        $synchronizationLog->setSynchronizationTask(Log::TASK_LISTINGS_PRODUCTS);
+        $synchronizationLog->setSynchronizationTask(Log::TASK_LISTINGS);
 
         return $synchronizationLog;
     }

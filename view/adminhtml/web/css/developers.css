@@ -62,12 +62,13 @@
     word-break: break-word;
 }
 
-#synchronizationLogGrid_table .grid-listing-column-task {
-    width: 30%;
+#synchronizationLogGrid_table .grid-listing-column-description,
+#synchronizationLogGrid_table .grid-listing-column-detailed_description {
+    width: 40%;
 }
 
-.width-800 > .modal-inner-wrap {
-    width: 800px !important;
+.width-1000 > .modal-inner-wrap {
+    width: 1000px !important;
 }
 
 #helpCenter_cron_job_info_content #cron_job_details,

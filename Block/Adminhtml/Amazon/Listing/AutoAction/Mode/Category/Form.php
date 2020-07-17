@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category;
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category\Form
  */
-class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\Form
+class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\AbstractForm
 {
     public $showCreateNewAsin = 0;
 
@@ -225,15 +225,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 
     public function getDefault()
     {
-        return [
-            'id' => null,
-            'title' => null,
-            'category_id' => null,
-            'adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
-            'deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
-            'adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'adding_description_template_id' => null
-        ];
+        return array_merge(
+            parent::getDefault(),
+            [
+                'adding_description_template_id' => null
+            ]
+        );
     }
 
     //########################################

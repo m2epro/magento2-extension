@@ -23,32 +23,21 @@ class Order extends AbstractContainer
 
         $this->_controller = 'adminhtml_amazon_order';
 
-        // Set buttons actions
-        // ---------------------------------------
         $this->removeButton('back');
         $this->removeButton('reset');
         $this->removeButton('delete');
         $this->removeButton('add');
         $this->removeButton('save');
         $this->removeButton('edit');
-        // ---------------------------------------
-    }
 
-    //########################################
-
-    protected function getHelpBlockJavascript()
-    {
-        if (!$this->getRequest()->isXmlHttpRequest()) {
-            return '';
-        }
-
-        return <<<HTML
-<script type="text/javascript">
-    setTimeout(function() {
-        OrderHandlerObj.initializeGrids();
-    }, 50);
-</script>
-HTML;
+        $this->addButton(
+            'upload_by_user',
+            [
+                'label'     => $this->__('Order Reimport'),
+                'onclick'   => 'UploadByUserObj.openPopup()',
+                'class'     => 'action-primary'
+            ]
+        );
     }
 
     //########################################
@@ -75,8 +64,6 @@ HTML
             )
         ]);
 
-        // ---------------------------------------
-
         $this->setPageActionsBlock('Amazon_Order_PageActions');
 
         return parent::_prepareLayout();
@@ -84,17 +71,31 @@ HTML
 
     public function getGridHtml()
     {
-        $editItemBlock = $this->createBlock('Order_Item_Edit');
-
-        return
-          $editItemBlock->toHtml()
-        . parent::getGridHtml();
+        return $this->createBlock('Order_Item_Edit')->toHtml() .
+               parent::getGridHtml();
     }
 
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Controller\Adminhtml\Order\EditItem::class)
+        );
+
+        $this->js->addRequireJs(['upload' => 'M2ePro/Order/UploadByUser'], <<<JS
+UploadByUserObj = new UploadByUser('amazon', 'orderUploadByUserPopupGrid');
+JS
+        );
+
+        $this->jsUrl->addUrls(
+            $this->getHelper('Data')->getControllerActions('Order_UploadByUser')
+        );
+
+        $this->jsTranslator->addTranslations(
+            [
+                'Order Reimport'               => $this->__('Order Reimport'),
+                'Order importing in progress.' => $this->__('Order importing in progress.'),
+                'Order importing is canceled.' => $this->__('Order importing is canceled.')
+            ]
         );
 
         return parent::_beforeToHtml();

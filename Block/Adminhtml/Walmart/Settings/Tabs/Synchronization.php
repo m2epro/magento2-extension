@@ -98,10 +98,7 @@ HTML
     protected function _beforeToHtml()
     {
         // ---------------------------------------
-        $this->inspectorMode = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/listing/product/inspector/',
-            'mode'
-        );
+        $this->inspectorMode = $this->getHelper('Module_Configuration')->isEnableListingProductInspectorMode();
         // ---------------------------------------
 
         return parent::_beforeToHtml();
@@ -110,17 +107,10 @@ HTML
     protected function _toHtml()
     {
         $js = "require([
-                'M2ePro/Plugin/ProgressBar',
-                'M2ePro/Plugin/AreaWrapper',
-                'M2ePro/SynchProgress',
                 'M2ePro/Synchronization'
             ], function() {
 
-            SynchProgressBarObj = new ProgressBar('synchronization_progress_bar');
-            SynchWrapperObj = new AreaWrapper('synchronization_content_container');
-
-            SynchronizationProgressObj = new SynchProgress(SynchProgressBarObj, SynchWrapperObj );
-            SynchronizationObj = new Synchronization(SynchronizationProgressObj);";
+            SynchronizationObj = new Synchronization();";
 
         $js .= '})';
 
@@ -129,7 +119,6 @@ HTML
         $this->jsTranslator->addTranslations(
             [
                 'Synchronization Settings have been saved.' => 'Synchronization Settings have been saved.',
-                'Running All Enabled Tasks' => 'Running All Enabled Tasks',
             ]
         );
 
@@ -140,8 +129,7 @@ HTML
                 ->makeBackUrlParam('*/walmart_synchronization/index')]),
         ]);
 
-        return '<div id="synchronization_progress_bar"></div>
-                <div id="synchronization_content_container">'.parent::_toHtml();
+        return parent::_toHtml();
     }
 
     //########################################

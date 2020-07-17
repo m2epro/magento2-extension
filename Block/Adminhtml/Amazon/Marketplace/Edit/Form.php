@@ -28,7 +28,6 @@ class Form extends AbstractForm
     protected function _prepareForm()
     {
         $this->prepareData();
-        $componentName = $this->getHelper('Component\Amazon')->getTitle();
 
         $form = $this->_formFactory->create(
             ['data' => ['id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post']]
@@ -66,6 +65,12 @@ class Form extends AbstractForm
 
                     <div id="synch_info_complete_{$marketplace['instance']->getId()}"
                         class="value" style="display: none; color: green;">{$this->__('Completed')}</div>
+                        
+                    <div id="synch_info_error_{$marketplace['instance']->getId()}"
+                        class="value" style="display: none; color: red;">{$this->__('Error')}</div>
+                        
+                    <div id="synch_info_skip_{$marketplace['instance']->getId()}"
+                        class="value" style="display: none; color: gray;">{$this->__('Skipped')}</div>
 
                     <div id="marketplace_title_{$marketplace['instance']->getId()}"
                         class="value" style="display: none;">{$marketplace['instance']->getTitle()}</div>
@@ -111,7 +116,8 @@ HTML;
                     self::SELECT,
                     $selectData
                 )->addCustomAttribute('marketplace_id', $marketplace['instance']->getId())
-                 ->addCustomAttribute('markeptlace_component_name', $componentName)
+                 ->addCustomAttribute('component_name', \Ess\M2ePro\Helper\Component\Amazon::NICK)
+                 ->addCustomAttribute('component_title', $this->getHelper('Component\Amazon')->getTitle())
                  ->addCustomAttribute('onchange', 'MarketplaceObj.changeStatus(this);');
             }
         }
@@ -223,13 +229,11 @@ HTML;
     protected function _toHtml()
     {
         $this->jsUrl->addUrls([
-            'formSubmit' => $this->getUrl('m2epro/amazon_marketplace/save'),
+            'formSubmit' => $this->getUrl('*/amazon_marketplace/save'),
             'logViewUrl' => $this->getUrl(
                 '*/amazon_synchronization_log/index',
-                ['back'=>$this->getHelper('Data')
-                ->makeBackUrlParam('*/amazon_synchronization/index')]
+                ['back'=>$this->getHelper('Data')->makeBackUrlParam('*/amazon_synchronization/index')]
             ),
-
             'runSynchNow' => $this->getUrl('*/amazon_marketplace/runSynchNow'),
         ]);
 
@@ -239,17 +243,13 @@ HTML;
         $this->js->addOnReadyJs(<<<JS
             require([
                 'M2ePro/Marketplace',
-                'M2ePro/Amazon/Marketplace/SynchProgress',
+                'M2ePro/SynchProgress',
                 'M2ePro/Plugin/ProgressBar',
-                'M2ePro/Plugin/AreaWrapper',
-                'M2ePro/Amazon/Marketplace/SynchProgress'
+                'M2ePro/Plugin/AreaWrapper'
             ], function() {
-                window.MarketplaceProgressBarObj = new ProgressBar('marketplaces_progress_bar');
-                window.MarketplaceWrapperObj = new AreaWrapper('marketplaces_content_container');
-
-                window.MarketplaceProgressObj = new AmazonMarketplaceSynchProgress(
-                    MarketplaceProgressBarObj,
-                    MarketplaceWrapperObj
+                window.MarketplaceProgressObj = new SynchProgress(
+                    new ProgressBar('marketplaces_progress_bar'),
+                    new AreaWrapper('marketplaces_content_container')
                 );
                 window.MarketplaceObj = new Marketplace(MarketplaceProgressObj, $storedStatuses);
             });

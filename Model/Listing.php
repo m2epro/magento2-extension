@@ -149,8 +149,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_LISTING,
             'Listing was successfully deleted',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
 
         $this->accountModel = null;
@@ -484,9 +483,9 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         }
 
         $data = [
-            'listing_id' => $this->getId(),
-            'product_id' => $productId,
-            'status'     => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
+            'listing_id'     => $this->getId(),
+            'product_id'     => $productId,
+            'status'         => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
             'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN
         ];
 
@@ -514,7 +513,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_PRODUCT_TO_LISTING,
             'Product was successfully Added',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW,
             $logAdditionalInfo
         );
         // ---------------------------------------
@@ -595,8 +593,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                 $actionId,
                 \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
                 'Item was not Moved because it is in progress state now',
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
             );
 
             return false;
@@ -622,8 +619,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                 $actionId,
                 \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
                 'Item was not Moved',
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
             );
 
             return false;
@@ -640,8 +636,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                 $actionId,
                 \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
                 'Product already exists in the selected Listing',
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
             );
 
             return false;
@@ -655,8 +650,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             $actionId,
             \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
             'Item was successfully Moved',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
 
         $logModel->addProductMessage(
@@ -667,8 +661,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             $actionId,
             \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
             'Item was successfully Moved',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
 
         // ---------------------------------------
@@ -763,8 +756,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                     null,
                     \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_MAGENTO,
                     null,
-                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING,
-                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING
                 );
         }
 
@@ -874,8 +866,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                     null,
                     \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_MAGENTO,
                     'Variation Option was deleted. Item was reset.',
-                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING,
-                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING
                 );
         }
 

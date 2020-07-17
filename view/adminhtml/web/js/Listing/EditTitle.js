@@ -4,8 +4,7 @@ define([
     'Magento_Ui/js/modal/modal'
 ], function (jQuery, confirm, modal) {
 
-    window.ListingEditListingTitle = Class.create();
-    ListingEditListingTitle.prototype = {
+    window.ListingEditListingTitle = Class.create({
 
         // ---------------------------------------
 
@@ -98,5 +97,5 @@ define([
         }
 
         // ---------------------------------------
-    };
+    });
 });

@@ -32,8 +32,9 @@
                     <resource id="Ess_M2ePro::ebay_configuration" title="Configuration" sortOrder="3">
                         <resource id="Ess_M2ePro::ebay_configuration_accounts" title="Accounts" sortOrder="1" />
                         <resource id="Ess_M2ePro::ebay_configuration_marketplaces" title="Marketplaces" sortOrder="2" />
-                        <resource id="Ess_M2ePro::ebay_configuration_templates" title="Policies" sortOrder="3" />
-                        <resource id="Ess_M2ePro::ebay_configuration_settings" title="Settings" sortOrder="4" />
+                        <resource id="Ess_M2ePro::ebay_configuration_categories" title="Categories" sortOrder="3" />
+                        <resource id="Ess_M2ePro::ebay_configuration_templates" title="Policies" sortOrder="4" />
+                        <resource id="Ess_M2ePro::ebay_configuration_settings" title="Settings" sortOrder="5" />
                     </resource>
 
                     <!-- ebay help center acl -->

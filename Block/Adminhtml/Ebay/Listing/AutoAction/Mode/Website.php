@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode;
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Website
  */
-class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Website
+class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\AbstractWebsite
 {
     //########################################
 
@@ -19,14 +19,7 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('ebayListingAutoActionModeWebsite');
-        // ---------------------------------------
-
-        $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Listing::class)
-        );
     }
 
     //########################################
@@ -77,12 +70,9 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
             ]
         );
 
-        $breadcrumb = $this->createBlock('Ebay_Listing_AutoAction_Mode_Breadcrumb', '', ['data' => [
-            'id_prefix' => 'website'
-        ]]);
-        $breadcrumb->setSelectedStep(1);
-
-        return $helpBlock->toHtml() . $breadcrumb->toHtml() . parent::_toHtml();
+        return $helpBlock->toHtml() .
+            parent::_toHtml() .
+            '<div id="ebay_category_chooser"></div>';
     }
 
     //########################################

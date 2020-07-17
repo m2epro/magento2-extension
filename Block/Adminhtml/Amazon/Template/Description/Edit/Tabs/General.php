@@ -470,21 +470,13 @@ HTML;
 
     public function getFormData()
     {
-        $default = [
-            'id'             => '',
-            'title'          => '',
-            'marketplace_id' => $this->getRequest()->getParam('marketplace_id', ''),
-
-            'is_new_asin_accepted' => $this->getRequest()->getParam('is_new_asin_accepted', 0),
-
-            'category_path'     => '',
-            'product_data_nick' => '',
-            'browsenode_id'     => '',
-
-            'registered_parameter'          => '',
-            'worldwide_id_mode'             => Description::WORLDWIDE_ID_MODE_NONE,
-            'worldwide_id_custom_attribute' => ''
-        ];
+        $default = array_merge(
+            $this->modelFactory->getObject('Amazon_Template_Description_Builder')->getDefaultData(),
+            [
+                'marketplace_id' => $this->getRequest()->getParam('marketplace_id', ''),
+                'is_new_asin_accepted' => $this->getRequest()->getParam('is_new_asin_accepted', 0),
+            ]
+        );
 
         if (!$this->templateModel->getId()) {
             return $default;

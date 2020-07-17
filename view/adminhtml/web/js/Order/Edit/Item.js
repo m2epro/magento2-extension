@@ -159,7 +159,7 @@ define([
                             self.closePopUp();
                         });
                     } else {
-                        MessageObj.addErrorMessage(response.error);
+                        MessageObj.addError(response.error);
                     }
 
                     return;
@@ -197,7 +197,7 @@ define([
             var response = transport.responseText.evalJSON();
 
             if (response.error) {
-                MessageObj.addErrorMessage(response.error);
+                MessageObj.addError(response.error);
                 return;
             }
 
@@ -209,7 +209,7 @@ define([
             if (response.success) {
                 self.closePopUp();
                 self.scrollPageToTop();
-                MessageObj.addSuccessMessage(response.success);
+                MessageObj.addSuccess(response.success);
             }
         },
 

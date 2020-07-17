@@ -107,7 +107,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'product_id=entity_id',
             [
                 'id'              => 'id',
-                'walmart_status'   => 'status',
+                'status'          => 'status',
                 'component_mode'  => 'component_mode',
                 'additional_data' => 'additional_data'
             ],
@@ -184,54 +184,56 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'    => $this->__('Product ID'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'entity_id',
-            'frame_callback' => [$this, 'callbackColumnProductId']
+            'header'   => $this->__('Product ID'),
+            'align'    => 'right',
+            'width'    => '100px',
+            'type'     => 'number',
+            'index'    => 'entity_id',
+            'store_id' => $this->listing->getStoreId(),
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
         ]);
 
         $this->addColumn('name', [
-            'header'    => $this->__('Product Title / Product SKU'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'name',
-            'filter_index' => 'name',
-            'escape'       => false,
+            'header'         => $this->__('Product Title / Product SKU'),
+            'align'          => 'left',
+            'type'           => 'text',
+            'index'          => 'name',
+            'filter_index'   => 'name',
+            'escape'         => false,
             'frame_callback' => [$this, 'callbackColumnProductTitle'],
             'filter_condition_callback' => [$this, 'callbackFilterTitle']
         ]);
 
         $this->addColumn('sku', [
-            'header' => $this->__('SKU'),
-            'align' => 'left',
-            'width' => '150px',
-            'type' => 'text',
-            'index' => 'walmart_sku',
+            'header'       => $this->__('SKU'),
+            'align'        => 'left',
+            'width'        => '150px',
+            'type'         => 'text',
+            'index'        => 'walmart_sku',
             'filter_index' => 'walmart_sku',
-            'frame_callback' => [$this, 'callbackColumnWalmartSku']
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku'
         ]);
 
         $this->addColumn('gtin', [
-            'header' => $this->__('GTIN'),
-            'align' => 'left',
-            'width' => '140px',
-            'type' => 'text',
-            'index' => 'gtin',
-            'filter_index' => 'gtin',
-            'frame_callback' => [$this, 'callbackColumnGtin'],
+            'header'         => $this->__('GTIN'),
+            'align'          => 'left',
+            'width'          => '140px',
+            'type'           => 'text',
+            'index'          => 'gtin',
+            'filter_index'   => 'gtin',
+            'marketplace_id' => $this->listing->getMarketplaceId(),
+            'renderer'       => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin',
             'filter_condition_callback' => [$this, 'callbackFilterGtin']
         ]);
 
         $this->addColumn('online_qty', [
-            'header' => $this->__('QTY'),
-            'align' => 'right',
-            'width' => '70px',
-            'type' => 'number',
-            'index' => 'online_qty',
+            'header'       => $this->__('QTY'),
+            'align'        => 'right',
+            'width'        => '70px',
+            'type'         => 'number',
+            'index'        => 'online_qty',
             'filter_index' => 'online_qty',
-            'frame_callback' => [$this, 'callbackColumnAvailableQty'],
+            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Qty',
             'filter_condition_callback' => [$this, 'callbackFilterQty']
         ]);
 
@@ -244,24 +246,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         $this->addColumn('online_price', [
-            'header' => $this->__('Price'),
-            'align' => 'right',
-            'width' => '110px',
-            'type' => 'number',
-            'index' => $priceSortField,
-            'filter_index' => $priceSortField,
+            'header'         => $this->__('Price'),
+            'align'          => 'right',
+            'width'          => '110px',
+            'type'           => 'number',
+            'index'          => $priceSortField,
+            'filter_index'   => $priceSortField,
             'frame_callback' => [$this, 'callbackColumnPrice'],
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ]);
 
         $statusColumn = [
             'header' => $this->__('Status'),
-            'width' => '155px',
-            'index' => 'walmart_status',
-            'filter_index' => 'walmart_status',
-            'type' => 'options',
+            'width'  => '155px',
+            'index'  => 'status',
+            'filter_index' => 'status',
+            'type'     => 'options',
             'sortable' => false,
-            'options' => [
+            'options'  => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
@@ -474,7 +476,7 @@ HTML;
             $value .= <<<HTML
 <div style="float: left; margin: 0 0 0 7px">
     <a {$problemStyle}href="javascript:"
-    onclick="ListingGridHandlerObj.variationProductManageHandler.openPopUp({$listingProductId}, '{$vpmt}')"
+    onclick="ListingGridObj.variationProductManageHandler.openPopUp({$listingProductId}, '{$vpmt}')"
     title="{$linkTitle}">{$linkContent}</a>&nbsp;{$problemIcon}
 </div>
 HTML;
@@ -562,176 +564,10 @@ HTML;
         return $value;
     }
 
-    public function callbackColumnWalmartSku($value, $row, $column, $isExport)
-    {
-        $isVariationParent = $row->getData('is_variation_parent');
-
-        if ($value === null || $value === '') {
-            $value = $this->__('N/A');
-        }
-
-        $productId = $row->getData('id');
-
-        if ($row->getData('walmart_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED &&
-            !$row->getData('is_variation_parent')) {
-            $value = <<<HTML
-<div class="walmart-sku">
-    {$value}&nbsp;&nbsp;
-    <a href="#" class="walmart-sku-edit"
-       onclick="ListingGridHandlerObj.editChannelDataHandler.showEditSkuPopup({$productId})">(edit)</a>
-</div>
-HTML;
-        }
-
-        if (!$isVariationParent && $row->getData('is_online_price_invalid')) {
-            $message = <<<HTML
-Item Price violates Walmart pricing rules. Please adjust the Item Price to comply with the Walmart requirements.<br>
-Once the changes are applied, Walmart Item will become Active automatically.
-HTML;
-            $msg = '<p>'.$this->__($message).'</p>';
-
-            if (empty($msg)) {
-                return $value;
-            }
-
-            $value .= <<<HTML
-<span class="fix-magento-tooltip">
-    {$this->getTooltipHtml($msg, 'map_link_defected_message_icon_'.$row->getId())}
-</span>
-HTML;
-        }
-
-        return $value;
-    }
-
-    public function callbackColumnGtin($gtin, $row, $column, $isExport)
-    {
-        if (empty($gtin)) {
-            return $this->__('N/A');
-        }
-
-        $productId = $row->getData('id');
-        $gtinHtml = $this->getHelper('Data')->escapeHtml($gtin);
-
-        $walmartHelper = $this->getHelper('Component\Walmart');
-        $marketplaceId = $this->listing->getMarketplaceId();
-        $channelUrl = $walmartHelper->getItemUrl(
-            $row->getData($walmartHelper->getIdentifierForItemUrl($marketplaceId)),
-            $marketplaceId
-        );
-
-        if (!empty($channelUrl)) {
-            $gtinHtml = <<<HTML
-<a href="{$channelUrl}" target="_blank">{$gtin}</a>
-HTML;
-        }
-
-        $html = '<div class="walmart-identifiers-gtin">'.$gtinHtml;
-
-        if ($row->getData('walmart_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED &&
-            !$row->getData('is_variation_parent')) {
-            $html .= <<<HTML
-&nbsp;&nbsp;<a href="#" class="walmart-identifiers-gtin-edit"
-   onclick="ListingGridHandlerObj.editChannelDataHandler.showIdentifiersPopup('$productId')">(edit)</a>
-HTML;
-        }
-
-        $html .= '</div>';
-
-        $identifiers = [
-            'UPC'        => $row->getData('upc'),
-            'EAN'        => $row->getData('ean'),
-            'ISBN'       => $row->getData('isbn'),
-            'Walmart ID' => $row->getData('wpid'),
-            'Item ID'    => $row->getData('item_id')
-        ];
-
-        $htmlAdditional = '';
-        foreach ($identifiers as $title => $value) {
-            if (empty($value)) {
-                continue;
-            }
-
-            if (($row->getData('upc') || $row->getData('ean') || $row->getData('isbn')) &&
-                ($row->getData('wpid') || $row->getData('item_id')) && $title == 'Walmart ID') {
-                $htmlAdditional .= "<div class='separator-line'></div>";
-            }
-            $identifierCode  = $this->__($title);
-            $identifierValue = $this->getHelper('Data')->escapeHtml($value);
-
-            $htmlAdditional .= <<<HTML
-<div>
-    <span style="display: inline-block; float: left;">
-        <strong>{$identifierCode}:</strong>&nbsp;&nbsp;&nbsp;&nbsp;
-    </span>
-    <span style="display: inline-block; float: right;">
-        {$identifierValue}
-    </span>
-    <div style="clear: both;"></div>
-</div>
-HTML;
-        }
-
-        if ($htmlAdditional != '') {
-            $html .= <<<HTML
-<span class="fix-magento-tooltip">
-    {$this->getTooltipHtml($htmlAdditional)}
-</span>
-HTML;
-        }
-
-        return $html;
-    }
-
-    public function callbackColumnAvailableQty($value, $row, $column, $isExport)
-    {
-        if (!$row->getData('is_variation_parent')) {
-            if ($row->getData('walmart_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-                return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
-            }
-
-            if ($value === null || $value === '' ||
-                ($row->getData('walmart_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
-                    !$row->getData('is_online_price_invalid'))) {
-                return $this->__('N/A');
-            }
-
-            if ($value <= 0) {
-                return '<span style="color: red;">0</span>';
-            }
-
-            return $value;
-        }
-
-        $variationChildStatuses = $this->getHelper('Data')->jsonDecode($row->getData('variation_child_statuses'));
-
-        if (empty($variationChildStatuses) || $value === null || $value === '') {
-            return $this->__('N/A');
-        }
-
-        $activeChildrenCount = 0;
-        foreach ($variationChildStatuses as $childStatus => $count) {
-            if ($childStatus == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-                continue;
-            }
-            $activeChildrenCount += (int)$count;
-        }
-
-        if ($activeChildrenCount == 0) {
-            return $this->__('N/A');
-        }
-
-        if ($value <= 0) {
-            return '<span style="color: red;">0</span>';
-        }
-
-        return $value;
-    }
-
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
         if ((!$row->getData('is_variation_parent') &&
-            $row->getData('walmart_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED)) {
+            $row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED)) {
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
@@ -739,7 +575,7 @@ HTML;
         $onlineMaxPrice = (float)$row->getData('max_online_price');
 
         if (empty($onlineMinPrice) ||
-            ($row->getData('walmart_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
+            ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
                 !$row->getData('is_online_price_invalid'))) {
             return $this->__('N/A');
         }
@@ -778,294 +614,11 @@ HTML;
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
-        $listingProductId  = (int)$row->getData('id');
-        $isVariationParent = (bool)(int)$row->getData('is_variation_parent');
-        $additionalData    = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+        /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Status $status */
+        $status = $this->createBlock('Walmart_Grid_Column_Renderer_Status');
+        $status->setParentAndChildReviseScheduledCache($this->parentAndChildReviseScheduledCache);
 
-        $html = $this->getViewLogIconHtml($listingProductId, $isVariationParent);
-
-        if (!empty($additionalData['synch_template_list_rules_note'])) {
-            $synchNote = $this->getHelper('View')->getModifiedLogMessage(
-                $additionalData['synch_template_list_rules_note']
-            );
-
-            if (empty($html)) {
-                $html = <<<HTML
-<span class="fix-magento-tooltip m2e-tooltip-grid-warning" style="float:right;">
-    {$this->getTooltipHtml($synchNote, 'map_link_error_icon_'.$row->getId())}
-</span>
-HTML;
-            } else {
-                $html .= <<<HTML
-<div id="synch_template_list_rules_note_{$listingProductId}" style="display: none">{$synchNote}</div>
-HTML;
-            }
-        }
-
-        $resetHtml = '';
-        if ($row->getData('walmart_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
-            !$row->getData('is_online_price_invalid')) {
-            $resetHtml = <<<HTML
-<br/>
-<span style="color: gray">[Can be fixed]</span>
-HTML;
-        }
-
-        if (!$isVariationParent) {
-            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-            $listingProduct = $this->walmartFactory
-                ->getObjectLoaded('Listing\Product', $listingProductId);
-
-            $statusChangeReasons = $listingProduct->getChildObject()->getStatusChangeReasons();
-
-            return $html
-                . $this->getProductStatus($row, $row->getData('walmart_status'), $statusChangeReasons)
-                . $resetHtml
-                . $this->getScheduledTag($row)
-                . $this->getLockedTag($row);
-        } else {
-            $statusNotListed = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
-            $statusListed    = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
-            $statusStopped   = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
-            $statusBlocked   = \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED;
-
-            $variationChildStatuses = $row->getData('variation_child_statuses');
-            if (empty($variationChildStatuses)) {
-                return $html
-                    . $this->getProductStatus($row, $statusNotListed)
-                    . $this->getScheduledTag($row)
-                    . $this->getLockedTag($row);
-            }
-
-            $variationChildStatuses = $this->getHelper('Data')->jsonDecode($variationChildStatuses);
-
-            $sortedStatuses = [];
-
-            if (isset($variationChildStatuses[$statusNotListed])) {
-                $sortedStatuses[$statusNotListed] = $variationChildStatuses[$statusNotListed];
-            }
-            if (isset($variationChildStatuses[$statusListed])) {
-                $sortedStatuses[$statusListed] = $variationChildStatuses[$statusListed];
-            }
-            if (isset($variationChildStatuses[$statusStopped])) {
-                $sortedStatuses[$statusStopped] = $variationChildStatuses[$statusStopped];
-            }
-            if (isset($variationChildStatuses[$statusBlocked])) {
-                $sortedStatuses[$statusBlocked] = $variationChildStatuses[$statusBlocked];
-            }
-
-            $linkTitle = $this->__('Show all Child Products with such Status');
-
-            foreach ($sortedStatuses as $status => $productsCount) {
-                if (empty($productsCount)) {
-                    continue;
-                }
-
-                $filter = base64_encode('status=' . $status);
-
-                $productTitle = $this->getHelper('Data')->escapeHtml($row->getData('name'));
-                $vpmt = $this->__('Manage Variations of &quot;%s%&quot; ', $productTitle);
-                $vpmt = addslashes($vpmt);
-
-                $generalId = $row->getData('general_id');
-                if (!empty($generalId)) {
-                    $vpmt .= '('. $generalId .')';
-                }
-
-                $productsCount = <<<HTML
-<a onclick="ListingGridHandlerObj.variationProductManageHandler.openPopUp({$listingProductId}, '{$vpmt}', '{$filter}')"
-   class="hover-underline"
-   title="{$linkTitle}"
-   href="javascript:void(0)">[{$productsCount}]</a>
-HTML;
-
-                $html .= $this->getProductStatus($row, $status) . '&nbsp;'. $productsCount . '<br/>';
-            }
-
-            $html .= $this->getScheduledTag($row) . $this->getLockedTag($row);
-        }
-
-        return $html;
-    }
-
-    private function getProductStatus($row, $status, $statusChangeReasons = [])
-    {
-        $html = '';
-        switch ($status) {
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
-                $html = '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
-                break;
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED:
-                $html = '<span style="color: green;">' . $this->__('Active') . '</span>';
-                break;
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
-                $html ='<span style="color: red;">' . $this->__('Inactive') . '</span>';
-                break;
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
-                $html ='<span style="color: orange; font-weight: bold;">' .
-                       $this->__('Inactive (Blocked)') . '</span>';
-                break;
-        }
-
-        return $html .
-            $this->getStatusChangeReasons($statusChangeReasons);
-    }
-
-    private function getStatusChangeReasons($statusChangeReasons)
-    {
-        if (empty($statusChangeReasons)) {
-            return '';
-        }
-
-        $html = '<li style="margin-bottom: 5px;">'
-            . implode('</li><li style="margin-bottom: 5px;">', $statusChangeReasons)
-            . '</li>';
-
-        return <<<HTML
-        <span class="fix-magento-tooltip">
-            {$this->getTooltipHtml($html)}
-        </span>
-HTML;
-    }
-
-    private function getLockedTag($row)
-    {
-        $html           = '';
-
-        $tempLocks = $this->getLockedData($row);
-        $tempLocks = $tempLocks['object_locks'];
-
-        $childCount     = 0;
-
-        foreach ($tempLocks as $lock) {
-            switch ($lock->getTag()) {
-                case 'list_action':
-                    $html .= '<br/><span style="color: #605fff">[List in Progress...]</span>';
-                    break;
-
-                case 'relist_action':
-                    $html .= '<br/><span style="color: #605fff">[Relist in Progress...]</span>';
-                    break;
-
-                case 'revise_action':
-                    $html .= '<br/><span style="color: #605fff">[Revise in Progress...]</span>';
-                    break;
-
-                case 'stop_action':
-                    $html .= '<br/><span style="color: #605fff">[Stop in Progress...]</span>';
-                    break;
-
-                case 'stop_and_remove_action':
-                    $html .= '<br/><span style="color: #605fff">[Stop And Remove in Progress...]</span>';
-                    break;
-
-                case 'delete_and_remove_action':
-                    $html .= '<br/><span style="color: #605fff">[Remove in Progress...]</span>';
-                    break;
-
-                case 'child_products_in_action':
-                    $childCount++;
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        if ($childCount > 0) {
-            $html .= '<br/><span style="color: #605fff">[Child(s) in Action...]</span>';
-        }
-
-        return $html;
-    }
-
-    private function getScheduledTag($row)
-    {
-        $html = '';
-
-        /**
-         * @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $scheduledActionsCollection
-         */
-        $scheduledActionsCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
-            ->getCollection();
-        $scheduledActionsCollection->addFieldToFilter('listing_product_id', $row['id']);
-
-        /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction */
-        $scheduledAction = $scheduledActionsCollection->getFirstItem();
-
-        if (!$scheduledAction->getId()) {
-            return $html;
-        }
-
-        switch ($scheduledAction->getActionType()) {
-            case \Ess\M2ePro\Model\Listing\Product::ACTION_LIST:
-                $html .= '<br/><span style="color: #605fff">[List is Scheduled...]</span>';
-                break;
-
-            case \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST:
-                $html .= '<br/><span style="color: #605fff">[Relist is Scheduled...]</span>';
-                break;
-
-            case \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE:
-                $reviseParts = [];
-
-                $additionalData = $scheduledAction->getAdditionalData();
-                if (!empty($additionalData['configurator']) &&
-                    !isset($this->parentAndChildReviseScheduledCache[$row->getData('id')])) {
-                    /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator $configurator */
-                    $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
-                    $configurator->setUnserializedData($additionalData['configurator']);
-
-                    if ($configurator->isIncludingMode()) {
-                        if ($configurator->isQtyAllowed()) {
-                            $reviseParts[] = 'QTY';
-                        }
-
-                        if ($configurator->isPriceAllowed()) {
-                            $reviseParts[] = 'Price';
-                        }
-
-                        if ($configurator->isPromotionsAllowed()) {
-                            $reviseParts[] = 'Promotions';
-                        }
-
-                        if ($configurator->isDetailsAllowed()) {
-                            $params = $additionalData['params'];
-
-                            if (isset($params['changed_sku'])) {
-                                $reviseParts[] = 'SKU';
-                            }
-
-                            if (isset($params['changed_identifier'])) {
-                                $reviseParts[] = strtoupper($params['changed_identifier']['type']);
-                            }
-
-                            $reviseParts[] = 'Details';
-                        }
-                    }
-                }
-
-                if (!empty($reviseParts)) {
-                    $reviseParts = implode(', ', $reviseParts);
-                    $html .= '<br/><span style="color: #605fff">[Revise of '.$reviseParts.' is Scheduled...]</span>';
-                } else {
-                    $html .= '<br/><span style="color: #605fff">[Revise is Scheduled...]</span>';
-                }
-                break;
-
-            case \Ess\M2ePro\Model\Listing\Product::ACTION_STOP:
-                $html .= '<br/><span style="color: #605fff">[Stop is Scheduled...]</span>';
-                break;
-
-            case \Ess\M2ePro\Model\Listing\Product::ACTION_DELETE:
-                $html .= '<br/><span style="color: #605fff">[Retire is Scheduled...]</span>';
-                break;
-
-            default:
-                break;
-        }
-
-        return $html;
+        return $status->render($row);
     }
 
     // ---------------------------------------
@@ -1210,70 +763,6 @@ SQL;
         }
     }
 
-    // ---------------------------------------
-
-    public function getViewLogIconHtml($listingProductId, $isVariationParent)
-    {
-        $listingProductId = (int)$listingProductId;
-        $availableActionsId = array_keys($this->getAvailableActions());
-
-        $connection = $this->resourceConnection->getConnection();
-
-        // Get last messages
-        // ---------------------------------------
-        $dbSelect = $connection->select()
-            ->from(
-                $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getMainTable(),
-                ['action_id','action','type','description','create_date','initiator','listing_product_id']
-            )
-            ->where('`action` IN (?)', $availableActionsId)
-            ->order(['id DESC'])
-            ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::PRODUCTS_LIMIT);
-
-        if ($isVariationParent) {
-            $dbSelect->where('`listing_product_id` = ? OR `parent_listing_product_id` = ?', $listingProductId);
-        } else {
-            $dbSelect->where('`listing_product_id` = ?', $listingProductId);
-        }
-
-        $logs = $connection->fetchAll($dbSelect);
-
-        if (empty($logs)) {
-            return '';
-        }
-
-        // ---------------------------------------
-
-        $summary = $this->createBlock('Walmart_Listing_Log_Grid_LastActions')->setData([
-            'entity_id' => $listingProductId,
-            'logs'      => $logs,
-            'available_actions' => $this->getAvailableActions(),
-            'is_variation_parent' => $isVariationParent,
-            'view_help_handler' => 'ListingGridHandlerObj.viewItemHelp',
-            'hide_help_handler' => 'ListingGridHandlerObj.hideItemHelp',
-        ]);
-
-        return $summary->toHtml();
-    }
-
-    private function getAvailableActions()
-    {
-        return [
-            Log::ACTION_LIST_PRODUCT_ON_COMPONENT       => $this->__('List'),
-            Log::ACTION_RELIST_PRODUCT_ON_COMPONENT     => $this->__('Relist'),
-            Log::ACTION_REVISE_PRODUCT_ON_COMPONENT     => $this->__('Revise'),
-            Log::ACTION_STOP_PRODUCT_ON_COMPONENT       => $this->__('Stop'),
-            Log::ACTION_DELETE_PRODUCT_FROM_COMPONENT   => $this->__('Remove from Channel'),
-            Log::ACTION_STOP_AND_REMOVE_PRODUCT         => $this->__('Stop on Channel / Remove from Listing'),
-            Log::ACTION_DELETE_AND_REMOVE_PRODUCT       => $this->__('Remove from Channel & Listing'),
-            Log::ACTION_DELETE_PRODUCT_FROM_LISTING     => $this->__('Remove from Listing'),
-            Log::ACTION_RESET_BLOCKED_PRODUCT           => $this->__('Reset Inactive (Blocked) Item'),
-            Log::ACTION_CHANNEL_CHANGE                  => $this->__('Channel Change'),
-            Log::ACTION_SWITCH_TO_AFN_ON_COMPONENT      => $this->__('Switch to AFN'),
-            Log::ACTION_SWITCH_TO_MFN_ON_COMPONENT      => $this->__('Switch to MFN'),
-        ];
-    }
-
     //########################################
 
     public function getRowUrl($row)
@@ -1304,7 +793,7 @@ HTML;
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
                 <<<JS
-    ListingGridHandlerObj.afterInitPage();
+    ListingGridObj.afterInitPage();
 JS
             );
         }

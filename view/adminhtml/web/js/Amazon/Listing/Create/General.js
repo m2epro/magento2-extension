@@ -6,8 +6,7 @@ define([
     'M2ePro/Plugin/AreaWrapper'
 ], function (_, alert) {
 
-    window.AmazonListingCreateGeneral = Class.create();
-    AmazonListingCreateGeneral.prototype = {
+    window.AmazonListingCreateGeneral = Class.create({
 
         marketplaceSynchProgressObj: null,
         accounts: null,
@@ -193,14 +192,25 @@ define([
                         return self.marketplaceSynchProgressObj.end();
                     }
 
-                    var title = 'Amazon ' + $('marketplace_title').innerHTML;
+                    var params = {};
+                    params['status_' + marketplaceId] = 1;
 
-                    $('save_and_next').disable();
+                    new Ajax.Request(M2ePro.url.get('amazon_marketplace/save'), {
+                        method: 'post',
+                        parameters: params,
+                        onSuccess: function() {
 
-                    self.marketplaceSynchProgressObj.runTask(
-                        title,
-                        M2ePro.url.get('amazon_marketplace/runSynchNow', {marketplace_id: marketplaceId})
-                    );
+                            var title = 'Amazon ' + $('marketplace_title').innerHTML;
+                            $('save_and_next').disable();
+
+                            self.marketplaceSynchProgressObj.runTask(
+                                title,
+                                M2ePro.url.get('amazon_marketplace/runSynchNow', {marketplace_id: marketplaceId}),
+                                M2ePro.url.get('amazon_marketplace/synchGetExecutingInfo'),
+                                'AmazonListingCreateGeneralObj.marketplaceSynchProgressObj.end()'
+                            );
+                        }
+                    });
                 }
             });
         },
@@ -220,5 +230,5 @@ define([
         }
 
         // ---------------------------------------
-    };
+    });
 });

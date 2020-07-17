@@ -26,4 +26,12 @@
                   shared="false" />
     </event>
 
+    <!-- magento static blocks -->
+
+    <event name="cms_block_save_after">
+        <observer name="m2epro_observer_cms_block_save_after"
+                  instance="Ess\M2ePro\Observer\Cms\Block\Save\After"
+                  shared="false" />
+    </event>
+
 </config>

@@ -17,8 +17,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected $magentoCategoryIds = [];
     protected $marketplaceId;
 
-    protected $mapToTemplateJsFn = 'ListingGridHandlerObj.templateCategoryHandler.mapToTemplateCategory';
-    protected $createNewTemplateJsFn = 'ListingGridHandlerObj.templateCategoryHandler.createTemplateCategoryInNewTab';
+    protected $mapToTemplateJsFn = 'ListingGridObj.templateCategoryHandler.mapToTemplateCategory';
+    protected $createNewTemplateJsFn = 'ListingGridObj.templateCategoryHandler.createTemplateCategoryInNewTab';
 
     protected $resourceConnection;
 

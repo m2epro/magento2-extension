@@ -58,6 +58,7 @@ class AfterToken extends InstallationEbay
         }
 
         $data = array_merge(
+            $this->getEbayAccountDefaultSettings(),
             [
                 'title' => $response['info']['UserID'],
                 'user_id' => $response['info']['UserID'],
@@ -66,11 +67,11 @@ class AfterToken extends InstallationEbay
                 'server_hash' => $response['hash'],
                 'token_session' => $tokenSessionId,
                 'token_expired_date' => $response['token_expired_date']
-            ],
-            $this->getEbayAccountDefaultSettings()
+            ]
         );
 
-        $accountModel = $this->ebayFactory->getObject('Account')->setData($data)->save();
+        $accountModel = $this->ebayFactory->getObject('Account');
+        $this->modelFactory->getObject('Ebay_Account_Builder')->build($accountModel, $data);
         $accountModel->getChildObject()->updateEbayStoreInfo();
 
         $this->setStep($this->getNextStep());
@@ -83,55 +84,16 @@ class AfterToken extends InstallationEbay
      */
     private function getEbayAccountDefaultSettings()
     {
-        return [
+        $data = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
 
-            'marketplaces_data' => $this->getHelper('Data')->jsonEncode([]),
-            'feedbacks_receive' => 0,
-            'feedbacks_auto_response' => AccountModel::FEEDBACKS_AUTO_RESPONSE_NONE,
-            'feedbacks_auto_response_only_positive' => 0,
-            'other_listings_synchronization' => 0,
-            'other_listings_mapping_mode' => 0,
-            'other_listings_mapping_settings' => $this->getHelper('Data')->jsonEncode([]),
-            'magento_orders_settings' => $this->getHelper('Data')->jsonEncode([
-                'listing' => [
-                    'mode' => 1,
-                    'store_mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
-                    'store_id' => null
-                ],
-                'listing_other' => [
-                    'mode' => 1,
-                    'product_mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
-                    'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
-                    'store_id' => $this->getHelper('Magento\Store')->getDefaultStoreId(),
-                ],
-                'customer' => [
-                    'mode' => AccountModel::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,
-                    'id' => null,
-                    'website_id' => null,
-                    'group_id' => null,
-                    'notifications' => [
-                        'invoice_created' => false,
-                        'order_created' => false
-                    ]
-                ],
-                'creation' => [
-                    'mode' => AccountModel::MAGENTO_ORDERS_CREATE_CHECKOUT_AND_PAID,
-                ],
-                'tax' => [
-                    'mode' => AccountModel::MAGENTO_ORDERS_TAX_MODE_MIXED
-                ],
-                'status_mapping' => [
-                    'mode' => AccountModel::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
-                    'new' => AccountModel::MAGENTO_ORDERS_STATUS_MAPPING_NEW,
-                    'paid' => AccountModel::MAGENTO_ORDERS_STATUS_MAPPING_PAID,
-                    'shipped' => AccountModel::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED
-                ],
-                'qty_reservation' => [
-                    'days' => 0
-                ],
-                'invoice_mode' => 1,
-                'shipment_mode' => 1
-            ])
-        ];
+        $data['marketplaces_data'] = [];
+
+        $data['other_listings_synchronization'] = 0;
+
+        $data['magento_orders_settings']['listing_other']['store_id'] = $this->getHelper('Magento\Store')
+            ->getDefaultStoreId();
+        $data['magento_orders_settings']['qty_reservation']['days'] = 0;
+
+        return $data;
     }
 }

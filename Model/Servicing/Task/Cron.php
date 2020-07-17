@@ -47,13 +47,14 @@ class Cron extends \Ess\M2ePro\Model\Servicing\Task
         if ($helper->isRunnerMagento()) {
             $currentTimeStamp = $this->getHelper('Data')->getCurrentGmtDate(true);
             $lastTypeChange = $helper->getLastRunnerChange();
-            $lastRun = $this->cacheConfig
-                           ->getGroupValue('/servicing/cron/', 'last_run');
+            $lastRun = $this->getHelper('Module')->getRegistry()->getValue('/servicing/cron/last_run/');
 
             if (($lastTypeChange === null || $currentTimeStamp > strtotime($lastTypeChange) + 86400) &&
                 ($lastRun === null || $currentTimeStamp > strtotime($lastRun) + 86400)) {
-                $this->cacheConfig
-                    ->setGroupValue('/servicing/cron/', 'last_run', $this->getHelper('Data')->getCurrentGmtDate());
+                $this->getHelper('Module')->getRegistry()->setValue(
+                    '/servicing/cron/last_run/',
+                    $this->getHelper('Data')->getCurrentGmtDate()
+                );
 
                 return true;
             }

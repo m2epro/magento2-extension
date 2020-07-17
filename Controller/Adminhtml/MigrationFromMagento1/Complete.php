@@ -8,8 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1;
 
-use Ess\M2ePro\Setup\MigrationFromMagento1\Runner;
-use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
 
 /**
@@ -17,18 +15,6 @@ use Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
  */
 class Complete extends Base
 {
-    protected $migrationRunner;
-
-    //########################################
-
-    public function __construct(
-        Context $context,
-        Runner $migrationRunner
-    ) {
-        $this->migrationRunner = $migrationRunner;
-        parent::__construct($context);
-    }
-
     //########################################
 
     public function execute()

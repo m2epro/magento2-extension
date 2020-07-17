@@ -59,12 +59,6 @@ class Enable extends \Ess\M2ePro\Observer\AbstractModel
         if (count($executedIndexes) <= 0) {
             return;
         }
-
-        $this->activeRecordFactory->getObject('Synchronization\Log')->addMessage(
-            $this->getHelper('Module\Translation')->__('Product reindex was executed.'),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
-        );
     }
 
     //########################################

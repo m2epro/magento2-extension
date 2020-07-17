@@ -913,12 +913,17 @@ HTML
             );
         }
 
-        $showHideWYSIWYGButton = $this->createBlock('Magento\Button')->setData([
-            'id' => 'description_template_show_hide_wysiwyg',
-            'label' => ($formData['editor_type'] == Description::EDITOR_TYPE_SIMPLE)
-                ? $this->__('Show Editor') : $this->__('Hide Editor'),
-            'class' => 'action-primary'
-        ]);
+        $showHideWYSIWYGButton = '';
+        if ($this->wysiwygConfig->isEnabled()) {
+            $showHideWYSIWYGButtonBlock = $this->createBlock('Magento\Button')->setData([
+                'id' => 'description_template_show_hide_wysiwyg',
+                'label' => ($formData['editor_type'] == Description::EDITOR_TYPE_SIMPLE)
+                    ? $this->__('Show Editor') : $this->__('Hide Editor'),
+                'class' => 'action-primary'
+            ]);
+
+            $showHideWYSIWYGButton = $showHideWYSIWYGButtonBlock->toHtml();
+        }
 
         $openCustomInsertsButton = $this->createBlock('Magento\Button')->setData([
             'id' => 'custom_inserts_open_popup',
@@ -936,7 +941,7 @@ HTML
                 'name' => 'description[description_template]',
                 'value' => $formData['description_template'],
                 'class' => ' admin__control-textarea left M2ePro-validate-description-template',
-                'wysiwyg' => true,
+                'wysiwyg' => $this->wysiwygConfig->isEnabled(),
                 'force_load' => true,
                 'config' => $this->wysiwygConfig->getConfig([
                     'hidden' => true,
@@ -947,7 +952,7 @@ HTML
                 ]),
                 'after_element_html' => <<<HTML
 <div id="description_template_buttons">
-    {$showHideWYSIWYGButton->toHtml()}
+    {$showHideWYSIWYGButton}
     {$openCustomInsertsButton->toHtml()}
 </div>
 HTML
@@ -1569,7 +1574,7 @@ JS
 
     public function getDefault()
     {
-        $default = $this->activeRecordFactory->getObject('Ebay_Template_Description')->getDefaultSettings();
+        $default = $this->modelFactory->getObject('Ebay_Template_Description_Builder')->getDefaultData();
 
         $default['enhancement'] = explode(',', $default['enhancement']);
         $default['product_details'] = $this->getHelper('Data')->jsonDecode($default['product_details']);

@@ -23,24 +23,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
             return $this->getResult();
         }
 
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/product/force_qty/',
-            'mode',
-            (int)$post['force_qty_mode']
-        );
-
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/product/force_qty/',
-            'value',
-            (int)$post['force_qty_value']
-        );
-
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/magento/attribute/',
-            'price_type_converting',
-            (int)$post['price_type_converting_mode']
-        );
-
+        $this->getHelper('Module_Configuration')->setConfigValues($this->getRequest()->getParams());
         $this->setJsonContent(['success' => true]);
         return $this->getResult();
     }

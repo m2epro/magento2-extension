@@ -40,30 +40,6 @@ class General extends Command
     //########################################
 
     /**
-     * @title "Clear Cache"
-     * @description "Clear extension cache"
-     * @confirm "Are you sure?"
-     */
-    public function clearExtensionCacheAction()
-    {
-        $this->getHelper('Module')->clearCache();
-        $this->getMessageManager()->addSuccess('Extension cache was successfully cleared.');
-        return $this->_redirect($this->getHelper('View\ControlPanel')->getPageToolsTabUrl());
-    }
-
-    /**
-     * @title "Clear Config Cache"
-     * @description "Clear config cache"
-     * @confirm "Are you sure?"
-     */
-    public function clearConfigCacheAction()
-    {
-        $this->getHelper('Module')->clearConfigCache();
-        $this->getMessageManager()->addSuccess('Config cache was successfully cleared.');
-        return $this->_redirect($this->getHelper('View\ControlPanel')->getPageToolsTabUrl());
-    }
-
-    /**
      * @title "Clear Variables Dir"
      * @description "Clear Variables Dir"
      * @confirm "Are you sure?"
@@ -663,8 +639,9 @@ HTML;
 
         //########################################
 
-        $amazonComponentTitle = (string)$this->getHelper('Component\Amazon');
-        $eBayComponentTitle = (string)$this->getHelper('Component\Ebay');
+        $walmartComponentTitle = (string)$this->getHelper('Component\Walmart')->getTitle();
+        $amazonComponentTitle = (string)$this->getHelper('Component\Amazon')->getTitle();
+        $eBayComponentTitle = (string)$this->getHelper('Component\Ebay')->getTitle();
         $logs = [];
 
         /** @var \Ess\M2ePro\Helper\Data $dataHelper */
@@ -699,21 +676,14 @@ HTML;
                 $componentTitle = (string)$account->getComponentTitle();
 
                 if ($amazonComponentTitle === $componentTitle) {
-                    $key = "/amazon/orders/receive/{$account->getChildObject()->getMerchantId()}/from_update_date/";
-                    $registry = $this->activeRecordFactory->getObjectLoaded(
-                        'Registry',
-                        $key,
-                        'key',
-                        false
+                    $this->getHelper('Module')->getRegistry()->setValue(
+                        "/amazon/orders/receive/{$account->getChildObject()->getMerchantId()}/from_update_date/",
+                        $data['time']
                     );
-                    $registry === null && $registry = $this->activeRecordFactory->getObject('Registry');
-                    $registry->setData('key', $key);
-                    $registry->setData('value', $data['time']);
-                    $registry->save();
                     continue;
                 }
 
-                if ($eBayComponentTitle === $componentTitle) {
+                if ($eBayComponentTitle === $componentTitle || $walmartComponentTitle === $componentTitle) {
                     $accountChildObject = $account->getChildObject();
                     $accountChildObject->setData('orders_last_synchronization', $data['time']);
                     $accountChildObject->save();
@@ -742,17 +712,12 @@ HTML;
             $time = null;
 
             if ($amazonComponentTitle === $componentTitle) {
-                $key = "/amazon/orders/receive/{$account->getChildObject()->getMerchantId()}/from_update_date/";
-                $registry = $this->activeRecordFactory->getObjectLoaded(
-                    'Registry',
-                    $key,
-                    'key',
-                    false
+                $time = $this->getHelper('Module')->getRegistry()->getValue(
+                    "/amazon/orders/receive/{$account->getChildObject()->getMerchantId()}/from_update_date/"
                 );
-                $time = $registry->getData('value');
             }
 
-            if ($eBayComponentTitle === $componentTitle) {
+            if ($eBayComponentTitle === $componentTitle || $walmartComponentTitle === $componentTitle) {
                 $time = $account->getChildObject()->getData('orders_last_synchronization');
             }
 
@@ -894,7 +859,8 @@ HTML;
                 null,
                 null,
                 false,
-                false
+                false,
+                true
             );
         } catch (Connection $e) {
             $result = "<h2>{$e->getMessage()}</h2><pre><br/>";

@@ -20,6 +20,7 @@ class DeleteCategory extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoA
         $groupId = $this->getRequest()->getParam('group_id');
         $categoryId = $this->getRequest()->getParam('category_id');
 
+        /** @var \Ess\M2ePro\Model\Listing\Auto\Category $category */
         $category = $this->activeRecordFactory->getObject('Listing_Auto_Category')
             ->getCollection()
             ->addFieldToFilter('group_id', (int)$groupId)
@@ -33,7 +34,7 @@ class DeleteCategory extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoA
         $category->delete();
 
         if ($this->activeRecordFactory->getObject('Listing_Auto_Category_Group')->getResource()->isEmpty($groupId)) {
-            $this->activeRecordFactory->getObject('Listing_Auto_Category_Group')->load($groupId)->delete();
+            $this->activeRecordFactory->getObjectLoaded('Listing_Auto_Category_Group', $groupId)->delete();
         }
     }
 

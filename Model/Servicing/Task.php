@@ -17,7 +17,6 @@ abstract class Task extends \Ess\M2ePro\Model\AbstractModel
     private $initiator;
 
     protected $config;
-    protected $cacheConfig;
     protected $storeManager;
     protected $parentFactory;
     protected $activeRecordFactory;
@@ -27,7 +26,6 @@ abstract class Task extends \Ess\M2ePro\Model\AbstractModel
 
     public function __construct(
         \Magento\Eav\Model\Config $config,
-        \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -36,7 +34,6 @@ abstract class Task extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
     ) {
         $this->config = $config;
-        $this->cacheConfig = $cacheConfig;
         $this->storeManager = $storeManager;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->parentFactory = $parentFactory;

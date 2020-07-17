@@ -83,7 +83,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             [
                 'label' => '',
                 'value' => $this->__('Save'),
-                'onclick' => 'ListingGridHandlerObj.variationProductManageHandler.saveAutoActionSettings()',
+                'onclick' => 'ListingGridObj.variationProductManageHandler.saveAutoActionSettings()',
                 'class' => 'action-primary'
             ]
         );

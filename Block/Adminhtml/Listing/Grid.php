@@ -40,6 +40,47 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareLayout();
     }
 
+    protected function _prepareMassaction()
+    {
+        // Set massaction identifiers
+        // ---------------------------------------
+        $this->setMassactionIdField('main_table.id');
+        $this->getMassactionBlock()->setFormFieldName('ids');
+        // ---------------------------------------
+        $currentView = $this->getHelper('View')->getCurrentView();
+
+        // Set clear log action
+        // ---------------------------------------
+        $this->getMassactionBlock()->addItem(
+            'clear_logs',
+            [
+                'label' => $this->__('Clear Log(s)'),
+                'url' => $this->getUrl(
+                    '*/listing/clearLog',
+                    [
+                        'back' => $this->getHelper('Data')->makeBackUrlParam("*/{$currentView}_listing/index")
+                    ]
+                ),
+                'confirm' => $this->__('Are you sure?')
+            ]
+        );
+        // ---------------------------------------
+
+        // Set remove listings action
+        // ---------------------------------------
+        $this->getMassactionBlock()->addItem(
+            'delete_listings',
+            [
+                'label' => $this->__('Delete Listing(s)'),
+                'url' => $this->getUrl("*/{$currentView}_listing/delete"),
+                'confirm' => $this->__('Are you sure?')
+            ]
+        );
+        // ---------------------------------------
+
+        return parent::_prepareMassaction();
+    }
+
     //########################################
 
     protected function _prepareColumns()

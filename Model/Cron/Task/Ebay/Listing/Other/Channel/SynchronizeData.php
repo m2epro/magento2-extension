@@ -137,7 +137,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     {
         $nextSinceTime = new \DateTime($sinceTime, new \DateTimeZone('UTC'));
 
-        $operationHistory = $this->getOperationHistory()->getParentObject('synchronization');
+        $operationHistory = $this->getOperationHistory()->getParentObject('cron_runner');
         if ($operationHistory !== null) {
             $toTime = new \DateTime($operationHistory->getData('start_date'), new \DateTimeZone('UTC'));
         } else {
@@ -236,8 +236,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($message->getText()),
-                $logType,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+                $logType
             );
         }
     }

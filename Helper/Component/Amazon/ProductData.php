@@ -35,14 +35,7 @@ class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getRecent($marketplaceId, $excludedProductDataNick = null)
     {
-        /** @var $registryModel \Ess\M2ePro\Model\Registry */
-        $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', $this->getConfigGroup(), 'key', false);
-
-        if ($registryModel === null) {
-            return [];
-        }
-
-        $allRecent = $registryModel->getValueFromJson();
+        $allRecent = $this->getHelper('Module')->getRegistry()->getValueFromJson($this->getConfigGroup());
 
         if (!isset($allRecent[$marketplaceId])) {
             return [];
@@ -61,16 +54,7 @@ class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function addRecent($marketplaceId, $productDataNick)
     {
-        $key = $this->getConfigGroup();
-        $allRecent = [];
-
-        /** @var $registryModel \Ess\M2ePro\Model\Registry */
-        $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', $key, 'key', false);
-        if ($registryModel === null) {
-            $registryModel = $this->activeRecordFactory->getObject('Registry');
-        } else {
-            $allRecent = $registryModel->getValueFromJson();
-        }
+        $allRecent = $this->getHelper('Module')->getRegistry()->getValueFromJson($this->getConfigGroup());
 
         !isset($allRecent[$marketplaceId]) && $allRecent[$marketplaceId] = [];
 
@@ -88,10 +72,7 @@ class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
         $recent[] = $productDataNick;
         $allRecent[$marketplaceId] = $recent;
 
-        $registryModel->addData([
-            'key'   => $key,
-            'value' => $this->getHelper('Data')->jsonEncode($allRecent)
-        ])->save();
+        $this->getHelper('Module')->getRegistry()->setValue($this->getConfigGroup(), $allRecent);
     }
 
     //########################################

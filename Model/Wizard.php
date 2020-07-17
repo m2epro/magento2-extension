@@ -26,9 +26,10 @@ class Wizard extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     //########################################
 
     /**
+     * @param string|null $view
      * @return bool
      */
-    public function isActive()
+    public function isActive($view)
     {
         return true;
     }

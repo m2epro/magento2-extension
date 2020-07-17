@@ -49,13 +49,14 @@ class Link extends Account
         if ($status == '1') {
             $accountRepricingModel = $this->activeRecordFactory->getObject('Amazon_Account_Repricing');
 
-            $accountRepricingModel->setData([
-                'account_id' => $accountId,
-                'email' => $email,
-                'token' => $token
-            ]);
-
-            $accountRepricingModel->save();
+            $this->modelFactory->getObject('Amazon_Account_Repricing_Builder')->build(
+                $accountRepricingModel,
+                [
+                    'account_id' => $accountId,
+                    'email' => $email,
+                    'token' => $token
+                ]
+            );
 
             /** @var $repricing \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General */
             $repricing = $this->modelFactory->getObject('Amazon_Repricing_Synchronization_General');

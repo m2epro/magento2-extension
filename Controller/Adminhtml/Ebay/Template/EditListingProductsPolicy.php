@@ -17,7 +17,7 @@ class EditListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
 
     public function execute()
     {
-        $ids = $this->getRequestIds();
+        $ids = $this->getRequestIds('products_id');
 
         if (empty($ids)) {
             $this->setAjaxContent('0', false);

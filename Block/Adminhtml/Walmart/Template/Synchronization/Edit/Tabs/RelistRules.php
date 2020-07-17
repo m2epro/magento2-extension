@@ -23,23 +23,7 @@ class RelistRules extends AbstractForm
         $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $defaults = [
-            'relist_mode' => 1,
-            'relist_filter_user_lock' => 1,
-            'relist_status_enabled' => 1,
-            'relist_is_in_stock' => 1,
-
-            'relist_qty_magento'           => TemplateSynchronization::QTY_MODE_NONE,
-            'relist_qty_magento_value'     => '1',
-            'relist_qty_magento_value_max' => '10',
-
-            'relist_qty_calculated'           => TemplateSynchronization::QTY_MODE_NONE,
-            'relist_qty_calculated_value'     => '1',
-            'relist_qty_calculated_value_max' => '10',
-
-            'relist_advanced_rules_mode'    => 0,
-            'relist_advanced_rules_filters' => null
-        ];
+        $defaults = $this->modelFactory->getObject('Walmart_Template_Synchronization_Builder')->getDefaultData();
         $formData = array_merge($defaults, $formData);
 
         $form = $this->_formFactory->create();
@@ -148,61 +132,15 @@ HTML
         );
 
         $fieldset->addField(
-            'relist_qty_magento',
-            self::SELECT,
-            [
-                'name' => 'relist_qty_magento',
-                'label' => $this->__('Magento Quantity'),
-                'value' => $formData['relist_qty_magento'],
-                'values' => [
-                    TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
-                    TemplateSynchronization::QTY_MODE_MORE => $this->__('More or Equal'),
-                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
-                ],
-                'class' => 'M2ePro-validate-stop-relist-conditions-item-qty',
-                'tooltip' => $this->__(
-                    'Magento Product Quantity at which the Item(s) have to be relisted.'
-                )
-            ]
-        )->addCustomAttribute('qty_type', 'magento');
-
-        $fieldset->addField(
-            'relist_qty_magento_value',
-            'text',
-            [
-                'container_id' => 'relist_qty_magento_value_container',
-                'name' => 'relist_qty_magento_value',
-                'label' => $this->__('Quantity'),
-                'value' => $formData['relist_qty_magento_value'],
-                'class' => 'validate-digits',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
-            'relist_qty_magento_value_max',
-            'text',
-            [
-                'container_id' => 'relist_qty_magento_value_max_container',
-                'name' => 'relist_qty_magento_value_max',
-                'label' => $this->__('Max Quantity'),
-                'value' => $formData['relist_qty_magento_value_max'],
-                'class' => 'validate-digits M2ePro-validate-conditions-between',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
             'relist_qty_calculated',
             self::SELECT,
             [
                 'name' => 'relist_qty_calculated',
-                'label' => $this->__('Calculated Quantity'),
+                'label' => $this->__('Quantity'),
                 'value' => $formData['relist_qty_calculated'],
                 'values' => [
                     TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
-                    TemplateSynchronization::QTY_MODE_MORE => $this->__('More or Equal'),
-                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
+                    TemplateSynchronization::QTY_MODE_YES => $this->__('More or Equal'),
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-item-qty',
                 'tooltip' => $this->__(
@@ -213,32 +151,12 @@ HTML
                     Product listed as Walmart Variant Group.'
                 )
             ]
-        )->addCustomAttribute('qty_type', 'calculated');
-
-        $fieldset->addField(
-            'relist_qty_calculated_value',
-            'text',
-            [
-                'container_id' => 'relist_qty_calculated_value_container',
-                'name' => 'relist_qty_calculated_value',
-                'label' => $this->__('Quantity'),
-                'value' => $formData['relist_qty_calculated_value'],
-                'class' => 'validate-digits',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
-            'relist_qty_calculated_value_max',
-            'text',
-            [
-                'container_id' => 'relist_qty_calculated_value_max_container',
-                'name' => 'relist_qty_calculated_value_max',
-                'label' => $this->__('Max Quantity'),
-                'value' => $formData['relist_qty_calculated_value_max'],
-                'class' => 'validate-digits M2ePro-validate-conditions-between',
-                'required' => true
-            ]
+        )->setAfterElementHtml(<<<HTML
+<input name="relist_qty_calculated_value" id="relist_qty_calculated_value"
+       value="{$formData['relist_qty_calculated_value']}" type="text"
+       style="width: 72px; margin-left: 10px;"
+       class="input-text admin__control-text required-entry validate-digits _required" />
+HTML
         );
 
         $fieldset = $form->addFieldset(
@@ -307,13 +225,8 @@ HTML
             'relist_status_enabled',
             'relist_is_in_stock',
 
-            'relist_qty_magento',
-            'relist_qty_magento_value',
-            'relist_qty_magento_value_max',
-
             'relist_qty_calculated',
             'relist_qty_calculated_value',
-            'relist_qty_calculated_value_max',
 
             'relist_advanced_rules_mode',
             'relist_advanced_rules_filters',

@@ -258,6 +258,10 @@ HTML
             'wizard' => (bool)$this->getRequest()->getParam('wizard', false)
         ]), 'ebay_account/newAction');
 
+        $this->jsUrl->add($this->getUrl('*/ebay_synchronization_log/index', [
+            'wizard' => (bool)$this->getRequest()->getParam('wizard', false)
+        ]), 'logViewUrl');
+
         $this->jsTranslator->add(
             'The specified Title is already used for other Listing. Listing Title must be unique.',
             $this->__(

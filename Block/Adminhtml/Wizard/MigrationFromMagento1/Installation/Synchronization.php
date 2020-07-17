@@ -27,9 +27,11 @@ class Synchronization extends Installation
         'M2ePro/Wizard/MigrationFromMagento1',
         'M2ePro/Wizard/MigrationFromMagento1/MarketplaceSynchProgress',
         'M2ePro/Plugin/ProgressBar',
+        'M2ePro/Plugin/AreaWrapper'
     ], function(){
         window.MarketplaceSynchProgressObj = new MigrationFromMagento1MarketplaceSynchProgress(
-            new ProgressBar('progress_bar')
+            new ProgressBar('progress_bar'),
+            new AreaWrapper('content_container')
         );
         window.MigrationFromMagento1Obj = new MigrationFromMagento1();
     });
@@ -76,6 +78,6 @@ JS
             $stepsBlock->toHtml() .
             '<div id="progress_bar"></div>' .
             $helpBlock->toHtml() .
-            $contentBlock->toHtml();
+            '<div id="content_container">' . $contentBlock->toHtml() . '</div>';
     }
 }

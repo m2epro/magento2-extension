@@ -191,6 +191,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
         );
 
         $connection->delete($tableCategories, ['marketplace_id = ?' => $this->marketplace->getId()]);
+        $this->getHelper('Component_Ebay_Category')->removeEbayRecent();
 
         $partNumber = 1;
 
@@ -457,7 +458,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 
         return $this->progressManager = $this->modelFactory->getObject('Lock_Item_Progress', [
             'lockItemManager' => $this->getLockItemManager(),
-            'progressNick'    => $this->marketplace->getTitle() . ' eBay Site'
+            'progressNick'    => $this->marketplace->getTitle() . ' Marketplace'
         ]);
     }
 

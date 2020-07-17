@@ -306,23 +306,25 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         if ($this->canDisplayLocalShippingRateTable()) {
 
             $shippingRateTableModeToolTipHtmlAccept = $this->__(<<<HTML
-Choose whether you want to apply 
-<a href="http://pages.ebay.com/help/pay/shipping-costs.html#tables" target="_blank">eBay Shipping Rate Tables</a> to 
+Choose whether you want to apply
+<a href="http://pages.ebay.com/help/pay/shipping-costs.html#tables" target="_blank">eBay Shipping Rate Tables</a> to
 M2E Pro Items.
 HTML
             );
+            // @codingStandardsIgnoreStart
             $shippingRateTableModeToolTipHtmlIdentifier = $this->__(<<<HTML
 Select which Shipping Rate Table mode to use:<br>
-<strong>Yes/No</strong> - allows you to apply or disable a 
-<a target="_blank" 
+<strong>Yes/No</strong> - allows you to apply or disable a
+<a target="_blank"
     href="http://pages.ebay.com/help/pay/shipping-costs.html#tables">default</a> Shipping Rate Table;<br>
-<strong>Rate Table</strong> -  allows you to apply a 
-<a target="_blank" 
-    href="http://pages.ebay.com/seller-center/seller-updates/2017spring/shipping-tools.html">certain</a> 
+<strong>Rate Table</strong> -  allows you to apply a
+<a target="_blank"
+    href="http://pages.ebay.com/seller-center/seller-updates/2017spring/shipping-tools.html">certain</a>
 Shipping Rate Table from the list you have created to the current eBay Seller Account.<br><br>
 Click <strong>Refresh</strong> to download the latest Shipping Rate Tables from eBay.
 HTML
             );
+            // @codingStandardsIgnoreEnd
 
             if ($this->getAccountId() !== null) {
 
@@ -361,6 +363,7 @@ HTML
                         'title' => $this->__('Use eBay Shipping Rate Table'),
                         'class' => 'M2ePro-validate-rate-table',
                         'field_extra_attributes' => 'id="local_shipping_rate_table_mode_tr"',
+                        'style'   => 'margin-right: 18px',
                         'tooltip' => $this->__(
                             <<<HTML
     <span class="shipping_rate_table_note_accepted" style="{$shippingRateTableModeToolTipStyleAccept}">
@@ -377,7 +380,8 @@ HTML
                     $this->formData['local_shipping_rate_table'][$this->getAccountId()]['mode']
                 )->setAfterElementHtml(
                     <<<HTML
-    <a href="javascript:void(0);" onclick='EbayTemplateShippingObj.updateRateTablesData({
+    <a href="javascript:void(0);" class="update_rate_table_button"
+       onclick='EbayTemplateShippingObj.updateRateTablesData({
         accountId: {$this->getAccountId()},
         marketplaceId: {$this->getMarketplace()->getId()},
         elementId: "local_shipping_rate_table_value_{$this->getAccountId()}",
@@ -423,20 +427,21 @@ HTML
         <td class="label">
             <label for="local_shipping_rate_table_value_{$account->getId()}">{$account->getTitle()}</label>
         </td>
-    
-        <td class="value">
-            <input type="hidden" id="local_shipping_rate_table_mode_{$account->getId()}" 
-                name="shipping[local_shipping_rate_table][{$account->getId()}][mode]" 
+
+        <td class="value" style="border-right: none;">
+            <input type="hidden" id="local_shipping_rate_table_mode_{$account->getId()}"
+                name="shipping[local_shipping_rate_table][{$account->getId()}][mode]"
                 value="{$this->formData['local_shipping_rate_table'][$account->getId()]['mode']}">
-            <select name="shipping[local_shipping_rate_table][{$account->getId()}][value]" 
-                id="local_shipping_rate_table_value_{$account->getId()}" 
+            <select name="shipping[local_shipping_rate_table][{$account->getId()}][value]"
+                id="local_shipping_rate_table_value_{$account->getId()}"
                 data-current-mode="{$this->formData['local_shipping_rate_table'][$account->getId()]['mode']}"
                 style="min-width: 250px;"
                 class="m2epro-field-with-tooltip select admin__control-select M2ePro-validate-rate-table"></select>
             {$toolTip}
         </td>
-        <td class="value">
-            <a href="javascript:void(0);" onclick='EbayTemplateShippingObj.updateRateTablesData({
+        <td class="value v-middle" style="border-left: none;">
+            <a href="javascript:void(0);" class="update_rate_table_button"
+               onclick='EbayTemplateShippingObj.updateRateTablesData({
                 accountId: {$account->getId()},
                 marketplaceId: {$this->getMarketplace()->getId()},
                 elementId: "local_shipping_rate_table_value_{$account->getId()}",
@@ -458,11 +463,11 @@ HTML;
                 }
 
                 $shippingRateTableModeHtml = <<<HTML
-    <table class="border data-grid data-grid-not-hovered" cellpadding="0" cellspacing="0">
+    <table class="border data-grid data-grid-not-hovered shipping_rate_table" cellpadding="0" cellspacing="0">
         <thead>
             <tr class="headings">
-                <th class="data-grid-th" style="width: 130px;">{$this->__('Account')}</th>
-                <th class="data-grid-th" colspan="3" style="width: 250px;">{$this->__('eBay Shipping Rate Table')}</th>
+                <th class="data-grid-th v-middle" style="width: 30%;">{$this->__('Account')}</th>
+                <th class="data-grid-th v-middle" colspan="3">{$this->__('eBay Shipping Rate Table')}</th>
             </tr>
         </thead>
         {$shippingRateTableModeAccountsHtml}
@@ -543,7 +548,7 @@ HTML;
                 'class' => 'M2ePro-required-when-visible M2ePro-custom-attribute-can-be-created',
                 'css_class' => 'local-shipping-tr local-shipping-always-visible-tr',
                 'tooltip' => $this->__(
-                    'The dispatch (or handling) time is the number of working days during which seller will take the 
+                    'The dispatch (or handling) time is the number of working days during which seller will take the
                     item to carrier after buyer\'s payment is credited to seller\'s account.'
                 )
             ]
@@ -759,23 +764,25 @@ HTML;
         if ($this->canDisplayInternationalShippingRateTable()) {
 
             $shippingRateTableModeToolTipHtmlAccept = $this->__(<<<HTML
-Choose whether you want to apply 
-<a href="http://pages.ebay.com/help/pay/shipping-costs.html#tables" target="_blank">eBay Shipping Rate Tables</a> to 
+Choose whether you want to apply
+<a href="http://pages.ebay.com/help/pay/shipping-costs.html#tables" target="_blank">eBay Shipping Rate Tables</a> to
 M2E Pro Items.
 HTML
             );
+            // @codingStandardsIgnoreStart
             $shippingRateTableModeToolTipHtmlIdentifier = $this->__(<<<HTML
 Select which Shipping Rate Table mode to use:<br>
-<strong>Yes/No</strong> - allows you to apply or disable a 
-<a target="_blank" 
+<strong>Yes/No</strong> - allows you to apply or disable a
+<a target="_blank"
     href="http://pages.ebay.com/help/pay/shipping-costs.html#tables">default</a> Shipping Rate Table;<br>
-<strong>Rate Table</strong> -  allows you to apply a 
-<a target="_blank" 
-    href="http://pages.ebay.com/seller-center/seller-updates/2017spring/shipping-tools.html">certain</a> 
+<strong>Rate Table</strong> -  allows you to apply a
+<a target="_blank"
+    href="http://pages.ebay.com/seller-center/seller-updates/2017spring/shipping-tools.html">certain</a>
 Shipping Rate Table from the list you have created to the current eBay Seller Account.<br><br>
 Click <strong>Refresh</strong> to download the latest Shipping Rate Tables from eBay.
 HTML
             );
+            // @codingStandardsIgnoreEnd
 
             if ($this->getAccountId() !== null) {
 
@@ -814,6 +821,7 @@ HTML
                         'title' => $this->__('Use eBay Shipping Rate Table'),
                         'css_class' => 'international-shipping-tr M2ePro-validate-rate-table',
                         'field_extra_attributes' => 'id="international_shipping_rate_table_mode_tr"',
+                        'style'   => 'margin-right: 18px',
                         'tooltip' => $this->__(
                             <<<HTML
     <span class="shipping_rate_table_note_accepted" style="{$shippingRateTableModeToolTipStyleAccept}">
@@ -830,7 +838,8 @@ HTML
                     $this->formData['international_shipping_rate_table'][$this->getAccountId()]['mode']
                 )->setAfterElementHtml(
                     <<<HTML
-    <a href="javascript:void(0);" onclick='EbayTemplateShippingObj.updateRateTablesData({
+    <a href="javascript:void(0);" class="update_rate_table_button"
+       onclick='EbayTemplateShippingObj.updateRateTablesData({
         accountId: {$this->getAccountId()},
         marketplaceId: {$this->getMarketplace()->getId()},
         elementId: "international_shipping_rate_table_value_{$this->getAccountId()}",
@@ -877,20 +886,21 @@ HTML
         <td class="label">
             <label for="international_shipping_rate_table_value_{$account->getId()}">{$account->getTitle()}</label>
         </td>
-    
-        <td class="value">
-            <input type="hidden" id="international_shipping_rate_table_mode_{$account->getId()}" 
-                name="shipping[international_shipping_rate_table][{$account->getId()}][mode]" 
+
+        <td class="value" style="border-right: none;">
+            <input type="hidden" id="international_shipping_rate_table_mode_{$account->getId()}"
+                name="shipping[international_shipping_rate_table][{$account->getId()}][mode]"
                 value="{$this->formData['international_shipping_rate_table'][$account->getId()]['mode']}">
-            <select name="shipping[international_shipping_rate_table][{$account->getId()}][value]" 
-                id="international_shipping_rate_table_value_{$account->getId()}" 
-                data-current-mode="{$this->formData['international_shipping_rate_table'][$account->getId()]['mode']}" 
+            <select name="shipping[international_shipping_rate_table][{$account->getId()}][value]"
+                id="international_shipping_rate_table_value_{$account->getId()}"
+                data-current-mode="{$this->formData['international_shipping_rate_table'][$account->getId()]['mode']}"
                 style="min-width: 250px;"
                 class="m2epro-field-with-tooltip select admin__control-select M2ePro-validate-rate-table"></select>
             {$toolTip}
         </td>
-        <td class="value">
-            <a href="javascript:void(0);" onclick='EbayTemplateShippingObj.updateRateTablesData({
+        <td class="value v-middle" style="border-left: none;">
+            <a href="javascript:void(0);" class="update_rate_table_button"
+               onclick='EbayTemplateShippingObj.updateRateTablesData({
                 accountId: {$account->getId()},
                 marketplaceId: {$this->getMarketplace()->getId()},
                 elementId: "international_shipping_rate_table_value_{$account->getId()}",
@@ -912,11 +922,12 @@ HTML;
                 }
 
                 $shippingRateTableModeHtml = <<<HTML
-    <table class="border data-grid data-grid-not-hovered international-shipping-tr" cellpadding="0" cellspacing="0">
+    <table class="border data-grid data-grid-not-hovered shipping_rate_table international-shipping-tr"
+           cellpadding="0" cellspacing="0">
         <thead>
             <tr class="headings">
-                <th class="data-grid-th" style="width: 130px;">{$this->__('Account')}</th>
-                <th class="data-grid-th" colspan="3" style="width: 250px;">{$this->__('eBay Shipping Rate Table')}</th>
+                <th class="data-grid-th" style="width: 30%;">{$this->__('Account')}</th>
+                <th class="data-grid-th" colspan="3">{$this->__('eBay Shipping Rate Table')}</th>
             </tr>
         </thead>
         {$shippingRateTableModeAccountsHtml}
@@ -1454,7 +1465,7 @@ HTML;
             </tfoot>
         </table>
 
-        <div id="add_international_shipping_method_button" style="display: none; width: 1109px">
+        <div id="add_international_shipping_method_button" style="display: none;">
 
             <table style="border: none" cellpadding="0" cellspacing="0">
                 <tfoot>
@@ -1484,7 +1495,7 @@ HTML;
         if (!empty($discountProfiles)) {
             foreach ($discountProfiles as $accountId => $value) {
                 $html .= <<<HTML
-                    <tr class="{$locationType}-discount-profile-account-tr" account_id="{$accountId}">
+                    <tr class="{$locationType}-discount-profile-account-tr label v-middle" account_id="{$accountId}">
                         <td class="label v-middle">
                             <label for="{$locationType}_shipping_discount_combined_profile_id_{$accountId}">
                                 {$value['account_name']}
@@ -1503,7 +1514,7 @@ HTML;
                                  Click <b>Refresh Profiles</b> to get your latest shipping profiles from eBay.'
                 ))}
                         </td>
-                        <td class="value v-middle" style="width: 200px; border-left: none;">
+                        <td class="value v-middle" style="border-left: none;">
                             <a href="javascript:void(0);"
                                onclick="EbayTemplateShippingObj.updateDiscountProfiles({$accountId});">
                                   {$this->__('Refresh Profiles')}
@@ -2045,7 +2056,7 @@ HTML;
 
     public function getDefault()
     {
-        $default = $this->activeRecordFactory->getObject('Ebay_Template_Shipping')->getDefaultSettings();
+        $default = $this->modelFactory->getObject('Ebay_Template_Shipping_Builder')->getDefaultData();
         $default['excluded_locations'] = $this->getHelper('Data')->jsonDecode($default['excluded_locations']);
 
         // populate address fields with the data from magento configuration
@@ -2594,11 +2605,11 @@ HTML;
             'sell_api_popup_text' => $this->__(
                 <<<HTML
     To download the Shipping Rate Tables, you should grant M2E Pro access to your eBay data.
-If you consent, click <strong>Confirm</strong>. You will be redirected to M2E Pro eBay Account page. Under the 
-<strong>Sell API Details</strong> section, click <strong>Get Token</strong> (the instructions can be found 
-<a href="%url%" target="_blank">here</a>). After an eBay token is obtained, <strong>Save</strong> the changes to 
-Account configuration.<br><br> 
-The Rate Tables will be downloaded to M2E Pro Shipping Policy automatically. Select 
+If you consent, click <strong>Confirm</strong>. You will be redirected to M2E Pro eBay Account page. Under the
+<strong>Sell API Details</strong> section, click <strong>Get Token</strong> (the instructions can be found
+<a href="%url%" target="_blank">here</a>). After an eBay token is obtained, <strong>Save</strong> the changes to
+Account configuration.<br><br>
+The Rate Tables will be downloaded to M2E Pro Shipping Policy automatically. Select
 one which should be applied to your Items.<br><br>
 <strong>Note</strong>, you need to repeat the procedure above for each eBay Account separately.
 HTML
@@ -2607,7 +2618,7 @@ HTML
             ),
             'You are submitting different Shipping Rate Table modes for the domestic and international shipping. ' .
             'It contradicts eBay requirements. Please edit the settings.' => $this->__(
-                'You are submitting different Shipping Rate Table modes for the domestic and international shipping. 
+                'You are submitting different Shipping Rate Table modes for the domestic and international shipping.
                 It contradicts eBay requirements. Please edit the settings.'
             )
         ]);
@@ -2623,7 +2634,11 @@ HTML
             'ebay_template_shipping/getRateTableData' => $this->getUrl('*/ebay_template_shipping/getRateTableData'),
             'ebay_account/edit' => $this->getUrl(
                 '*/ebay_account/edit',
-                $this->getRequest()->getParam('wizard') ? ['wizard' => 1] : []
+                $this->getRequest()->getParam('wizard') ?
+                    [
+                        'wizard' => 1,
+                        'close_on_save' => true
+                    ] : []
             )
         ]);
 
@@ -2753,7 +2768,7 @@ JS;
         EbayTemplateShippingExcludedLocationsObj.setSelectedLocations({$selectedLocations});
 
         {$rateTablesHtml}
-        
+
         EbayTemplateShippingObj.counter = {
             local: 0,
             international: 0,

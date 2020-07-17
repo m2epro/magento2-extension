@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat;
 /**
  * Class \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ChangeProcessor
  */
-class ChangeProcessor extends \Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\AbstractModel
+class ChangeProcessor extends \Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\ChangeProcessorAbstract
 {
     const INSTRUCTION_INITIATOR = 'template_selling_format_change_processor';
 
@@ -24,7 +24,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Walmart\Template\ChangeProcessor
 
     // ---------------------------------------
 
-    protected function getInstructionsData(\Ess\M2ePro\Model\Template\Diff\AbstractModel $diff, $status)
+    protected function getInstructionsData(\Ess\M2ePro\Model\ActiveRecord\Diff $diff, $status)
     {
         /** @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Diff $diff */
 

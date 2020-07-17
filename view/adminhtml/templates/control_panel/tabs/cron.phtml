@@ -39,7 +39,7 @@
                     </td>
 
                     <td class="value">
-                        <a class="button-link" onclick="window.open('<?php echo $block->getUrl('*/controlPanel_cron/run', array('_query' => array('task_code' => 'task-plx'))); ?>'.replace('task-plx', $('task_code').value));" href="javascript:void(0);" style="display: inline !important;"><?php echo $block->__('Run') ?></a>
+                        <a class="action-default scalable add" onclick="window.open('<?php echo $block->getUrl('*/controlPanel_cron/run', ['_query' => ['task_code' => 'task-plx']]); ?>'.replace('task-plx', $('task_code').value));" href="javascript:void(0);" style="display: inline !important; margin-left: 10px;"><?php echo $block->__('Run') ?></a>
                     </td>
                 </tr>
 

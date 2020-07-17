@@ -10,26 +10,27 @@ namespace Ess\M2ePro\Model\Amazon\Template\Description;
 
 /**
  * Class \Ess\M2ePro\Model\Amazon\Template\Description\SnapshotBuilder
+ * @method \Ess\M2ePro\Model\Template\Description getModel()
  */
-class SnapshotBuilder extends \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel
+class SnapshotBuilder extends \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder
 {
     //########################################
 
     public function getSnapshot()
     {
-        $data = $this->model->getData();
+        $data = $this->getModel()->getData();
 
-        if ($this->model->getChildObject() !== null) {
-            $data = array_merge($data, $this->model->getChildObject()->getData());
+        if ($this->getModel()->getChildObject() !== null) {
+            $data = array_merge($data, $this->getModel()->getChildObject()->getData());
         }
 
         if (empty($data)) {
             return [];
         }
 
-        $data['specifics'] = $this->model->getChildObject()->getSpecifics();
-        $data['definition'] = $this->model->getChildObject()->getDefinitionTemplate()
-            ? $this->model->getChildObject()->getDefinitionTemplate()->getData() : [];
+        $data['specifics'] = $this->getModel()->getChildObject()->getSpecifics();
+        $data['definition'] = $this->getModel()->getChildObject()->getDefinitionTemplate()
+            ? $this->getModel()->getChildObject()->getDefinitionTemplate()->getData() : [];
 
         $ignoredKeys = [
             'id', 'template_description_id',

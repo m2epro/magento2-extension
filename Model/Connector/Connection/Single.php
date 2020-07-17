@@ -36,7 +36,8 @@ class Single extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
             $this->getServerBaseUrl(),
             $this->getServerHostName(),
             $this->isTryToResendOnError(),
-            $this->isTryToSwitchEndpointOnError()
+            $this->isTryToSwitchEndpointOnError(),
+            $this->isCanIgnoreMaintenance()
         );
     }
 
@@ -50,25 +51,23 @@ class Single extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
             $this->isTryToSwitchEndpointOnError() && $this->helperFactory->getObject('Server')->switchEndpoint();
 
             $this->getHelper('Module\Logger')->process($result, 'Invalid Response Format', false);
+            throw new \Ess\M2ePro\Model\Exception\Connection($this->getConnectionErrorMessage(), $result);
+        }
 
-            $connectionErrorMessage = 'The Action was not completed because connection with M2E Pro Server was not set.
-            There are several possible reasons:  temporary connection problem – please wait and try again later;
-            block of outgoing connection by firewall – please, ensure that connection to s1.m2epro.com and
-            s2.m2epro.com, port 443 is allowed; CURL library is not installed or it does not support HTTPS Protocol –
-            please, install/update CURL library on your server and ensure it supports HTTPS Protocol.
-            More information you can find <a target="_blank" href="'.
-                $this->helperFactory->getObject('Module\Support')
-                    ->getKnowledgebaseArticleUrl('server-connection')
-                .'">here</a>';
-
-            throw new \Ess\M2ePro\Model\Exception\Connection($connectionErrorMessage, $result);
+        if ($this->getResponse()->isServerInMaintenanceMode()) {
+            $this->getHelper('Server_Maintenance')->processUnexpectedMaintenance();
         }
 
         if ($this->getResponse()->getMessages()->hasSystemErrorEntity()) {
-            throw new \Ess\M2ePro\Model\Exception($this->getHelper('Module\Translation')->__(
-                "Internal Server Error(s) [%error_message%]",
-                $this->getResponse()->getMessages()->getCombinedSystemErrorsString()
-            ), [], 0, !$this->getResponse()->isServerInMaintenanceMode());
+            throw new \Ess\M2ePro\Model\Exception(
+                $this->getHelper('Module\Translation')->__(
+                    "Internal Server Error(s) [%error_message%]",
+                    $this->getResponse()->getMessages()->getCombinedSystemErrorsString()
+                ),
+                [],
+                0,
+                !$this->getResponse()->isServerInMaintenanceMode()
+            );
         }
     }
 

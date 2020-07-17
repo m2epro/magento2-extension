@@ -73,35 +73,35 @@ define([
             return this;
         },
 
-        addSuccessMessage: function (message) {
+        addSuccess: function (message) {
             return this.add(message, SCOPE_CONTEXT, SUCCESS);
         },
 
-        addNoticeMessage: function (message) {
+        addNotice: function (message) {
             return this.add(message, SCOPE_CONTEXT);
         },
 
-        addWarningMessage: function (message) {
+        addWarning: function (message) {
             return this.add(message, SCOPE_CONTEXT, WARNING);
         },
 
-        addErrorMessage: function (message) {
+        addError: function (message) {
             return this.add(message, SCOPE_CONTEXT, ERROR);
         },
 
-        addGlobalSuccessMessage: function (message) {
+        addGlobalSuccess: function (message) {
             return this.add(message, SCOPE_GLOBAL, SUCCESS);
         },
 
-        addGlobalNoticeMessage: function (message) {
+        addGlobalNotice: function (message) {
             return this.add(message, SCOPE_GLOBAL);
         },
 
-        addGlobalWarningMessage: function (message) {
+        addGlobalWarning: function (message) {
             return this.add(message, SCOPE_GLOBAL, WARNING);
         },
 
-        addGlobalErrorMessage: function (message) {
+        addGlobalError: function (message) {
             return this.add(message, SCOPE_GLOBAL, ERROR);
         },
 
@@ -112,6 +112,14 @@ define([
         clearGlobal: function () {
             jQuery(this._globalContainer).find('.messages').empty();
             CommonObj.updateFloatingHeader();
+        },
+
+        clearAll: function () {
+            this.clear();
+        },
+
+        clearAllGlobal:function () {
+            this.clearGlobal();
         }
     };
 });

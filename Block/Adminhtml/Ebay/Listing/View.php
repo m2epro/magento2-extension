@@ -168,7 +168,7 @@ class View extends AbstractContainer
             ),
             $helper->getControllerActions(
                 'Ebay_Listing_AutoAction',
-                ['id' => $this->getRequest()->getParam('id')]
+                ['listing_id' => $this->getRequest()->getParam('id')]
             ),
             ['variationProductManage' =>
                 $this->getUrl('*/ebay_listing_variation_product_manage/index')]
@@ -179,7 +179,7 @@ class View extends AbstractContainer
 
         $this->jsTranslator->addTranslations([
             'Remove Category' => $this->__('Remove Category'),
-            'Add New Group' => $this->__('Add New Group'),
+            'Add New Rule' => $this->__('Add New Rule'),
             'Add/Edit Categories Rule' => $this->__('Add/Edit Categories Rule'),
             'Auto Add/Remove Rules' => $this->__('Auto Add/Remove Rules'),
             'Based on Magento Categories' => $this->__('Based on Magento Categories'),
@@ -285,6 +285,7 @@ JS
             'id' => $this->listing->getId()
         ]);
         $items[] = [
+            'id' => 'add_products_mode_product',
             'label' => $this->__('From Products List'),
             'onclick' => "setLocation('" . $url . "')",
             'default' => true
@@ -298,6 +299,7 @@ JS
             'id' => $this->listing->getId()
         ]);
         $items[] = [
+            'id' => 'add_products_mode_category',
             'label' => $this->__('From Categories'),
             'onclick' => "setLocation('" . $url . "')"
         ];

@@ -8,9 +8,13 @@
 
 namespace Ess\M2ePro\Model;
 
+use \Ess\M2ePro\Model\Ebay\Marketplace as EbayMarketplace;
+use \Ess\M2ePro\Model\Amazon\Marketplace as AmazonMarketplace;
+use \Ess\M2ePro\Model\Walmart\Marketplace as WalmartMarketplace;
+
 /**
- * @method \Ess\M2ePro\Model\Ebay\Marketplace|\Ess\M2ePro\Model\Amazon\Marketplace|
- * \Ess\M2ePro\Model\Walmart\Marketplace getChildObject()
+ * @method EbayMarketplace|AmazonMarketplace|WalmartMarketplace getChildObject()
+ * @method \Ess\M2ePro\Model\ResourceModel\Marketplace getResource()
  */
 class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
@@ -41,72 +45,6 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
         return parent::save($reloadOnCreate);
-    }
-
-    //########################################
-
-    public function delete()
-    {
-        if ($this->isLocked()) {
-            return false;
-        }
-
-        $otherListings = $this->getOtherListings(true);
-        foreach ($otherListings as $otherListing) {
-            $otherListing->delete();
-        }
-
-        $orders = $this->getOrders(true);
-        foreach ($orders as $order) {
-            $order->delete();
-        }
-
-        $this->deleteChildInstance();
-
-        $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
-        return parent::delete();
-    }
-
-    //########################################
-
-    /**
-     * @param bool $asObjects
-     * @param array $filters
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function getOtherListings($asObjects = false, array $filters = [])
-    {
-        $otherListings = $this->getRelatedComponentItems('Listing\Other', 'marketplace_id', $asObjects, $filters);
-
-        if ($asObjects) {
-            foreach ($otherListings as $otherListing) {
-                /** @var $otherListing \Ess\M2ePro\Model\Listing\Other */
-                $otherListing->setMarketplace($this);
-            }
-        }
-
-        return $otherListings;
-    }
-
-    /**
-     * @param bool $asObjects
-     * @param array $filters
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function getOrders($asObjects = false, array $filters = [])
-    {
-        $orders = $this->getRelatedComponentItems('Order', 'marketplace_id', $asObjects, $filters);
-
-        if ($asObjects) {
-            foreach ($orders as $order) {
-                /** @var $order \Ess\M2ePro\Model\Order */
-                $order->setMarketplace($this);
-            }
-        }
-
-        return $orders;
     }
 
     //########################################

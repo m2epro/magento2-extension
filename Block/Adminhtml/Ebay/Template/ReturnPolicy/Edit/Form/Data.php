@@ -291,7 +291,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     public function getDefault()
     {
-        return $this->returnPolicyTemplate->getDefaultSettings();
+        return $this->modelFactory->getObject('Ebay_Template_ReturnPolicy_Builder')->getDefaultData();
     }
 
     public function getMarketplaceData()

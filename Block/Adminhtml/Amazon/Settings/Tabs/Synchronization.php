@@ -33,10 +33,7 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->inspectorMode = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/listing/product/inspector/',
-            'mode'
-        );
+        $this->inspectorMode = $this->getHelper('Module_Configuration')->isEnableListingProductInspectorMode();
         // ---------------------------------------
 
         $form = $this->_formFactory->create(
@@ -86,17 +83,10 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
     protected function _toHtml()
     {
         $js = "require([
-                'M2ePro/Plugin/ProgressBar',
-                'M2ePro/Plugin/AreaWrapper',
-                'M2ePro/SynchProgress',
                 'M2ePro/Synchronization'
             ], function() {
 
-            SynchProgressBarObj = new ProgressBar('synchronization_progress_bar');
-            SynchWrapperObj = new AreaWrapper('synchronization_content_container');
-
-            SynchronizationProgressObj = new SynchProgress(SynchProgressBarObj, SynchWrapperObj );
-            SynchronizationObj = new Synchronization(SynchronizationProgressObj);";
+            SynchronizationObj = new Synchronization();";
 
         $js .= '})';
 
@@ -105,8 +95,6 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
         $this->jsTranslator->addTranslations(
             [
                 'Synchronization Settings have been saved.' => 'Synchronization Settings have been saved.',
-                'Running All Enabled Tasks' => 'Running All Enabled Tasks',
-                'Revise All' => 'Revise All'
             ]
         );
 
@@ -117,8 +105,7 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
                 ->makeBackUrlParam('*/amazon_synchronization/index')]),
         ]);
 
-        return '<div id="synchronization_progress_bar"></div>
-                <div id="synchronization_content_container">'.parent::_toHtml();
+        return parent::_toHtml();
     }
 
     //########################################

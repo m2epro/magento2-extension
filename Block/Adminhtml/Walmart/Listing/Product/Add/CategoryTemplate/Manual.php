@@ -44,16 +44,15 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         ]);
         $this->addButton('back', [
             'label'     => $this->__('Back'),
-            'onclick'   => 'ListingGridHandlerObj.backClick(\'' . $url . '\')',
+            'onclick'   => 'ListingGridObj.backClick(\'' . $url . '\')',
             'class'     => 'back'
         ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('save_and_go_to_listing_view', [
-            'id'        => 'walmart_listing_category_continue_btn',
+        $this->addButton('add_products_category_template_manual_continue', [
             'label'     => $this->__('Continue'),
-            'onclick'   => 'ListingGridHandlerObj.completeCategoriesDataStep()',
+            'onclick'   => 'ListingGridObj.completeCategoriesDataStep()',
             'class'     => 'action-primary forward'
         ]);
         // ---------------------------------------
@@ -100,7 +99,7 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             <<<JS
     selectTemplateCategory = function (el, templateId)
     {
-        ListingGridHandlerObj.mapToTemplateCategory(el, templateId);
+        ListingGridObj.mapToTemplateCategory(el, templateId);
     };
 
     require([
@@ -108,12 +107,12 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     ],function() {
         Common.prototype.scrollPageToTop = function() { return; }
 
-        window.ListingGridHandlerObj = new WalmartListingProductAddCategoryTemplateGrid(
+        window.ListingGridObj = new WalmartListingProductAddCategoryTemplateGrid(
             '{$this->getChildBlock('grid')->getId()}',
             {$this->getRequest()->getParam('id')}
         );
 
-        ListingGridHandlerObj.afterInitPage();
+        ListingGridObj.afterInitPage();
     });
 JS
         );

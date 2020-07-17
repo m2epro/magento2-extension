@@ -8,7 +8,6 @@
 
 namespace Ess\M2ePro\Setup;
 
-use Ess\M2ePro\Model\Config\Manager\Module;
 use Ess\M2ePro\Model\Exception;
 use Ess\M2ePro\Model\Setup;
 use Ess\M2ePro\Model\Setup\Upgrade\Manager;
@@ -75,6 +74,7 @@ class UpgradeData implements UpgradeDataInterface
         '1.4.3' => ['1.5.0'],
         '1.5.0' => ['1.5.1'],
         '1.5.1' => ['1.6.0'],
+        '1.6.0' => ['1.7.0'],
     ];
 
     //########################################
@@ -118,16 +118,9 @@ class UpgradeData implements UpgradeDataInterface
             return;
         }
 
-        if ($this->helperFactory->getObject('Module\Maintenance')->isEnabled() &&
-            !$this->isMaintenanceCanBeIgnored()) {
-            return;
-        }
-
         if (!$this->isInstalled()) {
             return;
         }
-
-        $this->checkPreconditions();
 
         $this->installer->startSetup();
         $this->helperFactory->getObject('Module\Maintenance')->enable();
@@ -146,13 +139,11 @@ class UpgradeData implements UpgradeDataInterface
                 $setupObject  = $upgradeManager->getCurrentSetupObject();
                 $backupObject = $upgradeManager->getBackupObject();
 
-                if ($setupObject->isBackuped() && $this->isAllowedRollbackFromBackup()) {
-                    $backupObject->rollback();
+                if (!$setupObject->isBackuped()) {
+                    $backupObject->create();
+                    $setupObject->setData('is_backuped', 1);
+                    $setupObject->save();
                 }
-
-                $backupObject->remove();
-                $backupObject->create();
-                $setupObject->setData('is_backuped', 1)->save();
 
                 $upgradeManager->process();
 
@@ -196,102 +187,44 @@ class UpgradeData implements UpgradeDataInterface
         return $setupRow !== false;
     }
 
-    private function checkPreconditions()
-    {
-        $setupResource = $this->activeRecordFactory->getObject('Setup')->getResource();
-
-        $maxSetupVersion = $setupResource->getMaxCompletedItem();
-        $maxSetupVersion && $maxSetupVersion = $maxSetupVersion->getVersionTo();
-
-        if ($maxSetupVersion !== null && $maxSetupVersion != $this->getMagentoResourceVersion()) {
-            $this->setMagentoResourceVersion($maxSetupVersion);
-        }
-
-        $notCompletedUpgrades = $setupResource->getNotCompletedUpgrades();
-        if (!empty($notCompletedUpgrades) && !$this->isAllowedRollbackFromBackup()) {
-            // @codingStandardsIgnoreLine
-            throw new Exception('There are some not completed previous upgrades');
-        }
-
-        if ($this->isAllowedRollbackFromBackup()) {
-            // only 1 not completed upgrade allowed for rollback from backup
-
-            if (count($notCompletedUpgrades) > 1) {
-                // @codingStandardsIgnoreLine
-                throw new Exception('There are more than 1 not completed previous upgrades available');
-            }
-
-            if (!empty($notCompletedUpgrades) &&
-                reset($notCompletedUpgrades)->getVersionFrom() != $this->getMagentoResourceVersion()
-            ) {
-                // @codingStandardsIgnoreLine
-                throw new Exception('Not completed upgrade is invalid for rollback from backup');
-            }
-        }
-    }
-
     private function getVersionsToExecute()
     {
-        $resultVersions = [];
+        $versionFrom = $this->getMagentoResourceVersion();
 
-        $setupResource = $this->activeRecordFactory->getObject('Setup')->getResource();
-        $notCompletedUpgrades = $setupResource->getNotCompletedUpgrades();
-        if ($this->isAllowedRollbackFromBackup() && !empty($notCompletedUpgrades)) {
-            /** @var Setup[] $notCompletedUpgrades */
+        /** @var Setup[] $notCompletedUpgrades */
+        $notCompletedUpgrades = $this->activeRecordFactory->getObject('Setup')->getResource()
+            ->getNotCompletedUpgrades();
 
+        if (!empty($notCompletedUpgrades)) {
+            /**
+             * Only one not completed upgrade is supported
+             */
             $notCompletedUpgrade = reset($notCompletedUpgrades);
-            $resultVersions[$notCompletedUpgrade->getVersionFrom()] = $notCompletedUpgrade->getVersionTo();
-        }
-
-        $versionFrom = end($resultVersions);
-        if (empty($versionFrom)) {
-            $versionFrom = $this->getMagentoResourceVersion();
+            if (version_compare($notCompletedUpgrade->getVersionFrom(), $versionFrom, '<')) {
+                $versionFrom = $notCompletedUpgrade->getVersionFrom();
+            }
         }
 
         if (version_compare($versionFrom, self::MIN_SUPPORTED_VERSION_FOR_UPGRADE, '<')) {
-            // @codingStandardsIgnoreStart
-            throw new Exception(
-                sprintf(
-                    'This version [%s] is too old.', $versionFrom
-                )
-            );
-            // @codingStandardsIgnoreEnd
+            // @codingStandardsIgnoreLine
+            throw new Exception(sprintf('This version [%s] is too old.', $versionFrom));
         }
 
+        $versions = [];
         while ($versionFrom != $this->getConfigVersion()) {
-            $versionTo = end(self::$availableVersionUpgrades[$versionFrom]);
-            $resultVersions[$versionFrom] = $versionTo;
+            $versionTo = !empty(self::$availableVersionUpgrades[$versionFrom])
+                ? end(self::$availableVersionUpgrades[$versionFrom])
+                : null;
 
+            if ($versionTo === null) {
+                break;
+            }
+
+            $versions[$versionFrom] = $versionTo;
             $versionFrom = $versionTo;
         }
 
-        return $resultVersions;
-    }
-
-    //########################################
-
-    private function isMaintenanceCanBeIgnored()
-    {
-        $select = $this->installer->getConnection()
-            ->select()
-            ->from($this->installer->getTable('core_config_data'), 'value')
-            ->where('scope = ?', 'default')
-            ->where('scope_id = ?', 0)
-            ->where('path = ?', 'm2epro/setup/ignore_maintenace');
-
-        return (bool)$this->installer->getConnection()->fetchOne($select);
-    }
-
-    private function isAllowedRollbackFromBackup()
-    {
-        $select = $this->installer->getConnection()
-            ->select()
-            ->from($this->installer->getTable('core_config_data'), 'value')
-            ->where('scope = ?', 'default')
-            ->where('scope_id = ?', 0)
-            ->where('path = ?', 'm2epro/setup/allow_rollback_from_backup');
-
-        return (bool)$this->installer->getConnection()->fetchOne($select);
+        return $versions;
     }
 
     //########################################

@@ -1,0 +1,54 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Custom $this */
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element\Custom $element */
+$element = $this->getElement();
+?>
+
+<table class="data-grid data-grid-not-hovered" cellpadding="0" cellspacing="0" style="width: 100%">
+    <thead>
+    <tr class="headings">
+        <th class="data-grid-th" style="width: 33%;"><?php echo $this->getTranslator()->__('Name'); ?></th>
+        <th class="data-grid-th" style="width: 33%;"><?php echo $this->getTranslator()->__('Mode'); ?></th>
+        <th class="data-grid-th" style="width: 31%;"><?php echo $this->getTranslator()->__('Value'); ?></th>
+        <th class="data-grid-th" style="width: 3%;">&nbsp;</th>
+    </tr>
+    </thead>
+
+    <tbody id="specific_custom_table_body">
+    <?php foreach ($element->getSpecifics() as $index => $specific) { ?>
+        <tr style="height: 25px; <?php if (isset($specific['__template__'])) echo ' display: none; '; ?>">
+            <td style="vertical-align:middle;">
+                <?php echo $element->getModeHtml($index, $specific); ?>
+                <?php echo $element->getAttributeTitleLabelHtml($index, $specific); ?>
+                <?php echo $element->getAttributeTitleInputHtml($index, $specific); ?>
+            </td>
+            <td style="vertical-align:top;">
+                <?php echo $element->getValueModeSelectHtml($index, $specific); ?>
+            </td>
+            <td style="width: 100%; vertical-align:top; text-align: left;">
+                <?php echo $element->getValueCustomAttributeHtml($index, $specific); ?>
+                <?php echo $element->getValueCustomValueHtml($index, $specific); ?>
+            </td>
+            <td style="text-align: center; vertical-align: middle;">
+                <?php echo $this->getRemoveCustomSpecificButtonHtml(); ?>
+            </td>
+        </tr>
+    <?php } ?>
+    </tbody>
+
+    <tfoot>
+    <tr>
+        <td colspan="4" class="a-right"><?php echo $this->getAddCustomSpecificButtonHtml(); ?></td>
+    </tr>
+    </tfoot>
+
+</table>

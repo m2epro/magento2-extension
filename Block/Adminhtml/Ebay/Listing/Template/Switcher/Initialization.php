@@ -109,9 +109,9 @@ class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $this->js->add(<<<JS
     define('Switcher/Initialization',[
         'M2ePro/Ebay/Listing/Template/Switcher',
-        'M2ePro/TemplateHandler'
+        'M2ePro/TemplateManager'
     ], function(){
-        window.TemplateHandlerObj = new TemplateHandler();
+        window.TemplateManagerObj = new TemplateManager();
 
         window.EbayListingTemplateSwitcherObj = new EbayListingTemplateSwitcher();
         EbayListingTemplateSwitcherObj.storeId = {$store->getId()};

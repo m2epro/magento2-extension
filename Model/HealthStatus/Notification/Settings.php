@@ -19,26 +19,11 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
     const MODE_MAGENTO_SYSTEM_NOTIFICATION = 3;
     const MODE_EMAIL                       = 4;
 
-    /** @var \Ess\M2ePro\Model\Config\Manager\Module */
-    protected $moduleConfig;
-
-    //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        array $data = []
-    ) {
-        parent::__construct($helperFactory, $modelFactory, $data);
-        $this->moduleConfig  = $moduleConfig;
-    }
-
     //########################################
 
     public function getMode()
     {
-        return (int)$this->moduleConfig->getGroupValue('/health_status/notification/', 'mode');
+        return (int)$this->getHelper('Module')->getConfig()->getGroupValue('/health_status/notification/', 'mode');
     }
 
     public function isModeDisabled()
@@ -70,14 +55,14 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
     public function getEmail()
     {
-        return $this->moduleConfig->getGroupValue('/health_status/notification/', 'email');
+        return $this->getHelper('Module')->getConfig()->getGroupValue('/health_status/notification/', 'email');
     }
 
     //----------------------------------------
 
     public function getLevel()
     {
-        return $this->moduleConfig->getGroupValue('/health_status/notification/', 'level');
+        return $this->getHelper('Module')->getConfig()->getGroupValue('/health_status/notification/', 'level');
     }
 
     //########################################

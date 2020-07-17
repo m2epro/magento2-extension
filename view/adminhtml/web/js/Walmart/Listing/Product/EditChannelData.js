@@ -3,9 +3,7 @@ define([
     'M2ePro/Plugin/Messages',
     'M2ePro/Common'
 ], function (modal, MessageObj) {
-
-    window.WalmartListingProductEditChannelData = Class.create();
-    WalmartListingProductEditChannelData.prototype = Object.extend(new Common(), {
+    window.WalmartListingProductEditChannelData = Class.create(Common, {
 
         gridHandler: null,
 
@@ -35,8 +33,8 @@ define([
         showIdentifiersPopup: function (productId)
         {
             if (window.top !== window) {
-                window.top.ListingGridHandlerObj.editChannelDataHandler.frameObj = window;
-                window.top.ListingGridHandlerObj.editChannelDataHandler.showIdentifiersPopup(productId);
+                window.top.ListingGridObj.editChannelDataHandler.frameObj = window;
+                window.top.ListingGridObj.editChannelDataHandler.showIdentifiersPopup(productId);
 
                 return;
             }
@@ -54,13 +52,13 @@ define([
                             text: M2ePro.translator.translate('Close'),
                             class: 'action-secondary action-dismiss',
                             click: function (event) {
-                                ListingGridHandlerObj.editChannelDataHandler.cancelEditIdentifier();
+                                ListingGridObj.editChannelDataHandler.cancelEditIdentifier();
                             }
                         }, {
                             text: M2ePro.translator.translate('Submit'),
                             class: 'action-primary action-accept',
                             click: function (event) {
-                                ListingGridHandlerObj.editChannelDataHandler.editIdentifier();
+                                ListingGridObj.editChannelDataHandler.editIdentifier();
                             }
                         }]
                     });
@@ -95,9 +93,9 @@ define([
 
                     var response = transport.responseText.evalJSON();
 
-                    self.getAppropriateMagentoMessageObj().clear();
+                    self.getAppropriateMessageObj().clear();
                     if (response.message) {
-                        self.getAppropriateMagentoMessageObj().addErrorMessage(response.message);
+                        self.getAppropriateMessageObj().addError(response.message);
                     }
 
                     if (!response.result) {
@@ -106,7 +104,7 @@ define([
 
                     self.cancelEditIdentifier();
 
-                    self.getAppropriateMagentoMessageObj().addSuccessMessage(
+                    self.getAppropriateMessageObj().addSuccess(
                         M2ePro.translator.translate("Updating "+identifierName+" has successfully submitted to be processed.")
                     );
                     self.getAppropriateGridObj().reload();
@@ -131,8 +129,8 @@ define([
         showEditSkuPopup: function (productId)
         {
             if (window.top !== window) {
-                window.top.ListingGridHandlerObj.editChannelDataHandler.frameObj = window;
-                window.top.ListingGridHandlerObj.editChannelDataHandler.showEditSkuPopup(productId);
+                window.top.ListingGridObj.editChannelDataHandler.frameObj = window;
+                window.top.ListingGridObj.editChannelDataHandler.showEditSkuPopup(productId);
 
                 return;
             }
@@ -150,13 +148,13 @@ define([
                             text: M2ePro.translator.translate('Close'),
                             class: 'action-secondary action-dismiss',
                             click: function (event) {
-                                ListingGridHandlerObj.editChannelDataHandler.cancelEditSku();
+                                ListingGridObj.editChannelDataHandler.cancelEditSku();
                             }
                         }, {
                             text: M2ePro.translator.translate('Submit'),
                             class: 'action-primary action-accept',
                             click: function (event) {
-                                ListingGridHandlerObj.editChannelDataHandler.editSku();
+                                ListingGridObj.editChannelDataHandler.editSku();
                             }
                         }]
                     });
@@ -188,9 +186,9 @@ define([
 
                     var response = transport.responseText.evalJSON();
 
-                    self.getAppropriateMagentoMessageObj().clear();
+                    self.getAppropriateMessageObj().clear();
                     if (response.message) {
-                        self.getAppropriateMagentoMessageObj().addErrorMessage(response.message);
+                        self.getAppropriateMessageObj().addError(response.message);
                     }
 
                     if (!response.result) {
@@ -199,7 +197,7 @@ define([
 
                     self.cancelEditSku();
 
-                    self.getAppropriateMagentoMessageObj().addSuccessMessage(
+                    self.getAppropriateMessageObj().addSuccess(
                         M2ePro.translator.translate('Updating SKU has successfully submitted to be processed.')
                     );
 
@@ -264,13 +262,13 @@ define([
 
         getAppropriateGridObj: function()
         {
-            return this.frameObj ? this.frameObj.ListingGridHandlerObj.editChannelDataHandler.gridHandler.getGridObj()
+            return this.frameObj ? this.frameObj.ListingGridObj.editChannelDataHandler.gridHandler.getGridObj()
                                  : this.gridHandler.getGridObj();
         },
 
-        getAppropriateMagentoMessageObj: function()
+        getAppropriateMessageObj: function()
         {
-            return this.frameObj ? this.frameObj.ListingGridHandlerObj.MessageObj : MessageObj;
+            return this.frameObj ? this.frameObj.ListingGridObj.MessageObj : MessageObj;
         }
 
         // ---------------------------------------

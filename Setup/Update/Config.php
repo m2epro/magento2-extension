@@ -22,7 +22,9 @@ class Config extends AbstractConfig
         return [
             'dev' => [
                 'ChangeDevelopVersion',
-                'ReinstallHookWithFix'
+                'ReinstallHookWithFix',
+                'PrimaryConfigs',
+                'ModuleConfigs'
             ],
             'y19_m01' => [
                 'NewUpgradesEngine',
@@ -87,13 +89,32 @@ class Config extends AbstractConfig
                 'RemoveModePrefixFromChannelAccounts',
                 'AmazonSendInvoice',
                 'AmazonNL',
-                'RemoveVersionsHistory'
+                'RemoveVersionsHistory',
+                'EbayCategories'
             ],
             'y20_m04' => [
+                'SaveEbayCategory',
                 'BrowsenodeIdFix'
             ],
             'y20_m05' => [
-                'DisableUploadInvoicesAvailableNl'
+                'DisableUploadInvoicesAvailableNl',
+                'Logs',
+                'RemoveMagentoQtyRules',
+                'RemovePriceDeviationRules',
+                'PrimaryConfigs',
+                'CacheConfigs',
+                'ModuleConfigs',
+                'ConvertIntoInnoDB'
+            ],
+            'y20_m06' => [
+                'WalmartConsumerId',
+                'RemoveCronDomains',
+                'GeneralConfig',
+                'EbayConfig',
+                'AmazonConfig',
+            ],
+            'y20_m07' => [
+                'EbayTemplateStoreCategory'
             ]
         ];
     }

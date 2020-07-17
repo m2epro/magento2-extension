@@ -414,8 +414,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                         $logsActionId,
                         \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
                         $tempLogMessage,
-                        \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
-                        \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+                        \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS
                     );
 
                     $walmartListingProduct->save();
@@ -463,8 +462,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                         $logsActionId,
                         \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
                         $tempLogMessage,
-                        \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
-                        \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+                        \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS
                     );
                 }
 

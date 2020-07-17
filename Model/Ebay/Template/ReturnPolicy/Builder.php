@@ -8,59 +8,31 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\ReturnPolicy;
 
+use Ess\M2ePro\Model\Ebay\Template\ReturnPolicy as ReturnPolicy;
+
 /**
  * Class \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy\Builder
  */
-class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
+class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 {
     //########################################
 
-    public function build(array $data)
+    protected function validate()
     {
-        if (empty($data)) {
-            return null;
-        }
-
-        $this->validate($data);
-
-        $data = $this->prepareData($data);
-
-        $marketplace = $this->ebayFactory->getCachedObjectLoaded(
-            'Marketplace',
-            $data['marketplace_id']
-        );
-
-        $template = $this->activeRecordFactory->getObject('Ebay_Template_ReturnPolicy');
-
-        if (isset($data['id'])) {
-            $template->load($data['id']);
-        }
-
-        $template->addData($data);
-        $template->save();
-        $template->setMarketplace($marketplace);
-
-        return $template;
-    }
-
-    //########################################
-
-    protected function validate(array $data)
-    {
-        // ---------------------------------------
-        if (empty($data['marketplace_id'])) {
+        if (empty($this->rawData['marketplace_id'])) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Marketplace ID is empty.');
         }
-        // ---------------------------------------
 
-        parent::validate($data);
+        parent::validate();
     }
 
-    protected function prepareData(array &$data)
+    protected function prepareData()
     {
-        $prepared = parent::prepareData($data);
+        $this->validate();
 
-        $prepared['marketplace_id'] = (int)$data['marketplace_id'];
+        $data = parent::prepareData();
+
+        $data['marketplace_id'] = (int)$this->rawData['marketplace_id'];
 
         $domesticKeys = [
             'accepted',
@@ -69,7 +41,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             'shipping_cost'
         ];
         foreach ($domesticKeys as $keyName) {
-            isset($data[$keyName]) && $prepared[$keyName] = $data[$keyName];
+            isset($this->rawData[$keyName]) && $data[$keyName] = $this->rawData[$keyName];
         }
 
         $internationalKeys = [
@@ -79,12 +51,31 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             'international_shipping_cost'
         ];
         foreach ($internationalKeys as $keyName) {
-            isset($data[$keyName]) && $prepared[$keyName] = $data[$keyName];
+            isset($this->rawData[$keyName]) && $data[$keyName] = $this->rawData[$keyName];
         }
 
-        isset($data['description']) && $prepared['description'] = $data['description'];
+        isset($this->rawData['description']) && $data['description'] = $this->rawData['description'];
 
-        return $prepared;
+        return $data;
+    }
+
+    //########################################
+
+    public function getDefaultData()
+    {
+        return [
+            'accepted'      => ReturnPolicy::RETURNS_ACCEPTED,
+            'option'        => '',
+            'within'        => '',
+            'shipping_cost' => '',
+
+            'international_accepted'      => ReturnPolicy::RETURNS_NOT_ACCEPTED,
+            'international_option'        => '',
+            'international_within'        => '',
+            'international_shipping_cost' => '',
+
+            'description' => ''
+        ];
     }
 
     //########################################

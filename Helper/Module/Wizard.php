@@ -32,16 +32,24 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
     protected $activeRecordFactory;
     protected $resourceConnection;
 
+    protected $nameBuilder;
+
+    protected $layout;
+
     //########################################
 
     public function __construct(
+        \Magento\Framework\Code\NameBuilder $nameBuilder,
+        \Magento\Framework\View\LayoutInterface $layout,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
+        $this->nameBuilder = $nameBuilder;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->layout = $layout;
         parent::__construct($helperFactory, $context);
     }
 
@@ -68,16 +76,16 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function isNotStarted($nick)
+    public function isNotStarted($nick, $view = null)
     {
         return $this->getStatus($nick) == self::STATUS_NOT_STARTED &&
-               $this->getWizard($nick)->isActive();
+               $this->getWizard($nick)->isActive($view);
     }
 
-    public function isActive($nick)
+    public function isActive($nick, $view = null)
     {
         return $this->getStatus($nick) == self::STATUS_ACTIVE &&
-               $this->getWizard($nick)->isActive();
+               $this->getWizard($nick)->isActive($view);
     }
 
     public function isCompleted($nick)
@@ -144,7 +152,8 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
 
         /** @var $wizard \Ess\M2ePro\Model\Wizard */
         foreach ($wizards as $wizard) {
-            if ($this->isNotStarted($this->getNick($wizard)) || $this->isActive($this->getNick($wizard))) {
+            if ($this->isNotStarted($this->getNick($wizard), $view) ||
+                $this->isActive($this->getNick($wizard), $view)) {
                 return $wizard;
             }
         }
@@ -162,7 +171,8 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
                 continue;
             }
 
-            if ($this->isNotStarted($this->getNick($wizard)) || $this->isActive($this->getNick($wizard))) {
+            if ($this->isNotStarted($this->getNick($wizard), $view) ||
+                $this->isActive($this->getNick($wizard), $view)) {
                 return $wizard;
             }
         }
@@ -186,6 +196,15 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         return $wizards;
+    }
+
+    //########################################
+
+    public function createBlock($block, $nick = '')
+    {
+        return $this->layout->createBlock($this->nameBuilder->buildClassName([
+            'Ess', 'M2ePro', 'Block', 'Adminhtml', 'Wizard', $nick, $block
+        ]), '', ['data' => ['nick' => $nick]]);
     }
 
     //########################################

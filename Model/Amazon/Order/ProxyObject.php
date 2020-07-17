@@ -40,37 +40,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     //########################################
 
     /**
-     * @return string
-     */
-    public function getCheckoutMethod()
-    {
-        if ($this->order->getAmazonAccount()->isMagentoOrdersCustomerPredefined() ||
-            $this->order->getAmazonAccount()->isMagentoOrdersCustomerNew()) {
-            return self::CHECKOUT_REGISTER;
-        }
-
-        return self::CHECKOUT_GUEST;
-    }
-
-    //########################################
-
-    /**
-     * @return bool
-     */
-    public function isOrderNumberPrefixSourceChannel()
-    {
-        return $this->order->getAmazonAccount()->isMagentoOrdersNumberSourceChannel();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isOrderNumberPrefixSourceMagento()
-    {
-        return $this->order->getAmazonAccount()->isMagentoOrdersNumberSourceMagento();
-    }
-
-    /**
      * @return mixed
      */
     public function getChannelOrderNumber()
@@ -100,57 +69,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         return $prefix;
-    }
-
-    //########################################
-
-    /**
-     * @return \Magento\Customer\Api\Data\CustomerInterface
-     * @throws \Ess\M2ePro\Model\Exception
-     */
-    public function getCustomer()
-    {
-        if ($this->order->getAmazonAccount()->isMagentoOrdersCustomerPredefined()) {
-            $customerDataObject = $this->customerRepository->getById(
-                $this->order->getAmazonAccount()->getMagentoOrdersCustomerId()
-            );
-
-            if ($customerDataObject->getId() === null) {
-                throw new \Ess\M2ePro\Model\Exception('Customer with ID specified in Amazon Account
-                    Settings does not exist.');
-            }
-
-            return $customerDataObject;
-        }
-
-        /** @var $customerBuilder \Ess\M2ePro\Model\Magento\Customer */
-        $customerBuilder = $this->modelFactory->getObject('Magento\Customer');
-
-        if ($this->order->getAmazonAccount()->isMagentoOrdersCustomerNew()) {
-            $customerInfo = $this->getAddressData();
-
-            $customerObject = $this->customerFactory->create();
-            $customerObject->setWebsiteId($this->order->getAmazonAccount()->getMagentoOrdersCustomerNewWebsiteId());
-            $customerObject->loadByEmail($customerInfo['email']);
-
-            if ($customerObject->getId() !== null) {
-                $customerBuilder->setData($customerInfo);
-                $customerBuilder->updateAddress($customerObject);
-
-                return $customerObject->getDataModel();
-            }
-
-            $customerInfo['website_id'] = $this->order->getAmazonAccount()->getMagentoOrdersCustomerNewWebsiteId();
-            $customerInfo['group_id'] = $this->order->getAmazonAccount()->getMagentoOrdersCustomerNewGroupId();
-
-            $customerBuilder->setData($customerInfo);
-            $customerBuilder->buildCustomer();
-            $customerBuilder->getCustomer()->save();
-
-            return $customerBuilder->getCustomer()->getDataModel();
-        }
-
-        return null;
     }
 
     //########################################
@@ -198,13 +116,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         return true;
-    }
-
-    //########################################
-
-    public function getCurrency()
-    {
-        return $this->order->getCurrency();
     }
 
     //########################################
@@ -487,74 +398,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     public function getShippingPriceTaxRate()
     {
         return $this->order->getShippingPriceTaxRate();
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return bool|null
-     */
-    public function isProductPriceIncludeTax()
-    {
-        $configValue = $this->getHelper('Module')
-            ->getConfig()
-            ->getGroupValue('/amazon/order/tax/product_price/', 'is_include_tax');
-
-        if ($configValue !== null) {
-            return (bool)$configValue;
-        }
-
-        if ($this->isTaxModeChannel() || ($this->isTaxModeMixed() && $this->hasTax())) {
-            return false;
-        }
-
-        return null;
-    }
-
-    /**
-     * @return bool|null
-     */
-    public function isShippingPriceIncludeTax()
-    {
-        $configValue = $this->getHelper('Module')
-            ->getConfig()
-            ->getGroupValue('/amazon/order/tax/shipping_price/', 'is_include_tax');
-
-        if ($configValue !== null) {
-            return (bool)$configValue;
-        }
-
-        if ($this->isTaxModeChannel() || ($this->isTaxModeMixed() && $this->hasTax())) {
-            return false;
-        }
-
-        return null;
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return bool
-     */
-    public function isTaxModeNone()
-    {
-        return $this->order->getAmazonAccount()->isMagentoOrdersTaxModeNone();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTaxModeMagento()
-    {
-        return $this->order->getAmazonAccount()->isMagentoOrdersTaxModeMagento();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTaxModeChannel()
-    {
-        return $this->order->getAmazonAccount()->isMagentoOrdersTaxModeChannel();
     }
 
     //########################################

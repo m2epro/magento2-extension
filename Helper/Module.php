@@ -26,9 +26,8 @@ class Module extends AbstractHelper
     const ENVIRONMENT_TESTING_AUTO   = 'testing-auto';
 
     protected $activeRecordFactory;
-    protected $moduleConfig;
-    protected $cacheConfig;
-    protected $primaryConfig;
+    protected $config;
+    protected $registry;
     protected $moduleList;
     protected $cookieMetadataFactory;
     protected $cookieManager;
@@ -39,9 +38,8 @@ class Module extends AbstractHelper
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
-        \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
-        \Ess\M2ePro\Model\Config\Manager\Primary $primaryConfig,
+        \Ess\M2ePro\Model\Config\Manager $config,
+        \Ess\M2ePro\Model\Registry\Manager $registry,
         \Magento\Framework\Module\ModuleListInterface $moduleList,
         \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory $cookieMetadataFactory,
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
@@ -51,9 +49,8 @@ class Module extends AbstractHelper
         \Magento\Framework\App\Helper\Context $context
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->moduleConfig = $moduleConfig;
-        $this->cacheConfig = $cacheConfig;
-        $this->primaryConfig = $primaryConfig;
+        $this->config = $config;
+        $this->registry = $registry;
         $this->moduleList = $moduleList;
         $this->cookieMetadataFactory = $cookieMetadataFactory;
         $this->cookieManager = $cookieManager;
@@ -66,19 +63,21 @@ class Module extends AbstractHelper
     //########################################
 
     /**
-     * @return \Ess\M2ePro\Model\Config\Manager\Module
+     * @return \Ess\M2ePro\Model\Config\Manager
      */
     public function getConfig()
     {
-        return $this->moduleConfig;
+        return $this->config;
     }
 
+    //########################################
+
     /**
-     * @return \Ess\M2ePro\Model\Config\Manager\Cache
+     * @return \Ess\M2ePro\Model\Registry\Manager
      */
-    public function getCacheConfig()
+    public function getRegistry()
     {
-        return $this->cacheConfig;
+        return $this->registry;
     }
 
     //########################################
@@ -104,7 +103,7 @@ class Module extends AbstractHelper
 
     public function getInstallationKey()
     {
-        return $this->primaryConfig->getGroupValue('/server/', 'installation_key');
+        return $this->config->getGroupValue('/', 'installation_key');
     }
 
     //########################################
@@ -209,14 +208,7 @@ class Module extends AbstractHelper
 
     public function getServerMessages()
     {
-        /** @var \Ess\M2ePro\Model\Registry $registryModel */
-        $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', '/server/messages/', 'key', false);
-
-        if ($registryModel === null) {
-            return [];
-        }
-
-        $messages = $registryModel->getValueFromJson();
+        $messages = $this->getRegistry()->getValueFromJson('/server/messages/');
 
         $messages = array_filter($messages, [$this,'getServerMessagesFilterModuleMessages']);
         !is_array($messages) && $messages = [];
@@ -234,11 +226,6 @@ class Module extends AbstractHelper
     }
 
     //########################################
-
-    public function clearConfigCache()
-    {
-        $this->cacheConfig->clear();
-    }
 
     public function clearCache()
     {

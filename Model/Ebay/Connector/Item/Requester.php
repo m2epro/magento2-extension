@@ -108,7 +108,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
             $requestData['is_eps_ebay_images_mode'] === false ||
             ($requestData['is_eps_ebay_images_mode'] === null &&
                 $requestData['upload_images_mode'] ==
-                \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Images::UPLOAD_IMAGES_MODE_SELF)) {
+                \Ess\M2ePro\Helper\Component\Ebay\Configuration::UPLOAD_IMAGES_MODE_SELF)) {
             return self::DEFAULT_REQUEST_TIMEOUT;
         }
 
@@ -540,8 +540,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         foreach ($this->getStoredLogMessages() as $message) {
             $this->getLogger()->logListingProductMessage(
                 $this->listingProduct,
-                $message,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+                $message
             );
         }
     }

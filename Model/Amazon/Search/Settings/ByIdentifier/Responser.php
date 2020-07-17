@@ -42,8 +42,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByIdentifier\I
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_UNKNOWN,
             $messageText,
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
         );
 
         $amazonListingProduct = $this->getListingProduct()->getChildObject();

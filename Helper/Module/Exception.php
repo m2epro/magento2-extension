@@ -19,7 +19,6 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
 
     private $activeRecordFactory;
     private $modelFactory;
-    private $moduleConfig;
     private $phpEnvironmentRequest;
     private $storeManager;
 
@@ -28,7 +27,6 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
@@ -36,7 +34,6 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->modelFactory = $modelFactory;
-        $this->moduleConfig = $moduleConfig;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
         $this->storeManager = $storeManager;
         parent::__construct($helperFactory, $context);
@@ -49,20 +46,28 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
         /**@var \Exception $throwable */
 
         try {
-            $type = get_class($throwable);
+            $class = get_class($throwable);
+            $info = $this->getExceptionDetailedInfo($throwable);
 
-            $info = $this->getExceptionInfo($throwable, $type);
-            $info .= $this->getExceptionStackTraceInfo($throwable);
-            $info .= $this->getCurrentUserActionInfo();
-            $info .= $this->getAdditionalActionInfo();
-            $info .= $this->getHelper('Module_Support_Form')->getSummaryInfo();
+            $type = \Ess\M2ePro\Model\Log\System::TYPE_EXCEPTION;
+            if ($throwable instanceof \Ess\M2ePro\Model\Exception\Connection) {
+                $type = \Ess\M2ePro\Model\Log\System::TYPE_EXCEPTION_CONNECTOR;
+            }
 
-            $this->log($info, $type);
+            $this->systemLog(
+                $type,
+                $class,
+                $throwable->getMessage(),
+                $info
+            );
+
+            $sendConfig = (bool)(int)$this->getHelper('Module')->getConfig()
+                ->getGroupValue('/server/exceptions/', 'send');
 
             if (!$sendToServer ||
                 ($throwable instanceof \Ess\M2ePro\Model\Exception && !$throwable->isSendToServer()) ||
-                !(bool)(int)$this->moduleConfig->getGroupValue('/debug/exceptions/', 'send_to_server') ||
-                $this->isExceptionFiltered($info, $throwable->getMessage(), $type)) {
+                !$sendConfig || $this->isExceptionFiltered($info, $throwable->getMessage(), $class)
+            ) {
                 return;
             }
 
@@ -70,11 +75,14 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
             if (!empty($temp)) {
                 return;
             }
+
             $this->getHelper('Data\GlobalData')->setValue('send_exception_to_server', true);
 
-            $this->send($info, $throwable->getMessage(), $type);
+            $this->send($info, $throwable->getMessage(), $class);
 
             $this->getHelper('Data\GlobalData')->unsetValue('send_exception_to_server');
+
+        // @codingStandardsIgnoreLine
         } catch (\Exception $exceptionTemp) {
         }
     }
@@ -82,18 +90,20 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
     public function processFatal($error, $traceInfo)
     {
         try {
-            $type = 'Fatal Error';
+            $class = 'Fatal Error';
+            $info = $this->getFatalErrorDetailedInfo($error, $traceInfo);
 
-            $info = $this->getFatalInfo($error, $type);
-            $info .= $traceInfo;
-            $info .= $this->getCurrentUserActionInfo();
-            $info .= $this->getAdditionalActionInfo();
-            $info .= $this->getHelper('Module_Support_Form')->getSummaryInfo();
+            $this->systemLog(
+                \Ess\M2ePro\Model\Log\System::TYPE_FATAL_ERROR,
+                $class,
+                $error['message'],
+                $info
+            );
 
-            $this->log($info, $type);
+            $sendToServer = (bool)(int)$this->getHelper('Module')->getConfig()
+                ->getGroupValue('/server/fatal_error/', 'send');
 
-            if (!(bool)(int)$this->moduleConfig->getGroupValue('/debug/fatal_error/', 'send_to_server') ||
-                $this->isExceptionFiltered($info, $error['message'], $type)) {
+            if (!$sendToServer || $this->isExceptionFiltered($info, $error['message'], $class)) {
                 return;
             }
 
@@ -101,11 +111,14 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
             if (!empty($temp)) {
                 return;
             }
+
             $this->getHelper('Data\GlobalData')->setValue('send_exception_to_server', true);
 
-            $this->send($info, $error['message'], $type);
+            $this->send($info, $error['message'], $class);
 
             $this->getHelper('Data\GlobalData')->unsetValue('send_exception_to_server');
+
+        // @codingStandardsIgnoreLine
         } catch (\Exception $exceptionTemp) {
         }
     }
@@ -139,6 +152,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
             }
         };
 
+        // @codingStandardsIgnoreLine
         register_shutdown_function($shutdownFunction);
     }
 
@@ -149,25 +163,55 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    private function log($message, $type)
+    public function getFatalErrorDetailedInfo($error, $traceInfo)
     {
-        /** @var \Ess\M2ePro\Model\Log\System $log */
-        $log = $this->activeRecordFactory->getObject('Log\System');
+        $info = $this->getFatalInfo($error, 'Fatal Error');
+        $info .= $traceInfo;
+        $info .= $this->getCurrentUserActionInfo();
+        $info .= $this->getAdditionalActionInfo();
+        $info .= $this->getHelper('Module_Support_Form')->getSummaryInfo();
 
-        $log->setType($type);
-        $log->setDescription($message);
+        return $info;
+    }
 
+    public function getExceptionDetailedInfo($throwable)
+    {
+        /**@var \Exception $throwable */
+
+        $info = $this->getExceptionInfo($throwable, get_class($throwable));
+        $info .= $this->getExceptionStackTraceInfo($throwable);
+        $info .= $this->getCurrentUserActionInfo();
+        $info .= $this->getAdditionalActionInfo();
+        $info .= $this->getHelper('Module_Support_Form')->getSummaryInfo();
+
+        return $info;
+    }
+
+    //########################################
+
+    protected function systemLog($type, $class, $message, $description)
+    {
         // @codingStandardsIgnoreLine
         $trace = debug_backtrace();
         $file = isset($trace[1]['file']) ? $trace[1]['file'] : 'not set';
-        ;
         $line = isset($trace[1]['line']) ? $trace[1]['line'] : 'not set';
 
         $additionalData = [
             'called-from' => $file .' : '. $line
         ];
-        $log->setData('additional_data', print_r($additionalData, true));
 
+        /** @var \Ess\M2ePro\Model\Log\System $log */
+        $log = $this->activeRecordFactory->getObject('Log\System');
+        $log->setData(
+            [
+                'type'                 => $type,
+                'class'                => $class,
+                'description'          => $message,
+                'detailed_description' => $description,
+                // @codingStandardsIgnoreLine
+                'additional_data'      => print_r($additionalData, true),
+            ]
+        );
         $log->save();
     }
 
@@ -179,7 +223,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
 
         $additionalData = $throwable instanceof \Ess\M2ePro\Model\Exception ? $throwable->getAdditionalData()
                                                                             : '';
-
+        // @codingStandardsIgnoreLine
         is_array($additionalData) && $additionalData = print_r($additionalData, true);
 
         $exceptionInfo = <<<EXCEPTION
@@ -271,9 +315,11 @@ TRACE;
 
     private function getCurrentUserActionInfo()
     {
+        // @codingStandardsIgnoreStart
         $server = print_r($this->phpEnvironmentRequest->getServer()->toArray(), true);
         $get = print_r($this->phpEnvironmentRequest->getQuery()->toArray(), true);
         $post = print_r($this->phpEnvironmentRequest->getPost()->toArray(), true);
+        // @codingStandardsIgnoreEnd
 
         $actionInfo = <<<ACTION
 -------------------------------- ACTION INFO -------------------------------------
@@ -308,9 +354,11 @@ ACTION;
             'exception',
             'add',
             'entity',
-            ['info'    => $info,
-                                                                     'message' => $message,
-            'type'    => $type]
+            [
+                'info'    => $info,
+                'message' => $message,
+                'type'    => $type
+            ]
         );
 
         $dispatcherObject->process($connectorObj);
@@ -318,21 +366,11 @@ ACTION;
 
     private function isExceptionFiltered($info, $message, $type)
     {
-        if (!(bool)(int)$this->moduleConfig->getGroupValue('/debug/exceptions/', 'filters_mode')) {
+        if (!(bool)(int)$this->getHelper('Module')->getConfig()->getGroupValue('/server/exceptions/', 'filters')) {
             return false;
         }
 
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            '/exceptions_filters/',
-            'key',
-            false
-        );
-
-        $exceptionFilters = [];
-        if ($registry !== null) {
-            $exceptionFilters = $registry->getValueFromJson();
-        }
+        $exceptionFilters = $this->getHelper('Module')->getRegistry()->getValueFromJson('/exceptions_filters/');
 
         foreach ($exceptionFilters as $exceptionFilter) {
             try {

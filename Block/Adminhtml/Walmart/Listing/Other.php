@@ -22,12 +22,21 @@ class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->setId('walmartListingOther');
         $this->_controller = 'adminhtml_walmart_listing_other';
 
-        $this->isAjax = $this->getHelper('Data')->jsonEncode($this->getRequest()->isXmlHttpRequest());
+        $this->buttonList->remove('back');
+        $this->buttonList->remove('reset');
+        $this->buttonList->remove('delete');
+        $this->buttonList->remove('add');
+        $this->buttonList->remove('save');
+        $this->buttonList->remove('edit');
 
-        // Set buttons actions
-        // ---------------------------------------
-        $this->removeButton('add');
-        // ---------------------------------------
+        $url = $this->getUrl('*/walmart_listing_other/reset');
+        $this->addButton('reset_other_listings', [
+            'label'   => $this->__('Reset 3rd Party Listings'),
+            'onclick' => "ListingOtherObj.showResetPopup('".$url."');",
+            'class'   => 'action-primary'
+        ]);
+
+        $this->isAjax = $this->getHelper('Data')->jsonEncode($this->getRequest()->isXmlHttpRequest());
     }
 
     protected function _prepareLayout()
@@ -46,6 +55,41 @@ HTML
         ]);
 
         return parent::_prepareLayout();
+    }
+
+    //########################################
+
+    protected function _toHtml()
+    {
+        $this->js->add(
+            <<<JS
+    require(['M2ePro/Listing/Other'], function(){
+
+        window.ListingOtherObj = new ListingOther();
+
+    });
+JS
+        );
+
+        return parent::_toHtml() . $this->getResetPopupHtml();
+    }
+
+    protected function getResetPopupHtml()
+    {
+        return <<<HTML
+<div style="display: none">
+    <div id="reset_other_listings_popup_content" class="block_notices m2epro-box-style"
+     style="display: none; margin-bottom: 0;">
+        <div>
+            <h3>{$this->__('Confirm the 3rd Party Listings reset')}</h3>
+            <p>{$this->__('This action will remove all the items from Walmart 3rd Party Listings.
+             It will take some time to import them again.')}</p>
+             <br>
+            <p>{$this->__('Do you want to reset the 3rd Party Listings?')}</p>
+        </div>
+    </div>
+</div>
+HTML;
     }
 
     //########################################

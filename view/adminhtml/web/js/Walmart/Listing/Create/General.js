@@ -1,12 +1,14 @@
 define([
     'underscore',
+    'Magento_Ui/js/modal/alert',
+    'M2ePro/Walmart/Listing/Create/General/MarketplaceSynchProgress',
     'M2ePro/Plugin/ProgressBar',
     'M2ePro/Plugin/AreaWrapper'
 ], function (_) {
 
-    window.WalmartListingCreateGeneral = Class.create();
-    WalmartListingCreateGeneral.prototype = {
+    window.WalmartListingCreateGeneral = Class.create({
 
+        marketplaceSynchProgressObj: null,
         accounts: null,
         selectedAccountId: null,
 
@@ -15,6 +17,11 @@ define([
         initialize: function () {
             var self = this;
 
+            self.marketplaceSynchProgressObj = new WalmartListingCreateGeneralMarketplaceSynchProgress(
+                new ProgressBar('progress_bar'),
+                new AreaWrapper('content_container')
+            );
+
             CommonObj.setValidationCheckRepetitionValue(
                 'M2ePro-listing-title',
                 M2ePro.translator.translate('The specified Title is already used for other Listing. Listing Title must be unique.'),
@@ -22,6 +29,7 @@ define([
             );
 
             self.initAccount();
+            self.initMarketplace();
         },
 
         initAccount: function () {
@@ -62,6 +70,20 @@ define([
                     self.renderAccounts();
 
                 }, 1000);
+            });
+        },
+
+        initMarketplace: function () {
+            var self = this;
+
+            $('save_and_next').observe('click', function() {
+                if (self.marketplaceSynchProgressObj.runningNow) {
+                    alert({
+                        content: M2ePro.translator.translate('Please wait while Synchronization is finished.')
+                    });
+                    return;
+                }
+                jQuery('#edit_form').valid() && self.synchronizeMarketplace($('marketplace_id').value);
             });
         },
 
@@ -159,6 +181,42 @@ define([
             });
         },
 
+        synchronizeMarketplace: function (marketplaceId) {
+            var self = this;
+
+            new Ajax.Request(M2ePro.url.get('general/isMarketplaceEnabled'), {
+                method: 'get',
+                parameters: { marketplace_id: marketplaceId },
+                onSuccess: function(transport) {
+
+                    var result = transport.responseText.evalJSON();
+                    if (result.status) {
+                        return self.marketplaceSynchProgressObj.end();
+                    }
+
+                    var params = {};
+                    params['status_' + marketplaceId] = 1;
+
+                    new Ajax.Request(M2ePro.url.get('walmart_marketplace/save'), {
+                        method: 'post',
+                        parameters: params,
+                        onSuccess: function() {
+
+                            var title = 'Walmart ' + $('marketplace_title').innerHTML;
+                            $('save_and_next').disable();
+
+                            self.marketplaceSynchProgressObj.runTask(
+                                title,
+                                M2ePro.url.get('walmart_marketplace/runSynchNow', {marketplace_id: marketplaceId}),
+                                M2ePro.url.get('walmart_marketplace/synchGetExecutingInfo'),
+                                'WalmartListingCreateGeneralObj.marketplaceSynchProgressObj.end()'
+                            );
+                        }
+                    });
+                }
+            });
+        },
+
         isAccountsEqual: function (newAccounts) {
             if (!newAccounts.length && !this.accounts.length) {
                 return true;
@@ -181,5 +239,5 @@ define([
         },
 
         // ---------------------------------------
-    };
+    });
 });

@@ -759,7 +759,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     public function isAllowedForBusinessCustomers()
     {
-        if (!$this->getHelper('Component_Amazon_Business')->isEnabled()) {
+        if (!$this->getHelper('Component_Amazon_Configuration')->isEnabledBusinessMode()) {
             return false;
         }
 

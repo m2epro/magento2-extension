@@ -17,7 +17,7 @@ class CloseInstruction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
     public function execute()
     {
-        $this->getHelper('Module')->getCacheConfig()->setGroupValue('/ebay/motors/', 'was_instruction_shown', 1);
+        $this->getHelper('Module')->getRegistry()->setValue('/ebay/motors/instruction/is_shown/', 1);
     }
 
     //########################################

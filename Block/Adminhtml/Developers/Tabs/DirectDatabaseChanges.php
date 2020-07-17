@@ -81,10 +81,7 @@ HTML
             ['legend' => false, 'collabsable' => false]
         );
 
-        $inspectorMode = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/listing/product/inspector/',
-            'mode'
-        );
+        $inspectorMode = $this->getHelper('Module_Configuration')->isEnableListingProductInspectorMode();
 
         $button = $this->createBlock('Magento\Button', '', ['data' => [
             'id' => 'save_inspector_mode',
@@ -95,10 +92,10 @@ HTML
         ]]);
 
         $fieldSet->addField(
-            'inspector_mode',
+            'listing_product_inspector_mode',
             self::SELECT,
             [
-                'name' => 'inspector_mode',
+                'name' => 'listing_product_inspector_mode',
                 'label' => $this->__('Track Direct Database Changes'),
                 'values' => [
                     ['value' => 0, 'label' => $this->__('No')],

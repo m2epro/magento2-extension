@@ -1,0 +1,84 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Widget\Info $block */
+?>
+
+<style type="text/css">
+
+    div.m2epro-widget-info {
+        background: none repeat scroll 0 0 #FAFAFA !important;
+        border: 1px solid #D6D6D6 !important;
+        margin-bottom: 15px !important;
+        padding: 10px 15px !important;
+    }
+
+    div.m2epro-widget-info label {
+        width: 95%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: inline-block;
+    }
+
+    div.m2epro-widget-info span.label {
+        font-weight: bold;
+    }
+
+    div.m2epro-widget-info span.value {
+        color: #8e9393;
+    }
+
+    div.m2epro-widget-info ul {
+        text-align: justify;
+        line-height: 0;
+        font-size: 1px;
+    }
+
+    div.m2epro-widget-info ul:after {
+        width: 100%;
+        height: 0;
+        visibility: hidden;
+        overflow: hidden;
+        content: '';
+        display: inline-block;
+    }
+
+    div.m2epro-widget-info ul li {
+        display: inline-block;
+        text-align: left;
+        line-height: normal;
+        font-size: 12px;
+        vertical-align: top;
+    }
+    <?php foreach ($this->getInfo() as $index => $data) :?>
+    #<?php echo $this->getId() ?> ul li:nth-child(<?php echo $index+1; ?>) {
+       width: <?php echo $this->getInfoPartWidth($index); ?>;
+       text-align: <?php echo $this->getInfoPartAlign($index); ?>;
+    }
+    <?php endforeach; ?>
+
+</style>
+
+<div id="<?= $this->getId() ?>" class="m2epro-widget-info">
+    <ul>
+    <?php foreach ($block->getInfo() as $index => $data) :?>
+        <li>
+            <label>
+                <span class="label">
+                    <?= $data['label']; ?>:&nbsp;
+                </span>
+                <span class="value">
+                    <?= $data['value']; ?>
+                </span>
+            </label>
+        </li>
+    <?php endforeach; ?>
+    </ul>
+</div>

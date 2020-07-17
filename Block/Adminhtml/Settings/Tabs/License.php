@@ -186,34 +186,26 @@ class License extends AbstractTab
 
     protected function prepareLicenseData()
     {
-        /** @var \Ess\M2ePro\Helper\Module\License $licenseHelper */
-        $licenseHelper = $this->getHelper('Module\License');
-
-        $cacheConfig = $this->modelFactory->getObject('Config_Manager_Cache');
-
-        // Set data for form
-        // ---------------------------------------
-        $this->key = $this->getHelper('Data')->escapeHtml($licenseHelper->getKey());
-        $this->status = $licenseHelper->getStatus();
+        $this->key = $this->getHelper('Data')->escapeHtml($this->getHelper('Module\License')->getKey());
+        $this->status = $this->getHelper('Module\License')->getStatus();
 
         $this->licenseData = [
-            'domain' => $this->getHelper('Data')->escapeHtml($licenseHelper->getDomain()),
-            'ip' => $this->getHelper('Data')->escapeHtml($licenseHelper->getIp()),
+            'domain' => $this->getHelper('Data')->escapeHtml($this->getHelper('Module\License')->getDomain()),
+            'ip' => $this->getHelper('Data')->escapeHtml($this->getHelper('Module\License')->getIp()),
             'info' => [
-                'email' => $this->getHelper('Data')->escapeHtml($licenseHelper->getEmail()),
+                'email' => $this->getHelper('Data')->escapeHtml($this->getHelper('Module\License')->getEmail()),
             ],
             'valid' => [
-                'domain' => $licenseHelper->isValidDomain(),
-                'ip' => $licenseHelper->isValidIp()
+                'domain' => $this->getHelper('Module\License')->isValidDomain(),
+                'ip'     => $this->getHelper('Module\License')->isValidIp()
             ],
             'connection' => [
-                'domain' => $cacheConfig->getGroupValue('/license/connection/', 'domain'),
-                'ip' => $cacheConfig->getGroupValue('/license/connection/', 'ip'),
-                'directory' => $cacheConfig->getGroupValue('/license/connection/', 'directory')
+                'domain'    => $this->getHelper('Client')->getDomain(),
+                'ip'        => $this->getHelper('Client')->getIp(),
+                'directory' => $this->getHelper('Client')->getBaseDirectory()
             ]
         ];
 
-        // ---------------------------------------
         $data = [
             'label'   => $this->__('Refresh'),
             'onclick' => 'LicenseObj.refreshStatus();',
@@ -232,17 +224,6 @@ class License extends AbstractTab
         ];
         $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
         $this->setChild('change_license', $buttonBlock);
-        // ---------------------------------------
-
-        // ---------------------------------------
-        $data = [
-            'label'   => $this->__('Create New License'),
-            'onclick' => 'LicenseObj.newLicenseKeyPopup();',
-            'class'   => 'new_license primary'
-        ];
-        $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
-        $this->setChild('new_license', $buttonBlock);
-        // ---------------------------------------
     }
 
     //########################################
@@ -250,26 +231,21 @@ class License extends AbstractTab
     protected function _beforeToHtml()
     {
         try {
-            $this->getHelper('Client')->updateBackupConnectionData(true);
-        } catch (\Exception $exception) {
-        }
+            $this->getHelper('Client')->updateLocationData(true);
+        // @codingStandardsIgnoreLine
+        } catch (\Exception $exception) {}
 
         $this->jsTranslator->addTranslations([
             'Use Existing License' => $this->__('Use Existing License'),
-            'Create New License' => $this->__('Create New License'),
             'Cancel' => $this->__('Cancel'),
             'Confirm' => $this->__('Confirm'),
             'Internal Server Error' => $this->__('Internal Server Error'),
-            'The License Key has been successfully created.' => $this->__(
-                'The License Key has been successfully created.'
-            ),
         ]);
         $this->jsUrl->add(
             $this->getUrl('*/settings_license/refreshStatus'),
             \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs::TAB_ID_LICENSE
         );
         $this->jsUrl->add($this->getUrl('*/settings_license/refreshStatus'), 'settings_license/refreshStatus');
-        $this->jsUrl->add($this->getUrl('*/settings_license/create'), 'settings_license/create');
         $this->jsUrl->add($this->getUrl('*/settings_license/change'), 'settings_license/change');
 
         $this->js->addRequireJs([

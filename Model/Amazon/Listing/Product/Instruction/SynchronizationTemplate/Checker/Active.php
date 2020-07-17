@@ -29,7 +29,7 @@ class Active extends AbstractModel
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
             \Ess\M2ePro\Model\Amazon\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
             \Ess\M2ePro\Model\Amazon\Listing\Product::INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED,
-            \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\AbstractModel::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+            \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_STATUS_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_QTY_CHANGED,
@@ -279,48 +279,11 @@ class Active extends AbstractModel
             }
         }
 
-        if ($amazonSynchronizationTemplate->isStopWhenQtyMagentoHasValue()) {
-            $productQty = (int)$amazonListingProduct->getQty(true);
-
-            $typeQty = (int)$amazonSynchronizationTemplate->getStopWhenQtyMagentoHasValueType();
-            $minQty = (int)$amazonSynchronizationTemplate->getStopWhenQtyMagentoHasValueMin();
-            $maxQty = (int)$amazonSynchronizationTemplate->getStopWhenQtyMagentoHasValueMax();
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_LESS &&
-                $productQty <= $minQty) {
-                return true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_MORE &&
-                $productQty >= $minQty) {
-                return true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_BETWEEN &&
-                $productQty >= $minQty && $productQty <= $maxQty) {
-                return true;
-            }
-        }
-
         if ($amazonSynchronizationTemplate->isStopWhenQtyCalculatedHasValue()) {
             $productQty = (int)$amazonListingProduct->getQty(false);
-
-            $typeQty = (int)$amazonSynchronizationTemplate->getStopWhenQtyCalculatedHasValueType();
             $minQty = (int)$amazonSynchronizationTemplate->getStopWhenQtyCalculatedHasValueMin();
-            $maxQty = (int)$amazonSynchronizationTemplate->getStopWhenQtyCalculatedHasValueMax();
 
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_LESS &&
-                $productQty <= $minQty) {
-                return true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_MORE &&
-                $productQty >= $minQty) {
-                return true;
-            }
-
-            if ($typeQty == \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_BETWEEN &&
-                $productQty >= $minQty && $productQty <= $maxQty) {
+            if ($productQty <= $minQty) {
                 return true;
             }
         }
@@ -423,8 +386,7 @@ class Active extends AbstractModel
         $currentPrice = $amazonListingProduct->getRegularPrice();
         $onlinePrice  = $amazonListingProduct->getOnlineRegularPrice();
 
-        $isChanged = $amazonSynchronizationTemplate->isPriceChangedOverAllowedDeviation($onlinePrice, $currentPrice);
-        if ($isChanged) {
+        if ($currentPrice != $onlinePrice) {
             return true;
         }
 
@@ -451,12 +413,7 @@ class Active extends AbstractModel
             return true;
         }
 
-        $isChanged = $amazonSynchronizationTemplate->isPriceChangedOverAllowedDeviation(
-            $onlineSalePrice,
-            $currentSalePrice
-        );
-
-        if ($isChanged) {
+        if ($onlineSalePrice != $currentSalePrice) {
             return true;
         }
 
@@ -496,7 +453,7 @@ class Active extends AbstractModel
         $currentPrice = $amazonListingProduct->getBusinessPrice();
         $onlinePrice  = $amazonListingProduct->getOnlineBusinessPrice();
 
-        if ($amazonSynchronizationTemplate->isPriceChangedOverAllowedDeviation($onlinePrice, $currentPrice)) {
+        if ($onlinePrice != $currentPrice) {
             return true;
         }
 
@@ -519,12 +476,7 @@ class Active extends AbstractModel
 
             $onlineDiscount = $onlineDiscounts[$qty];
 
-            $isChanged = $amazonSynchronizationTemplate->isPriceChangedOverAllowedDeviation(
-                $onlineDiscount,
-                $currentDiscount
-            );
-
-            if ($isChanged) {
+            if ($onlineDiscount != $currentDiscount) {
                 return true;
             }
         }

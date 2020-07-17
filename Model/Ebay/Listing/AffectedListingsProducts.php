@@ -13,7 +13,7 @@ use Ess\M2ePro\Model\Ebay\Template\Manager;
 /**
  * Class \Ess\M2ePro\Model\Ebay\Listing\AffectedListingsProducts
  */
-class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListingsProducts\AbstractModel
+class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListingsProductsAbstract
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     private $ebayParentFactory;
@@ -33,14 +33,16 @@ class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListin
 
     //########################################
 
-    public function getObjects(array $filters = [])
+    /**
+     * @inheritDoc
+     */
+    public function loadCollection(array $filters = [])
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->ebayParentFactory->getObject('Listing\Product')->getCollection();
         $collection->addFieldToFilter('listing_id', $this->model->getId());
 
         if (isset($filters['template'])) {
-            /** @var Manager $templateManager */
             $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
             $templateManager->setTemplate($filters['template']);
 
@@ -50,52 +52,7 @@ class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListin
             );
         }
 
-        return $collection->getItems();
-    }
-
-    public function getObjectsData($columns = '*', array $filters = [])
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
-        $collection = $this->ebayParentFactory->getObject('Listing\Product')->getCollection();
-        $collection->addFieldToFilter('listing_id', $this->model->getId());
-
-        if (isset($filters['template'])) {
-            /** @var Manager $templateManager */
-            $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
-            $templateManager->setTemplate($filters['template']);
-
-            $collection->addFieldToFilter(
-                $templateManager->getModeColumnName(),
-                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_PARENT
-            );
-        }
-
-        if (is_array($columns) && !empty($columns)) {
-            $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $collection->getSelect()->columns($columns);
-        }
-
-        return $collection->getItems();
-    }
-
-    public function getIds(array $filters = [])
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
-        $collection = $this->ebayParentFactory->getObject('Listing\Product')->getCollection();
-        $collection->addFieldToFilter('listing_id', $this->model->getId());
-
-        if (isset($filters['template'])) {
-            /** @var Manager $templateManager */
-            $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
-            $templateManager->setTemplate($filters['template']);
-
-            $collection->addFieldToFilter(
-                $templateManager->getModeColumnName(),
-                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_PARENT
-            );
-        }
-
-        return $collection->getAllIds();
+        return $collection;
     }
 
     //########################################

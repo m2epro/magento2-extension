@@ -27,13 +27,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $formData = $model->toArray();
         }
 
-        $default = [
-            'title'         => '',
-
-            'product_tax_code_mode' => '',
-            'product_tax_code_value' => '',
-            'product_tax_code_attribute' => '',
-        ];
+        $default = $this->modelFactory->getObject('Amazon_Template_ProductTaxCode_Builder')->getDefaultData();
 
         $formData = array_merge($default, $formData);
 

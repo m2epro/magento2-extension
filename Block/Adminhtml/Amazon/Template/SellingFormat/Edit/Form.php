@@ -45,58 +45,7 @@ class Form extends AbstractForm
         $formData['discount_rules'] = $template && $template->getId() ?
             $template->getChildObject()->getBusinessDiscounts() : [];
 
-        $default = [
-            'title' => '',
-
-            'is_regular_customer_allowed' => 1,
-            'is_business_customer_allowed' => 0,
-
-            'qty_mode' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT,
-            'qty_custom_value' => 1,
-            'qty_custom_attribute' => '',
-            'qty_percentage' => 100,
-            'qty_modification_mode' => SellingFormat::QTY_MODIFICATION_MODE_OFF,
-            'qty_min_posted_value' => SellingFormat::QTY_MIN_POSTED_DEFAULT_VALUE,
-            'qty_max_posted_value' => SellingFormat::QTY_MAX_POSTED_DEFAULT_VALUE,
-
-            'regular_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
-            'regular_price_coefficient' => '',
-            'regular_price_custom_attribute' => '',
-
-            'regular_map_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
-            'regular_map_price_custom_attribute' => '',
-
-            'regular_sale_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
-            'regular_sale_price_coefficient' => '',
-            'regular_sale_price_custom_attribute' => '',
-
-            'regular_price_variation_mode' => SellingFormat::PRICE_VARIATION_MODE_PARENT,
-
-            'regular_sale_price_start_date_mode' => SellingFormat::DATE_VALUE,
-            'regular_sale_price_end_date_mode' => SellingFormat::DATE_VALUE,
-
-            'regular_sale_price_start_date_custom_attribute' => '',
-            'regular_sale_price_end_date_custom_attribute' => '',
-
-            'regular_sale_price_start_date_value' => $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d'),
-            'regular_sale_price_end_date_value' => $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d'),
-
-            'regular_price_vat_percent' => 0,
-
-            'business_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
-            'business_price_coefficient' => '',
-            'business_price_custom_attribute' => '',
-
-            'business_price_variation_mode' => SellingFormat::PRICE_VARIATION_MODE_PARENT,
-
-            'business_price_vat_percent' => 0,
-
-            'business_discounts_mode' => 0,
-            'business_discounts_tier_coefficient' => '',
-            'business_discounts_tier_customer_group_id' => null,
-
-            'discount_rules' => []
-        ];
+        $default = $this->modelFactory->getObject('Amazon_Template_SellingFormat_Builder')->getDefaultData();
 
         $formData = array_merge($default, $formData);
 
@@ -134,8 +83,6 @@ class Form extends AbstractForm
         ];
 
         $groups = $this->customerGroup->getCollection()->toArray();
-
-        $isEdit = !!$this->getRequest()->getParam('id');
 
         $form = $this->_formFactory->create(
             [
@@ -184,7 +131,7 @@ class Form extends AbstractForm
             ]
         );
 
-        if ($this->getHelper('Component_Amazon_Business')->isEnabled()) {
+        if ($this->getHelper('Component_Amazon_Configuration')->isEnabledBusinessMode()) {
             $fieldset = $form->addFieldset(
                 'magento_block_amazon_template_selling_format_business',
                 [
@@ -402,7 +349,7 @@ class Form extends AbstractForm
             ]
         );
 
-        $priceTitle = $this->getHelper('Component_Amazon_Business')->isEnabled() ?
+        $priceTitle = $this->getHelper('Component_Amazon_Configuration')->isEnabledBusinessMode() ?
             $this->__('Price (B2C)') :
             $this->__('Price');
 
@@ -807,7 +754,7 @@ class Form extends AbstractForm
             ]
         );
 
-        if ($this->getHelper('Component_Amazon_Business')->isEnabled()) {
+        if ($this->getHelper('Component_Amazon_Configuration')->isEnabledBusinessMode()) {
 
             $fieldset = $form->addFieldset(
                 'magento_block_amazon_template_selling_format_business_prices',

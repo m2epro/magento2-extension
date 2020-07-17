@@ -102,12 +102,12 @@ define([
                     var response = transport.responseText.evalJSON();
 
                     if (response && response['message']) {
-                        MessagesObj.addErrorMessage(response['message']);
+                        MessagesObj.addError(response['message']);
                         return CommonObj.scrollPageToTop();
                     }
 
                     if (!response['url']) {
-                        MessagesObj.addErrorMessage(M2ePro.translator.translate('An error during of account creation.'));
+                        MessagesObj.addError(M2ePro.translator.translate('An error during of account creation.'));
                         return CommonObj.scrollPageToTop();
                     }
 

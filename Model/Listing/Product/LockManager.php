@@ -110,8 +110,7 @@ class LockManager extends \Ess\M2ePro\Model\AbstractModel
             $this->getHelper('Module\Translation')->__(
                 'Another Action is being processed. Try again when the Action is completed.'
             ),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
         );
 
         return true;

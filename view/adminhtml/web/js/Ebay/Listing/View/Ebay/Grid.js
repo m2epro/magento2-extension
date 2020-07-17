@@ -177,7 +177,7 @@ define([
                     MessageObj.clear();
 
                     if (response.message) {
-                        MessageObj.addErrorMessage(response.message);
+                        MessageObj.addError(response.message);
                     }
 
                     if (response.result) {

@@ -51,15 +51,15 @@ class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
         ]);
         $this->addButton('back', [
             'label'     => $this->__('Back'),
-            'onclick'   => 'ListingGridHandlerObj.backClick(\'' . $url . '\')',
+            'onclick'   => 'ListingGridObj.backClick(\'' . $url . '\')',
             'class'     => 'back'
         ]);
 
         // ---------------------------------------
-        $this->addButton('auto_action', [
+        $this->addButton('edit_search_settings', [
             'label'     => $this->__('Edit Search Settings'),
             'class'     => 'action-primary next',
-            'onclick'   => 'ListingGridHandlerObj.editSearchSettings(\'' .
+            'onclick'   => 'ListingGridObj.editSearchSettings(\'' .
                 $this->__('Listing Search Settings') . '\' ,' .
                 $this->listing['id'] .
             ');'
@@ -67,9 +67,9 @@ class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('save_and_go_to_listing_view', [
+        $this->addButton('add_products_search_asin_continue', [
             'label'     => $this->__('Continue'),
-            'onclick'   => 'ListingGridHandlerObj.checkSearchResults('.$this->listing['id'].')',
+            'onclick'   => 'ListingGridObj.checkSearchResults('.$this->listing['id'].')',
             'class'     => 'action-primary forward'
         ]);
         // ---------------------------------------

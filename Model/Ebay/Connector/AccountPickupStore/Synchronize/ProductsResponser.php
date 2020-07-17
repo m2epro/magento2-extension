@@ -208,8 +208,7 @@ class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending
             $this->params['logs_action_id'],
             $this->getLogsAction($stateItem),
             $message->getText(),
-            $this->getLogsMessageType($message),
-            $this->getLogsPriority($message)
+            $this->getLogsMessageType($message)
         );
     }
 
@@ -247,19 +246,6 @@ class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending
         }
 
         return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
-    }
-
-    protected function getLogsPriority(\Ess\M2ePro\Model\Connector\Connection\Response\Message $message)
-    {
-        if ($message->isError()) {
-            return \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH;
-        }
-
-        if ($message->isNotice()) {
-            return \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW;
-        }
-
-        return \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM;
     }
 
     //########################################

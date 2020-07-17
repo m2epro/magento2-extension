@@ -58,7 +58,7 @@ class SaveListing extends Template
         foreach ($templateManager->getAllTemplates() as $template) {
             $templateManager->setTemplate($template);
 
-            /** @var \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel $snapshotBuilder */
+            /** @var \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder $snapshotBuilder */
             if ($templateManager->isHorizontalTemplate()) {
                 $snapshotBuilder = $this->modelFactory->getObject(
                     'Ebay_'.$templateManager->getTemplateModelName().'_SnapshotBuilder'
@@ -73,7 +73,7 @@ class SaveListing extends Template
 
             $newTemplateData = $snapshotBuilder->getSnapshot();
 
-            /** @var \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel $snapshotBuilder */
+            /** @var \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder $snapshotBuilder */
             if ($templateManager->isHorizontalTemplate()) {
                 $snapshotBuilder = $this->modelFactory->getObject(
                     'Ebay_'.$templateManager->getTemplateModelName().'_SnapshotBuilder'
@@ -88,7 +88,7 @@ class SaveListing extends Template
 
             $oldTemplateData = $snapshotBuilder->getSnapshot();
 
-            /** @var \Ess\M2ePro\Model\Template\Diff\AbstractModel $diff */
+            /** @var \Ess\M2ePro\Model\ActiveRecord\Diff $diff */
             if ($templateManager->isHorizontalTemplate()) {
                 $diff = $this->modelFactory->getObject('Ebay_'.$templateManager->getTemplateModelName().'_Diff');
             } else {
@@ -98,7 +98,7 @@ class SaveListing extends Template
             $diff->setNewSnapshot($newTemplateData);
             $diff->setOldSnapshot($oldTemplateData);
 
-            /** @var \Ess\M2ePro\Model\Template\ChangeProcessor\AbstractModel $changeProcessor */
+            /** @var \Ess\M2ePro\Model\Template\ChangeProcessorAbstract $changeProcessor */
             if ($templateManager->isHorizontalTemplate()) {
                 $changeProcessor = $this->modelFactory->getObject(
                     'Ebay_'.$templateManager->getTemplateModelName().'_ChangeProcessor'

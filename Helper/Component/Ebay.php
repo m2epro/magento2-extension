@@ -40,13 +40,11 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
         $this->ebayFactory = $ebayFactory;
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->moduleConfig = $moduleConfig;
         parent::__construct($helperFactory, $context);
     }
 
@@ -87,7 +85,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isEnabled()
     {
-        return (bool)$this->moduleConfig->getGroupValue('/component/' . self::NICK . '/', 'mode');
+        return (bool)$this->getHelper('Module')->getConfig()->getGroupValue('/component/' . self::NICK . '/', 'mode');
     }
 
     //########################################
@@ -124,10 +122,8 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isShowTaxCategory()
     {
-        return (bool)$this->moduleConfig->getGroupValue(
-            '/view/ebay/template/selling_format/',
-            'show_tax_category'
-        );
+        return (bool)$this->getHelper('Component_Ebay_Configuration')
+            ->getViewTemplateSellingFormatShowTaxCategory();
     }
 
     public function getAvailableDurations()

@@ -1,7 +1,6 @@
 define([], function () {
 
-    window.AreaWrapper = Class.create();
-    AreaWrapper.prototype = {
+    window.AreaWrapper = Class.create({
 
         // ---------------------------------------
 
@@ -42,5 +41,5 @@ define([], function () {
         }
 
         // ---------------------------------------
-    };
+    });
 });

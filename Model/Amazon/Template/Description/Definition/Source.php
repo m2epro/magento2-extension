@@ -711,10 +711,8 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             return $attributeValue;
         }
 
-        $isPriceConvertEnabled = $this->getHelper('Module')->getConfig()->getGroupValue(
-            '/magento/attribute/',
-            'price_type_converting'
-        );
+        $isPriceConvertEnabled = $this->getHelper('Module_Configuration')
+            ->isEnableMagentoAttributePriceTypeConvertingMode();
 
         if ($isPriceConvertEnabled &&
             $this->getHelper('Magento\Attribute')->isAttributeInputTypePrice($attributeCode)) {

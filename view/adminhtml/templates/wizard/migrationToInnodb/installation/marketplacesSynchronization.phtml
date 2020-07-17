@@ -1,0 +1,33 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationToInnodb\Installation\MarketplacesSynchronization\Content $block */
+?>
+<div class="wizard_block">
+
+    <div class="marketplaces">
+<?php foreach ($block->getEnabledMarketplaces() as $component => $marketplaces) : ?>
+
+        <div>
+            <h3>
+                <?php echo $block->__("Enabled {$component} Marketplaces"); ?>
+            </h3>
+            <ul>
+                <?php foreach($marketplaces as $marketplace) { ?>
+                <li id="status_<?php echo $marketplace->getId(); ?>">
+                    <span id="marketplace_<?php echo $marketplace->getId(); ?>"><?php echo $marketplace->getTitle(); ?></span>
+                    <input type="hidden" class="marketplace-id" component="<?php echo $marketplace->getComponentTitle(); ?>" value="<?php echo $marketplace->getId(); ?>">
+                 </li>
+                <?php } ?>
+            </ul>
+        </div>
+
+<?php endforeach; ?>
+    </div>
+</div>

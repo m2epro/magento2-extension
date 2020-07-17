@@ -15,6 +15,7 @@ class GetEstimatedFees extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 {
     public function execute()
     {
+        // @codingStandardsIgnoreLine
         session_write_close();
 
         // ---------------------------------------

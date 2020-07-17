@@ -113,14 +113,6 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
     /**
      * @return bool
      */
-    public function isListWhenQtyMagentoHasValue()
-    {
-        return $this->getData('list_qty_magento') != TemplateSynchronization::QTY_MODE_NONE;
-    }
-
-    /**
-     * @return bool
-     */
     public function isListWhenQtyCalculatedHasValue()
     {
         return $this->getData('list_qty_calculated') != TemplateSynchronization::QTY_MODE_NONE;
@@ -173,63 +165,6 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
     public function getReviseUpdateQtyMaxAppliedValue()
     {
         return (int)$this->getData('revise_update_qty_max_applied_value');
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return int
-     */
-    public function getReviseUpdatePriceMaxAllowedDeviationMode()
-    {
-        return (int)$this->getData('revise_update_price_max_allowed_deviation_mode');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isReviseUpdatePriceMaxAllowedDeviationModeOn()
-    {
-        return $this->getReviseUpdatePriceMaxAllowedDeviationMode() == 1;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isReviseUpdatePriceMaxAllowedDeviationModeOff()
-    {
-        return $this->getReviseUpdatePriceMaxAllowedDeviationMode() == 0;
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return int
-     */
-    public function getReviseUpdatePriceMaxAllowedDeviation()
-    {
-        return (int)$this->getData('revise_update_price_max_allowed_deviation');
-    }
-
-    // ---------------------------------------
-
-    public function isPriceChangedOverAllowedDeviation($onlinePrice, $currentPrice)
-    {
-        if ((float)$onlinePrice == (float)$currentPrice) {
-            return false;
-        }
-
-        if ((float)$onlinePrice <= 0) {
-            return true;
-        }
-
-        if ($this->isReviseUpdatePriceMaxAllowedDeviationModeOff()) {
-            return true;
-        }
-
-        $deviation = round(abs($onlinePrice - $currentPrice) / $onlinePrice * 100, 2);
-
-        return $deviation > $this->getReviseUpdatePriceMaxAllowedDeviation();
     }
 
     // ---------------------------------------
@@ -359,14 +294,6 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
     /**
      * @return bool
      */
-    public function isRelistWhenQtyMagentoHasValue()
-    {
-        return $this->getData('relist_qty_magento') != TemplateSynchronization::QTY_MODE_NONE;
-    }
-
-    /**
-     * @return bool
-     */
     public function isRelistWhenQtyCalculatedHasValue()
     {
         return $this->getData('relist_qty_calculated') != TemplateSynchronization::QTY_MODE_NONE;
@@ -414,14 +341,6 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
     /**
      * @return bool
      */
-    public function isStopWhenQtyMagentoHasValue()
-    {
-        return $this->getData('stop_qty_magento') != TemplateSynchronization::QTY_MODE_NONE;
-    }
-
-    /**
-     * @return bool
-     */
     public function isStopWhenQtyCalculatedHasValue()
     {
         return $this->getData('stop_qty_calculated') != TemplateSynchronization::QTY_MODE_NONE;
@@ -442,60 +361,9 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
 
     //########################################
 
-    public function getListWhenQtyMagentoHasValueType()
-    {
-        return $this->getData('list_qty_magento');
-    }
-
-    public function getListWhenQtyMagentoHasValueMin()
-    {
-        return $this->getData('list_qty_magento_value');
-    }
-
-    public function getListWhenQtyMagentoHasValueMax()
-    {
-        return $this->getData('list_qty_magento_value_max');
-    }
-
-    // ---------------------------------------
-
-    public function getListWhenQtyCalculatedHasValueType()
-    {
-        return $this->getData('list_qty_calculated');
-    }
-
-    public function getListWhenQtyCalculatedHasValueMin()
+    public function getListWhenQtyCalculatedHasValue()
     {
         return $this->getData('list_qty_calculated_value');
-    }
-
-    public function getListWhenQtyCalculatedHasValueMax()
-    {
-        return $this->getData('list_qty_calculated_value_max');
-    }
-
-    // ---------------------------------------
-
-    public function getRelistWhenQtyMagentoHasValueType()
-    {
-        return $this->getData('relist_qty_magento');
-    }
-
-    public function getRelistWhenQtyMagentoHasValueMin()
-    {
-        return $this->getData('relist_qty_magento_value');
-    }
-
-    public function getRelistWhenQtyMagentoHasValueMax()
-    {
-        return $this->getData('relist_qty_magento_value_max');
-    }
-
-    // ---------------------------------------
-
-    public function getRelistWhenQtyCalculatedHasValueType()
-    {
-        return $this->getData('relist_qty_calculated');
     }
 
     public function getRelistWhenQtyCalculatedHasValueMin()
@@ -503,153 +371,9 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
         return $this->getData('relist_qty_calculated_value');
     }
 
-    public function getRelistWhenQtyCalculatedHasValueMax()
-    {
-        return $this->getData('relist_qty_calculated_value_max');
-    }
-
-    // ---------------------------------------
-
-    public function getStopWhenQtyMagentoHasValueType()
-    {
-        return $this->getData('stop_qty_magento');
-    }
-
-    public function getStopWhenQtyMagentoHasValueMin()
-    {
-        return $this->getData('stop_qty_magento_value');
-    }
-
-    public function getStopWhenQtyMagentoHasValueMax()
-    {
-        return $this->getData('stop_qty_magento_value_max');
-    }
-
-    // ---------------------------------------
-
-    public function getStopWhenQtyCalculatedHasValueType()
-    {
-        return $this->getData('stop_qty_calculated');
-    }
-
     public function getStopWhenQtyCalculatedHasValueMin()
     {
         return $this->getData('stop_qty_calculated_value');
-    }
-
-    public function getStopWhenQtyCalculatedHasValueMax()
-    {
-        return $this->getData('stop_qty_calculated_value_max');
-    }
-
-    //########################################
-
-    /**
-     * @return array
-     */
-    public function getDefaultSettings()
-    {
-        return array_merge(
-            $this->getListDefaultSettings(),
-            $this->getReviseDefaultSettings(),
-            $this->getRelistDefaultSettings(),
-            $this->getStopDefaultSettings()
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public function getListDefaultSettings()
-    {
-        return [
-            'list_mode' => 1,
-            'list_status_enabled' => 1,
-            'list_is_in_stock' => 1,
-
-            'list_qty_magento' => TemplateSynchronization::QTY_MODE_NONE,
-            'list_qty_magento_value' => '1',
-            'list_qty_magento_value_max' => '10',
-
-            'list_qty_calculated' => TemplateSynchronization::QTY_MODE_NONE,
-            'list_qty_calculated_value' => '1',
-            'list_qty_calculated_value_max' => '10',
-
-            'list_advanced_rules_mode' => 0,
-            'list_advanced_rules_filters' => null
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getReviseDefaultSettings()
-    {
-        return [
-            'revise_update_qty' => 1,
-            'revise_update_qty_max_applied_value_mode' => 1,
-            'revise_update_qty_max_applied_value' => 5,
-            'revise_update_price' => 1,
-            'revise_update_price_max_allowed_deviation_mode' => 1,
-            'revise_update_price_max_allowed_deviation' => 0,
-            'revise_update_title' => 0,
-            'revise_update_sub_title' => 0,
-            'revise_update_description' => 0,
-            'revise_update_images' => 0,
-            'revise_update_categories' => 0,
-            'revise_update_shipping' => 0,
-            'revise_update_payment' => 0,
-            'revise_update_return' => 0,
-            'revise_update_other' => 0,
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getRelistDefaultSettings()
-    {
-        return [
-            'relist_mode' => 1,
-            'relist_filter_user_lock' => 1,
-            'relist_status_enabled' => 1,
-            'relist_is_in_stock' => 1,
-
-            'relist_qty_magento' => TemplateSynchronization::QTY_MODE_NONE,
-            'relist_qty_magento_value' => '1',
-            'relist_qty_magento_value_max' => '10',
-
-            'relist_qty_calculated' => TemplateSynchronization::QTY_MODE_NONE,
-            'relist_qty_calculated_value' => '1',
-            'relist_qty_calculated_value_max' => '10',
-
-            'relist_advanced_rules_mode' => 0,
-            'relist_advanced_rules_filters' => null
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getStopDefaultSettings()
-    {
-        return [
-            'stop_mode' => 1,
-
-            'stop_status_disabled' => 1,
-            'stop_out_off_stock' => 1,
-
-            'stop_qty_magento' => TemplateSynchronization::QTY_MODE_NONE,
-            'stop_qty_magento_value' => '0',
-            'stop_qty_magento_value_max' => '10',
-
-            'stop_qty_calculated' => TemplateSynchronization::QTY_MODE_NONE,
-            'stop_qty_calculated_value' => '0',
-            'stop_qty_calculated_value_max' => '10',
-
-            'stop_advanced_rules_mode' => 0,
-            'stop_advanced_rules_filters' => null
-        ];
     }
 
     //########################################

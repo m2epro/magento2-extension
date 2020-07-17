@@ -1,0 +1,49 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+/**@var \Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\MysqlTables $block */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<style type="text/css">
+    .category {
+        font-size: 14px;
+        color: #ea7601;
+    }
+    td.edit-database a {
+        padding-left: 10px !important;
+    }
+</style>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <?php foreach ($block->getTablesInfo() as $category => $tables) : ?>
+        <tr>
+            <td class="label category" colspan="3">
+                <label><?php echo $category; ?>: </label>
+            </td>
+        </tr>
+
+        <?php foreach ($tables as $table => $data) : ?>
+            <tr>
+                <td class="label" style="padding-right: 10px;">
+                    <?php echo $table; ?>
+                </td>
+                <td class="value">
+                    <?php echo $data['count']; ?>
+                </td>
+                <td class="value edit-database">
+                    <a href="<?php echo $data['url']?>">Edit</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        <tr><td class="label"></td></tr>
+    <?php endforeach; ?>
+
+</table>

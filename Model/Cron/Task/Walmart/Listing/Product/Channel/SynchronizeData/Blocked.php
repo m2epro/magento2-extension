@@ -43,7 +43,7 @@ class Blocked extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $synchronizationLog = parent::getSynchronizationLog();
 
         $synchronizationLog->setComponentMode(Walmart::NICK);
-        $synchronizationLog->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_LISTINGS_PRODUCTS);
+        $synchronizationLog->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_LISTINGS);
 
         return $synchronizationLog;
     }
@@ -146,8 +146,7 @@ class Blocked extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                     $logsActionId,
                     \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
                     $tempLogMessage,
-                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
-                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS
                 );
 
                 if (!empty($notReceivedItem['is_variation_product']) &&
@@ -285,8 +284,7 @@ class Blocked extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module_Translation')->__($message->getText()),
-                $logType,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+                $logType
             );
         }
     }

@@ -214,8 +214,7 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($message->getText()),
-                $logType,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+                $logType
             );
         }
     }

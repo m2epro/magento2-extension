@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Other\View;
 
+use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
+
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Other\View\Grid
  */
@@ -84,23 +86,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $collection->getSelect()->columns(
             [
-                'id'                    => 'main_table.id',
-                'account_id'            => 'main_table.account_id',
-                'marketplace_id'        => 'main_table.marketplace_id',
-                'product_id'            => 'main_table.product_id',
-                'title'                 => 'second_table.title',
-                'sku'                   => 'second_table.sku',
-                'item_id'               => 'second_table.item_id',
-                'available_qty'         => new \Zend_Db_Expr(
+                'id'                   => 'main_table.id',
+                'account_id'           => 'main_table.account_id',
+                'marketplace_id'       => 'main_table.marketplace_id',
+                'product_id'           => 'main_table.product_id',
+                'title'                => 'second_table.title',
+                'sku'                  => 'second_table.sku',
+                'item_id'              => 'second_table.item_id',
+                'available_qty'        => new \Zend_Db_Expr(
                     '(second_table.online_qty - second_table.online_qty_sold)'
                 ),
-                'online_qty_sold'       => 'second_table.online_qty_sold',
-                'online_price'          => 'second_table.online_price',
-                'status'                => 'main_table.status',
-                'start_date'            => 'second_table.start_date',
-                'end_date'              => 'second_table.end_date',
-                'currency'              => 'second_table.currency',
-                'account_mode'          => 'mea.mode'
+                'online_qty_sold'      => 'second_table.online_qty_sold',
+                'online_price'         => 'second_table.online_price',
+                'online_main_category' => 'second_table.online_main_category',
+                'status'               => 'main_table.status',
+                'start_date'           => 'second_table.start_date',
+                'end_date'             => 'second_table.end_date',
+                'currency'             => 'second_table.currency',
+                'account_mode'         => 'mea.mode'
             ]
         );
 
@@ -112,76 +115,77 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header' => $this->__('Product ID'),
-            'align' => 'left',
-            'type' => 'number',
-            'width' => '80px',
-            'index' => 'product_id',
-            'filter_index' => 'main_table.product_id',
+            'header'         => $this->__('Product ID'),
+            'align'          => 'left',
+            'type'           => 'number',
+            'width'          => '80px',
+            'index'          => 'product_id',
+            'filter_index'   => 'main_table.product_id',
             'frame_callback' => [$this, 'callbackColumnProductId'],
-            'filter' => 'Ess\M2ePro\Block\Adminhtml\Grid\Column\Filter\ProductId',
+            'filter'         => 'Ess\M2ePro\Block\Adminhtml\Grid\Column\Filter\ProductId',
             'filter_condition_callback' => [$this, 'callbackFilterProductId']
         ]);
 
         $this->addColumn('title', [
-            'header' => $this->__('Title / SKU'),
-            'align' => 'left',
-            'type' => 'text',
-            'index' => 'title',
-            'escape' => false,
-            'filter_index' => 'second_table.title',
-            'frame_callback' => [$this, 'callbackColumnProductTitle'],
+            'header'                    => $this->__('Title / SKU'),
+            'align'                     => 'left',
+            'type'                      => 'text',
+            'index'                     => 'title',
+            'escape'                    => false,
+            'filter_index'              => 'second_table.title',
+            'frame_callback'            => [$this, 'callbackColumnProductTitle'],
             'filter_condition_callback' => [$this, 'callbackFilterTitle']
         ]);
 
         $this->addColumn('item_id', [
-            'header' => $this->__('Item ID'),
-            'align' => 'left',
-            'width' => '100px',
-            'type' => 'text',
-            'index' => 'item_id',
-            'filter_index' => 'second_table.item_id',
+            'header'         => $this->__('Item ID'),
+            'align'          => 'left',
+            'width'          => '100px',
+            'type'           => 'text',
+            'index'          => 'item_id',
+            'filter_index'   => 'second_table.item_id',
             'frame_callback' => [$this, 'callbackColumnItemId']
         ]);
 
         $this->addColumn('available_qty', [
-            'header' => $this->__('Available QTY'),
-            'align' => 'right',
-            'width' => '50px',
-            'type' => 'number',
-            'index' => 'available_qty',
+            'header'       => $this->__('Available QTY'),
+            'align'        => 'right',
+            'width'        => '50px',
+            'type'         => 'number',
+            'index'        => 'available_qty',
             'filter_index' => new \Zend_Db_Expr('(second_table.online_qty - second_table.online_qty_sold)'),
-            'frame_callback' => [$this, 'callbackColumnOnlineAvailableQty']
+            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty',
+            'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY
         ]);
 
         $this->addColumn('online_qty_sold', [
-            'header' => $this->__('Sold QTY'),
-            'align' => 'right',
-            'width' => '50px',
-            'type' => 'number',
-            'index' => 'online_qty_sold',
+            'header'       => $this->__('Sold QTY'),
+            'align'        => 'right',
+            'width'        => '50px',
+            'type'         => 'number',
+            'index'        => 'online_qty_sold',
             'filter_index' => 'second_table.online_qty_sold',
-            'frame_callback' => [$this, 'callbackColumnOnlineQtySold']
+            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty'
         ]);
 
         $this->addColumn('online_price', [
-            'header' => $this->__('Price'),
-            'align' => 'right',
-            'width' => '50px',
-            'type' => 'number',
-            'index' => 'online_price',
-            'filter_index' => 'second_table.online_price',
+            'header'         => $this->__('Price'),
+            'align'          => 'right',
+            'width'          => '50px',
+            'type'           => 'number',
+            'index'          => 'online_price',
+            'filter_index'   => 'second_table.online_price',
             'frame_callback' => [$this, 'callbackColumnOnlinePrice']
         ]);
 
         $this->addColumn('status', [
-            'header' => $this->__('Status'),
-            'width' => '100px',
-            'index' => 'status',
+            'header'       => $this->__('Status'),
+            'width'        => '100px',
+            'index'        => 'status',
             'filter_index' => 'main_table.status',
-            'type' => 'options',
-            'sortable' => false,
-            'options' => [
+            'type'         => 'options',
+            'sortable'     => false,
+            'options'      => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED   => $this->__('Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN   => $this->__('Listed (Hidden)'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD     => $this->__('Sold'),
@@ -193,15 +197,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('end_date', [
-           'header' => $this->__('End Date'),
-           'align' => 'right',
-           'width' => '150px',
-           'type' => 'datetime',
-           'filter' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
-           'filter_time' => true,
-           'index' => 'end_date',
+           'header'       => $this->__('End Date'),
+           'align'        => 'right',
+           'width'        => '150px',
+           'type'         => 'datetime',
+           'filter'       => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+           'filter_time'  => true,
+           'index'        => 'end_date',
            'filter_index' => 'second_table.end_date',
-           'frame_callback' => [$this, 'callbackColumnEndTime']
+            'renderer'    => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime'
         ]);
 
         $back = $this->getHelper('Data')->makeBackUrlParam('*/ebay_listing_other/view', [
@@ -302,10 +306,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnProductTitle($value, $row, $column, $isExport)
     {
         $title = $row->getChildObject()->getData('title');
-        $title = '<span>' . $this->getHelper('Data')->escapeHtml($title) . '</span>';
 
         $tempSku = $row->getChildObject()->getData('sku');
-
         if ($tempSku === null) {
             $tempSku = '<i style="color:gray;">receiving...</i>';
         } elseif ($tempSku == '') {
@@ -314,12 +316,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $tempSku = $this->getHelper('Data')->escapeHtml($tempSku);
         }
 
-        $title .= '<br/><strong>'
-                  .$this->__('SKU')
-                  .':</strong> '
-                  .$tempSku;
+        $categoryHtml = '';
+        if ($category = $row->getChildObject()->getData('online_main_category')) {
+            $categoryHtml = <<<HTML
+<strong>{$this->__('Category')}:</strong>&nbsp;
+{$this->escapeHtml($category)}
+HTML;
+        }
 
-        return $title;
+        return <<<HTML
+<span>{$this->escapeHtml($title)}</span><br/>
+<strong>{$this->__('SKU')}:</strong>&nbsp;{$tempSku}<br/>
+{$categoryHtml}
+HTML;
     }
 
     public function callbackColumnItemId($value, $row, $column, $isExport)
@@ -335,38 +344,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $row->getData('marketplace_id')
         );
         $value = '<a href="' . $url . '" target="_blank">' . $value . '</a>';
-
-        return $value;
-    }
-
-    public function callbackColumnOnlineAvailableQty($value, $row, $column, $isExport)
-    {
-        $value = $row->getData('available_qty');
-        if ($value === null || $value === '') {
-            return $this->__('N/A');
-        }
-
-        if ($value <= 0) {
-            return '<span style="color: red;">0</span>';
-        }
-
-        if ($row->getData('status') != \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {
-            return '<span style="color: gray; text-decoration: line-through;">' . $value . '</span>';
-        }
-
-        return $value;
-    }
-
-    public function callbackColumnOnlineQtySold($value, $row, $column, $isExport)
-    {
-        $value = $row->getChildObject()->getData('online_qty_sold');
-        if ($value === null || $value === '') {
-            return $this->__('N/A');
-        }
-
-        if ($value <= 0) {
-            return '<span style="color: red;">0</span>';
-        }
 
         return $value;
     }
@@ -407,17 +384,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnStartTime($value, $row, $column, $isExport)
     {
-        if (empty($value)) {
-            return $this->__('N/A');
-        }
-
-        return $value;
-    }
-
-    public function callbackColumnEndTime($value, $row, $column, $isExport)
-    {
-        $value = $row->getChildObject()->getEndDate();
-
         if (empty($value)) {
             return $this->__('N/A');
         }

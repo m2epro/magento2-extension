@@ -9,8 +9,6 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
-use Ess\M2ePro\Model\Amazon\Template\Description\Specific;
-use Ess\M2ePro\Helper\Component\Amazon;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description\Save
@@ -32,31 +30,9 @@ class Save extends Description
 
         // Saving general data
         // ---------------------------------------
-        $keys = [
-            'title',
-            'marketplace_id',
-            'is_new_asin_accepted',
-
-            'category_path',
-            'product_data_nick',
-            'browsenode_id',
-
-            'registered_parameter',
-
-            'worldwide_id_mode',
-            'worldwide_id_custom_attribute'
-        ];
-
-        $dataForAdd = [];
-        foreach ($keys as $key) {
-            isset($post['general'][$key]) && $dataForAdd[$key] = $post['general'][$key];
-        }
-
-        $dataForAdd['title'] = strip_tags($dataForAdd['title']);
 
         /** @var \Ess\M2ePro\Model\Template\Description $descriptionTemplate */
         $descriptionTemplate = $this->amazonFactory->getObject('Template\Description');
-
         $id && $descriptionTemplate->load($id);
 
         $oldData = [];
@@ -68,131 +44,13 @@ class Save extends Description
             $oldData = $snapshotBuilder->getSnapshot();
         }
 
-        $descriptionTemplate->addData($dataForAdd)->save();
-
-        /** @var \Ess\M2ePro\Model\Amazon\Template\Description $amazonDescriptionTemplate */
-        $amazonDescriptionTemplate = $descriptionTemplate->getChildObject();
-        $amazonDescriptionTemplate->addData(array_merge(
-            [$descriptionTemplate->getResource()->getChildPrimary(Amazon::NICK) => $descriptionTemplate->getId()],
-            $dataForAdd
-        ))->save();
-        // ---------------------------------------
+        $this->modelFactory->getObject('Amazon_Template_Description_Builder')
+            ->build($descriptionTemplate, $post['general']);
 
         $id = $descriptionTemplate->getId();
 
         // Saving definition info
         // ---------------------------------------
-        $keys = [
-
-            'title_mode',
-            'title_template',
-
-            'brand_mode',
-            'brand_custom_value',
-            'brand_custom_attribute',
-
-            'manufacturer_mode',
-            'manufacturer_custom_value',
-            'manufacturer_custom_attribute',
-
-            'manufacturer_part_number_mode',
-            'manufacturer_part_number_custom_value',
-            'manufacturer_part_number_custom_attribute',
-
-            'msrp_rrp_mode',
-            'msrp_rrp_custom_attribute',
-
-            'item_package_quantity_mode',
-            'item_package_quantity_custom_value',
-            'item_package_quantity_custom_attribute',
-
-            'number_of_items_mode',
-            'number_of_items_custom_value',
-            'number_of_items_custom_attribute',
-
-            'item_dimensions_volume_mode',
-            'item_dimensions_volume_length_custom_value',
-            'item_dimensions_volume_width_custom_value',
-            'item_dimensions_volume_height_custom_value',
-            'item_dimensions_volume_length_custom_attribute',
-            'item_dimensions_volume_width_custom_attribute',
-            'item_dimensions_volume_height_custom_attribute',
-            'item_dimensions_volume_unit_of_measure_mode',
-            'item_dimensions_volume_unit_of_measure_custom_value',
-            'item_dimensions_volume_unit_of_measure_custom_attribute',
-
-            'item_dimensions_weight_mode',
-            'item_dimensions_weight_custom_value',
-            'item_dimensions_weight_custom_attribute',
-            'item_dimensions_weight_unit_of_measure_mode',
-            'item_dimensions_weight_unit_of_measure_custom_value',
-            'item_dimensions_weight_unit_of_measure_custom_attribute',
-
-            'package_dimensions_volume_mode',
-            'package_dimensions_volume_length_custom_value',
-            'package_dimensions_volume_width_custom_value',
-            'package_dimensions_volume_height_custom_value',
-            'package_dimensions_volume_length_custom_attribute',
-            'package_dimensions_volume_width_custom_attribute',
-            'package_dimensions_volume_height_custom_attribute',
-            'package_dimensions_volume_unit_of_measure_mode',
-            'package_dimensions_volume_unit_of_measure_custom_value',
-            'package_dimensions_volume_unit_of_measure_custom_attribute',
-
-            'package_weight_mode',
-            'package_weight_custom_value',
-            'package_weight_custom_attribute',
-            'package_weight_unit_of_measure_mode',
-            'package_weight_unit_of_measure_custom_value',
-            'package_weight_unit_of_measure_custom_attribute',
-
-            'shipping_weight_mode',
-            'shipping_weight_custom_value',
-            'shipping_weight_custom_attribute',
-            'shipping_weight_unit_of_measure_mode',
-            'shipping_weight_unit_of_measure_custom_value',
-            'shipping_weight_unit_of_measure_custom_attribute',
-
-            'target_audience_mode',
-            'target_audience',
-
-            'search_terms_mode',
-            'search_terms',
-
-            'image_main_mode',
-            'image_main_attribute',
-
-            'image_variation_difference_mode',
-            'image_variation_difference_attribute',
-
-            'gallery_images_mode',
-            'gallery_images_attribute',
-            'gallery_images_limit',
-
-            'bullet_points_mode',
-            'bullet_points',
-
-            'description_mode',
-            'description_template',
-        ];
-
-        $dataForAdd = [];
-        foreach ($keys as $key) {
-            isset($post['definition'][$key]) && $dataForAdd[$key] = $post['definition'][$key];
-        }
-
-        $dataForAdd['template_description_id'] = $id;
-
-        $dataForAdd['target_audience'] = $this->getHelper('Data')->jsonEncode(
-            array_filter($dataForAdd['target_audience'])
-        );
-        $dataForAdd['search_terms']    = $this->getHelper('Data')->jsonEncode(
-            array_filter($dataForAdd['search_terms'])
-        );
-        $dataForAdd['bullet_points']   = $this->getHelper('Data')->jsonEncode(
-            array_filter($dataForAdd['bullet_points'])
-        );
-
         /** @var $descriptionDefinition \Ess\M2ePro\Model\Amazon\Template\Description\Definition */
         $descriptionDefinition = $this->activeRecordFactory->getObjectLoaded(
             'Amazon_Template_Description_Definition',
@@ -200,12 +58,18 @@ class Save extends Description
             null,
             false
         );
-
         if ($descriptionDefinition === null) {
             $descriptionDefinition = $this->activeRecordFactory->getObject('Amazon_Template_Description_Definition');
         }
 
-        $descriptionDefinition->addData($dataForAdd)->save();
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Description\Definition\Builder $descriptionDefinitionBuilder */
+        $descriptionDefinitionBuilder = $this->modelFactory
+            ->getObject('Amazon_Template_Description_Definition_Builder');
+        $descriptionDefinitionBuilder->setTemplateDescriptionId($id);
+        $descriptionDefinitionBuilder->build($descriptionDefinition, $post['definition']);
+
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Description $amazonDescriptionTemplate */
+        $amazonDescriptionTemplate = $descriptionTemplate->getChildObject();
         $amazonDescriptionTemplate->setDefinitionTemplate($descriptionDefinition);
         // ---------------------------------------
 
@@ -220,41 +84,20 @@ class Save extends Description
 
         $this->sortSpecifics($specifics, $post['general']['product_data_nick'], $post['general']['marketplace_id']);
 
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Description\Specific\Builder $descriptionSpecificBuilder */
+        $descriptionSpecificBuilder = $this->modelFactory->getObject('Amazon_Template_Description_Specific_Builder');
+
         foreach ($specifics as $xpath => $specificData) {
             if (!$this->validateSpecificData($specificData)) {
                 continue;
             }
 
+            $specificData['xpath'] = $xpath;
+
             $specificInstance = $this->activeRecordFactory->getObject('Amazon_Template_Description_Specific');
-
-            $type       = isset($specificData['type']) ? $specificData['type'] : '';
-            $isRequired = isset($specificData['is_required']) ? $specificData['is_required'] : 0;
-            $attributes = isset($specificData['attributes'])
-                ? $this->getHelper('Data')->jsonEncode($specificData['attributes']) : '[]';
-
-            $recommendedValue = $specificData['mode'] == Specific::DICTIONARY_MODE_RECOMMENDED_VALUE
-                ? $specificData['recommended_value'] : '';
-
-            $customValue      = $specificData['mode'] == Specific::DICTIONARY_MODE_CUSTOM_VALUE
-                ? $specificData['custom_value'] : '';
-
-            $customAttribute  = $specificData['mode'] == Specific::DICTIONARY_MODE_CUSTOM_ATTRIBUTE
-                ? $specificData['custom_attribute'] : '';
-
-            $specificInstance->addData([
-                'template_description_id' => $id,
-                'xpath'                   => $xpath,
-                'mode'                    => $specificData['mode'],
-                'is_required'             => $isRequired,
-                'recommended_value'       => $recommendedValue,
-                'custom_value'            => $customValue,
-                'custom_attribute'        => $customAttribute,
-                'type'                    => $type,
-                'attributes'              => $attributes
-            ]);
-            $specificInstance->save();
+            $descriptionSpecificBuilder->setTemplateDescriptionId($id);
+            $descriptionSpecificBuilder->build($specificInstance, $specificData);
         }
-        // ---------------------------------------
 
         // Is Need Synchronize
         // ---------------------------------------
@@ -280,7 +123,6 @@ class Save extends Description
             $diff,
             $affectedListingsProducts->getObjectsData(['id', 'status'])
         );
-        // ---------------------------------------
 
         // Run Processor for Variation Relation Parents
         // ---------------------------------------
@@ -303,7 +145,6 @@ class Save extends Description
 
             $massProcessor->execute();
         }
-        // ---------------------------------------
 
         if ($this->isAjax()) {
             $this->setJsonContent([

@@ -14,7 +14,6 @@ namespace Ess\M2ePro\Helper\Module;
 class Logger extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $modelFactory;
-    protected $moduleConfig;
     protected $logSystemFactory;
     protected $phpEnvironmentRequest;
 
@@ -22,14 +21,12 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function __construct(
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Model\Log\SystemFactory $logSystemFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest
     ) {
         $this->modelFactory = $modelFactory;
-        $this->moduleConfig = $moduleConfig;
         $this->logSystemFactory = $logSystemFactory;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
         parent::__construct($helperFactory, $context);
@@ -37,44 +34,54 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function process($logData, $type = null, $sendToServer = true)
+    public function process($logData, $class = 'undefined', $sendToServer = true)
     {
         try {
-            $info  = $this->getLogMessage($logData, $type);
+            $info  = $this->getLogMessage($logData, $class);
             $info .= $this->getStackTraceInfo();
             $info .= $this->getCurrentUserActionInfo();
 
-            $this->log($info, $type);
+            $this->systemLog($class, null, $info);
 
-            if (!$sendToServer || !(bool)(int)$this->moduleConfig->getGroupValue('/debug/logging/', 'send_to_server')) {
+            $sendConfig = (bool)(int)$this->getHelper('Module')->getConfig()
+                ->getGroupValue('/server/logging/', 'send');
+
+            if (!$sendToServer || !$sendConfig) {
                 return;
             }
 
-            $type = $type === null ? 'undefined' : $type;
             $info .= $this->getHelper('Module_Support_Form')->getSummaryInfo();
 
-            $this->send($info, $type);
+            $this->send($info, $class);
+
+        // @codingStandardsIgnoreLine
         } catch (\Exception $exceptionTemp) {
         }
     }
 
     //########################################
 
-    private function log($info, $type)
+    private function systemLog($class, $message, $description)
     {
         /** @var \Ess\M2ePro\Model\Log\System $log */
         $log = $this->logSystemFactory->create();
-
-        $log->setType($type === null ? 'Logging' : "{$type} Logging");
-        $log->setDescription($info);
-
+        $log->setData(
+            [
+                'type'                 => \Ess\M2ePro\Model\Log\System::TYPE_LOGGER,
+                'class'                => $class,
+                'description'          => $message,
+                'detailed_description' => $description,
+            ]
+        );
         $log->save();
     }
 
     private function getLogMessage($logData, $type)
     {
+        // @codingStandardsIgnoreLine
         !is_string($logData) && $logData = print_r($logData, true);
 
+        // @codingStandardsIgnoreLine
         $logData = '[DATE] '.date('Y-m-d H:i:s', (int)gmdate('U')).PHP_EOL.
             '[TYPE] '.$type.PHP_EOL.
             '[MESSAGE] '.$logData.PHP_EOL.
@@ -99,9 +106,11 @@ TRACE;
 
     private function getCurrentUserActionInfo()
     {
+        // @codingStandardsIgnoreStart
         $server = print_r($this->phpEnvironmentRequest->getServer()->toArray(), true);
         $get = print_r($this->phpEnvironmentRequest->getQuery()->toArray(), true);
         $post = print_r($this->phpEnvironmentRequest->getPost()->toArray(), true);
+        // @codingStandardsIgnoreEnd
 
         $actionInfo = <<<ACTION
 -------------------------------- ACTION INFO -------------------------------------
@@ -123,8 +132,10 @@ ACTION;
             'logger',
             'add',
             'entity',
-            ['info' => $logData,
-            'type' => $type]
+            [
+                'info' => $logData,
+                'type' => $type
+            ]
         );
         $dispatcherObject->process($connectorObj);
     }

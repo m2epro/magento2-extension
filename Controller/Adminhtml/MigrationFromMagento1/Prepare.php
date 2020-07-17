@@ -19,12 +19,10 @@ class Prepare extends Base
 
     public function execute()
     {
-        $this->getHelper('Module\Maintenance')->enable();
-
         $this->setWizardStatus(BaseMigrationFromMagento1::WIZARD_STATUS_PREPARED);
 
         try {
-            $this->prepareDatabase();
+            $this->migrationRunner->prepare();
         } catch (\Exception $exception) {
             $this->getMessageManager()->addErrorMessage(
                 $this->__(
@@ -36,30 +34,7 @@ class Prepare extends Base
             return $this->_redirect($this->getUrl('m2epro/wizard_migrationFromMagento1/disableModule'));
         }
 
-        $this->getHelper('Magento')->clearCache();
-
         return $this->_redirect($this->getUrl('m2epro/wizard_migrationFromMagento1/database'));
-    }
-
-    //########################################
-
-    private function prepareDatabase()
-    {
-        $allTables  = $this->getHelper('Module_Database_Structure')->getModuleTables();
-        $skipTables = [
-            'm2epro_setup',
-            'm2epro_module_config'
-        ];
-
-        foreach ($allTables as $tableName) {
-            if (in_array($tableName, $skipTables)) {
-                continue;
-            }
-
-            $this->resourceConnection->getConnection()->dropTable(
-                $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName)
-            );
-        }
     }
 
     //########################################

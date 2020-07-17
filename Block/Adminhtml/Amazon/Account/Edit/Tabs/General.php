@@ -42,12 +42,7 @@ class General extends AbstractForm
             );
         }
 
-        $defaults = [
-            'title'          => '',
-            'marketplace_id' => 0,
-            'merchant_id'    => '',
-            'token'          => ''
-        ];
+        $defaults = $this->modelFactory->getObject('Amazon_Account_Builder')->getDefaultData();
 
         $formData = array_merge($defaults, $formData);
 

@@ -107,7 +107,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'product_id=entity_id',
             [
                 'id'              => 'id',
-                'amazon_status'   => 'status',
+                'status'          => 'status',
                 'component_mode'  => 'component_mode',
                 'additional_data' => 'additional_data'
             ],
@@ -126,7 +126,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'search_settings_status'         => 'search_settings_status',
                 'search_settings_data'           => 'search_settings_data',
                 'variation_child_statuses'       => 'variation_child_statuses',
-                'amazon_sku'                     => 'sku',
+                'sku'                            => 'sku',
                 'online_qty'                     => 'online_qty',
                 'online_regular_price'           => 'online_regular_price',
                 'online_regular_sale_price'      => 'IF(
@@ -206,12 +206,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'    => $this->__('Product ID'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'entity_id',
-            'frame_callback' => [$this, 'callbackColumnProductId']
+            'header'   => $this->__('Product ID'),
+            'align'    => 'right',
+            'width'    => '100px',
+            'type'     => 'number',
+            'index'    => 'entity_id',
+            'store_id' => $this->listing->getStoreId(),
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
         ]);
 
         $this->addColumn('name', [
@@ -219,41 +220,41 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'name',
-            'filter_index' => 'name',
-            'escape'       => false,
+            'filter_index'   => 'name',
+            'escape'         => false,
             'frame_callback' => [$this, 'callbackColumnProductTitle'],
             'filter_condition_callback' => [$this, 'callbackFilterTitle']
         ]);
 
         $this->addColumn('sku', [
-            'header' => $this->__('SKU'),
-            'align' => 'left',
-            'width' => '150px',
-            'type' => 'text',
-            'index' => 'amazon_sku',
-            'filter_index' => 'amazon_sku',
-            'frame_callback' => [$this, 'callbackColumnAmazonSku']
+            'header'       => $this->__('SKU'),
+            'align'        => 'left',
+            'width'        => '150px',
+            'type'         => 'text',
+            'index'        => 'sku',
+            'filter_index' => 'sku',
+            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku'
         ]);
 
         $this->addColumn('general_id', [
-            'header' => $this->__('ASIN / ISBN'),
-            'align' => 'left',
-            'width' => '140px',
-            'type' => 'text',
-            'index' => 'general_id',
-            'filter_index' => 'general_id',
+            'header'         => $this->__('ASIN / ISBN'),
+            'align'          => 'left',
+            'width'          => '140px',
+            'type'           => 'text',
+            'index'          => 'general_id',
+            'filter_index'   => 'general_id',
             'frame_callback' => [$this, 'callbackColumnGeneralId']
         ]);
 
         $this->addColumn('online_qty', [
-            'header' => $this->__('QTY'),
-            'align' => 'right',
-            'width' => '70px',
-            'type' => 'number',
-            'index' => 'online_qty',
+            'header'       => $this->__('QTY'),
+            'align'        => 'right',
+            'width'        => '70px',
+            'type'         => 'number',
+            'index'        => 'online_qty',
             'filter_index' => 'online_qty',
-            'frame_callback' => [$this, 'callbackColumnAvailableQty'],
-            'filter'   => 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty',
+            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Qty',
+            'filter'       => 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty',
             'filter_condition_callback' => [$this, 'callbackFilterQty']
         ]);
 
@@ -266,13 +267,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         $priceColumn = [
-            'header' => $this->__('Price'),
-            'align' => 'right',
-            'width' => '110px',
-            'type' => 'number',
-            'index' => $priceSortField,
-            'filter_index' => $priceSortField,
-            'frame_callback' => [$this, 'callbackColumnPrice'],
+            'header'                    => $this->__('Price'),
+            'align'                     => 'right',
+            'width'                     => '110px',
+            'type'                      => 'number',
+            'index'                     => $priceSortField,
+            'filter_index'              => $priceSortField,
+            'frame_callback'            => [$this, 'callbackColumnPrice'],
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ];
 
@@ -284,12 +285,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->addColumn('online_price', $priceColumn);
 
         $this->addColumn('status', [
-            'header' => $this->__('Status'),
-            'width' => '155px',
-            'index' => 'amazon_status',
-            'filter_index' => 'amazon_status',
-            'type' => 'options',
-            'sortable' => false,
+            'header'       => $this->__('Status'),
+            'width'        => '155px',
+            'index'        => 'status',
+            'filter_index' => 'status',
+            'type'         => 'options',
+            'sortable'     => false,
             'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => $this->__('Unknown'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
@@ -522,7 +523,7 @@ HTML;
                 $value .= <<<HTML
 <div style="float: left; margin: 0 0 0 7px">
     <a {$problemStyle}href="javascript:"
-    onclick="ListingGridHandlerObj.variationProductManageHandler.openPopUp({$listingProductId}, '{$vpmt}')"
+    onclick="ListingGridObj.variationProductManageHandler.openPopUp({$listingProductId}, '{$vpmt}')"
     title="{$linkTitle}">{$linkContent}</a>&nbsp;{$problemIcon}
 </div>
 HTML;
@@ -611,52 +612,6 @@ HTML;
         return $value;
     }
 
-    public function callbackColumnAmazonSku($value, $row, $column, $isExport)
-    {
-        if ((!$row->getData('is_variation_parent') &&
-            $row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
-            ($row->getData('is_variation_parent') && $row->getData('general_id') == '')) {
-            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
-        }
-
-        if ($value === null || $value === '') {
-            $value = $this->__('N/A');
-        }
-
-        if (!$row->getData('is_variation_parent') && $row->getData('defected_messages')
-        ) {
-            $defectedMessages = $this->getHelper('Data')->jsonDecode($row->getData('defected_messages'));
-            if (empty($defectedMessages)) {
-                $defectedMessages = [];
-            }
-
-            $msg = '';
-            foreach ($defectedMessages as $message) {
-                if (empty($message['message'])) {
-                    continue;
-                }
-
-                $msg .= '<p>'.$message['message'] . '&nbsp;';
-                if (!empty($message['value'])) {
-                    $msg .= $this->__('Current Value') . ': "' . $message['value'] . '"';
-                }
-                $msg .= '</p>';
-            }
-
-            if (empty($msg)) {
-                return $value;
-            }
-
-            $value .= <<<HTML
-<span class="fix-magento-tooltip">
-    {$this->getTooltipHtml($msg, 'map_link_defected_message_icon_'.$row->getId())}
-</span>
-HTML;
-        }
-
-        return $value;
-    }
-
     public function callbackColumnGeneralId($generalId, $row, $column, $isExport)
     {
         if (empty($generalId)) {
@@ -669,124 +624,14 @@ HTML;
         return $this->getGeneralIdColumnValueNotEmptyGeneralId($row);
     }
 
-    public function callbackColumnAvailableQty($value, $row, $column, $isExport)
-    {
-        if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
-            return $this->__('N/A');
-        }
-
-        $listingProductId = $row->getData('id');
-
-        if (!$row->getData('is_variation_parent')) {
-            if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-                return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
-            }
-
-            if ((bool)$row->getData('is_afn_channel')) {
-                $sku = $row->getData('amazon_sku');
-
-                if (empty($sku)) {
-                    return $this->__('AFN');
-                }
-
-                /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-                $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $listingProductId);
-
-                $afn = $this->__('AFN');
-                $total = $this->__('Total');
-                $inStock = $this->__('In Stock');
-                $accountId = $listingProduct->getListing()->getAccountId();
-
-                return <<<HTML
-<div id="m2ePro_afn_qty_value_{$listingProductId}">
-    <span class="m2ePro-online-sku-value" productId="{$listingProductId}" style="display: none">{$sku}</span>
-    <span class="m2epro-empty-afn-qty-data" style="display: none">{$afn}</span>
-    <div class="m2epro-afn-qty-data" style="display: none">
-        <div class="total">{$total}: <span></span></div>
-        <div class="in-stock">{$inStock}: <span></span></div>
-    </div>
-    <a href="javascript:void(0)"
-        onclick="AmazonListingAfnQtyObj.showAfnQty(this,'{$sku}',{$listingProductId}, {$accountId})">{$afn}</a>
-</div>
-HTML;
-            }
-
-            if ($value === null || $value === '') {
-                return '<i style="color:gray;">receiving...</i>';
-            }
-
-            if ($value <= 0) {
-                return '<span style="color: red;">0</span>';
-            }
-
-            return $value;
-        }
-
-        if ($row->getData('general_id') == '') {
-            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
-        }
-
-        $variationChildStatuses = $this->getHelper('Data')->jsonDecode($row->getData('variation_child_statuses'));
-
-        if (empty($variationChildStatuses)) {
-            return $this->__('N/A');
-        }
-
-        $activeChildrenCount = 0;
-        foreach ($variationChildStatuses as $childStatus => $count) {
-            if ($childStatus == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-                continue;
-            }
-            $activeChildrenCount += (int)$count;
-        }
-
-        if ($activeChildrenCount == 0) {
-            return $this->__('N/A');
-        }
-
-        if (!(bool)$row->getData('is_afn_channel')) {
-            if ($value <= 0) {
-                return '<span style="color: red;">0</span>';
-            }
-
-            return $value;
-        }
-
-        $resultValue = $this->__('AFN');
-        $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
-
-        $filter = base64_encode('online_qty[afn]=1');
-
-        $productTitle = $this->getHelper('Data')->escapeHtml($row->getData('name'));
-        $vpmt = $this->__('Manage Variations of &quot;%s%&quot; ', $productTitle);
-        // @codingStandardsIgnoreLine
-        $vpmt = addslashes($vpmt);
-
-        $linkTitle = $this->__('Show AFN Child Products.');
-        $afnCountWord = !empty($additionalData['afn_count']) ? $additionalData['afn_count']
-            : $this->__('show');
-
-        $resultValue = $resultValue."&nbsp;<a href=\"javascript:void(0)\"
-                           class=\"hover-underline\"
-                           title=\"{$linkTitle}\"
-                           onclick=\"ListingGridHandlerObj.variationProductManageHandler.openPopUp(
-                            {$listingProductId}, '{$vpmt}', '{$filter}'
-                        )\">[".$afnCountWord."]</a>";
-
-        return <<<HTML
-    <div>{$value}</div>
-    <div>{$resultValue}</div>
-HTML;
-    }
-
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
-        if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
+        if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
             return $this->__('N/A');
         }
 
         if ((!$row->getData('is_variation_parent') &&
-            $row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
+            $row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
             ($row->getData('is_variation_parent') && $row->getData('general_id') == '')) {
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
@@ -864,7 +709,7 @@ HTML;
        style="vertical-align: top;line-height: 20px; padding-left: 5px;"
        class="hover-underline"
        title="{$linkTitle}"
-       onclick="ListingGridHandlerObj.variationProductManageHandler.openPopUp(
+       onclick="ListingGridObj.variationProductManageHandler.openPopUp(
         {$listingProductId}, '{$vpmt}', '{$filter}'
     )">$countHtml</a>
 </div>
@@ -902,7 +747,7 @@ HTML;
         $onlineMaxBusinessPrice = (float)$row->getData('max_online_business_price');
 
         if (empty($onlineMinRegularPrice) && empty($onlineMinBusinessPrice)) {
-            if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED ||
+            if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED ||
                 $row->getData('is_variation_parent')
             ) {
                 return $this->__('N/A') . $repricingHtml;
@@ -948,7 +793,7 @@ HTML;
             !$row->getData('is_variation_parent')
         ) {
             $accountId = $this->listing['account_id'];
-            $sku = $row->getData('amazon_sku');
+            $sku = $row->getData('sku');
 
             $regularPriceValue =<<<HTML
 <a id="m2epro_repricing_price_value_{$sku}"
@@ -1038,262 +883,11 @@ HTML;
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
-        $listingProductId  = (int)$row->getData('id');
-        $isVariationParent = (bool)(int)$row->getData('is_variation_parent');
-        $additionalData    = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+        /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Status $status */
+        $status = $this->createBlock('Amazon_Grid_Column_Renderer_Status');
+        $status->setParentAndChildReviseScheduledCache($this->parentAndChildReviseScheduledCache);
 
-        $html = $this->getViewLogIconHtml($listingProductId, $isVariationParent);
-
-        if (!empty($additionalData['synch_template_list_rules_note'])) {
-            $synchNote = $this->getHelper('View')->getModifiedLogMessage(
-                $additionalData['synch_template_list_rules_note']
-            );
-
-            if (empty($html)) {
-                $html = <<<HTML
-<span class="fix-magento-tooltip m2e-tooltip-grid-warning" style="float:right;">
-    {$this->getTooltipHtml($synchNote, 'map_link_error_icon_'.$row->getId())}
-</span>
-HTML;
-            } else {
-                $html .= <<<HTML
-<div id="synch_template_list_rules_note_{$listingProductId}" style="display: none">{$synchNote}</div>
-HTML;
-            }
-        }
-
-        if (!$isVariationParent) {
-            return $html . $this->getProductStatus($row->getData('amazon_status'))
-                .$this->getScheduledTag($row).$this->getLockedTag($row);
-        } else {
-            $statusUnknown   = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
-            $statusNotListed = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
-            $statusListed    = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
-            $statusStopped   = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
-            $statusBlocked   = \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED;
-
-            $generalId = $row->getData('general_id');
-            $variationChildStatuses = $row->getData('variation_child_statuses');
-            if (empty($generalId) || empty($variationChildStatuses)) {
-                return $html .
-                       $this->getProductStatus($statusNotListed) .
-                       $this->getScheduledTag($row) .
-                       $this->getLockedTag($row);
-            }
-
-            $variationChildStatuses = $this->getHelper('Data')->jsonDecode($variationChildStatuses);
-
-            $sortedStatuses = [];
-            if (isset($variationChildStatuses[$statusUnknown])) {
-                $sortedStatuses[$statusUnknown] = $variationChildStatuses[$statusUnknown];
-            }
-            if (isset($variationChildStatuses[$statusNotListed])) {
-                $sortedStatuses[$statusNotListed] = $variationChildStatuses[$statusNotListed];
-            }
-            if (isset($variationChildStatuses[$statusListed])) {
-                $sortedStatuses[$statusListed] = $variationChildStatuses[$statusListed];
-            }
-            if (isset($variationChildStatuses[$statusStopped])) {
-                $sortedStatuses[$statusStopped] = $variationChildStatuses[$statusStopped];
-            }
-            if (isset($variationChildStatuses[$statusBlocked])) {
-                $sortedStatuses[$statusBlocked] = $variationChildStatuses[$statusBlocked];
-            }
-
-            $linkTitle = $this->__('Show all Child Products with such Status');
-
-            foreach ($sortedStatuses as $status => $productsCount) {
-                if (empty($productsCount)) {
-                    continue;
-                }
-
-                $filter = base64_encode('status=' . $status);
-
-                $productTitle = $this->getHelper('Data')->escapeHtml($row->getData('name'));
-                $vpmt = $this->__('Manage Variations of &quot;%s%&quot; ', $productTitle);
-                // @codingStandardsIgnoreLine
-                $vpmt = addslashes($vpmt);
-
-                $generalId = $row->getData('general_id');
-                if (!empty($generalId)) {
-                    $vpmt .= '('. $generalId .')';
-                }
-
-                $productsCount = <<<HTML
-<a onclick="ListingGridHandlerObj.variationProductManageHandler.openPopUp({$listingProductId}, '{$vpmt}', '{$filter}')"
-   class="hover-underline"
-   title="{$linkTitle}"
-   href="javascript:void(0)">[{$productsCount}]</a>
-HTML;
-
-                $html .= $this->getProductStatus($status) . '&nbsp;'. $productsCount . '<br/>';
-            }
-
-            $html .= $this->getScheduledTag($row) . $this->getLockedTag($row);
-        }
-
-        return $html;
-    }
-
-    private function getProductStatus($status)
-    {
-        switch ($status) {
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN:
-                return '<span style="color: gray;">' . $this->__('Unknown') . '</span>';
-
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
-                return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
-
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED:
-                return '<span style="color: green;">' . $this->__('Active') . '</span>';
-
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
-                return'<span style="color: red;">' . $this->__('Inactive') . '</span>';
-
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
-                return'<span style="color: orange; font-weight: bold;">' .
-                    $this->__('Inactive (Blocked)') . '</span>';
-        }
-
-        return '';
-    }
-
-    private function getLockedTag($row)
-    {
-        $html = '';
-
-        $tempLocks = $this->getLockedData($row);
-        $tempLocks = $tempLocks['object_locks'];
-
-        $childCount = 0;
-
-        foreach ($tempLocks as $lock) {
-            switch ($lock->getTag()) {
-                case 'list_action':
-                    $html .= '<br/><span style="color: #605fff">[List in Progress...]</span>';
-                    break;
-
-                case 'relist_action':
-                    $html .= '<br/><span style="color: #605fff">[Relist in Progress...]</span>';
-                    break;
-
-                case 'revise_action':
-                    $html .= '<br/><span style="color: #605fff">[Revise in Progress...]</span>';
-                    break;
-
-                case 'stop_action':
-                    $html .= '<br/><span style="color: #605fff">[Stop in Progress...]</span>';
-                    break;
-
-                case 'stop_and_remove_action':
-                    $html .= '<br/><span style="color: #605fff">[Stop And Remove in Progress...]</span>';
-                    break;
-
-                case 'delete_and_remove_action':
-                    $html .= '<br/><span style="color: #605fff">[Remove in Progress...]</span>';
-                    break;
-
-                case 'switch_to_afn_action':
-                    $html .= '<br/><span style="color: #605fff">[Switch to AFN in Progress...]</span>';
-                    break;
-
-                case 'switch_to_mfn_action':
-                    $html .= '<br/><span style="color: #605fff">[Switch to MFN in Progress...]</span>';
-                    break;
-
-                case 'child_products_in_action':
-                    $childCount++;
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        if ($childCount > 0) {
-            $html .= '<br/><span style="color: #605fff">[Child(s) in Action...]</span>';
-        }
-
-        return $html;
-    }
-
-    protected function getScheduledTag($row)
-    {
-        $html = '';
-
-        /**
-         * @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $scheduledActionsCollection
-         */
-        $scheduledActionsCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
-            ->getCollection();
-        $scheduledActionsCollection->addFieldToFilter('listing_product_id', $row['id']);
-
-        /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction */
-        $scheduledAction = $scheduledActionsCollection->getFirstItem();
-
-        if (!$scheduledAction->getId()) {
-            return $html;
-        }
-
-        switch ($scheduledAction->getActionType()) {
-            case \Ess\M2ePro\Model\Listing\Product::ACTION_LIST:
-                $html .= '<br/><span style="color: #605fff">[List is Scheduled...]</span>';
-                break;
-
-            case \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST:
-                $html .= '<br/><span style="color: #605fff">[Relist is Scheduled...]</span>';
-                break;
-
-            case \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE:
-                $reviseParts = [];
-
-                $additionalData = $scheduledAction->getAdditionalData();
-                if (!empty($additionalData['configurator']) &&
-                !isset($this->parentAndChildReviseScheduledCache[$row->getData('id')])) {
-                    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator */
-                    $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
-                    $configurator->setUnserializedData($additionalData['configurator']);
-
-                    if ($configurator->isIncludingMode()) {
-                        if ($configurator->isQtyAllowed()) {
-                            $reviseParts[] = 'QTY';
-                        }
-
-                        if ($configurator->isRegularPriceAllowed() || $configurator->isBusinessPriceAllowed()) {
-                            $reviseParts[] = 'Price';
-                        }
-
-                        if ($configurator->isDetailsAllowed()) {
-                            $reviseParts[] = 'Details';
-                        }
-
-                        if ($configurator->isImagesAllowed()) {
-                            $reviseParts[] = 'Images';
-                        }
-                    }
-                }
-
-                if (!empty($reviseParts)) {
-                    $html .= '<br/><span style="color: #605fff">[Revise of '.implode(', ', $reviseParts)
-                             .' is Scheduled...]</span>';
-                } else {
-                    $html .= '<br/><span style="color: #605fff">[Revise is Scheduled...]</span>';
-                }
-                break;
-
-            case \Ess\M2ePro\Model\Listing\Product::ACTION_STOP:
-                $html .= '<br/><span style="color: #605fff">[Stop is Scheduled...]</span>';
-                break;
-
-            case \Ess\M2ePro\Model\Listing\Product::ACTION_DELETE:
-                $html .= '<br/><span style="color: #605fff">[Delete is Scheduled...]</span>';
-                break;
-
-            default:
-                break;
-        }
-
-        return $html;
+        return $status->render($row);
     }
 
     // ---------------------------------------
@@ -1416,69 +1010,6 @@ HTML;
             (alp.variation_child_statuses REGEXP '\"{$value}\":[^0]') AND alp.is_variation_parent = 1");
     }
 
-    // ---------------------------------------
-
-    public function getViewLogIconHtml($listingProductId, $isVariationParent)
-    {
-        $listingProductId = (int)$listingProductId;
-        $availableActionsId = array_keys($this->getAvailableActions());
-
-        $connection = $this->resourceConnection->getConnection();
-
-        // Get last messages
-        // ---------------------------------------
-        $dbSelect = $connection->select()
-            ->from(
-                $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getMainTable(),
-                ['action_id','action','type','description','create_date','initiator','listing_product_id']
-            )
-            ->where('`action` IN (?)', $availableActionsId)
-            ->order(['id DESC'])
-            ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::PRODUCTS_LIMIT);
-
-        if ($isVariationParent) {
-            $dbSelect->where('`listing_product_id` = ? OR `parent_listing_product_id` = ?', $listingProductId);
-        } else {
-            $dbSelect->where('`listing_product_id` = ?', $listingProductId);
-        }
-
-        $logs = $connection->fetchAll($dbSelect);
-
-        if (empty($logs)) {
-            return '';
-        }
-
-        // ---------------------------------------
-
-        $summary = $this->createBlock('Amazon_Listing_Log_Grid_LastActions')->setData([
-            'entity_id' => $listingProductId,
-            'logs'      => $logs,
-            'available_actions' => $this->getAvailableActions(),
-            'is_variation_parent' => $isVariationParent,
-            'view_help_handler' => 'ListingGridHandlerObj.viewItemHelp',
-            'hide_help_handler' => 'ListingGridHandlerObj.hideItemHelp',
-        ]);
-
-        return $summary->toHtml();
-    }
-
-    private function getAvailableActions()
-    {
-        return [
-            Log::ACTION_LIST_PRODUCT_ON_COMPONENT       => $this->__('List'),
-            Log::ACTION_RELIST_PRODUCT_ON_COMPONENT     => $this->__('Relist'),
-            Log::ACTION_REVISE_PRODUCT_ON_COMPONENT     => $this->__('Revise'),
-            Log::ACTION_STOP_PRODUCT_ON_COMPONENT       => $this->__('Stop'),
-            Log::ACTION_DELETE_PRODUCT_FROM_COMPONENT   => $this->__('Remove from Channel'),
-            Log::ACTION_STOP_AND_REMOVE_PRODUCT         => $this->__('Stop on Channel / Remove from Listing'),
-            Log::ACTION_DELETE_AND_REMOVE_PRODUCT       => $this->__('Remove from Channel & Listing'),
-            Log::ACTION_DELETE_PRODUCT_FROM_LISTING     => $this->__('Remove from Listing'),
-            Log::ACTION_CHANNEL_CHANGE                  => $this->__('Channel Change'),
-            Log::ACTION_SWITCH_TO_AFN_ON_COMPONENT      => $this->__('Switch to AFN'),
-            Log::ACTION_SWITCH_TO_MFN_ON_COMPONENT      => $this->__('Switch to MFN'),
-        ];
-    }
-
     //########################################
 
     public function getRowUrl($row)
@@ -1509,7 +1040,7 @@ HTML;
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
                 <<<JS
-    ListingGridHandlerObj.afterInitPage();
+    ListingGridObj.afterInitPage();
 JS
             );
         }
@@ -1540,7 +1071,7 @@ JS
     private function getGeneralIdColumnValueEmptyGeneralId($row)
     {
         // ---------------------------------------
-        if ((int)$row->getData('amazon_status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+        if ((int)$row->getData('status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
             return '<i style="color:gray;">'.$this->__('receiving...').'</i>';
         }
         // ---------------------------------------
@@ -1597,7 +1128,7 @@ HTML;
             return <<<HTML
 {$na} &nbsp;
 <a href="javascript:;" title="{$tip}" class="amazon-listing-view-icon amazon-listing-view-generalId-search-data"
-   onclick="ListingGridHandlerObj.productSearchHandler.openPopUp(1,'{$productTitle}',{$lpId})">
+   onclick="ListingGridObj.productSearchHandler.openPopUp(1,'{$productTitle}',{$lpId})">
 </a>
 HTML;
         }
@@ -1613,7 +1144,7 @@ HTML;
 <a href="javascript: void(0);"
    title="{$tip}"
    class="amazon-listing-view-icon amazon-listing-view-generalId-search-error"
-    onclick="ListingGridHandlerObj.productSearchHandler.openPopUp(0,'{$productTitle}',{$lpId});">
+    onclick="ListingGridObj.productSearchHandler.openPopUp(0,'{$productTitle}',{$lpId});">
 </a>
 HTML;
         }
@@ -1623,7 +1154,7 @@ HTML;
         return <<<HTML
 {$na} &nbsp;
 <a href="javascript:;" title="{$tip}" class="amazon-listing-view-icon amazon-listing-view-generalId-search"
-   onclick="ListingGridHandlerObj.productSearchHandler.openPopUp(0,'{$productTitle}',{$lpId});">
+   onclick="ListingGridObj.productSearchHandler.openPopUp(0,'{$productTitle}',{$lpId});">
 </a>
 HTML;
     }
@@ -1641,7 +1172,7 @@ HTML;
                                   '</span>';
         }
 
-        if ((int)$row->getData('amazon_status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+        if ((int)$row->getData('status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
             return <<<HTML
 <a href="{$url}" target="_blank">{$generalId}</a>{$generalIdOwnerHtml}
 HTML;
@@ -1699,7 +1230,7 @@ HTML;
 &nbsp;
 <a href="javascript:;"
     class="amazon-listing-view-icon amazon-listing-view-generalId-remove"
-    onclick="ListingGridHandlerObj.productSearchHandler.showUnmapFromGeneralIdPrompt({$listingProductId});"
+    onclick="ListingGridObj.productSearchHandler.showUnmapFromGeneralIdPrompt({$listingProductId});"
     title="{$tip}">
 </a>{$generalIdOwnerHtml}
 HTML;
@@ -1728,7 +1259,7 @@ HTML;
 &nbsp;
 <a href="javascript:;"
     class="amazon-listing-view-icon amazon-listing-view-generalId-remove"
-    onclick="ListingGridHandlerObj.productSearchHandler.showUnmapFromGeneralIdPrompt({$lpId});"
+    onclick="ListingGridObj.productSearchHandler.showUnmapFromGeneralIdPrompt({$lpId});"
     title="{$tip}">
 </a>
 HTML;

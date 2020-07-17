@@ -22,6 +22,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected $magentoProductCollectionFactory;
     protected $amazonFactory;
 
+    protected $lockedDataCache = [];
+
     //########################################
 
     public function __construct(
@@ -125,13 +127,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'    => $this->__('Product ID'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'entity_id',
+            'header'   => $this->__('Product ID'),
+            'align'    => 'right',
+            'width'    => '100px',
+            'type'     => 'number',
+            'index'    => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => [$this, 'callbackColumnProductId']
+            'store_id' => $this->listing->getStoreId(),
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
         ]);
 
         $this->addColumn('name', [
@@ -216,46 +219,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     }
 
     //########################################
-
-    public function callbackColumnProductId($value, $row, $column, $isExport)
-    {
-        $productId = (int)$value;
-        $storeId = (int)$this->listing['store_id'];
-
-        $withoutImageHtml = '<a href="'
-            .$this->getUrl(
-                'catalog/product/edit',
-                ['id' => $productId]
-            )
-            .'" target="_blank">'
-            .$productId
-            .'</a>';
-
-        $showProductsThumbnails = (bool)(int)$this->getHelper('Module')
-            ->getConfig()
-            ->getGroupValue('/view/', 'show_products_thumbnails');
-        if (!$showProductsThumbnails) {
-            return $withoutImageHtml;
-        }
-
-        /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
-        $magentoProduct = $this->modelFactory->getObject('Magento\Product');
-        $magentoProduct->setProductId($productId);
-        $magentoProduct->setStoreId($storeId);
-
-        $imageResized = $magentoProduct->getThumbnailImage();
-        if ($imageResized === null) {
-            return $withoutImageHtml;
-        }
-
-        $imageResizedUrl = $imageResized->getUrl();
-
-        $imageHtml = $productId.'<div style="margin-top: 5px">'.
-            '<img style="max-width: 100px; max-height: 100px;" src="' .$imageResizedUrl. '" /></div>';
-        $withImageHtml = str_replace('>'.$productId.'<', '>'.$imageHtml.'<', $withoutImageHtml);
-
-        return $withImageHtml;
-    }
 
     public function callbackColumnProductTitle($productTitle, $row, $column, $isExport)
     {
@@ -401,7 +364,7 @@ HTML;
 
                 $linkHtml = <<<HTML
 <a href="javascript:void(0)"
-    onclick="ListingGridHandlerObj.productSearchHandler.openPopUp(1,'{$productTitle}',{$lpId})">{$linkTxt}</a>
+    onclick="ListingGridObj.productSearchHandler.openPopUp(1,'{$productTitle}',{$lpId})">{$linkTxt}</a>
 HTML;
 
                 $msg = $this->__('Action Required');
@@ -483,7 +446,7 @@ HTML;
 
             return <<<HTML
 <a href="javascript:;" title="{$linkTxt}"
-   onclick="ListingGridHandlerObj.productSearchHandler.openPopUp(1,'{$productTitle}',{$lpId})">{$linkTxt}</a>
+   onclick="ListingGridObj.productSearchHandler.openPopUp(1,'{$productTitle}',{$lpId})">{$linkTxt}</a>
 HTML;
         }
         // ---------------------------------------
@@ -494,7 +457,7 @@ HTML;
         return <<<HTML
 {$na} &nbsp;
 <a href="javascript:;" title="{$tip}" class="amazon-listing-view-icon amazon-listing-view-generalId-search"
-   onclick="ListingGridHandlerObj.productSearchHandler.showSearchManualPrompt('{$productTitle}',{$lpId});">
+   onclick="ListingGridObj.productSearchHandler.showSearchManualPrompt('{$productTitle}',{$lpId});">
 </a>
 HTML;
     }
@@ -544,7 +507,7 @@ HTML;
 &nbsp;
 <a href="javascript:;"
     class="amazon-listing-view-icon amazon-listing-view-generalId-remove"
-    onclick="ListingGridHandlerObj.productSearchHandler.showUnmapFromGeneralIdPrompt({$listingProductId});"
+    onclick="ListingGridObj.productSearchHandler.showUnmapFromGeneralIdPrompt({$listingProductId});"
     title="{$tip}">
 </a>
 HTML;
@@ -601,6 +564,22 @@ HTML;
         );
     }
 
+    protected function getLockedData($row)
+    {
+        $listingProductId = $row->getData('id');
+        if (!isset($this->lockedDataCache[$listingProductId])) {
+            $objectLocks = $this->activeRecordFactory->getObjectLoaded('Listing\Product', $listingProductId)
+                ->getProcessingLocks();
+            $tempArray = [
+                'object_locks' => $objectLocks,
+                'in_action'    => !empty($objectLocks),
+            ];
+            $this->lockedDataCache[$listingProductId] = $tempArray;
+        }
+
+        return $this->lockedDataCache[$listingProductId];
+    }
+
     //########################################
 
     public function getRowUrl($row)
@@ -615,7 +594,7 @@ HTML;
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
                 <<<JS
-    ListingGridHandlerObj.afterInitPage();
+    ListingGridObj.afterInitPage();
 JS
             );
 
@@ -624,7 +603,7 @@ JS
 
         $showNotCompletedPopup = '';
         if ($this->getRequest()->getParam('not_completed', false)) {
-            $showNotCompletedPopup = 'ListingGridHandlerObj.showNotCompletedPopup();';
+            $showNotCompletedPopup = 'ListingGridObj.showNotCompletedPopup();';
         }
 
         $this->js->add(<<<JS
@@ -632,14 +611,14 @@ JS
         'M2ePro/Amazon/Listing/Product/Add/SearchAsin/Grid'
     ],function() {
 
-        ListingGridHandlerObj = new AmazonListingProductAddSearchAsinGrid(
+        ListingGridObj = new AmazonListingProductAddSearchAsinGrid(
             '{$this->getId()}',
             {$this->listing->getId()}
         );
 
-        ListingGridHandlerObj.actionHandler.setProgressBar('search_asin_progress_bar');
-        ListingGridHandlerObj.actionHandler.setGridWrapper('search_asin_content_container');
-        ListingGridHandlerObj.afterInitPage();
+        ListingGridObj.actionHandler.setProgressBar('search_asin_progress_bar');
+        ListingGridObj.actionHandler.setGridWrapper('search_asin_content_container');
+        ListingGridObj.afterInitPage();
 
         {$showNotCompletedPopup}
     });
@@ -676,8 +655,8 @@ JS
 require([
     'M2ePro/Amazon/Listing/Product/Add/SearchAsin/Grid'
 ],function() {
-    ListingGridHandlerObj.getGridMassActionObj().selectAll();
-    ListingGridHandlerObj.productSearchHandler.searchGeneralIdAuto(ListingGridHandlerObj.getSelectedProductsString());
+    ListingGridObj.getGridMassActionObj().selectAll();
+    ListingGridObj.productSearchHandler.searchGeneralIdAuto(ListingGridObj.getSelectedProductsString());
 });
 JS
                 );

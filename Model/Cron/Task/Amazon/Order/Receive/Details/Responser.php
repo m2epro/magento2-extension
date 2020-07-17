@@ -37,8 +37,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details\It
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module_Translation')->__($message->getText()),
-                $logType,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+                $logType
             );
         }
     }
@@ -71,8 +70,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details\It
 
         $this->getSynchronizationLog()->addMessage(
             $this->getHelper('Module_Translation')->__($messageText),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
         );
     }
 

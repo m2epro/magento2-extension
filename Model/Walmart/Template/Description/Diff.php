@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Template\Description;
 /**
  * Class \Ess\M2ePro\Model\Walmart\Template\Description\Diff
  */
-class Diff extends \Ess\M2ePro\Model\Template\Diff\AbstractModel
+class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
 {
     //########################################
 

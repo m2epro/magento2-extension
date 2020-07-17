@@ -141,7 +141,7 @@ define([
                         text: M2ePro.translator.translate('Clear Search Results'),
                         class: 'action primary',
                         click: function () {
-                            ListingGridHandlerObj.productSearchHandler.clearSearchResultsAndOpenSearchMenu();
+                            ListingGridObj.productSearchHandler.clearSearchResultsAndOpenSearchMenu();
                         }
                     }]
                 }, this.popup);
@@ -322,14 +322,14 @@ define([
                     self.flagSuccess = true;
 
                     if (response.products_ids.length > 0) {
-                        ListingGridHandlerObj.templateDescriptionHandler.openPopUp(
+                        ListingGridObj.templateDescriptionHandler.openPopUp(
                             0, M2ePro.translator.translate('templateDescriptionPopupTitle'),
                             response.products_ids, response.html, 1);
                     } else {
                         if (response.messages.length > 0) {
                             MessageObj.clear();
                             response.messages.each(function (msg) {
-                                MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1) + 'Message'](msg.text);
+                                MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1)](msg.text);
                             });
                         }
                     }
@@ -395,9 +395,9 @@ define([
 
             var selectedProductsParts = result;
 
-            ListingGridHandlerObj.actionHandler.progressBarObj.reset();
-            ListingGridHandlerObj.actionHandler.progressBarObj.show(M2ePro.translator.translate('automap_asin_progress_title'));
-            ListingGridHandlerObj.actionHandler.gridWrapperObj.lock();
+            ListingGridObj.actionHandler.progressBarObj.reset();
+            ListingGridObj.actionHandler.progressBarObj.show(M2ePro.translator.translate('automap_asin_progress_title'));
+            ListingGridObj.actionHandler.gridWrapperObj.lock();
             $$('.loading-mask').invoke('setStyle', {visibility: 'hidden'});
 
             self.params.autoMapErrorFlag = false;
@@ -410,20 +410,20 @@ define([
 
             if (parts.length == 0) {
 
-                ListingGridHandlerObj.actionHandler.progressBarObj.setStatus(M2ePro.translator.translate('task_completed_message'));
+                ListingGridObj.actionHandler.progressBarObj.setStatus(M2ePro.translator.translate('task_completed_message'));
 
-                ListingGridHandlerObj.actionHandler.gridWrapperObj.unlock();
+                ListingGridObj.actionHandler.gridWrapperObj.unlock();
                 $$('.loading-mask').invoke('setStyle', {visibility: 'visible'});
 
                 self.gridHandler.unselectAllAndReload();
 
                 if (self.params.autoMapErrorFlag == true) {
-                    MessageObj.addErrorMessage(M2ePro.translator.translate('automap_error_message'));
+                    MessageObj.addError(M2ePro.translator.translate('automap_error_message'));
                 }
 
                 setTimeout(function () {
-                    ListingGridHandlerObj.actionHandler.progressBarObj.hide();
-                    ListingGridHandlerObj.actionHandler.progressBarObj.reset();
+                    ListingGridObj.actionHandler.progressBarObj.hide();
+                    ListingGridObj.actionHandler.progressBarObj.reset();
                 }, 2000);
 
                 new Ajax.Request(M2ePro.url.get('amazon_listing_product_search/getProductsSearchStatus'), {
@@ -442,7 +442,7 @@ define([
                         if (response.messages) {
                             MessageObj.clear();
                             response.messages.each(function (msg) {
-                                MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1) + 'Message'](msg.text);
+                                MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1)](msg.text);
                             });
                         }
                     }
@@ -458,7 +458,7 @@ define([
             var partExecuteString = part.length;
             partExecuteString += '';
 
-            ListingGridHandlerObj.actionHandler.progressBarObj.setStatus(str_replace('%product_title%', partExecuteString, M2ePro.translator.translate('automap_asin_search_products')));
+            ListingGridObj.actionHandler.progressBarObj.setStatus(str_replace('%product_title%', partExecuteString, M2ePro.translator.translate('automap_asin_search_products')));
 
             new Ajax.Request(M2ePro.url.get('amazon_listing_product_search/searchAsinAuto'), {
                 method: 'post',
@@ -474,11 +474,11 @@ define([
                     var percents = (100 / totalPartsCount) * (totalPartsCount - parts.length);
 
                     if (percents <= 0) {
-                        ListingGridHandlerObj.actionHandler.progressBarObj.setPercents(0, 0);
+                        ListingGridObj.actionHandler.progressBarObj.setPercents(0, 0);
                     } else if (percents >= 100) {
-                        ListingGridHandlerObj.actionHandler.progressBarObj.setPercents(100, 0);
+                        ListingGridObj.actionHandler.progressBarObj.setPercents(100, 0);
                     } else {
-                        ListingGridHandlerObj.actionHandler.progressBarObj.setPercents(percents, 1);
+                        ListingGridObj.actionHandler.progressBarObj.setPercents(percents, 1);
                     }
 
                     setTimeout(function () {
@@ -723,7 +723,7 @@ define([
                     var response = transport.responseText.evalJSON();
 
                     MessageObj.clear();
-                    MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](response.message);
+                    MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1)](response.message);
                 },
                 onComplete: function () {
                     if (self.flagSuccess == true && afterDoneFunction != undefined) {

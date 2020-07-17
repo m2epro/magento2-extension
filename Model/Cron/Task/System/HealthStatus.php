@@ -75,20 +75,14 @@ class HealthStatus extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     private function isSetProblemExistsMark()
     {
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::MESSAGE_SEND_REGISTRY_KEY,
-            'key',
-            false
-        );
+        $sendDate = $this->getHelper('Module')->getRegistry()->getValue(self::MESSAGE_SEND_REGISTRY_KEY);
 
-        if (!$registry || !$registry->getId()) {
+        if (!$sendDate) {
             return false;
         }
 
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
-        $expirationDate = new \DateTime($registry->getData('value'), new \DateTimeZone('UTC'));
+        $expirationDate = new \DateTime($sendDate, new \DateTimeZone('UTC'));
         $expirationDate->modify('+ 1 day');
 
         return $expirationDate->getTimestamp() > $now->getTimestamp();
@@ -96,31 +90,15 @@ class HealthStatus extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     private function setProblemExistsMark()
     {
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
+        $this->getHelper('Module')->getRegistry()->setValue(
             self::MESSAGE_SEND_REGISTRY_KEY,
-            'key',
-            false
+            $this->getHelper('Data')->getCurrentGmtDate()
         );
-
-        !$registry && $registry = $this->activeRecordFactory->getObject('Registry');
-        $registry->setData('key', self::MESSAGE_SEND_REGISTRY_KEY);
-        $registry->setData('value', $this->getHelper('Data')->getCurrentGmtDate());
-        $registry->save();
     }
 
     private function unsetProblemExistsMark()
     {
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::MESSAGE_SEND_REGISTRY_KEY,
-            'key',
-            false
-        );
-
-        if ($registry && $registry->getId()) {
-            $registry->delete();
-        }
+        $this->getHelper('Module')->getRegistry()->deleteValue(self::MESSAGE_SEND_REGISTRY_KEY);
     }
 
     //########################################

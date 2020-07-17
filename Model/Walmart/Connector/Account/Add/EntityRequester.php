@@ -33,7 +33,6 @@ class EntityRequester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pendin
         } else {
             $requestData = [
                 'title'          => $this->account->getTitle(),
-                'consumer_id'    => $this->params['consumer_id'],
                 'client_id'      => $this->params['client_id'],
                 'client_secret'  => $this->params['client_secret'],
                 'marketplace_id' => $marketplaceObject->getNativeId(),

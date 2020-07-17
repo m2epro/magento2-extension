@@ -733,32 +733,16 @@ SQL
             $listingProductInstructionData = [];
 
             foreach ($changedProductsListingsProductsData as $listingProductData) {
-
-                $instructionTypes = [
-                    'magento_product_qty_data_potentially_changed',
-                    'magento_product_price_data_potentially_changed',
-                    'magento_product_status_data_potentially_changed',
+                $listingProductInstructionData[] = [
+                    'listing_product_id' => $listingProductData['id'],
+                    'component' => $listingProductData['component_mode']
                 ];
-
-                foreach ($instructionTypes as $instructionType) {
-                    $listingProductInstructionData[] = [
-                        'listing_product_id' => $listingProductData['id'],
-                        'component'          => $listingProductData['component_mode'],
-                        'type'               => $instructionType,
-                        'priority'           => 80,
-                        'create_date'        => date('Y-m-d H:i:s', gmdate('U'))
-                    ];
-                }
             }
 
-            $instructionsInsertDataParts = array_chunk($listingProductInstructionData, 1000);
-
-            foreach ($instructionsInsertDataParts as $instructionsInsertDataPart) {
-                $this->getConnection()->insertMultiple(
-                    $this->getFullTableName('listing_product_instruction'),
-                    $instructionsInsertDataPart
-                );
-            }
+            $this->getConnection()->insertMultiple(
+                $this->getFullTableName('listing_product_instruction'),
+                $listingProductInstructionData
+            );
 
             $this->getConnection()->dropTable($productChangeTable);
         }
@@ -773,32 +757,16 @@ SELECT `id`, `component_mode` FROM `{$listingProductTable}` WHERE `synch_status`
             $listingProductInstructionData = [];
 
             foreach ($synchStatusNeedListingsProductsData as $listingProductData) {
-
-                $instructionTypes = [
-                    'magento_product_qty_data_potentially_changed',
-                    'magento_product_price_data_potentially_changed',
-                    'magento_product_status_data_potentially_changed',
+                $listingProductInstructionData[] = [
+                    'listing_product_id' => $listingProductData['id'],
+                    'component' => $listingProductData['component_mode']
                 ];
-
-                foreach ($instructionTypes as $instructionType) {
-                    $listingProductInstructionData[] = [
-                        'listing_product_id' => $listingProductData['id'],
-                        'component'          => $listingProductData['component_mode'],
-                        'type'               => $instructionType,
-                        'priority'           => 60,
-                        'create_date'        => date('Y-m-d H:i:s', gmdate('U'))
-                    ];
-                }
             }
 
-            $instructionsInsertDataParts = array_chunk($listingProductInstructionData, 1000);
-
-            foreach ($instructionsInsertDataParts as $instructionsInsertDataPart) {
-                $this->getConnection()->insertMultiple(
-                    $this->getFullTableName('listing_product_instruction'),
-                    $instructionsInsertDataPart
-                );
-            }
+            $this->getConnection()->insertMultiple(
+                $this->getFullTableName('listing_product_instruction'),
+                $listingProductInstructionData
+            );
 
             $this->getTableModifier('listing_product')
                 ->dropColumn('synch_status', true, false)
@@ -1047,19 +1015,19 @@ SQL
             $query = $this->getConnection()->query("SELECT account_id FROM {$tableName}");
             $accounts = $query->fetchAll(\PDO::FETCH_ASSOC);
 
-            $enabledShippingRateTable = array();
-            $disabledShippingRateTable = array();
+            $enabledShippingRateTable = [];
+            $disabledShippingRateTable = [];
             foreach ($accounts as $account) {
 
-                $enabledShippingRateTable[$account['account_id']] = array(
+                $enabledShippingRateTable[$account['account_id']] = [
                     "mode" => 1,
                     "value" => 1
-                );
+                ];
 
-                $disabledShippingRateTable[$account['account_id']] = array(
+                $disabledShippingRateTable[$account['account_id']] = [
                     "mode" => 1,
                     "value" => 0
-                );
+                ];
             }
 
             $tableName = $this->getFullTableName('ebay_template_shipping');

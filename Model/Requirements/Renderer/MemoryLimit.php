@@ -13,6 +13,27 @@ namespace Ess\M2ePro\Model\Requirements\Renderer;
  */
 class MemoryLimit extends AbstractRenderer
 {
+    /** @var \Magento\Framework\UrlInterface */
+    protected $urlBuilder;
+
+    /** @var \Magento\Framework\View\LayoutInterface */
+    protected $layout;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\Requirements\Checks\AbstractCheck $checkObject,
+        \Magento\Framework\UrlInterface $urlBuilder,
+        \Magento\Framework\View\LayoutInterface $layout,
+        array $data = []
+    ) {
+        $this->urlBuilder = $urlBuilder;
+        $this->layout = $layout;
+        parent::__construct($helperFactory, $modelFactory, $checkObject, $data);
+    }
+
     //########################################
 
     public function getTitle()
@@ -42,6 +63,74 @@ HTML;
     <span>{$this->getCheckObject()->getReader()->getMemoryLimitData('measure')}</span>
 </span>
 HTML;
+    }
+
+    public function getAdditional()
+    {
+        $helper = $this->getHelper('Module\Translation');
+        $testUrl = $this->urlBuilder->getUrl('*/support/testMemoryLimit');
+        $testResultUrl = $this->urlBuilder->getUrl('*/support/testMemoryLimitResult');
+
+        $button = $this->layout->createBlock('Ess\M2ePro\Block\Adminhtml\Magento\Button')->setData([
+            'label'   => $helper->__('Check'),
+            'class'   => 'delete',
+            'onclick' => "memoryLimitTest();"
+        ]);
+
+        return <<<HTML
+<script>
+
+function memoryLimitTest()
+{
+    new Ajax.Request('{$testUrl}', {
+        method: 'post',
+        asynchronous: true,
+        onComplete: function(transport) {
+            
+            new Ajax.Request('{$testResultUrl}', {
+                method: 'post',
+                asynchronous: true,
+                onComplete: function(transport) {
+                    require(['M2ePro/Plugin/Messages'], function (MessageObj) {
+                        MessageObj.clearAll();
+                        var response = transport.responseText.evalJSON();
+                        if (typeof response['result'] === 'undefined') {
+                            MessageObj.addError('{$helper->__('Something went wrong. Please try again later.')}');
+                            return;
+                        }
+                        
+                        if (response['result'] < {$this->getCheckObject()->getMin()}) {
+                            MessageObj.addWarning(
+                                '{$this->getTestWarningMessage()}'
+                                .replace('%value%', response['result'])
+                                .replace('%min-value%', '{$this->getCheckObject()->getMin()}')
+                            );
+                        } else {
+                            MessageObj.addSuccess(
+                                '{$helper->__('Actual memory limit is %value% Mb.')}'
+                                .replace('%value%', response['result'])
+                            );
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
+</script>
+
+{$button->toHtml()}&nbsp;
+HTML;
+    }
+
+    protected function getTestWarningMessage()
+    {
+        return $this->getHelper('Data')->escapeJs(
+            $this->getHelper('Module\Translation')->__(
+                'Actual memory limit is %value% Mb. It should be increased to at least %min-value% Mb
+                for uninterrupted synchronization work.'
+            )
+        );
     }
 
     //########################################

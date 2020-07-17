@@ -32,7 +32,7 @@ class SynchGetExecutingInfo extends Marketplace
         $response = ['mode' => 'executing'];
 
         if (!empty($progressData)) {
-            $response['title'] = 'eBay Sites Synchronization';
+            $response['title'] = 'Marketplaces Synchronization';
             $response['percents'] = $progressData[key($progressData)]['percentage'];
             $response['status'] = key($progressData);
         }

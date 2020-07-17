@@ -1,0 +1,28 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationToInnodb\Notification $block */
+
+$startWizardLink = $block->getUrl("*/wizard_migrationToInnodb");
+?>
+
+<div class="wizard-note">
+
+    <div>
+        <?php
+
+        echo $block->__(
+                'The Marketplace data must be synchronized. Click <a href="%url_1%">here</a> to get to the Marketplace Synchronization Wizard.',
+                $startWizardLink
+        );
+
+        ?>
+    </div>
+
+</div>

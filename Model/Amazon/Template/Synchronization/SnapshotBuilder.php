@@ -10,25 +10,11 @@ namespace Ess\M2ePro\Model\Amazon\Template\Synchronization;
 
 /**
  * Class \Ess\M2ePro\Model\Amazon\Template\Synchronization\SnapshotBuilder
+ * @method \Ess\M2ePro\Model\Template\Synchronization getModel()
  */
-class SnapshotBuilder extends \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel
+class SnapshotBuilder extends \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder
 {
     //########################################
-
-    public function getSnapshot()
-    {
-        $data = $this->model->getData();
-
-        if ($this->model->getChildObject() !== null) {
-            $data = array_merge($data, $this->model->getChildObject()->getData());
-        }
-
-        foreach ($data as &$value) {
-            $value !== null && !is_array($value) && $value = (string)$value;
-        }
-
-        return $data;
-    }
 
     //########################################
 }

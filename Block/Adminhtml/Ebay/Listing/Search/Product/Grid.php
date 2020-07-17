@@ -193,13 +193,6 @@ HTML;
 HTML;
     }
 
-    protected function getProcessingLocks($row)
-    {
-        $objectId = $row->getData('listing_product_id');
-        $object = $this->ebayFactory->getObjectLoaded('Listing\Product', $objectId);
-        return $object->getProcessingLocks();
-    }
-
     //########################################
 
     protected function callbackFilterProductId($collection, $column)

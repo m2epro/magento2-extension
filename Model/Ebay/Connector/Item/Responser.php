@@ -75,8 +75,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
         $this->getLogger()->logListingProductMessage(
             $this->listingProduct,
-            $message,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            $message
         );
     }
 

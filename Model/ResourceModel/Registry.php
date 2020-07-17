@@ -21,16 +21,4 @@ class Registry extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMode
     }
 
     //########################################
-
-    public function loadByKey(\Ess\M2ePro\Model\Registry $object, $key)
-    {
-        $this->load($object, $key, 'key');
-        if (!$object->getId()) {
-            $object->setData('key', $key);
-        }
-
-        return $object;
-    }
-
-    //########################################
 }

@@ -15,16 +15,15 @@ use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
  */
 class StepTwoModeProductGrid extends Settings
 {
-
     //########################################
 
     public function execute()
     {
-        // ---------------------------------------
-        $this->getHelper('Data\GlobalData')->setValue('listing_for_products_category_settings', $this->getListing());
-        // ---------------------------------------
+        $categoriesData = $this->getSessionValue($this->getSessionDataKey());
+        $block = $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Product_Grid');
+        $block->setCategoriesData($categoriesData);
 
-        $this->setAjaxContent($this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Product_Grid'));
+        $this->setAjaxContent($block);
 
         return $this->getResult();
     }

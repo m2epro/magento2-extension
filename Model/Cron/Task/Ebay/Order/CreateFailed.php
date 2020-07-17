@@ -36,22 +36,16 @@ class CreateFailed extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
-        $permittedAccounts = $this->getPermittedAccounts();
-        if (empty($permittedAccounts)) {
-            return;
-        }
+        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+        $accountsCollection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Account')
+                                                  ->getCollection();
 
-        foreach ($permittedAccounts as $account) {
+        foreach ($accountsCollection->getItems() as $account) {
             /** @var $account \Ess\M2ePro\Model\Account **/
 
             try {
-                $this->getOperationHistory()->addText('Starting account "'.$account->getTitle().'"');
-
                 $ebayOrders = $this->getEbayOrders($account);
-
-                if (!empty($ebayOrders)) {
-                    $this->createMagentoOrders($ebayOrders);
-                }
+                $this->createMagentoOrders($ebayOrders);
             } catch (\Exception $exception) {
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Create Failed Orders" Action for eBay Account "%account%" was completed with error.',
@@ -66,97 +60,32 @@ class CreateFailed extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     //########################################
 
-    protected function getPermittedAccounts()
-    {
-        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
-        $accountsCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'Account'
-        )->getCollection();
-        return $accountsCollection->getItems();
-    }
-
-    // ---------------------------------------
-
     protected function createMagentoOrders($ebayOrders)
     {
+        /** @var \Ess\M2ePro\Model\Cron\Task\Ebay\Order\Creator $ordersCreator */
+        $ordersCreator = $this->modelFactory->getObject('Cron_Task_Ebay_Order_Creator');
+        $ordersCreator->setSynchronizationLog($this->getSynchronizationLog());
+
         foreach ($ebayOrders as $order) {
             /** @var $order \Ess\M2ePro\Model\Order */
 
-            if ($this->isOrderChangedInParallelProcess($order)) {
+            if ($ordersCreator->isOrderChangedInParallelProcess($order)) {
                 continue;
             }
 
-            if ($order->canCreateMagentoOrder()) {
-                try {
-                    $order->addNoticeLog(
-                        'Magento order creation rules are met. M2E Pro will attempt to create Magento order.'
-                    );
-                    $order->createMagentoOrder();
-                } catch (\Exception $exception) {
-                    continue;
-                }
-            } else {
-                $order->addData(
-                    [
-                        'magento_order_creation_failure' => \Ess\M2ePro\Model\Order::MAGENTO_ORDER_CREATION_FAILED_NO,
-                        'magento_order_creation_fails_count' => 0,
-                        'magento_order_creation_latest_attempt_date' => null
-                    ]
-                );
+            if (!$order->canCreateMagentoOrder()) {
+                $order->addData([
+                    'magento_order_creation_failure' => \Ess\M2ePro\Model\Order::MAGENTO_ORDER_CREATION_FAILED_NO,
+                    'magento_order_creation_fails_count' => 0,
+                    'magento_order_creation_latest_attempt_date' => null
+                ]);
                 $order->save();
-
                 continue;
             }
 
-            if ($order->getReserve()->isNotProcessed() && $order->isReservable()) {
-                $order->getReserve()->place();
-            }
-
-            if ($order->getChildObject()->canCreatePaymentTransaction()) {
-                $order->getChildObject()->createPaymentTransactions();
-            }
-
-            if ($order->getChildObject()->canCreateInvoice()) {
-                $order->createInvoice();
-            }
-
-            if ($order->getChildObject()->canCreateShipments()) {
-                $order->createShipments();
-            }
-
-            if ($order->getChildObject()->canCreateTracks()) {
-                $order->getChildObject()->createTracks();
-            }
-
-            if ($order->getStatusUpdateRequired()) {
-                $order->updateMagentoOrderStatus();
-            }
+            $ordersCreator->createMagentoOrder($order);
         }
     }
-
-    /**
-     * This is going to protect from Magento Orders duplicates.
-     * (Is assuming that there may be a parallel process that has already created Magento Order)
-     *
-     * But this protection is not covering a cases when two parallel cron processes are isolated by mysql transactions
-     * @param \Ess\M2ePro\Model\Order $order
-     * @return bool
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    protected function isOrderChangedInParallelProcess(\Ess\M2ePro\Model\Order $order)
-    {
-        /** @var \Ess\M2ePro\Model\Order $dbOrder */
-        $dbOrder = $this->activeRecordFactory->getObjectLoaded('Order', $order->getId());
-
-        if ($dbOrder->getMagentoOrderId() != $order->getMagentoOrderId()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    // ---------------------------------------
 
     protected function getEbayOrders(\Ess\M2ePro\Model\Account $account)
     {

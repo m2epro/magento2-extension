@@ -8,8 +8,14 @@
 
 namespace Ess\M2ePro\Model\Template;
 
+use \Ess\M2ePro\Model\Amazon\Template\SellingFormat as AmazonTemplateSellingFormat;
+use \Ess\M2ePro\Model\Ebay\Template\SellingFormat as EbayTemplateSellingFormat;
+use \Ess\M2ePro\Model\Walmart\Template\SellingFormat as WalmartTemplateSellingFormat;
+
 /**
  * Class \Ess\M2ePro\Model\Template\SellingFormat
+ *
+ * @method AmazonTemplateSellingFormat|EbayTemplateSellingFormat|WalmartTemplateSellingFormat getChildObject()
  */
 class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {

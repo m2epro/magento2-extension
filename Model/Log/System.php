@@ -13,6 +13,11 @@ namespace Ess\M2ePro\Model\Log;
  */
 class System extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
+    const TYPE_LOGGER              = 100;
+    const TYPE_EXCEPTION           = 200;
+    const TYPE_EXCEPTION_CONNECTOR = 201;
+    const TYPE_FATAL_ERROR         = 300;
+
     //########################################
 
     public function _construct()
@@ -23,21 +28,14 @@ class System extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     //########################################
 
-    public function setType($type)
-    {
-        $this->setData('type', $type);
-    }
-
     public function getType()
     {
         return $this->getData('type');
     }
 
-    // ---------------------------------------
-
-    public function setDescription($description)
+    public function getClass()
     {
-        $this->setData('description', $description);
+        return $this->getData('class');
     }
 
     public function getDescription()
@@ -45,22 +43,14 @@ class System extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return $this->getData('description');
     }
 
-    // ---------------------------------------
-
-    /**
-     * @param array $data
-     */
-    public function setAdditionalData(array $data = [])
+    public function getDetailedDescription()
     {
-        $this->setData('additional_data', $this->getHelper('Data')->jsonEncode($data));
+        return $this->getData('detailed_description');
     }
 
-    /**
-     * @return array
-     */
     public function getAdditionalData()
     {
-        return (array)$this->getHelper('Data')->jsonDecode($this->getData('additional_data'));
+        return $this->getData('additional_data');
     }
 
     //########################################

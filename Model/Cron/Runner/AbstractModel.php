@@ -61,8 +61,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $runnerSwitcher = $this->modelFactory->getObject('Cron_Runner_Switcher');
         $runnerSwitcher->check($this);
 
-        $this->modelFactory->getObject('Cron_Checker_Dispatcher')->process();
-
         /** @var \Ess\M2ePro\Model\Lock\Transactional\Manager $transactionalManager */
         $transactionalManager = $this->modelFactory->getObject('Lock_Transactional_Manager', [
             'nick' => 'cron_runner'

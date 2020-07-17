@@ -5,20 +5,23 @@ define([
 
     window.SynchProgress = Class.create(Common, {
 
+        stateExecuting : 'executing',
+        stateInactive  : 'inactive',
+
+        resultTypeError   : 'error',
+        resultTypeWarning : 'warning',
+        resultTypeSuccess : 'success',
+
+        runningNow: false,
+        result : null,
+
         // ---------------------------------------
 
         initialize: function (progressBarObj, wrapperObj)
         {
-            this.stateExecuting = 'executing';
-            this.stateInactive = 'inactive';
-
-            this.resultTypeError = 'error';
-            this.resultTypeWarning = 'warning';
-            this.resultTypeSuccess = 'success';
-            this.result = null;
-
             this.progressBarObj = progressBarObj;
             this.wrapperObj = wrapperObj;
+            this.loadingMask = $$('.loading-mask');
         },
 
         // ---------------------------------------
@@ -42,7 +45,9 @@ define([
             self.progressBarObj.show();
 
             self.wrapperObj.lock();
-            $$('.loading-mask').invoke('setStyle', {visibility: 'hidden'});
+            this.loadingMask.invoke('setStyle', {visibility: 'hidden'});
+
+            self.runningNow = true;
         },
 
         end: function ()
@@ -53,26 +58,27 @@ define([
             self.progressBarObj.hide();
 
             self.wrapperObj.unlock();
-            $$('.loading-mask').invoke('setStyle', {visibility: 'visible'});
+            self.loadingMask.invoke('setStyle', {visibility: 'visible'});
+
+            self.runningNow = false;
         },
 
         // ---------------------------------------
 
-        runTask: function (title, url, components, callBackWhenEnd)
+        runTask: function (taskTitle, taskUrl, taskCheckUrl, callBackWhenEnd)
         {
-            title = title || '';
-            url = url || '';
-            components = components || '';
+            taskTitle = taskTitle || '';
+            taskUrl = taskUrl || '';
             callBackWhenEnd = callBackWhenEnd || '';
 
-            if (url == '') {
+            if (taskUrl == '') {
                 return;
             }
 
             var self = this;
-            self.start(title, M2ePro.translator.translate('Preparing to start. Please wait ...'));
-            new Ajax.Request(url, {
-                parameters: {components: components},
+            self.start(taskTitle, M2ePro.translator.translate('Preparing to start. Please wait ...'));
+
+            new Ajax.Request(taskUrl, {
                 method: 'get',
                 asynchronous: true,
                 onSuccess: function(transport) {
@@ -81,39 +87,96 @@ define([
 
                     if (response && response['result']) {
                         self.result = response['result'];
+
+                        if (response && response['result']) {
+                            if (!(self.result == self.resultTypeWarning && response['result'] == self.resultTypeSuccess)) {
+                                self.result = response['result'];
+                            }
+                        }
                     }
                 }
             });
 
             setTimeout(function () {
-                self.startGetExecutingInfo(callBackWhenEnd);
+                self.startGetExecutingInfo(taskCheckUrl, callBackWhenEnd);
             }, 2000);
+        },
+
+        startGetExecutingInfo: function(taskCheckUrl, callBackWhenEnd)
+        {
+            callBackWhenEnd = callBackWhenEnd || '';
+
+            var self = this;
+            new Ajax.Request(taskCheckUrl, {
+                method:'get',
+                asynchronous: true,
+                onSuccess: function(transport) {
+
+                    var data = transport.responseText.evalJSON(true);
+
+                    if (data.ajaxExpired && response.ajaxRedirect) {
+
+                        alert(M2ePro.translator.translate('Unauthorized! Please login again.'));
+                        setLocation(response.ajaxRedirect);
+                    }
+
+                    if (data.mode == self.stateExecuting) {
+
+                        self.progressBarObj.setTitle(data.title);
+                        if (data.percents <= 0) {
+                            self.progressBarObj.setPercents(0,0);
+                        } else if (data.percents >= 100) {
+                            self.progressBarObj.setPercents(100,0);
+                        } else {
+                            self.progressBarObj.setPercents(data.percents,1);
+                        }
+                        self.progressBarObj.setStatus(data.status);
+
+                        self.wrapperObj.lock();
+                        self.loadingMask.invoke('setStyle', {visibility: 'hidden'});
+
+                        setTimeout(function() {
+                            self.startGetExecutingInfo(taskCheckUrl, callBackWhenEnd);
+                        },3000);
+
+                    } else {
+
+                        self.progressBarObj.setPercents(100,0);
+
+                        setTimeout(function() {
+                            eval(callBackWhenEnd);
+                        },1500);
+                    }
+                }
+            });
         },
 
         // ---------------------------------------
 
-        printFinalMessage: function (resultType)
+        printFinalMessage: function ()
         {
             var self = this;
-            var finalResult = self.result !== null ? self.result : resultType;
 
-            if (finalResult == self.resultTypeError) {
-                MessageObj.addErrorMessage(str_replace(
+            if (self.result == self.resultTypeError) {
+                MessageObj.addError(str_replace(
                     '%url%',
                     M2ePro.url.get('logViewUrl'),
                     M2ePro.translator.translate('Marketplace synchronization was completed with errors. <a target="_blank" href="%url%">View Log</a> for the details.')
                 ));
-            } else if (finalResult == self.resultTypeWarning) {
-                MessageObj.addWarningMessage(str_replace(
+            } else if (self.result == self.resultTypeWarning) {
+                MessageObj.addWarning(str_replace(
                     '%url%',
                     M2ePro.url.get('logViewUrl'),
                     M2ePro.translator.translate('Marketplace synchronization was completed with warnings. <a target="_blank" href="%url%">View Log</a> for the details.')
                 ));
             } else {
-                MessageObj.addSuccessMessage(M2ePro.translator.translate('Marketplace synchronization was completed successfully.'));
+                MessageObj.addSuccess(M2ePro.translator.translate('Marketplace synchronization was completed successfully.'));
             }
+
+            self.result = null;
         },
 
         // ---------------------------------------
     });
 });
+

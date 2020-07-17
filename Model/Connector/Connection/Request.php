@@ -99,9 +99,6 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
             ]
         ];
 
-        $adminKey = $this->getHelper('Server')->getAdminKey();
-        $adminKey !== null && $adminKey != '' && $data['auth']['admin_key'] = $adminKey;
-
         $applicationKey = $this->getHelper('Server')->getApplicationKey();
         $applicationKey !== null && $applicationKey != '' && $data['auth']['application_key'] = $applicationKey;
 

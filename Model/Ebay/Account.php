@@ -96,9 +96,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $this->getResource()->getConnection()
             ->delete($storeCategoriesTable, ['account_id = ?' => $this->getId()]);
 
-        $otherCategoryTemplates = $this->getOtherCategoryTemplates(true);
-        foreach ($otherCategoryTemplates as $otherCategoryTemplate) {
-            $otherCategoryTemplate->delete();
+        $storeCategoryTemplates = $this->getStoreCategoryTemplates(true);
+        foreach ($storeCategoryTemplates as $storeCategoryTemplate) {
+            $storeCategoryTemplate->delete();
         }
 
         $feedbacks = $this->getFeedbacks(true);
@@ -135,9 +135,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      * @return array|\Ess\M2ePro\Model\ActiveRecord\AbstractModel[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getOtherCategoryTemplates($asObjects = false, array $filters = [])
+    public function getStoreCategoryTemplates($asObjects = false, array $filters = [])
     {
-        return $this->getRelatedSimpleItems('Ebay_Template_OtherCategory', 'account_id', $asObjects, $filters);
+        return $this->getRelatedSimpleItems('Ebay_Template_StoreCategory', 'account_id', $asObjects, $filters);
     }
 
     /**
@@ -1236,6 +1236,8 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
 
         $connection->delete($tableAccountStoreCategories, ['account_id = ?' => $this->getId()]);
+
+        $this->getHelper('Component_Ebay_Category')->removeStoreRecent();
 
         if (empty($data['categories'])) {
             return;

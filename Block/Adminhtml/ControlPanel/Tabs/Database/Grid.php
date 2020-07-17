@@ -78,13 +78,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'table_name' => $tableName,
                 'component'  => '',
                 'is_exist'   => $isExists = $structureHelper->isTableExists($tableName),
-                'is_crashed' => $isExists ? !$structureHelper->isTableStatusOk($tableName) : false,
                 'records'    => 0,
                 'size'       => 0,
                 'model'      => $structureHelper->getTableModel($tableName)
             ];
 
-            if ($tableRow['is_exist'] && !$tableRow['is_crashed']) {
+            if ($tableRow['is_exist']) {
                 $tableRow['component'] = $structureHelper->getTableComponent($tableName);
                 $tableRow['size']      = $structureHelper->getDataLength($tableName);
                 $tableRow['records']   = $structureHelper->getCountOfRecords($tableName);
@@ -152,10 +151,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             return "<p style=\"color: red; font-weight: bold;\">{$value} [table is not exists]</p>";
         }
 
-        if ($row->getData('is_crashed')) {
-            return "<p style=\"color: orange; font-weight: bold;\">{$value} [table is crashed]</p>";
-        }
-
         if (!$row->getData('model')) {
             return "<p style=\"color: #878787;\">{$value}</p>";
         }
@@ -195,7 +190,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function getRowUrl($row)
     {
-        if (!$row->getData('is_exist') || $row->getData('is_crashed') || !$row->getData('model')) {
+        if (!$row->getData('is_exist') || !$row->getData('model')) {
             return false;
         }
 

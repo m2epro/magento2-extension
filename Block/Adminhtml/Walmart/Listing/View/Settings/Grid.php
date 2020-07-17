@@ -85,7 +85,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'product_id=entity_id',
             [
                 'id'              => 'id',
-                'walmart_status'   => 'status',
+                'status'          => 'status',
                 'component_mode'  => 'component_mode',
                 'additional_data' => 'additional_data'
             ],
@@ -141,12 +141,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'    => $this->__('Product ID'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'entity_id',
-            'frame_callback' => [$this, 'callbackColumnProductId']
+            'header'   => $this->__('Product ID'),
+            'align'    => 'right',
+            'width'    => '100px',
+            'type'     => 'number',
+            'index'    => 'entity_id',
+            'store_id' => $this->listing->getStoreId(),
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
         ]);
 
         $this->addColumn('name', [
@@ -167,7 +168,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type' => 'text',
             'index' => 'walmart_sku',
             'filter_index' => 'walmart_sku',
-            'frame_callback' => [$this, 'callbackColumnWalmartSku']
+            'show_edit_sku' => false,
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku'
         ]);
 
         $this->addColumn('gtin', [
@@ -176,8 +178,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'width' => '150px',
             'type' => 'text',
             'index' => 'gtin',
+            'show_edit_identifier' => false,
+            'marketplace_id'  => $this->listing->getMarketplaceId(),
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin',
             'filter_index' => 'gtin',
-            'frame_callback' => [$this, 'callbackColumnGtin'],
             'filter_condition_callback' => [$this, 'callbackFilterGtin']
         ]);
 
@@ -227,7 +231,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'caption' => $this->__('Use Another Category Policy'),
                 'group'   => 'edit_template_category',
                 'field'   => 'id',
-                'onclick_action' => 'ListingGridHandlerObj.actions[\'changeTemplateCategoryIdAction\']'
+                'onclick_action' => 'ListingGridObj.actions[\'changeTemplateCategoryIdAction\']'
             ],
         ];
 
@@ -349,83 +353,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return $value;
     }
 
-    public function callbackColumnWalmartSku($value, $row, $column, $isExport)
-    {
-        if ($value === null || $value === '') {
-            $value = $this->__('N/A');
-        }
-
-        return $value;
-    }
-
-    // ---------------------------------------
-
-    public function callbackColumnGtin($gtin, $row, $column, $isExport)
-    {
-        if (empty($gtin)) {
-            return $this->__('N/A');
-        }
-
-        $gtinHtml = $this->getHelper('Data')->escapeHtml($gtin);
-
-        $walmartHelper = $this->getHelper('Component\Walmart');
-        $marketplaceId = $this->listing->getMarketplaceId();
-        $channelUrl = $walmartHelper->getItemUrl(
-            $row->getData($walmartHelper->getIdentifierForItemUrl($marketplaceId)),
-            $marketplaceId
-        );
-
-        if (!empty($channelUrl)) {
-            $gtinHtml = <<<HTML
-<a href="{$channelUrl}" target="_blank">{$gtin}</a>
-HTML;
-        }
-
-        $html = <<<HTML
-<div class="walmart-identifiers-gtin">{$gtinHtml}</div>
-HTML;
-
-        $identifiers = [
-            'UPC'        => $row->getData('upc'),
-            'EAN'        => $row->getData('ean'),
-            'ISBN'       => $row->getData('isbn'),
-            'Walmart ID' => $row->getData('wpid'),
-            'Item ID'    => $row->getData('item_id')
-        ];
-
-        $htmlAdditional = '';
-        foreach ($identifiers as $title => $value) {
-            if (empty($value)) {
-                continue;
-            }
-
-            if (($row->getData('upc') || $row->getData('ean') || $row->getData('isbn')) &&
-                ($row->getData('wpid') || $row->getData('item_id')) && $title == 'Walmart ID') {
-                $htmlAdditional .= "<div class='separator-line'></div>";
-            }
-            $identifierCode  = $this->__($title);
-            $identifierValue = $this->getHelper('Data')->escapeHtml($value);
-
-            $htmlAdditional .= <<<HTML
-<div>
-    <span style="display: inline-block; float: left;">
-        <strong>{$identifierCode}:</strong>&nbsp;&nbsp;&nbsp;&nbsp;
-    </span>
-    <span style="display: inline-block; float: right;">
-        {$identifierValue}
-    </span>
-    <div style="clear: both;"></div>
-</div>
-HTML;
-        }
-
-        if ($htmlAdditional != '') {
-            $html .= $this->getTooltipHtml($htmlAdditional);
-        }
-
-        return $html;
-    }
-
     // ---------------------------------------
 
     public function callbackColumnTemplateCategory($value, $row, $column, $isExport)
@@ -500,7 +427,7 @@ SQL;
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
                 <<<JS
-    ListingGridHandlerObj.afterInitPage();
+    ListingGridObj.afterInitPage();
 JS
             );
         }

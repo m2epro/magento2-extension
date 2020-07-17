@@ -10,7 +10,6 @@ define([
         // ---------------------------------------
 
         selectedProductsIds: [],
-        selectedCategoriesData: {},
 
         // ---------------------------------------
 
@@ -29,15 +28,6 @@ define([
 
             this.variationProductManageHandler = new EbayListingVariationProductManage(this);
             this.listingProductBidsHandler = new EbayListingViewEbayBids(this);
-
-            this.actions = Object.extend(this.actions, {
-
-                editCategorySettingsAction: function(id) {
-                    this.editCategorySettings(id);
-                }.bind(this)
-
-            });
-
         },
 
         massActionSubmitClick: function($super)
@@ -47,99 +37,6 @@ define([
                 return;
             }
             $super();
-        },
-
-        // ---------------------------------------
-
-        editCategorySettings: function(id)
-        {
-            this.selectedProductsIds = id ? [id] : this.getSelectedProductsArray();
-
-            new Ajax.Request(M2ePro.url.get('ebay_listing/getCategoryChooserHtml'), {
-                method: 'post',
-                asynchronous: true,
-                parameters: {
-                    product_ids: this.selectedProductsIds.join(',')
-                },
-                onSuccess: function(transport) {
-
-                    this.unselectAll();
-
-                    var title = M2ePro.translator.translate('eBay Categories');
-
-                    if (this.selectedProductsIds.length == 1) {
-                        var productName = this.getProductNameByRowId(this.selectedProductsIds[0]);
-                        title += '&nbsp;' + M2ePro.translator.translate('of Product') + '&nbsp;"' + productName + '"';
-                    }
-
-                    this.openPopUp(title, transport.responseText);
-
-                    $('cancel_button').stopObserving('click').observe('click', function() {
-                        this.popUp.modal('closeModal');
-                    }.bind(this));
-
-                    $('done_button').stopObserving('click').observe('click', function() {
-                        if (!EbayListingProductCategorySettingsChooserObj.validate()) {
-                            return;
-                        }
-
-                        this.selectedCategoriesData = EbayListingProductCategorySettingsChooserObj.getInternalData();
-                        this.editSpecificSettings();
-                    }.bind(this));
-                }.bind(this)
-            });
-        },
-
-        // ---------------------------------------
-
-        editSpecificSettings: function()
-        {
-            var typeEbayMain = M2ePro.php.constant('\\Ess\\M2ePro\\Helper\\Component\\Ebay\\Category::TYPE_EBAY_MAIN');
-
-            new Ajax.Request(M2ePro.url.get('ebay_listing/getCategorySpecificHtml'), {
-                method: 'post',
-                asynchronous: true,
-                parameters: {
-                    ids: this.selectedProductsIds.join(','),
-                    category_mode: EbayListingProductCategorySettingsChooserObj.getSelectedCategory(typeEbayMain)['mode'],
-                    category_value: EbayListingProductCategorySettingsChooserObj.getSelectedCategory(typeEbayMain)['value']
-                },
-                onSuccess: function(transport) {
-
-                    var title = M2ePro.translator.translate('Specifics');
-
-                    this.openPopUp(title, transport.responseText);
-
-                    $('cancel_button').stopObserving('click').observe('click', function() { this.popUp.modal('closeModal'); }.bind(this));
-                    $('done_button').stopObserving('click').observe('click', this.saveCategoryTemplate.bind(this));
-                }.bind(this)
-            });
-        },
-
-        // ---------------------------------------
-
-        saveCategoryTemplate: function()
-        {
-            if (!EbayListingProductCategorySettingsSpecificObj.validate()) {
-                return;
-            }
-
-            var categoryTemplateData = {};
-            categoryTemplateData = Object.extend(categoryTemplateData, this.selectedCategoriesData);
-            categoryTemplateData = Object.extend(categoryTemplateData, EbayListingProductCategorySettingsSpecificObj.getInternalData());
-
-            new Ajax.Request(M2ePro.url.get('ebay_listing/saveCategoryTemplate'), {
-                method: 'post',
-                asynchronous: true,
-                parameters: {
-                    ids: this.selectedProductsIds.join(','),
-                    template_category_data: Object.toJSON(categoryTemplateData)
-                },
-                onSuccess: function(transport) {
-                    this.popUp.modal('closeModal');
-                    this.getGridObj().doFilter();
-                }.bind(this)
-            });
         },
 
         // ---------------------------------------
@@ -183,7 +80,6 @@ define([
                 }],
                 closed: function() {
                     self.selectedProductsIds = [];
-                    self.selectedCategoriesData = {};
 
                     self.getGridObj().reload();
 

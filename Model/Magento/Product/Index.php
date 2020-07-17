@@ -118,8 +118,7 @@ class Index extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isIndexManagementEnabled()
     {
-        return (bool)(int)$this->getHelper('Module')->getConfig()
-                            ->getGroupValue('/product/index/', 'mode');
+        return (bool)$this->getHelper('Module_Configuration')->getProductIndexMode();
     }
 
     public function isDisabledIndex($code)

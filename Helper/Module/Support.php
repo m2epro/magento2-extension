@@ -15,23 +15,17 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $urlBuilder;
     protected $modelFactory;
-    protected $moduleConfig;
-    protected $cacheConfig;
 
     //########################################
 
     public function __construct(
         \Magento\Backend\Model\UrlInterface $urlBuilder,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
         $this->urlBuilder = $urlBuilder;
         $this->modelFactory = $modelFactory;
-        $this->moduleConfig = $moduleConfig;
-        $this->cacheConfig = $cacheConfig;
         parent::__construct($helperFactory, $context);
     }
 
@@ -51,18 +45,18 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getWebsiteUrl()
     {
-        return $this->moduleConfig->getGroupValue('/support/', 'website_url');
+        return $this->getHelper('Module')->getConfig()->getGroupValue('/support/', 'website_url');
     }
 
     public function getClientsPortalUrl()
     {
-        return $this->moduleConfig->getGroupValue('/support/', 'clients_portal_url');
+        return $this->getHelper('Module')->getConfig()->getGroupValue('/support/', 'clients_portal_url');
     }
 
     public function getSupportUrl($urlPart = null)
     {
         $urlParts[] = trim(
-            $this->moduleConfig->getGroupValue('/support/', 'support_url'),
+            $this->getHelper('Module')->getConfig()->getGroupValue('/support/', 'support_url'),
             '/'
         );
 
@@ -75,14 +69,14 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getMagentoMarketplaceUrl()
     {
-        return $this->moduleConfig->getGroupValue('/support/', 'magento_marketplace_url');
+        return $this->getHelper('Module')->getConfig()->getGroupValue('/support/', 'magento_marketplace_url');
     }
 
     //########################################
 
     public function getDocumentationUrl()
     {
-        return $this->moduleConfig->getGroupValue('/support/', 'documentation_url');
+        return $this->getHelper('Module')->getConfig()->getGroupValue('/support/', 'documentation_url');
     }
 
     public function getDocumentationComponentUrl($component)
@@ -160,7 +154,7 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getForumUrl()
     {
-        return $this->moduleConfig->getGroupValue('/support/', 'forum_url');
+        return $this->getHelper('Module')->getConfig()->getGroupValue('/support/', 'forum_url');
     }
 
     public function getForumComponentUrl($component)
@@ -186,7 +180,7 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getContactEmail()
     {
-        return $this->moduleConfig->getGroupValue('/support/', 'contact_email');
+        return $this->getHelper('Module')->getConfig()->getGroupValue('/support/', 'contact_email');
     }
 
     //########################################

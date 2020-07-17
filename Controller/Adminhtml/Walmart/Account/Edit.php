@@ -110,7 +110,6 @@ class Edit extends Account
         );
 
         $this->addExtendedErrorMessage($errorMessage);
-        return 'MagentoMessageObj.addError(\''.$errorMessage.'\');';
     }
 
     //########################################

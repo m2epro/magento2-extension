@@ -8,12 +8,13 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Shipping;
 
-use \Ess\M2ePro\Model\Ebay\Template\Shipping as TemplateShipping;
+use Ess\M2ePro\Model\Ebay\Template\Shipping as Shipping;
+use Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated as ShippingCalculated;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Template\Shipping\Builder
  */
-class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
+class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 {
     protected $resourceConnection;
 
@@ -32,67 +33,49 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
     //########################################
 
-    public function build(array $data)
+    public function build($model, array $rawData)
     {
-        if (empty($data)) {
-            return null;
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping $model */
+        $model = parent::build($model, $rawData);
+
+        if ($this->canSaveCalculatedData()) {
+            $calculatedData = $this->prepareCalculatedData($model->getId());
+            $this->createCalculated($model->getId(), $calculatedData);
         }
 
-        $this->validate($data);
+        $servicesData = $this->prepareServicesData($model->getId());
+        $this->createServices($model->getId(), $servicesData);
 
-        $generalData = $this->prepareGeneralData($data);
-
-        $marketplace = $this->ebayFactory->getCachedObjectLoaded(
-            'Marketplace',
-            $generalData['marketplace_id']
-        );
-
-        $template = $this->activeRecordFactory->getObject('Ebay_Template_Shipping');
-
-        if (isset($generalData['id'])) {
-            $template->load($generalData['id']);
-        }
-
-        $template->addData($generalData);
-        $template->save();
-        $template->setMarketplace($marketplace);
-
-        if ($this->canSaveCalculatedData($data)) {
-            $calculatedData = $this->prepareCalculatedData($template->getId(), $data);
-            $this->createCalculated($template->getId(), $calculatedData);
-        }
-
-        $servicesData = $this->prepareServicesData($template->getId(), $data);
-        $this->createServices($template->getId(), $servicesData);
-
-        return $template;
+        return $model;
     }
 
     //########################################
 
-    protected function validate(array $data)
+    protected function validate()
     {
-        if (empty($data['marketplace_id'])) {
+        if (empty($this->rawData['marketplace_id'])) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Marketplace ID is empty.');
         }
 
-        if ($data['country_mode'] == TemplateShipping::COUNTRY_MODE_CUSTOM_VALUE &&
-            empty($data['country_custom_value']) ||
-            $data['country_mode'] == TemplateShipping::COUNTRY_MODE_CUSTOM_ATTRIBUTE &&
-            empty($data['country_custom_attribute'])) {
+        if ($this->rawData['country_mode'] == Shipping::COUNTRY_MODE_CUSTOM_VALUE &&
+            empty($this->rawData['country_custom_value']) ||
+            $this->rawData['country_mode'] == Shipping::COUNTRY_MODE_CUSTOM_ATTRIBUTE &&
+            empty($this->rawData['country_custom_attribute'])) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Country is empty.');
         }
 
-        parent::validate($data);
+        parent::validate();
     }
 
     //########################################
 
-    protected function prepareGeneralData(array &$data)
+    protected function prepareData()
     {
-        $prepared = parent::prepareData($data);
+        $this->validate();
 
-        $prepared['marketplace_id'] = (int)$data['marketplace_id'];
+        $data = parent::prepareData();
+
+        $data['marketplace_id'] = (int)$this->rawData['marketplace_id'];
 
         $keys = [
             'country_mode',
@@ -116,52 +99,52 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         ];
 
         foreach ($keys as $key) {
-            $prepared[$key] = isset($data[$key]) ? $data[$key] : '';
+            $data[$key] = isset($this->rawData[$key]) ? $this->rawData[$key] : '';
         }
 
-        if (isset($data['local_shipping_rate_table'])) {
-            $prepared['local_shipping_rate_table'] = $this->getHelper('Data')->jsonEncode(
-                $data['local_shipping_rate_table']
+        if (isset($this->rawData['local_shipping_rate_table'])) {
+            $data['local_shipping_rate_table'] = $this->getHelper('Data')->jsonEncode(
+                $this->rawData['local_shipping_rate_table']
             );
         } else {
-            $prepared['local_shipping_rate_table'] = $this->getHelper('Data')->jsonEncode([]);
+            $data['local_shipping_rate_table'] = $this->getHelper('Data')->jsonEncode([]);
         }
 
-        if (isset($data['international_shipping_rate_table'])) {
-            $prepared['international_shipping_rate_table'] = $this->getHelper('Data')->jsonEncode(
-                $data['international_shipping_rate_table']
+        if (isset($this->rawData['international_shipping_rate_table'])) {
+            $data['international_shipping_rate_table'] = $this->getHelper('Data')->jsonEncode(
+                $this->rawData['international_shipping_rate_table']
             );
         } else {
-            $prepared['international_shipping_rate_table'] = $this->getHelper('Data')->jsonEncode([]);
+            $data['international_shipping_rate_table'] = $this->getHelper('Data')->jsonEncode([]);
         }
 
-        if (isset($data['local_shipping_discount_combined_profile_id'])) {
-            $prepared['local_shipping_discount_combined_profile_id'] = $this->getHelper('Data')->jsonEncode(
-                array_diff($data['local_shipping_discount_combined_profile_id'], [''])
+        if (isset($this->rawData['local_shipping_discount_combined_profile_id'])) {
+            $data['local_shipping_discount_combined_profile_id'] = $this->getHelper('Data')->jsonEncode(
+                array_diff($this->rawData['local_shipping_discount_combined_profile_id'], [''])
             );
         } else {
-            $prepared['local_shipping_discount_combined_profile_id'] = $this->getHelper('Data')->jsonEncode([]);
+            $data['local_shipping_discount_combined_profile_id'] = $this->getHelper('Data')->jsonEncode([]);
         }
 
-        if (isset($data['international_shipping_discount_combined_profile_id'])) {
-            $prepared['international_shipping_discount_combined_profile_id'] = $this->getHelper('Data')->jsonEncode(
-                array_diff($data['international_shipping_discount_combined_profile_id'], [''])
+        if (isset($this->rawData['international_shipping_discount_combined_profile_id'])) {
+            $data['international_shipping_discount_combined_profile_id'] = $this->getHelper('Data')->jsonEncode(
+                array_diff($this->rawData['international_shipping_discount_combined_profile_id'], [''])
             );
         } else {
-            $prepared['international_shipping_discount_combined_profile_id']
+            $data['international_shipping_discount_combined_profile_id']
                 = $this->getHelper('Data')->jsonEncode([]);
         }
 
-        if (isset($data['excluded_locations'])) {
-            $prepared['excluded_locations'] = $data['excluded_locations'];
+        if (isset($this->rawData['excluded_locations'])) {
+            $data['excluded_locations'] = $this->rawData['excluded_locations'];
         }
 
-        if (isset($data['click_and_collect_mode'])) {
-            $prepared['click_and_collect_mode'] = (int)$data['click_and_collect_mode'];
+        if (isset($this->rawData['click_and_collect_mode'])) {
+            $data['click_and_collect_mode'] = (int)$this->rawData['click_and_collect_mode'];
         }
 
         $key = 'cash_on_delivery_cost';
-        $prepared[$key] = (isset($data[$key]) && $data[$key] != '') ? $data[$key] : null;
+        $data[$key] = (isset($this->rawData[$key]) && $this->rawData[$key] != '') ? $this->rawData[$key] : null;
 
         $modes = [
             'local_shipping_mode',
@@ -172,17 +155,17 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         ];
 
         foreach ($modes as $mode) {
-            $prepared[$mode] = (int)$prepared[$mode];
+            $data[$mode] = (int)$data[$mode];
         }
 
-        return $prepared;
+        return $data;
     }
 
     //########################################
 
-    private function prepareCalculatedData($templateShippingId, array $data)
+    protected function prepareCalculatedData($templateShippingId)
     {
-        $prepared = ['template_shipping_id' => $templateShippingId];
+        $data = ['template_shipping_id' => $templateShippingId];
 
         $keys = [
             'measurement_system',
@@ -206,7 +189,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         ];
 
         foreach ($keys as $key) {
-            $prepared[$key] = isset($data[$key]) ? $data[$key] : '';
+            $data[$key] = isset($this->rawData[$key]) ? $this->rawData[$key] : '';
         }
 
         $nullKeys = [
@@ -215,52 +198,52 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         ];
 
         foreach ($nullKeys as $key) {
-            $prepared[$key] = (isset($data[$key]) && $data[$key] != '') ? $data[$key] : null;
+            $data[$key] = (isset($this->rawData[$key]) && $this->rawData[$key] != '') ? $this->rawData[$key] : null;
         }
 
-        return $prepared;
+        return $data;
     }
 
-    private function canSaveCalculatedData(array $data)
+    protected function canSaveCalculatedData()
     {
-        if ($data['local_shipping_mode'] == TemplateShipping::SHIPPING_TYPE_CALCULATED) {
+        if ($this->rawData['local_shipping_mode'] == Shipping::SHIPPING_TYPE_CALCULATED) {
             return true;
         }
 
-        if ($data['international_shipping_mode'] == TemplateShipping::SHIPPING_TYPE_CALCULATED) {
+        if ($this->rawData['international_shipping_mode'] == Shipping::SHIPPING_TYPE_CALCULATED) {
             return true;
         }
 
-        $marketplace = $this->ebayFactory->getObjectLoaded('Marketplace', $data['marketplace_id']);
+        $marketplace = $this->ebayFactory->getObjectLoaded('Marketplace', $this->rawData['marketplace_id']);
 
         $isLocalRateTableEnabled = $marketplace->getChildObject()->isLocalShippingRateTableEnabled();
         $isInternationalRateTableEnabled = $marketplace->getChildObject()->isInternationalShippingRateTableEnabled();
 
         if ($isLocalRateTableEnabled
-            && $data['local_shipping_mode'] == TemplateShipping::SHIPPING_TYPE_FLAT
-            && isset($data['local_shipping_rate_table'])
-            && $this->isRateTableEnabled($data['local_shipping_rate_table'])
+            && $this->rawData['local_shipping_mode'] == Shipping::SHIPPING_TYPE_FLAT
+            && isset($this->rawData['local_shipping_rate_table'])
+            && $this->isRateTableEnabled($this->rawData['local_shipping_rate_table'])
         ) {
             return true;
         }
 
         if ($isInternationalRateTableEnabled
-            && $data['international_shipping_mode'] == TemplateShipping::SHIPPING_TYPE_FLAT
-            && isset($data['international_shipping_rate_table'])
-            && $this->isRateTableEnabled($data['international_shipping_rate_table'])
+            && $this->rawData['international_shipping_mode'] == Shipping::SHIPPING_TYPE_FLAT
+            && isset($this->rawData['international_shipping_rate_table'])
+            && $this->isRateTableEnabled($this->rawData['international_shipping_rate_table'])
         ) {
             return true;
         }
 
         if ($marketplace->getChildObject()->isClickAndCollectEnabled() &&
-            !empty($data['click_and_collect_mode'])) {
+            !empty($this->rawData['click_and_collect_mode'])) {
             return true;
         }
 
         return false;
     }
 
-    private function createCalculated($templateShippingId, array $data)
+    protected function createCalculated($templateShippingId, array $data)
     {
         $connection = $this->resourceConnection->getConnection();
 
@@ -280,72 +263,72 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
     //########################################
 
-    private function prepareServicesData($templateShippingId, array $data)
+    protected function prepareServicesData($templateShippingId)
     {
-        if (isset($data['shipping_type']['%i%'])) {
-            unset($data['shipping_type']['%i%']);
+        if (isset($this->rawData['shipping_type']['%i%'])) {
+            unset($this->rawData['shipping_type']['%i%']);
         }
 
-        if (isset($data['cost_mode']['%i%'])) {
-            unset($data['cost_mode']['%i%']);
+        if (isset($this->rawData['cost_mode']['%i%'])) {
+            unset($this->rawData['cost_mode']['%i%']);
         }
 
-        if (isset($data['shipping_priority']['%i%'])) {
-            unset($data['shipping_priority']['%i%']);
+        if (isset($this->rawData['shipping_priority']['%i%'])) {
+            unset($this->rawData['shipping_priority']['%i%']);
         }
 
-        if (isset($data['shipping_cost_value']['%i%'])) {
-            unset($data['shipping_cost_value']['%i%']);
+        if (isset($this->rawData['shipping_cost_value']['%i%'])) {
+            unset($this->rawData['shipping_cost_value']['%i%']);
         }
 
-        if (isset($data['shipping_cost_surcharge_value']['%i%'])) {
-            unset($data['shipping_cost_surcharge_value']['%i%']);
+        if (isset($this->rawData['shipping_cost_surcharge_value']['%i%'])) {
+            unset($this->rawData['shipping_cost_surcharge_value']['%i%']);
         }
 
-        if (isset($data['shipping_cost_additional_value']['%i%'])) {
-            unset($data['shipping_cost_additional_value']['%i%']);
+        if (isset($this->rawData['shipping_cost_additional_value']['%i%'])) {
+            unset($this->rawData['shipping_cost_additional_value']['%i%']);
         }
 
         // ---------------------------------------
 
         $services = [];
-        foreach ($data['cost_mode'] as $i => $costMode) {
+        foreach ($this->rawData['cost_mode'] as $i => $costMode) {
             $locations = [];
-            if (isset($data['shippingLocation'][$i])) {
-                foreach ($data['shippingLocation'][$i] as $location) {
+            if (isset($this->rawData['shippingLocation'][$i])) {
+                foreach ($this->rawData['shippingLocation'][$i] as $location) {
                     $locations[] = $location;
                 }
             }
 
-            $shippingType = $data['shipping_type'][$i] == 'local'
+            $shippingType = $this->rawData['shipping_type'][$i] == 'local'
                 ? \Ess\M2ePro\Model\Ebay\Template\Shipping\Service::SHIPPING_TYPE_LOCAL
                 : \Ess\M2ePro\Model\Ebay\Template\Shipping\Service::SHIPPING_TYPE_INTERNATIONAL;
 
             if ($costMode == \Ess\M2ePro\Model\Ebay\Template\Shipping\Service::COST_MODE_CUSTOM_ATTRIBUTE) {
-                $cost = isset($data['shipping_cost_attribute'][$i])
-                    ? $data['shipping_cost_attribute'][$i]
+                $cost = isset($this->rawData['shipping_cost_attribute'][$i])
+                    ? $this->rawData['shipping_cost_attribute'][$i]
                     : '';
 
-                $costAdditional = isset($data['shipping_cost_additional_attribute'][$i])
-                    ? $data['shipping_cost_additional_attribute'][$i]
+                $costAdditional = isset($this->rawData['shipping_cost_additional_attribute'][$i])
+                    ? $this->rawData['shipping_cost_additional_attribute'][$i]
                     : '';
             } else {
-                $cost = isset($data['shipping_cost_value'][$i])
-                    ? $data['shipping_cost_value'][$i]
+                $cost = isset($this->rawData['shipping_cost_value'][$i])
+                    ? $this->rawData['shipping_cost_value'][$i]
                     : '';
 
-                $costAdditional = isset($data['shipping_cost_additional_value'][$i])
-                    ? $data['shipping_cost_additional_value'][$i]
+                $costAdditional = isset($this->rawData['shipping_cost_additional_value'][$i])
+                    ? $this->rawData['shipping_cost_additional_value'][$i]
                     : '';
             }
 
             if ($costMode == \Ess\M2ePro\Model\Ebay\Template\Shipping\Service::COST_MODE_CUSTOM_ATTRIBUTE) {
-                $costSurcharge = isset($data['shipping_cost_surcharge_attribute'][$i])
-                    ? $data['shipping_cost_surcharge_attribute'][$i]
+                $costSurcharge = isset($this->rawData['shipping_cost_surcharge_attribute'][$i])
+                    ? $this->rawData['shipping_cost_surcharge_attribute'][$i]
                     : '';
             } elseif ($costMode == \Ess\M2ePro\Model\Ebay\Template\Shipping\Service::COST_MODE_CUSTOM_VALUE) {
-                $costSurcharge = isset($data['shipping_cost_surcharge_value'][$i])
-                    ? $data['shipping_cost_surcharge_value'][$i]
+                $costSurcharge = isset($this->rawData['shipping_cost_surcharge_value'][$i])
+                    ? $this->rawData['shipping_cost_surcharge_value'][$i]
                     : '';
             } else {
                 $costSurcharge = '';
@@ -355,11 +338,11 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
                 'template_shipping_id'  => $templateShippingId,
                 'cost_mode'             => $costMode,
                 'cost_value'            => $cost,
-                'shipping_value'        => $data['shipping_service'][$i],
+                'shipping_value'        => $this->rawData['shipping_service'][$i],
                 'shipping_type'         => $shippingType,
                 'cost_additional_value' => $costAdditional,
                 'cost_surcharge_value'  => $costSurcharge,
-                'priority'              => $data['shipping_priority'][$i],
+                'priority'              => $this->rawData['shipping_priority'][$i],
                 'locations'             => $this->getHelper('Data')->jsonEncode($locations)
             ];
         }
@@ -405,6 +388,71 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         }
 
         return false;
+    }
+
+    //########################################
+
+    public function getDefaultData()
+    {
+        return [
+            'country_mode' => Shipping::COUNTRY_MODE_CUSTOM_VALUE,
+            'country_custom_value' => 'US',
+            'country_custom_attribute' => '',
+            'postal_code_mode' => Shipping::POSTAL_CODE_MODE_NONE,
+            'postal_code_custom_value' => '',
+            'postal_code_custom_attribute' => '',
+            'address_mode' => Shipping::ADDRESS_MODE_NONE,
+            'address_custom_value' => '',
+            'address_custom_attribute' => '',
+
+            'dispatch_time_mode' => Shipping::DISPATCH_TIME_MODE_VALUE,
+            'dispatch_time_value' => 1,
+            'dispatch_time_attribute' => '',
+            'cash_on_delivery_cost' => null,
+            'global_shipping_program' => 0,
+            'cross_border_trade' => Shipping::CROSS_BORDER_TRADE_NONE,
+            'excluded_locations' => $this->getHelper('Data')->jsonEncode([]),
+
+            'local_shipping_mode' =>  Shipping::SHIPPING_TYPE_FLAT,
+            'local_shipping_discount_promotional_mode' => 0,
+            'local_shipping_discount_combined_profile_id' => $this->getHelper('Data')->jsonEncode([]),
+            'local_shipping_rate_table_mode' => 0,
+            'local_shipping_rate_table' => null,
+            'click_and_collect_mode' => 1,
+
+            'international_shipping_mode' => Shipping::SHIPPING_TYPE_NO_INTERNATIONAL,
+            'international_shipping_discount_promotional_mode' => 0,
+            'international_shipping_discount_combined_profile_id' => $this->getHelper('Data')->jsonEncode([]),
+            'international_shipping_rate_table_mode' => 0,
+            'international_shipping_rate_table' => null,
+
+            // CALCULATED SHIPPING
+            // ---------------------------------------
+            'measurement_system' => ShippingCalculated::MEASUREMENT_SYSTEM_ENGLISH,
+
+            'package_size_mode' => ShippingCalculated::PACKAGE_SIZE_CUSTOM_VALUE,
+            'package_size_value' => 'None',
+            'package_size_attribute' => '',
+
+            'dimension_mode'   => ShippingCalculated::DIMENSION_NONE,
+            'dimension_width_value'  => '',
+            'dimension_length_value' => '',
+            'dimension_depth_value'  => '',
+            'dimension_width_attribute'  => '',
+            'dimension_length_attribute' => '',
+            'dimension_depth_attribute'  => '',
+
+            'weight_mode' => ShippingCalculated::WEIGHT_NONE,
+            'weight_minor' => '',
+            'weight_major' => '',
+            'weight_attribute' => '',
+
+            'local_handling_cost' => null,
+            'international_handling_cost' => null,
+            // ---------------------------------------
+
+            'services' => []
+        ];
     }
 
     //########################################

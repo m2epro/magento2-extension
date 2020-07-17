@@ -132,8 +132,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                     $this->logsActionId,
                     $action,
                     $exception->getMessage(),
-                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
                 );
             }
 

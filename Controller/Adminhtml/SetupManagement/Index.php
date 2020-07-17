@@ -8,11 +8,11 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\SetupManagement;
 
-use Magento\Framework\Message\MessageInterface;
-use Magento\Framework\Config\ConfigOptionsListConstants;
-use Magento\Setup\Model\Cron;
-use Magento\Framework\App\Filesystem\DirectoryList;
 use Ess\M2ePro\Setup\LoggerFactory;
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Config\ConfigOptionsListConstants;
+use Magento\Framework\Message\MessageInterface;
+use Magento\Setup\Model\Cron;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\SetupManagement\Index
@@ -344,33 +344,6 @@ HTML;
 <a href="{$url}">[change]</a><br>
 HTML;
 
-        $isMaintenanceCanBeIgnored = (bool)$this->getMagentoCoreConfigValue('m2epro/setup/ignore_maintenace');
-        $className = $isMaintenanceCanBeIgnored ? 'feature-enabled feature-enabled-word'
-                                                : 'feature-disabled feature-disabled-word';
-        $url = $this->_url->getUrl('*/*/*', ['action' => 'setMagentoCoreConfigValue',
-                                             '_query' => [
-                                                 'config_path'  => 'm2epro/setup/ignore_maintenace',
-                                                 'config_value' => (int)!$isMaintenanceCanBeIgnored
-                                             ]]);
-        $html .= <<<HTML
-<span>Maintenance mode can be ignored: <span class="{$className}"></span></span>&nbsp;
-<a href="{$url}">[change]</a><br>
-HTML;
-
-        $isAllowedToRollback = (bool)$this->getMagentoCoreConfigValue('m2epro/setup/allow_rollback_from_backup');
-        $className = $isAllowedToRollback ? 'feature-enabled feature-enabled-word'
-                                          : 'feature-disabled feature-disabled-word';
-        $url = $this->_url->getUrl('*/*/*', ['action' => 'setMagentoCoreConfigValue',
-                                             '_query' => [
-                                                 'config_path'  => 'm2epro/setup/allow_rollback_from_backup',
-                                                 'config_value' => (int)!$isAllowedToRollback
-                                             ]]);
-
-        $html .= <<<HTML
-<span>Allowed to rollback backup: <span class="{$className}"></span></span>&nbsp;
-<a href="{$url}">[change]</a><br>
-HTML;
-
         $migrationM1Status = $this->getMagentoCoreConfigValue('m2epro/migrationFromMagento1/status');
         if (!empty($migrationM1Status)) {
             $className = 'feature-enabled';
@@ -415,7 +388,6 @@ HTML;
             $className = 'feature-enabled';
         }
 
-        $dropUrl = $this->_url->getUrl('*/*/*', ['action' => 'dropMagentoCoreSetupValue']);
         $editUrl = $this->_url->getUrl('*/*/*', ['action' => 'setMagentoCoreSetupValue',
                                                  '_query' => [
                                                      'version' => '#version#',
@@ -426,17 +398,14 @@ HTML;
 
         $html .=  <<<HTML
 <span>Schema \ Data Version: <span class="{$className}">{$schemaVersion} \ {$dataVersion}</span></span>&nbsp;
-<a href="javascript:void(0);"
+<a hrefhandlerObj.askAdditionalParametersForAction = function (pleaseSpecifyVersionToSet, s, version) {
+return undefined;
+}
+="javascript:void(0);"
    onclick="return handlerObj.askAdditionalParametersForAction('Please specify version to set:',
                                                                '{$editUrl}', 'version'); ">
    <span>[change]</span>
-</a>&nbsp;
-
-<a href="javascript:void(0);"
-   onclick="return handlerObj.confirmImportantAction('This row will be DROPPED.', '{$dropUrl}'); ">
-    <span>[drop]</span>
 </a>
-<br>
 HTML;
 
         $html .= "</div>";
@@ -701,9 +670,6 @@ HTML;
 
         if (!in_array($path, [
             'm2epro/maintenance',
-            'm2epro/setup/ignore_maintenace',
-            'm2epro/setup/allow_rollback_from_backup',
-
             'm2epro/migrationFromMagento1/status'
         ])) {
             $this->messageManager->addErrorMessage("This config path is not supported [{$path}].");
@@ -750,16 +716,6 @@ HTML;
 
         $this->moduleResource->setDbVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
         $this->moduleResource->setDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
-
-        return $this->_redirect($this->_url->getUrl('*/*/*'));
-    }
-
-    public function dropMagentoCoreSetupValueAction()
-    {
-        $this->resourceConnection->getConnection()->delete(
-            $this->moduleResource->getMainTable(),
-            ['module = ?' => \Ess\M2ePro\Helper\Module::IDENTIFIER]
-        );
 
         return $this->_redirect($this->_url->getUrl('*/*/*'));
     }

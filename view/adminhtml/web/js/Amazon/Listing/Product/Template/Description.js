@@ -39,14 +39,14 @@ define([
                                 var response = transport.responseText.evalJSON();
 
                                 if (mapToGeneralId) {
-                                    ListingGridHandlerObj.productSearchHandler.addNewGeneralId(response.products_ids);
+                                    ListingGridObj.productSearchHandler.addNewGeneralId(response.products_ids);
                                 } else {
                                     self.gridHandler.unselectAllAndReload();
 
                                     if (response.messages.length > 0) {
                                         MessageObj.clear();
                                         response.messages.each(function (msg) {
-                                            MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](msg);
+                                            MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1)](msg);
                                         });
                                     }
                                 }
@@ -84,7 +84,7 @@ define([
 
                     MessageObj.clear();
                     response.messages.each(function (msg) {
-                        MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1) + 'Message'](msg.text);
+                        MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1)](msg.text);
                     });
                 }
             });
@@ -96,7 +96,7 @@ define([
             var self = this;
             self.flagSuccess = false;
 
-            productsIds = productsIds || ListingGridHandlerObj.productSearchHandler.params.productId;
+            productsIds = productsIds || ListingGridObj.productSearchHandler.params.productId;
 
             new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/validateProductsForAssign'), {
                 method: 'post',
@@ -115,7 +115,7 @@ define([
                     if (response.messages.length > 0) {
                         MessageObj.clear();
                         response.messages.each(function (msg) {
-                            MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1) + 'Message'](msg.text);
+                            MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1)](msg.text);
                         });
                     }
 

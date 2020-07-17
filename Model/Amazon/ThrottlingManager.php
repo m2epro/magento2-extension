@@ -82,19 +82,8 @@ class ThrottlingManager extends \Ess\M2ePro\Model\AbstractModel
 
     public function getReservedRequestsCount($merchantId, $requestType)
     {
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::RESERVED_REQUESTS_REGISTRY_KEY,
-            'key',
-            false
-        );
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $reservedRequests = $registry->getValueFromJson();
+        $reservedRequests = $this->getHelper('Module')->getRegistry()
+            ->getValueFromJson(self::RESERVED_REQUESTS_REGISTRY_KEY);
 
         if (!isset($reservedRequests[$merchantId][$requestType])) {
             return 0;
@@ -105,19 +94,8 @@ class ThrottlingManager extends \Ess\M2ePro\Model\AbstractModel
 
     public function reserveRequests($merchantId, $requestType, $requestsCount)
     {
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::RESERVED_REQUESTS_REGISTRY_KEY,
-            'key',
-            false
-        );
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $reservedRequests = $registry->getValueFromJson();
+        $reservedRequests = $this->getHelper('Module')->getRegistry()
+            ->getValueFromJson(self::RESERVED_REQUESTS_REGISTRY_KEY);
 
         if (!isset($reservedRequests[$merchantId][$requestType])) {
             $reservedRequests[$merchantId][$requestType] = 0;
@@ -125,30 +103,13 @@ class ThrottlingManager extends \Ess\M2ePro\Model\AbstractModel
 
         $reservedRequests[$merchantId][$requestType] += $requestsCount;
 
-        $registry->setData(
-            [
-                'key'   => self::RESERVED_REQUESTS_REGISTRY_KEY,
-                'value' => $this->getHelper('Data')->jsonEncode($reservedRequests),
-            ]
-        );
-        $registry->save();
+        $this->getHelper('Module')->getRegistry()->setValue(self::RESERVED_REQUESTS_REGISTRY_KEY, $reservedRequests);
     }
 
     public function releaseReservedRequests($merchantId, $requestType, $requestsCount)
     {
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::RESERVED_REQUESTS_REGISTRY_KEY,
-            'key',
-            false
-        );
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $reservedRequests = $registry->getValueFromJson();
+        $reservedRequests = $this->getHelper('Module')->getRegistry()
+            ->getValueFromJson(self::RESERVED_REQUESTS_REGISTRY_KEY);
 
         if (!isset($reservedRequests[$merchantId][$requestType])) {
             return;
@@ -160,13 +121,7 @@ class ThrottlingManager extends \Ess\M2ePro\Model\AbstractModel
             unset($reservedRequests[$merchantId][$requestType]);
         }
 
-        $registry->setData(
-            [
-                'key'   => self::RESERVED_REQUESTS_REGISTRY_KEY,
-                'value' => $this->getHelper('Data')->jsonEncode($reservedRequests),
-            ]
-        );
-        $registry->save();
+        $this->getHelper('Module')->getRegistry()->setValue(self::RESERVED_REQUESTS_REGISTRY_KEY, $reservedRequests);
     }
 
     //########################################

@@ -23,10 +23,7 @@ class VCSUploadInvoices extends AbstractForm
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
-        $defaults = [
-            'auto_invoicing' => 0,
-            'is_magento_invoice_creation_disabled' => 0,
-        ];
+        $defaults = $this->modelFactory->getObject('Amazon_Account_Builder')->getDefaultData();
 
         $formData = array_merge($defaults, $formData);
 
@@ -37,9 +34,9 @@ class VCSUploadInvoices extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(<<<HTML
-'<strong>Upload Magento Invoices</strong> - M2E Pro will automatically send Magento Invoices/Credit Memos to 
+'<strong>Upload Magento Invoices</strong> - M2E Pro will automatically send Magento Invoices/Credit Memos to
 Amazon once they are created in Magento Order.<br /><br/>
-<strong>Use VAT Calculation Service</strong> - Amazon will automatically generate and send Invoices to the buyers. 
+<strong>Use VAT Calculation Service</strong> - Amazon will automatically generate and send Invoices to the buyers.
 Switch <i>Disable Magento Invoice Creation</i> option to “Yes” to prevent Invoice duplicates.<br/><br/>
 <strong>Note:</strong> You have to be enrolled in Amazon VAT Calculation Service.'
 HTML

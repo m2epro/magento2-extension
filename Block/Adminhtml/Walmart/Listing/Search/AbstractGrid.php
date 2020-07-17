@@ -58,13 +58,13 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
     protected function _prepareColumns()
     {
         $this->addColumn('entity_id', [
-            'header'    => $this->__('Product ID'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'entity_id',
+            'header'   => $this->__('Product ID'),
+            'align'    => 'right',
+            'width'    => '100px',
+            'type'     => 'number',
+            'index'    => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => [$this, 'callbackColumnProductId'],
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId',
             'filter_condition_callback' => [$this, 'callbackFilterProductId']
         ]);
 
@@ -86,7 +86,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'type' => 'text',
             'index' => 'online_sku',
             'filter_index' => 'online_sku',
-            'frame_callback' => [$this, 'callbackColumnWalmartSku'],
+            'show_edit_sku' => false,
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku',
             'filter_condition_callback' => [$this, 'callbackFilterOnlineSku']
         ]);
 
@@ -96,8 +97,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'width' => '150px',
             'type' => 'text',
             'index' => 'gtin',
+            'show_edit_identifier' => false,
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin',
             'filter_index' => 'gtin',
-            'frame_callback' => [$this, 'callbackColumnGtin'],
             'filter_condition_callback' => [$this, 'callbackFilterGtin']
         ]);
 
@@ -108,7 +110,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'type' => 'number',
             'index' => 'online_qty',
             'filter_index' => 'online_qty',
-            'frame_callback' => [$this, 'callbackColumnAvailableQty'],
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Qty',
             'filter_condition_callback' => [$this, 'callbackFilterQty']
         ]);
 
@@ -165,167 +167,6 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
     }
 
     //########################################
-
-    public function callbackColumnProductId($value, $row, $column, $isExport)
-    {
-        if ($row->getData('entity_id') === null) {
-            return $this->__('N/A');
-        }
-
-        $productId = (int)$row->getData('entity_id');
-        $storeId = (int)$row->getData('store_id');
-
-        $url = $this->getUrl('catalog/product/edit', ['id' => $productId]);
-        $withoutImageHtml = '<a href="'.$url.'" target="_blank">'.$productId.'</a>';
-
-        $showProductsThumbnails = (bool)(int)$this->getHelper('Module')
-            ->getConfig()
-            ->getGroupValue('/view/', 'show_products_thumbnails');
-
-        if (!$showProductsThumbnails) {
-            return $withoutImageHtml;
-        }
-
-        /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
-        $magentoProduct = $this->modelFactory->getObject('Magento\Product');
-        $magentoProduct->setProductId($productId);
-        $magentoProduct->setStoreId($storeId);
-
-        $imageUrlResized = $magentoProduct->getThumbnailImage();
-        if ($imageUrlResized === null) {
-            return $withoutImageHtml;
-        }
-
-        $imageUrlResizedUrl = $imageUrlResized->getUrl();
-
-        $imageHtml = $productId.'<div style="margin-top: 5px;">'.
-           '<img style="max-width: 100px; max-height: 100px;" src="' .$imageUrlResizedUrl. '" /></div>';
-        $withImageHtml = str_replace('>'.$productId.'<', '>'.$imageHtml.'<', $withoutImageHtml);
-
-        return $withImageHtml;
-    }
-
-    public function callbackColumnWalmartSku($value, $row, $column, $isExport)
-    {
-        if ($value === null || $value === '') {
-            return $this->__('N/A');
-        }
-
-        return $value;
-    }
-
-    public function callbackColumnGtin($gtin, $row, $column, $isExport)
-    {
-        if (empty($gtin)) {
-            return $this->__('N/A');
-        }
-
-        $gtinHtml = $this->getHelper('Data')->escapeHtml($gtin);
-
-        $walmartHelper = $this->getHelper('Component\Walmart');
-        $marketplaceId = $row->getData('marketplace_id');
-        $channelUrl = $walmartHelper->getItemUrl(
-            $row->getData($walmartHelper->getIdentifierForItemUrl($marketplaceId)),
-            $marketplaceId
-        );
-
-        if (!empty($channelUrl)) {
-            $gtinHtml = <<<HTML
-<a href="{$channelUrl}" target="_blank">{$gtin}</a>
-HTML;
-        }
-
-        $html = <<<HTML
-<div class="walmart-identifiers-gtin">{$gtinHtml}</div>
-HTML;
-
-        $identifiers = [
-            'UPC'        => $row->getData('upc'),
-            'EAN'        => $row->getData('ean'),
-            'ISBN'       => $row->getData('isbn'),
-            'Walmart ID' => $row->getData('wpid'),
-            'Item ID'    => $row->getData('item_id')
-        ];
-
-        $htmlAdditional = '';
-        foreach ($identifiers as $title => $value) {
-            if (empty($value)) {
-                continue;
-            }
-
-            if (($row->getData('upc') || $row->getData('ean') || $row->getData('isbn')) &&
-                ($row->getData('wpid') || $row->getData('item_id')) && $title == 'Walmart ID') {
-                $htmlAdditional .= "<div class='separator-line'></div>";
-            }
-            $identifierCode  = $this->__($title);
-            $identifierValue = $this->getHelper('Data')->escapeHtml($value);
-
-            $htmlAdditional .= <<<HTML
-<div>
-    <span style="display: inline-block; float: left;">
-        <strong>{$identifierCode}:</strong>&nbsp;&nbsp;&nbsp;&nbsp;
-    </span>
-    <span style="display: inline-block; float: right;">
-        {$identifierValue}
-    </span>
-    <div style="clear: both;"></div>
-</div>
-HTML;
-        }
-
-        if ($htmlAdditional != '') {
-            $html .= <<<HTML
-&nbsp;<div class="fix-magento-tooltip">
-    {$this->getTooltipHtml($htmlAdditional)}
-</div>
-HTML;
-        }
-
-        return $html;
-    }
-
-    public function callbackColumnAvailableQty($value, $row, $column, $isExport)
-    {
-        if (!$row->getData('is_variation_parent')) {
-            if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-                return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
-            }
-
-            if ($value === null || $value === '' ||
-                ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
-                 !$row->getData('is_online_price_invalid'))) {
-                return $this->__('N/A');
-            }
-
-            if ($value <= 0) {
-                return '<span style="color: red;">0</span>';
-            }
-
-            return $value;
-        }
-
-        $variationChildStatuses = $this->getHelper('Data')->jsonDecode($row->getData('variation_child_statuses'));
-
-        if (empty($variationChildStatuses)) {
-            return $this->__('N/A');
-        }
-
-        $activeChildrenCount = 0;
-        foreach ($variationChildStatuses as $childStatus => $count) {
-            if ($childStatus == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-                continue;
-            }
-            $activeChildrenCount += (int)$count;
-        }
-
-        if ($activeChildrenCount == 0 || $value === null || $value === '') {
-            return $this->__('N/A');
-        }
-
-        return $value;
-    }
-
-    //----------------------------------------
 
     protected function getProductStatus($status)
     {

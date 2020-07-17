@@ -1,4 +1,46 @@
-* 1.6.0 (r3775) (26/05/2020) 
+* 1.7.0 (r3968) (17/07/2020) 
+
+Common: [Added] Automatically set maintenance mode if the server connection fails
+Common: [Added] New Active Record engine
+Common: [Added] Ability to reimport Orders
+Common: [Added] Analytics from M1
+Common: [Added] Add 3rd Party Reset
+Common: [Added] Add mass actions Clear Logs and Delete Listings to Listings grid
+Common: [Fixed] License problems while the client is blocked on Wizard pages
+Common: [Fixed] Add Magento CSV import observer
+Common: [Fixed] Public Services [Sql Change] never adds instructions
+Common: [Improved] Do not reset start_from (date) for orders if cron_type switches
+Common: [Improved] Rework upgrades engine
+Common: [Improved] Changes to System and Synchronization Logs
+Common: [Improved] JS handlers refactored [m1 compatibility]
+Common: [Improved] Use entities builders
+Common: [Improved] New System Requirements blocks
+Common: [Improved] Move duplicated code in Order/Proxy models to abstract one
+Common: [Improved] Listing Product instructions were processed randomly
+Common: [Improved] Remove Listing Product instructions along with deleted Products
+Common: [Removed] Create New License Button
+Common: [Removed] Magento QTY option from Synchronization Policy
+Common: [Removed] QTY_MODE_BETWEEN option from Synchronization Policy
+Common: [Removed] Conditional revise for Price in Synchronization Policy
+Common: [Removed] Primary Config (merged with Module Config)
+Common: [Removed] Cache Config (use Registry instead)
+Common: [Removed] Usage of MyISAM tables
+eBay: [Added] Improved eBay Categories settings and management
+eBay: [Added] Changes of Magento Static Blocks in custom description can be tracked
+eBay: [Fixed] Non-disableable WYSIWYG editor in description policy
+eBay: [Fixed] Message: Undefined index: status in Ess/M2ePro/Observer/Ebay/Order.php on line 23
+eBay: [Fixed] eBay Store Category can not be correctly saved (if ID exceeds the INT_MAX)
+eBay: [Improved] Send variation images for Bundle product
+eBay: [Improved] Assign Category when importing 3rd party item from eBay
+eBay: [Improved] Transaction table display improvement
+Amazon: [Fixed] Notice: Undefined index: SKU in Model/Cron/Task/Amazon/Listing/Product/Channel/SynchronizeData/Responser.php on line 225
+Amazon: [Improved] Prevent oversell in special cases (skip qty change on background synchronization)
+Walmart: [Fixed] Wrong input type for attributes in some fields of selling policy
+Walmart: [Fixed] Exception on adding a listing on Canada Marketplace
+Walmart: [Fixed] No button "Show Sales Tax Codes" in Selling Policy for Canada Marketplace
+Walmart: [Removed] Consumer ID text field for US Marketplace
+
+* 1.6.0 (r3774) (22/05/2020)
 
 Common: [Improved] Move Issue locators engine from M1
 Common: [Improved] Always throw an exception on duplicate key while using Magento registry

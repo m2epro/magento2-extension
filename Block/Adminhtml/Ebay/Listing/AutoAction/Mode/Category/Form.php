@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Category;
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Category\Form
  */
-class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\Form
+class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\AbstractForm
 {
     //########################################
 
@@ -62,12 +62,8 @@ JS
 
     protected function _toHtml()
     {
-        $breadcrumb = $this->createBlock('Ebay_Listing_AutoAction_Mode_Breadcrumb', '', ['data' => [
-            'id_prefix' => 'category'
-        ]]);
-        $breadcrumb->setSelectedStep(1);
-
-        return $breadcrumb->toHtml() . parent::_toHtml();
+        return parent::_toHtml() .
+            '<div id="ebay_category_chooser"></div>';
     }
 
     //########################################

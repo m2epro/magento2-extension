@@ -338,15 +338,12 @@ JS
 
     public function getFormData()
     {
-        $default = [
-            'id'                => '',
-            'title'             => '',
-            'marketplace_id'    => $this->getRequest()->getParam('marketplace_id', ''),
-            'category_path'     => '',
-            'browsenode_id'     => '',
-            'product_data_nick' => '',
-            'specifics'         => []
-        ];
+        $default = array_merge(
+            $this->modelFactory->getObject('Walmart_Template_Category_Builder')->getDefaultData(),
+            [
+                'marketplace_id'    => $this->getRequest()->getParam('marketplace_id', ''),
+            ]
+        );
 
         if (!$this->templateModel || !$this->templateModel->getId()) {
             return $default;

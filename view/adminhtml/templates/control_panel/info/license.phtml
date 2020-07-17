@@ -1,0 +1,56 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+/**@var \Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\License $block */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Extension Key'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->licenseData['key']; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Domain [valid | real]'); ?>: </label>
+        </td>
+        <td class="value">
+            <span <?php echo $this->licenseData['valid']['domain'] ? '' : 'style="color:red;"' ?>>
+                <?php echo "{$this->licenseData['domain']} | {$this->locationData['domain']}"; ?>
+            </span>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('IP [valid | real]'); ?>: </label>
+        </td>
+        <td class="value">
+            <span <?php echo $this->licenseData['valid']['ip'] ? '' : 'style="color:red;"' ?>>
+                <?php echo "{$this->licenseData['ip']} | {$this->locationData['ip']}"; ?>
+            </span>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Directory'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->locationData['directory']; ?>
+        </td>
+    </tr>
+
+</table>

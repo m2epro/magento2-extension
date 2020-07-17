@@ -255,24 +255,16 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getSameTemplatesData($ids)
-    {
-        return $this->getHelper('Component_Ebay_Category')->getSameTemplatesData(
-            $ids,
-            $this->activeRecordFactory->getObject('Ebay_Template_Category')->getResource()->getMainTable(),
-            ['category_main']
-        );
-    }
-
     public function exists($categoryId, $marketplaceId)
     {
         /** @var $connRead \Magento\Framework\DB\Adapter\AdapterInterface */
         $connRead = $this->resourceConnection->getConnection();
-        $tableDictCategories = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
-
         $dbSelect = $connRead->select()
-                             ->from($tableDictCategories, 'COUNT(*)')
+                             ->from(
+                                 $this->getHelper('Module_Database_Structure')
+                                     ->getTableNameWithPrefix('m2epro_ebay_dictionary_category'),
+                                 'COUNT(*)'
+                             )
                              ->where('`marketplace_id` = ?', (int)$marketplaceId)
                              ->where('`category_id` = ?', (int)$categoryId);
 
@@ -284,53 +276,35 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         /** @var $connRead \Magento\Framework\DB\Adapter\AdapterInterface */
         $connRead = $this->resourceConnection->getConnection();
 
-        $etcTable = $this->activeRecordFactory->getObject('Ebay_Template_Category')->getResource()->getMainTable();
-        $etocTable = $this->activeRecordFactory->getObject('Ebay_Template_OtherCategory')
-            ->getResource()->getMainTable();
-        $edcTable = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
-
-        $etcSelect = $connRead->select();
-        $etcSelect->from(
-            ['etc' => $etcTable]
-        )
-            ->reset(\Zend_Db_Select::COLUMNS)
-            ->columns([
-                'category_main_id as category_id',
-                'marketplace_id',
-            ])
-            ->where('category_main_mode = ?', \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY)
-            ->group(['category_id', 'marketplace_id']);
-
-        $etocSelect = $connRead->select();
-        $etocSelect->from(
-            ['etc' => $etocTable]
-        )
-            ->reset(\Zend_Db_Select::COLUMNS)
-            ->columns([
-                'category_secondary_id as category_id',
-                'marketplace_id',
-            ])
-            ->where('category_secondary_mode = ?', \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY)
-            ->group(['category_id', 'marketplace_id']);
-
-        $unionSelect = $connRead->select();
-        $unionSelect->union([
-            $etcSelect,
-            $etocSelect,
-        ]);
-
-        $mainSelect = $connRead->select();
-        $mainSelect->reset()
-            ->from(['main_table' => $unionSelect])
-            ->joinLeft(
-                ['edc' => $edcTable],
-                'edc.marketplace_id = main_table.marketplace_id
-                 AND edc.category_id = main_table.category_id'
+        $stmt = $connRead->select()
+            ->from(
+                [
+                    'etc' => $this->activeRecordFactory->getObject('Ebay_Template_Category')->getResource()
+                                                                                            ->getMainTable()
+                ]
             )
-            ->where('edc.category_id IS NULL');
+            ->joinLeft(
+                [
+                    'edc' => $this->getHelper('Module_Database_Structure')
+                        ->getTableNameWithPrefix('m2epro_ebay_dictionary_category')
+                ],
+                'edc.marketplace_id = etc.marketplace_id AND edc.category_id = etc.category_id'
+            )
+            ->reset(\Zend_Db_Select::COLUMNS)
+            ->columns(
+                [
+                    'etc.category_id',
+                    'etc.marketplace_id',
+                ]
+            )
+            ->where('etc.category_mode = ?', \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY)
+            ->where('edc.category_id IS NULL')
+            ->group(
+                ['etc.category_id', 'etc.marketplace_id']
+            )
+            ->query();
 
-        return $connRead->query($mainSelect)->fetchColumn() !== false;
+        return $stmt->fetchColumn() !== false;
     }
 
     //########################################

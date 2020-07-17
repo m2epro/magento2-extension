@@ -137,8 +137,7 @@ class ReplaceSalesChannelsDataForStock extends \Ess\M2ePro\Plugin\AbstractPlugin
                 'Website "%website%" has been linked with stock "%stock%".',
                 ['!website' => $channel->getCode(), '!stock' => $stock->getName()]
             ),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
     }
 

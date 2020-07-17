@@ -72,9 +72,7 @@ class Connection extends \Ess\M2ePro\Model\Exception
      */
     protected function getFirstConnectionErrorDate($key)
     {
-        return $this->activeRecordFactory->getObject('Registry')
-            ->loadByKey($key)
-            ->getValue();
+        return $this->getHelper('Module')->getRegistry()->getValue($key);
     }
 
     /**
@@ -84,10 +82,7 @@ class Connection extends \Ess\M2ePro\Model\Exception
      */
     protected function setFirstConnectionErrorDate($key, $date)
     {
-        $this->activeRecordFactory->getObject('Registry')
-            ->loadByKey($key)
-            ->setValue($date)
-            ->save();
+        $this->getHelper('Module')->getRegistry()->setValue($key, $date);
     }
 
     /**
@@ -96,9 +91,7 @@ class Connection extends \Ess\M2ePro\Model\Exception
      */
     protected function removeFirstConnectionErrorDate($key)
     {
-        $this->activeRecordFactory->getObject('Registry')
-            ->loadByKey($key)
-            ->delete();
+        $this->getHelper('Module')->getRegistry()->deleteValue($key);
     }
 
     //########################################

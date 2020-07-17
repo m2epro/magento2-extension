@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
+
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\GetCategoryChooserHtml
  */
@@ -17,49 +19,147 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
 
     public function execute()
     {
-        // ---------------------------------------
-        $listingId = $this->getRequest()->getParam('id');
-        $listingProductIds = $this->getRequestIds('product_id');
-        $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId);
-        // ---------------------------------------
+        $lPIds = $this->getRequestIds('products_id');
+        $accountId = $this->getRequest()->getParam('account_id');
+        $marketplaceId = $this->getRequest()->getParam('marketplace_id');
 
-        $internalData = [];
+        $productResource = $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource();
 
-        // ---------------------------------------
-        $categoryTemplateIds  = $this->activeRecordFactory
-                                    ->getObject('Ebay_Listing_Product')
-                                    ->getResource()
-                                    ->getTemplateCategoryIds($listingProductIds);
-        $internalData = array_merge(
-            $internalData,
-            $this->getHelper('Component_Ebay_Category_Ebay')->getSameTemplatesData($categoryTemplateIds)
-        );
-        // ---------------------------------------
-        $otherCategoryTemplateIds = $this->activeRecordFactory
-                                        ->getObject('Ebay_Listing_Product')
-                                        ->getResource()
-                                        ->getTemplateOtherCategoryIds($listingProductIds);
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter $converter */
+        $converter = $this->modelFactory->getObject('Ebay_Template_Category_Chooser_Converter');
+        $accountId && $converter->setAccountId($accountId);
+        $marketplaceId && $converter->setMarketplaceId($marketplaceId);
 
-        $internalData = array_merge(
-            $internalData,
-            $this->getHelper('Component_Ebay_Category_Store')->getSameTemplatesData($otherCategoryTemplateIds)
-        );
-        // ---------------------------------------
+        $ids = $productResource->getTemplateCategoryIds($lPIds, 'template_category_id', true);
+        $template = $this->tryToLoadCategoryTemplate($ids);
+        if ($template && $template->getId()) {
+            $converter->setCategoryDataFromTemplate($template->getData(), eBayCategory::TYPE_EBAY_MAIN);
+        }
+
+        $ids = $productResource->getTemplateCategoryIds($lPIds, 'template_category_secondary_id', true);
+        $template = $this->tryToLoadCategoryTemplate($ids);
+        if ($template && $template->getId()) {
+            $converter->setCategoryDataFromTemplate($template->getData(), eBayCategory::TYPE_EBAY_SECONDARY);
+        }
+
+        $ids = $productResource->getTemplateCategoryIds($lPIds, 'template_store_category_id', true);
+        $template = $this->tryToLoadStoreCategoryTemplate($ids);
+        if ($template && $template->getId()) {
+            $converter->setCategoryDataFromTemplate($template->getData(), eBayCategory::TYPE_STORE_MAIN);
+        }
+
+        $ids = $productResource->getTemplateCategoryIds($lPIds, 'template_store_category_secondary_id', true);
+        $template = $this->tryToLoadStoreCategoryTemplate($ids);
+        if ($template && $template->getId()) {
+            $converter->setCategoryDataFromTemplate($template->getData(), eBayCategory::TYPE_STORE_SECONDARY);
+        }
 
         /** @var $chooserBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser */
         $chooserBlock = $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser');
-        $chooserBlock->setDivId('chooser_main_container');
-        $chooserBlock->setAccountId($listing->getAccountId());
-        $chooserBlock->setMarketplaceId($listing->getMarketplaceId());
-        $chooserBlock->setInternalData($internalData);
+        $accountId && $chooserBlock->setAccountId($accountId);
+        $marketplaceId && $chooserBlock->setMarketplaceId($marketplaceId);
+        $chooserBlock->setCategoryMode($this->getRequest()->getParam('category_mode'));
+        $chooserBlock->setCategoriesData($converter->getCategoryDataForChooser());
 
-        // ---------------------------------------
-        $wrapper = $this->createBlock('Ebay_Listing_View_Settings_Category_Chooser_Wrapper');
-        $wrapper->setChild('chooser', $chooserBlock);
-        // ---------------------------------------
-
-        $this->setAjaxContent($wrapper);
+        $this->setAjaxContent($chooserBlock->toHtml());
         return $this->getResult();
+    }
+
+    //########################################
+
+    protected function tryToLoadCategoryTemplate($ids)
+    {
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Category $template */
+        $template = $this->activeRecordFactory->getObject('Ebay_Template_Category');
+
+        if (empty($ids)) {
+            return $template;
+        }
+
+        /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category\Collection $collection */
+        $collection = $template->getCollection();
+        $collection->addFieldToFilter('id', ['in' => $ids]);
+
+        if (count($ids) !== $collection->getSize()) {
+            // @codingStandardsIgnoreLine
+            return $template;
+        }
+
+        if (count($ids) === 1) {
+            // @codingStandardsIgnoreLine
+            return $collection->getFirstItem();
+        }
+
+        $differentCategories = [];
+        foreach ($collection->getItems() as $item) {
+            /**@var \Ess\M2ePro\Model\Ebay\Template\Category $item */
+            $differentCategories[] = $item->getCategoryValue();
+        }
+
+        if (count(array_unique($differentCategories)) > 1) {
+            return $template;
+        }
+
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Category $tempTemplate */
+        // @codingStandardsIgnoreLine
+        $tempTemplate = $collection->getFirstItem();
+
+        $template = $this->activeRecordFactory->getObject('Ebay_Template_Category');
+        $template->loadByCategoryValue(
+            $tempTemplate->getCategoryValue(),
+            $tempTemplate->getCategoryMode(),
+            $tempTemplate->getMarketplaceId(),
+            0
+        );
+
+        return $template;
+    }
+
+    protected function tryToLoadStoreCategoryTemplate($ids)
+    {
+        /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory $template */
+        $template = $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory');
+
+        if (empty($ids)) {
+            return $template;
+        }
+
+        /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Template\StoreCategory\Collection $collection */
+        $collection = $template->getCollection();
+        $collection->addFieldToFilter('id', ['in' => $ids]);
+
+        if (count($ids) !== $collection->getSize()) {
+            // @codingStandardsIgnoreLine
+            return $template;
+        }
+
+        if (count($ids) === 1) {
+            // @codingStandardsIgnoreLine
+            return $collection->getFirstItem();
+        }
+
+        $differentCategories = [];
+        foreach ($collection->getItems() as $item) {
+            /**@var \Ess\M2ePro\Model\Ebay\Template\StoreCategory $item */
+            $differentCategories[] = $item->getCategoryValue();
+        }
+
+        if (count(array_unique($differentCategories)) > 1) {
+            return $template;
+        }
+
+        /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory $tempTemplate */
+        // @codingStandardsIgnoreLine
+        $tempTemplate = $collection->getFirstItem();
+
+        $template = $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory');
+        $template->loadByCategoryValue(
+            $tempTemplate->getCategoryValue(),
+            $tempTemplate->getCategoryMode(),
+            $tempTemplate->getAccountId()
+        );
+
+        return $template;
     }
 
     //########################################

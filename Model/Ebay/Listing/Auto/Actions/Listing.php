@@ -41,12 +41,14 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             return;
         }
 
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Auto\Category\Group $ebayCategoryGroup */
-        $ebayCategoryGroup = $categoryGroup->getChildObject();
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Auto\Category\Group $group */
+        $group = $categoryGroup->getChildObject();
 
         $params = [
-            'template_category_id' => $ebayCategoryGroup->getAddingTemplateCategoryId(),
-            'template_other_category_id' => $ebayCategoryGroup->getAddingTemplateOtherCategoryId(),
+            'template_category_id'                 => $group->getAddingTemplateCategoryId(),
+            'template_category_secondary_id'       => $group->getAddingTemplateCategorySecondaryId(),
+            'template_store_category_id'           => $group->getAddingTemplateStoreCategoryId(),
+            'template_store_category_secondary_id' => $group->getAddingTemplateStoreCategorySecondaryId(),
         ];
 
         $this->processAddedListingProduct($listingProduct, $params);
@@ -78,12 +80,14 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 
         $this->logAddedToMagentoProduct($listingProduct);
 
-        /** @var \Ess\M2ePro\Model\Ebay\Listing $ebayListing */
-        $ebayListing = $listing->getChildObject();
+        /** @var \Ess\M2ePro\Model\Ebay\Listing $eListing */
+        $eListing = $listing->getChildObject();
 
         $params = [
-            'template_category_id' => $ebayListing->getAutoGlobalAddingTemplateCategoryId(),
-            'template_other_category_id' => $ebayListing->getAutoGlobalAddingTemplateOtherCategoryId(),
+            'template_category_id'                 => $eListing->getAutoGlobalAddingTemplateCategoryId(),
+            'template_category_secondary_id'       => $eListing->getAutoGlobalAddingTemplateCategorySecondaryId(),
+            'template_store_category_id'           => $eListing->getAutoGlobalAddingTemplateStoreCategoryId(),
+            'template_store_category_secondary_id' => $eListing->getAutoGlobalAddingTemplateStoreCategorySecondaryId()
         ];
 
         $this->processAddedListingProduct($listingProduct, $params);
@@ -113,12 +117,14 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             return;
         }
 
-        /** @var \Ess\M2ePro\Model\Ebay\Listing $ebayListing */
-        $ebayListing = $listing->getChildObject();
+        /** @var \Ess\M2ePro\Model\Ebay\Listing $eListing */
+        $eListing = $listing->getChildObject();
 
         $params = [
-            'template_category_id' => $ebayListing->getAutoWebsiteAddingTemplateCategoryId(),
-            'template_other_category_id' => $ebayListing->getAutoWebsiteAddingTemplateOtherCategoryId(),
+            'template_category_id'                 => $eListing->getAutoWebsiteAddingTemplateCategoryId(),
+            'template_category_secondary_id'       => $eListing->getAutoWebsiteAddingTemplateCategorySecondaryId(),
+            'template_store_category_id'           => $eListing->getAutoWebsiteAddingTemplateStoreCategoryId(),
+            'template_store_category_secondary_id' => $eListing->getAutoWebsiteAddingTemplateStoreCategorySecondaryId()
         ];
 
         $this->processAddedListingProduct($listingProduct, $params);
@@ -130,12 +136,15 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
     {
         $ebayListingProduct = $listingProduct->getChildObject();
 
-        if (!empty($params['template_category_id'])) {
-            $ebayListingProduct->setData('template_category_id', $params['template_category_id']);
-        }
+        $keys = [
+            'template_category_id',
+            'template_category_secondary_id',
+            'template_store_category_id',
+            'template_store_category_secondary_id'
+        ];
 
-        if (!empty($params['template_other_category_id'])) {
-            $ebayListingProduct->setData('template_other_category_id', $params['template_other_category_id']);
+        foreach ($keys as $key) {
+            !empty($params[$key]) && $ebayListingProduct->setData($key, $params[$key]);
         }
 
         $listingProduct->save();

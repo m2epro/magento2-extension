@@ -229,21 +229,6 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     //########################################
 
-    /**
-     * @return array
-     */
-    public function getDefaultSettings()
-    {
-        return [
-            'pay_pal_mode' => 0,
-            'pay_pal_email_address' => '',
-            'pay_pal_immediate_payment' => 0,
-            'services' => []
-        ];
-    }
-
-    //########################################
-
     public function getCacheGroupTags()
     {
         return array_merge(parent::getCacheGroupTags(), ['template']);

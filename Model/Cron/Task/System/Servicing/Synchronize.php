@@ -17,17 +17,6 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     //########################################
 
-    public function isPossibleToRun()
-    {
-        if ($this->getHelper('Server\Maintenance')->isNow()) {
-            return false;
-        }
-
-        return parent::isPossibleToRun();
-    }
-
-    //########################################
-
     protected function performActions()
     {
         $dispatcher = $this->modelFactory->getObject('Servicing\Dispatcher');

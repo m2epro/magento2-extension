@@ -35,15 +35,4 @@
         </tr>
     <?php endif; ?>
 
-    <?php if ($block->isSystemLogNotEmpty()) : ?>
-            <tr>
-                <td class="label">
-                    <label><?php echo $block->__('System Log'); ?>: </label>
-                </td>
-                <td class="value">
-                    <a style="margin-left: 10px;" href="<?php echo $block->getUrl('*/controlPanel_database/manageTable', ['table' => 'm2epro_system_log']); ?>">Show</a>
-                </td>
-            </tr>
-    <?php endif; ?>
-
 </table>

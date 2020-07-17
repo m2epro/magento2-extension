@@ -56,13 +56,13 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
     protected function _prepareColumns()
     {
         $this->addColumn('entity_id', [
-            'header'    => $this->__('Product ID'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'entity_id',
+            'header'   => $this->__('Product ID'),
+            'align'    => 'right',
+            'width'    => '100px',
+            'type'     => 'number',
+            'index'    => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => [$this, 'callbackColumnProductId']
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
         ]);
 
         $this->addColumn('name', [
@@ -70,52 +70,53 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'name',
-            'filter_index' => 'name',
-            'escape'       => false,
+            'filter_index'   => 'name',
+            'escape'         => false,
             'frame_callback' => [$this, 'callbackColumnProductTitle'],
             'filter_condition_callback' => [$this, 'callbackFilterTitle']
         ]);
 
         $this->addColumn('online_sku', [
-            'header' => $this->__('SKU'),
-            'align' => 'left',
-            'width' => '150px',
-            'type' => 'text',
-            'index' => 'online_sku',
+            'header'       => $this->__('SKU'),
+            'align'        => 'left',
+            'width'        => '150px',
+            'type'         => 'text',
+            'index'        => 'online_sku',
             'filter_index' => 'online_sku',
-            'frame_callback' => [$this, 'callbackColumnAmazonSku'],
+            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku',
+            'show_defected_messages'    => false,
             'filter_condition_callback' => [$this, 'callbackFilterOnlineSku']
         ]);
 
         $this->addColumn('general_id', [
-            'header' => $this->__('ASIN / ISBN'),
-            'align' => 'left',
-            'width' => '100px',
-            'type' => 'text',
-            'index' => 'general_id',
-            'filter_index' => 'general_id',
+            'header'         => $this->__('ASIN / ISBN'),
+            'align'          => 'left',
+            'width'          => '100px',
+            'type'           => 'text',
+            'index'          => 'general_id',
+            'filter_index'   => 'general_id',
             'frame_callback' => [$this, 'callbackColumnGeneralId']
         ]);
 
         $this->addColumn('online_qty', [
-            'header' => $this->__('QTY'),
-            'align' => 'right',
-            'width' => '70px',
-            'type' => 'number',
-            'index' => 'online_qty',
-            'filter_index' => 'online_qty',
+            'header'         => $this->__('QTY'),
+            'align'          => 'right',
+            'width'          => '70px',
+            'type'           => 'number',
+            'index'          => 'online_qty',
+            'filter_index'   => 'online_qty',
             'frame_callback' => [$this, 'callbackColumnAvailableQty'],
-            'filter'   => 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty',
+            'filter'         => 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty',
             'filter_condition_callback' => [$this, 'callbackFilterQty']
         ]);
 
         $priceColumn = [
-            'header' => $this->__('Price'),
-            'align' => 'right',
-            'width' => '110px',
-            'type' => 'number',
-            'index' => 'online_current_price',
-            'filter_index' => 'online_current_price',
+            'header'         => $this->__('Price'),
+            'align'          => 'right',
+            'width'          => '110px',
+            'type'           => 'number',
+            'index'          => 'online_current_price',
+            'filter_index'   => 'online_current_price',
             'frame_callback' => [$this, 'callbackColumnPrice'],
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ];
@@ -128,13 +129,13 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         $this->addColumn('online_price', $priceColumn);
 
         $statusColumn = [
-            'header' => $this->__('Status'),
-            'width' => '125px',
-            'index' => 'status',
+            'header'   => $this->__('Status'),
+            'width'    => '125px',
+            'index'    => 'status',
             'filter_index' => 'status',
-            'type' => 'options',
+            'type'     => 'options',
             'sortable' => false,
-            'options' => [
+            'options'  => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => $this->__('Unknown'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
@@ -169,60 +170,6 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
     }
 
     //########################################
-
-    public function callbackColumnProductId($value, $row, $column, $isExport)
-    {
-        if ($row->getData('entity_id') === null) {
-            return $this->__('N/A');
-        }
-
-        $productId = (int)$row->getData('entity_id');
-        $storeId = (int)$row->getData('store_id');
-
-        $url = $this->getUrl('catalog/product/edit', ['id' => $productId]);
-        $withoutImageHtml = '<a href="'.$url.'" target="_blank">'.$productId.'</a>';
-
-        $showProductsThumbnails = (bool)(int)$this->getHelper('Module')
-            ->getConfig()
-            ->getGroupValue('/view/', 'show_products_thumbnails');
-
-        if (!$showProductsThumbnails) {
-            return $withoutImageHtml;
-        }
-
-        /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
-        $magentoProduct = $this->modelFactory->getObject('Magento\Product');
-        $magentoProduct->setProductId($productId);
-        $magentoProduct->setStoreId($storeId);
-
-        $imageUrlResized = $magentoProduct->getThumbnailImage();
-        if ($imageUrlResized === null) {
-            return $withoutImageHtml;
-        }
-
-        $imageUrlResizedUrl = $imageUrlResized->getUrl();
-
-        $imageHtml = $productId.'<div style="margin-top: 5px;">'.
-           '<img style="max-width: 100px; max-height: 100px;" src="' .$imageUrlResizedUrl. '" /></div>';
-        $withImageHtml = str_replace('>'.$productId.'<', '>'.$imageHtml.'<', $withoutImageHtml);
-
-        return $withImageHtml;
-    }
-
-    public function callbackColumnAmazonSku($value, $row, $column, $isExport)
-    {
-        if ((!$row->getData('is_variation_parent') &&
-            $row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
-            ($row->getData('is_variation_parent') && $row->getData('general_id') == '')) {
-            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
-        }
-
-        if ($value === null || $value === '') {
-            return $this->__('N/A');
-        }
-
-        return $value;
-    }
 
     public function callbackColumnGeneralId($value, $row, $column, $isExport)
     {

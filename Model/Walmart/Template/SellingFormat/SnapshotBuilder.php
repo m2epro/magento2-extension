@@ -10,17 +10,18 @@ namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat;
 
 /**
  * Class \Ess\M2ePro\Model\Walmart\Template\SellingFormat\SnapshotBuilder
+ * @method \Ess\M2ePro\Model\Template\SellingFormat getModel()
  */
-class SnapshotBuilder extends \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel
+class SnapshotBuilder extends \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder
 {
     //########################################
 
     public function getSnapshot()
     {
-        $data = $this->model->getData();
+        $data = $this->getModel()->getData();
 
-        if ($this->model->getChildObject() !== null) {
-            $data = array_merge($data, $this->model->getChildObject()->getData());
+        if ($this->getModel()->getChildObject() !== null) {
+            $data = array_merge($data, $this->getModel()->getChildObject()->getData());
         }
 
         if (empty($data)) {
@@ -28,7 +29,7 @@ class SnapshotBuilder extends \Ess\M2ePro\Model\Template\SnapshotBuilder\Abstrac
         }
 
         /** @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat $childModel */
-        $childModel = $this->model->getChildObject();
+        $childModel = $this->getModel()->getChildObject();
 
         $ignoredKeys = [
             'id',

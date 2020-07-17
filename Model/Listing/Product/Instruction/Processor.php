@@ -62,6 +62,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     public function process()
     {
+        $this->deleteInstructionsWithoutListingProducts();
+
         $listingsProducts = $this->getNeededListingsProducts();
 
         $instructions = $this->loadInstructions($listingsProducts);
@@ -138,8 +140,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $collection->applySkipUntilFilter();
         $collection->addFieldToFilter('main_table.component', $this->component);
 
-        $collection->setOrder('main_table.priority', 'DESC');
-        $collection->setOrder('main_table.create_date', 'ASC');
+        $collection->setOrder('MAX(main_table.priority)', 'DESC');
+        $collection->setOrder('MIN(main_table.create_date)', 'ASC');
 
         $collection->getSelect()->limit($this->maxListingsProductsCount);
         $collection->getSelect()->group('main_table.listing_product_id');
@@ -155,6 +157,25 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $listingsProductsCollection->addFieldToFilter('id', $ids);
 
         return $listingsProductsCollection->getItems();
+    }
+
+    //########################################
+
+    protected function deleteInstructionsWithoutListingProducts()
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction\Collection $collection */
+        $collection = $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getCollection();
+        $collection->getSelect()->joinLeft(
+            ['second_table' => $this->activeRecordFactory->getObject('Listing_Product')->getResource()->getMainTable()],
+            'main_table.listing_product_id = second_table.id'
+        );
+        $collection->getSelect()->where('second_table.id IS NULL');
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->columns('main_table.id');
+
+        $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->remove(
+            $collection->getColumnValues('id')
+        );
     }
 
     //########################################

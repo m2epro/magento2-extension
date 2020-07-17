@@ -15,8 +15,6 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
  */
 class Mode extends AbstractContainer
 {
-//    protected $_template = 'Ess_M2ePro::ebay/listing/category/mode.phtml';
-
     const MODE_SAME     = 'same';
     const MODE_CATEGORY = 'category';
     const MODE_MANUALLY = 'manually';
@@ -31,17 +29,14 @@ class Mode extends AbstractContainer
         $this->_controller = 'adminhtml_ebay_listing_product_category_settings';
         $this->_mode = 'mode';
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('ebayListingCategoryMode');
 
         $this->removeButton('delete');
         $this->removeButton('back');
         $this->removeButton('reset');
         $this->removeButton('save');
-        // ---------------------------------------
 
-        $this->_headerText = $this->__('Set eBay Categories');
+        $this->_headerText = $this->__('Set Category');
 
         $url = $this->getUrl('*/ebay_listing_product_add/deleteAll', ['_current' => true]);
 
@@ -68,7 +63,12 @@ class Mode extends AbstractContainer
             'Apply Settings' => $this->__('Apply Settings')
         ]);
 
-        $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_category_settings');
+        /** @var \Ess\M2ePro\Model\Listing $listing */
+        $listing = $this->parentFactory->getCachedObjectLoaded(
+            \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'Listing',
+            $this->getRequest()->getParam('id')
+        );
 
         $this->js->addOnReadyJs(<<<JS
 require([

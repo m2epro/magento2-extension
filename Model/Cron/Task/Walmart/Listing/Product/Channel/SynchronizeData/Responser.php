@@ -54,8 +54,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module_Translation')->__($message->getText()),
-                $logType,
-                LogAbstractModel::PRIORITY_HIGH
+                $logType
             );
         }
     }
@@ -81,8 +80,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
 
         $this->getSynchronizationLog()->addMessage(
             $this->getHelper('Module_Translation')->__($messageText),
-            LogAbstractModel::TYPE_ERROR,
-            LogAbstractModel::PRIORITY_HIGH
+            LogAbstractModel::TYPE_ERROR
         );
     }
 
@@ -92,14 +90,9 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
     {
         try {
             $this->updateReceivedListingsProducts();
-        } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
-
-            $this->getSynchronizationLog()->addMessage(
-                $this->getHelper('Module_Translation')->__($exception->getMessage()),
-                LogAbstractModel::TYPE_ERROR,
-                LogAbstractModel::PRIORITY_HIGH
-            );
+        } catch (\Exception $e) {
+            $this->getHelper('Module\Exception')->process($e);
+            $this->getSynchronizationLog()->addMessageFromException($e);
         }
     }
 
@@ -281,8 +274,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
                     $this->getLogsActionId(),
                     \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
                     $tempLogMessage,
-                    LogAbstractModel::TYPE_SUCCESS,
-                    LogAbstractModel::PRIORITY_LOW
+                    LogAbstractModel::TYPE_SUCCESS
                 );
             }
 
@@ -411,8 +403,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
 
         $this->synchronizationLog = $this->activeRecordFactory->getObject('Synchronization\Log');
         $this->synchronizationLog->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK);
-        $this->synchronizationLog
-            ->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_LISTINGS_PRODUCTS);
+        $this->synchronizationLog->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_LISTINGS);
 
         return $this->synchronizationLog;
     }

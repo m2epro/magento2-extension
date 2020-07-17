@@ -97,32 +97,25 @@ define([
                 var stopMaxQty = 0,
                     relistMinQty = 0;
 
-                var qtyType = el.getAttribute('qty_type');
-
-                switch (parseInt($('stop_qty_' + qtyType).value)) {
+                switch (parseInt($('stop_qty_calculated').value)) {
 
                     case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_NONE'):
                         return true;
                         break;
 
-                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_LESS'):
-                        stopMaxQty = parseInt($('stop_qty_' + qtyType + '_value').value);
-                        break;
-
-                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_BETWEEN'):
-                        stopMaxQty = parseInt($('stop_qty_' + qtyType + '_value_max').value);
+                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_YES'):
+                        stopMaxQty = parseInt($('stop_qty_calculated_value').value);
                         break;
                 }
 
-                switch (parseInt($('relist_qty_' + qtyType).value)) {
+                switch (parseInt($('relist_qty_calculated').value)) {
 
                     case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_NONE'):
                         return false;
                         break;
 
-                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_MORE'):
-                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_BETWEEN'):
-                        relistMinQty = parseInt($('relist_qty_' + qtyType + '_value').value);
+                    case M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_YES'):
+                        relistMinQty = parseInt($('relist_qty_calculated_value').value);
                         break;
                 }
 
@@ -138,16 +131,30 @@ define([
         initObservers: function()
         {
             //list
-            $('list_mode').observe('change', WalmartTemplateSynchronizationObj.listMode_change).simulate('change');
-            $('list_qty_magento').observe('change', WalmartTemplateSynchronizationObj.listQty_change).simulate('change');
-            $('list_qty_calculated').observe('change', WalmartTemplateSynchronizationObj.listQty_change).simulate('change');
-            $('list_advanced_rules_mode').observe('change', WalmartTemplateSynchronizationObj.listAdvancedRules_change).simulate('change');
+            $('list_mode')
+                .observe('change', WalmartTemplateSynchronizationObj.listMode_change)
+                .simulate('change');
+
+            $('list_qty_calculated')
+                .observe('change', WalmartTemplateSynchronizationObj.listQty_change)
+                .simulate('change');
+
+            $('list_advanced_rules_mode')
+                .observe('change', WalmartTemplateSynchronizationObj.listAdvancedRules_change)
+                .simulate('change');
 
             //relist
-            $('relist_mode').observe('change', WalmartTemplateSynchronizationObj.relistMode_change).simulate('change');
-            $('relist_qty_magento').observe('change', WalmartTemplateSynchronizationObj.relistQty_change).simulate('change');
-            $('relist_qty_calculated').observe('change', WalmartTemplateSynchronizationObj.relistQty_change).simulate('change');
-            $('relist_advanced_rules_mode').observe('change', WalmartTemplateSynchronizationObj.relistAdvancedRules_change).simulate('change');
+            $('relist_mode')
+                .observe('change', WalmartTemplateSynchronizationObj.relistMode_change)
+                .simulate('change');
+
+            $('relist_qty_calculated')
+                .observe('change', WalmartTemplateSynchronizationObj.relistQty_change)
+                .simulate('change');
+
+            $('relist_advanced_rules_mode')
+                .observe('change', WalmartTemplateSynchronizationObj.relistAdvancedRules_change)
+                .simulate('change');
 
             //revise
             $('revise_update_qty')
@@ -158,17 +165,18 @@ define([
                 .observe('change', WalmartTemplateSynchronizationObj.reviseQtyMaxAppliedValueMode_change)
                 .simulate('change');
 
-            $('revise_update_price').observe('change', WalmartTemplateSynchronizationObj.revisePrice_change)
-                .simulate('change');
-
-            $('revise_update_price_max_allowed_deviation_mode').observe('change', WalmartTemplateSynchronizationObj.revisePriceMaxAllowedDeviationMode_change)
-                .simulate('change');
-
             //stop
-            $('stop_mode').observe('change', WalmartTemplateSynchronizationObj.stopMode_change).simulate('change');
-            $('stop_qty_magento').observe('change', WalmartTemplateSynchronizationObj.stopQty_change).simulate('change');
-            $('stop_qty_calculated').observe('change', WalmartTemplateSynchronizationObj.stopQty_change).simulate('change');
-            $('stop_advanced_rules_mode').observe('change', WalmartTemplateSynchronizationObj.stopAdvancedRules_change).simulate('change');
+            $('stop_mode')
+                .observe('change', WalmartTemplateSynchronizationObj.stopMode_change)
+                .simulate('change');
+
+            $('stop_qty_calculated')
+                .observe('change', WalmartTemplateSynchronizationObj.stopQty_change)
+                .simulate('change');
+
+            $('stop_advanced_rules_mode')
+                .observe('change', WalmartTemplateSynchronizationObj.stopAdvancedRules_change)
+                .simulate('change');
         },
 
         // ---------------------------------------
@@ -199,25 +207,11 @@ define([
 
         stopQty_change: function()
         {
-            var qtyType = this.getAttribute('qty_type');
-
-            var valueContainer    = $('stop_qty_' + qtyType + '_value_container'),
-                valueMaxContainer = $('stop_qty_' + qtyType + '_value_max_container'),
-                item              = valueContainer.select('label span')[0];
-
+            var valueContainer    = $('stop_qty_calculated_value');
             valueContainer.hide();
-            valueMaxContainer.hide();
 
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_LESS') ||
-                this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_MORE')) {
-                item.innerHTML = M2ePro.translator.translate('Quantity');
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_YES')) {
                 valueContainer.show();
-            }
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_BETWEEN')) {
-                item.innerHTML = M2ePro.translator.translate('Min Quantity');
-                valueContainer.show();
-                valueMaxContainer.show();
             }
         },
 
@@ -253,25 +247,11 @@ define([
 
         listQty_change: function()
         {
-            var qtyType = this.getAttribute('qty_type');
-
-            var valueContainer    = $('list_qty_' + qtyType + '_value_container'),
-                valueMaxContainer = $('list_qty_' + qtyType + '_value_max_container'),
-                item              = valueContainer.select('label span')[0];
-
+            var valueContainer    = $('list_qty_calculated_value');
             valueContainer.hide();
-            valueMaxContainer.hide();
 
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_LESS') ||
-                this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_MORE')) {
-                item.innerHTML = M2ePro.translator.translate('Quantity');
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_YES')) {
                 valueContainer.show();
-            }
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_BETWEEN')) {
-                item.innerHTML = M2ePro.translator.translate('Min Quantity');
-                valueContainer.show();
-                valueMaxContainer.show();
             }
         },
 
@@ -310,25 +290,11 @@ define([
 
         relistQty_change: function()
         {
-            var qtyType = this.getAttribute('qty_type');
-
-            var valueContainer    = $('relist_qty_' + qtyType + '_value_container'),
-                valueMaxContainer = $('relist_qty_' + qtyType + '_value_max_container'),
-                item              = valueContainer.select('label span')[0];
-
+            var valueContainer    = $('relist_qty_calculated_value');
             valueContainer.hide();
-            valueMaxContainer.hide();
 
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_LESS') ||
-                this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_MORE')) {
-                item.innerHTML = M2ePro.translator.translate('Quantity');
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_YES')) {
                 valueContainer.show();
-            }
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_BETWEEN')) {
-                item.innerHTML = M2ePro.translator.translate('Min Quantity');
-                valueContainer.show();
-                valueMaxContainer.show();
             }
         },
 
@@ -357,7 +323,6 @@ define([
             } else {
                 $('revise_update_qty_max_applied_value_mode_tr').hide();
                 $('revise_update_qty_max_applied_value_line_tr').hide();
-                $('revise_update_qty_max_applied_value_tr').hide();
                 $('revise_update_qty_max_applied_value_mode').value = 0;
             }
         },
@@ -366,10 +331,10 @@ define([
         {
             var self = WalmartTemplateSynchronizationObj;
 
-            $('revise_update_qty_max_applied_value_tr').hide();
+            $('revise_update_qty_max_applied_value').hide();
 
             if (this.value == 1) {
-                $('revise_update_qty_max_applied_value_tr').show();
+                $('revise_update_qty_max_applied_value').show();
             } else if (!event.cancelable) {
                 self.openReviseMaxAppliedQtyDisableConfirmationPopUp();
             }
@@ -413,74 +378,6 @@ define([
         {
             $('revise_update_qty_max_applied_value_mode').selectedIndex = 0;
             $('revise_update_qty_max_applied_value_mode').simulate('change');
-        },
-
-        // ---------------------------------------
-
-        revisePrice_change: function()
-        {
-            if (this.value == 1) {
-                $('revise_update_price_max_allowed_deviation_mode_tr').show();
-                $('revise_update_price_max_allowed_deviation_tr').show();
-                $('revise_update_price_max_allowed_deviation_mode').simulate('change');
-            } else {
-                $('revise_update_price_max_allowed_deviation_mode_tr').hide();
-                $('revise_update_price_max_allowed_deviation_tr').hide();
-                $('revise_update_price_max_allowed_deviation_mode').value = 0;
-            }
-        },
-
-        revisePriceMaxAllowedDeviationMode_change: function(event)
-        {
-            var self = WalmartTemplateSynchronizationObj;
-
-            $('revise_update_price_max_allowed_deviation_tr').hide();
-
-            if (this.value == 1) {
-                $('revise_update_price_max_allowed_deviation_tr').show();
-            } else if (!event.cancelable) {
-                self.openReviseMaxAllowedDeviationPriceDisableConfirmationPopUp();
-            }
-        },
-
-        openReviseMaxAllowedDeviationPriceDisableConfirmationPopUp: function()
-        {
-            var self = this;
-
-            var element = jQuery('#revise_price_max_max_allowed_deviation_confirmation_popup_template').clone();
-
-            element.confirm({
-                title: M2ePro.translator.translate('Are you sure?'),
-                actions: {
-                    confirm: self.revisePriceMaxAllowedDeviationDisableConfirm,
-                    cancel: self.revisePriceMaxAllowedDeviationDisableCancel
-                },
-                buttons: [{
-                    text: M2ePro.translator.translate('Cancel'),
-                    class: 'action-secondary action-dismiss',
-                    click: function (event) {
-                        this.closeModal(event);
-                    }
-                }, {
-                    text: M2ePro.translator.translate('Confirm'),
-                    class: 'action-primary action-accept',
-                    click: function (event) {
-                        this.closeModal(event, true);
-                    }
-                }]
-            });
-        },
-
-        revisePriceMaxAllowedDeviationDisableCancel: function()
-        {
-            $('revise_update_price_max_allowed_deviation_mode').selectedIndex = 1;
-            $('revise_update_price_max_allowed_deviation_mode').simulate('change');
-        },
-
-        revisePriceMaxAllowedDeviationDisableConfirm: function()
-        {
-            $('revise_update_price_max_allowed_deviation_mode').selectedIndex = 0;
-            $('revise_update_price_max_allowed_deviation_mode').simulate('change');
         },
 
         // ---------------------------------------

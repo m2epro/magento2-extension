@@ -17,19 +17,18 @@ class Grid extends AbstractGrid
 {
     //########################################
 
-    protected $cacheConfig;
+    protected $storeId = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
+
     protected $productTypeModel;
     protected $magentoProductCollectionFactory;
 
     public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Magento\Catalog\Model\Product\Type $productTypeModel,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->cacheConfig = $cacheConfig;
         $this->productTypeModel = $productTypeModel;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
 
@@ -60,14 +59,13 @@ class Grid extends AbstractGrid
         $itemId = $this->getRequest()->getParam('item_id');
         $orderItem = $this->activeRecordFactory->getObjectLoaded('Order\Item', $itemId);
 
-        $storeId = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
         if ($orderItem->getId() !== null) {
-            $storeId = $orderItem->getStoreId();
+            $this->storeId = $orderItem->getStoreId();
         }
 
         /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
-        $collection->setStoreId($storeId);
+        $collection->setStoreId($this->storeId);
 
         $collection
             ->addAttributeToSelect('name')
@@ -89,7 +87,8 @@ class Grid extends AbstractGrid
             'width'        => '60px',
             'index'        => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => [$this, 'callbackColumnProductId']
+            'store_id'     => $this->storeId,
+            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
         ]);
 
         $this->addColumn('title', [
@@ -139,37 +138,6 @@ class Grid extends AbstractGrid
     }
 
     //########################################
-
-    public function callbackColumnProductId($productId, $product, $column, $isExport)
-    {
-        $url = $this->getUrl('catalog/product/edit', ['id' => $productId]);
-        $withoutImageHtml = '<a href="'.$url.'" target="_blank">'.$productId.'</a>&nbsp;';
-
-        $showProductsThumbnails = (bool)(int)$this->cacheConfig->getGroupValue(
-            '/view/',
-            'show_products_thumbnails'
-        );
-        if (!$showProductsThumbnails) {
-            return $withoutImageHtml;
-        }
-
-        /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
-        $magentoProduct = $this->modelFactory->getObject('Magento\Product');
-        $magentoProduct->setProduct($product);
-
-        $imageResized = $magentoProduct->getThumbnailImage();
-        if ($imageResized === null) {
-            return $withoutImageHtml;
-        }
-
-        $imageResizedUrl = $imageResized->getUrl();
-
-        $imageHtml = $productId.'<div style="margin-top: 5px">'.
-            '<img style="max-width: 100px; max-height: 100px;" src="' .$imageResizedUrl. '" /></div>';
-        $withImageHtml = str_replace('>'.$productId.'<', '>'.$imageHtml.'<', $withoutImageHtml);
-
-        return $withImageHtml;
-    }
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {

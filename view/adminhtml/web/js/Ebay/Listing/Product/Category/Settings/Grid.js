@@ -2,125 +2,156 @@ define([
     'M2ePro/Plugin/Messages',
     'Magento_Ui/js/modal/modal',
     'M2ePro/Grid'
-], function (MagentoMessageObj, modal) {
+], function (MessageObj, modal) {
 
     window.EbayListingProductCategorySettingsGrid = Class.create(Grid, {
 
         // ---------------------------------------
 
         prepareActions: function () {
+
             this.actions = {
-
-                editCategoriesAction: function (id) {
-
+                editCategoriesAction: function(id) {
                     id && this.selectByRowId(id);
-                    this.editCategories();
-
+                    this.editCategories('both');
                 }.bind(this),
 
-                editPrimaryCategoriesAction: function (id) {
-
-                    id && this.selectByRowId(id);
-                    this.editPrimaryCategories();
-
-                }.bind(this),
-
-                editStorePrimaryCategoriesAction: function (id) {
-
-                    id && this.selectByRowId(id);
-                    this.editStorePrimaryCategories();
-
+                resetCategoriesAction: function(id) {
+                    this.resetCategories(id);
                 }.bind(this)
-
             };
         },
 
-        // ---------------------------------------
-
-        editPrimaryCategories: function () {
-            alert('abstract editPrimaryCategories');
-        },
-
-        editStorePrimaryCategories: function () {
-            alert('abstract editPrimaryCategories');
-        },
-
-        editCategoriesByType: function (type, validationRequired) {
-            validationRequired = validationRequired || false;
-
-            var self = this;
+        editCategories: function(mode)
+        {
+            this.selectedProductsIds = this.getSelectedProductsString();
 
             new Ajax.Request(M2ePro.url.get('ebay_listing_product_category_settings/getChooserBlockHtml'), {
-                method: 'get',
+                method: 'post',
                 asynchronous: true,
                 parameters: {
-                    products_ids: this.getSelectedProductsString()
+                    products_ids  : this.selectedProductsIds,
+                    category_mode : mode
                 },
                 onSuccess: function (transport) {
-
-                    var temp = document.createElement('div');
-                    temp.innerHTML = transport.responseText;
-                    temp.innerHTML.evalScripts();
-
-                    setTimeout(function go() {
-                        if (typeof EbayListingProductCategorySettingsChooserObj == 'undefined') {
-                            setTimeout(go, 50);
-                        } else {
-                            EbayListingProductCategorySettingsChooserObj.showEditPopUp(type);
-
-                            validationRequired && (EbayListingProductCategorySettingsChooserObj.categoriesRequiringValidation[type] = true);
-
-                            EbayListingProductCategorySettingsChooserObj.doneCallback = function () {
-                                self.saveCategoriesData(EbayListingProductCategorySettingsChooserObj.getInternalDataByType(type));
-
-                                EbayListingProductCategorySettingsChooserObj.doneCallback = null;
-                                EbayListingProductCategorySettingsChooserObj.cancelCallback = null;
-
-                                validationRequired && (delete EbayListingProductCategorySettingsChooserObj.categoriesRequiringValidation[type]);
-                            };
-
-                            EbayListingProductCategorySettingsChooserObj.cancelCallback = function () {
-                                self.unselectAll();
-
-                                EbayListingProductCategorySettingsChooserObj.doneCallback = null;
-                                EbayListingProductCategorySettingsChooserObj.cancelCallback = null;
-
-                                validationRequired && (delete EbayListingProductCategorySettingsChooserObj.categoriesRequiringValidation[type]);
-                            };
-                        }
-                    }, 50);
-
+                    this.openPopUp('Category Settings', transport.responseText);
                 }.bind(this)
             });
         },
+
+        resetCategories: function(id)
+        {
+            if (id && !confirm('Are you sure?')) {
+                return;
+            }
+
+            this.selectedProductsIds = id ? [id] : this.getSelectedProductsArray();
+
+            new Ajax.Request(M2ePro.url.get('ebay_listing_product_category_settings/stepTwoReset'), {
+                method: 'post',
+                asynchronous: true,
+                parameters: {
+                    products_ids: this.selectedProductsIds.join(',')
+                },
+                onSuccess: function (transport) {
+                    this.getGridObj().doFilter();
+                    this.unselectAll();
+                }.bind(this)
+            });
+        },
+
+        //----------------------------------------
+
+        openPopUp: function(title, content)
+        {
+            var self = this;
+            var popupId = 'modal_view_action_dialog';
+
+            var modalDialogMessage = $(popupId);
+
+            if (!modalDialogMessage) {
+                modalDialogMessage = new Element('form', {
+                    id: popupId
+                });
+            }
+
+            modalDialogMessage.innerHTML = '';
+
+            this.popUp = jQuery(modalDialogMessage).modal(Object.extend({
+                title: title,
+                type: 'slide',
+                buttons: [{
+                    text: M2ePro.translator.translate('Cancel'),
+                    attr: {id: 'cancel_button'},
+                    class: 'action-dismiss',
+                    click: function (event) {
+                        self.unselectAllAndReload();
+                        this.closeModal(event);
+                    }
+                }, {
+                    text: M2ePro.translator.translate('Save'),
+                    attr: {id: 'done_button'},
+                    class: 'action-primary action-accept',
+                    click: function (event) {
+                        self.confirmCategoriesData();
+                    },
+                }],
+            }));
+
+            this.popUp.modal('openModal');
+
+            try {
+                modalDialogMessage.innerHTML = content;
+                modalDialogMessage.innerHTML.evalScripts();
+            } catch (ignored) {}
+        },
+
+        confirmCategoriesData: function()
+        {
+            this.initFormValidation('#modal_view_action_dialog');
+
+            if (!jQuery('#modal_view_action_dialog').valid()) {
+                return;
+            }
+
+            var selectedCategories = EbayTemplateCategoryChooserObj.selectedCategories;
+            var typeMain = M2ePro.php.constant('\\Ess\\M2ePro\\Helper\\Component\\Ebay\\Category::TYPE_EBAY_MAIN');
+            if (typeof selectedCategories[typeMain] !== 'undefined') {
+                selectedCategories[typeMain]['specific'] = EbayTemplateCategoryChooserObj.selectedSpecifics;
+            }
+
+            this.saveCategoriesData(selectedCategories);
+        },
+
+        //----------------------------------------
 
         saveCategoriesData: function (templateData) {
             new Ajax.Request(M2ePro.url.get('ebay_listing_product_category_settings/stepTwoSaveToSession'), {
                 method: 'post',
                 parameters: {
-                    products_ids: this.getSelectedProductsString(),
-                    template_data: Object.toJSON(templateData)
+                    products_ids  : this.getSelectedProductsString(),
+                    template_data : Object.toJSON(templateData)
                 },
                 onSuccess: function (transport) {
 
-                    this.unselectAll();
-                    this.getGridObj().doFilter();
-
-                    jQuery('#m2epro-popup').modal('closeModal');
+                    jQuery('#modal_view_action_dialog').modal('closeModal');
+                    this.unselectAllAndReload();
                 }.bind(this)
             });
         },
 
         // ---------------------------------------
 
-        completeCategoriesDataStep: function () {
-            var self = this;
-            MagentoMessageObj.clear();
+        completeCategoriesDataStep: function (validateCategory, validateSpecifics) {
+            MessageObj.clear();
 
             new Ajax.Request(M2ePro.url.get('ebay_listing_product_category_settings/stepTwoModeValidate'), {
                 method: 'post',
                 asynchronous: true,
-                parameters: {},
+                parameters: {
+                    validate_category  : validateCategory,
+                    validate_specifics : validateSpecifics
+                },
                 onSuccess: function (transport) {
 
                     var response = transport.responseText.evalJSON();
@@ -130,7 +161,7 @@ define([
                     }
 
                     if (response['message']) {
-                        return MagentoMessageObj.addErrorMessage(response['message']);
+                        return MessageObj.addError(response['message']);
                     }
 
                     $('next_step_warning_popup_content').select('span.total_count').each(function(el){
@@ -171,8 +202,21 @@ define([
 
         // ---------------------------------------
 
-        editCategories: function () {
-            alert('abstract editCategories');
+        validateCategories: function (isAlLeasOneCategorySelected, showErrorMessage) {
+            MessageObj.setContainer('#anchor-content');
+            MessageObj.clear();
+            var button = $('ebay_listing_category_continue_btn');
+            if (parseInt(isAlLeasOneCategorySelected)) {
+                button.addClassName('disabled');
+                button.disable();
+                if (showErrorMessage) {
+                    MessageObj.addError(M2ePro.translator.translate('select_relevant_category'));
+                }
+            } else {
+                button.removeClassName('disabled');
+                button.enable();
+                MessageObj.clear();
+            }
         },
 
         // ---------------------------------------

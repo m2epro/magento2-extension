@@ -7,6 +7,7 @@
 
 // @codingStandardsIgnoreFile
 
+/** @var \Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\Cron $block */
 ?>
 
 <table class="form-list" cellspacing="0" cellpadding="0">
@@ -36,18 +37,16 @@
             <label><?php echo $block->__('Last Run'); ?>: </label>
         </td>
         <?php
-        $style = '';
-        if ($block->cronIsNotWorking) {
-            $style = ' style="color: red"';
-        }
+            $style = '';
+            if ($block->cronIsNotWorking) {
+                $style = ' style="color: red"';
+            }
         ?>
         <td class="value">
             <span<?php echo $style; ?>><?php echo $block->cronLastRunTime ?></span>
-            <?php
-            if ($block->cronIsNotWorking) {
-                echo ' (' . $block->__('not working') . ')';
-            }
-            ?>
+            <?php if ($block->cronIsNotWorking) : ?>
+                &nbsp;<a href="<?php echo $block->getHelper('Module_Support')->getKnowledgebaseArticleUrl('1577329'); ?>" target="_blank"><?php echo $block->__('[read more]'); ?></a>
+            <?php endif; ?>
         </td>
     </tr>
 
@@ -84,32 +83,6 @@
         </tr>
     <?php endif; ?>
 
-    <?php if ($block->isShownRecommendationsMessage()) : ?>
-        <tr>
-            <td class="label" colspan="2" style="width: 600px">
-                <strong><?php echo $block->__('We recommend to set up your Cron Job to be run every 1 minute (e.g. * * * * *).'); ?></strong>
-            </td>
-        </tr>
-
-        <tr>
-            <td class="label">
-                <label><?php echo $block->__('PHP Command'); ?>: </label>
-            </td>
-            <td class="value">
-                <?php echo $block->cronPhp; ?>
-            </td>
-        </tr>
-
-        <tr>
-            <td class="label">
-                <label><?php echo $block->__('GET Command'); ?>: </label>
-            </td>
-            <td class="value">
-                <?php echo $block->cronGet; ?>
-            </td>
-        </tr>
-    <?php endif; ?>
-
     <?php if ($block->isShownServiceDescriptionMessage()) : ?>
         <tr>
             <td class="label" colspan="2" style="width: 600px">
@@ -119,9 +92,8 @@
         <tr>
             <td class="label" colspan="2" style="width: 600px">
                 <?php echo $block->__(
-                    'It is M2E Pro Cron System where you were registered automatically during the Extension Installation.
-                    No additional Settings are required. Our Service does HTTP calls to your Magento from IPs addresses: <b>%server_ips%</b>.',
-                    $block->cronServiceIps
+                    'A background mechanism that provides permanent automatic synchronization. Find more details <a href="%url%" target="_blank">here</a>',
+                    $block->getHelper('Module_Support')->getKnowledgebaseArticleUrl('1499822')
                 ); ?>
             </td>
         </tr>

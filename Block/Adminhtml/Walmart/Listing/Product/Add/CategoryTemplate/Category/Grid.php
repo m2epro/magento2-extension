@@ -125,7 +125,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
             [
                 'caption' => $this->__('Set Category Policy'),
                 'field'   => 'entity_id',
-                'onclick_action' => 'ListingGridHandlerObj.setCategoryTemplateByCategoryRowAction'
+                'onclick_action' => 'ListingGridObj.setCategoryTemplateByCategoryRowAction'
             ]
         ];
 
@@ -267,11 +267,11 @@ HTML;
     require([
         'M2ePro/Plugin/Messages'
     ],function(MessageObj) {
-        var button = $('save_and_go_to_listing_view');
+        var button = $('add_products_category_template_category_continue');
         if ({$isNotExistProductsWithCategoryTemplate}) {
             button.addClassName('disabled');
             button.disable();
-            MessageObj.addErrorMessage(`{$errorMessage}`);
+            MessageObj.addError(`{$errorMessage}`);
         } else {
             button.removeClassName('disabled');
             button.enable();
@@ -285,7 +285,7 @@ JS
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
                 <<<JS
-    ListingGridHandlerObj.afterInitPage();
+    ListingGridObj.afterInitPage();
 JS
             );
         }

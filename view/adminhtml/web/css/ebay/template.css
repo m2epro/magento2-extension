@@ -26,7 +26,8 @@
 }
 
 #local_shipping_discount_profile_table select,
-#international_shipping_discount_profile_table select {
+#international_shipping_discount_profile_table select,
+.shipping_rate_table select {
     width: 90%;
 }
 
@@ -50,6 +51,10 @@
 #international_shipping_discount_profile_table {
     width: 55%;
     margin-left: 53px;
+}
+
+.shipping_rate_table {
+    width: calc( 55% + 53px );
 }
 
 #magento_block_ebay_template_shipping_form_data_exclude_locations_popup_content h4 {
@@ -195,10 +200,10 @@ label.mage-error[for="description_template"] {
 }
 #custom_inserts_open_popup {
     margin-left: 20px;
-    margin-top: 10px;
 }
 #description_template_show_hide_wysiwyg {
     margin-left: 20px;
+    margin-bottom: 10px;
 }
 #buttonsdescription_template {
     display: none;

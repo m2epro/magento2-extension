@@ -75,18 +75,7 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
             return !isset($message['is_global']) || !(bool)$message['is_global'];
         });
 
-        /** @var \Ess\M2ePro\Model\Registry $registryModel */
-        $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', '/server/messages/', 'key', false);
-
-        if ($registryModel === null) {
-            $registryModel = $this->activeRecordFactory->getObject('Registry');
-            $registryModel->setData('key', '/server/messages/');
-        }
-
-        $registryModel->setData(
-            'value',
-            $this->getHelper('Data')->jsonEncode($messages)
-        )->save();
+        $this->getHelper('Module')->getRegistry()->setValue('/server/messages/', $messages);
     }
 
     //########################################

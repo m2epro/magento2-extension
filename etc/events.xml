@@ -21,6 +21,11 @@
                   shared="false" />
     </event>
 
+    <event name="catalog_product_import_bunch_save_after">
+        <observer name="m2epro_observer_import_bunch"
+                  instance="Ess\M2ePro\Observer\Import\Bunch" />
+    </event>
+
     <!-- attributes -->
 
     <event name="catalog_product_attribute_update_before">
@@ -105,8 +110,12 @@
                   shared="false" />
     </event>
     <event name="sales_order_save_after">
-        <observer name="m2epro_observer_ebay_order"
-                  instance="Ess\M2ePro\Observer\Ebay\Order"
+        <observer name="m2epro_observer_order_save_after_sendpickupstorenotifications"
+                  instance="Ess\M2ePro\Observer\Order\Save\After\SendPickupStoreNotifications"
+                  shared="false" />
+
+        <observer name="m2epro_observer_order_order_save_after_storemagentoorderid"
+                  instance="Ess\M2ePro\Observer\Order\Save\After\StoreMagentoOrderId"
                   shared="false" />
     </event>
     <event name="ess_sales_convert_quote_item_to_order_item">

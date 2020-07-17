@@ -689,7 +689,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
 
         $action      = \Ess\M2ePro\Model\Order\Change::ACTION_CANCEL;
 
-        if ($this->isShipped() || $this->isPartiallyShipped() || $this->isSetProcessingLock('update_shipping_status')) {
+        if ($this->isShipped() ||
+            $this->isPartiallyShipped() ||
+            $this->getParentObject()->isOrderStatusUpdatingToShipped()
+        ) {
             if (empty($items)) {
                 $this->getParentObject()->addErrorLog(
                     'Walmart Order was not refunded. Reason: %msg%',

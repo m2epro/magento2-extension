@@ -9,7 +9,6 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
-use Ess\M2ePro\Model\Walmart\Account as WalmartAccount;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart\AccountContinue
@@ -24,15 +23,9 @@ class AccountContinue extends InstallationWalmart
         }
 
         if (empty($params['marketplace_id'])) {
-            $result['message'] = $this->__('Please select Marketplace');
-            $this->setJsonContent($result);
+            $this->setJsonContent(['message' => $this->__('Please select Marketplace')]);
             return $this->getResult();
         }
-
-        $result =  [
-            'result' => false,
-            'message' => null
-        ];
 
         try {
             $accountData = [];
@@ -40,7 +33,7 @@ class AccountContinue extends InstallationWalmart
             $requiredFields = [
                 'marketplace_id',
                 'consumer_id',
-                'old_private_key',
+                'private_key',
                 'client_id',
                 'client_secret'
             ];
@@ -58,11 +51,11 @@ class AccountContinue extends InstallationWalmart
             );
 
             if ($params['marketplace_id'] == \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA &&
-                $params['consumer_id'] && $params['old_private_key']) {
+                $params['consumer_id'] && $params['private_key']) {
                 $requestData = [
                     'marketplace_id' => $params['marketplace_id'],
                     'consumer_id' => $params['consumer_id'],
-                    'private_key' => $params['old_private_key'],
+                    'private_key' => $params['private_key'],
                 ];
             } elseif ($params['marketplace_id'] != \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA &&
                 $params['client_id'] && $params['client_secret']) {
@@ -70,11 +63,9 @@ class AccountContinue extends InstallationWalmart
                     'marketplace_id' => $params['marketplace_id'],
                     'client_id'     => $params['client_id'],
                     'client_secret' => $params['client_secret'],
-                    'consumer_id'   => $params['consumer_id']
                 ];
             } else {
-                $result['message'] = $this->__('You should fill all required fields.');
-                $this->setJsonContent($result);
+                $this->setJsonContent(['message' => $this->__('You should fill all required fields.')]);
                 return $this->getResult();
             }
 
@@ -90,7 +81,8 @@ class AccountContinue extends InstallationWalmart
 
             /** @var $model \Ess\M2ePro\Model\Account */
             $model = $this->walmartFactory->getObject('Account');
-            $model->setData($accountData);
+            $this->modelFactory->getObject('Walmart_Account_Builder')->build($model, $accountData);
+
             $id = $model->save()->getId();
 
             /** @var $dispatcherObject \Ess\M2ePro\Model\Walmart\Connector\Dispatcher */
@@ -111,77 +103,44 @@ class AccountContinue extends InstallationWalmart
                 $model->delete();
             }
 
+            $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
+                $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
+            );
+
             $error = 'The Walmart access obtaining is currently unavailable.<br/>Reason: %error_message%';
-            $error = $this->__($error, $exception->getMessage());
 
-            $this->setJsonContent([
-                'success' => false,
-                'message' => $error
-            ]);
+            if (!$this->getHelper('Module\License')->isValidDomain() ||
+                !$this->getHelper('Module\License')->isValidIp()) {
+                $error .= '</br>Go to the <a href="%url%" target="_blank">License Page</a>.';
+                $error = $this->__(
+                    $error,
+                    $exception->getMessage(),
+                    $this->getHelper('View\Configuration')->getLicenseUrl(['wizard' => 1])
+                );
+            } else {
+                $error = $this->__($error, $exception->getMessage());
+            }
 
+            $this->setJsonContent(['message' => $error]);
             return $this->getResult();
         }
 
         $this->setStep($this->getNextStep());
 
-        $this->setJsonContent([
-            'success' => true
-        ]);
+        $this->setJsonContent(['result' => true]);
         return $this->getResult();
     }
 
     private function getAccountDefaultSettings()
     {
-        return [
-            'title'           => '',
-            'marketplace_id'  => 0,
+        $data = $this->modelFactory->getObject('Walmart_Account_Builder')->getDefaultData();
 
-            'related_store_id' => 0,
+        $data['other_listings_synchronization'] = 0;
+        $data['other_listings_mapping_mode'] = 0;
 
-            'other_listings_synchronization'  => 0,
-            'other_listings_mapping_mode'     => 0,
-            'other_listings_mapping_settings' => $this->getHelper('Data')->jsonEncode([]),
+        $data['magento_orders_settings']['listing_other']['store_id'] = $this->getHelper('Magento\Store')
+            ->getDefaultStoreId();
 
-            'magento_orders_settings' => $this->getHelper('Data')->jsonEncode([
-                'listing' => [
-                    'mode'       => 1,
-                    'store_mode' => WalmartAccount::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
-                    'store_id'   => null
-                ],
-                'listing_other' => [
-                    'mode'                 => 1,
-                    'product_mode'         => WalmartAccount::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
-                    'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
-                    'store_id'             => $this->getHelper('Magento\Store')->getDefaultStoreId(),
-                ],
-                'number' => [
-                    'source' => WalmartAccount::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
-                    'prefix' => [
-                        'mode'   => 0,
-                        'prefix' => '',
-                    ]
-                ],
-                'tax' => [
-                    'mode' => WalmartAccount::MAGENTO_ORDERS_TAX_MODE_MIXED
-                ],
-                'customer' => [
-                    'mode'          => WalmartAccount::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,
-                    'id'            => null,
-                    'website_id'    => null,
-                    'group_id'      => null,
-                    'notifications' => [
-                        'invoice_created' => false,
-                        'order_created'   => false
-                    ],
-                ],
-                'status_mapping' => [
-                    'mode'       => WalmartAccount::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
-                    'processing' => WalmartAccount::MAGENTO_ORDERS_STATUS_MAPPING_PROCESSING,
-                    'shipped'    => WalmartAccount::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED,
-                ],
-                'invoice_mode'   => 1,
-                'shipment_mode'  => 1
-            ])
-        ];
+        return $data;
     }
 }

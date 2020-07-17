@@ -19,12 +19,14 @@ class Save extends Settings
 
     public function execute()
     {
-        $this->getHelper('Component_Walmart_Configuration')
-            ->setConfigValues($this->getRequest()->getParams());
+        $post = $this->getRequest()->getPostValue();
+        if (!$post) {
+            $this->setJsonContent(['success' => false]);
+            return $this->getResult();
+        }
 
-        $this->setJsonContent([
-            'success' => true
-        ]);
+        $this->getHelper('Component_Walmart_Configuration')->setConfigValues($this->getRequest()->getParams());
+        $this->setJsonContent(['success' => true]);
         return $this->getResult();
     }
 

@@ -92,7 +92,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'product_id=entity_id',
             [
                 'id'              => 'id',
-                'amazon_status'   => 'status',
+                'status'          => 'status',
                 'component_mode'  => 'component_mode',
                 'additional_data' => 'additional_data'
             ],
@@ -114,7 +114,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             [
                 'general_id'                    => 'general_id',
                 'search_settings_status'        => 'search_settings_status',
-                'amazon_sku'                    => 'sku',
+                'sku'                           => 'sku',
                 'online_qty'                    => 'online_qty',
                 'online_regular_price'          => 'online_regular_price',
                 'online_regular_sale_price'     => 'IF(
@@ -209,65 +209,68 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'    => $this->__('Product ID'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'entity_id',
-            'frame_callback' => [$this, 'callbackColumnProductId']
+            'header'   => $this->__('Product ID'),
+            'align'    => 'right',
+            'width'    => '100px',
+            'type'     => 'number',
+            'index'    => 'entity_id',
+            'store_id' => $this->listing->getStoreId(),
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
         ]);
 
         $this->addColumn('name', [
-            'header'    => $this->__('Product Title / Product SKU'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'name',
-            'filter_index' => 'name',
-            'escape'       => false,
+            'header'         => $this->__('Product Title / Product SKU'),
+            'align'          => 'left',
+            'type'           => 'text',
+            'index'          => 'name',
+            'filter_index'   => 'name',
+            'escape'         => false,
             'frame_callback' => [$this, 'callbackColumnProductTitle'],
             'filter_condition_callback' => [$this, 'callbackFilterTitle']
         ]);
 
         $this->addColumn('sku', [
-            'header' => $this->__('SKU'),
-            'align' => 'left',
-            'width' => '150px',
-            'type' => 'text',
-            'index' => 'amazon_sku',
-            'filter_index' => 'amazon_sku',
-            'frame_callback' => [$this, 'callbackColumnAmazonSku']
+            'header'       => $this->__('SKU'),
+            'align'        => 'left',
+            'width'        => '150px',
+            'type'         => 'text',
+            'index'        => 'sku',
+            'filter_index' => 'sku',
+            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku'
         ]);
 
         $this->addColumn('general_id', [
-            'header' => $this->__('ASIN / ISBN'),
-            'align' => 'left',
-            'width' => '140px',
-            'type' => 'text',
-            'index' => 'general_id',
-            'filter_index' => 'general_id',
+            'header'         => $this->__('ASIN / ISBN'),
+            'align'          => 'left',
+            'width'          => '140px',
+            'type'           => 'text',
+            'index'          => 'general_id',
+            'filter_index'   => 'general_id',
             'frame_callback' => [$this, 'callbackColumnGeneralId']
         ]);
 
         $this->addColumn('online_qty', [
-            'header' => $this->__('QTY'),
-            'align' => 'right',
-            'width' => '70px',
-            'type' => 'number',
-            'index' => 'online_qty',
+            'header'       => $this->__('QTY'),
+            'align'        => 'right',
+            'width'        => '70px',
+            'type'         => 'number',
+            'index'        => 'online_qty',
             'filter_index' => 'online_qty',
-            'frame_callback' => [$this, 'callbackColumnAvailableQty'],
-            'filter'   => 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty',
+            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Qty',
+            'filter'       => 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty',
             'filter_condition_callback' => [$this, 'callbackFilterQty']
         ]);
 
         $priceColumn = [
-            'header' => $this->__('Price'),
-            'align' => 'right',
-            'width' => '110px',
-            'type' => 'number',
-            'index' => 'min_online_price',
-            'filter_index' => 'min_online_price',
-            'frame_callback' => [$this, 'callbackColumnPrice'],
+            'header'         => $this->__('Price'),
+            'align'          => 'right',
+            'width'          => '110px',
+            'type'           => 'number',
+            'index'          => 'min_online_price',
+            'marketplace_id' => $this->listing->getMarketplaceId(),
+            'account_id'     => $this->listing->getAccountId(),
+            'renderer'       => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Price',
+            'filter_index'   => 'min_online_price',
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ];
 
@@ -279,11 +282,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->addColumn('online_price', $priceColumn);
 
         $this->addColumn('status', [
-            'header' => $this->__('Status'),
-            'width' => '155px',
-            'index' => 'amazon_status',
-            'filter_index' => 'amazon_status',
-            'type' => 'options',
+            'header'   => $this->__('Status'),
+            'width'    => '155px',
+            'index'    => 'status',
+            'filter_index' => 'status',
+            'type'     => 'options',
             'sortable' => false,
             'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => $this->__('Unknown'),
@@ -500,49 +503,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return $value;
     }
 
-    public function callbackColumnAmazonSku($value, $row, $column, $isExport)
-    {
-        if ($value === null || $value === '') {
-            $value = $this->__('N/A');
-        }
-
-        if ($row->getData('defected_messages')) {
-            $defectedMessages = $this->getHelper('Data')->jsonDecode($row->getData('defected_messages'));
-
-            $msg = '';
-            foreach ($defectedMessages as $message) {
-                if (empty($message['message'])) {
-                    continue;
-                }
-
-                $msg .= '<p>'.$message['message'] . '&nbsp;';
-                if (!empty($message['value'])) {
-                    $msg .= $this->__('Current Value') . ': "' . $message['value'] . '"';
-                }
-                $msg .= '</p>';
-            }
-
-            if (empty($msg)) {
-                return $value;
-            }
-
-            $value .= <<<HTML
-<span style="float:right;">
-    <img id="map_link_defected_message_icon_{$row->getId()}"
-         class="tool-tip-image"
-         style="vertical-align: middle;"
-         src="{$this->getViewFileUrl('Ess_M2ePro::images/warning.png')}">
-    <span class="tool-tip-message tool-tip-warning tip-left" style="display:none;">
-        <img src="{$this->getViewFileUrl('Ess_M2ePro::images/i_notice.gif')}">
-        <span>{$msg}</span>
-    </span>
-</span>
-HTML;
-        }
-
-        return $value;
-    }
-
     public function callbackColumnGeneralId($value, $row, $column, $isExport)
     {
         if ($value === null || $value === '') {
@@ -574,210 +534,9 @@ HTML;
 HTML;
     }
 
-    public function callbackColumnAvailableQty($value, $row, $column, $isExport)
-    {
-        if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
-            return $this->__('N/A');
-        }
-
-        if ((bool)$row->getData('is_afn_channel')) {
-            $sku = $row->getData('amazon_sku');
-
-            if (empty($sku)) {
-                return $this->__('AFN');
-            }
-
-            $productId = $row->getData('id');
-            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-            $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
-
-            $afn = $this->__('AFN');
-            $total = $this->__('Total');
-            $inStock = $this->__('In Stock');
-            $accountId = $listingProduct->getListing()->getAccountId();
-
-            return <<<HTML
-<div id="m2ePro_afn_qty_value_{$productId}">
-    <span class="m2ePro-online-sku-value" productId="{$productId}" style="display: none">{$sku}</span>
-    <span class="m2epro-empty-afn-qty-data" style="display: none">{$afn}</span>
-    <div class="m2epro-afn-qty-data" style="display: none">
-        <div class="total">{$total}: <span></span></div>
-        <div class="in-stock">{$inStock}: <span></span></div>
-    </div>
-    <a href="javascript:void(0)"
-        onclick="AmazonListingAfnQtyObj.showAfnQty(this,'{$sku}',{$productId}, {$accountId})">{$afn}</a>
-</div>
-HTML;
-        }
-
-        if ($value === null || $value === '') {
-            return '<i style="color:gray;">receiving...</i>';
-        }
-
-        if ($value <= 0) {
-            return '<span style="color: red;">0</span>';
-        }
-
-        return $value;
-    }
-
-    public function callbackColumnPrice($value, $row, $column, $isExport)
-    {
-        if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
-            return $this->__('N/A');
-        }
-
-        $onlinePrice = $row->getData('online_regular_price');
-
-        $repricingHtml ='';
-
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
-            (bool)(int)$row->getData('is_repricing')) {
-            $icon = 'repricing-enabled';
-            $text = $this->__(
-                'This Product is used by Amazon Repricing Tool, so its Price cannot be managed via M2E Pro. <br>
-                 <strong>Please note</strong> that the Price value(s) shown in the grid might
-                 be different from the actual one from Amazon. It is caused by the delay
-                 in the values updating made via the Repricing Service'
-            );
-
-            if ((int)$row->getData('is_repricing_disabled') == 1 || (int)$row->getData('is_repricing_inactive') == 1) {
-                $icon = 'repricing-disabled';
-                $text = $this->__(
-                    'This Item is disabled or unable to be repriced on Amazon Repricing Tool.
-                     Its Price is updated via M2E Pro.'
-                );
-            }
-
-            $repricingHtml = <<<HTML
-&nbsp;<div class="fix-magento-tooltip {$icon}" style="float:right;">
-    {$this->getTooltipHtml($text)}
-</div>
-HTML;
-        }
-
-        $onlineBusinessPrice = $row->getData('online_business_price');
-
-        if (($onlinePrice === null || $onlinePrice === '') &&
-            ($onlineBusinessPrice === null || $onlineBusinessPrice === '')
-        ) {
-            if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-                return $this->__('N/A') . $repricingHtml;
-            } else {
-                return '<i style="color:gray;">receiving...</i>' . $repricingHtml;
-            }
-        }
-
-        $currency = $this->listing->getMarketplace()->getChildObject()->getDefaultCurrency();
-
-        if ((float)$onlinePrice <= 0) {
-            $priceValue = '<span style="color: #f00;">0</span>';
-        } else {
-            $priceValue = $this->convertAndFormatPriceCurrency($onlinePrice, $currency);
-        }
-
-        if ($row->getData('is_repricing') &&
-            !$row->getData('is_repricing_disabled') &&
-            !$row->getData('is_repricing_inactive')) {
-            $accountId = $this->listing['account_id'];
-            $sku = $row->getData('amazon_sku');
-
-            $priceValue =<<<HTML
-<a id="m2epro_repricing_price_value_{$sku}"
-   class="m2epro-repricing-price-value"
-   sku="{$sku}"
-   account_id="{$accountId}"
-   href="javascript:void(0)"
-   onclick="AmazonListingProductRepricingPriceObj.showRepricingPrice()">{$priceValue}</a>
-HTML;
-        }
-
-        $resultHtml = '';
-
-        $salePrice = $row->getData('online_regular_sale_price');
-        if ((float)$salePrice > 0) {
-            $currentTimestamp = strtotime($this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d 00:00:00'));
-
-            $startDateTimestamp = strtotime($row->getData('online_regular_sale_price_start_date'));
-            $endDateTimestamp   = strtotime($row->getData('online_regular_sale_price_end_date'));
-
-            if ($currentTimestamp <= $endDateTimestamp) {
-                $fromDate = $this->_localeDate->formatDate(
-                    $row->getData('online_regular_sale_price_start_date'),
-                    \IntlDateFormatter::MEDIUM
-                );
-
-                $toDate = $this->_localeDate->formatDate(
-                    $row->getData('online_regular_sale_price_end_date'),
-                    \IntlDateFormatter::MEDIUM
-                );
-
-                $intervalHtml = <<<HTML
-<div class="m2epro-field-tooltip m2epro-field-tooltip-price-info admin__field-tooltip">
-    <a class="admin__field-tooltip-action" href="javascript://"></a>
-    <div class="admin__field-tooltip-content">
-        <span style="color:gray;">
-            <strong>From:</strong> {$fromDate}<br/>
-            <strong>To:</strong> {$toDate}
-        </span>
-    </div>
-</div>
-HTML;
-
-                $salePriceValue = $this->convertAndFormatPriceCurrency($salePrice, $currency);
-
-                if ($currentTimestamp >= $startDateTimestamp &&
-                    $currentTimestamp <= $endDateTimestamp &&
-                    $salePrice < (float)$onlinePrice
-                ) {
-                    $resultHtml .= '<span style="color: grey; text-decoration: line-through;">'.$priceValue.'</span>' .
-                                    $repricingHtml;
-                    $resultHtml .= '<br/>'.$intervalHtml.'&nbsp;'.$salePriceValue;
-                } else {
-                    $resultHtml .= $priceValue . $repricingHtml;
-                    $resultHtml .= '<br/>'.$intervalHtml.
-                        '<span style="color:gray;">'.'&nbsp;'.$salePriceValue.'</span>';
-                }
-            }
-        }
-
-        if (empty($resultHtml)) {
-            $resultHtml = $priceValue . $repricingHtml;
-        }
-
-        if ((float)$onlineBusinessPrice > 0) {
-            $businessPriceValue = '<strong>B2B:</strong> '
-                                  .$this->convertAndFormatPriceCurrency($onlineBusinessPrice, $currency);
-
-            $businessDiscounts = $row->getData('online_business_discounts');
-            if (!empty($businessDiscounts) && $businessDiscounts = json_decode($businessDiscounts, true)) {
-                $discountsHtml = '';
-
-                foreach ($businessDiscounts as $qty => $price) {
-                    $price = $this->convertAndFormatPriceCurrency($price, $currency);
-                    $discountsHtml .= 'QTY >= '.(int)$qty.', price '.$price.'<br />';
-                }
-
-                $businessPriceValue .= <<<HTML
-<div style="position: relative; left: -35px;">
-    {$this->getTooltipHtml($discountsHtml, false)}
-</div>
-HTML;
-            }
-
-            if (!empty($resultHtml)) {
-                $businessPriceValue = '<br />'.$businessPriceValue;
-            }
-
-            $resultHtml .= $businessPriceValue;
-        }
-
-        return $resultHtml;
-    }
-
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
-        switch ($row->getData('amazon_status')) {
+        switch ($row->getData('status')) {
             case \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN:
             case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
                 $value = '<span style="color: gray;">' . $value . '</span>';
@@ -799,7 +558,9 @@ HTML;
                 break;
         }
 
-        $value .= $this->getViewLogIconHtml($row->getData('id'));
+        /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\ViewLogIcon\Listing $viewLogIcon */
+        $viewLogIcon = $this->createBlock('Amazon_Grid_Column_Renderer_ViewLogIcon_Listing');
+        $value .= $viewLogIcon->render($row);
 
         $scheduledActionsCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
             ->getCollection();
@@ -1045,62 +806,6 @@ HTML;
         $collection->getSelect()->having($condition);
     }
 
-    // ---------------------------------------
-
-    public function getViewLogIconHtml($listingProductId)
-    {
-        $listingProductId = (int)$listingProductId;
-        $availableActionsId = array_keys($this->getAvailableActions());
-
-        $connection = $this->resourceConnection->getConnection();
-
-        // Get last messages
-        // ---------------------------------------
-        $dbSelect = $connection->select()
-            ->from(
-                $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getMainTable(),
-                ['action_id','action','type','description','create_date','initiator']
-            )
-            ->where('`listing_product_id` = ?', $listingProductId)
-            ->where('`action` IN (?)', $availableActionsId)
-            ->order(['id DESC'])
-            ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::PRODUCTS_LIMIT);
-
-        $logs = $connection->fetchAll($dbSelect);
-
-        if (empty($logs)) {
-            return '';
-        }
-
-        // ---------------------------------------
-
-        $summary = $this->createBlock('Listing_Log_Grid_LastActions')->setData([
-            'entity_id' => $listingProductId,
-            'logs'      => $logs,
-            'available_actions' => $this->getAvailableActions(),
-            'view_help_handler' => 'ListingGridHandlerObj.viewItemHelp',
-            'hide_help_handler' => 'ListingGridHandlerObj.hideItemHelp',
-        ]);
-
-        return $summary->toHtml();
-    }
-
-    private function getAvailableActions()
-    {
-        return [
-            Log::ACTION_LIST_PRODUCT_ON_COMPONENT       => $this->__('List'),
-            Log::ACTION_RELIST_PRODUCT_ON_COMPONENT     => $this->__('Relist'),
-            Log::ACTION_REVISE_PRODUCT_ON_COMPONENT     => $this->__('Revise'),
-            Log::ACTION_STOP_PRODUCT_ON_COMPONENT       => $this->__('Stop'),
-            Log::ACTION_DELETE_PRODUCT_FROM_COMPONENT   => $this->__('Remove from Channel'),
-            Log::ACTION_STOP_AND_REMOVE_PRODUCT         => $this->__('Stop on Channel / Remove from Listing'),
-            Log::ACTION_DELETE_AND_REMOVE_PRODUCT       => $this->__('Remove from Channel & Listing'),
-            Log::ACTION_CHANNEL_CHANGE                  => $this->__('Channel Change'),
-            Log::ACTION_SWITCH_TO_AFN_ON_COMPONENT      => $this->__('Switch to AFN'),
-            Log::ACTION_SWITCH_TO_MFN_ON_COMPONENT      => $this->__('Switch to MFN'),
-        ];
-    }
-
     //########################################
 
     public function getRowUrl($row)
@@ -1115,7 +820,7 @@ HTML;
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
                 <<<JS
-    ListingGridHandlerObj.afterInitPage();
+    ListingGridObj.afterInitPage();
 JS
             );
         }

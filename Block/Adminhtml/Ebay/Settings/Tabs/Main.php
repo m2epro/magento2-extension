@@ -8,87 +8,23 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs;
 
+use \Ess\M2ePro\Helper\Component\Ebay\Configuration as ConfigurationHelper;
+
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Main
  */
 class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
-    /** @var \Ess\M2ePro\Model\Config\Manager\Cache  */
-    protected $cacheConfig;
-
     //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Data\FormFactory $formFactory,
-        array $data = []
-    ) {
-        $this->cacheConfig = $cacheConfig;
-
-        parent::__construct($context, $registry, $formFactory, $data);
-    }
 
     protected function _prepareForm()
     {
-        $configModel = $this->getHelper('Module')->getConfig();
-
-        $useLastSpecificsMode = (bool)(int)$configModel->getGroupValue(
-            '/view/ebay/template/category/',
-            'use_last_specifics'
-        );
-        $checkTheSameProductAlreadyListedMode = (bool)(int)$configModel->getGroupValue(
-            '/ebay/connector/listing/',
-            'check_the_same_product_already_listed'
-        );
-
-        $uploadImagesMode = (int)$configModel->getGroupValue(
-            '/ebay/description/',
-            'upload_images_mode'
-        );
-        $shouldBeUlrsSecure = (int)$configModel->getGroupValue(
-            '/ebay/description/',
-            'should_be_ulrs_secure'
-        );
-
-        $viewEbayFeedbacksNotificationMode = (int)$configModel->getGroupValue(
-            '/view/ebay/feedbacks/notification/',
-            'mode'
-        );
-
         $form = $this->_formFactory->create([
             'data' => [
                 'method' => 'post',
                 'action' => $this->getUrl('*/*/save')
             ]
         ]);
-
-        $fieldset = $form->addFieldset(
-            'selling',
-            [
-                'legend' => $this->__('Listing'),
-                'collapsable' => false,
-            ]
-        );
-
-        $fieldset->addField(
-            'use_last_specifics_mode',
-            'select',
-            [
-                'name'        => 'use_last_specifics_mode',
-                'label'       => $this->__('Item Specifics Step'),
-                'values' => [
-                    0 => $this->__('Show'),
-                    1 => $this->__('Do Not Show')
-                ],
-                'value' => $useLastSpecificsMode,
-                'tooltip' => $this->__(
-                    'Choose <b>Do Not Show</b>
-                    if you don\'t need to edit Item specifics details every time you add Products.<br/>'
-                )
-            ]
-        );
 
         $fieldset = $form->addFieldset(
             'images',
@@ -105,14 +41,11 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
                 'name'   => 'upload_images_mode',
                 'label'  => $this->__('Main Image/Gallery Hosting Mode'),
                 'values' => [
-                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Images::UPLOAD_IMAGES_MODE_AUTO
-                    => $this->__('Automatic'),
-                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Images::UPLOAD_IMAGES_MODE_SELF
-                    => $this->__('Self-Hosted'),
-                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Images::UPLOAD_IMAGES_MODE_EPS
-                    => $this->__('EPS-Hosted'),
+                    ConfigurationHelper::UPLOAD_IMAGES_MODE_AUTO => $this->__('Automatic'),
+                    ConfigurationHelper::UPLOAD_IMAGES_MODE_SELF => $this->__('Self-Hosted'),
+                    ConfigurationHelper::UPLOAD_IMAGES_MODE_EPS => $this->__('EPS-Hosted')
                 ],
-                'value' => $uploadImagesMode,
+                'value' => $this->getHelper('Component_Ebay_Configuration')->getUploadImagesMode(),
                 'tooltip' => $this->__('
                     Select the Mode which you would like to use for uploading Images on eBay:<br/><br/>
                     <strong>Automatic</strong> — if you try to upload more then 1 Image for an Item or
@@ -121,23 +54,6 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
                     <strong>Self-Hosted</strong> — all the Images are provided as a direct Links to the
                     Images saved in your Magento;<br/>
                     <strong>EPS-Hosted</strong> — the Images are uploaded to eBay EPS service.
-                ')
-            ]
-        );
-
-        $fieldset->addField(
-            'should_be_ulrs_secure',
-            'select',
-            [
-                'name'   => 'should_be_ulrs_secure',
-                'label'  => $this->__('Use Secure Image URLs in Item Description'),
-                'values' => [
-                    \Ess\M2ePro\Helper\Component\Ebay\Images::SHOULD_BE_URLS_SECURE_YES => $this->__('Yes'),
-                    \Ess\M2ePro\Helper\Component\Ebay\Images::SHOULD_BE_URLS_SECURE_NO  => $this->__('No'),
-                ],
-                'value' => $shouldBeUlrsSecure,
-                'tooltip' => $this->__('
-                    Set <strong>Yes</strong> to use the secure content in eBay Item Description.
                 ')
             ]
         );
@@ -151,16 +67,16 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
         );
 
         $fieldset->addField(
-            'check_the_same_product_already_listed_mode',
+            'prevent_item_duplicates_mode',
             'select',
             [
-                'name'        => 'check_the_same_product_already_listed_mode',
+                'name'        => 'prevent_item_duplicates_mode',
                 'label'       => $this->__('Prevent eBay Item Duplicates'),
                 'values' => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
-                'value' => $checkTheSameProductAlreadyListedMode,
+                'value' => $this->getHelper('Component_Ebay_Configuration')->getPreventItemDuplicatesMode(),
                 'tooltip' => $this->__(
                     '<p>Choose \'Yes\' to prevent M2E Pro from adding a Product
                      if it has already been presented in the Listing</p>
@@ -173,18 +89,18 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
             ]
         );
 
-        if ($this->getHelper('View\Ebay')->isFeedbacksShouldBeShown()) {
+        if ($this->getHelper('View_Ebay')->isFeedbacksShouldBeShown()) {
             $fieldset->addField(
-                'view_ebay_feedbacks_notification_mode',
+                'feedback_notification_mode',
                 'select',
                 [
-                    'name' => 'view_ebay_feedbacks_notification_mode',
+                    'name' => 'feedback_notification_mode',
                     'label' => $this->__('Negative Feedback'),
                     'values' => [
                         0 => $this->__('No'),
                         1 => $this->__('Yes')
                     ],
-                    'value' => $viewEbayFeedbacksNotificationMode,
+                    'value' => $this->getHelper('Component_Ebay_Configuration')->getFeedbackNotificationMode(),
                     'tooltip' => $this->__('Show a notification in Magento when you receive negative Feedback on eBay.')
                 ]
             );

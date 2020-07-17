@@ -17,14 +17,7 @@ class CreateLicense extends InstallationEbay
 {
     public function execute()
     {
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            '/wizard/license_form_data/',
-            'key',
-            false
-        );
-
-        if ($registry !== null) {
+        if (!empty($this->getHelper('Module')->getRegistry()->getValueFromJson('/wizard/license_form_data/'))) {
             $this->setJsonContent([
                 'status' => true
             ]);
@@ -97,10 +90,7 @@ class CreateLicense extends InstallationEbay
             return $this->getResult();
         }
 
-        $registry = $this->activeRecordFactory->getObject('Registry');
-        $registry->setData('key', '/wizard/license_form_data/');
-        $registry->setData('value', $this->getHelper('Data')->jsonEncode($licenseData));
-        $registry->save();
+        $this->getHelper('Module')->getRegistry()->setValue('/wizard/license_form_data/', $licenseData);
 
         $this->setJsonContent(['status' => $licenseResult]);
         return $this->getResult();

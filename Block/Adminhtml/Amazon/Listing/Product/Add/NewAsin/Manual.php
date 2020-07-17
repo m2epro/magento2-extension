@@ -41,17 +41,16 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
         $this->addButton('back', [
             'label'     => $this->__('Back'),
-            'onclick'   => 'ListingGridHandlerObj.stepNewAsinBack()',
+            'onclick'   => 'ListingGridObj.stepNewAsinBack()',
             'class'     => 'back'
         ]);
         // ---------------------------------------
 
         $url = $this->getUrl('*/*/index', ['_current' => true, 'step' => 5]);
         // ---------------------------------------
-        $this->addButton('save_and_go_to_listing_view', [
-            'id'      => 'amazon_listing_category_continue_btn',
+        $this->addButton('add_products_new_asin_manual_continue', [
             'label'   => $this->__('Continue'),
-            'onclick' => 'ListingGridHandlerObj.checkManualProducts(\''.$url.'\')',
+            'onclick' => 'ListingGridObj.checkManualProducts(\''.$url.'\')',
             'class'   => 'action-primary forward'
         ]);
         // ---------------------------------------
@@ -105,7 +104,7 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             <<<JS
     selectTemplateDescription = function (el, templateId, mapToGeneralId)
     {
-        ListingGridHandlerObj.mapToTemplateDescription(el, templateId, mapToGeneralId);
+        ListingGridObj.mapToTemplateDescription(el, templateId, mapToGeneralId);
     };
 
     require([
@@ -113,12 +112,12 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     ],function() {
         Common.prototype.scrollPageToTop = function() { return; }
 
-        window.ListingGridHandlerObj = new AmazonListingProductAddNewAsinTemplateDescriptionGrid(
+        window.ListingGridObj = new AmazonListingProductAddNewAsinTemplateDescriptionGrid(
             '{$this->getChildBlock('grid')->getId()}',
             {$this->getRequest()->getParam('id')}
         );
 
-        ListingGridHandlerObj.afterInitPage();
+        ListingGridObj.afterInitPage();
     });
 JS
         );

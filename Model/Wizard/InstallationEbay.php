@@ -39,7 +39,7 @@ class InstallationEbay extends Wizard
     /**
      * @return bool
      */
-    public function isActive()
+    public function isActive($view)
     {
         return $this->getHelper('Component\Ebay')->isEnabled();
     }

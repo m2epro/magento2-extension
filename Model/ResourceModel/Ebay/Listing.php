@@ -206,27 +206,6 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     //########################################
 
-    public function getTemplateCategoryIds($listingId)
-    {
-        $lpTable  = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
-        $elpTable = $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable();
-
-        $select = $this->getConnection()
-            ->select()
-            ->from(['elp' => $elpTable])
-            ->joinLeft(['lp' => $lpTable], 'lp.id = elp.listing_product_id')
-            ->reset(\Zend_Db_Select::COLUMNS)
-            ->columns(['template_category_id'])
-            ->where('lp.listing_id = ?', $listingId)
-            ->where('template_category_id IS NOT NULL');
-
-        $ids = $select->query()->fetchAll(\PDO::FETCH_COLUMN);
-
-        return array_unique($ids);
-    }
-
-    //########################################
-
     public function getUsedProductsIds($listingId)
     {
         $collection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();

@@ -63,61 +63,7 @@ class Order extends AbstractForm
         $formData['magento_orders_settings'] = !empty($formData['magento_orders_settings'])
             ? $this->getHelper('Data')->jsonDecode($formData['magento_orders_settings']) : [];
 
-        $defaults = [
-            'magento_orders_settings' => [
-                'listing' => [
-                    'mode' => 1,
-                    'store_mode' => Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
-                    'store_id' => null
-                ],
-                'listing_other' => [
-                    'mode' => 1,
-                    'product_mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
-                    'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
-                    'store_id' => $this->getHelper('Magento\Store')->getDefaultStoreId(),
-                ],
-                'number' => [
-                    'source' => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
-                    'prefix' => [
-                        'prefix' => '',
-                    ],
-                ],
-                'customer' => [
-                    'mode' => Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,
-                    'id' => null,
-                    'website_id' => null,
-                    'group_id' => null,
-//                'subscription_mode' => 0,
-                    'notifications' => [
-//                    'customer_created' => false,
-                        'invoice_created' => false,
-                        'order_created' => false
-                    ]
-                ],
-                'creation' => [
-                    'mode' => Account::MAGENTO_ORDERS_CREATE_CHECKOUT_AND_PAID,
-                ],
-                'tax' => [
-                    'mode' => Account::MAGENTO_ORDERS_TAX_MODE_MIXED
-                ],
-                'in_store_pickup_statuses' => [
-                    'mode' => 0,
-                    'ready_for_pickup' => '',
-                    'picked_up' => '',
-                ],
-                'status_mapping' => [
-                    'mode' => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
-                    'new' => Account::MAGENTO_ORDERS_STATUS_MAPPING_NEW,
-                    'paid' => Account::MAGENTO_ORDERS_STATUS_MAPPING_PAID,
-                    'shipped' => Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED
-                ],
-                'qty_reservation' => [
-                    'days' => 1
-                ],
-                'invoice_mode' => 1,
-                'shipment_mode' => 1
-            ]
-        ];
+        $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
 
         $formData = array_replace_recursive($defaults, $formData);
 
@@ -521,7 +467,7 @@ HTML
                 'values' => $values,
                 'value' => $formData['magento_orders_settings']['qty_reservation']['days'],
                 'tooltip' => $this->__(
-                    'Choose for how long M2E Pro should reserve Magento Product quantity per eBay Order until 
+                    'Choose for how long M2E Pro should reserve Magento Product quantity per eBay Order until
                     Magento Order is created.'
                 )
             ]

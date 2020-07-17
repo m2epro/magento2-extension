@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode;
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\GlobalMode
  */
-class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\GlobalMode
+class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\AbstractGlobalMode
 {
     public $showCreateNewAsin = 0;
 

@@ -328,9 +328,8 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
             return $this->isNeedToReturnFirstOptionValues;
         }
 
-        $configGroup = '/order/magento/settings/';
-        $configKey   = 'create_with_first_product_options_when_variation_unavailable';
-        $configValue = (bool)$this->getHelper('Module')->getConfig()->getGroupValue($configGroup, $configKey);
+        $configValue = (bool)$this->getHelper('Module_Configuration')
+            ->getCreateWithFirstProductOptionsWhenVariationUnavailable();
 
         return $this->isNeedToReturnFirstOptionValues = $configValue;
     }

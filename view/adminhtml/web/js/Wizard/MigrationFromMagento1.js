@@ -47,7 +47,7 @@ define(function () {
             MarketplaceSynchProgressObj.runTask(
                 title,
                 url,
-                component,
+                M2ePro.url.get(component + '_marketplace/synchGetExecutingInfo'),
                 'MigrationFromMagento1Obj.synchronizationStep()'
             );
         }

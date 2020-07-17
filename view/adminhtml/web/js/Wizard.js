@@ -47,7 +47,7 @@ define([
                 parameters: {
                     status: status
                 },
-                asynchronous: true,
+                asynchronous: false,
                 onSuccess: (function(transport) {
 
                     var response = transport.responseText.evalJSON();
@@ -141,7 +141,7 @@ define([
                     var response = transport.responseText.evalJSON();
 
                     if (!response.status) {
-                        MessageObj.addErrorMessage(response.message);
+                        MessageObj.addError(response.message);
                         return CommonObj.scrollPageToTop();
                     }
 

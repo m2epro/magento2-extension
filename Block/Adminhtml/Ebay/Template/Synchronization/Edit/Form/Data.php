@@ -49,9 +49,6 @@ class Data extends AbstractBlock
             'Wrong value.' => $this->__('Wrong value.'),
             'Must be greater than "Active From" Date.' => $this->__('Must be greater than "Active From" Date.'),
             'Must be greater than "From Time".' => $this->__('Must be greater than "From Time".'),
-
-            'Quantity' => $this->__('Quantity'),
-            'Min Quantity' => $this->__('Min Quantity'),
         ]);
 
         $this->css->add(<<<CSS

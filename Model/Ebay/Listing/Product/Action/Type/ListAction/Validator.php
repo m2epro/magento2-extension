@@ -17,20 +17,17 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
 
     protected $activeRecordFactory;
     protected $ebayFactory;
-    protected $moduleConfig;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;
-        $this->moduleConfig = $moduleConfig;
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -94,12 +91,7 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
             return true;
         }
 
-        $config = $this->moduleConfig->getGroupValue(
-            '/ebay/connector/listing/',
-            'check_the_same_product_already_listed'
-        );
-
-        if (empty($config)) {
+        if (!$this->getHelper('Component_Ebay_Configuration')->isEnablePreventItemDuplicatesMode()) {
             return true;
         }
 
@@ -132,7 +124,7 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
 
         $this->addMessage($this->getHelper('Module\Log')->encodeDescription(
             'There is another Item with the same eBay User ID, ' .
-            'Product ID and eBay Site presented in "%listing_title%" (%listing_id%) Listing.',
+            'Product ID and Marketplace presented in "%listing_title%" (%listing_id%) Listing.',
             [
                 '!listing_title' => $theSameListingProduct->getListing()->getTitle(),
                 '!listing_id' => $theSameListingProduct->getListing()->getId()

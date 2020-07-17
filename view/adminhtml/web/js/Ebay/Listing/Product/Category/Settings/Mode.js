@@ -3,9 +3,7 @@ define([
     'Magento_Ui/js/modal/modal'
 ], function (jQuery, modal) {
 
-    window.EbayListingProductCategorySettingsMode = Class.create();
-    EbayListingProductCategorySettingsMode.prototype = {
-
+    window.EbayListingProductCategorySettingsMode = Class.create({
         // ---------------------------------------
 
         initialize: function (lastModeValue) {
@@ -61,5 +59,5 @@ define([
         },
 
         // ---------------------------------------
-    };
+    });
 });

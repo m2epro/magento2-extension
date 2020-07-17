@@ -161,8 +161,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_LISTING,
             'Product was successfully Deleted',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
 
         $this->listingModel = null;

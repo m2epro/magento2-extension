@@ -24,9 +24,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected $checkNewAsinAccepted = false;
     protected $productsIds;
-    protected $mapToTemplateJsFn = 'ListingGridHandlerObj.templateDescriptionHandler.mapToTemplateDescription';
+    protected $mapToTemplateJsFn = 'ListingGridObj.templateDescriptionHandler.mapToTemplateDescription';
     protected $createNewTemplateJsFn =
-        'ListingGridHandlerObj.templateDescriptionHandler.createTemplateDescriptionInNewTab';
+        'ListingGridObj.templateDescriptionHandler.createTemplateDescriptionInNewTab';
 
     protected $resourceConnection;
 

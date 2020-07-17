@@ -13,11 +13,9 @@ namespace Ess\M2ePro\Block\Adminhtml;
  */
 class General extends Magento\AbstractBlock
 {
-    //########################################
-
     protected $_template = 'general.phtml';
 
-    protected $cacheConfig;
+    //########################################
 
     protected function _prepareLayout()
     {
@@ -34,9 +32,8 @@ class General extends Magento\AbstractBlock
         $this->css->addFile('grid.css');
 
         $currentView = $this->getHelper('View')->getCurrentView();
-
         if (!empty($currentView)) {
-            $this->css->addFile($currentView.'/style.css');
+            $this->css->addFile($currentView . '/style.css');
         }
 
         return parent::_prepareLayout();
@@ -53,12 +50,7 @@ class General extends Magento\AbstractBlock
             'general/getCreateAttributeHtmlPopup' => $this->getUrl('*/general/getCreateAttributeHtmlPopup')
         ]);
 
-        $this->block_notices_show = $this->getHelper('Module')
-            ->getConfig()
-            ->getGroupValue('/view/', 'show_block_notices');
-        $this->block_notices_disable_collapse = $this->getHelper('Data')->jsonEncode(
-            (bool)$this->getHelper('Module')->getConfig()->getGroupValue('/view/ebay/notice/', 'disable_collapse')
-        );
+        $this->block_notices_show = $this->getHelper('Module_Configuration')->getViewShowBlockNoticesMode();
 
         $synchWarningMessage = 'Marketplace synchronization was completed with warnings. '
             . '<a target="_blank" href="%url%">View Log</a> for the details.';
@@ -134,7 +126,9 @@ class General extends Magento\AbstractBlock
                 $this->__('Marketplace synchronization was completed successfully.'),
             $synchWarningMessage => $this->__($synchWarningMessage),
             $synchErrorMessage => $this->__($synchErrorMessage),
-            'Unauthorized! Please login again' => $this->__('Unauthorized! Please login again')
+            'Unauthorized! Please login again' => $this->__('Unauthorized! Please login again'),
+
+            'Reset 3rd Party Listings' => $this->__('Reset 3rd Party Listings')
         ]);
 
         return parent::_beforeToHtml();

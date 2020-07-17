@@ -31,24 +31,11 @@ class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
 
     const REQUEST_TIMEOUT = 300;
 
-    protected $moduleConfig;
-
-    //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context,
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig
-    ) {
-        parent::__construct($helperFactory, $context);
-        $this->moduleConfig = $moduleConfig;
-    }
-
     //########################################
 
     public function isEnabled()
     {
-        return (bool)$this->moduleConfig->getGroupValue('/amazon/repricing/', 'mode');
+        return (bool)$this->getHelper('Module')->getConfig()->getGroupValue('/amazon/repricing/', 'mode');
     }
 
     //########################################
@@ -84,9 +71,10 @@ class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
 
         if ($response === false) {
             throw new Connection(
-                'The Action was not completed because connection with M2E Pro Repricing Service was not set.
-                 There are several possible reasons: temporary connection problem – please wait and try again later;
-                 block of outgoing connection by firewall',
+                $this->helperFactory->getObject('Module_Translation')->__(
+                    'M2E Pro Server connection failed. Find the solution <a target="_blank" href="%url%">here</a>',
+                    $this->helperFactory->getObject('Module_Support')->getKnowledgebaseArticleUrl('664870')
+                ),
                 [
                     'curl_error_number' => $errorNumber,
                     'curl_info'         => $curlInfo
@@ -114,7 +102,7 @@ class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getBaseUrl()
     {
-        $baseUrl = $this->moduleConfig->getGroupValue('/amazon/repricing/', 'base_url');
+        $baseUrl = $this->getHelper('Module')->getConfig()->getGroupValue('/amazon/repricing/', 'base_url');
         return rtrim($baseUrl, '/') . '/';
     }
 

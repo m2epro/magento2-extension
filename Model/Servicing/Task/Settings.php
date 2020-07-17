@@ -13,6 +13,33 @@ namespace Ess\M2ePro\Model\Servicing\Task;
  */
 class Settings extends \Ess\M2ePro\Model\Servicing\Task
 {
+    protected $registry;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry $registry,
+        \Magento\Eav\Model\Config $config,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\App\ResourceConnection $resource,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
+    ) {
+        $this->registry = $registry;
+
+        parent::__construct(
+            $config,
+            $storeManager,
+            $modelFactory,
+            $helperFactory,
+            $resource,
+            $activeRecordFactory,
+            $parentFactory
+        );
+    }
+
     //########################################
 
     /**
@@ -32,10 +59,12 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
     {
         $requestData = [];
 
-        $tempValue = $this->cacheConfig->getGroupValue('/server/location/', 'default_index_given_by_server_at');
+        $tempValue = $this->getHelper('Module')->getRegistry()->getValue(
+            '/server/location/default_index_given_by_server_at/'
+        );
         if ($tempValue) {
-            $primaryConfig = $this->getHelper('Primary')->getConfig();
-            $requestData['current_default_server_baseurl_index'] = $primaryConfig->getGroupValue(
+            $config = $this->getHelper('Module')->getConfig();
+            $requestData['current_default_server_baseurl_index'] = $config->getGroupValue(
                 '/server/location/',
                 'default_index'
             );
@@ -48,9 +77,9 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
     {
         $this->updateServersBaseUrls($data);
         $this->updateDefaultServerBaseUrlIndex($data);
-        $this->updateCronHosts($data);
         $this->updateLastVersion($data);
         $this->updateSendLogs($data);
+        $this->updateAnalytics($data);
     }
 
     //########################################
@@ -64,7 +93,7 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
         $index = 1;
         $configUpdates = [];
 
-        $config = $this->getHelper('Primary')->getConfig();
+        $config = $this->getHelper('Module')->getConfig();
 
         foreach ($data['servers_baseurls'] as $newHostName => $newBaseUrl) {
             $oldHostName = $config->getGroupValue('/server/location/'.$index.'/', 'hostname');
@@ -132,47 +161,16 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
             return;
         }
 
-        $this->getHelper('Primary')->getConfig()->setGroupValue(
+        $this->getHelper('Module')->getConfig()->setGroupValue(
             '/server/location/',
             'default_index',
             (int)$data['default_server_baseurl_index']
         );
 
-        $this->cacheConfig->setGroupValue(
-            '/server/location/',
-            'default_index_given_by_server_at',
+        $this->getHelper('Module')->getRegistry()->setValue(
+            '/server/location/default_index_given_by_server_at/',
             $this->getHelper('Data')->getCurrentGmtDate()
         );
-    }
-
-    private function updateCronHosts(array $data)
-    {
-        if (!isset($data['cron_domains'])) {
-            return;
-        }
-
-        $index = 1;
-        $config = $this->getHelper('Module')->getConfig();
-
-        foreach ($data['cron_domains'] as $newCronHost) {
-            $oldGroupValue = $config->getGroupValue('/cron/service/', 'hostname_'.$index);
-
-            if ($oldGroupValue != $newCronHost) {
-                $config->setGroupValue('/cron/service/', 'hostname_'.$index, $newCronHost);
-            }
-
-            $index++;
-        }
-
-        for ($i = $index; $i < 100; $i++) {
-            $oldGroupValue = $config->getGroupValue('/cron/service/', 'hostname_'.$i);
-
-            if ($oldGroupValue === null) {
-                break;
-            }
-
-            $config->deleteGroupValue('/server/', 'hostname_'.$i);
-        }
     }
 
     private function updateLastVersion(array $data)
@@ -181,14 +179,12 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
             return;
         }
 
-        $this->cacheConfig->setGroupValue(
-            '/installation/',
-            'public_last_version',
+        $this->getHelper('Module')->getRegistry()->setValue(
+            '/installation/public_last_version/',
             $data['last_version']['magento_2']['public']
         );
-        $this->cacheConfig->setGroupValue(
-            '/installation/',
-            'build_last_version',
+        $this->getHelper('Module')->getRegistry()->setValue(
+            '/installation/build_last_version/',
             $data['last_version']['magento_2']['build']
         );
     }
@@ -200,10 +196,22 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/debug/logging/',
-            'send_to_server',
+            '/server/logging/',
+            'send',
             (int)$data['send_logs']
         );
+    }
+
+    private function updateAnalytics(array $data)
+    {
+        if (empty($data['analytics'])) {
+            return;
+        }
+
+        if (isset($data['analytics']['planned_at']) &&
+            $data['analytics']['planned_at'] !== $this->registry->getPlannedAt()) {
+            $this->registry->markPlannedAt($data['analytics']['planned_at']);
+        }
     }
 
     //########################################

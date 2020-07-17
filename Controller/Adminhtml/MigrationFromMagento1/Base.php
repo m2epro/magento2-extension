@@ -32,13 +32,19 @@ abstract class Base extends Action
     /** @var \Magento\Framework\Controller\Result\Raw $rawResult  */
     protected $rawResult = null;
 
+    /** @var \Ess\M2ePro\Setup\MigrationFromMagento1\Runner */
+    protected $migrationRunner;
+
     //########################################
 
-    public function __construct(\Ess\M2ePro\Controller\Adminhtml\Context $context)
-    {
+    public function __construct(
+        \Ess\M2ePro\Controller\Adminhtml\Context $context,
+        \Ess\M2ePro\Setup\MigrationFromMagento1\Runner $migrationRunner
+    ) {
         $this->helperFactory = $context->getHelperFactory();
         $this->resultRawFactory = $context->getResultRawFactory();
         $this->resourceConnection = $context->getResourceConnection();
+        $this->migrationRunner = $migrationRunner;
 
         parent::__construct($context);
     }

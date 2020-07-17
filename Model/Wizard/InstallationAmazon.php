@@ -33,6 +33,14 @@ class InstallationAmazon extends Wizard
     //########################################
 
     /**
+     * @return bool
+     */
+    public function isActive($view)
+    {
+        return $this->getHelper('Component\Amazon')->isEnabled();
+    }
+
+    /**
      * @return string
      */
     public function getNick()

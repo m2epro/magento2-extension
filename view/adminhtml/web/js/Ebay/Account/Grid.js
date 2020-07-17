@@ -130,7 +130,7 @@ define([
                                     onSuccess: function(transport) {
                                         var response = transport.responseText.evalJSON();
 
-                                        self.messageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](response.text);
+                                        self.messageObj['add' + response.type[0].toUpperCase() + response.type.slice(1)](response.text);
 
                                         self.sendResponsePopup.modal('closeModal');
                                         window['ebayFeedbackGridJsObject'].reload();

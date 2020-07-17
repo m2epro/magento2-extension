@@ -15,17 +15,15 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
 {
     public function execute()
     {
-        // ---------------------------------------
-        $listingId = $this->getRequest()->getParam('id');
-        $autoMode  = $this->getRequest()->getParam('auto_mode');
-        $listing   = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId);
-
+        /** @var \Ess\M2ePro\Model\Listing $listing */
+        $listing = $this->ebayFactory->getCachedObjectLoaded(
+            'Listing',
+            $this->getRequest()->getParam('listing_id')
+        );
         $this->getHelper('Data\GlobalData')->setValue('listing', $listing);
-        // ---------------------------------------
 
-        if (empty($autoMode)) {
-            $autoMode = $listing->getAutoMode();
-        }
+        $autoMode = $this->getRequest()->getParam('auto_mode');
+        empty($autoMode) && $autoMode = $listing->getAutoMode();
 
         $autoModes = [
             \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL => 'Ebay_Listing_AutoAction_Mode_GlobalMode',

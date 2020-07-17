@@ -98,13 +98,10 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
      * @param string $message
-     * @param int $type
-     * @param int $priority
      */
     public function logListingProductMessage(
         \Ess\M2ePro\Model\Listing\Product $listingProduct,
-        \Ess\M2ePro\Model\Connector\Connection\Response\Message $message,
-        $priority = \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
+        \Ess\M2ePro\Model\Connector\Connection\Response\Message $message
     ) {
         $this->getListingLog()->addProductMessage(
             $listingProduct->getListingId(),
@@ -114,8 +111,7 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
             $this->actionId,
             $this->action,
             $message->getText(),
-            $this->initLogType($message),
-            $priority
+            $this->initLogType($message)
         );
     }
 

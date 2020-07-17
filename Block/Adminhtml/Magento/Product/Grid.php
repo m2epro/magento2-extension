@@ -131,41 +131,6 @@ CSS
 
     //########################################
 
-    public function callbackColumnProductId($value, $row, $column, $isExport)
-    {
-        $productId = (int)$value;
-        $storeId = $this->getStoreId();
-
-        $url = $this->getUrl('catalog/product/edit', ['id' => $productId, 'store' => $storeId]);
-        $htmlWithoutThumbnail = '<a href="' . $url . '" target="_blank">'.$productId.'</a>';
-
-        $showProductsThumbnails = (bool)(int)$this->getHelper('Module')->getConfig()
-            ->getGroupValue('/view/', 'show_products_thumbnails');
-
-        if (!$showProductsThumbnails) {
-            return $htmlWithoutThumbnail;
-        }
-
-        /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
-        $magentoProduct = $this->modelFactory->getObject('Magento\Product');
-        $magentoProduct->setProductId($productId);
-        $magentoProduct->setStoreId($storeId);
-
-        $thumbnail = $magentoProduct->getThumbnailImage();
-        if ($thumbnail === null) {
-            return $htmlWithoutThumbnail;
-        }
-
-        $thumbnailUrl = $thumbnail->getUrl();
-
-        return <<<HTML
-<a href="{$url}" target="_blank">
-    {$productId}
-    <div style="margin-top: 5px"><img style="max-width: 100px; max-height: 100px;" src="{$thumbnailUrl}" /></div>
-</a>
-HTML;
-    }
-
     public function callbackColumnProductTitle($value, $row, $column, $isExport)
     {
         return $this->getHelper('Data')->escapeHtml($value);

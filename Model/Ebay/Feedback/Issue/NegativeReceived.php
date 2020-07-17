@@ -44,20 +44,15 @@ class NegativeReceived extends \Ess\M2ePro\Model\Issue\Locator\AbstractModel
             return [];
         }
 
-        /** @var \Ess\M2ePro\Model\Config\Manager\Module $config */
-        $config = $this->getHelper('Module')->getConfig();
-        if (!$config->getGroupValue('/view/ebay/feedbacks/notification/', 'mode')) {
+        $eBayConfigHelper = $this->getHelper('Component_Ebay_Configuration');
+        if (!$eBayConfigHelper->isEnableFeedbackNotificationMode()) {
             return [];
         }
 
-        $lastCheckDate = $config->getGroupValue('/view/ebay/feedbacks/notification/', 'last_check');
-
+        $lastCheckDate = $eBayConfigHelper->getFeedbackNotificationLastCheck();
         if ($lastCheckDate === null) {
-            $config->setGroupValue(
-                '/view/ebay/feedbacks/notification/',
-                'last_check',
-                $this->getHelper('Data')->getCurrentGmtDate()
-            );
+            $eBayConfigHelper->setFeedbackNotificationLastCheck($this->getHelper('Data')->getCurrentGmtDate());
+
             return [];
         }
 
@@ -77,11 +72,7 @@ class NegativeReceived extends \Ess\M2ePro\Model\Issue\Locator\AbstractModel
                 '_query' => ['hash' => $editHash]
             ]);
 
-            $config->setGroupValue(
-                '/view/ebay/feedbacks/notification/',
-                'last_check',
-                $this->getHelper('Data')->getCurrentGmtDate()
-            );
+            $eBayConfigHelper->setFeedbackNotificationLastCheck($this->getHelper('Data')->getCurrentGmtDate());
 
             return [
                 $this->modelFactory->getObject('Issue_DataObject', [

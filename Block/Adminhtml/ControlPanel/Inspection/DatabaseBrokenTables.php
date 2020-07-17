@@ -15,7 +15,6 @@ class DatabaseBrokenTables extends AbstractInspection
 {
     public $emptyTables        = [];
     public $notInstalledTables = [];
-    public $crashedTables      = [];
 
     //########################################
 
@@ -23,11 +22,7 @@ class DatabaseBrokenTables extends AbstractInspection
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('controlPanelInspectionDatabaseBrokenTables');
-        // ---------------------------------------
-
         $this->setTemplate('control_panel/inspection/databaseBrokenTables.phtml');
 
         $this->prepareTablesInfo();
@@ -38,8 +33,7 @@ class DatabaseBrokenTables extends AbstractInspection
     public function isShown()
     {
         return !empty($this->emptyTables) ||
-               !empty($this->notInstalledTables) ||
-               !empty($this->crashedTables);
+               !empty($this->notInstalledTables);
     }
 
     //########################################
@@ -48,7 +42,6 @@ class DatabaseBrokenTables extends AbstractInspection
     {
         $this->emptyTables        = $this->getEmptyTables();
         $this->notInstalledTables = $this->getNotInstalledTables();
-        $this->crashedTables      = $this->getCrashedTables();
     }
 
     //########################################
@@ -81,29 +74,12 @@ class DatabaseBrokenTables extends AbstractInspection
         return $notInstalledTables;
     }
 
-    private function getCrashedTables()
-    {
-        $helper = $this->getHelper('Module_Database_Structure');
-
-        $crashedTables = [];
-        foreach ($helper->getModuleTables() as $tableName) {
-            if (!$helper->isTableExists($tableName)) {
-                continue;
-            }
-
-            !$helper->isTableStatusOk($tableName) && $crashedTables[] = $tableName;
-        }
-
-        return $crashedTables;
-    }
-
     //########################################
 
     private function getGeneralTables()
     {
         return [
-            'm2epro_primary_config',
-            'm2epro_module_config',
+            'm2epro_config',
             'm2epro_wizard',
             'm2epro_marketplace',
             'm2epro_amazon_marketplace',

@@ -98,17 +98,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
                 ['progress_nick' => $this->getNick()]
             );
         } catch (\Exception $exception) {
-            $this->getOperationHistory()->addContentData(
-                'exceptions',
-                [
-                    'message' => $exception->getMessage(),
-                    'file'    => $exception->getFile(),
-                    'line'    => $exception->getLine(),
-                    'trace'   => $exception->getTraceAsString(),
-                ]
-            );
-
-            $this->getHelper('Module_Exception')->process($exception);
+            $this->processTaskException($exception);
         }
 
         $this->afterEnd();
@@ -228,16 +218,20 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     protected function initialize()
     {
         $this->getHelper('Module_Exception')->setFatalErrorHandler();
+        $this->activeRecordFactory->getObject('Synchronization_Log')->setFatalErrorHandler();
     }
 
     protected function updateLastAccess()
     {
-        $this->setCacheConfigValue('last_access', $this->getHelper('Data')->getCurrentGmtDate());
+        $this->setConfigValue('last_access', $this->getHelper('Data')->getCurrentGmtDate());
     }
 
     protected function updateLastRun()
     {
-        $this->setCacheConfigValue('last_run', $this->getHelper('Data')->getCurrentGmtDate());
+        $this->getHelper('Module')->getRegistry()->setValue(
+            $this->getConfigGroup() . 'last_run/',
+            $this->getHelper('Data')->getCurrentGmtDate()
+        );
     }
 
     // ---------------------------------------
@@ -291,7 +285,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function isIntervalExceeded()
     {
-        $lastRun = $this->getCacheConfigValue('last_run');
+        $lastRun = $this->getHelper('Module')->getRegistry()->getValue($this->getConfigGroup() . 'last_run/');
 
         if ($lastRun === null) {
             return true;
@@ -335,11 +329,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             ]
         );
 
-        $this->getSynchronizationLog()->addMessage(
-            $this->getHelper('Module\Translation')->__($exception->getMessage()),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
-        );
+        $this->getSynchronizationLog()->addMessageFromException($exception);
 
         $this->getHelper('Module_Exception')->process($exception);
     }
@@ -358,44 +348,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
         $this->getSynchronizationLog()->addMessage(
             $message,
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
         );
-    }
-
-    //########################################
-
-    protected function setRegistryValue($key, $value)
-    {
-        $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', $key, 'key', false);
-
-        if ($registryModel === null) {
-            $registryModel = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $registryModel->setData('key', $key);
-        $registryModel->setData('value', $value);
-        $registryModel->save();
-    }
-
-    protected function deleteRegistryValue($key)
-    {
-        $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', $key, 'key', false);
-
-        if ($registryModel !== null && $registryModel->getId()) {
-            $registryModel->delete();
-        }
-    }
-
-    protected function getRegistryValue($key)
-    {
-        $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', $key, 'key', false);
-
-        if ($registryModel === null) {
-            $registryModel = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        return $registryModel->getValue();
     }
 
     //########################################
@@ -403,11 +357,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     protected function getConfig()
     {
         return $this->getHelper('Module')->getConfig();
-    }
-
-    protected function getCacheConfig()
-    {
-        return $this->getHelper('Module')->getCacheConfig();
     }
 
     protected function getConfigGroup()
@@ -425,18 +374,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     protected function getConfigValue($key)
     {
         return $this->getConfig()->getGroupValue($this->getConfigGroup(), $key);
-    }
-
-    // ---------------------------------------
-
-    protected function setCacheConfigValue($key, $value)
-    {
-        return $this->getCacheConfig()->setGroupValue($this->getConfigGroup(), $key, $value);
-    }
-
-    protected function getCacheConfigValue($key)
-    {
-        return $this->getCacheConfig()->getGroupValue($this->getConfigGroup(), $key);
     }
 
     //########################################

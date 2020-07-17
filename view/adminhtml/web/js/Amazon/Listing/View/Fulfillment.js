@@ -38,7 +38,7 @@ define([
 
                     MessageObj.clear();
                     response.messages.each(function (msg) {
-                        MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1) + 'Message'](msg.text);
+                        MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1)](msg.text);
                     });
                 }
             });
@@ -67,7 +67,7 @@ define([
 
                     MessageObj.clear();
                     response.messages.each(function (msg) {
-                        MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1) + 'Message'](msg.text);
+                        MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1)](msg.text);
                     });
                 }
             });

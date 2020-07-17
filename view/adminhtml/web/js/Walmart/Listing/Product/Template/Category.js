@@ -43,7 +43,7 @@ define([
                                 if (response.messages.length > 0) {
                                     MessageObj.clear();
                                         response.messages.each(function (msg) {
-                                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](msg);
+                                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1)](msg);
                                     });
                                 }
                             }
@@ -81,7 +81,7 @@ define([
                     if (response.messages.length > 0) {
                         MessageObj.clear();
                         response.messages.each(function (msg) {
-                            MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1) + 'Message'](msg.text);
+                            MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1)](msg.text);
                         });
                     }
 
@@ -126,7 +126,7 @@ define([
                     }
                 }, {
                     text: M2ePro.translator.translate('Add New Category Policy'),
-                    class: 'action primary ',
+                    class: 'action primary add_new_category_policy',
                     click: function () {
                         self.createTemplateCategoryInNewTab(M2ePro.url.get('newTemplateCategoryUrl'));
                     }

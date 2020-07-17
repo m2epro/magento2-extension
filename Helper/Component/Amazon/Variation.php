@@ -258,14 +258,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
             return $cacheData;
         }
 
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded('Registry', self::DATA_REGISTRY_KEY, 'key', false);
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $data = $registry->getSettings('value');
+        $data = $this->getHelper('Module')->getRegistry()->getValueFromJson(self::DATA_REGISTRY_KEY);
 
         $this->setThemeUsageDataCache($data);
 
@@ -274,14 +267,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function increaseThemeUsageCount($theme, $marketplaceId)
     {
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded('Registry', self::DATA_REGISTRY_KEY, 'key', false);
-
-        if ($registry === null) {
-            $registry = $this->activeRecordFactory->getObject('Registry');
-        }
-
-        $data = $registry->getSettings('value');
+        $data = $this->getHelper('Module')->getRegistry()->getValueFromJson(self::DATA_REGISTRY_KEY);
 
         if (empty($data[$marketplaceId][$theme])) {
             $data[$marketplaceId][$theme] = 0;
@@ -290,8 +276,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
         arsort($data[$marketplaceId]);
 
-        $registry->setData('key', self::DATA_REGISTRY_KEY);
-        $registry->setSettings('value', $data)->save();
+        $this->getHelper('Module')->getRegistry()->setValue(self::DATA_REGISTRY_KEY, $data);
 
         $this->removeThemeUsageDataCache();
     }

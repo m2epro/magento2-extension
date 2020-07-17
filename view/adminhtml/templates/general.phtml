@@ -28,7 +28,6 @@
 
     <?php else : ?>
     var BLOCK_NOTICES_SHOW = <?php echo $block->block_notices_show ? 'true' : 'false'; ?>;
-    var BLOCK_NOTICES_DISABLE_COLLAPSE = <?php echo $block->block_notices_disable_collapse; ?>;
 
     var IS_VIEW_EBAY = <?php echo json_encode($block->getHelper('View')->isCurrentViewEbay()); ?>;
     var IS_VIEW_AMAZON = <?php echo json_encode($block->getHelper('View')->isCurrentViewAmazon()); ?>;

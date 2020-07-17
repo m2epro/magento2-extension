@@ -132,7 +132,7 @@ class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         ];
 
         $modePrefix = $this->getOrder()->getAccount()->getChildObject()->isModeSandbox() ? 'sandbox.' : '';
-        $baseUrl = $this->getHelper('Module')->getConfig()->getGroupValue('/other/paypal/', 'url');
+        $baseUrl = $this->getHelper('Module_Configuration')->getOtherPayPalUrl();
 
         return 'https://www.' . $modePrefix . $baseUrl . '?' . http_build_query($params, '', '&');
     }

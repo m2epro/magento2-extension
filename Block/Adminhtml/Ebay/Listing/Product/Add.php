@@ -80,7 +80,7 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $this->jsTranslator->addTranslations([
             'Remove Category' => $this->__('Remove Category'),
-            'Add New Group' => $this->__('Add New Group'),
+            'Add New Rule' => $this->__('Add New Rule'),
             'Add/Edit Categories Rule' => $this->__('Add/Edit Categories Rule'),
             'Start Configure' => $this->__('Start Configure')
         ]);

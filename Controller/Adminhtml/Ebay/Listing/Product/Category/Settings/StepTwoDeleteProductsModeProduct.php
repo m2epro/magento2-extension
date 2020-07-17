@@ -36,16 +36,14 @@ class StepTwoDeleteProductsModeProduct extends Settings
             $listingProduct->delete();
         }
 
-        $listing = $this->getListing();
-
-        $listingProductAddIds = $listing->getChildObject()->getAddedListingProductsIds();
+        $listingProductAddIds = $this->getEbayListingFromRequest()->getAddedListingProductsIds();
         if (empty($listingProductAddIds)) {
             return $this->getResult();
         }
         $listingProductAddIds = array_map('intval', $listingProductAddIds);
         $listingProductAddIds = array_diff($listingProductAddIds, $ids);
 
-        $listing->getChildObject()->setData(
+        $this->getEbayListingFromRequest()->setData(
             'product_add_ids',
             $this->getHelper('Data')->jsonEncode($listingProductAddIds)
         )->save();

@@ -9,7 +9,6 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
-use Ess\M2ePro\Helper\Component\Amazon;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat\Save
@@ -42,120 +41,6 @@ class Save extends Template
 
         $id = $this->getRequest()->getParam('id');
 
-        // Base prepare
-        // ---------------------------------------
-        $data = [];
-
-        $keys = [
-            'title',
-
-            'is_regular_customer_allowed',
-            'is_business_customer_allowed',
-
-            'qty_mode',
-            'qty_custom_value',
-            'qty_custom_attribute',
-            'qty_percentage',
-            'qty_modification_mode',
-            'qty_min_posted_value',
-            'qty_max_posted_value',
-
-            'regular_price_mode',
-            'regular_price_coefficient',
-            'regular_price_custom_attribute',
-
-            'regular_map_price_mode',
-            'regular_map_price_custom_attribute',
-
-            'regular_sale_price_mode',
-            'regular_sale_price_coefficient',
-            'regular_sale_price_custom_attribute',
-
-            'regular_price_variation_mode',
-
-            'regular_sale_price_start_date_mode',
-            'regular_sale_price_end_date_mode',
-
-            'regular_sale_price_start_date_value',
-            'regular_sale_price_end_date_value',
-
-            'regular_sale_price_start_date_custom_attribute',
-            'regular_sale_price_end_date_custom_attribute',
-
-            'regular_price_vat_percent',
-
-            'business_price_mode',
-            'business_price_coefficient',
-            'business_price_custom_attribute',
-
-            'business_price_variation_mode',
-
-            'business_price_vat_percent',
-
-            'business_discounts_mode',
-            'business_discounts_tier_coefficient',
-            'business_discounts_tier_customer_group_id',
-        ];
-
-        foreach ($keys as $key) {
-            if (isset($post[$key])) {
-                $data[$key] = $post[$key];
-            }
-        }
-
-        if ($data['regular_sale_price_start_date_value'] === '') {
-            $data['regular_sale_price_start_date_value'] = $this->getHelper('Data')->getCurrentGmtDate(
-                false,
-                'Y-m-d 00:00:00'
-            );
-        } else {
-            // UTC Date are shown on interface
-            $timestamp = $this->getHelper('Data')->parseTimestampFromLocalizedFormat(
-                $data['regular_sale_price_start_date_value'],
-                \IntlDateFormatter::SHORT,
-                \IntlDateFormatter::NONE,
-                $this->getHelper('Data')->getDefaultTimezone()
-            );
-            $data['regular_sale_price_start_date_value'] = $this->getHelper('Data')->getDate(
-                $timestamp,
-                false,
-                'Y-m-d 00:00:00'
-            );
-        }
-        if ($data['regular_sale_price_end_date_value'] === '') {
-            $data['regular_sale_price_end_date_value'] = $this->getHelper('Data')->getCurrentGmtDate(
-                false,
-                'Y-m-d 00:00:00'
-            );
-        } else {
-            // UTC Date are shown on interface
-            $timestamp = $this->getHelper('Data')->parseTimestampFromLocalizedFormat(
-                $data['regular_sale_price_end_date_value'],
-                \IntlDateFormatter::SHORT,
-                \IntlDateFormatter::NONE,
-                $this->getHelper('Data')->getDefaultTimezone()
-            );
-            $data['regular_sale_price_end_date_value'] = $this->getHelper('Data')->getDate(
-                $timestamp,
-                false,
-                'Y-m-d 00:00:00'
-            );
-        }
-
-        if (empty($data['is_business_customer_allowed'])) {
-            unset($data['business_price_mode']);
-            unset($data['business_price_coefficient']);
-            unset($data['business_price_custom_attribute']);
-            unset($data['business_price_variation_mode']);
-            unset($data['business_price_vat_percent']);
-            unset($data['business_discounts_mode']);
-            unset($data['business_discounts_tier_coefficient']);
-            unset($data['business_discounts_tier_customer_group_id']);
-        }
-
-        $data['title'] = strip_tags($data['title']);
-        // ---------------------------------------
-
         // Add or update model
         // ---------------------------------------
         $model = $this->amazonFactory->getObject('Template\SellingFormat');
@@ -170,14 +55,9 @@ class Save extends Template
             $oldData = $snapshotBuilder->getSnapshot();
         }
 
-        $model->addData($data)->save();
-        $model->getChildObject()->addData(array_merge(
-            [$model->getResource()->getChildPrimary(Amazon::NICK) => $model->getId()],
-            $data
-        ));
-        $model->save();
+        $this->modelFactory->getObject('Amazon_Template_SellingFormat_Builder')->build($model, $post->toArray());
 
-        if ($this->getHelper('Component_Amazon_Business')->isEnabled()) {
+        if ($this->getHelper('Component_Amazon_Configuration')->isEnabledBusinessMode()) {
             $this->saveDiscounts($model->getId(), $post);
         }
 

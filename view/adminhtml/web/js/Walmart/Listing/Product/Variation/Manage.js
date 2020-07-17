@@ -1386,7 +1386,7 @@ define([
             jQuery('#walmartVariationProductManageTabs').tabs('option', 'active', 0);
             ListingProductVariationManageVariationsGridObj.showNewChildForm(
                 createNewAsin,
-                ListingGridHandlerObj.variationProductManageHandler.variationProductManagePopup.productId
+                ListingGridObj.variationProductManageHandler.variationProductManagePopup.productId
             );
         },
 

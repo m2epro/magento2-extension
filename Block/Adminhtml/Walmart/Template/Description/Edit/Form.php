@@ -36,7 +36,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
         $allAttributes          = $magentoAttributeHelper->getAll();
-        
+
         $this->allAttributesByInputTypes = [
             'text_select' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'select']),
             'text' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text']),
@@ -1132,76 +1132,7 @@ JS
 
     public function getFormData()
     {
-        $default = [
-            'id'             => '',
-            'title'          => '',
-
-            'title_mode'     => Description::TITLE_MODE_PRODUCT,
-            'title_template' => '',
-
-            'brand_mode'             => Description::BRAND_MODE_CUSTOM_VALUE,
-            'brand_custom_value'     => '',
-            'brand_custom_attribute' => '',
-
-            'manufacturer_mode'             => Description::MANUFACTURER_MODE_NONE,
-            'manufacturer_custom_value'     => '',
-            'manufacturer_custom_attribute' => '',
-
-            'manufacturer_part_number_mode'             => Description::MANUFACTURER_PART_NUMBER_MODE_NONE,
-            'manufacturer_part_number_custom_value'     => '',
-            'manufacturer_part_number_custom_attribute' => '',
-
-            // ---
-
-            'model_number_mode'             => Description::MODEL_NUMBER_MODE_NONE,
-            'model_number_custom_value'     => '',
-            'model_number_custom_attribute' => '',
-
-            'total_count_mode'             => Description::TOTAL_COUNT_MODE_NONE,
-            'total_count_custom_value'     => '',
-            'total_count_custom_attribute' => '',
-
-            'count_per_pack_mode'             => Description::COUNT_PER_PACK_MODE_NONE,
-            'count_per_pack_custom_value'     => '',
-            'count_per_pack_custom_attribute' => '',
-
-            'multipack_quantity_mode'             => Description::MULTIPACK_QUANTITY_MODE_NONE,
-            'multipack_quantity_custom_value'     => '',
-            'multipack_quantity_custom_attribute' => '',
-
-            // ---
-
-            'msrp_rrp_mode'             => Description::MSRP_RRP_MODE_NONE,
-            'msrp_rrp_custom_attribute' => '',
-
-            // ---
-
-            'description_mode'     => '',
-            'description_template' => '',
-
-            'image_main_mode'      => Description::IMAGE_MAIN_MODE_PRODUCT,
-            'image_main_attribute' => '',
-
-            'image_variation_difference_mode'      => Description::IMAGE_VARIATION_DIFFERENCE_MODE_NONE,
-            'image_variation_difference_attribute' => '',
-
-            'gallery_images_mode'      => Description::GALLERY_IMAGES_MODE_NONE,
-            'gallery_images_limit'     => 1,
-            'gallery_images_attribute' => '',
-
-            'key_features_mode' => Description::KEY_FEATURES_MODE_NONE,
-            'key_features'      => [],
-
-            'other_features_mode' => Description::OTHER_FEATURES_MODE_NONE,
-            'other_features'      => [],
-
-            'keywords_mode'             => Description::KEYWORDS_MODE_NONE,
-            'keywords_custom_value'     => '',
-            'keywords_custom_attribute' => '',
-
-            'attributes_mode' => Description::ATTRIBUTES_MODE_NONE,
-            'attributes'      => [],
-        ];
+        $default = $this->modelFactory->getObject('Walmart_Template_Description_Builder')->getDefaultData();
 
         if (!$this->templateModel || !$this->templateModel->getId()) {
             return $default;

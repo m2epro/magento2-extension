@@ -45,19 +45,16 @@ HTML
         );
 
         $fieldset->addField(
-            'products_show_thumbnails',
+            'view_show_products_thumbnails_mode',
             self::SELECT,
             [
-                'name' => 'products_show_thumbnails',
+                'name' => 'view_show_products_thumbnails_mode',
                 'label' => $this->__('Products Thumbnail'),
                 'values' => [
                     0 => $this->__('Do Not Show'),
                     1 => $this->__('Show')
                 ],
-                'value' => (bool)(int)$this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/view/',
-                    'show_products_thumbnails'
-                ),
+                'value' => $this->getHelper('Module_Configuration')->getViewShowProductsThumbnailsMode(),
                 'tooltip' => $this->__(
                     'Choose whether you want to see Thumbnail Images for Products on the
                     Add Products and View Listing Pages.'
@@ -66,19 +63,16 @@ HTML
         );
 
         $fieldset->addField(
-            'block_notices_show',
+            'view_show_block_notices_mode',
             self::SELECT,
             [
-                'name' => 'block_notices_show',
+                'name' => 'view_show_block_notices_mode',
                 'label' => $this->__('Help Information'),
                 'values' => [
                     0 => $this->__('Do Not Show'),
                     1 => $this->__('Show')
                 ],
-                'value' => (bool)(int)$this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/view/',
-                    'show_block_notices'
-                ),
+                'value' => $this->getHelper('Module_Configuration')->getViewShowBlockNoticesMode(),
                 'tooltip' => $this->__(
                     '<p>Choose whether you want the help information to be available at the top of
                     each M2E Pro Page.</p><br>
@@ -132,8 +126,8 @@ HTML
             'jQuery' => 'jquery'
         ], <<<JS
 
-        $('block_notices_show').observe('change', function() {
-            if ($('block_notices_show').value == 1) {
+        $('view_show_block_notices_mode').observe('change', function() {
+            if ($('view_show_block_notices_mode').value == 1) {
                 $('restore_block_notices_tr').show();
             } else {
                 $('restore_block_notices_tr').hide();

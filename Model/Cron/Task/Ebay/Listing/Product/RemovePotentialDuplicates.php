@@ -323,8 +323,7 @@ class RemovePotentialDuplicates extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
             $logsActionId,
             \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
             $statusLogMessage,
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS
         );
 
         $additionalData = $listingProduct->getAdditionalData();
@@ -355,8 +354,7 @@ class RemovePotentialDuplicates extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
             $logsActionId,
             \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
             $duplicateDeletedMessage,
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING
         );
     }
 

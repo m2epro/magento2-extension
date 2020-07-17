@@ -442,7 +442,7 @@ define([
                     text: M2ePro.translator.translate('Add New Description Policy'),
                     class: 'action primary ',
                     click: function () {
-                        ListingGridHandlerObj.templateDescriptionHandler.createTemplateDescriptionInNewTab(M2ePro.url.get('newTemplateDescriptionUrl'));
+                        ListingGridObj.templateDescriptionHandler.createTemplateDescriptionInNewTab(M2ePro.url.get('newTemplateDescriptionUrl'));
                     }
                 }]
             }, self.templateDescriptionPopup);
@@ -463,7 +463,7 @@ define([
                 parameters: {
                     products_ids: self.variationProductManagePopup.productId,
                     check_is_new_asin_accepted: 1,
-                    map_to_template_js_fn: 'ListingGridHandlerObj.variationProductManageHandler.mapToTemplateDescription'
+                    map_to_template_js_fn: 'ListingGridObj.variationProductManageHandler.mapToTemplateDescription'
                 },
                 onSuccess: function (transport) {
                     $('template_description_grid').update(transport.responseText);
@@ -1445,7 +1445,7 @@ define([
             jQuery('#amazonVariationProductManageTabs').tabs('option', 'active', 0);
             ListingProductVariationManageVariationsGridObj.showNewChildForm(
                 createNewAsin,
-                ListingGridHandlerObj.variationProductManageHandler.variationProductManagePopup.productId
+                ListingGridObj.variationProductManageHandler.variationProductManagePopup.productId
             );
         },
 

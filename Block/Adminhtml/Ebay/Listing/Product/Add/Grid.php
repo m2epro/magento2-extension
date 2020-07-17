@@ -169,7 +169,8 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'type'      => 'number',
             'index'     => 'entity_id',
             'filter_index' => 'entity_id',
-            'frame_callback' => [$this, 'callbackColumnProductId']
+            'store_id' => $this->listing->getStoreId(),
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
         ]);
 
         $this->addColumn('name', [
@@ -315,7 +316,7 @@ JS
         // ---------------------------------------
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
             'Ebay_Listing_AutoAction',
-            ['id' => $this->listing->getId()]
+            ['listing_id' => $this->listing->getId()]
         ));
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
@@ -336,8 +337,7 @@ JS
 
         // ---------------------------------------
         $this->jsTranslator->addTranslations([
-            'eBay Categories' => $this->__('eBay Categories'),
-            'of Product' => $this->__('of Product'),
+            'Category Settings' => $this->__('Category Settings'),
             'Specifics' => $this->__('Specifics'),
             'Auto Add/Remove Rules' => $this->__('Auto Add/Remove Rules'),
             'Based on Magento Categories' => $this->__('Based on Magento Categories'),
@@ -350,11 +350,9 @@ JS
         // ---------------------------------------
 
         // ---------------------------------------
-        $showAutoActionPopup = !$this->getHelper('Module')->getCacheConfig()->getGroupValue(
-            '/view/ebay/advanced/autoaction_popup/',
-            'shown'
+        $showAutoActionPopup = $this->getHelper('Data')->jsonEncode(
+            !$this->getHelper('Module')->getRegistry()->getValue('/ebay/listing/autoaction_popup/is_shown/')
         );
-        $showAutoActionPopup = $this->getHelper('Data')->jsonEncode($showAutoActionPopup);
 
         // ---------------------------------------
 

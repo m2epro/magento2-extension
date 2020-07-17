@@ -22,7 +22,10 @@ class Save extends Settings
     {
         $this->save($this->getSessionValue($this->getSessionDataKey()));
 
-        return $this->getResult();
+        return $this->_redirect(
+            '*/ebay_listing/review',
+            ['id' => $this->getRequest()->getParam('id')]
+        );
     }
 
     //########################################

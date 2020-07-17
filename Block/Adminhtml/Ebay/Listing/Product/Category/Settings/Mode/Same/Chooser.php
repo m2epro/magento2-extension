@@ -13,34 +13,36 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode
  */
 class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
+    /** @var \Ess\M2ePro\Model\Listing */
+    protected $_listing;
+
     //########################################
 
     public function _construct()
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
-        $this->setId('ebayListingCategorySameChooser');
-        // ---------------------------------------
-
-        $this->_headerText = $this->__('eBay Same Categories');
+        $this->_headerText = $this->__('eBay Categories');
+        $this->_listing =$this->activeRecordFactory->getCachedObjectLoaded(
+            'Listing',
+            $this->getRequest()->getParam('id')
+        );
 
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'class'     => 'back',
-            'onclick'   => 'setLocation(\'' . $this->getUrl('*/*/*', ['_current' => true, 'step' => 1]) . '\');'
+            'label'   => $this->__('Back'),
+            'class'   => 'back',
+            'onclick' => 'setLocation(\'' . $this->getUrl('*/*/*', ['_current' => true, 'step' => 1]) . '\');'
         ]);
 
         $onClick = <<<JS
-EbayListingProductCategorySettingsChooserObj.submitData(
+EbayListingCategoryObj.modeSameSubmitData(
     '{$this->getUrl('*/*/*', array('step' => 2,'_current' => true))}'
 );
 JS;
         $this->addButton('next', [
-            'label'     => $this->__('Continue'),
-            'class'     => 'action-primary forward',
-            'onclick'   => $onClick
+            'label'   => $this->__('Continue'),
+            'class'   => 'action-primary forward',
+            'onclick' => $onClick
         ]);
     }
 
@@ -49,13 +51,6 @@ JS;
     public function getHeaderWidth()
     {
         return 'width:50%;';
-    }
-
-    //########################################
-
-    protected function _beforeToHtml()
-    {
-        parent::_beforeToHtml();
     }
 
     //########################################
@@ -72,6 +67,8 @@ JS;
             ]
         ));
 
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Category', ['_current' => true]));
+
         $this->jsUrl->add($this->getUrl('*/ebay_listing_product_category_settings', [
             'step' => 3,
             '_current' => true
@@ -83,28 +80,46 @@ JS;
         // ---------------------------------------
 
         // ---------------------------------------
-        $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_category_settings');
         $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
-            'data' => ['listing' => $listing]
+            'data' => ['listing' => $this->_listing]
         ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_category_settings');
-        $internalData = $this->getData('internal_data');
 
-        $chooserBlock = $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser');
-        $chooserBlock->setMarketplaceId($listing['marketplace_id']);
-        $chooserBlock->setAccountId($listing['account_id']);
+        /** @var $chooserBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser */
+        $chooserBlock = $this->createBlock('Ebay_Template_Category_Chooser');
+        $chooserBlock->setMarketplaceId($this->_listing->getMarketplaceId());
+        $chooserBlock->setAccountId($this->_listing->getAccountId());
+        $chooserBlock->setCategoriesData($this->getData('categories_data'));
 
-        if (!empty($internalData)) {
-            $chooserBlock->setInternalData($internalData);
-        }
         // ---------------------------------------
+
+        $this->js->addOnReadyJs(
+            <<<JS
+require([
+    'M2ePro/Ebay/Listing/Category',
+    'M2ePro/Ebay/Template/Category/Chooser'
+], function(){
+    window.EbayListingCategoryObj = new EbayListingCategory(null);
+
+    EbayTemplateCategoryChooserObj.confirmSpecificsCallback = function() {
+        var typeMain = M2ePro.php.constant('Ess_M2ePro_Helper_Component_Ebay_Category::TYPE_EBAY_MAIN');
+        this.selectedCategories[typeMain].specific = this.selectedSpecifics;
+    }.bind(EbayTemplateCategoryChooserObj);
+
+    EbayTemplateCategoryChooserObj.resetSpecificsCallback = function() {
+        var typeMain = M2ePro.php.constant('Ess_M2ePro_Helper_Component_Ebay_Category::TYPE_EBAY_MAIN');
+        this.selectedCategories[typeMain].specific = this.selectedSpecifics;
+    }.bind(EbayTemplateCategoryChooserObj);
+
+})
+JS
+        );
 
         return <<<HTML
 {$viewHeaderBlock->toHtml()}
-{$chooserBlock->toHtml()}
+<div id="ebay_category_chooser">{$chooserBlock->toHtml()}</div>
 {$parentHtml}
 HTML;
     }

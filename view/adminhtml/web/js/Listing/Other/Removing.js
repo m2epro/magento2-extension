@@ -26,9 +26,9 @@ define([
                     MessagesObj.clear();
 
                     if (transport.responseText == '1') {
-                        MessagesObj.addSuccessMessage(M2ePro.translator.translate('successfully_removed'));
+                        MessagesObj.addSuccess(M2ePro.translator.translate('successfully_removed'));
                     } else {
-                        MessagesObj.addErrorMessage(M2ePro.translator.translate('not_enough_data'));
+                        MessagesObj.addError(M2ePro.translator.translate('not_enough_data'));
                     }
 
                     this.gridHandler.unselectAllAndReload();

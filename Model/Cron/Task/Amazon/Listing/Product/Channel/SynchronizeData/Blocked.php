@@ -43,7 +43,7 @@ class Blocked extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $synchronizationLog = parent::getSynchronizationLog();
 
         $synchronizationLog->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
-        $synchronizationLog->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_LISTINGS_PRODUCTS);
+        $synchronizationLog->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_LISTINGS);
 
         return $synchronizationLog;
     }

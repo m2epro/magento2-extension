@@ -104,7 +104,7 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'group'     => self::GROUP_EBAY,
         ],
-        \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Other\ResolveSku::NICK => [
+        \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Other\ResolveNonReceivedData::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'group'     => self::GROUP_EBAY,
         ],
@@ -130,6 +130,10 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'group'     => self::GROUP_EBAY,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Order\CreateFailed::NICK => [
+            'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'group'     => self::GROUP_EBAY,
+        ],
+        \Ess\M2ePro\Model\Cron\Task\Ebay\Order\UploadByUser::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'group'     => self::GROUP_EBAY,
         ],
@@ -202,6 +206,10 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'group'     => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\CreateFailed::NICK => [
+            'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'group'     => self::GROUP_AMAZON,
+        ],
+        \Ess\M2ePro\Model\Cron\Task\Amazon\Order\UploadByUser::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'group'     => self::GROUP_AMAZON,
         ],
@@ -295,6 +303,10 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'group'     => self::GROUP_WALMART,
         ],
         \Ess\M2ePro\Model\Cron\Task\Walmart\Order\CreateFailed::NICK => [
+            'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+            'group'     => self::GROUP_WALMART,
+        ],
+        \Ess\M2ePro\Model\Cron\Task\Walmart\Order\UploadByUser::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
             'group'     => self::GROUP_WALMART,
         ],

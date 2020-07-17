@@ -8,6 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction;
 
+use \Ess\M2ePro\Model\Listing as Listing;
+use \Ess\M2ePro\Model\Ebay\Listing as eBayListing;
+use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
+
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction\Save
  */
@@ -25,108 +29,112 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
             return $this->getResult();
         }
 
-        // ---------------------------------------
-        $listingId = $this->getRequest()->getParam('id');
-        $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId);
-        // ---------------------------------------
+        /** @var \Ess\M2ePro\Model\Listing $listing */
+        $listing = $this->ebayFactory->getCachedObjectLoaded(
+            'Listing',
+            $this->getRequest()->getParam('listing_id')
+        );
 
         $data = $this->getHelper('Data')->jsonDecode($post['auto_action_data']);
 
-        if (isset($data['template_category_data'])) {
-            $this->getHelper('Component_Ebay_Category')->fillCategoriesPaths(
-                $data['template_category_data'],
-                $listing
-            );
-        }
-
         $listingData = [
-            'auto_mode' => \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE,
-            'auto_global_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
-            'auto_global_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'auto_global_adding_template_category_id' => null,
-            'auto_global_adding_template_other_category_id' => null,
-            'auto_website_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
-            'auto_website_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'auto_website_adding_template_category_id' => null,
-            'auto_website_adding_template_other_category_id' => null,
-            'auto_website_deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE
+            'auto_mode'                                      => Listing::AUTO_MODE_NONE,
+            'auto_global_adding_mode'                        => Listing::ADDING_MODE_NONE,
+            'auto_global_adding_add_not_visible'             => Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
+            'auto_global_adding_template_category_id'                 => null,
+            'auto_global_adding_template_category_secondary_id'       => null,
+            'auto_global_adding_template_store_category_id'           => null,
+            'auto_global_adding_template_store_category_secondary_id' => null,
+
+            'auto_website_adding_mode'            => Listing::ADDING_MODE_NONE,
+            'auto_website_adding_add_not_visible' => Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
+            'auto_website_adding_template_category_id'                 => null,
+            'auto_website_adding_template_category_secondary_id'       => null,
+            'auto_website_adding_template_store_category_id'           => null,
+            'auto_website_adding_template_store_category_secondary_id' => null,
+
+            'auto_website_deleting_mode' => Listing::DELETING_MODE_NONE
         ];
 
         $groupData = [
-            'id' => null,
-            'category' => null,
-            'title' => null,
-            'auto_mode' => \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE,
-            'adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
-            'adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
-            'categories' => []
+            'id'                     => null,
+            'category'               => null,
+            'title'                  => null,
+            'auto_mode'              => Listing::AUTO_MODE_NONE,
+            'adding_mode'            => Listing::ADDING_MODE_NONE,
+            'adding_add_not_visible' => Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
+            'deleting_mode'          => Listing::DELETING_MODE_NONE,
+            'categories'             => []
         ];
 
-        $addingModeAddAndAssignCategory = \Ess\M2ePro\Model\Ebay\Listing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY;
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter $converter */
+        $converter = $this->modelFactory->getObject('Ebay_Template_Category_Chooser_Converter');
+        $converter->setAccountId($listing->getAccountId());
+        $converter->setMarketplaceId($listing->getMarketplaceId());
+        foreach ($data['template_category_data'] as $type => $templateData) {
+            $converter->setCategoryDataFromChooser($templateData, $type);
+        }
+
+        $ebayTpl = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build(
+            $this->activeRecordFactory->getObject('Ebay_Template_Category'),
+            $converter->getCategoryDataForTemplate(eBayCategory::TYPE_EBAY_MAIN)
+        );
+        $ebaySecondaryTpl = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build(
+            $this->activeRecordFactory->getObject('Ebay_Template_Category'),
+            $converter->getCategoryDataForTemplate(eBayCategory::TYPE_EBAY_SECONDARY)
+        );
+        $storeTpl = $this->modelFactory->getObject('Ebay_Template_StoreCategory_Builder')->build(
+            $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory'),
+            $converter->getCategoryDataForTemplate(eBayCategory::TYPE_STORE_MAIN)
+        );
+        $storeSecondaryTpl = $this->modelFactory->getObject('Ebay_Template_StoreCategory_Builder')->build(
+            $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory'),
+            $converter->getCategoryDataForTemplate(eBayCategory::TYPE_STORE_SECONDARY)
+        );
 
         // mode global
         // ---------------------------------------
-        if ($data['auto_mode'] == \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL) {
-            $listingData['auto_mode'] = \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL;
+        if ($data['auto_mode'] == Listing::AUTO_MODE_GLOBAL) {
+            $listingData['auto_mode']               = Listing::AUTO_MODE_GLOBAL;
             $listingData['auto_global_adding_mode'] = $data['auto_global_adding_mode'];
 
-            if ($data['auto_global_adding_mode'] == $addingModeAddAndAssignCategory) {
-                $builderData = $data['template_category_data'];
-                $builderData['marketplace_id'] = $listing->getMarketplaceId();
-                $builderData['account_id'] = $listing->getAccountId();
-                $builderData['specifics'] = $data['template_category_specifics_data']['specifics'];
-
-                $categoryTemplate = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build(
-                    $builderData
-                );
-                $otherCategoryTemplate = $this->modelFactory->getObject('Ebay_Template_OtherCategory_Builder')->build(
-                    $builderData
-                );
-
-                $listingData['auto_global_adding_template_category_id'] = $categoryTemplate->getId();
-                $listingData['auto_global_adding_template_other_category_id'] = $otherCategoryTemplate->getId();
+            if ($data['auto_global_adding_mode'] == eBayListing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY) {
+                $listingData['auto_global_adding_template_category_id']                 = $ebayTpl->getId();
+                $listingData['auto_global_adding_template_category_secondary_id']       = $ebaySecondaryTpl->getId();
+                $listingData['auto_global_adding_template_store_category_id']           = $storeTpl->getId();
+                $listingData['auto_global_adding_template_store_category_secondary_id'] = $storeSecondaryTpl->getId();
             }
-            if ($data['auto_global_adding_mode'] != \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE) {
+
+            if ($data['auto_global_adding_mode'] != Listing::ADDING_MODE_NONE) {
                 $listingData['auto_global_adding_add_not_visible'] = $data['auto_global_adding_add_not_visible'];
             }
         }
-        // ---------------------------------------
 
         // mode website
         // ---------------------------------------
-        if ($data['auto_mode'] == \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE) {
-            $listingData['auto_mode'] = \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE;
-            $listingData['auto_website_adding_mode'] = $data['auto_website_adding_mode'];
+        if ($data['auto_mode'] == Listing::AUTO_MODE_WEBSITE) {
+            $listingData['auto_mode']                  = Listing::AUTO_MODE_WEBSITE;
+            $listingData['auto_website_adding_mode']   = $data['auto_website_adding_mode'];
             $listingData['auto_website_deleting_mode'] = $data['auto_website_deleting_mode'];
 
-            if ($data['auto_website_adding_mode'] == $addingModeAddAndAssignCategory) {
-                $builderData = $data['template_category_data'];
-                $builderData['marketplace_id'] = $listing->getMarketplaceId();
-                $builderData['account_id'] = $listing->getAccountId();
-                $builderData['specifics'] = $data['template_category_specifics_data']['specifics'];
-
-                $categoryTemplate = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build(
-                    $builderData
-                );
-                $otherCategoryTemplate = $this->modelFactory->getObject('Ebay_Template_OtherCategory_Builder')->build(
-                    $builderData
-                );
-
-                $listingData['auto_website_adding_template_category_id'] = $categoryTemplate->getId();
-                $listingData['auto_website_adding_template_other_category_id'] = $otherCategoryTemplate->getId();
+            if ($data['auto_website_adding_mode'] == eBayListing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY) {
+                $listingData['auto_website_adding_template_category_id']                 = $ebayTpl->getId();
+                $listingData['auto_website_adding_template_category_secondary_id']       = $ebaySecondaryTpl->getId();
+                $listingData['auto_website_adding_template_store_category_id']           = $storeTpl->getId();
+                $listingData['auto_website_adding_template_store_category_secondary_id'] = $storeSecondaryTpl->getId();
             }
-            if ($data['auto_website_adding_mode'] != \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE) {
+
+            if ($data['auto_website_adding_mode'] != Listing::ADDING_MODE_NONE) {
                 $listingData['auto_website_adding_add_not_visible'] = $data['auto_website_adding_add_not_visible'];
             }
         }
-        // ---------------------------------------
 
         // mode category
         // ---------------------------------------
-        if ($data['auto_mode'] == \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY) {
-            $listingData['auto_mode'] = \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY;
+        if ($data['auto_mode'] == Listing::AUTO_MODE_CATEGORY) {
+            $listingData['auto_mode'] = Listing::AUTO_MODE_CATEGORY;
 
+            /** @var \Ess\M2ePro\Model\Listing\Auto\Category\Group $group */
             $group = $this->ebayFactory->getObject('Listing_Auto_Category_Group');
 
             if ((int)$data['id'] > 0) {
@@ -136,29 +144,18 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
             }
 
             $group->addData(array_merge($groupData, $data));
-            $group->setData('listing_id', $listingId);
-            if (!$group->getId()) {
-                $group->save();
-            }
+            $group->setData('listing_id', $listing->getId());
 
-            if ($data['adding_mode'] == \Ess\M2ePro\Model\Ebay\Listing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY) {
-                $builderData = $data['template_category_data'];
-                $builderData['marketplace_id'] = $listing->getMarketplaceId();
-                $builderData['account_id'] = $listing->getAccountId();
-                $builderData['specifics'] = $data['template_category_specifics_data']['specifics'];
-
-                $categoryTemplate = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build(
-                    $builderData
-                );
-                $otherCategoryTemplate = $this->modelFactory->getObject('Ebay_Template_OtherCategory_Builder')->build(
-                    $builderData
-                );
-
-                $group->getChildObject()->setData('adding_template_category_id', $categoryTemplate->getId());
-                $group->getChildObject()->setData('adding_template_other_category_id', $otherCategoryTemplate->getId());
+            if ($data['adding_mode'] == eBayListing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY) {
+                $group->setData('adding_template_category_id', $ebayTpl->getId());
+                $group->setData('adding_template_category_secondary_id', $ebaySecondaryTpl->getId());
+                $group->setData('adding_template_store_category_id', $storeTpl->getId());
+                $group->setData('adding_template_store_category_secondary_id', $storeSecondaryTpl->getId());
             } else {
-                $group->getChildObject()->setData('adding_template_category_id', null);
-                $group->getChildObject()->setData('adding_template_other_category_id', null);
+                $group->setData('adding_template_category_id', null);
+                $group->setData('adding_template_category_secondary_id', null);
+                $group->setData('adding_template_store_category_id', null);
+                $group->setData('adding_template_store_category_secondary_id', null);
             }
 
             $group->save();
@@ -171,7 +168,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
                 $category->save();
             }
         }
-        // ---------------------------------------
 
         $listing->addData($listingData);
         $listing->getChildObject()->addData($listingData);
@@ -180,4 +176,5 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
         $this->setJsonContent(['success' => true]);
         return $this->getResult();
     }
+
 }

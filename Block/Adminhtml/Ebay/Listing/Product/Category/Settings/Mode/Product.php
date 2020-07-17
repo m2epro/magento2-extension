@@ -19,55 +19,49 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('ebayListingCategoryProduct');
         $this->_controller = 'adminhtml_ebay_listing_product_category_settings_mode_product';
-        // ---------------------------------------
 
-        // Set header text
-        // ---------------------------------------
+        $this->_headerText = $this->__('Set Category (manually)');
 
-        $this->_headerText = $this->__('Set eBay Category for Product(s)');
-        // ---------------------------------------
-
-        // Set buttons actions
-        // ---------------------------------------
         $this->removeButton('back');
         $this->removeButton('reset');
         $this->removeButton('delete');
         $this->removeButton('add');
         $this->removeButton('save');
         $this->removeButton('edit');
-        // ---------------------------------------
 
-        // ---------------------------------------
         $url = $this->getUrl('*/*/', ['step' => 1, '_current' => true]);
         $this->addButton('back', [
             'label'     => $this->__('Back'),
             'class'     => 'back',
             'onclick'   => 'setLocation(\''.$url.'\');'
         ]);
-        // ---------------------------------------
 
-        // ---------------------------------------
         $this->addButton('next', [
             'id'      => 'ebay_listing_category_continue_btn',
             'class'   => 'action-primary forward',
             'label'   => $this->__('Continue'),
-            'onclick' => 'EbayListingProductCategorySettingsModeProductGridObj.completeCategoriesDataStep();'
+            'onclick' => 'EbayListingProductCategorySettingsModeProductGridObj.completeCategoriesDataStep(1, 0);'
         ]);
-        // ---------------------------------------
     }
 
     public function getGridHtml()
     {
-        // ---------------------------------------
-        $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_category_settings');
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            return parent::getGridHtml();
+        }
+
+        /** @var \Ess\M2ePro\Model\Listing $listing */
+        $listing = $this->parentFactory->getCachedObjectLoaded(
+            \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'Listing',
+            $this->getRequest()->getParam('id')
+        );
+
         $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
             'data' => ['listing' => $listing]
         ]);
-        // ---------------------------------------
 
         return $viewHeaderBlock->toHtml() . parent::getGridHtml();
     }
@@ -88,7 +82,7 @@ HTML;
 
     private function getPopupsHtml()
     {
-        return $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Product_WarningPopup')->toHtml();
+        return $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_WarningPopup')->toHtml();
     }
 
     //########################################

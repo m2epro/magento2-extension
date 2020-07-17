@@ -80,7 +80,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'product_id=entity_id',
             [
                 'lp_id' => 'id',
-                'ebay_status' => 'status',
+                'status' => 'status',
                 'component_mode' => 'component_mode',
                 'additional_data' => 'additional_data'
             ],
@@ -230,61 +230,64 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header' => $this->__('Product ID'),
-            'align' => 'right',
-            'width' => '100px',
-            'type' => 'number',
-            'index' => 'entity_id',
-            'frame_callback' => [$this, 'callbackColumnListingProductId'],
+            'header'   => $this->__('Product ID'),
+            'align'    => 'right',
+            'width'    => '100px',
+            'type'     => 'number',
+            'index'    => 'entity_id',
+            'store_id' => $this->listing->getStoreId(),
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId',
         ]);
 
         $this->addColumn('name', [
-            'header' => $this->__('Product Title / Product SKU'),
-            'align' => 'left',
-            'type' => 'text',
-            'index' => 'online_title',
-            'width' => '550px',
-            'escape' => false,
+            'header'         => $this->__('Product Title / Product SKU'),
+            'align'          => 'left',
+            'type'           => 'text',
+            'index'          => 'online_title',
+            'width'          => '550px',
+            'escape'         => false,
             'frame_callback' => [$this, 'callbackColumnTitle'],
             'filter_condition_callback' => [$this, 'callbackFilterTitle']
         ]);
 
         $this->addColumn('account_pickup_store_id', [
-            'header' => $this->__('Store Details'),
-            'align' => 'left',
-            'type' => 'text',
-            'index' => 'id',
-            'width' => '500px',
+            'header'         => $this->__('Store Details'),
+            'align'          => 'left',
+            'type'           => 'text',
+            'index'          => 'id',
+            'width'          => '500px',
             'frame_callback' => [$this, 'callbackColumnPickupStore'],
             'filter_condition_callback' => [$this, 'callbackFilterPickupStore']
         ]);
 
         $this->addColumn('ebay_item_id', [
-            'header' => $this->__('Item ID'),
-            'align' => 'left',
-            'width' => '100px',
-            'type' => 'text',
-            'index' => 'item_id',
-            'frame_callback' => [$this, 'callbackColumnEbayItemId']
+            'header'         => $this->__('Item ID'),
+            'align'          => 'left',
+            'width'          => '100px',
+            'type'           => 'text',
+            'index'          => 'item_id',
+            'account_id'     => $this->listing->getAccountId(),
+            'marketplace_id' => $this->listing->getMarketplaceId(),
+            'renderer'       => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId'
         ]);
 
         $this->addColumn('pickup_store_product_qty', [
-            'header' => $this->__('Available QTY'),
-            'align' => 'left',
-            'width' => '110px',
-            'type' => 'number',
-            'index' => 'pickup_store_product_qty',
+            'header'         => $this->__('Available QTY'),
+            'align'          => 'left',
+            'width'          => '110px',
+            'type'           => 'number',
+            'index'          => 'pickup_store_product_qty',
             'frame_callback' => [$this, 'callbackColumnOnlineQty'],
             'filter_condition_callback' => [$this, 'callbackFilterOnlineQty']
         ]);
 
         $this->addColumn('availability', [
-            'header' => $this->__('Availability'),
-            'align' => 'right',
-            'width' => '110px',
-            'type' => 'options',
+            'header'   => $this->__('Availability'),
+            'align'    => 'right',
+            'width'    => '110px',
+            'type'     => 'options',
             'sortable' => false,
-            'options' => [
+            'options'  => [
                 1 => $this->__('Yes'),
                 0 => $this->__('No')
             ],
@@ -294,13 +297,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('delete_action', [
-            'header' => $this->__('Logs'),
-            'align' => 'left',
-            'type' => 'action',
-            'index' => 'delete_action',
-            'width' => '100px',
-            'filter' => false,
-            'sortable' => false,
+            'header'         => $this->__('Logs'),
+            'align'          => 'left',
+            'type'           => 'action',
+            'index'          => 'delete_action',
+            'width'          => '100px',
+            'filter'         => false,
+            'sortable'       => false,
             'frame_callback' => [$this, 'callbackColumnLog'],
         ]);
 
@@ -355,42 +358,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     }
 
     //########################################
-
-    public function callbackColumnListingProductId($value, $row, $column, $isExport)
-    {
-        $productId = (int)$value;
-
-        $url = $this->getUrl('catalog/product/edit', ['id' => $productId]);
-        $htmlWithoutThumbnail = '<a href="' . $url . '" target="_blank">' . $productId . '</a>';
-
-        $showProductsThumbnails = (bool)(int)$this->getHelper('Module')->getConfig()
-            ->getGroupValue('/view/', 'show_products_thumbnails');
-
-        if (!$showProductsThumbnails) {
-            return $htmlWithoutThumbnail;
-        }
-
-        $storeId = $this->getStoreId();
-
-        /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
-        $magentoProduct = $this->modelFactory->getObject('Magento\Product');
-        $magentoProduct->setProductId($productId);
-        $magentoProduct->setStoreId($storeId);
-
-        $thumbnail = $magentoProduct->getThumbnailImage();
-        if ($thumbnail === null) {
-            return $htmlWithoutThumbnail;
-        }
-
-        $thumbnailUrl = $thumbnail->getUrl();
-
-        return <<<HTML
-        <a href="{$url}" target="_blank">
-            {$productId}
-            <div style="margin-top: 5px"><img src="{$thumbnailUrl}" /></div>
-        </a>
-HTML;
-    }
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
@@ -457,29 +424,9 @@ HTML;
         return '<div style="padding: 0 4px;">' . $valueHtml . '</div>';
     }
 
-    public function callbackColumnEbayItemId($value, $row, $column, $isExport)
-    {
-        if ($row->getData('ebay_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
-        }
-
-        if ($value === null || $value === '') {
-            return $this->__('N/A');
-        }
-
-        $listingData = $this->listing->getData();
-
-        $url = $this->getUrl('*/ebay_listing/gotoEbay/', [
-            'item_id' => $value,
-            'account_id' => $listingData['account_id'],
-            'marketplace_id' => $listingData['marketplace_id']
-        ]);
-        return '<a href="' . $url . '" target="_blank">' . $value . '</a>';
-    }
-
     public function callbackColumnOnlineQty($value, $row, $column, $isExport)
     {
-        if ($row->getData('ebay_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+        if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
@@ -512,7 +459,7 @@ HTML;
 
     public function callbackColumnOnlineAvailability($value, $row, $column, $isExport)
     {
-        if ($row->getData('ebay_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+        if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
@@ -598,7 +545,9 @@ HTML
             return '';
         }
 
-        $logIcon = $this->getViewLogIconHtml($row->getData('state_id'), $row->getData('id'));
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ViewLogIcon\PickupStore $viewLogIcon */
+        $viewLogIcon = $this->createBlock('Ebay_Grid_Column_Renderer_ViewLogIcon_Listing');
+        $logIcon = $viewLogIcon->render($row);
 
         if (!empty($logIcon)) {
             $logIcon .= '<input type="hidden"
@@ -730,65 +679,6 @@ HTML
     public function getRowUrl($row)
     {
         return false;
-    }
-
-    //########################################
-
-    public function getViewLogIconHtml($stateId, $columnId)
-    {
-        $stateId = (int)$stateId;
-        $availableActionsId = array_keys($this->getAvailableActions());
-
-        // Get last messages
-        // ---------------------------------------
-        $dbSelect = $this->resourceConnection->getConnection()->select()
-            ->from(
-                $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_Log')
-                    ->getResource()->getMainTable(),
-                ['id', 'action_id', 'action', 'type', 'description', 'create_date']
-            )
-            ->where('`account_pickup_store_state_id` = ?', $stateId)
-            ->where('`action` IN (?)', $availableActionsId)
-            ->order(['id DESC'])
-            ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::PRODUCTS_LIMIT);
-
-        $logs = $this->resourceConnection->getConnection()->fetchAll($dbSelect);
-
-        if (empty($logs)) {
-            return '';
-        }
-
-        foreach ($logs as &$log) {
-            $log['initiator'] = \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION;
-        }
-
-        // ---------------------------------------
-
-        $summary = $this->createBlock('Listing_Log_Grid_LastActions')->setData([
-            'entity_id' => (int)$columnId,
-            'logs' => $logs,
-            'available_actions' => $this->getAvailableActions(),
-            'view_help_handler' => 'EbayListingPickupStoreGridObj.viewItemHelp',
-            'hide_help_handler' => 'EbayListingPickupStoreGridObj.hideItemHelp',
-        ]);
-
-        $pickupStoreState = $this->activeRecordFactory->getObjectLoaded('Ebay_Account_PickupStore_State', $stateId);
-
-        $this->jsTranslator->addTranslations([
-            'Log For SKU ' . $stateId => $this->__('Log For SKU (%s%)', $pickupStoreState->getSku())
-        ]);
-
-        return $summary->toHtml();
-    }
-
-    private function getAvailableActions()
-    {
-        return [
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_UNKNOWN => $this->__('Unknown'),
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_ADD_PRODUCT => $this->__('Add'),
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_UPDATE_QTY => $this->__('Update'),
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_DELETE_PRODUCT => $this->__('Delete'),
-        ];
     }
 
     //########################################

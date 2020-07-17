@@ -16,6 +16,9 @@ use \Ess\M2ePro\Model\Connector\Connection\Response\Message as ResponseMessage;
 use \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Action\Processing\Collection as ProcessingCollection;
 use \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Action\ProcessingList as ProcessingListResourceModel;
 
+/**
+ * Class Ess\M2ePro\Model\Walmart\Listing\Product\Action\ListAction\Processor
+ */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
     const LIST_PRIORITY = 25;
@@ -249,6 +252,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 }
 
                 if (!empty($resultMessages)) {
+                    // @codingStandardsIgnoreLine
                     $resultActionData['errors'] = array_merge($resultActionData['errors'], $resultMessages);
                 }
 
@@ -365,7 +369,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 $listingProduct = $listingProductCollection->getItemById($processingAction->getListingProductId());
                 $processingAction->setListingProduct($listingProduct);
 
-                /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\ProcessingList $processingList */
+                /** @var ProcessingList $processingList */
                 $processingList = $listCollection->getItemById($processingAction->getData('processing_list_id'));
 
                 /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator $configurator */
@@ -391,7 +395,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 $processingList->addData(
                     [
                         'relist_request_data'      => $this->getHelper('Data')->jsonEncode($requestData),
-                        'relist_configurator_data' => $this->getHelper('Data')->jsonEncode($configurator->getSerializedData())
+                        'relist_configurator_data' =>
+                            $this->getHelper('Data')->jsonEncode($configurator->getSerializedData())
                     ]
                 );
                 $processingList->save();
@@ -517,7 +522,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 $listingProduct = $listingProductCollection->getItemById($processingAction->getListingProductId());
                 $processingAction->setListingProduct($listingProduct);
 
-                /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\ProcessingList $processingList */
+                /** @var ProcessingList $processingList */
                 $processingList = $listCollection->getItemById($processingAction->getData('processing_list_id'));
 
                 $resultActionData = [];
@@ -531,6 +536,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 }
 
                 if (!empty($resultMessages)) {
+                    // @codingStandardsIgnoreLine
                     $resultActionData['errors'] = array_merge($resultActionData['errors'], $resultMessages);
                 }
 
@@ -595,7 +601,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
             'Item was successfully Listed',
-            \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
+            ResponseMessage::TYPE_SUCCESS
         );
 
         $logger->logListingProductMessage($listingProduct, $message);
@@ -624,6 +630,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param ActionProcessing $processingAction
      * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Ess\M2ePro\Model\Exception
      */
     protected function completeListProcessingActionFail(ActionProcessing $processingAction)
     {
@@ -644,7 +651,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             'The Item was listed successfully. However, some product data, i.e. product quantity, cannot yet
             be submitted. It is caused by the technical limitations imposed by Walmart when adding a new offer
             on their website. M2E Pro will try to submit this product data later.',
-            \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING
+            ResponseMessage::TYPE_WARNING
         );
 
         $logger->logListingProductMessage($listingProduct, $message);
@@ -840,6 +847,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             if (!empty($listingProductData['additional_data'])) {
                 $additionalData = $this->getHelper('Data')->jsonDecode($listingProductData['additional_data']);
+                // @codingStandardsIgnoreLine
                 !empty($additionalData['params']) && $params = array_merge($params, $additionalData['params']);
             }
 

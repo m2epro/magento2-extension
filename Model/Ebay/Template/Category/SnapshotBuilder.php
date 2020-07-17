@@ -10,19 +10,20 @@ namespace Ess\M2ePro\Model\Ebay\Template\Category;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Template\Category\SnapshotBuilder
+ * @method \Ess\M2ePro\Model\Ebay\Template\Category getModel()
  */
-class SnapshotBuilder extends \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel
+class SnapshotBuilder extends \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder
 {
     //########################################
 
     public function getSnapshot()
     {
-        $data = $this->model->getData();
+        $data = $this->getModel()->getData();
         if (empty($data)) {
             return [];
         }
 
-        $data['specifics'] = $this->model->getSpecifics();
+        $data['specifics'] = $this->getModel()->getSpecifics();
 
         foreach ($data['specifics'] as &$specificData) {
             unset($specificData['id'], $specificData['template_category_id']);

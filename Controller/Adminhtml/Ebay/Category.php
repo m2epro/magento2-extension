@@ -124,4 +124,36 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
     }
 
     //########################################
+
+    protected function setRuleData($prefix)
+    {
+        $prefix .= $this->getRequest()->getParam('active_tab', '');
+        $prefix .= $this->getRequest()->getParam('template_id', '');
+        $this->getHelper('Data\GlobalData')->setValue('rule_prefix', $prefix);
+
+        $ruleModel = $this->activeRecordFactory->getObject('Ebay_Magento_Product_Rule')->setData(
+            [
+                'prefix' => $prefix,
+            ]
+        );
+
+        $ruleParam = $this->getRequest()->getPost('rule');
+        if (!empty($ruleParam)) {
+            $this->getHelper('Data\Session')->setValue(
+                $prefix,
+                $ruleModel->getSerializedFromPost($this->getRequest()->getPostValue())
+            );
+        } elseif ($ruleParam !== null) {
+            $this->getHelper('Data\Session')->setValue($prefix, []);
+        }
+
+        $sessionRuleData = $this->getHelper('Data\Session')->getValue($prefix);
+        if (!empty($sessionRuleData)) {
+            $ruleModel->loadFromSerialized($sessionRuleData);
+        }
+
+        $this->getHelper('Data\GlobalData')->setValue('rule_model', $ruleModel);
+    }
+
+    //########################################
 }

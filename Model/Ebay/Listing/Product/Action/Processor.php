@@ -312,6 +312,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 $isServerInMaintenanceMode = null;
 
                 foreach ($connectors as $actionId => $connector) {
+                    /** @var \Ess\M2ePro\Model\Connector\Command\AbstractModel $connector */
                     foreach ($actionsPack as $action) {
                         if ($action->getId() != $actionId) {
                             continue;
@@ -340,10 +341,15 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 }
 
                 if (!empty($systemErrorsMessages)) {
-                    throw new \Ess\M2ePro\Model\Exception($this->getHelper('Module\Translation')->__(
-                        "Internal Server Error(s) [%error_message%]",
-                        $this->getCombinedErrorMessage($systemErrorsMessages)
-                    ), [], 0, !$isServerInMaintenanceMode);
+                    throw new \Ess\M2ePro\Model\Exception(
+                        $this->getHelper('Module\Translation')->__(
+                            "Internal Server Error(s) [%error_message%]",
+                            $this->getCombinedErrorMessage($systemErrorsMessages)
+                        ),
+                        [],
+                        0,
+                        !$isServerInMaintenanceMode
+                    );
                 }
             }
         }

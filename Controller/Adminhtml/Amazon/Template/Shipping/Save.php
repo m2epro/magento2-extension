@@ -23,23 +23,6 @@ class Save extends Template
 
         $id = $this->getRequest()->getParam('id');
 
-        // Base prepare
-        // ---------------------------------------
-        $data = [];
-
-        $keys = [
-            'title',
-            'template_name_mode',
-            'template_name_value',
-            'template_name_attribute',
-        ];
-
-        foreach ($keys as $key) {
-            if (isset($post[$key])) {
-                $data[$key] = $post[$key];
-            }
-        }
-
         /** @var \Ess\M2ePro\Model\Amazon\Template\Shipping $model */
         $model = $this->activeRecordFactory->getObjectLoaded('Amazon_Template_Shipping', $id, null, false);
 
@@ -56,7 +39,7 @@ class Save extends Template
             $oldData = $snapshotBuilder->getSnapshot();
         }
 
-        $model->addData($data)->save();
+        $this->modelFactory->getObject('Amazon_Template_Shipping_Builder')->build($model, $post->toArray());
 
         $snapshotBuilder = $this->modelFactory->getObject('Amazon_Template_Shipping_SnapshotBuilder');
         $snapshotBuilder->setModel($model);

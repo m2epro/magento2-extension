@@ -80,10 +80,12 @@ class Solve extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $listingProduct->getMarketplace()->getId(),
             $listingProduct->getAccount()->getId()
         );
-
-        $dispatcherObject->process($connectorObj);
-        $response = $connectorObj->getResponseData();
-
+        try {
+            $dispatcherObject->process($connectorObj);
+            $response = $connectorObj->getResponseData();
+        } catch (\Exception $exception) {
+             $this->getHelper('Module\Exception')->process($exception);
+        }
         if (!isset($response['result'][0]['ebay_end_date_raw'])) {
             $messages[] = $this->__('Unable to stop eBay item ID.');
             return false;

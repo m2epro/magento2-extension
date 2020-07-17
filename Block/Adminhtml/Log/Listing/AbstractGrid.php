@@ -13,14 +13,12 @@ namespace Ess\M2ePro\Block\Adminhtml\Log\Listing;
  */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 {
-    protected $moduleConfig;
     protected $wrapperCollectionFactory;
     protected $customCollectionFactory;
 
     //#######################################
 
     public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -28,7 +26,6 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->moduleConfig = $moduleConfig;
         $this->wrapperCollectionFactory = $wrapperCollectionFactory;
         $this->customCollectionFactory = $customCollectionFactory;
 
@@ -56,7 +53,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
     protected function getMaxLastHandledRecordsCount()
     {
-        return $this->moduleConfig->getGroupValue(
+        return $this->getHelper('Module')->getConfig()->getGroupValue(
             '/logs/grouped/',
             'max_records_count'
         );

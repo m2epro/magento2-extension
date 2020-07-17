@@ -3,7 +3,6 @@ define([
     'M2ePro/Common',
     'mage/adminhtml/wysiwyg/tiny_mce/setup'
 ], function () {
-
     window.EbayTemplateDescription = Class.create(Common, {
 
         // ---------------------------------------
@@ -78,10 +77,6 @@ define([
                 .observe('change', EbayTemplateDescriptionObj.description_mode_change)
                 .simulate('change');
 
-            $('description_template_show_hide_wysiwyg')
-                .observe('click', wysiwygdescription_template.toggle.bind(wysiwygdescription_template)).simulate('click')
-                .observe('click', EbayTemplateDescriptionObj.showHideWYSIWYG);
-
             $('image_main')
                 .observe('change', EbayTemplateDescriptionObj.image_main_change)
                 .simulate('change');
@@ -112,6 +107,14 @@ define([
 
             $('custom_inserts_open_popup')
                 .observe('click', EbayTemplateDescriptionObj.customInsertsOpenPopup);
+
+            if (typeof wysiwygdescription_template !== 'undefined') {
+                $('description_template_show_hide_wysiwyg')
+                    .observe('click', wysiwygdescription_template.toggle.bind(wysiwygdescription_template)).simulate('click')
+                    .observe('click', EbayTemplateDescriptionObj.showHideWYSIWYG);
+            } else {
+                $('description_template_tr').down('.admin__field-control').down('.admin__field').appendChild($('description_template_buttons'));
+            }
 
             this.initCustomInsertsPopup();
             this.initPreviewPopup();

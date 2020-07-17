@@ -81,4 +81,19 @@ class AbstractModifier extends AbstractModel
     }
 
     //########################################
+
+    /**
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Setup
+     */
+    public function getTableName()
+    {
+        if ($this->tableName === null) {
+            throw new \Ess\M2ePro\Model\Exception\Setup("Table Name does not exist.");
+        }
+
+        return $this->tableName;
+    }
+
+    //########################################
 }

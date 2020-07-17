@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode;
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode\Website
  */
-class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Website
+class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\AbstractWebsite
 {
     //########################################
 

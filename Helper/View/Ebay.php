@@ -23,7 +23,6 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
     protected $ebayFactory;
     protected $activeRecordFactory;
-    protected $cacheConfig;
     protected $modelFactory;
 
     //########################################
@@ -31,14 +30,12 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Ess\M2ePro\Model\ActiveRecord\Factory $modelFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
         $this->ebayFactory = $ebayFactory;
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->cacheConfig = $cacheConfig;
         $this->modelFactory = $modelFactory;
         parent::__construct($helperFactory, $context);
     }

@@ -10,21 +10,11 @@ namespace Ess\M2ePro\Model\Ebay\Template\ReturnPolicy;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy\SnapshotBuilder
+ * @method \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy getModel()
  */
-class SnapshotBuilder extends \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel
+class SnapshotBuilder extends \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder
 {
     //########################################
-
-    public function getSnapshot()
-    {
-        $data = $this->model->getData();
-
-        foreach ($data as &$value) {
-            $value !== null && !is_array($value) && $value = (string)$value;
-        }
-
-        return $data;
-    }
 
     //########################################
 }

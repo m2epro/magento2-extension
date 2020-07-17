@@ -179,4 +179,27 @@ class Setup extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
     }
 
     //########################################
+
+    /**
+     * @return null|string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getLastUpgradeDate()
+    {
+        if (!$this->getHelper('Module_Database_Structure')->isTableExists('m2epro_setup')) {
+            return null;
+        }
+
+        $collection = $this->activeRecordFactory->getObject('Setup')->getCollection();
+
+        /** @var \Ess\M2ePro\Model\Setup $setupObject */
+        $setupObject = $collection->getLastItem();
+        if (!$setupObject->getId()) {
+            return null;
+        }
+
+        return $setupObject->getCreateDate();
+    }
+
+    //########################################
 }

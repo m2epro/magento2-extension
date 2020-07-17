@@ -18,13 +18,11 @@ class Data extends AbstractForm
 {
     protected $resourceConnection;
     protected $currency;
-    protected $cacheConfig;
     protected $ebayFactory;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Framework\Locale\Currency $currency,
-        \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -33,7 +31,6 @@ class Data extends AbstractForm
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->currency = $currency;
-        $this->cacheConfig = $cacheConfig;
         $this->ebayFactory = $ebayFactory;
 
         parent::__construct($context, $registry, $formFactory, $data);
@@ -162,16 +159,16 @@ class Data extends AbstractForm
                     ? $formData['listing_type'] : '',
                 'create_magento_attribute' => true,
                 'tooltip' => $this->__(
-                    '<b>Auction</b> - your listings will have a starting price and last for the selected listing 
+                    '<b>Auction</b> - your listings will have a starting price and last for the selected listing
                     duration or until you accept a buyer bid.
-                    To set Auction listing type via Magento Attribute, 
+                    To set Auction listing type via Magento Attribute,
                     fill Magento Product Attribute with value "Chinese".<br/>
-                    <b>Fixed Price</b> - your listings will have a set price and last for the entire listing duration 
+                    <b>Fixed Price</b> - your listings will have a set price and last for the entire listing duration
                     or until you run out of stock.
-                    To set Fixed Price listing type via Magento Attribute, fill Magento Product Attribute 
+                    To set Fixed Price listing type via Magento Attribute, fill Magento Product Attribute
                     with value "FixedPriceItem".<br/><br/>
 
-                    <b>Note:</b> If selected Magento Attribute has a wrong or empty value, your items 
+                    <b>Note:</b> If selected Magento Attribute has a wrong or empty value, your items
                     will be listed as Fixed Price listings.'
                 )
             ]
@@ -254,12 +251,12 @@ class Data extends AbstractForm
                             . '</span><span class="duration_note duration_fixed_note" style="display: none;">' .
                             $this->__('Your fixed-price listings will renew automatically every 30 days until the items
                             sell out or you end the listings.<br><br>
-                            <b>Note:</b> By using eBay out-of-stock feature, your item with zero quantity stays active 
+                            <b>Note:</b> By using eBay out-of-stock feature, your item with zero quantity stays active
                             but is hidden from search results until you increase the quantity.
                             Read more <a href="%url%" target="_blank">here</a>.',
                             $this->getHelper('Module\Support')->getKnowledgebaseArticleUrl('332094'))
                             . '</span><span class="duration_note duration_attribute_note" style="display: none;">'
-                            . $this->__('Attribute must contain a whole number. If you choose "Good Till Cancelled" 
+                            . $this->__('Attribute must contain a whole number. If you choose "Good Till Cancelled"
                             the Attribute must contain 100.')
                             . '</span>';
 
@@ -1151,7 +1148,7 @@ JS
 
     private function getDefault()
     {
-        return $this->activeRecordFactory->getObject('Ebay_Template_SellingFormat')->getDefaultSettings();
+        return $this->modelFactory->getObject('Ebay_Template_SellingFormat_Builder')->getDefaultData();
     }
 
     private function getCurrency()

@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Listing;
 
 use Ess\M2ePro\Model\Account;
+use Ess\M2ePro\Helper\Component\Amazon as AmazonHelper;
 
 /**
  * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other
@@ -17,11 +18,14 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 {
     protected $_isPkAutoIncrement = false;
 
+    protected $resourceConnection;
+
     protected $amazonFactory;
 
     //########################################
 
     public function __construct(
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -29,9 +33,10 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         $connectionName = null
     ) {
-        parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
-
+        $this->resourceConnection = $resourceConnection;
         $this->amazonFactory = $amazonFactory;
+
+        parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
     }
 
     //########################################
@@ -113,6 +118,47 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         }
 
         return $result;
+    }
+
+    //########################################
+
+    public function resetEntities()
+    {
+        $listingOther = $this->parentFactory->getObject(AmazonHelper::NICK, 'Listing\Other');
+        $amazonListingOther = $this->activeRecordFactory->getObject('Amazon_Listing_Other');
+
+        $stmt = $listingOther->getResourceCollection()->getSelect()->query();
+
+        $SKUs = [];
+        foreach ($stmt as $row) {
+            $listingOther->setData($row);
+            $amazonListingOther->setData($row);
+
+            $listingOther->setChildObject($amazonListingOther);
+            $amazonListingOther->setParentObject($listingOther);
+            $SKUs[] = $amazonListingOther->getSku();
+
+            $listingOther->delete();
+        }
+
+        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_amazon_item');
+        foreach (array_chunk($SKUs, 1000) as $chunkSKUs) {
+            $this->resourceConnection->getConnection()->delete($tableName, ['sku IN (?)' => $chunkSKUs]);
+        }
+
+        $accountsCollection = $this->parentFactory->getObject(AmazonHelper::NICK, 'Account')->getCollection();
+        $accountsCollection->addFieldToFilter('other_listings_synchronization', 1);
+
+        foreach ($accountsCollection->getItems() as $account) {
+            $additionalData = (array)$this->getHelper('Data')
+                ->jsonDecode($account->getAdditionalData());
+
+            unset($additionalData['is_amazon_other_listings_full_items_data_already_received'],
+                $additionalData['last_other_listing_products_synchronization']
+            );
+
+            $account->setSettings('additional_data', $additionalData)->save();
+        }
     }
 
     //########################################

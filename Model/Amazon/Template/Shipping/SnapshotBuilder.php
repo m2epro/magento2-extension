@@ -10,21 +10,11 @@ namespace Ess\M2ePro\Model\Amazon\Template\Shipping;
 
 /**
  * Class \Ess\M2ePro\Model\Amazon\Template\Shipping\SnapshotBuilder
+ * @method \Ess\M2ePro\Model\Amazon\Template\Shipping getModel()
  */
-class SnapshotBuilder extends \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel
+class SnapshotBuilder extends \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder
 {
     //########################################
-
-    public function getSnapshot()
-    {
-        $data = $this->model->getData();
-
-        foreach ($data as &$value) {
-            $value !== null && !is_array($value) && $value = (string)$value;
-        }
-
-        return $data;
-    }
 
     //########################################
 }

@@ -23,23 +23,7 @@ class StopRules extends AbstractForm
         $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $defaults = [
-            'stop_mode' => 1,
-
-            'stop_status_disabled' => 1,
-            'stop_out_off_stock'   => 1,
-
-            'stop_qty_magento'           => TemplateSynchronization::QTY_MODE_NONE,
-            'stop_qty_magento_value'     => '0',
-            'stop_qty_magento_value_max' => '10',
-
-            'stop_qty_calculated'           => TemplateSynchronization::QTY_MODE_NONE,
-            'stop_qty_calculated_value'     => '0',
-            'stop_qty_calculated_value_max' => '10',
-
-            'stop_advanced_rules_mode'    => 0,
-            'stop_advanced_rules_filters' => null
-        ];
+        $defaults = $this->modelFactory->getObject('Walmart_Template_Synchronization_Builder')->getDefaultData();
         $formData = array_merge($defaults, $formData);
 
         $form = $this->_formFactory->create();
@@ -131,60 +115,15 @@ Rules will not take effect.</p>'
         );
 
         $fieldset->addField(
-            'stop_qty_magento',
-            self::SELECT,
-            [
-                'name' => 'stop_qty_magento',
-                'label' => $this->__('Stop When Magento Quantity Is'),
-                'value' => $formData['stop_qty_magento'],
-                'values' => [
-                    TemplateSynchronization::QTY_MODE_NONE => $this->__('No Action'),
-                    TemplateSynchronization::QTY_MODE_LESS => $this->__('Less or Equal'),
-                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
-                ],
-                'tooltip' => $this->__(
-                    'Automatically stops the Items on Walmart when their Magento Quantity reaches the specified value.'
-                )
-            ]
-        )->addCustomAttribute('qty_type', 'magento');
-
-        $fieldset->addField(
-            'stop_qty_magento_value',
-            'text',
-            [
-                'container_id' => 'stop_qty_magento_value_container',
-                'name' => 'stop_qty_magento_value',
-                'label' => $this->__('Quantity'),
-                'value' => $formData['stop_qty_magento_value'],
-                'class' => 'validate-digits',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
-            'stop_qty_magento_value_max',
-            'text',
-            [
-                'container_id' => 'stop_qty_magento_value_max_container',
-                'name' => 'stop_qty_magento_value_max',
-                'label' => $this->__('Max Quantity'),
-                'value' => $formData['stop_qty_magento_value_max'],
-                'class' => 'validate-digits M2ePro-validate-conditions-between',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
             'stop_qty_calculated',
             self::SELECT,
             [
                 'name' => 'stop_qty_calculated',
-                'label' => $this->__('Stop When Calculated Quantity Is'),
+                'label' => $this->__('Stop When Quantity Is'),
                 'value' => $formData['stop_qty_calculated'],
                 'values' => [
                     TemplateSynchronization::QTY_MODE_NONE => $this->__('No Action'),
-                    TemplateSynchronization::QTY_MODE_LESS => $this->__('Less or Equal'),
-                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
+                    TemplateSynchronization::QTY_MODE_YES => $this->__('Less or Equal'),
                 ],
                 'tooltip' => $this->__(
                     'Automatically stops the Items on Walmart when their Quantity calculated based on
@@ -194,32 +133,12 @@ Rules will not take effect.</p>'
                     listed as Walmart Variant Group.'
                 )
             ]
-        )->addCustomAttribute('qty_type', 'calculated');
-
-        $fieldset->addField(
-            'stop_qty_calculated_value',
-            'text',
-            [
-                'container_id' => 'stop_qty_calculated_value_container',
-                'name' => 'stop_qty_calculated_value',
-                'label' => $this->__('Quantity'),
-                'value' => $formData['stop_qty_calculated_value'],
-                'class' => 'validate-digits',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
-            'stop_qty_calculated_value_max',
-            'text',
-            [
-                'container_id' => 'stop_qty_calculated_value_max_container',
-                'name' => 'stop_qty_calculated_value_max',
-                'label' => $this->__('Max Quantity'),
-                'value' => $formData['stop_qty_calculated_value_max'],
-                'class' => 'validate-digits M2ePro-validate-conditions-between',
-                'required' => true
-            ]
+        )->setAfterElementHtml(<<<HTML
+<input name="stop_qty_calculated_value" id="stop_qty_calculated_value"
+       value="{$formData['stop_qty_calculated_value']}" type="text"
+       style="width: 72px; margin-left: 10px;"
+       class="input-text admin__control-text required-entry validate-digits _required" />
+HTML
         );
 
         $fieldset = $form->addFieldset(
@@ -289,13 +208,8 @@ Rules will not take effect.</p>'
             'stop_status_disabled',
             'stop_out_off_stock',
 
-            'stop_qty_magento',
-            'stop_qty_magento_value',
-            'stop_qty_magento_value_max',
-
             'stop_qty_calculated',
             'stop_qty_calculated_value',
-            'stop_qty_calculated_value_max',
 
             'stop_advanced_rules_mode',
             'stop_advanced_rules_filters',

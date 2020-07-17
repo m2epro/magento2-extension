@@ -25,34 +25,27 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     //########################################
 
-    public function getTemplateCategoryIds(array $listingProductIds)
+    public function getTemplateCategoryIds(array $listingProductIds, $columnName, $returnNull = false)
     {
         $select = $this->getConnection()
                        ->select()
                        ->from(['elp' => $this->getMainTable()])
                        ->reset(\Zend_Db_Select::COLUMNS)
-                       ->columns(['template_category_id'])
-                       ->where('listing_product_id IN (?)', $listingProductIds)
-                       ->where('template_category_id IS NOT NULL');
+                       ->columns([$columnName])
+                       ->where('listing_product_id IN (?)', $listingProductIds);
 
-        $ids = $select->query()->fetchAll(\PDO::FETCH_COLUMN);
+        !$returnNull && $select->where("{$columnName} IS NOT NULL");
 
-        return array_unique($ids);
-    }
+        foreach ($select->query()->fetchAll() as $row) {
+            $id = $row[$columnName] !== null ? (int)$row[$columnName] : null;
+            if (!$returnNull) {
+                continue;
+            }
 
-    public function getTemplateOtherCategoryIds(array $listingProductIds)
-    {
-        $select = $this->getConnection()
-                       ->select()
-                       ->from(['elp' => $this->getMainTable()])
-                       ->reset(\Zend_Db_Select::COLUMNS)
-                       ->columns(['template_other_category_id'])
-                       ->where('listing_product_id IN (?)', $listingProductIds)
-                       ->where('template_other_category_id IS NOT NULL');
+            $ids[$id] = $id;
+        }
 
-        $ids = $select->query()->fetchAll(\PDO::FETCH_COLUMN);
-
-        return array_unique($ids);
+        return array_values($ids);
     }
 
     //########################################

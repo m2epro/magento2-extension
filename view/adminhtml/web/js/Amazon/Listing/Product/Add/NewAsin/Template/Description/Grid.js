@@ -130,14 +130,14 @@ define([
                     self.templateDescriptionHandler.gridHandler.unselectAllAndReload();
 
                     if (response.products_ids.length > 0) {
-                        ListingGridHandlerObj.templateDescriptionHandler.openPopUp(
+                        ListingGridObj.templateDescriptionHandler.openPopUp(
                             0, M2ePro.translator.translate('templateDescriptionPopupTitle'),
                             response.products_ids, response.html, 1);
                     } else {
                         if (response.messages.length > 0) {
                             MessageObj.clear();
                             response.messages.each(function (msg) {
-                                MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1) + 'Message'](msg.text);
+                                MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1)](msg.text);
                             });
                         }
                     }
@@ -179,7 +179,7 @@ define([
             new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/assign'), {
                 method: 'post',
                 parameters: {
-                    products_ids: ListingGridHandlerObj.templateDescriptionHandler.templateDescriptionPopup.productsIds,
+                    products_ids: ListingGridObj.templateDescriptionHandler.templateDescriptionPopup.productsIds,
                     template_id: templateId
                 },
                 onSuccess: function (transport) {
@@ -193,7 +193,7 @@ define([
                 }
             });
 
-            ListingGridHandlerObj.templateDescriptionHandler.templateDescriptionPopup.modal('closeModal');
+            ListingGridObj.templateDescriptionHandler.templateDescriptionPopup.modal('closeModal');
         },
 
         checkCategoryProducts: function (url) {
@@ -214,7 +214,7 @@ define([
                         var response = transport.responseText.evalJSON();
 
                         MessageObj.clear();
-                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](response.text);
+                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1)](response.text);
                     }
                 }
             });

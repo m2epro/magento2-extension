@@ -235,28 +235,6 @@ class ReturnPolicy extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMode
 
     //########################################
 
-    /**
-     * @return array
-     */
-    public function getDefaultSettings()
-    {
-        return [
-            'accepted' => 'ReturnsAccepted',
-            'option' => '',
-            'within' => '',
-            'shipping_cost' => '',
-
-            'international_accepted' => self::RETURNS_NOT_ACCEPTED,
-            'international_option' => '',
-            'international_within' => '',
-            'international_shipping_cost' => '',
-
-            'description' => ''
-        ];
-    }
-
-    //########################################
-
     public function isCacheEnabled()
     {
         return true;

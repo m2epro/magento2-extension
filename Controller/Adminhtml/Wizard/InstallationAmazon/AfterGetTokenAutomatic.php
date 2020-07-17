@@ -39,13 +39,13 @@ class AfterGetTokenAutomatic extends AfterGetTokenAbstract
         }
 
         return array_merge(
+            $this->getAmazonAccountDefaultSettings(),
             [
                 'title'          => $params['Merchant'],
                 'marketplace_id' => $this->getHelper('Data\Session')->getValue('marketplace_id'),
                 'merchant_id'    => $params['Merchant'],
                 'token'          => $params['MWSAuthToken'],
-            ],
-            $this->getAmazonAccountDefaultSettings()
+            ]
         );
     }
 

@@ -32,11 +32,8 @@ class Grid extends WidgetGrid
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Model\ItemFactory $itemFactory,
-        \Ess\M2ePro\Model\Config\Manager\Module $configModule,
         array $data = []
     ) {
-
-        $configModule->setGroupValue('test', 'mode', 1);
 
         $this->_itemFactory = $itemFactory;
         parent::__construct($context, $backendHelper, $data);

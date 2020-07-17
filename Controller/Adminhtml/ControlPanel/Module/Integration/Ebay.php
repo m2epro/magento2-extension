@@ -41,42 +41,6 @@ class Ebay extends Command
     //########################################
 
     /**
-     * @title "Reset 3rd Party"
-     * @description "Clear all 3rd party items for all Accounts"
-     */
-    public function resetOtherListingsAction()
-    {
-        $listingOther = $this->parentFactory->getObject(EbayHelper::NICK, 'Listing\Other');
-        $ebayListingOther = $this->activeRecordFactory->getObject('Ebay_Listing_Other');
-
-        $stmt = $listingOther->getResourceCollection()->getSelect()->query();
-
-        $itemIds = [];
-        foreach ($stmt as $row) {
-            $listingOther->setData($row);
-            $ebayListingOther->setData($row);
-
-            $listingOther->setChildObject($ebayListingOther);
-            $ebayListingOther->setParentObject($listingOther);
-            $itemIds[] = $ebayListingOther->getItemId();
-
-            $listingOther->delete();
-        }
-
-        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_ebay_item');
-        foreach (array_chunk($itemIds, 1000) as $chunkItemIds) {
-            $this->resourceConnection->getConnection() ->delete($tableName, ['item_id IN (?)' => $chunkItemIds]);
-        }
-
-        foreach ($this->parentFactory->getObject(EbayHelper::NICK, 'Account')->getCollection() as $account) {
-            $account->getChildObject()->setData('other_listings_last_synchronization', null)->save();
-        }
-
-        $this->getMessageManager()->addSuccess('Successfully removed.');
-        $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
-    }
-
-    /**
      * @title "Stop 3rd Party"
      * @description "[in order to resolve the problem with duplicates]"
      * @new_line
@@ -245,56 +209,51 @@ class Ebay extends Command
     public function showNonexistentTemplatesAction()
     {
         if ($this->getRequest()->getParam('fix')) {
-            $fixAction    = $this->getRequest()->getParam('fix_action');
+            $template   = $this->getRequest()->getParam('template');
+            $field      = $this->getRequest()->getParam('field');
+            $fieldValue = $this->getRequest()->getParam('field_value');
 
-            $template     = $this->getRequest()->getParam('template_nick');
-            $currentMode  = $this->getRequest()->getParam('current_mode');
-            $currentValue = $this->getRequest()->getParam('value');
-
-            if ($fixAction == 'set_null') {
-                $field = $currentMode == 'template' ? "template_{$template}_id"
-                                                    : "template_{$template}_custom_id";
-
+            if ($this->getRequest()->getParam('fix_action') === 'set_null') {
                 $collection = $this->parentFactory->getObject(EbayHelper::NICK, 'Listing\Product')->getCollection();
-                $collection->addFieldToFilter($field, $currentValue);
+                $collection->addFieldToFilter($field, $fieldValue);
 
                 foreach ($collection->getItems() as $listingProduct) {
-                    $listingProduct->getChildObject()->setData($field, null)->save();
+                    $listingProduct->getChildObject()->setData($field, null);
+                    $listingProduct->getChildObject()->save();
                 }
             }
 
-            if ($fixAction == 'set_parent') {
-                $field = $currentMode == 'template' ? "template_{$template}_id"
-                                                    : "template_{$template}_custom_id";
-
+            if ($this->getRequest()->getParam('fix_action') === 'set_parent') {
                 $collection = $this->parentFactory->getObject(EbayHelper::NICK, 'Listing\Product')->getCollection();
-                $collection->addFieldToFilter($field, $currentValue);
-
-                $data = [
-                    "template_{$template}_mode" => \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_PARENT,
-                    $field                      => null
-                ];
+                $collection->addFieldToFilter($field, $fieldValue);
 
                 foreach ($collection->getItems() as $listingProduct) {
-                    $listingProduct->getChildObject()->addData($data)->save();
+                    $listingProduct->getChildObject()->setData(
+                        "template_{$template}_mode",
+                        \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_PARENT
+                    );
+
+                    $listingProduct->getChildObject()->setData($field, null);
+                    $listingProduct->getChildObject()->save();
                 }
             }
 
-            if ($fixAction == 'set_template' && $this->getRequest()->getParam('template_id')) {
-                $field = $currentMode == 'template' ? "template_{$template}_id"
-                                                    : "template_{$template}_custom_id";
+            if ($this->getRequest()->getParam('fix_action') === 'set_template' &&
+                $this->getRequest()->getParam('template_id')) {
 
                 $collection = $this->parentFactory->getObject(EbayHelper::NICK, 'Listing\Product')->getCollection();
-                $collection->addFieldToFilter($field, $currentValue);
-
-                $data = [
-                    "template_{$template}_mode" => \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE,
-                    $field                      => null,
-                ];
-                $data["template_{$template}_id"] = (int)$this->getRequest()->getParam('template_id');
+                $collection->addFieldToFilter($field, $fieldValue);
 
                 foreach ($collection->getItems() as $listing) {
-                    $listing->getChildObject()->addData($data)->save();
+                    $listing->getChildObject()->setData(
+                        "template_{$template}_mode",
+                        \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                    );
+                    $listingProduct->getChildObject()->setData($field, null);
+                    $listingProduct->getChildObject()->setData(
+                        "template_{$template}_id",
+                        (int)$this->getRequest()->getParam('template_id')
+                    );
                 }
             }
 
@@ -303,9 +262,14 @@ class Ebay extends Command
 
         $nonexistentTemplates = [];
 
-        $simpleTemplates = ['category', 'other_category'];
-        foreach ($simpleTemplates as $templateName) {
-            $tempResult = $this->getNonexistentTemplatesBySimpleLogic($templateName);
+        $simpleTemplates = [
+            'template_category_id'                 => 'category',
+            'template_category_secondary_id'       => 'category',
+            'template_store_category_id'           => 'store_category',
+            'template_store_category_secondary_id' => 'store_category'
+        ];
+        foreach ($simpleTemplates as $templateIdField => $templateName) {
+            $tempResult = $this->getNonexistentTemplatesBySimpleLogic($templateName, $templateIdField);
             !empty($tempResult) && $nonexistentTemplates[$templateName] = $tempResult;
         }
 
@@ -331,6 +295,7 @@ class Ebay extends Command
     <th>Listing ID</th>
     <th>Listing Product ID</th>
     <th>Policy ID</th>
+    <th>Policy ID Field</th>
     <th>My Mode</th>
     <th>Parent Mode</th>
     <th>Actions</th>
@@ -341,23 +306,23 @@ HTML;
         foreach ($nonexistentTemplates as $templateName => $items) {
             $tableContent .= <<<HTML
 <tr>
-    <td colspan="6" align="center"><b>{$templateName}</b></td>
+    <td colspan="7" align="center"><b>{$templateName}</b></td>
 </tr>
 HTML;
 
             foreach ($items as $index => $itemInfo) {
-                $myModeWord = '';
-                $parentModeWord = '';
-                $actionsHtml = '';
+                $myModeWord     = '--';
+                $parentModeWord = '--';
+                $actionsHtml    = '';
 
                 if (!isset($itemInfo['my_mode']) && !isset($itemInfo['parent_mode'])) {
                     $url = $this->getUrl('*/*/*', [
-                        'action'        => 'showNonexistentTemplates',
-                        'fix'           => '1',
-                        'template_nick' => $templateName,
-                        'current_mode'  => 'template',
-                        'fix_action'    => 'set_null',
-                        'value'         => $itemInfo['my_needed_id'],
+                        'action'      => 'showNonexistentTemplates',
+                        'fix'         => '1',
+                        'fix_action'  => 'set_null',
+                        'template'    => $templateName,
+                        'field_value' => $itemInfo['my_needed_id'],
+                        'field'       => $itemInfo['my_needed_id_field']
                     ]);
 
                     $actionsHtml .= <<<HTML
@@ -372,12 +337,12 @@ HTML;
                 if (isset($itemInfo['my_mode']) && $itemInfo['my_mode'] == 1) {
                     $myModeWord = 'custom';
                     $url = $this->getUrl('*/*/*', [
-                        'action'        => 'showNonexistentTemplates',
-                        'fix'           => '1',
-                        'template_nick' => $templateName,
-                        'current_mode'  => $myModeWord,
-                        'fix_action'    => 'set_parent',
-                        'value'         => $itemInfo['my_needed_id'],
+                        'action'      => 'showNonexistentTemplates',
+                        'fix'         => '1',
+                        'fix_action'  => 'set_parent',
+                        'template'    => $templateName,
+                        'field_value' => $itemInfo['my_needed_id'],
+                        'field'       => $itemInfo['my_needed_id_field']
                     ]);
 
                     $actionsHtml .= <<<HTML
@@ -388,12 +353,12 @@ HTML;
                 if (isset($itemInfo['my_mode']) && $itemInfo['my_mode'] == 2) {
                     $myModeWord = 'template';
                     $url = $this->getUrl('*/*/*', [
-                        'action'        => 'showNonexistentTemplates',
-                        'fix'           => '1',
-                        'template_nick' => $templateName,
-                        'current_mode'  => $myModeWord,
-                        'fix_action'    => 'set_parent',
-                        'value'         => $itemInfo['my_needed_id'],
+                        'action'      => 'showNonexistentTemplates',
+                        'fix'         => '1',
+                        'fix_action'  => 'set_parent',
+                        'template'    => $templateName,
+                        'field_value' => $itemInfo['my_needed_id'],
+                        'field'       => $itemInfo['my_needed_id_field']
                     ]);
 
                     $actionsHtml .= <<<HTML
@@ -404,12 +369,12 @@ HTML;
                 if (isset($itemInfo['parent_mode']) && $itemInfo['parent_mode'] == 1) {
                     $parentModeWord = 'custom';
                     $url = $this->getUrl('*/*/*', [
-                        'action'        => 'showNonexistentTemplates',
-                        'fix'           => '1',
-                        'fix_action'    => 'set_template',
-                        'template_nick' => $templateName,
-                        'current_mode'  => $parentModeWord,
-                        'value'         => $itemInfo['my_needed_id'],
+                        'action'      => 'showNonexistentTemplates',
+                        'fix'         => '1',
+                        'fix_action'  => 'set_template',
+                        'template'    => $templateName,
+                        'field_value' => $itemInfo['my_needed_id'],
+                        'field'       => $itemInfo['my_needed_id_field']
                     ]);
                     $onClick = <<<JS
 var result = prompt('Enter Template ID');
@@ -426,12 +391,12 @@ HTML;
                 if (isset($itemInfo['parent_mode']) && $itemInfo['parent_mode'] == 2) {
                     $parentModeWord = 'template';
                     $url = $this->getUrl('*/*/*', [
-                        'action'        => 'showNonexistentTemplates',
-                        'fix'           => '1',
-                        'fix_action'    => 'set_template',
-                        'template_nick' => $templateName,
-                        'current_mode'  => $parentModeWord,
-                        'value'         => $itemInfo['my_needed_id'],
+                        'action'      => 'showNonexistentTemplates',
+                        'fix'         => '1',
+                        'fix_action'  => 'set_template',
+                        'template'    => $templateName,
+                        'field_value' => $itemInfo['my_needed_id'],
+                        'field'       => $itemInfo['my_needed_id_field']
                     ]);
                     $onClick = <<<JS
 var result = prompt('Enter Template ID');
@@ -446,7 +411,7 @@ HTML;
                 }
 
                 $key = $templateName .'##'. $myModeWord .'##'. $itemInfo['listing_id'];
-                if ($myModeWord == 'parent' && in_array($key, $alreadyRendered)) {
+                if ($myModeWord === 'parent' && in_array($key, $alreadyRendered)) {
                     continue;
                 }
 
@@ -456,6 +421,7 @@ HTML;
     <td>{$itemInfo['listing_id']}</td>
     <td>{$itemInfo['my_id']}</td>
     <td>{$itemInfo['my_needed_id']}</td>
+    <td>{$itemInfo['my_needed_id_field']}</td>
     <td>{$myModeWord}</td>
     <td>{$parentModeWord}</td>
     <td>
@@ -485,11 +451,12 @@ HTML;
 
     private function getNonexistentTemplatesByDifficultLogic($templateCode)
     {
+        $databaseHelper = $this->getHelper('Module_Database_Structure');
+
         $subSelect = $this->resourceConnection->getConnection()->select()
             ->from(
                 [
-                    'melp' => $this->getHelper('Module_Database_Structure')
-                        ->getTableNameWithPrefix('m2epro_ebay_listing_product')
+                    'melp' => $databaseHelper->getTableNameWithPrefix('m2epro_ebay_listing_product')
                 ],
                 [
                     'my_id'          => 'listing_product_id',
@@ -505,20 +472,28 @@ HTML;
                                                                             mel.template_{$templateCode}_custom_id,
                                                                             mel.template_{$templateCode}_id)
                     END"
-                    )]
+                    ),
+                    'my_needed_id_field' => new \Zend_Db_Expr(
+                        "CASE
+                        WHEN melp.template_{$templateCode}_mode = 2 THEN 'template_{$templateCode}_id'
+                        WHEN melp.template_{$templateCode}_mode = 1 THEN 'template_{$templateCode}_custom_id'
+                        WHEN melp.template_{$templateCode}_mode = 0 THEN IF(mel.template_{$templateCode}_mode = 1,
+                                                                            'template_{$templateCode}_custom_id',
+                                                                            'template_{$templateCode}_id')
+                        END"
+                    )
+                ]
             )
             ->joinLeft(
                 [
-                    'mlp' => $this->getHelper('Module_Database_Structure')
-                        ->getTableNameWithPrefix('m2epro_listing_product')
+                    'mlp' => $databaseHelper->getTableNameWithPrefix('m2epro_listing_product')
                 ],
                 'melp.listing_product_id = mlp.id',
                 ['listing_id' => 'listing_id']
             )
             ->joinLeft(
                 [
-                    'mel' => $this->getHelper('Module_Database_Structure')
-                        ->getTableNameWithPrefix('m2epro_ebay_listing')
+                    'mel' => $databaseHelper->getTableNameWithPrefix('m2epro_ebay_listing')
                 ],
                 'mlp.listing_id = mel.listing_id',
                 [
@@ -529,68 +504,73 @@ HTML;
             );
 
         $templateIdName = 'id';
-        $horizontalTemplates = [
-            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT,
-            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION,
-            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION,
-        ];
-        in_array($templateCode, $horizontalTemplates) && $templateIdName = "template_{$templateCode}_id";
+
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager */
+        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
+        if (in_array($templateCode, $templateManager->getHorizontalTemplates())) {
+            $templateIdName = "template_{$templateCode}_id";
+        }
 
         $result = $this->resourceConnection->getConnection()->select()
             ->from(
-                ['subselect' => new \Zend_Db_Expr('('.$subSelect->__toString().')')],
+                [
+                    'subselect' => new \Zend_Db_Expr(
+                        '('.$subSelect->__toString().')'
+                    )
+                ],
                 [
                     'subselect.my_id',
                     'subselect.listing_id',
                     'subselect.my_mode',
                     'subselect.parent_mode',
                     'subselect.my_needed_id',
+                    'subselect.my_needed_id_field'
                 ]
             )
             ->joinLeft(
                 [
-                    'template' => $this->getHelper('Module_Database_Structure')
-                        ->getTableNameWithPrefix("m2epro_ebay_template_{$templateCode}")
+                    'template' => $databaseHelper->getTableNameWithPrefix("m2epro_ebay_template_{$templateCode}")
                 ],
                 "subselect.my_needed_id = template.{$templateIdName}",
                 []
             )
             ->where("template.{$templateIdName} IS NULL")
-            ->query()->fetchAll();
+            ->query()
+            ->fetchAll();
 
         return $result;
     }
 
-    private function getNonexistentTemplatesBySimpleLogic($templateCode)
+    private function getNonexistentTemplatesBySimpleLogic($templateCode, $templateIdField)
     {
+        $databaseHelper = $this->getHelper('Module_Database_Structure');
+
         $select = $this->resourceConnection->getConnection()->select()
             ->from(
                 [
-                    'melp' => $this->getHelper('Module_Database_Structure')
-                        ->getTableNameWithPrefix('m2epro_ebay_listing_product')
+                    'melp' => $databaseHelper->getTableNameWithPrefix('m2epro_ebay_listing_product')
                 ],
                 [
-                    'my_id'        => 'listing_product_id',
-                    'my_needed_id' => "template_{$templateCode}_id",
+                    'my_id'              => 'listing_product_id',
+                    'my_needed_id'       => $templateIdField,
+                    'my_needed_id_field' => new \Zend_Db_Expr("'{$templateIdField}'")
                 ]
             )
             ->joinLeft(
                 [
-                    'mlp' => $this->getHelper('Module_Database_Structure')
-                        ->getTableNameWithPrefix('m2epro_listing_product')
+                    'mlp' => $databaseHelper->getTableNameWithPrefix('m2epro_listing_product')
                 ],
                 'melp.listing_product_id = mlp.id',
                 ['listing_id' => 'listing_id']
             )
             ->joinLeft(
                 [
-                    'template' => $this->getHelper('Module_Database_Structure')
-                        ->getTableNameWithPrefix("m2epro_ebay_template_{$templateCode}")
+                    'template' => $databaseHelper->getTableNameWithPrefix("m2epro_ebay_template_{$templateCode}")
                 ],
-                "melp.template_{$templateCode}_id = template.id",
+                "melp.{$templateIdField} = template.id",
                 []
             )
-            ->where("melp.template_{$templateCode}_id IS NOT NULL")
+            ->where("melp.{$templateIdField} IS NOT NULL")
             ->where("template.id IS NULL");
 
         return $select->query()->fetchAll();
@@ -666,7 +646,7 @@ HTML;
     <th>Product Title</th>
     <th>Listing Product ID</th>
     <th>eBay Item ID</th>
-    <th>eBay Site</th>
+    <th>Marketplace</th>
     <th>Date</th>
 </tr>
 HTML;
@@ -833,52 +813,6 @@ HTML;
 </html>
 HTML;
         return str_replace('#count#', count($duplicated), $html);
-    }
-
-    //########################################
-
-    /**
-     * @title "Fix many same categories templates"
-     * @description "[remove the same templates and set original templates to the settings of listings products]"
-     * @new_line
-     */
-    public function fixManySameCategoriesTemplatesOnEbayAction()
-    {
-        $affectedListingProducts = $removedTemplates = 0;
-        $statistics = [];
-        $snapshots = [];
-
-        foreach ($this->activeRecordFactory->getObject('Ebay_Template_Category')->getCollection() as $template) {
-            $shot = $template->getDataSnapshot();
-            unset($shot['id'], $shot['create_date'], $shot['update_date']);
-            foreach ($shot['specifics'] as &$specific) {
-                unset($specific['id'], $specific['template_category_id']);
-            }
-            $key = sha1($this->getHelper('Data')->jsonEncode($shot));
-
-            if (!array_key_exists($key, $snapshots)) {
-                $snapshots[$key] = $template;
-                continue;
-            }
-
-            foreach ($template->getAffectedListingsProducts(false) as $listingsProduct) {
-                $originalTemplate = $snapshots[$key];
-                $listingsProduct->getChildObject()->setData('template_category_id', $originalTemplate->getId())
-                                                  ->save();
-
-                $affectedListingProducts++;
-            }
-
-            $template->delete();
-            $statistics['templates'][] = $template->getId();
-
-            $removedTemplates++;
-        }
-
-        return <<<HTML
-Templates were removed: {$removedTemplates}.<br>
-Listings Product Affected: {$affectedListingProducts}.<br>
-HTML;
     }
 
     //########################################

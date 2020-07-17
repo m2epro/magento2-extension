@@ -34,7 +34,7 @@ class MoveToListingGrid extends Listing
             $this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('ignoreListings'))
         );
 
-        $movingHandlerJs = 'ListingGridHandlerObj.movingHandler';
+        $movingHandlerJs = 'ListingGridObj.movingHandler';
         if ($this->getRequest()->getParam('componentMode') == \Ess\M2ePro\Helper\Component\Ebay::NICK) {
             $movingHandlerJs = 'EbayListingViewSettingsGridObj.movingHandler';
         }

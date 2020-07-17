@@ -67,7 +67,7 @@ class CheckMessages extends Base
             }
         }
 
-        if ($template === null && empty($templateData)) {
+        if ($template === null || empty($templateData)) {
             $this->setJsonContent(['messages' => '']);
             return $this->getResult();
         }

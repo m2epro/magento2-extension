@@ -2,8 +2,7 @@ define([
     'Magento_Ui/js/modal/alert'
 ], function (alert) {
 
-    window.AmazonTemplateDescriptionCategorySpecificRenderer = Class.create();
-    AmazonTemplateDescriptionCategorySpecificRenderer.prototype = {
+    window.AmazonTemplateDescriptionCategorySpecificRenderer = Class.create({
 
         // ---------------------------------------
 
@@ -281,5 +280,5 @@ define([
         }
 
         // ---------------------------------------
-    };
+    });
 });

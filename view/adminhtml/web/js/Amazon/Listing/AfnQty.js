@@ -1,8 +1,7 @@
 define([
     'Magento_Ui/js/modal/alert'
 ], function (alert) {
-    window.AmazonListingAfnQty = Class.create();
-    AmazonListingAfnQty.prototype = {
+    window.AmazonListingAfnQty = Class.create({
 
         // ---------------------------------------
 
@@ -105,5 +104,5 @@ define([
             });
         }
 
-    };
+    });
 });

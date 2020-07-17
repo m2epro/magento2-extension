@@ -147,7 +147,7 @@ define([
 
                         self.completeProgressBar();
                         if (typeof response.message !== 'undefined') {
-                            MessagesObj.addErrorMessage(response.message);
+                            MessagesObj.addError(response.message);
                         }
                         return;
                     }
@@ -207,9 +207,9 @@ define([
                         onSuccess.bind(self.gridHandler)(listingId);
                         if (response.message) {
                             if (response.isFailed) {
-                                MessagesObj.addErrorMessage(response.message);
+                                MessagesObj.addError(response.message);
                             } else {
-                                MessagesObj.addSuccessMessage(response.message);
+                                MessagesObj.addSuccess(response.message);
                             }
                         }
                         return;
@@ -217,7 +217,7 @@ define([
 
                     self.gridHandler.unselectAllAndReload();
                     if (response.message) {
-                        MessagesObj.addErrorMessage(response.message);
+                        MessagesObj.addError(response.message);
                     }
 
                 }

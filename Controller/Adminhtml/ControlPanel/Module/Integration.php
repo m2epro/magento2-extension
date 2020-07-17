@@ -57,6 +57,7 @@ class Integration extends Command
             if ($componentMode == 'ebay') {
                 $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
 
+                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request $request */
                 $request = $this->modelFactory->getObject(
                     'Ebay_Listing_Product_Action_Type_'.$requestType.'_Request'
                 );
@@ -64,12 +65,13 @@ class Integration extends Command
                 $request->setConfigurator($configurator);
 
                 // @codingStandardsIgnoreLine
-                return '<pre>' . print_r($request->getBuilderData(), true);
+                return '<pre>' . print_r($request->getRequestData(), true);
             }
 
             if ($componentMode == 'amazon') {
                 $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
 
+                /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Request $request */
                 $request = $this->modelFactory->getObject(
                     'Amazon_Listing_Product_Action_Type_'.$requestType.'_Request'
                 );
@@ -78,7 +80,7 @@ class Integration extends Command
                 $request->setConfigurator($configurator);
 
                 if ($requestType == 'ListAction') {
-                    $request->setValidatorsData([
+                    $request->setCachedData([
                         'sku'        => 'placeholder',
                         'general_id' => 'placeholder',
                         'list_type'  => 'placeholder'
@@ -86,12 +88,13 @@ class Integration extends Command
                 }
 
                 // @codingStandardsIgnoreLine
-                return '<pre>' . print_r($request->getBuilderData(), true);
+                return '<pre>' . print_r($request->getRequestData(), true);
             }
 
             if ($componentMode == 'walmart') {
                 $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
 
+                /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Request $request */
                 $request = $this->modelFactory->getObject(
                     'Walmart_Listing_Product_Action_Type_'.$requestType.'_Request'
                 );
@@ -100,7 +103,7 @@ class Integration extends Command
                 $request->setConfigurator($configurator);
 
                 // @codingStandardsIgnoreLine
-                return '<pre>' . print_r($request->getBuilderData(), true);
+                return '<pre>' . print_r($request->getRequestData(), true);
             }
 
             return '';
@@ -455,18 +458,21 @@ HTML;
                 $quoteData['extension_attributes']
             );
 
-            $html = '';
-
-            $html .= '<pre><b>Grand Total:</b> ' .$quote->getGrandTotal(). '<br>';
-            $html .= '<pre><b>Shipping Amount:</b> ' .$quote->getShippingAddress()->getShippingAmount(). '<br>';
-
-            $html .= '<pre><b>Quote Data:</b> ' .print_r($quoteData, true). '<br>';
-            $html .= '<pre><b>Shipping Address Data:</b> ' .print_r($shippingAddressData, true). '<br>';
-            $html .= '<pre><b>Billing Address Data:</b> ' .print_r($billingAddressData, true). '<br>';
+            $items = [];
+            foreach ($quote->getAllItems() as $item) {
+                $items[] = $item->getData();
+            }
 
             $magentoQuoteManager->save($quote->setIsActive(false));
 
-            return $html;
+            return print_r(json_decode(json_encode([
+                'Grand Total'           => $quote->getGrandTotal(),
+                'Shipping Amount'       => $quote->getShippingAddress()->getShippingAmount(),
+                'Quote Data'            => $quoteData,
+                'Shipping Address Data' => $shippingAddressData,
+                'Billing Address Data'  => $billingAddressData,
+                'Items'                 => $items
+            ]), true), true);
         }
 
         $formKey = $this->formKey->getFormKey();

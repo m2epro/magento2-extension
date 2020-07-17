@@ -22,9 +22,19 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     private $categoryTemplateModel = null;
 
     /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory
+     * @var \Ess\M2ePro\Model\Ebay\Template\Category
      */
-    private $otherCategoryTemplateModel = null;
+    protected $categorySecondaryTemplateModel = null;
+
+    /**
+     * @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    protected $storeCategoryTemplateModel = null;
+
+    /**
+     * @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    protected $storeCategorySecondaryTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Magento\Product
@@ -47,9 +57,11 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             return false;
         }
 
-        $this->categoryTemplateModel = null;
-        $this->otherCategoryTemplateModel = null;
-        $this->magentoProductModel = null;
+        $this->categoryTemplateModel               = null;
+        $this->categorySecondaryTemplateModel      = null;
+        $this->storeCategoryTemplateModel          = null;
+        $this->storeCategorySecondaryTemplateModel = null;
+        $this->magentoProductModel                 = null;
 
         return parent::delete();
     }
@@ -90,34 +102,104 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     // ---------------------------------------
 
     /**
-     * @return \Ess\M2ePro\Model\Ebay\Template\OtherCategory
+     * @return \Ess\M2ePro\Model\Ebay\Template\Category
      */
-    public function getOtherCategoryTemplate()
+    public function getCategorySecondaryTemplate()
     {
-        if ($this->otherCategoryTemplateModel === null) {
+        if ($this->categorySecondaryTemplateModel === null) {
             try {
-                $this->otherCategoryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                    'Ebay_Template_OtherCategory',
-                    (int)$this->getAddingTemplateOtherCategoryId()
+                $this->categorySecondaryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
+                    'Ebay_Template_Category',
+                    (int)$this->getAddingTemplateCategorySecondaryId(),
+                    null,
+                    ['template']
                 );
             } catch (\Exception $exception) {
-                return $this->otherCategoryTemplateModel;
+                return $this->categorySecondaryTemplateModel;
             }
 
             if ($this->getMagentoProduct() !== null) {
-                $this->otherCategoryTemplateModel->setMagentoProduct($this->getMagentoProduct());
+                $this->categorySecondaryTemplateModel->setMagentoProduct($this->getMagentoProduct());
             }
         }
 
-        return $this->otherCategoryTemplateModel;
+        return $this->categorySecondaryTemplateModel;
     }
 
     /**
-     * @param \Ess\M2ePro\Model\Ebay\Template\OtherCategory $instance
+     * @param \Ess\M2ePro\Model\Ebay\Template\Category $instance
      */
-    public function setOtherCategoryTemplate(\Ess\M2ePro\Model\Ebay\Template\OtherCategory $instance)
+    public function setCategorySecondaryTemplate(\Ess\M2ePro\Model\Ebay\Template\Category $instance)
     {
-        $this->otherCategoryTemplateModel = $instance;
+        $this->categorySecondaryTemplateModel = $instance;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    public function getStoreCategoryTemplate()
+    {
+        if ($this->storeCategoryTemplateModel === null) {
+            try {
+                $this->storeCategoryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
+                    'Ebay_Template_StoreCategory',
+                    (int)$this->getAddingTemplateStoreCategoryId(),
+                    null,
+                    ['template']
+                );
+            } catch (\Exception $exception) {
+                return $this->storeCategoryTemplateModel;
+            }
+
+            if ($this->getMagentoProduct() !== null) {
+                $this->storeCategoryTemplateModel->setMagentoProduct($this->getMagentoProduct());
+            }
+        }
+
+        return $this->storeCategoryTemplateModel;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Ebay\Template\StoreCategory $instance
+     */
+    public function setStoreCategoryTemplate(\Ess\M2ePro\Model\Ebay\Template\StoreCategory $instance)
+    {
+        $this->storeCategoryTemplateModel = $instance;
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    public function getStoreCategorySecondaryTemplate()
+    {
+        if ($this->storeCategorySecondaryTemplateModel === null) {
+            try {
+                $this->storeCategorySecondaryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
+                    'Ebay_Template_StoreCategory',
+                    (int)$this->getAddingTemplateStoreCategorySecondaryId(),
+                    null,
+                    ['template']
+                );
+            } catch (\Exception $exception) {
+                return $this->storeCategorySecondaryTemplateModel;
+            }
+
+            if ($this->getMagentoProduct() !== null) {
+                $this->storeCategorySecondaryTemplateModel->setMagentoProduct($this->getMagentoProduct());
+            }
+        }
+
+        return $this->storeCategorySecondaryTemplateModel;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Ebay\Template\StoreCategory $instance
+     */
+    public function setStoreCategorySecondaryTemplate(\Ess\M2ePro\Model\Ebay\Template\StoreCategory $instance)
+    {
+        $this->storeCategorySecondaryTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -145,9 +227,19 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $this->getData('adding_template_category_id');
     }
 
-    public function getAddingTemplateOtherCategoryId()
+    public function getAddingTemplateCategorySecondaryId()
     {
-        return $this->getData('adding_template_other_category_id');
+        return $this->getData('adding_template_category_secondary_id');
+    }
+
+    public function getAddingTemplateStoreCategoryId()
+    {
+        return $this->getData('adding_template_store_category_id');
+    }
+
+    public function getAddingTemplateStoreCategorySecondaryId()
+    {
+        return $this->getData('adding_template_store_category_secondary_id');
     }
 
     //########################################

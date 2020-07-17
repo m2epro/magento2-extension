@@ -81,14 +81,9 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         foreach ($accounts as $account) {
             try {
                 $this->processAccount($account);
-            } catch (\Exception $exception) {
-                $this->synchronizationLog->addMessage(
-                    $this->getHelper('Module\Translation')->__($exception->getMessage()),
-                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
-                );
-
-                $this->getHelper('Module\Exception')->process($exception);
+            } catch (\Exception $e) {
+                $this->getHelper('Module\Exception')->process($e);
+                $this->synchronizationLog->addMessageFromException($e);
             }
         }
     }
@@ -325,8 +320,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
             $this->synchronizationLog->addMessage(
                 $this->getHelper('Module\Translation')->__($message->getText()),
-                $logType,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+                $logType
             );
         }
     }
@@ -783,8 +777,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             $this->getLogsActionId(),
             \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
             $logMessage,
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS
         );
     }
 

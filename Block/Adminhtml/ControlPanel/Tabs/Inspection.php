@@ -21,11 +21,7 @@ class Inspection extends AbstractBlock
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('controlPanelInspection');
-        // ---------------------------------------
-
         $this->setTemplate('control_panel/tabs/inspection.phtml');
     }
 
@@ -33,16 +29,10 @@ class Inspection extends AbstractBlock
 
     protected function _beforeToHtml()
     {
-        // ---------------------------------------
         $this->setChild('requirements', $this->createBlock(
             'ControlPanel_Inspection_Requirements'
         ));
-        $this->setChild('cron', $this->createBlock(
-            'ControlPanel_Inspection_Cron'
-        ));
-        // ---------------------------------------
 
-        // ---------------------------------------
         $this->setChild('caches', $this->createBlock(
             'ControlPanel_Inspection_Caches'
         ));
@@ -55,7 +45,6 @@ class Inspection extends AbstractBlock
         $this->setChild('other_issues', $this->createBlock(
             'ControlPanel_Inspection_OtherIssues'
         ));
-        // ---------------------------------------
 
         return parent::_beforeToHtml();
     }

@@ -356,17 +356,17 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function getAccountData($account, $key)
     {
-        return $this->getRegistryValue($key . $account->getId() . '/');
+        return $this->getHelper('Module')->getRegistry()->getValue($key . $account->getId() . '/');
     }
 
     protected function setAccountData($account, $key, $value)
     {
-        $this->setRegistryValue($key . $account->getId() . '/', $value);
+        $this->getHelper('Module')->getRegistry()->setValue($key . $account->getId() . '/', $value);
     }
 
     protected function deleteAccountData($account, $key)
     {
-        $this->deleteRegistryValue($key . $account->getId() . '/');
+        $this->getHelper('Module')->getRegistry()->deleteValue($key . $account->getId() . '/');
     }
 
     //####################################

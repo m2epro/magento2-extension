@@ -1,0 +1,43 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Dictionary $this */
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element\Dictionary $element */
+$element = $this->getElement();
+?>
+
+<table class="data-grid data-grid-not-hovered" cellpadding="0" cellspacing="0" style="width: 100%">
+    <thead>
+    <tr class="headings">
+        <th class="data-grid-th" style="width: 30%;"><?php echo $this->getTranslator()->__('Name'); ?></th>
+        <th class="data-grid-th" style="width: 30%;"><?php echo $this->getTranslator()->__('Mode'); ?></th>
+        <th class="data-grid-th" style="width: 40%;"><?php echo $this->getTranslator()->__('Value'); ?></th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($element->getSpecifics() as $index => $specific) { ?>
+        <tr style="height: 25px;">
+            <td style="vertical-align:top;">
+                <?php echo $element->getAttributeTitleHiddenHtml($index, $specific); ?>
+                <?php echo $element->getModeHtml($index); ?>
+                <?php echo $element->getAttributeTitleLabelHtml($index, $specific); ?>
+            </td>
+            <td style="vertical-align:top;">
+                <?php echo $element->getValueModeSelectHtml($index, $specific); ?>
+            </td>
+            <td style="width: 100%; vertical-align:top; text-align: left;">
+                <?php echo $element->getValueEbayRecomendedHtml($index, $specific); ?>
+                <?php echo $element->getValueCustomValueHtml($index, $specific); ?>
+                <?php echo $element->getValueCustomAttributeHtml($index, $specific); ?>
+            </td>
+        </tr>
+        <?php } ?>
+    </tbody>
+</table>

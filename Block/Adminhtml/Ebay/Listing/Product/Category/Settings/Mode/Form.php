@@ -25,11 +25,7 @@ class Form extends AbstractForm
             ]]
         );
 
-        $fieldset = $form->addFieldset(
-            'categories_mode',
-            [
-            ]
-        );
+        $fieldset = $form->addFieldset('categories_mode', []);
 
         $fieldset->addField(
             'block-title',

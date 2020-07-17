@@ -84,7 +84,7 @@ class Uninstall implements \Magento\Framework\Setup\UninstallInterface
     {
         $select = $this->installer->getConnection()
             ->select()
-            ->from($this->installer->getTable('m2epro_module_config'), 'value')
+            ->from($this->installer->getTable('m2epro_config'), 'value')
             ->where('`group` = ?', '/uninstall/')
             ->where('`key` = ?', 'can_remove_data');
 

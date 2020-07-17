@@ -128,24 +128,28 @@ class InstallData implements InstallDataInterface
         $magentoMarketplaceUrl = 'https://marketplace.magento.com/m2e-ebay-amazon-magento2.html';
         $servicingInterval = rand(43200, 86400);
 
-        $primaryConfig = $this->getConfigModifier('primary');
-
-        $primaryConfig->insert('/license/', 'key', null);
-        $primaryConfig->insert('/license/', 'status', 1);
-        $primaryConfig->insert('/license/', 'domain', null);
-        $primaryConfig->insert('/license/', 'ip', null);
-        $primaryConfig->insert('/license/info/', 'email', null);
-        $primaryConfig->insert('/license/valid/', 'domain', null);
-        $primaryConfig->insert('/license/valid/', 'ip', null);
-        $primaryConfig->insert('/server/', 'application_key', '02edcc129b6128f5fa52d4ad1202b427996122b6');
-        $primaryConfig->insert('/server/', 'installation_key', sha1(microtime(1)));
-        $primaryConfig->insert('/server/location/1/', 'baseurl', 'https://s1.m2epro.com/');
-        $primaryConfig->insert('/server/location/', 'default_index', 1);
-
-        $moduleConfig = $this->getConfigModifier('module');
+        $moduleConfig = $this->getConfigModifier();
 
         $moduleConfig->insert('/', 'is_disabled', '0');
         $moduleConfig->insert('/', 'environment', 'production');
+        $moduleConfig->insert('/', 'installation_key', sha1(microtime(1)));
+        $moduleConfig->insert('/license/', 'key', null);
+        $moduleConfig->insert('/license/', 'status', 1);
+        $moduleConfig->insert('/license/domain/', 'real', null);
+        $moduleConfig->insert('/license/domain/', 'valid', null);
+        $moduleConfig->insert('/license/domain/', 'is_valid', null);
+        $moduleConfig->insert('/license/ip/', 'real', null);
+        $moduleConfig->insert('/license/ip/', 'valid', null);
+        $moduleConfig->insert('/license/ip/', 'is_valid', null);
+        $moduleConfig->insert('/license/info/', 'email', null);
+        $moduleConfig->insert('/server/', 'application_key', '02edcc129b6128f5fa52d4ad1202b427996122b6');
+        $moduleConfig->insert('/server/location/1/', 'baseurl', 'https://s1.m2epro.com/');
+        $moduleConfig->insert('/server/location/', 'default_index', 1);
+        $moduleConfig->insert('/server/location/', 'current_index', 1);
+        $moduleConfig->insert('/server/exceptions/', 'send', '1');
+        $moduleConfig->insert('/server/exceptions/', 'filters', '0');
+        $moduleConfig->insert('/server/fatal_error/', 'send', '1');
+        $moduleConfig->insert('/server/logging/', 'send', 1);
         $moduleConfig->insert('/cron/', 'mode', '1');
         $moduleConfig->insert('/cron/', 'runner', 'magento');
         $moduleConfig->insert('/cron/', 'last_access', null);
@@ -153,7 +157,6 @@ class InstallData implements InstallDataInterface
         $moduleConfig->insert('/cron/', 'last_executed_slow_task', null);
         $moduleConfig->insert('/cron/', 'last_executed_task_group', null);
         $moduleConfig->insert('/cron/service/', 'auth_key', null);
-        $moduleConfig->insert('/cron/service/', 'hostname_1', 'cron.m2epro.com');
         $moduleConfig->insert('/cron/service_controller/', 'disabled', '0');
         $moduleConfig->insert('/cron/service_pub/', 'disabled', '0');
         $moduleConfig->insert('/cron/magento/', 'disabled', '0');
@@ -176,29 +179,23 @@ class InstallData implements InstallDataInterface
         $moduleConfig->insert('/support/', 'forum_url', 'https://community.m2epro.com/');
         $moduleConfig->insert('/support/', 'magento_marketplace_url', $magentoMarketplaceUrl);
         $moduleConfig->insert('/support/', 'contact_email', 'support@m2epro.com');
-        $moduleConfig->insert('/view/', 'show_block_notices', '1');
-        $moduleConfig->insert('/view/', 'show_products_thumbnails', '1');
-        $moduleConfig->insert('/magento/attribute/', 'price_type_converting', '0');
-        $moduleConfig->insert('/view/products_grid/', 'use_alternative_mysql_select', '0');
-        $moduleConfig->insert('/view/ebay/notice/', 'disable_collapse', '0');
-        $moduleConfig->insert('/view/ebay/template/selling_format/', 'show_tax_category', '0');
-        $moduleConfig->insert('/view/ebay/feedbacks/notification/', 'mode', '0');
-        $moduleConfig->insert('/view/ebay/feedbacks/notification/', 'last_check', null);
-        $moduleConfig->insert('/debug/exceptions/', 'send_to_server', '1');
-        $moduleConfig->insert('/debug/exceptions/', 'filters_mode', '0');
-        $moduleConfig->insert('/debug/fatal_error/', 'send_to_server', '1');
-        $moduleConfig->insert('/debug/logging/', 'send_to_server', 1);
-        $moduleConfig->insert('/renderer/description/', 'convert_linebreaks', '1');
-        $moduleConfig->insert('/other/paypal/', 'url', 'paypal.com/cgi-bin/webscr/');
-        $moduleConfig->insert('/product/index/', 'mode', '1');
-        $moduleConfig->insert('/product/force_qty/', 'mode', '0');
-        $moduleConfig->insert('/product/force_qty/', 'value', '10');
-        $moduleConfig->insert('/qty/percentage/', 'rounding_greater', '0');
+        $moduleConfig->insert('/general/configuration/', 'listing_product_inspector_mode', '0');
+        $moduleConfig->insert('/general/configuration/', 'view_show_block_notices_mode', '1');
+        $moduleConfig->insert('/general/configuration/', 'view_show_products_thumbnails_mode', '1');
+        $moduleConfig->insert('/general/configuration/', 'view_products_grid_use_alternative_mysql_select_mode', '0');
+        $moduleConfig->insert('/general/configuration/', 'renderer_description_convert_linebreaks_mode', '1');
+        $moduleConfig->insert('/general/configuration/', 'other_pay_pal_url', 'paypal.com/cgi-bin/webscr/');
+        $moduleConfig->insert('/general/configuration/', 'product_index_mode', '1');
+        $moduleConfig->insert('/general/configuration/', 'product_force_qty_mode', '0');
+        $moduleConfig->insert('/general/configuration/', 'product_force_qty_value', '10');
+        $moduleConfig->insert('/general/configuration/', 'qty_percentage_rounding_greater', '0');
+        $moduleConfig->insert('/general/configuration/', 'magento_attribute_price_type_converting_mode', '0');
         $moduleConfig->insert(
-            '/order/magento/settings/',
+            '/general/configuration/',
             'create_with_first_product_options_when_variation_unavailable',
             '1'
         );
+        $moduleConfig->insert('/general/configuration/', 'secure_image_url_in_item_description_mode', '0');
         $moduleConfig->insert('/magento/product/simple_type/', 'custom_types', '');
         $moduleConfig->insert('/magento/product/downloadable_type/', 'custom_types', '');
         $moduleConfig->insert('/magento/product/configurable_type/', 'custom_types', '');
@@ -207,7 +204,6 @@ class InstallData implements InstallDataInterface
         $moduleConfig->insert('/health_status/notification/', 'mode', 1);
         $moduleConfig->insert('/health_status/notification/', 'email', '');
         $moduleConfig->insert('/health_status/notification/', 'level', 40);
-        $moduleConfig->insert('/listing/product/inspector/', 'mode', '0', '0 - disable, \r\n1 - enable');
 
         $this->getConnection()->insertMultiple($this->getFullTableName('wizard'), [
             [
@@ -241,31 +237,40 @@ class InstallData implements InstallDataInterface
                 'step'     => null,
                 'type'     => 1,
                 'priority' => 1,
+            ],
+            [
+                'nick'     => 'migrationToInnodb',
+                'view'     => '*',
+                'status'   => 3,
+                'step'     => null,
+                'type'     => 1,
+                'priority' => 5,
             ]
         ]);
     }
 
     private function installEbay()
     {
-        $moduleConfig = $this->getConfigModifier('module');
+        $moduleConfig = $this->getConfigModifier();
 
         $moduleConfig->insert('/component/ebay/', 'mode', '1');
         $moduleConfig->insert('/cron/task/ebay/listing/product/process_instructions/', 'mode', '1');
         $moduleConfig->insert('/listing/product/inspector/ebay/', 'max_allowed_instructions_count', '2000');
-        $moduleConfig->insert('/ebay/order/settings/marketplace_8/', 'use_first_street_line_as_company', '1');
-        $moduleConfig->insert('/ebay/connector/listing/', 'check_the_same_product_already_listed', '1');
-        $moduleConfig->insert('/component/ebay/variation/', 'mpn_can_be_changed', '0');
-        $moduleConfig->insert('/view/ebay/template/category/', 'use_last_specifics', '0');
-        $moduleConfig->insert('/ebay/motors/', 'epids_motor_attribute', null);
-        $moduleConfig->insert('/ebay/motors/', 'epids_uk_attribute', null);
-        $moduleConfig->insert('/ebay/motors/', 'epids_de_attribute', null);
-        $moduleConfig->insert('/ebay/motors/', 'epids_au_attribute', null);
-        $moduleConfig->insert('/ebay/motors/', 'ktypes_attribute', null);
-        $moduleConfig->insert('/ebay/sell_on_another_marketplace/', 'tutorial_shown', '0');
-        $moduleConfig->insert('/ebay/description/', 'upload_images_mode', 2);
-        $moduleConfig->insert('/ebay/description/', 'should_be_ulrs_secure', 0);
         $moduleConfig->insert('/ebay/listing/product/instructions/cron/', 'listings_products_per_one_time', '1000');
         $moduleConfig->insert('/ebay/listing/product/scheduled_actions/', 'max_prepared_actions_count', '3000');
+        $moduleConfig->insert('/ebay/order/settings/marketplace_8/', 'use_first_street_line_as_company', '1');
+        $moduleConfig->insert('/ebay/configuration/', 'prevent_item_duplicates_mode', '1');
+        $moduleConfig->insert('/ebay/configuration/', 'variation_mpn_can_be_changed', '0');
+        $moduleConfig->insert('/ebay/configuration/', 'motors_epids_attribute', null);
+        $moduleConfig->insert('/ebay/configuration/', 'uk_epids_attribute', null);
+        $moduleConfig->insert('/ebay/configuration/', 'de_epids_attribute', null);
+        $moduleConfig->insert('/ebay/configuration/', 'au_epids_attribute', null);
+        $moduleConfig->insert('/ebay/configuration/', 'ktypes_attribute', null);
+        $moduleConfig->insert('/ebay/configuration/', 'sell_on_another_marketplace_tutorial_shown', '0');
+        $moduleConfig->insert('/ebay/configuration/', 'upload_images_mode', 2);
+        $moduleConfig->insert('/ebay/configuration/', 'view_template_selling_format_show_tax_category', '0');
+        $moduleConfig->insert('/ebay/configuration/', 'feedback_notification_mode', '0');
+        $moduleConfig->insert('/ebay/configuration/', 'feedback_notification_last_check', null);
 
         $this->getConnection()->insertMultiple($this->getFullTableName('marketplace'), [
             [
@@ -1134,18 +1139,19 @@ class InstallData implements InstallDataInterface
 
     private function installAmazon()
     {
-        $moduleConfig = $this->getConfigModifier('module');
+        $moduleConfig = $this->getConfigModifier();
 
         $moduleConfig->insert('/amazon/', 'application_name', 'M2ePro - Amazon Magento Integration');
         $moduleConfig->insert('/component/amazon/', 'mode', '1');
         $moduleConfig->insert('/cron/task/amazon/listing/product/process_instructions/', 'mode', '1');
-        $moduleConfig->insert('/amazon/listing/product/action/scheduled_data/', 'limit', '20000');
         $moduleConfig->insert('/listing/product/inspector/amazon/', 'max_allowed_instructions_count', '2000');
-        $moduleConfig->insert('/amazon/order/settings/marketplace_25/', 'use_first_street_line_as_company', '1');
-        $moduleConfig->insert('/amazon/repricing/', 'mode', '1');
-        $moduleConfig->insert('/amazon/repricing/', 'base_url', 'https://repricer.m2epro.com/connector/m2epro/');
-        $moduleConfig->insert('/amazon/business/', 'mode', '0');
         $moduleConfig->insert('/amazon/listing/product/instructions/cron/', 'listings_products_per_one_time', '1000');
+        $moduleConfig->insert('/amazon/listing/product/action/scheduled_data/', 'limit', '20000');
+        $moduleConfig->insert(
+            '/amazon/listing/product/action/processing/prepare/',
+            'max_listings_products_count',
+            '2000'
+        );
         $moduleConfig->insert('/amazon/listing/product/action/list/', 'min_allowed_wait_interval', '3600');
         $moduleConfig->insert('/amazon/listing/product/action/relist/', 'min_allowed_wait_interval', '1800');
         $moduleConfig->insert('/amazon/listing/product/action/revise_qty/', 'min_allowed_wait_interval', '900');
@@ -1154,11 +1160,10 @@ class InstallData implements InstallDataInterface
         $moduleConfig->insert('/amazon/listing/product/action/revise_images/', 'min_allowed_wait_interval', '7200');
         $moduleConfig->insert('/amazon/listing/product/action/stop/', 'min_allowed_wait_interval', '600');
         $moduleConfig->insert('/amazon/listing/product/action/delete/', 'min_allowed_wait_interval', '600');
-        $moduleConfig->insert(
-            '/amazon/listing/product/action/processing/prepare/',
-            'max_listings_products_count',
-            '2000'
-        );
+        $moduleConfig->insert('/amazon/order/settings/marketplace_25/', 'use_first_street_line_as_company', '1');
+        $moduleConfig->insert('/amazon/repricing/', 'mode', '1');
+        $moduleConfig->insert('/amazon/repricing/', 'base_url', 'https://repricer.m2epro.com/connector/m2epro/');
+        $moduleConfig->insert('/amazon/configuration/', 'business_mode', '0');
 
         $this->getConnection()->insertMultiple($this->getFullTableName('marketplace'), [
             [
@@ -1419,7 +1424,7 @@ class InstallData implements InstallDataInterface
 
     private function installWalmart()
     {
-        $moduleConfig = $this->getConfigModifier('module');
+        $moduleConfig = $this->getConfigModifier();
 
         $moduleConfig->insert('/walmart/', 'application_name', 'M2ePro - Walmart Magento Integration');
         $moduleConfig->insert('/component/walmart/', 'mode', '1');
@@ -1557,18 +1562,15 @@ class InstallData implements InstallDataInterface
     }
 
     /**
-     * @param $configName
      * @return Config
      */
-    protected function getConfigModifier($configName)
+    protected function getConfigModifier()
     {
-        $tableName = $configName . '_config';
-
         return $this->modelFactory->getObject(
             'Setup_Database_Modifier_Config',
             [
                 'installer' => $this->installer,
-                'tableName' => $tableName,
+                'tableName' => 'config',
             ]
         );
     }

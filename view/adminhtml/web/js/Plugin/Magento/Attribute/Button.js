@@ -6,8 +6,7 @@ define([
     'M2ePro/Attribute'
 ], function (jQuery, modal, _) {
 
-    window.MagentoAttributeButton = Class.create();
-    MagentoAttributeButton.prototype = {
+    window.MagentoAttributeButton = Class.create({
         _id: '',
         _destinationId: '',
         _magentoAttributes: {},
@@ -144,5 +143,5 @@ define([
                 select: select.outerHTML
             });
         }
-    };
+    });
 });

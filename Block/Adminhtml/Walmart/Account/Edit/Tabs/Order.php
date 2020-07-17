@@ -64,47 +64,7 @@ class Order extends AbstractForm
         $formData['magento_orders_settings'] = !empty($formData['magento_orders_settings'])
             ? $this->getHelper('Data')->jsonDecode($formData['magento_orders_settings']) : [];
 
-        $defaults = [
-            'magento_orders_settings' => [
-                'listing' => [
-                    'mode' => 1,
-                    'store_mode' => Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
-                    'store_id' => null
-                ],
-                'listing_other' => [
-                    'mode' => 1,
-                    'product_mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
-                    'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
-                    'store_id' => null,
-                ],
-                'number' => [
-                    'source' => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
-                    'prefix' => [
-                        'prefix' => '',
-                    ]
-                ],
-                'tax' => [
-                    'mode' => Account::MAGENTO_ORDERS_TAX_MODE_MIXED
-                ],
-                'customer' => [
-                    'mode' => Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,
-                    'id' => null,
-                    'website_id' => null,
-                    'group_id' => null,
-                    'notifications' => [
-                        'invoice_created' => false,
-                        'order_created' => false
-                    ],
-                ],
-                'status_mapping' => [
-                    'mode' => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
-                    'processing' => Account::MAGENTO_ORDERS_STATUS_MAPPING_PROCESSING,
-                    'shipped' => Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED,
-                ],
-                'invoice_mode' => 1,
-                'shipment_mode' => 1
-            ]
-        ];
+        $defaults = $this->modelFactory->getObject('Walmart_Account_Builder')->getDefaultData();
 
         $isEdit = !!$this->getRequest()->getParam('id');
 

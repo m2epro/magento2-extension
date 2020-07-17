@@ -16,35 +16,33 @@ use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode as Ca
  */
 class StepTwoSaveToSession extends Settings
 {
-
     //########################################
 
     public function execute()
     {
-        $ids = $this->getRequestIds('products_id');
         $templateData = $this->getRequest()->getParam('template_data');
         $templateData = (array)$this->getHelper('Data')->jsonDecode($templateData);
 
-        $listing = $this->getListing();
+        $sessionData = $this->getSessionValue($this->getSessionDataKey());
 
-        $this->addCategoriesPath($templateData, $listing);
+        foreach ($this->getRequestIds('products_id') as $id) {
+            foreach ($templateData as $categoryType => $categoryData) {
+                $sessionData[$id][$categoryType] = $categoryData;
+                if (empty($sessionData[$id][$categoryType])) {
+                    unset($sessionData[$id][$categoryType]);
+                }
+            }
 
-        $key = $this->getSessionDataKey();
-        $sessionData = $this->getSessionValue($key);
-
-        if ($this->getSessionValue('mode') == CategoryTemplateBlock::MODE_CATEGORY) {
-            foreach ($ids as $categoryId) {
-                $sessionData[$categoryId]['listing_products_ids'] = $this->getSelectedListingProductsIdsByCategoriesIds(
-                    [$categoryId]
+            if ($this->getSessionValue('mode') == CategoryTemplateBlock::MODE_CATEGORY) {
+                $sessionData[$id]['listing_products_ids'] = $this->getSelectedListingProductsIdsByCategoriesIds(
+                    [$id]
                 );
+            } else {
+                $sessionData[$id]['listing_products_ids'] = [$id];
             }
         }
 
-        foreach ($ids as $id) {
-            $sessionData[$id] = array_merge($sessionData[$id], $templateData);
-        }
-
-        $this->setSessionValue($key, $sessionData);
+        $this->setSessionValue($this->getSessionDataKey(), $sessionData);
 
         return $this->getResult();
     }

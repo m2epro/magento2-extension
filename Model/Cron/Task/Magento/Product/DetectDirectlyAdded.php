@@ -140,12 +140,14 @@ class DetectDirectlyAdded extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function getLastProcessedProductId()
     {
-        return $this->getRegistryValue('/magento/product/detect_directly_added/last_magento_product_id/');
+        return $this->getHelper('Module')->getRegistry()->getValue(
+            '/magento/product/detect_directly_added/last_magento_product_id/'
+        );
     }
 
     protected function setLastProcessedProductId($magentoProductId)
     {
-        $this->setRegistryValue(
+        $this->getHelper('Module')->getRegistry()->setValue(
             '/magento/product/detect_directly_added/last_magento_product_id/',
             (int)$magentoProductId
         );

@@ -170,7 +170,7 @@ define([
                     }
                 }.bind(this);
 
-            TemplateHandlerObj.checkMessages(
+            TemplateManagerObj.checkMessages(
                 id,
                 nick,
                 data,

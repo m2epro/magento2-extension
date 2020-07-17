@@ -1,7 +1,6 @@
 define([], function () {
 
-    window.ProgressBar = Class.create();
-    ProgressBar.prototype = {
+    window.ProgressBar = Class.create({
 
         // ---------------------------------------
 
@@ -211,5 +210,5 @@ define([], function () {
         }
 
         // ---------------------------------------
-    };
+    });
 });

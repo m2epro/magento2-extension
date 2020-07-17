@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\View;
 
+use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
+
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\View\Grid
  */
@@ -165,77 +167,78 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('variation', [
-            'header' => $this->__('Magento Variation'),
-            'align' => 'left',
-            'width' => '210px',
-            'sortable' => false,
-            'index' => 'attributes',
-            'filter_index' => 'attributes',
+            'header'         => $this->__('Magento Variation'),
+            'align'          => 'left',
+            'width'          => '210px',
+            'sortable'       => false,
+            'index'          => 'attributes',
+            'filter_index'   => 'attributes',
             'frame_callback' => [$this, 'callbackColumnVariations'],
-            'filter' => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions',
-            'options' => $this->getVariationsAttributes(),
+            'filter'         => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions',
+            'options'        => $this->getVariationsAttributes(),
             'filter_condition_callback' => [$this, 'callbackFilterVariations']
         ]);
 
         $this->addColumn('online_sku', [
-            'header'    => $this->__('SKU'),
-            'align'     => 'left',
-            'width'     => '150px',
-            'index'     => 'online_sku',
-            'filter_index' => 'online_sku',
+            'header'         => $this->__('SKU'),
+            'align'          => 'left',
+            'width'          => '150px',
+            'index'          => 'online_sku',
+            'filter_index'   => 'online_sku',
             'frame_callback' => [$this, 'callbackColumnOnlineSku']
         ]);
 
         $this->addColumn('available_qty', [
-            'header'    => $this->__('Available QTY'),
-            'align'     => 'right',
-            'width'     => '40px',
-            'type'      => 'number',
-            'index'     => 'available_qty',
-            'filter'    => false,
-            'frame_callback' => [$this, 'callbackColumnAvailableQty']
+            'header'   => $this->__('Available QTY'),
+            'align'    => 'right',
+            'width'    => '40px',
+            'type'     => 'number',
+            'index'    => 'available_qty',
+            'filter'   => false,
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty',
+            'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY,
         ]);
 
         $this->addColumn('online_qty_sold', [
-            'header' => $this->__('Sold QTY'),
-            'align' => 'right',
-            'width' => '40px',
-            'type' => 'number',
-            'index' => 'online_qty_sold',
-            'frame_callback' => [$this, 'callbackColumnOnlineQtySold']
+            'header'   => $this->__('Sold QTY'),
+            'align'    => 'right',
+            'width'    => '40px',
+            'type'     => 'number',
+            'index'    => 'online_qty_sold',
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty'
         ]);
 
         $this->addColumn('price', [
-            'header' => $this->__('Price'),
-            'align' => 'right',
-            'width' => '40px',
-            'type' => 'number',
-            'index' => 'online_price',
-            'filter_index' => 'online_price',
+            'header'         => $this->__('Price'),
+            'align'          => 'right',
+            'width'          => '40px',
+            'type'           => 'number',
+            'index'          => 'online_price',
+            'filter_index'   => 'online_price',
             'frame_callback' => [$this, 'callbackColumnPrice'],
         ]);
 
         $this->addColumn('identifiers', [
-            'header' => $this->__('eBay Catalog Identifiers'),
-            'align' => 'left',
-            'width' => '150px',
-            'sortable' => false,
-            'index' => 'additional_data',
-            'filter_index' => 'additional_data',
-            'filter' => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions',
-            'options' => $this->identifiers,
+            'header'         => $this->__('eBay Catalog Identifiers'),
+            'align'          => 'left',
+            'width'          => '150px',
+            'sortable'       => false,
+            'index'          => 'additional_data',
+            'filter_index'   => 'additional_data',
+            'filter'         => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions',
+            'options'        => $this->identifiers,
             'frame_callback' => [$this, 'callbackColumnIdentifiers'],
             'filter_condition_callback' => [$this, 'callbackFilterIdentifiers']
         ]);
 
         $this->addColumn('status', [
-            'header'=> $this->__('Status'),
-            'width' => '60px',
-            'index' => 'status',
+            'header'       => $this->__('Status'),
+            'width'        => '60px',
+            'index'        => 'status',
             'filter_index' => 'status',
-            'type' => 'options',
-            'sortable' => false,
-            'options' => [
+            'type'         => 'options',
+            'sortable'     => false,
+            'options'      => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED     => $this->__('Active'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN     => $this->__('Inactive'),
@@ -291,46 +294,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         if ($value === null || $value === '') {
             return $this->__('N/A');
-        }
-
-        return $value;
-    }
-
-    public function callbackColumnAvailableQty($value, $row, $column, $isExport)
-    {
-        if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED &&
-            ($value === null || $value === '')) {
-            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
-        }
-
-        if ($value === null || $value === '') {
-            return $this->__('N/A');
-        }
-
-        if ($value <= 0) {
-            return '<span style="color: red;">0</span>';
-        }
-
-        if ($row->getData('status') != \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {
-            return '<span style="color: gray; text-decoration: line-through;">' . $value . '</span>';
-        }
-
-        return $value;
-    }
-
-    public function callbackColumnOnlineQtySold($value, $row, $column, $isExport)
-    {
-        if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED &&
-            ($value === null || $value === '')) {
-            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
-        }
-
-        if ($value === null || $value === '') {
-            return $this->__('N/A');
-        }
-
-        if ($value <= 0) {
-            return '<span style="color: red;">0</span>';
         }
 
         return $value;

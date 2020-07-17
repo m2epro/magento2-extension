@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Account\Repricing;
 /**
  * Class \Ess\M2ePro\Model\Amazon\Account\Repricing\Diff
  */
-class Diff extends \Ess\M2ePro\Model\Template\Diff\AbstractModel
+class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
 {
     //########################################
 

@@ -65,16 +65,15 @@ HTML
         // ---------------------------------------
 
         // ---------------------------------------
-        $earlierFormData = $this->getHelper('Data\GlobalData')->getValue('license_form_data');
+        $earlierFormData = $this->getHelper('Module')->getRegistry()->getValueFromJson('/wizard/license_form_data/');
 
-        if ($earlierFormData) {
-            $earlierFormData = $earlierFormData->getValue();
-            $earlierFormData = (array)$this->getHelper('Data')->jsonDecode($earlierFormData);
-            $userInfo = array_merge($userInfo, $earlierFormData);
-        }
+        $userInfo = array_merge($userInfo, $earlierFormData);
 
         $this->setData('user_info', $userInfo);
-        $this->setData('isLicenseStepFinished', $earlierFormData && $this->getHelper('Module\License')->getKey());
+        $this->setData(
+            'isLicenseStepFinished',
+            !empty($earlierFormData) && $this->getHelper('Module\License')->getKey()
+        );
         // ---------------------------------------
 
         return parent::_beforeToHtml();

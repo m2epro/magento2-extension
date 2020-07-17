@@ -86,8 +86,8 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
                     true
                 );
                 $this->helperFactory->getObject('Magento')->clearMenuCache();
+                $this->processMaintenance($menuModel);
             }
-            $this->processMaintenance($menuModel);
             return $menuModel;
         } elseif ($maintenanceMenuState !== null) {
             $this->helperFactory->getObject('Data_Cache_Permanent')->removeValue(
@@ -98,29 +98,12 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
         // ---------------------------------------
 
-        $previousMenuState = [];
         $currentMenuState = $this->buildMenuStateData();
-
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            self::MENU_STATE_REGISTRY_KEY,
-            'key',
-            false
-        );
-
-        if ($registry !== null) {
-            $previousMenuState = $registry->getValueFromJson();
-        }
+        $previousMenuState = $this->getHelper('Module')->getRegistry()
+            ->getValueFromJson(self::MENU_STATE_REGISTRY_KEY);
 
         if ($previousMenuState != $currentMenuState) {
-            if ($registry === null) {
-                $registry = $this->activeRecordFactory->getObject('Registry');
-                $registry->setKey(self::MENU_STATE_REGISTRY_KEY);
-            }
-
-            $registry->setValue($this->helperFactory->getObject('Data')->jsonEncode($currentMenuState))->save();
-
+            $this->getHelper('Module')->getRegistry()->setValue(self::MENU_STATE_REGISTRY_KEY, $currentMenuState);
             $this->helperFactory->getObject('Magento')->clearMenuCache();
         }
 
@@ -205,7 +188,8 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
         $actionUrl = 'm2epro/wizard_' . $activeBlocker->getNick();
 
-        if ($activeBlocker instanceof \Ess\M2ePro\Model\Wizard\MigrationFromMagento1) {
+        if ($activeBlocker instanceof \Ess\M2ePro\Model\Wizard\MigrationFromMagento1 ||
+            $activeBlocker instanceof \Ess\M2ePro\Model\Wizard\MigrationToInnodb) {
             $actionUrl .= '/index/referrer/' . $viewNick;
         }
 

@@ -1,8 +1,7 @@
 define([
     'M2ePro/Plugin/Messages'
 ], function (MessagesObj) {
-    window.Developers = Class.create();
-    Developers.prototype = {
+    window.Developers = Class.create({
 
         inspectionModeElement: null,
         inspectionModeValue: null,
@@ -13,7 +12,7 @@ define([
         {
             var self = this;
 
-            self.inspectionModeElement = $('inspector_mode');
+            self.inspectionModeElement = $('listing_product_inspector_mode');
             self.inspectionModeValue = self.inspectionModeElement.value;
 
             self.inspectionModeElement.observe('change', function() {
@@ -37,29 +36,29 @@ define([
                 method: 'post',
                 asynchronous: true,
                 parameters: {
-                    inspector_mode: $('inspector_mode').value
+                    listing_product_inspector_mode: $('listing_product_inspector_mode').value
                 },
                 onSuccess: function(transport) {
                     var result = transport.responseText;
 
                     MessagesObj.clear();
                     if (!result.isJSON()) {
-                        MessagesObj.addErrorMessage(result);
+                        MessagesObj.addError(result);
                     }
 
                     result = JSON.parse(result);
 
                     if (result.success) {
-                        MessagesObj.addSuccessMessage(M2ePro.translator.translate('Settings successfully saved'));
+                        MessagesObj.addSuccess(M2ePro.translator.translate('Settings successfully saved'));
                         $('save_inspector_mode').hide();
                         self.inspectionModeValue = self.inspectionModeElement.value;
                     } else {
-                        MessagesObj.addErrorMessage(M2ePro.translator.translate('Error'));
+                        MessagesObj.addError(M2ePro.translator.translate('Error'));
                     }
                 }
             });
         }
 
         // ---------------------------------------
-    }
+    });
 });

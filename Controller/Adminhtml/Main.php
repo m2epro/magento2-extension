@@ -10,8 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml;
 
 use Ess\M2ePro\Helper\Module;
 use Ess\M2ePro\Helper\Module\License;
-use Ess\M2ePro\Model\Servicing\Dispatcher;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
+use Ess\M2ePro\Model\Servicing\Dispatcher;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Main
@@ -34,25 +34,21 @@ abstract class Main extends Base
             return $this->_redirect('admin/dashboard');
         }
 
-        $blockerWizardNick = $this->getBlockerWizardNick();
-        if ($blockerWizardNick !== false) {
-            return $this->_redirect('*/wizard_' . $blockerWizardNick);
-        }
-
         $this->addNotificationMessages();
 
         if ($request->isGet() && !$request->isPost() && !$request->isXmlHttpRequest()) {
             try {
-                $this->getHelper('Client')->updateBackupConnectionData(false);
+                $this->getHelper('Client')->updateLocationData(false);
             } catch (\Exception $exception) {
+                $this->getHelper('Module_Exception')->process($exception);
             }
 
             try {
-
                 /** @var Dispatcher $dispatcher */
                 $dispatcher = $this->modelFactory->getObject('Servicing\Dispatcher');
-                $dispatcher->process(Dispatcher::DEFAULT_INTERVAL, $dispatcher->getFastTasks());
+                $dispatcher->process($dispatcher->getFastTasks());
             } catch (\Exception $exception) {
+                $this->getHelper('Module_Exception')->process($exception);
             }
         }
 
@@ -97,6 +93,10 @@ abstract class Main extends Base
             }
         }
 
+        if ($this->isContentLockedByWizard()) {
+            return $this->addWizardUpgradeNotification();
+        }
+
         return parent::addContent($block);
     }
 
@@ -114,9 +114,9 @@ abstract class Main extends Base
             return;
         }
 
-        if ($this->getHelper('Module')->getCacheConfig()->getGroupValue('/view/requirements/popup/', 'closed')) {
+        if ($this->getHelper('Module')->getRegistry()->getValue('/view/requirements/popup/closed/')) {
             return;
-        };
+        }
 
         $manager = $this->modelFactory->getObject('Requirements\Manager');
         if ($manager->isMeet()) {
@@ -127,6 +127,35 @@ abstract class Main extends Base
         $this->getLayout()->setChild('js', $block->getNameInLayout(), '');
 
         $this->systemRequirementsChecked = true;
+    }
+
+    protected function addWizardUpgradeNotification()
+    {
+        if ($this->isAjax()) {
+            return false;
+        }
+        /** @var Module\Wizard $wizardHelper */
+        $wizardHelper = $this->getHelper('Module\Wizard');
+
+        if (!($activeWizard = $wizardHelper->getActiveBlockerWizard($this->getCustomViewNick()))) {
+            return false;
+        }
+
+        $activeWizardNick = $wizardHelper->getNick($activeWizard);
+
+        if ((bool)$this->getRequest()->getParam('wizard', false) ||
+            $this->getRequest()->getControllerName() == 'wizard_'.$activeWizardNick) {
+            return false;
+        }
+
+        $this->resultPage->getLayout()->unsetChild('page.content', 'page_main_actions');
+        /** @var \Magento\Framework\View\Element\AbstractBlock $notificationBlock */
+        $notificationBlock = $wizardHelper->createBlock('notification', $activeWizardNick);
+        if ($notificationBlock) {
+            return parent::addContent($notificationBlock);
+        }
+
+        return $this->_redirect('*/wizard_' . $activeWizardNick, ['referrer' => $this->getCustomViewNick()]);
     }
 
     //########################################
@@ -147,14 +176,14 @@ abstract class Main extends Base
     {
         if ($this->getRequest()->isGet() &&
             !$this->getRequest()->isPost() &&
-            !$this->getRequest()->isXmlHttpRequest()) {
+            !$this->getRequest()->isXmlHttpRequest()
+        ) {
             $staticNotification = $this->addStaticContentNotification();
-            $browserNotification = $this->addBrowserNotifications();
             $healthStatusNotifications = $this->addHealthStatusNotifications();
 
-            $muteMessages = $staticNotification || $browserNotification || $healthStatusNotifications;
+            $muteMessages = $staticNotification || $healthStatusNotifications;
 
-            if (!$muteMessages && $this->getCustomViewHelper()->isInstallationWizardFinished()) {
+            if (!$muteMessages) {
                 $this->addLicenseNotifications();
             }
 
@@ -173,18 +202,6 @@ abstract class Main extends Base
     }
 
     // ---------------------------------------
-
-    protected function addBrowserNotifications()
-    {
-        if ($this->getHelper('Client')->isBrowserIE()) {
-            $this->getMessageManager()->addError($this->__(
-                'We are sorry, Internet Explorer browser is not supported. Please, use'.
-                ' another browser (Mozilla Firefox, Google Chrome, etc.).'
-            ), self::GLOBAL_MESSAGES_GROUP);
-            return true;
-        }
-        return false;
-    }
 
     protected function addStaticContentNotification()
     {
@@ -244,9 +261,18 @@ abstract class Main extends Base
 
     protected function addLicenseNotifications()
     {
-        $this->addLicenseActivationNotifications() ||
-        $this->addLicenseValidationFailNotifications() ||
-        $this->addLicenseStatusNotifications();
+        $added = false;
+        if (!$added && $this->getCustomViewHelper()->isInstallationWizardFinished()) {
+            $added = $this->addLicenseActivationNotifications();
+        }
+
+        if (!$added && $this->getHelper('Module\License')->getKey()) {
+            $added = $this->addLicenseValidationFailNotifications();
+        }
+
+        if (!$added && $this->getHelper('Module\License')->getKey()) {
+            $added = $this->addLicenseStatusNotifications();
+        }
     }
 
     // ---------------------------------------
@@ -358,7 +384,7 @@ abstract class Main extends Base
 
         if (!$licenseHelper->getKey() || !$licenseHelper->getDomain() || !$licenseHelper->getIp()) {
             $params = [];
-            $this->getBlockerWizardNick() && $params['wizard'] = '1';
+            $this->isContentLockedByWizard() && $params['wizard'] = '1';
             $url = $this->getHelper('View\Configuration')->getLicenseUrl($params);
 
             $message = $this->__(
@@ -380,7 +406,9 @@ abstract class Main extends Base
 
         if (!$licenseHelper->isValidDomain()) {
             $params = [];
-            $this->getBlockerWizardNick() && $params['wizard'] = '1';
+            if ($this->getHelper('Module\Wizard')->getActiveBlockerWizard($this->getCustomViewNick())) {
+                $params['wizard'] = '1';
+            }
             $url = $this->getHelper('View\Configuration')->getLicenseUrl($params);
 
             $message = 'M2E Pro License Key Validation is failed for this Domain. ';
@@ -394,7 +422,9 @@ abstract class Main extends Base
 
         if (!$licenseHelper->isValidIp()) {
             $params = [];
-            $this->getBlockerWizardNick() && $params['wizard'] = '1';
+            if ($this->getHelper('Module\Wizard')->getActiveBlockerWizard($this->getCustomViewNick())) {
+                $params['wizard'] = '1';
+            }
             $url = $this->getHelper('View\Configuration')->getLicenseUrl($params);
 
             $message = 'M2E Pro License Key Validation is failed for this IP. ';
@@ -416,7 +446,7 @@ abstract class Main extends Base
 
         if (!$licenseHelper->getStatus()) {
             $params = [];
-            $this->getBlockerWizardNick() && $params['wizard'] = '1';
+            $this->isContentLockedByWizard() && $params['wizard'] = '1';
             $url = $this->getHelper('View\Configuration')->getLicenseUrl($params);
 
             $message = $this->__(
@@ -438,9 +468,8 @@ abstract class Main extends Base
             return;
         }
 
-        $skipMessageForVersion = $this->modelFactory->getObject('Config_Manager_Cache')->getGroupValue(
-            '/global/notification/message/',
-            'skip_static_content_validation_message'
+        $skipMessageForVersion = $this->getHelper('Module')->getRegistry()->getValue(
+            '/global/notification/static_content/skip_for_version/'
         );
 
         if (version_compare($skipMessageForVersion, $this->getHelper('Module')->getPublicVersion(), '==')) {
@@ -452,7 +481,20 @@ abstract class Main extends Base
             return;
         }
 
-        $url = $this->getUrl(
+        $setupResource = $this->activeRecordFactory->getObject('Setup')->getResource();
+        $lastUpgradeDate = $setupResource->getLastUpgradeDate();
+        if (!$lastUpgradeDate) {
+            return;
+        }
+
+        $lastUpgradeDate = new \DateTime($lastUpgradeDate, new \DateTimeZone('UTC'));
+        $deployDate = new \DateTime($deployDate, new \DateTimeZone('UTC'));
+
+        if ($deployDate->getTimestamp() > $lastUpgradeDate->modify('- 30 minutes')->getTimestamp()) {
+            return;
+        }
+
+        $skipMessageUrl = $this->getUrl(
             '*/general/skipStaticContentValidationMessage',
             [
                 'skip_message' => true,
@@ -460,16 +502,17 @@ abstract class Main extends Base
             ]
         );
 
+        $docsUrl = 'https://devdocs.magento.com/guides/v2.3/config-guide/cli/config-cli-subcommands-static-view.html';
         $this->addExtendedWarningMessage(
             $this->__(
-                '<p>The static content data was not deployed from the latest upgrade of M2E Pro Extension.
-                 It causes the incorrect working of all or some part of the Interface.</p>
-                 <p>Thus, to solve this issue you should follow the recommendations provided in this
-                 <a href="%url_1%" target="_blank">article</a> and update the static content data.</p>
-
+                '<p>Static content data was not deployed during the last M2E Pro installation/upgrade.
+                 It may affect some elements of your Magento user interface.</p>
+                 <p>Please follow <a href="%url_1%" target="_blank">these instructions</a>
+                 to deploy static view files.</p>
+                  
                  <a href="%url_2%">Don\'t Show Again</a><br>',
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/ZgM0AQ'),
-                $url
+                $docsUrl,
+                $skipMessageUrl
             ),
             self::GLOBAL_MESSAGES_GROUP
         );
@@ -479,14 +522,11 @@ abstract class Main extends Base
 
     private function isContentLocked()
     {
-        return $this->getHelper('Client')->isBrowserIE()
-                || (
-                       $this->getHelper('Magento')->isProduction() &&
-                       !$this->getHelper('Module')->isStaticContentDeployed()
-                   );
+        return $this->getHelper('Magento')->isProduction() &&
+               !$this->getHelper('Module')->isStaticContentDeployed();
     }
 
-    private function getBlockerWizardNick()
+    private function isContentLockedByWizard()
     {
         if ($this->isAjax()) {
             return false;
@@ -506,7 +546,7 @@ abstract class Main extends Base
             return false;
         }
 
-        return $activeWizardNick;
+        return true;
     }
 
     //########################################

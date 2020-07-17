@@ -38,27 +38,20 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     public function addMessage(
         $accountPickupStoreStateId,
         $actionId = null,
-        $action = null,
+        $action = self::ACTION_UNKNOWN,
         $description = null,
-        $type = null,
-        $priority = null
+        $type = self::TYPE_NOTICE,
+        array $additionalData = []
     ) {
-        $dataForAdd = $this->makeDataForAdd(
-            $accountPickupStoreStateId,
-            $actionId,
-            $action,
-            $description,
-            $type,
-            $priority
-        );
+        $dataForAdd = [
+            'account_pickup_store_state_id' => (int)$accountPickupStoreStateId,
+            'action_id'                     => $actionId,
+            'action'                        => $action,
+            'description'                   => $description,
+            'type'                          => $type,
+            'additional_data'               => $this->getHelper('Data')->jsonEncode($additionalData)
+        ];
 
-        $this->createMessage($dataForAdd);
-    }
-
-    //########################################
-
-    protected function createMessage($dataForAdd)
-    {
         /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore\State $accountPickupStoreState */
         $accountPickupStoreState = $this->activeRecordFactory->getObjectLoaded(
             'Ebay_Account_PickupStore_State',
@@ -73,54 +66,6 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_Log')
             ->setData($dataForAdd)
             ->save();
-    }
-
-    protected function makeDataForAdd(
-        $accountPickupStoreStateId,
-        $actionId = null,
-        $action = null,
-        $description = null,
-        $type = null,
-        $priority = null,
-        array $additionalData = []
-    ) {
-        $dataForAdd = [];
-
-        $dataForAdd['account_pickup_store_state_id'] = (int)$accountPickupStoreStateId;
-
-        if ($actionId !== null) {
-            $dataForAdd['action_id'] = (int)$actionId;
-        } else {
-            $dataForAdd['action_id'] = $this->getResource()->getNextActionId();
-        }
-
-        if ($action !== null) {
-            $dataForAdd['action'] = (int)$action;
-        } else {
-            $dataForAdd['action'] = self::ACTION_UNKNOWN;
-        }
-
-        if ($description !== null) {
-            $dataForAdd['description'] = $description;
-        } else {
-            $dataForAdd['description'] = null;
-        }
-
-        if ($type !== null) {
-            $dataForAdd['type'] = (int)$type;
-        } else {
-            $dataForAdd['type'] = self::TYPE_NOTICE;
-        }
-
-        if ($priority !== null) {
-            $dataForAdd['priority'] = (int)$priority;
-        } else {
-            $dataForAdd['priority'] = self::PRIORITY_LOW;
-        }
-
-        $dataForAdd['additional_data'] = $this->getHelper('Data')->jsonEncode($additionalData);
-
-        return $dataForAdd;
     }
 
     //########################################

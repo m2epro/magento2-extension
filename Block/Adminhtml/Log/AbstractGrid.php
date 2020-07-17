@@ -138,18 +138,10 @@ abstract class AbstractGrid extends WidgetAbstractGrid
         ];
     }
 
-    protected function _getLogPriorityList()
-    {
-        return [
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH => $this->__('High'),
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM => $this->__('Medium'),
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW => $this->__('Low')
-        ];
-    }
-
     protected function _getLogInitiatorList()
     {
         return [
+            \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN => $this->__('Unknown'),
             \Ess\M2ePro\Helper\Data::INITIATOR_USER => $this->__('Manual'),
             \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION => $this->__('Automatic')
         ];
@@ -171,6 +163,7 @@ abstract class AbstractGrid extends WidgetAbstractGrid
                 $value = '<span style="color: orange; font-weight: bold;">'.$value.'</span>';
                 break;
 
+            case \Ess\M2ePro\Model\Synchronization\Log::TYPE_FATAL_ERROR:
             case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR:
                  $value = '<span style="color: red; font-weight: bold;">'.$value.'</span>';
                 break;
@@ -184,14 +177,34 @@ abstract class AbstractGrid extends WidgetAbstractGrid
 
     public function callbackColumnInitiator($value, $row, $column, $isExport)
     {
-        return "<span style='padding: 0 10px;'>{$value}</span>";
+        $initiator = $row->getData('initiator');
+
+        switch ($initiator) {
+            case \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION:
+                $message = "<span style=\"text-decoration: underline;\">{$value}</span>";
+                break;
+            case \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN:
+                $message = "<span style=\"font-style: italic; color: gray;\">{$value}</span>";
+                break;
+            case \Ess\M2ePro\Helper\Data::INITIATOR_USER:
+            default:
+                $message = "<span>{$value}</span>";
+                break;
+        }
+
+        return $message;
+
     }
 
     public function callbackDescription($value, $row, $column, $isExport)
     {
-        $fullDescription = $this->getHelper('View')->getModifiedLogMessage($row->getData('description'));
-        $renderedText = $this->stripTags($fullDescription);
+        $fullDescription = str_replace(
+            "\n",
+            '<br>',
+            $this->getHelper('View')->getModifiedLogMessage($row->getData('description'))
+        );
 
+        $renderedText = $this->stripTags($fullDescription, '<br>');
         if (strlen($renderedText) < 200) {
             return $fullDescription;
         }

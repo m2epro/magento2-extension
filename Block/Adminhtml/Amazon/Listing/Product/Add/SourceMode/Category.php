@@ -62,7 +62,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('save_and_go_to_listing_view', [
+        $this->addButton('add_products_mode_category_continue', [
             'label'     => $this->__('Continue'),
             'onclick'   => 'add_category_products()',
             'class'     => 'action-primary forward'
@@ -93,7 +93,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
             'Amazon_Listing_AutoAction',
-            ['id' => $this->getRequest()->getParam('id')]
+            ['listing_id' => $this->getRequest()->getParam('id')]
         ));
 
         $path = 'amazon_listing_autoAction/getDescriptionTemplatesList';
@@ -105,7 +105,6 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         $this->jsTranslator->addTranslations([
             'Remove Category' => $this->__('Remove Category'),
             'Add New Rule' => $this->__('Add New Rule'),
-            'Add New Group' => $this->__('Add New Group'),
             'Add/Edit Categories Rule' => $this->__('Add/Edit Categories Rule'),
             'Auto Add/Remove Rules' => $this->__('Auto Add/Remove Rules'),
             'Based on Magento Categories' => $this->__('Based on Magento Categories'),

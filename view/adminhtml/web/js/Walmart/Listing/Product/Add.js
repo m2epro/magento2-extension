@@ -1,9 +1,7 @@
 define([
     'M2ePro/Common'
 ], function () {
-
-    window.WalmartListingProductAdd = Class.create();
-    WalmartListingProductAdd.prototype = Object.extend(new Common(), {
+    window.WalmartListingProductAdd = Class.create(Common, {
 
         // ---------------------------------------
 

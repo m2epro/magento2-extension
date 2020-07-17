@@ -44,7 +44,7 @@ abstract class AbstractModel extends CheckerAbstractModel
     {
         return [
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_QTY_DATA_POTENTIALLY_CHANGED,
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\AbstractModel::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_QTY_ENABLED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_QTY_DISABLED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_QTY_SETTINGS_CHANGED,
@@ -65,10 +65,10 @@ abstract class AbstractModel extends CheckerAbstractModel
     {
         return [
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_PRICE_DATA_POTENTIALLY_CHANGED,
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\AbstractModel::INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
+            INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_PRICE_ENABLED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_PRICE_DISABLED,
-            SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_PRICE_SETTINGS_CHANGED,
             \Ess\M2ePro\Model\Ebay\Listing\Product::INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
@@ -85,7 +85,8 @@ abstract class AbstractModel extends CheckerAbstractModel
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_TITLE_DATA_CHANGED,
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\AbstractModel::INSTRUCTION_TYPE_TITLE_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
+            INSTRUCTION_TYPE_TITLE_DATA_CHANGED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_TITLE_ENABLED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_TITLE_DISABLED,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
@@ -102,7 +103,8 @@ abstract class AbstractModel extends CheckerAbstractModel
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_SUBTITLE_DATA_CHANGED,
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\AbstractModel::INSTRUCTION_TYPE_SUBTITLE_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
+            INSTRUCTION_TYPE_SUBTITLE_DATA_CHANGED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_SUBTITLE_ENABLED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_SUBTITLE_DISABLED,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
@@ -119,7 +121,8 @@ abstract class AbstractModel extends CheckerAbstractModel
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_DESCRIPTION_DATA_CHANGED,
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\AbstractModel::INSTRUCTION_TYPE_DESCRIPTION_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
+            INSTRUCTION_TYPE_DESCRIPTION_DATA_CHANGED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::
             INSTRUCTION_TYPE_REVISE_DESCRIPTION_ENABLED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_DESCRIPTION_DISABLED,
@@ -138,7 +141,8 @@ abstract class AbstractModel extends CheckerAbstractModel
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\AbstractModel::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
+            INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_IMAGES_ENABLED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_IMAGES_DISABLED,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
@@ -148,7 +152,7 @@ abstract class AbstractModel extends CheckerAbstractModel
             \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel::
             INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
             \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::INSTRUCTION_TYPE,
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\AbstractModel::
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
             INSTRUCTION_TYPE_VARIATION_IMAGES_DATA_CHANGED,
         ];
     }
@@ -156,6 +160,9 @@ abstract class AbstractModel extends CheckerAbstractModel
     protected function getReviseVariationImagesInstructionTypes()
     {
         return [
+            \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
+            INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_IMAGES_ENABLED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_IMAGES_DISABLED,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
@@ -165,7 +172,7 @@ abstract class AbstractModel extends CheckerAbstractModel
             \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel::
             INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
             \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::INSTRUCTION_TYPE,
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\AbstractModel::
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
             INSTRUCTION_TYPE_VARIATION_IMAGES_DATA_CHANGED,
         ];
     }
@@ -174,7 +181,8 @@ abstract class AbstractModel extends CheckerAbstractModel
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_CATEGORIES_DATA_CHANGED,
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\AbstractModel::INSTRUCTION_TYPE_CATEGORIES_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
+            INSTRUCTION_TYPE_CATEGORIES_DATA_CHANGED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_CATEGORIES_ENABLED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::
             INSTRUCTION_TYPE_REVISE_CATEGORIES_DISABLED,
@@ -192,7 +200,8 @@ abstract class AbstractModel extends CheckerAbstractModel
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_SHIPPING_DATA_CHANGED,
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\AbstractModel::INSTRUCTION_TYPE_SHIPPING_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
+            INSTRUCTION_TYPE_SHIPPING_DATA_CHANGED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_SHIPPING_ENABLED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_SHIPPING_DISABLED,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
@@ -208,7 +217,8 @@ abstract class AbstractModel extends CheckerAbstractModel
     protected function getRevisePaymentInstructionTypes()
     {
         return [
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\AbstractModel::INSTRUCTION_TYPE_PAYMENT_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
+            INSTRUCTION_TYPE_PAYMENT_DATA_CHANGED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_PAYMENT_ENABLED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_PAYMENT_DISABLED,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
@@ -224,7 +234,8 @@ abstract class AbstractModel extends CheckerAbstractModel
     protected function getReviseReturnInstructionTypes()
     {
         return [
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\AbstractModel::INSTRUCTION_TYPE_RETURN_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
+            INSTRUCTION_TYPE_RETURN_DATA_CHANGED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_RETURN_ENABLED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_RETURN_DISABLED,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
@@ -241,7 +252,8 @@ abstract class AbstractModel extends CheckerAbstractModel
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_OTHER_DATA_CHANGED,
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\AbstractModel::INSTRUCTION_TYPE_OTHER_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
+            INSTRUCTION_TYPE_OTHER_DATA_CHANGED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_OTHER_ENABLED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_OTHER_DISABLED,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,

@@ -106,7 +106,7 @@ define([
                                     self.gridHandler.unselectAllAndReload();
                                     self.popUp.modal('closeModal');
                                     self.scrollPageToTop();
-                                    MessagesObj.addSuccessMessage(
+                                    MessagesObj.addSuccess(
                                         M2ePro.translator.translate('Product(s) was successfully Mapped.')
                                     );
                                 } else if (transport.responseText == 1) {
@@ -116,7 +116,7 @@ define([
                                 } else if (transport.responseText == 3) {
                                     self.popUp.modal('closeModal');
                                     self.scrollPageToTop();
-                                    MessagesObj.addErrorMessage(
+                                    MessagesObj.addError(
                                         M2ePro.translator.translate('Item was not Mapped as the chosen %product_id% Simple Product has Custom Options.', productId)
                                     );
                                 }

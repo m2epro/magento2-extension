@@ -1,7 +1,6 @@
 define([], function () {
 
-    window.AmazonTemplateDescriptionCategorySpecificDictionary = Class.create();
-    AmazonTemplateDescriptionCategorySpecificDictionary.prototype = {
+    window.AmazonTemplateDescriptionCategorySpecificDictionary = Class.create({
 
         // ---------------------------------------
 
@@ -160,5 +159,5 @@ define([], function () {
         }
 
         // ---------------------------------------
-    };
+    });
 });

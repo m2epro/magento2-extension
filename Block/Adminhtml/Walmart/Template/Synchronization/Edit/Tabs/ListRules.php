@@ -23,22 +23,7 @@ class ListRules extends AbstractForm
         $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $defaults = [
-            'list_mode'           => 1,
-            'list_status_enabled' => 1,
-            'list_is_in_stock'    => 1,
-
-            'list_qty_magento'           => TemplateSynchronization::QTY_MODE_NONE,
-            'list_qty_magento_value'     => '1',
-            'list_qty_magento_value_max' => '10',
-
-            'list_qty_calculated'           => TemplateSynchronization::QTY_MODE_NONE,
-            'list_qty_calculated_value'     => '1',
-            'list_qty_calculated_value_max' => '10',
-
-            'list_advanced_rules_mode'    => 0,
-            'list_advanced_rules_filters' => null
-        ];
+        $defaults = $this->modelFactory->getObject('Walmart_Template_Synchronization_Builder')->getDefaultData();
         $formData = array_merge($defaults, $formData);
 
         $form = $this->_formFactory->create();
@@ -53,7 +38,7 @@ class ListRules extends AbstractForm
                     automatically transfers your Magento data to the Channel. You may configure the List,
                     Revise, Relist and Stop Rules.</p><br/>
 
-                    <p><strong>Note:</strong> Synchronization Policy is required when you create a new offer 
+                    <p><strong>Note:</strong> Synchronization Policy is required when you create a new offer
                     on Walmart.</p><br>
 
                     <p>Enable the List Action and define the List Conditions based on which M2E Pro will
@@ -137,60 +122,15 @@ HTML
         );
 
         $fieldset->addField(
-            'list_qty_magento',
-            self::SELECT,
-            [
-                'name' => 'list_qty_magento',
-                'label' => $this->__('Magento Quantity'),
-                'value' => $formData['list_qty_magento'],
-                'values' => [
-                    TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
-                    TemplateSynchronization::QTY_MODE_MORE => $this->__('More or Equal'),
-                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
-                ],
-                'tooltip' => $this->__(
-                    'Magento Product Quantity at which the Item(s) have to be listed.'
-                )
-            ]
-        )->addCustomAttribute('qty_type', 'magento');
-
-        $fieldset->addField(
-            'list_qty_magento_value',
-            'text',
-            [
-                'container_id' => 'list_qty_magento_value_container',
-                'name' => 'list_qty_magento_value',
-                'label' => $this->__('Quantity'),
-                'value' => $formData['list_qty_magento_value'],
-                'class' => 'validate-digits',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
-            'list_qty_magento_value_max',
-            'text',
-            [
-                'container_id' => 'list_qty_magento_value_max_container',
-                'name' => 'list_qty_magento_value_max',
-                'label' => $this->__('Max Quantity'),
-                'value' => $formData['list_qty_magento_value_max'],
-                'class' => 'validate-digits M2ePro-validate-conditions-between',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
             'list_qty_calculated',
             self::SELECT,
             [
                 'name' => 'list_qty_calculated',
-                'label' => $this->__('Calculated Quantity'),
+                'label' => $this->__('Quantity'),
                 'value' => $formData['list_qty_calculated'],
                 'values' => [
                     TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
-                    TemplateSynchronization::QTY_MODE_MORE => $this->__('More or Equal'),
-                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
+                    TemplateSynchronization::QTY_MODE_YES => $this->__('More or Equal'),
                 ],
                 'tooltip' => $this->__(
                     '<p>Item Quantity calculated based on the Selling Policy settings at which
@@ -199,33 +139,13 @@ HTML
                     Magento Variational Product listed as Walmart Variant Group</p>'
                 )
             ]
-        )->addCustomAttribute('qty_type', 'calculated');
-
-        $fieldset->addField(
-            'list_qty_calculated_value',
-            'text',
-            [
-                'container_id' => 'list_qty_calculated_value_container',
-                'name' => 'list_qty_calculated_value',
-                'label' => $this->__('Quantity'),
-                'value' => $formData['list_qty_calculated_value'],
-                'class' => 'validate-digits',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
-            'list_qty_calculated_value_max',
-            'text',
-            [
-                'container_id' => 'list_qty_calculated_value_max_container',
-                'name' => 'list_qty_calculated_value_max',
-                'label' => $this->__('Max Quantity'),
-                'value' => $formData['list_qty_calculated_value_max'],
-                'class' => 'validate-digits M2ePro-validate-conditions-between  ',
-                'required' => true
-            ]
-        );
+        )->setAfterElementHtml(<<<HTML
+<input name="list_qty_calculated_value" id="list_qty_calculated_value"
+       value="{$formData['list_qty_calculated_value']}" type="text"
+       style="width: 72px; margin-left: 10px;"
+       class="input-text admin__control-text required-entry validate-digits _required" />
+HTML
+            );
 
         $fieldset = $form->addFieldset(
             'magento_block_walmart_template_synchronization_list_advanced_filters',
@@ -321,9 +241,6 @@ HTML
             'The specified Title is already used for other Policy. Policy Title must be unique.' => $this->__(
                 'The specified Title is already used for other Policy. Policy Title must be unique.'
             ),
-
-            'Quantity' => $this->__('Quantity'),
-            'Min Quantity' => $this->__('Min Quantity'),
         ]);
 
         $this->js->add("M2ePro.formData.id = '{$this->getRequest()->getParam('id')}';");

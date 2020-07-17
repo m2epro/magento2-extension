@@ -72,7 +72,7 @@ define([
                                 BlockNoticeObj.deleteAllHashedStorage();
                                 self.templateEdit.forgetSkipSaveConfirmation();
 
-                                self.messageObj.addSuccessMessage(
+                                self.messageObj.addSuccess(
                                     M2ePro.translator.translate('Help Blocks have been successfully restored.')
                                 );
                             }
@@ -110,13 +110,13 @@ define([
 
                     self.messageObj.clear();
                     if (!result.isJSON()) {
-                        self.messageObj.addErrorMessage(result);
+                        self.messageObj.addError(result);
                     }
 
                     result = JSON.parse(result);
 
-                    if (typeof result['block_notices_show'] !== 'undefined') {
-                        BLOCK_NOTICES_SHOW = result['block_notices_show'];
+                    if (typeof result['view_show_block_notices_mode'] !== 'undefined') {
+                        BLOCK_NOTICES_SHOW = result['view_show_block_notices_mode'];
                         BlockNoticeObj.initializedBlocks = [];
                         BlockNoticeObj.init();
                     }
@@ -125,15 +125,15 @@ define([
                         self.scrollPageToTop();
                         result.messages.forEach(function(el) {
                             var key = Object.keys(el).shift();
-                            self.messageObj['add'+key.capitalize()+'Message'](el[key]);
+                            self.messageObj['add'+key.capitalize()](el[key]);
                         });
                         return;
                     }
 
                     if (result.success) {
-                        self.messageObj.addSuccessMessage(M2ePro.translator.translate('Settings successfully saved'));
+                        self.messageObj.addSuccess(M2ePro.translator.translate('Settings successfully saved'));
                     } else {
-                        self.messageObj.addErrorMessage(M2ePro.translator.translate('Error'));
+                        self.messageObj.addError(M2ePro.translator.translate('Error'));
                     }
 
                 }

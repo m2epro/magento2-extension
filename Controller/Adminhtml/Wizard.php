@@ -99,19 +99,12 @@ abstract class Wizard extends Main
 
     protected function registrationAction()
     {
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry',
-            '/wizard/license_form_data/',
-            'key',
-            false
-        );
+        $licenseData = $this->getHelper('Module')->getRegistry()->getValueFromJson('/wizard/license_form_data/');
 
-        if ($registry !== null) {
+        if (!empty($licenseData)) {
             $this->setStep($this->getNextStep());
             return $this->renderSimpleStep();
         }
-
-        $this->getHelper('Data\GlobalData')->setValue('license_form_data', $registry);
 
         return $this->renderSimpleStep();
     }

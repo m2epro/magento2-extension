@@ -51,8 +51,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module_Translation')->__($message->getText()),
-                $logType,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+                $logType
             );
         }
     }
@@ -78,8 +77,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
 
         $this->getSynchronizationLog()->addMessage(
             $this->getHelper('Module_Translation')->__($messageText),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
         );
     }
 
@@ -89,14 +87,9 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
     {
         try {
             $this->updateReceivedListingsProducts();
-        } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
-
-            $this->getSynchronizationLog()->addMessage(
-                $this->getHelper('Module_Translation')->__($exception->getMessage()),
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
-            );
+        } catch (\Exception $e) {
+            $this->getHelper('Module\Exception')->process($e);
+            $this->getSynchronizationLog()->addMessageFromException($e);
         }
     }
 
@@ -222,9 +215,9 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                 if ($this->isNeedSkipQTYChange($existingData, $newData)) {
                     $this->getHelper('Module_Logger')->process(
                         [
-                            'sku'       => $existingData['sku'],
+                            'sku'       => $existingItem['sku'],
                             'new_qty'   => $newData['online_qty'],
-                            'exist_qty' => $existingData['online_qty']
+                            'exist_qty' => $existingItem['online_qty']
                         ],
                         'amazon-skip-online-change'
                     );
@@ -303,8 +296,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                     $this->getLogsActionId(),
                     \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
                     $tempLogMessage,
-                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
-                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS
                 );
             }
 
@@ -443,7 +435,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
         $this->synchronizationLog = $this->activeRecordFactory->getObject('Synchronization\Log');
         $this->synchronizationLog->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
         $this->synchronizationLog
-            ->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_LISTINGS_PRODUCTS);
+            ->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_LISTINGS);
 
         return $this->synchronizationLog;
     }

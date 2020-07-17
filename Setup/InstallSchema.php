@@ -80,11 +80,6 @@ class InstallSchema implements InstallSchemaInterface
 
         $this->helperFactory->getObject('Data\GlobalData')->setValue('is_install_process', true);
 
-        if ($this->helperFactory->getObject('Module\Maintenance')->isEnabled() &&
-            !$this->isMaintenanceCanBeIgnored()) {
-            return;
-        }
-
         if ($this->isInstalled()) {
             return;
         }
@@ -178,52 +173,7 @@ class InstallSchema implements InstallSchemaInterface
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($accountTable);
 
-        $cacheConfigTable = $this->getConnection()->newTable($this->getFullTableName('cache_config'))
-            ->addColumn(
-                'id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
-            )
-            ->addColumn(
-                'group',
-                Table::TYPE_TEXT,
-                255,
-                ['default' => null]
-            )
-            ->addColumn(
-                'key',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'value',
-                Table::TYPE_TEXT,
-                255,
-                ['default' => null]
-            )
-            ->addColumn(
-                'update_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addColumn(
-                'create_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addIndex('group', 'group')
-            ->addIndex('key', 'key')
-            ->addIndex('value', 'value')
-            ->setOption('type', 'INNODB')
-            ->setOption('charset', 'utf8')
-            ->setOption('collate', 'utf8_general_ci');
-        $this->getConnection()->createTable($cacheConfigTable);
-
-        $moduleConfigTable = $this->getConnection()->newTable($this->getFullTableName('module_config'))
+        $moduleConfigTable = $this->getConnection()->newTable($this->getFullTableName('config'))
             ->addColumn(
                 'id',
                 Table::TYPE_INTEGER,
@@ -588,12 +538,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'priority',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 3]
-            )
-            ->addColumn(
                 'description',
                 Table::TYPE_TEXT,
                 null,
@@ -612,12 +556,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addColumn(
-                'update_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addColumn(
                 'create_date',
                 Table::TYPE_DATETIME,
                 null,
@@ -631,14 +569,13 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('listing_product_id', 'listing_product_id')
             ->addIndex('parent_listing_product_id', 'parent_listing_product_id')
             ->addIndex('listing_title', 'listing_title')
-            ->addIndex('priority', 'priority')
             ->addIndex('product_id', 'product_id')
             ->addIndex('product_title', 'product_title')
             ->addIndex('type', 'type')
             ->addIndex('account_id', 'account_id')
             ->addIndex('marketplace_id', 'marketplace_id')
             ->addIndex('create_date', 'create_date')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($listingLogTable);
@@ -1066,7 +1003,7 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addIndex('nick', 'nick')
             ->addIndex('parent_id', 'parent_id')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($lockItemTable);
@@ -1341,7 +1278,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('hash', 'hash')
             ->addIndex('order_id', 'order_id')
             ->addIndex('processing_attempt_count', 'processing_attempt_count')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($orderChangeTable);
@@ -1459,12 +1396,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addColumn(
-                'update_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addColumn(
                 'create_date',
                 Table::TYPE_DATETIME,
                 null,
@@ -1576,51 +1507,6 @@ class InstallSchema implements InstallSchemaInterface
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($orderMatchingTable);
 
-        $primaryConfigTable = $this->getConnection()->newTable($this->getFullTableName('primary_config'))
-            ->addColumn(
-                'id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
-            )
-            ->addColumn(
-                'group',
-                Table::TYPE_TEXT,
-                255,
-                ['default' => null]
-            )
-            ->addColumn(
-                'key',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'value',
-                Table::TYPE_TEXT,
-                255,
-                ['default' => null]
-            )
-            ->addColumn(
-                'update_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addColumn(
-                'create_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addIndex('group', 'group')
-            ->addIndex('key', 'key')
-            ->addIndex('value', 'value')
-            ->setOption('type', 'INNODB')
-            ->setOption('charset', 'utf8')
-            ->setOption('collate', 'utf8_general_ci');
-        $this->getConnection()->createTable($primaryConfigTable);
-
         $processingTable = $this->getConnection()->newTable($this->getFullTableName('processing'))
             ->addColumn(
                 'id',
@@ -1686,7 +1572,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('type', 'type')
             ->addIndex('is_completed', 'is_completed')
             ->addIndex('expiration_date', 'expiration_date')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($processingTable);
@@ -1738,7 +1624,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('model_name', 'model_name')
             ->addIndex('object_id', 'object_id')
             ->addIndex('tag', 'tag')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($processingLockTable);
@@ -1801,7 +1687,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('component', 'component')
             ->addIndex('server_hash', 'server_hash')
             ->addIndex('is_completed', 'is_completed')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($requestPendingSingleTable);
@@ -1867,7 +1753,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('server_hash', 'server_hash')
             ->addIndex('next_part', 'next_part')
             ->addIndex('is_completed', 'is_completed')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($requestPendingPartialTable);
@@ -1901,7 +1787,7 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addIndex('part_number', 'part_number')
             ->addIndex('request_pending_partial_id', 'request_pending_partial_id')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($requestPendingPartialDataTable);
@@ -2064,7 +1950,7 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addIndex('component_mode', 'component_mode')
             ->addIndex('is_processed', 'is_processed')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($stopQueueTable);
@@ -2101,15 +1987,15 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'priority',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 3]
-            )
-            ->addColumn(
                 'description',
                 Table::TYPE_TEXT,
                 null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'detailed_description',
+                Table::TYPE_TEXT,
+                self::LONG_COLUMN_SIZE,
                 ['default' => null]
             )
             ->addColumn(
@@ -2125,12 +2011,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addColumn(
-                'update_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addColumn(
                 'create_date',
                 Table::TYPE_DATETIME,
                 null,
@@ -2138,12 +2018,11 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addIndex('component_mode', 'component_mode')
             ->addIndex('initiator', 'initiator')
-            ->addIndex('priority', 'priority')
             ->addIndex('task', 'task')
             ->addIndex('operation_history_id', 'operation_history_id')
             ->addIndex('type', 'type')
             ->addIndex('create_date', 'create_date')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($synchronizationLogTable);
@@ -2162,7 +2041,19 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addColumn(
+                'class',
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
                 'description',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'detailed_description',
                 Table::TYPE_TEXT,
                 self::LONG_COLUMN_SIZE,
                 ['default' => null]
@@ -2174,19 +2065,14 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addColumn(
-                'update_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addColumn(
                 'create_date',
                 Table::TYPE_DATETIME,
                 null,
                 ['default' => null]
             )
             ->addIndex('type', 'type')
-            ->setOption('type', 'MYISAM')
+            ->addIndex('class', 'class')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($systemLogTable);
@@ -2251,7 +2137,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('initiator', 'initiator')
             ->addIndex('start_date', 'start_date')
             ->addIndex('end_date', 'end_date')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($operationHistoryTable);
@@ -3032,20 +2918,8 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'priority',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 3]
-            )
-            ->addColumn(
                 'description',
                 Table::TYPE_TEXT,
-                null,
-                ['default' => null]
-            )
-            ->addColumn(
-                'update_date',
-                Table::TYPE_DATETIME,
                 null,
                 ['default' => null]
             )
@@ -3060,10 +2934,9 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('location_title', 'location_title')
             ->addIndex('action', 'action')
             ->addIndex('action_id', 'action_id')
-            ->addIndex('priority', 'priority')
             ->addIndex('type', 'type')
             ->addIndex('create_date', 'create_date')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($ebayAccountPickupStoreLogTable);
@@ -3187,8 +3060,8 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('is_leaf', 'is_leaf')
             ->addIndex('parent_category_id', 'parent_category_id')
             ->addIndex('title', 'title')
-            ->addIndex('path', [['name' => 'path', 'size' => 500]])
-            ->setOption('type', 'MYISAM')
+            ->addIndex('path', [['name' => 'path', 'size' => 255]])
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($ebayDictionaryCategory);
@@ -3596,7 +3469,19 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'auto_global_adding_template_other_category_id',
+                'auto_global_adding_template_category_secondary_id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'auto_global_adding_template_store_category_id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'auto_global_adding_template_store_category_secondary_id',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'default' => null]
@@ -3608,7 +3493,19 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'auto_website_adding_template_other_category_id',
+                'auto_website_adding_template_category_secondary_id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'auto_website_adding_template_store_category_id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'auto_website_adding_template_store_category_secondary_id',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'default' => null]
@@ -3734,11 +3631,30 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addIndex('auto_global_adding_template_category_id', 'auto_global_adding_template_category_id')
-            ->addIndex('auto_global_adding_template_other_category_id', 'auto_global_adding_template_other_category_id')
+            ->addIndex(
+                'auto_global_adding_template_category_secondary_id',
+                'auto_global_adding_template_category_secondary_id'
+            )
+            ->addIndex(
+                'auto_global_adding_template_store_category_id',
+                'auto_global_adding_template_store_category_id'
+            )
+            ->addIndex(
+                'auto_global_adding_template_store_category_secondary_id',
+                'auto_global_adding_template_store_category_secondary_id'
+            )
             ->addIndex('auto_website_adding_template_category_id', 'auto_website_adding_template_category_id')
             ->addIndex(
-                'auto_website_adding_template_other_category_id',
-                'auto_website_adding_template_other_category_id'
+                'auto_website_adding_template_category_secondary_id',
+                'auto_website_adding_template_category_secondary_id'
+            )
+            ->addIndex(
+                'auto_website_adding_template_store_category_id',
+                'auto_website_adding_template_store_category_id'
+            )
+            ->addIndex(
+                'auto_website_adding_template_store_category_secondary_id',
+                'auto_website_adding_template_store_category_secondary_id'
             )
             ->addIndex('items_sold_count', 'items_sold_count')
             ->addIndex('products_sold_count', 'products_sold_count')
@@ -3781,13 +3697,27 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'adding_template_other_category_id',
+                'adding_template_category_secondary_id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'adding_template_store_category_id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'adding_template_store_category_secondary_id',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'default' => null]
             )
             ->addIndex('adding_template_category_id', 'adding_template_category_id')
-            ->addIndex('adding_template_other_category_id', 'adding_template_other_category_id')
+            ->addIndex('adding_template_category_secondary_id', 'adding_template_category_secondary_id')
+            ->addIndex('adding_template_store_category_id', 'adding_template_store_category_id')
+            ->addIndex('adding_template_store_category_secondary_id', 'adding_template_store_category_secondary_id')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
@@ -3855,6 +3785,18 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
+                'online_main_category',
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'online_categories_data',
+                Table::TYPE_TEXT,
+                self::LONG_COLUMN_SIZE,
+                ['default' => null]
+            )
+            ->addColumn(
                 'start_date',
                 Table::TYPE_DATETIME,
                 null,
@@ -3895,7 +3837,19 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_other_category_id',
+                'template_category_secondary_id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'template_store_category_id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'template_store_category_secondary_id',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'default' => null]
@@ -4182,10 +4136,12 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('online_title', 'online_title')
             ->addIndex('start_date', 'start_date')
             ->addIndex('template_category_id', 'template_category_id')
+            ->addIndex('template_category_secondary_id', 'template_category_secondary_id')
+            ->addIndex('template_store_category_id', 'template_store_category_id')
+            ->addIndex('template_store_category_secondary_id', 'template_store_category_secondary_id')
             ->addIndex('template_description_custom_id', 'template_description_custom_id')
             ->addIndex('template_description_id', 'template_description_id')
             ->addIndex('template_description_mode', 'template_description_mode')
-            ->addIndex('template_other_category_id', 'template_other_category_id')
             ->addIndex('template_payment_custom_id', 'template_payment_custom_id')
             ->addIndex('template_payment_id', 'template_payment_id')
             ->addIndex('template_payment_mode', 'template_payment_mode')
@@ -4611,7 +4567,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('is_custom', 'is_custom')
             ->addIndex('scope', 'scope')
             ->addIndex('street_name', 'street_name')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($ebaDictionaryMotorEpidTable);
@@ -4695,7 +4651,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('type', 'type')
             ->addIndex('variant', 'variant')
             ->addIndex('is_custom', 'is_custom')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($ebayDictionaryMotorKtypeTable);
@@ -4744,7 +4700,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addIndex('type', 'type')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($ebayMotorFilterTable);
@@ -5131,25 +5087,31 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'category_main_id',
+                'is_custom_template',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'category_id',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'category_main_path',
+                'category_path',
                 Table::TYPE_TEXT,
                 255,
                 ['default' => null]
             )
             ->addColumn(
-                'category_main_mode',
+                'category_mode',
                 Table::TYPE_SMALLINT,
                 null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 2]
             )
             ->addColumn(
-                'category_main_attribute',
+                'category_attribute',
                 Table::TYPE_TEXT,
                 255,
                 ['nullable' => false]
@@ -5166,6 +5128,7 @@ class InstallSchema implements InstallSchemaInterface
                 null,
                 ['default' => null]
             )
+            ->addIndex('is_custom_template', 'is_custom_template')
             ->addIndex('marketplace_id', 'marketplace_id')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
@@ -5437,7 +5400,7 @@ class InstallSchema implements InstallSchemaInterface
         $this->getConnection()->createTable($ebayTemplateDescriptionTable);
 
         $ebayTemplateOtherCategoryTable = $this->getConnection()->newTable(
-            $this->getFullTableName('ebay_template_other_category')
+            $this->getFullTableName('ebay_template_store_category')
         )
             ->addColumn(
                 'id',
@@ -5446,85 +5409,31 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'marketplace_id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
                 'account_id',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'category_secondary_id',
-                Table::TYPE_INTEGER,
-                null,
+                'category_id',
+                Table::TYPE_DECIMAL,
+                [20, 0],
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'category_secondary_path',
+                'category_path',
                 Table::TYPE_TEXT,
                 255,
                 ['default' => null]
             )
             ->addColumn(
-                'category_secondary_mode',
+                'category_mode',
                 Table::TYPE_SMALLINT,
                 null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 2]
             )
             ->addColumn(
-                'category_secondary_attribute',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'store_category_main_id',
-                Table::TYPE_DECIMAL,
-                [20, 0],
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'store_category_main_path',
-                Table::TYPE_TEXT,
-                255,
-                ['default' => null]
-            )
-            ->addColumn(
-                'store_category_main_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'store_category_main_attribute',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'store_category_secondary_id',
-                Table::TYPE_DECIMAL,
-                [20, 0],
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'store_category_secondary_path',
-                Table::TYPE_TEXT,
-                255,
-                ['default' => null]
-            )
-            ->addColumn(
-                'store_category_secondary_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'store_category_secondary_attribute',
+                'category_attribute',
                 Table::TYPE_TEXT,
                 255,
                 ['nullable' => false]
@@ -5542,7 +5451,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addIndex('account_id', 'account_id')
-            ->addIndex('marketplace_id', 'marketplace_id')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
@@ -6475,24 +6383,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_qty_magento',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'list_qty_magento_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'list_qty_magento_value_max',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
                 'list_qty_calculated',
                 Table::TYPE_SMALLINT,
                 null,
@@ -6500,12 +6390,6 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'list_qty_calculated_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'list_qty_calculated_value_max',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => false]
@@ -6545,18 +6429,6 @@ class InstallSchema implements InstallSchemaInterface
                 Table::TYPE_SMALLINT,
                 null,
                 ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'revise_update_price_max_allowed_deviation_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'revise_update_price_max_allowed_deviation',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'revise_update_title',
@@ -6643,24 +6515,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_qty_magento',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'relist_qty_magento_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'relist_qty_magento_value_max',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
                 'relist_qty_calculated',
                 Table::TYPE_SMALLINT,
                 null,
@@ -6668,12 +6522,6 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'relist_qty_calculated_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'relist_qty_calculated_value_max',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => false]
@@ -6709,24 +6557,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_qty_magento',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'stop_qty_magento_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'stop_qty_magento_value_max',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
                 'stop_qty_calculated',
                 Table::TYPE_SMALLINT,
                 null,
@@ -6734,12 +6564,6 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'stop_qty_calculated_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'stop_qty_calculated_value_max',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => false]
@@ -7074,11 +6898,10 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('category_id', 'category_id')
             ->addIndex('is_leaf', 'is_leaf')
             ->addIndex('marketplace_id', 'marketplace_id')
-            ->addIndex('path', [['name' => 'path', 'size' => 500]])
+            ->addIndex('path', [['name' => 'path', 'size' => 255]])
             ->addIndex('parent_category_id', 'parent_category_id')
             ->addIndex('title', 'title')
-            ->addIndex('product_data_nicks', [['name' => 'product_data_nicks', 'size' => 500]])
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($amazonDictionaryCategoryTable);
@@ -7126,7 +6949,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('browsenode_id', 'browsenode_id')
             ->addIndex('product_data_nick', 'product_data_nick')
             ->addIndex('is_applicable', 'is_applicable')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($amazonDictionaryCategoryProductDataTable);
@@ -7165,7 +6988,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addIndex('marketplace_id', 'marketplace_id')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($amazonDictionaryMarketplaceTable);
@@ -7273,7 +7096,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('xml_tag', 'xml_tag')
             ->addIndex('xpath', 'xpath')
             ->addIndex('product_data_nick', 'product_data_nick')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($amazonDictionarySpecificTable);
@@ -9577,24 +9400,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_qty_magento',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'list_qty_magento_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'list_qty_magento_value_max',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
                 'list_qty_calculated',
                 Table::TYPE_SMALLINT,
                 null,
@@ -9602,12 +9407,6 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'list_qty_calculated_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'list_qty_calculated_value_max',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => false]
@@ -9649,18 +9448,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_price_max_allowed_deviation_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'revise_update_price_max_allowed_deviation',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'default' => null]
-            )
-            ->addColumn(
                 'revise_update_details',
                 Table::TYPE_SMALLINT,
                 null,
@@ -9697,24 +9484,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_qty_magento',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'relist_qty_magento_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'relist_qty_magento_value_max',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
                 'relist_qty_calculated',
                 Table::TYPE_SMALLINT,
                 null,
@@ -9722,12 +9491,6 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'relist_qty_calculated_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'relist_qty_calculated_value_max',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => false]
@@ -9763,24 +9526,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_qty_magento',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'stop_qty_magento_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'stop_qty_magento_value_max',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
                 'stop_qty_calculated',
                 Table::TYPE_SMALLINT,
                 null,
@@ -9788,12 +9533,6 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'stop_qty_calculated_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'stop_qty_calculated_value_max',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => false]
@@ -9844,10 +9583,10 @@ class InstallSchema implements InstallSchemaInterface
                 'consumer_id',
                 Table::TYPE_TEXT,
                 255,
-                ['nullable' => false]
+                ['nullable' => true]
             )
             ->addColumn(
-                'old_private_key',
+                'private_key',
                 Table::TYPE_TEXT,
                 null,
                 ['nullable' => true]
@@ -9982,11 +9721,10 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('category_id', 'category_id')
             ->addIndex('is_leaf', 'is_leaf')
             ->addIndex('marketplace_id', 'marketplace_id')
-            ->addIndex('path', [['name' => 'path', 'size' => 500]])
+            ->addIndex('path', [['name' => 'path', 'size' => 255]])
             ->addIndex('parent_category_id', 'parent_category_id')
             ->addIndex('title', 'title')
-            ->addIndex('product_data_nicks', [['name' => 'product_data_nicks', 'size' => 500]])
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($walmartDictionaryCategoryTable);
@@ -10033,7 +9771,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => true]
             )
             ->addIndex('marketplace_id', 'marketplace_id')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($walmartDictionaryMarketplaceTable);
@@ -10143,7 +9881,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('xml_tag', 'xml_tag')
             ->addIndex('xpath', 'xpath')
             ->addIndex('product_data_nick', 'product_data_nick')
-            ->setOption('type', 'MYISAM')
+            ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($walmartDictionarySpecificTable);
@@ -11862,24 +11600,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_qty_magento',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'list_qty_magento_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'list_qty_magento_value_max',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
                 'list_qty_calculated',
                 Table::TYPE_SMALLINT,
                 null,
@@ -11887,12 +11607,6 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'list_qty_calculated_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'list_qty_calculated_value_max',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => false]
@@ -11934,18 +11648,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_price_max_allowed_deviation_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'revise_update_price_max_allowed_deviation',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'default' => null]
-            )
-            ->addColumn(
                 'revise_update_promotions',
                 Table::TYPE_SMALLINT,
                 null,
@@ -11982,24 +11684,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_qty_magento',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'relist_qty_magento_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'relist_qty_magento_value_max',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
                 'relist_qty_calculated',
                 Table::TYPE_SMALLINT,
                 null,
@@ -12007,12 +11691,6 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'relist_qty_calculated_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'relist_qty_calculated_value_max',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => false]
@@ -12048,24 +11726,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned'  => true, 'nullable'  => false]
             )
             ->addColumn(
-                'stop_qty_magento',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'stop_qty_magento_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'stop_qty_magento_value_max',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
                 'stop_qty_calculated',
                 Table::TYPE_SMALLINT,
                 null,
@@ -12073,12 +11733,6 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'stop_qty_calculated_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'stop_qty_calculated_value_max',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => false]
@@ -12117,18 +11771,6 @@ class InstallSchema implements InstallSchemaInterface
             ->fetch();
 
         return $setupRow !== false;
-    }
-
-    private function isMaintenanceCanBeIgnored()
-    {
-        $select = $this->installer->getConnection()
-            ->select()
-            ->from($this->installer->getTable('core_config_data'), 'value')
-            ->where('scope = ?', 'default')
-            ->where('scope_id = ?', 0)
-            ->where('path = ?', 'm2epro/setup/ignore_maintenace');
-
-        return (bool)$this->installer->getConnection()->fetchOne($select);
     }
 
     /**

@@ -39,8 +39,24 @@ class BeforeToken extends InstallationAmazon
             $response = $connectorObj->getResponseData();
         } catch (\Exception $exception) {
             $this->getHelper('Module\Exception')->process($exception);
+
+            $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
+                $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
+            );
+
             $error = 'The Amazon token obtaining is currently unavailable.<br/>Reason: %error_message%';
-            $error = $this->__($error, $exception->getMessage());
+
+            if (!$this->getHelper('Module\License')->isValidDomain() ||
+                !$this->getHelper('Module\License')->isValidIp()) {
+                $error .= '</br>Go to the <a href="%url%" target="_blank">License Page</a>.';
+                $error = $this->__(
+                    $error,
+                    $exception->getMessage(),
+                    $this->getHelper('View\Configuration')->getLicenseUrl(['wizard' => 1])
+                );
+            } else {
+                $error = $this->__($error, $exception->getMessage());
+            }
 
             $this->setJsonContent([
                 'message' => $error

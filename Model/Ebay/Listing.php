@@ -24,9 +24,19 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     private $autoGlobalAddingCategoryTemplateModel = null;
 
     /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory
+     * @var \Ess\M2ePro\Model\Ebay\Template\Category
      */
-    private $autoGlobalAddingOtherCategoryTemplateModel = null;
+    protected $autoGlobalAddingCategorySecondaryTemplateModel = null;
+
+    /**
+     * @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    protected $autoGlobalAddingStoreCategoryTemplateModel = null;
+
+    /**
+     * @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    protected $autoGlobalAddingStoreCategorySecondaryTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Category
@@ -34,9 +44,19 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     private $autoWebsiteAddingCategoryTemplateModel = null;
 
     /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory
+     * @var \Ess\M2ePro\Model\Ebay\Template\Category
      */
-    private $autoWebsiteAddingOtherCategoryTemplateModel = null;
+    protected $autoWebsiteAddingCategorySecondaryTemplateModel = null;
+
+    /**
+     * @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    protected $autoWebsiteAddingStoreCategoryTemplateModel = null;
+
+    /**
+     * @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    protected $autoWebsiteAddingStoreCategorySecondaryTemplateModel = null;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Manager[]
@@ -100,16 +120,23 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         }
 
         $this->templateManagers = [];
-        $this->autoGlobalAddingCategoryTemplateModel = null;
-        $this->autoGlobalAddingOtherCategoryTemplateModel = null;
-        $this->autoWebsiteAddingCategoryTemplateModel = null;
-        $this->autoWebsiteAddingOtherCategoryTemplateModel = null;
-        $this->sellingFormatTemplateModel = null;
+
+        $this->autoGlobalAddingCategoryTemplateModel               = null;
+        $this->autoGlobalAddingCategorySecondaryTemplateModel      = null;
+        $this->autoGlobalAddingStoreCategoryTemplateModel          = null;
+        $this->autoGlobalAddingStoreCategorySecondaryTemplateModel = null;
+
+        $this->autoWebsiteAddingCategoryTemplateModel               = null;
+        $this->autoWebsiteAddingCategorySecondaryTemplateModel      = null;
+        $this->autoWebsiteAddingStoreCategoryTemplateModel          = null;
+        $this->autoWebsiteAddingStoreCategorySecondaryTemplateModel = null;
+
+        $this->sellingFormatTemplateModel   = null;
         $this->synchronizationTemplateModel = null;
-        $this->descriptionTemplateModel = null;
-        $this->paymentTemplateModel = null;
-        $this->returnTemplateModel = null;
-        $this->shippingTemplateModel = null;
+        $this->descriptionTemplateModel     = null;
+        $this->paymentTemplateModel         = null;
+        $this->returnTemplateModel          = null;
+        $this->shippingTemplateModel        = null;
 
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('listing');
 
@@ -145,33 +172,96 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
          $this->autoGlobalAddingCategoryTemplateModel = $instance;
     }
 
-    // ---------------------------------------
-
     /**
-     * @return \Ess\M2ePro\Model\Ebay\Template\OtherCategory
+     * @return \Ess\M2ePro\Model\Ebay\Template\Category
      */
-    public function getAutoGlobalAddingOtherCategoryTemplate()
+    public function getAutoGlobalAddingCategorySecondaryTemplate()
     {
-        if ($this->autoGlobalAddingOtherCategoryTemplateModel === null) {
+        if ($this->autoGlobalAddingCategorySecondaryTemplateModel === null) {
             try {
-                $this->autoGlobalAddingOtherCategoryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                    'Ebay_Template_OtherCategory',
-                    (int)$this->getAutoGlobalAddingTemplateOtherCategoryId()
-                );
+                $this->autoGlobalAddingCategorySecondaryTemplateModel =
+                    $this->activeRecordFactory->getCachedObjectLoaded(
+                        'Ebay_Template_Category',
+                        (int)$this->getAutoGlobalAddingTemplateCategorySecondaryId(),
+                        null,
+                        ['template']
+                    );
             } catch (\Exception $exception) {
-                return $this->autoGlobalAddingOtherCategoryTemplateModel;
+                return $this->autoGlobalAddingCategorySecondaryTemplateModel;
             }
         }
 
-        return $this->autoGlobalAddingOtherCategoryTemplateModel;
+        return $this->autoGlobalAddingCategorySecondaryTemplateModel;
     }
 
     /**
-     * @param \Ess\M2ePro\Model\Ebay\Template\OtherCategory $instance
+     * @param \Ess\M2ePro\Model\Ebay\Template\Category $instance
      */
-    public function setAutoGlobalAddingOtherCategoryTemplate(\Ess\M2ePro\Model\Ebay\Template\OtherCategory $instance)
+    public function setAutoGlobalAddingCategorySecondaryTemplate(\Ess\M2ePro\Model\Ebay\Template\Category $instance)
     {
-         $this->autoGlobalAddingOtherCategoryTemplateModel = $instance;
+        $this->autoGlobalAddingCategorySecondaryTemplateModel = $instance;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    public function getAutoGlobalAddingStoreCategoryTemplate()
+    {
+        if ($this->autoGlobalAddingStoreCategoryTemplateModel === null) {
+            try {
+                $this->autoGlobalAddingStoreCategoryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
+                    'Ebay_Template_StoreCategory',
+                    (int)$this->getAutoGlobalAddingTemplateStoreCategoryId(),
+                    null,
+                    ['template']
+                );
+            } catch (\Exception $exception) {
+                return $this->autoGlobalAddingStoreCategoryTemplateModel;
+            }
+        }
+
+        return $this->autoGlobalAddingStoreCategoryTemplateModel;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Ebay\Template\StoreCategory $instance
+     */
+    public function setAutoGlobalAddingStoreCategoryTemplate(\Ess\M2ePro\Model\Ebay\Template\StoreCategory $instance)
+    {
+        $this->autoGlobalAddingStoreCategoryTemplateModel = $instance;
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    public function getAutoGlobalAddingStoreCategorySecondaryTemplate()
+    {
+        if ($this->autoGlobalAddingStoreCategorySecondaryTemplateModel === null) {
+            try {
+                $this->autoGlobalAddingStoreCategorySecondaryTemplateModel =
+                    $this->activeRecordFactory->getCachedObjectLoaded(
+                        'Ebay_Template_StoreCategory',
+                        (int)$this->getAutoGlobalAddingTemplateStoreCategorySecondaryId(),
+                        null,
+                        ['template']
+                    );
+            } catch (\Exception $exception) {
+                return $this->autoGlobalAddingStoreCategorySecondaryTemplateModel;
+            }
+        }
+
+        return $this->autoGlobalAddingStoreCategorySecondaryTemplateModel;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Ebay\Template\StoreCategory $instance
+     */
+    public function setAutoGlobalAddingStoreCategorySecondaryTemplate(
+        \Ess\M2ePro\Model\Ebay\Template\StoreCategory $instance
+    ) {
+        $this->autoGlobalAddingStoreCategorySecondaryTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -206,30 +296,95 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     // ---------------------------------------
 
     /**
-     * @return \Ess\M2ePro\Model\Ebay\Template\OtherCategory
+     * @return \Ess\M2ePro\Model\Ebay\Template\Category
      */
-    public function getAutoWebsiteAddingOtherCategoryTemplate()
+    public function getAutoWebsiteAddingCategorySecondaryTemplate()
     {
-        if ($this->autoWebsiteAddingOtherCategoryTemplateModel === null) {
+        if ($this->autoWebsiteAddingCategorySecondaryTemplateModel === null) {
             try {
-                $this->autoWebsiteAddingOtherCategoryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
-                    'Ebay_Template_OtherCategory',
-                    (int)$this->getAutoWebsiteAddingTemplateOtherCategoryId()
-                );
+                $this->autoWebsiteAddingCategorySecondaryTemplateModel =
+                    $this->activeRecordFactory->getCachedObjectLoaded(
+                        'Ebay_Template_Category',
+                        (int)$this->getAutoWebsiteAddingTemplateCategorySecondaryId(),
+                        null,
+                        ['template']
+                    );
             } catch (\Exception $exception) {
-                return $this->autoWebsiteAddingOtherCategoryTemplateModel;
+                return $this->autoWebsiteAddingCategorySecondaryTemplateModel;
             }
         }
 
-        return $this->autoWebsiteAddingOtherCategoryTemplateModel;
+        return $this->autoWebsiteAddingCategorySecondaryTemplateModel;
     }
 
     /**
-     * @param \Ess\M2ePro\Model\Ebay\Template\OtherCategory $instance
+     * @param \Ess\M2ePro\Model\Ebay\Template\Category $instance
      */
-    public function setAutoWebsiteAddingOtherCategoryTemplate(\Ess\M2ePro\Model\Ebay\Template\OtherCategory $instance)
+    public function setAutoWebsiteAddingCategorySecondaryTemplate(\Ess\M2ePro\Model\Ebay\Template\Category $instance)
     {
-         $this->autoWebsiteAddingOtherCategoryTemplateModel = $instance;
+        $this->autoWebsiteAddingCategorySecondaryTemplateModel = $instance;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    public function getAutoWebsiteAddingStoreCategoryTemplate()
+    {
+        if ($this->autoWebsiteAddingStoreCategoryTemplateModel === null) {
+            try {
+                $this->autoWebsiteAddingStoreCategoryTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
+                    'Ebay_Template_StoreCategory',
+                    (int)$this->getAutoWebsiteAddingTemplateStoreCategoryId(),
+                    null,
+                    ['template']
+                );
+            } catch (\Exception $exception) {
+                return $this->autoWebsiteAddingStoreCategoryTemplateModel;
+            }
+        }
+
+        return $this->autoWebsiteAddingStoreCategoryTemplateModel;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Ebay\Template\StoreCategory $instance
+     */
+    public function setAutoWebsiteAddingStoreCategoryTemplate(\Ess\M2ePro\Model\Ebay\Template\StoreCategory $instance)
+    {
+        $this->autoWebsiteAddingStoreCategoryTemplateModel = $instance;
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    public function getAutoWebsiteAddingStoreCategorySecondaryTemplate()
+    {
+        if ($this->autoWebsiteAddingStoreCategorySecondaryTemplateModel === null) {
+            try {
+                $this->autoWebsiteAddingStoreCategorySecondaryTemplateModel =
+                    $this->activeRecordFactory->getCachedObjectLoaded(
+                        'Ebay_Template_StoreCategory',
+                        (int)$this->getAutoWebsiteAddingTemplateStoreCategorySecondaryId(),
+                        null,
+                        ['template']
+                    );
+            } catch (\Exception $exception) {
+                return $this->autoWebsiteAddingStoreCategorySecondaryTemplateModel;
+            }
+        }
+
+        return $this->autoWebsiteAddingStoreCategorySecondaryTemplateModel;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Ebay\Template\StoreCategory $instance
+     */
+    public function setAutoWebsiteAddingStoreCategorySecondaryTemplate(
+        \Ess\M2ePro\Model\Ebay\Template\StoreCategory $instance
+    ) {
+        $this->autoWebsiteAddingStoreCategorySecondaryTemplateModel = $instance;
     }
 
     //########################################
@@ -463,9 +618,19 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getData('auto_global_adding_template_category_id');
     }
 
-    public function getAutoGlobalAddingTemplateOtherCategoryId()
+    public function getAutoGlobalAddingTemplateCategorySecondaryId()
     {
-        return $this->getData('auto_global_adding_template_other_category_id');
+        return $this->getData('auto_global_adding_template_category_secondary_id');
+    }
+
+    public function getAutoGlobalAddingTemplateStoreCategoryId()
+    {
+        return $this->getData('auto_global_adding_template_store_category_id');
+    }
+
+    public function getAutoGlobalAddingTemplateStoreCategorySecondaryId()
+    {
+        return $this->getData('auto_global_adding_template_store_category_secondary_id');
     }
 
     // ---------------------------------------
@@ -482,9 +647,19 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getData('auto_website_adding_template_category_id');
     }
 
-    public function getAutoWebsiteAddingTemplateOtherCategoryId()
+    public function getAutoWebsiteAddingTemplateCategorySecondaryId()
     {
-        return $this->getData('auto_website_adding_template_other_category_id');
+        return $this->getData('auto_website_adding_template_category_secondary_id');
+    }
+
+    public function getAutoWebsiteAddingTemplateStoreCategoryId()
+    {
+        return $this->getData('auto_website_adding_template_store_category_id');
+    }
+
+    public function getAutoWebsiteAddingTemplateStoreCategorySecondaryId()
+    {
+        return $this->getData('auto_website_adding_template_store_category_secondary_id');
     }
 
     // ---------------------------------------
@@ -573,23 +748,26 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $ebayItem->setData('store_id', $this->getParentObject()->getStoreId())
                  ->save();
 
-        $ebayListingProduct = $listingOtherProduct->getChildObject();
+        $ebayListingOther = $listingOtherProduct->getChildObject();
 
         $dataForUpdate = [
-            'ebay_item_id'         => $ebayItem->getId(),
+            'ebay_item_id'           => $ebayItem->getId(),
+            'online_sku'             => $ebayListingOther->getSku(),
+            'online_title'           => $ebayListingOther->getTitle(),
+            'online_duration'        => $ebayListingOther->getOnlineDuration(),
+            'online_current_price'   => $ebayListingOther->getOnlinePrice(),
+            'online_qty'             => $ebayListingOther->getOnlineQty(),
+            'online_qty_sold'        => $ebayListingOther->getOnlineQtySold(),
+            'online_bids'            => $ebayListingOther->getOnlineBids(),
+            'online_main_category'   => $ebayListingOther->getOnlineMainCategory(),
+            'online_categories_data' => $this->getHelper('Data')->jsonEncode(
+                $ebayListingOther->getOnlineCategoriesData()
+            ),
 
-            'online_sku'           => $ebayListingProduct->getSku(),
-            'online_title'         => $ebayListingProduct->getTitle(),
-            'online_duration'      => $ebayListingProduct->getOnlineDuration(),
-            'online_current_price' => $ebayListingProduct->getOnlinePrice(),
-            'online_qty'           => $ebayListingProduct->getOnlineQty(),
-            'online_qty_sold'      => $ebayListingProduct->getOnlineQtySold(),
-            'online_bids'          => $ebayListingProduct->getOnlineBids(),
-            'start_date'           => $ebayListingProduct->getStartDate(),
-            'end_date'             => $ebayListingProduct->getEndDate(),
-
-            'status'               => $listingOtherProduct->getStatus(),
-            'status_changer'       => $listingOtherProduct->getStatusChanger()
+            'start_date'     => $ebayListingOther->getStartDate(),
+            'end_date'       => $ebayListingOther->getEndDate(),
+            'status'         => $listingOtherProduct->getStatus(),
+            'status_changer' => $listingOtherProduct->getStatusChanger()
         ];
 
         $listingProduct->addData($dataForUpdate)

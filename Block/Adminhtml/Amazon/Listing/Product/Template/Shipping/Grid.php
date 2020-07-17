@@ -114,7 +114,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     'id' => 'shipping_template_refresh_btn',
                     'label'     => $this->__('Refresh'),
                     'class'     => 'action primary',
-                    'onclick'   => "ListingGridHandlerObj.templateShippingHandler.loadGrid()"
+                    'onclick'   => "ListingGridObj.templateShippingHandler.loadGrid()"
                 ])
         );
 
@@ -170,7 +170,7 @@ HTML;
     {
         $this->js->add(
             <<<JS
-ListingGridHandlerObj.templateShippingHandler.newTemplateUrl='{$this->getNewTemplateShippingUrl()}';
+ListingGridObj.templateShippingHandler.newTemplateUrl='{$this->getNewTemplateShippingUrl()}';
 JS
         );
 

@@ -278,7 +278,7 @@ HTML;
                     <<<HTML
 <select
     class="select admin__control-select amazon_product_attribute_{$id}"
-    onchange="ListingGridHandlerObj.productSearchHandler.attributesChange(this)"
+    onchange="ListingGridObj.productSearchHandler.attributesChange(this)"
     style="width: 250px; margin-left: 10px; margin-bottom: 7px; font-size: 11px;
         background-position: calc(100% - 12px) -38px, 100%, calc(100% - 3.2rem) 0;"
     id="amazon_product_attribute_{$attributeId}_{$id}">
@@ -293,7 +293,7 @@ HTML;
                         if ($attrKey == $amazonAttr) {
                             $selected = 'selected';
                             $magentoProductAttributesJs .= <<<JS
-ListingGridHandlerObj.productSearchHandler.attributesChange({id:"magento_product_attribute_{$magentoAttr}_{$id}"});
+ListingGridObj.productSearchHandler.attributesChange({id:"magento_product_attribute_{$magentoAttr}_{$id}"});
 JS;
                         }
 
@@ -323,7 +323,7 @@ JS;
                 $magentoAttributesText = $this->__('Magento Attributes');
                 $amazonAttributesText = $this->__('Amazon Attributes');
 
-                $searchHandler = 'ListingGridHandlerObj.productSearchHandler';
+                $searchHandler = 'ListingGridObj.productSearchHandler';
 
                 $value .= <<<HTML
 <form id="matching_attributes_form_{$id}" action="javascript:void(0)" style="margin-left: 10px">
@@ -363,7 +363,7 @@ HTML;
     {$searchHandler}.searchData[{$id}].magentoVariationSet = {$magentoProductVariationsSet};
     {$searchHandler}.searchData[{$id}].amazonVariation = {$amazonVariations};
 
-    ListingGridHandlerObj.productSearchHandler.renderMatchedAttributesVirtualView({$id});
+    ListingGridObj.productSearchHandler.renderMatchedAttributesVirtualView({$id});
 </script>
 HTML;
                 } else {
@@ -375,7 +375,7 @@ HTML;
     {$searchHandler}.searchData[{$id}].destinationAttributes = {$destinationAttributes};
     {$searchHandler}.searchData[{$id}].amazonVariation = {$amazonVariations};
 
-    ListingGridHandlerObj.productSearchHandler.renderMatchedAttributesVirtualView({$id});
+    ListingGridObj.productSearchHandler.renderMatchedAttributesVirtualView({$id});
 </script>
 HTML;
                 }
@@ -441,7 +441,7 @@ HTML;
             <<<HTML
 <select
     class="select admin__control-select specifics_{$id}"
-    onchange="ListingGridHandlerObj.productSearchHandler.specificsChange(this)"
+    onchange="ListingGridObj.productSearchHandler.specificsChange(this)"
     style="width: 250px; margin-bottom: 5px; font-size: 11px;
         background-position: calc(100% - 12px) -38px, 100%, calc(100% - 3.2rem) 0;"
     id="specific_{$specificName}_{$id}">
@@ -464,7 +464,7 @@ HTML;
             $attributeValues .= '</select><br/>';
 
             $specificsJs .= <<<JS
-ListingGridHandlerObj.productSearchHandler.specificsChange({id:"specific_{$specificName}_{$id}"});
+ListingGridObj.productSearchHandler.specificsChange({id:"specific_{$specificName}_{$id}"});
 JS;
         }
 
@@ -505,7 +505,7 @@ HTML;
             || $this->listingProduct->getChildObject()->getVariationManager()->isIndividualType()) {
             if (!$row->getData('is_variation_product')) {
                 return <<<HTML
-<a href="javascript:void(0);" onclick="ListingGridHandlerObj.productSearchHandler.mapToGeneralId(
+<a href="javascript:void(0);" onclick="ListingGridObj.productSearchHandler.mapToGeneralId(
     {$this->productId}, '{$row->getData('general_id')}');">{$assignText}</a>
 HTML;
             }
@@ -521,7 +521,7 @@ HTML;
     {$this->getTooltipHtml($msg, 'map_link_error_icon_'.$row->getId())}
 </span>
 <div id="template_map_link_{$row->getId()}" style="display: none;">
-<a href="javascript:void(0);" onclick="ListingGridHandlerObj.productSearchHandler.mapToGeneralId(
+<a href="javascript:void(0);" onclick="ListingGridObj.productSearchHandler.mapToGeneralId(
     {$this->productId}, '%general_id%', '%options_data%'
 );">{$assignText}</a>
 </div>
@@ -560,7 +560,7 @@ HTML;
     {$this->getTooltipHtml($msg, 'map_link_error_icon_'.$row->getId())}
 </span>
 <div id="template_map_link_{$row->getId()}" style="display: none;">
-<a href="javascript:void(0);" onclick="ListingGridHandlerObj.productSearchHandler.mapToGeneralId(
+<a href="javascript:void(0);" onclick="ListingGridObj.productSearchHandler.mapToGeneralId(
     {$this->productId}, '{$row->getData('general_id')}', '%options_data%'
 );">{$assignText}</a>
 </div>

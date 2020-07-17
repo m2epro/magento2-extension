@@ -977,19 +977,11 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $backorders,
         $useConfigBackorders
     ) {
-        $forceQtyMode = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/product/force_qty/',
-            'mode'
-        );
-
-        if ($forceQtyMode == 0) {
+        if (!$this->getHelper('Module_Configuration')->isEnableProductForceQtyMode()) {
             return $qty;
         }
 
-        $forceQtyValue = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/product/force_qty/',
-            'value'
-        );
+        $forceQtyValue = $this->getHelper('Module_Configuration')->getProductForceQtyValue();
 
         $manageStockGlobal = $this->catalogInventoryConfiguration->getManageStock();
         if (($useConfigManageStock && !$manageStockGlobal) || (!$useConfigManageStock && !$manageStock)) {
@@ -1251,7 +1243,8 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                                   ->load($this->getStoreId())
                                   ->getBaseUrl(
                                       \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
-                                      $this->getHelper('Component_Ebay_Images')->shouldBeUrlsSecure()
+                                      $this->getHelper('Module_Configuration')
+                                          ->getSecureImageUrlInItemDescriptionMode()
                                   )
                                   . 'catalog/product/'.ltrim($value, '/');
                 }
@@ -1461,7 +1454,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                              ->load($this->getStoreId())
                              ->getBaseUrl(
                                  \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
-                                 $this->getHelper('Component_Ebay_Images')->shouldBeUrlsSecure()
+                                 $this->getHelper('Module_Configuration')->getSecureImageUrlInItemDescriptionMode()
                              );
             $imageUrl .= 'catalog/product/'.ltrim($galleryImage['file'], '/');
             $imageUrl = $this->prepareImageUrl($imageUrl);
@@ -1524,7 +1517,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                 ->load($this->getStoreId())
                 ->getBaseUrl(
                     \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
-                    $this->getHelper('Component_Ebay_Images')->shouldBeUrlsSecure()
+                    $this->getHelper('Module_Configuration')->getSecureImageUrlInItemDescriptionMode()
                 ) . $imagePath;
 
         $imageUrl = $this->prepareImageUrl($imageUrl);

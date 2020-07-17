@@ -364,6 +364,12 @@ HTML;
     {
         $value = $column->getFilter()->getValue();
 
+        if ($this->isNullFilter($value)) {
+            $collection->getSelect()
+                ->where("TIME_TO_SEC(TIMEDIFF(`end_date`, `start_date`)) IS NULL");
+            return $this;
+        }
+
         if ($value === null || !$value = preg_grep('/^\d+:\d{2}$/', $value)) {
             return $this;
         }
@@ -431,8 +437,7 @@ HTML;
 
         if (!$column->getFilterConditionCallback()) {
             $value = $column->getFilter()->getValue();
-            $field = ( $column->getFilterIndex() ) ? $column->getFilterIndex()
-                : $column->getIndex();
+            $field = ($column->getFilterIndex()) ? $column->getFilterIndex() : $column->getIndex();
 
             if ($this->isNullFilter($value)) {
                 $this->getCollection()->addFieldToFilter($field, ['null' => true]);
@@ -444,8 +449,13 @@ HTML;
                 return $this;
             }
 
-            if ($this->isUnEqualFilter($value)) {
+            if ($this->isNotEqualFilter($value)) {
                 $this->getCollection()->addFieldToFilter($field, ['neq' => preg_replace('/^!=/', '', $value)]);
+                return $this;
+            }
+
+            if ($this->isNotLikeFilter($value)) {
+                $this->getCollection()->addFieldToFilter($field, ['nlike' => preg_replace('/^!%/', '', $value)]);
                 return $this;
             }
         }
@@ -479,9 +489,32 @@ HTML;
         return false;
     }
 
-    private function isUnEqualFilter($value)
+    protected function isNotEqualFilter($value)
     {
         if (is_string($value) && strpos($value, '!=') === 0) {
+            return true;
+        }
+
+        if (isset($value['from'], $value['to']) &&
+            strpos($value['from'], '!=') === 0 &&
+            strpos($value['to'], '!=') === 0
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function isNotLikeFilter($value)
+    {
+        if (is_string($value) && strpos($value, '!%') === 0) {
+            return true;
+        }
+
+        if (isset($value['from'], $value['to']) &&
+            strpos($value['from'], '!%') === 0 &&
+            strpos($value['to'], '!%') === 0
+        ) {
             return true;
         }
 

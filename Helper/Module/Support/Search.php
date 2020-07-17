@@ -13,19 +13,6 @@ namespace Ess\M2ePro\Helper\Module\Support;
  */
 class Search extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    protected $moduleConfig;
-
-    //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
-    ) {
-        $this->moduleConfig = $moduleConfig;
-        parent::__construct($helperFactory, $context);
-    }
-
     //########################################
 
     public function process($query)

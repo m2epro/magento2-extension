@@ -19,7 +19,7 @@ class RelistRules extends AbstractTab
 {
     protected function _prepareForm()
     {
-        $default = $this->activeRecordFactory->getObject('Ebay_Template_Synchronization')->getRelistDefaultSettings();
+        $default = $this->modelFactory->getObject('Ebay_Template_Synchronization_Builder')->getDefaultData();
         $formData = $this->getFormData();
 
         $formData = array_merge($default, $formData);
@@ -162,102 +162,31 @@ HTML
         );
 
         $fieldset->addField(
-            'relist_qty_magento',
-            self::SELECT,
-            [
-                'name' => 'synchronization[relist_qty_magento]',
-                'label' => $this->__('Magento Quantity'),
-                'value' => $formData['relist_qty_magento'],
-                'values' => [
-                    TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
-                    TemplateSynchronization::QTY_MODE_MORE => $this->__('More or Equal'),
-                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
-                ],
-                'class' => 'M2ePro-validate-stop-relist-conditions-item-qty',
-                'tooltip' => $this->__(
-                    '<p><strong>Any:</strong> Relist Items automatically with any Quantity available.</p>
-                    <p><strong>More or Equal:</strong> Relist Items automatically if the Quantity available
-                    in Magento is at least equal to the number you set. (Recommended)</p>
-                    <p><strong>Between:</strong> Relist Items automatically if the Quantity available in
-                    Magento is between the minimum and maximum numbers you set.</p>'
-                )
-            ]
-        )->addCustomAttribute('qty_type', 'magento');
-
-        $fieldset->addField(
-            'relist_qty_magento_value',
-            'text',
-            [
-                'container_id' => 'relist_qty_magento_value_container',
-                'name' => 'synchronization[relist_qty_magento_value]',
-                'label' => $this->__('Quantity'),
-                'value' => $formData['relist_qty_magento_value'],
-                'class' => 'validate-digits',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
-            'relist_qty_magento_value_max',
-            'text',
-            [
-                'container_id' => 'relist_qty_magento_value_max_container',
-                'name' => 'synchronization[relist_qty_magento_value_max]',
-                'label' => $this->__('Max Quantity'),
-                'value' => $formData['relist_qty_magento_value_max'],
-                'class' => 'validate-digits M2ePro-validate-conditions-between',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
             'relist_qty_calculated',
             self::SELECT,
             [
                 'name' => 'synchronization[relist_qty_calculated]',
-                'label' => $this->__('Calculated Quantity'),
+                'label' => $this->__('Quantity'),
                 'value' => $formData['relist_qty_calculated'],
                 'values' => [
                     TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
-                    TemplateSynchronization::QTY_MODE_MORE => $this->__('More or Equal'),
-                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
+                    TemplateSynchronization::QTY_MODE_YES => $this->__('More or Equal'),
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-item-qty',
                 'tooltip' => $this->__(
                     '<p><strong>Any:</strong> Relist Items automatically with any Quantity available.</p>
                     <p><strong>More or Equal:</strong> Relist Items automatically if the Quantity is at least equal
-                    to the number you set, according to the Selling Policy. (Recommended)</p>
-                    <p><strong>Between:</strong> Relist Items automatically if the Quantity is between the
-                    minimum and maximum numbers you set, according to the Selling Policy.</p>'
+                    to the number you set, according to the Selling Policy. (Recommended)</p>'
                 )
             ]
-        )->addCustomAttribute('qty_type', 'calculated');
-
-        $fieldset->addField(
-            'relist_qty_calculated_value',
-            'text',
-            [
-                'container_id' => 'relist_qty_calculated_value_container',
-                'name' => 'synchronization[relist_qty_calculated_value]',
-                'label' => $this->__('Quantity'),
-                'value' => $formData['relist_qty_calculated_value'],
-                'class' => 'validate-digits',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
-            'relist_qty_calculated_value_max',
-            'text',
-            [
-                'container_id' => 'relist_qty_calculated_value_max_container',
-                'name' => 'synchronization[relist_qty_calculated_value_max]',
-                'label' => $this->__('Max Quantity'),
-                'value' => $formData['relist_qty_calculated_value_max'],
-                'class' => 'validate-digits M2ePro-validate-conditions-between',
-                'required' => true
-            ]
-        );
+        )->setAfterElementHtml(<<<HTML
+<input name="synchronization[relist_qty_calculated_value]" id="relist_qty_calculated_value"
+       value="{$formData['relist_qty_calculated_value']}"
+       type="text"
+       style="width: 72px; margin-left: 10px;"
+       class="input-text admin__control-text required-entry validate-digits _required" />
+HTML
+            );
 
         $fieldset = $form->addFieldset(
             'magento_block_ebay_template_synchronization_relist_advanced_filters',

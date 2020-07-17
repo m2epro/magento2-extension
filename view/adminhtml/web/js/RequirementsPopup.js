@@ -14,7 +14,7 @@ define([
 
         initErrorMessage: function()
         {
-            messagesObj.addGlobalErrorMessage(M2ePro.translator.translate(
+            messagesObj.addGlobalError(M2ePro.translator.translate(
                 'System Configuration does not meet minimum requirements. Please check.'
             ));
         },
@@ -42,10 +42,7 @@ define([
                             self.close();
                         }
                     }
-                ],
-                closed: function() {
-                    self.close();
-                }
+                ]
             });
 
             self.popupObj.modal('openModal');
@@ -53,8 +50,6 @@ define([
 
         close: function()
         {
-            var self = this;
-
             new Ajax.Request(M2ePro.url.get('general/requirementsPopupClose'),
             {
                 method: 'post',

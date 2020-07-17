@@ -6,81 +6,15 @@ define([
 
         // ---------------------------------------
 
-        initialize: function()
+        initValidation: function()
         {
-            var self = this;
-            this.setValidationCheckRepetitionValue('M2ePro-account-title',
-                                                   M2ePro.translator.translate('The specified Title is already used for other Account. Account Title must be unique.'),
-                                                   'Account', 'title', 'id',
-                                                   M2ePro.formData.id,
-                                                   M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart::NICK'));
-
-            jQuery.validator.addMethod('M2ePro-validate-consumer-id', function(value, el) {
-
-                if (self.isElementHiddenFromPage(el)) {
-                    return true;
-                }
-
-                // Do not validate on edit
-                if (el.disabled) {
-                    return true;
-                }
-
-                // Partner ID example: 10000004781
-                // Consumer ID Example: c2cfff2c-57a9-4f0a-b5ab-00b000dfe000
-                return /^[0-9]{11}$/.test(value) || /^[a-f0-9-]{36}$/.test(value);
-
-            }, M2ePro.translator.translate('The specified Consumer ID / Partner ID is not valid'));
-
-            jQuery.validator.addMethod('M2ePro-marketplace-merchant', function(value, el) {
-
-                if (self.isElementHiddenFromPage(el)) {
-                    return true;
-                }
-
-                // reset error message to the default
-                this.error = M2ePro.translator.translate('M2E Pro was not able to get access to the Walmart Account');
-
-                var marketplace_id = $('marketplace_id').value;
-
-                var params = [];
-
-                if (marketplace_id == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart::MARKETPLACE_CA')) {
-                    params = {
-                        consumer_id     : $('consumer_id').value,
-                        old_private_key : $('old_private_key').value,
-                        marketplace_id  : marketplace_id
-                    };
-                } else {
-                    params = {
-                        consumer_id    : $('consumer_id').value,
-                        client_id      : $('client_id').value,
-                        client_secret  : $('client_secret').value,
-                        marketplace_id : marketplace_id
-                    };
-                }
-
-                var checkResult = false;
-                var checkReason = null;
-
-                new Ajax.Request(M2ePro.url.get('walmart_account/checkAuth'), {
-                    method: 'post',
-                    asynchronous: false,
-                    parameters: params,
-                    onSuccess: function(transport) {
-                        var response = transport.responseText.evalJSON();
-                        checkResult  = response['result'];
-                        checkReason  = response['reason'];
-                    }
-                });
-
-                if (checkReason != null && typeof checkReason != 'undefined') {
-                    this.error = M2ePro.translator.translate('M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%').replace('%error_message%', checkReason);
-                }
-
-                return checkResult;
-
-            }, M2ePro.translator.translate('M2E Pro was not able to get access to the Walmart Account'));
+            this.setValidationCheckRepetitionValue(
+                'M2ePro-account-title',
+                M2ePro.translator.translate('The specified Title is already used for other Account. Account Title must be unique.'),
+                'Account', 'title', 'id',
+                M2ePro.formData.id,
+                M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart::NICK')
+            );
 
             jQuery.validator.addMethod('M2ePro-account-customer-id', function(value) {
 
@@ -136,7 +70,59 @@ define([
             }, M2ePro.translator.translate('Coefficient is not valid.'));
         },
 
-        // ---------------------------------------
+        initTokenValidation: function()
+        {
+            var self = this;
+
+            jQuery.validator.addMethod('M2ePro-marketplace-merchant', function(value, el) {
+
+                if (self.isElementHiddenFromPage(el)) {
+                    return true;
+                }
+
+                // reset error message to the default
+                this.error = M2ePro.translator.translate('M2E Pro was not able to get access to the Walmart Account');
+
+                var marketplace_id = $('marketplace_id').value;
+
+                var params = [];
+
+                if (marketplace_id == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart::MARKETPLACE_CA')) {
+                    params = {
+                        consumer_id    : $('consumer_id').value,
+                        private_key    : $('private_key').value,
+                        marketplace_id : marketplace_id
+                    };
+                } else {
+                    params = {
+                        client_id      : $('client_id').value,
+                        client_secret  : $('client_secret').value,
+                        marketplace_id : marketplace_id
+                    };
+                }
+
+                var checkResult = false;
+                var checkReason = null;
+
+                new Ajax.Request(M2ePro.url.get('walmart_account/checkAuth'), {
+                    method: 'post',
+                    asynchronous: false,
+                    parameters: params,
+                    onSuccess: function(transport) {
+                        var response = transport.responseText.evalJSON();
+                        checkResult  = response['result'];
+                        checkReason  = response['reason'];
+                    }
+                });
+
+                if (checkReason != null && typeof checkReason != 'undefined') {
+                    this.error = M2ePro.translator.translate('M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%').replace('%error_message%', checkReason);
+                }
+
+                return checkResult;
+
+            }, M2ePro.translator.translate('M2E Pro was not able to get access to the Walmart Account'));
+        },
 
         initObservers: function()
         {
@@ -206,13 +192,6 @@ define([
             var marketplaceId = this.value;
             if (marketplaceId === '') {
                 return;
-            }
-
-            $('consumer_id').removeClassName('M2ePro-validate-consumer-id');
-            $$('label[for="consumer_id"] > span').first().innerHTML = M2ePro.translator.translate('Consumer ID');
-            if (marketplaceId == M2ePro.php.constant('\\Ess\\M2ePro\\Helper\\Component\\Walmart::MARKETPLACE_US')) {
-                $('consumer_id').addClassName('M2ePro-validate-consumer-id');
-                $$('label[for="consumer_id"] > span').first().innerHTML = M2ePro.translator.translate('Consumer ID / Partner ID');
             }
 
             $$('.marketplace-required-field-id' + marketplaceId, '.marketplace-required-field-id-not-null').each(function(obj) {
@@ -466,24 +445,24 @@ define([
 
             if ($('magento_orders_listings_mode').value == 0 && $('magento_orders_listings_other_mode').value == 0) {
 
-                $('magento_block_walmart_accounts_magento_orders_number').hide();
+                $('magento_block_walmart_accounts_magento_orders_number-wrapper').hide();
                 $('magento_orders_number_source').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO');
 
-                $('magento_block_walmart_accounts_magento_orders_customer').hide();
+                $('magento_block_walmart_accounts_magento_orders_customer-wrapper').hide();
                 $('magento_orders_customer_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST');
                 self.magentoOrdersCustomerModeChange();
 
-                $('magento_block_walmart_accounts_magento_orders_status_mapping').hide();
+                $('magento_block_walmart_accounts_magento_orders_status_mapping-wrapper').hide();
                 $('magento_orders_status_mapping_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT');
                 self.magentoOrdersStatusMappingModeChange();
 
-                $('magento_block_walmart_accounts_magento_orders_tax').hide();
+                $('magento_block_walmart_accounts_magento_orders_tax-wrapper').hide();
                 $('magento_orders_tax_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::MAGENTO_ORDERS_TAX_MODE_MIXED');
             } else {
-                $('magento_block_walmart_accounts_magento_orders_number').show();
-                $('magento_block_walmart_accounts_magento_orders_customer').show();
-                $('magento_block_walmart_accounts_magento_orders_status_mapping').show();
-                $('magento_block_walmart_accounts_magento_orders_tax').show();
+                $('magento_block_walmart_accounts_magento_orders_number-wrapper').show();
+                $('magento_block_walmart_accounts_magento_orders_customer-wrapper').show();
+                $('magento_block_walmart_accounts_magento_orders_status_mapping-wrapper').show();
+                $('magento_block_walmart_accounts_magento_orders_tax-wrapper').show();
             }
         },
 

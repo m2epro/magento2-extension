@@ -651,7 +651,6 @@ class After extends AbstractAddUpdate
                             ['!from' => $oldValue, '!to' => $newValue]
                         ),
                         \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-                        \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW,
                         ['variation_options' => [$attribute => $option]]
                     );
                 }
@@ -671,7 +670,6 @@ class After extends AbstractAddUpdate
                     ['!from' => $oldValue, '!to' => $newValue]
                 ),
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW,
                 $additionalData
             );
 
@@ -689,8 +687,7 @@ class After extends AbstractAddUpdate
                 'From [%from%] to [%to%]' . $messagePostfix . '.',
                 ['!from' => $oldValue, '!to' => $newValue]
             ),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
     }
 

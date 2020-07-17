@@ -45,9 +45,15 @@ class Order extends \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractContainer
 
     protected function _toHtml()
     {
+        $supportHelper = $this->helperFactory->getObject('Module_Support');
+        $message = <<<TEXT
+This Log contains information about Order processing.<br/><br/>
+Find detailed info in <a href="%url%" target="_blank">the article</a>.
+TEXT;
         $helpBlock = $this->createBlock('HelpBlock')->setData([
             'content' => $this->__(
-                '<p>This Log contains Orders history information.</p>'
+                $message,
+                $supportHelper->getDocumentationArticleUrl('x/WgBhAQ#Logs&Events-Orderlogs')
             )
         ]);
 

@@ -40,16 +40,7 @@ class General extends AbstractForm
         $temp = $this->getHelper('Data\Session')->getValue('get_sell_api_token_account_token_session', true);
         $temp !== null && $formData['sell_api_token_session'] = $temp;
 
-        $defaults = [
-            'title' => '',
-            'user_id' => '',
-            'mode' => Account::MODE_PRODUCTION,
-            'token_session' => '',
-            'token_expired_date' => '',
-            'sell_api_token_session' => '',
-            'sell_api_token_expired_date' => '',
-            'other_listings_synchronization' => 1
-        ];
+        $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
         $formData = array_merge($defaults, $formData);
 
         $isEdit = !!$this->getRequest()->getParam('id');

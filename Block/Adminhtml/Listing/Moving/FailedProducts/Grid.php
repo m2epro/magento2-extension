@@ -94,11 +94,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $url = $this->getUrl('catalog/product/edit', ['id' => $productId]);
         $withoutImageHtml = '<a href="'.$url.'" target="_blank">'.$productId.'</a>&nbsp;';
 
-        $showProductsThumbnails = (bool)(int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/view/',
-            'show_products_thumbnails'
-        );
-        if (!$showProductsThumbnails) {
+        if (!$this->getHelper('Module_Configuration')->getViewShowProductsThumbnailsMode()) {
             return $withoutImageHtml;
         }
 

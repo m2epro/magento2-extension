@@ -13,6 +13,15 @@
 
     <tr>
         <td class="label">
+            <label><?php echo $block->__('System | Current Time'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo "{$this->systemName} | {$this->systemTime}"; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
             <label><?php echo $block->__('Magento'); ?>: </label>
         </td>
         <td class="value">
@@ -49,10 +58,53 @@
 
     <tr>
         <td class="label">
+            <label><?php echo $block->__('Maintenance'); ?>: </label>
+        </td>
+        <td class="value">
+            <table class="form-list" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <span style="<?php echo $block->maintenanceMode ? 'color: green;' : 'color: red;'; ?>"><?php echo $block->maintenanceMode ? $block->__('enabled') : $block->__('disabled'); ?></span>
+                    </td>
+                    <td>
+                        <span style="color: orange;">
+                            &nbsp;<a href="<?php echo $block->getUrl('*/controlPanel_inspection/changeMaintenanceMode') ?>" onclick="return confirm('Are you sure?');">[<?php echo $block->__('change'); ?>]</a>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Core Resource'); ?>: </label>
+        </td>
+        <td class="value">
+            <table class="form-list" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <span <?php if ($block->setupVersion != $block->coreResourceVersion || $block->setupVersion != $block->coreResourceDataVersion) : echo ' style="color: red;" '; endif; ?>>
+                            <?php echo($block->coreResourceVersion ? $block->coreResourceVersion : 'N/A') . ' / ' . ($block->coreResourceDataVersion ? $block->coreResourceDataVersion : 'N/A') ?>
+                        </span>
+                    </td>
+                    <td>
+                        <span style="color: orange;">
+                            &nbsp;<a href="javascript:void(0);" onclick="return setupManagementActionHandler.askAdditionalParametersForAction('Please specify version to set:', '<?php echo $block->getUrl('*/controlPanel_inspection/setMagentoCoreSetupValue', ['_query' => ['version' => '#version#']]) ?>', 'version');">[<?php echo $block->__('set'); ?>]</a>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
             <label><?php echo $block->__('PHP'); ?>: </label>
         </td>
         <td class="value">
             <?php echo $block->phpVersion ?>
+            <a target="_blank" href="<?php echo $block->getUrl('*/controlPanel_inspection/phpInfo') ?>" style="padding-left: 10px;"><?php echo $block->__('[info]') ?></a>
         </td>
     </tr>
 
@@ -94,30 +146,10 @@
 
     <tr>
         <td class="label">
-            <label><?php echo $block->__('Database'); ?>: </label>
+            <label><?php echo $block->__('MySQL Database | Tables Prefix'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $block->mySqlDatabaseName ?>
-        </td>
-    </tr>
-
-    <tr>
-        <td class="label">
-            <label><?php echo $block->__('Cron'); ?> (<?php echo $block->cronCurrentRunner; ?>): </label>
-        </td>
-        <?php
-            $style = '';
-        if ($block->cronIsNotWorking) {
-            $style = ' style="color: red"';
-        }
-        ?>
-        <td class="value">
-            <span<?php echo $style; ?>><?php echo $block->cronLastRunTime; ?></span>
-            <?php
-            if ($block->cronIsNotWorking) {
-                echo ' (' . $block->__('not working') . ')';
-            }
-            ?>
+            <?php echo "{$this->mySqlDatabaseName} | {$this->mySqlPrefix}"; ?>
         </td>
     </tr>
 </table>

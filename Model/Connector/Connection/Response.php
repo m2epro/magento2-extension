@@ -13,6 +13,8 @@ namespace Ess\M2ePro\Model\Connector\Connection;
  */
 class Response extends \Ess\M2ePro\Model\AbstractModel
 {
+    const SERVER_MAINTENANCE_CODE = 3;
+
     protected $data = [];
 
     /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messages */
@@ -115,7 +117,7 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            if ($message->getCode() == 3) {
+            if ($message->getCode() == self::SERVER_MAINTENANCE_CODE) {
                 return true;
             }
         }

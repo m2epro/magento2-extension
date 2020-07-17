@@ -280,7 +280,8 @@ HTML
         {$editPolicyTooltip}</div>
         <span>{$this->__('or')}</span>
     </span>
-    <a href="javascript: void(0);" onclick="AmazonListingSettingsObj.addNewTemplate(
+    <a id="add_selling_format_template_link" href="javascript: void(0);"
+        onclick="AmazonListingSettingsObj.addNewTemplate(
         M2ePro.url.get(
                 'addNewSellingFormatTemplate',
                 {close_on_save: 1}),
@@ -347,7 +348,8 @@ HTML
         {$editPolicyTooltip}</div>
         <span>{$this->__('or')}</span>
     </span>
-    <a href="javascript: void(0);" onclick="AmazonListingSettingsObj.addNewTemplate(
+    <a id="add_synchronization_template_link"
+        href="javascript: void(0);" onclick="AmazonListingSettingsObj.addNewTemplate(
         M2ePro.url.get(
                 'addNewSynchronizationTemplate',
                 {close_on_save: 1}),
@@ -1049,13 +1051,13 @@ HTML
 
         $this->js->add(<<<JS
 require([
-    'M2ePro/TemplateHandler',
+    'M2ePro/TemplateManager',
     'M2ePro/Amazon/Listing/Settings',
     'M2ePro/Amazon/Listing/Create/Selling',
     'M2ePro/Plugin/Magento/Attribute/Button'
 ], function(){
 
-    window.TemplateHandlerObj = new TemplateHandler();
+    window.TemplateManagerObj = new TemplateManager();
 
     window.AmazonListingSettingsObj = new AmazonListingSettings();
     window.AmazonListingSettingsObj.storeId = '{$storeId}';

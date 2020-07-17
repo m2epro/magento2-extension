@@ -10,19 +10,20 @@ namespace Ess\M2ePro\Model\Ebay\Template\Payment;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Template\Payment\SnapshotBuilder
+ * @method \Ess\M2ePro\Model\Ebay\Template\Payment getModel()
  */
-class SnapshotBuilder extends \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel
+class SnapshotBuilder extends \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder
 {
     //########################################
 
     public function getSnapshot()
     {
-        $data = $this->model->getData();
+        $data = $this->getModel()->getData();
         if (empty($data)) {
             return [];
         }
 
-        $data['services'] = $this->model->getServices();
+        $data['services'] = $this->getModel()->getServices();
 
         $ignoredKeys = [
             'id', 'template_payment_id',

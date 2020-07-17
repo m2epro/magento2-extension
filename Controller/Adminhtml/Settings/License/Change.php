@@ -19,13 +19,10 @@ class Change extends \Ess\M2ePro\Controller\Adminhtml\Base
     {
         if ($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPostValue();
-            $primaryConfig = $this->getHelper('Primary')->getConfig();
+            $config = $this->getHelper('Module')->getConfig();
 
-            // Save settings
-            // ---------------------------------------
             $key = strip_tags($post['new_license_key']);
-            $primaryConfig->setGroupValue('/license/', 'key', (string)$key);
-            // ---------------------------------------
+            $config->setGroupValue('/license/', 'key', (string)$key);
 
             try {
                 $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(

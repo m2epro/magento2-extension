@@ -17,7 +17,7 @@ class IsCategoryGroupTitleUnique extends \Ess\M2ePro\Controller\Adminhtml\Ebay\L
 
     public function execute()
     {
-        $listingId = $this->getRequest()->getParam('id');
+        $listingId = $this->getRequest()->getParam('listing_id');
         $groupId = $this->getRequest()->getParam('group_id');
         $title = $this->getRequest()->getParam('title');
 

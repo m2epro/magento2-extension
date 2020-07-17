@@ -18,7 +18,7 @@ class ListRules extends AbstractTab
 {
     protected function _prepareForm()
     {
-        $default = $this->activeRecordFactory->getObject('Ebay_Template_Synchronization')->getListDefaultSettings();
+        $default = $this->modelFactory->getObject('Ebay_Template_Synchronization_Builder')->getDefaultData();
         $formData = $this->getFormData();
 
         $formData = array_merge($default, $formData);
@@ -145,101 +145,30 @@ HTML
         );
 
         $fieldset->addField(
-            'list_qty_magento',
-            self::SELECT,
-            [
-                'name' => 'synchronization[list_qty_magento]',
-                'label' => $this->__('Magento Quantity'),
-                'value' => $formData['list_qty_magento'],
-                'values' => [
-                    TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
-                    TemplateSynchronization::QTY_MODE_MORE => $this->__('More or Equal'),
-                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
-                ],
-                'tooltip' => $this->__(
-                    '<p><strong>Any:</strong> List Items automatically with any Quantity available.</p>
-                    <p><strong>More or Equal:</strong> List Items automatically if the Quantity available
-                    in Magento is at least equal to the number you set. (Recommended)</p>
-                    <p><strong>Between:</strong> List Items automatically if the Quantity available in
-                    Magento is between the minimum and maximum numbers you set. </p>'
-                )
-            ]
-        )->addCustomAttribute('qty_type', 'magento');
-
-        $fieldset->addField(
-            'list_qty_magento_value',
-            'text',
-            [
-                'container_id' => 'list_qty_magento_value_container',
-                'name' => 'synchronization[list_qty_magento_value]',
-                'label' => $this->__('Quantity'),
-                'value' => $formData['list_qty_magento_value'],
-                'class' => 'validate-digits',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
-            'list_qty_magento_value_max',
-            'text',
-            [
-                'container_id' => 'list_qty_magento_value_max_container',
-                'name' => 'synchronization[list_qty_magento_value_max]',
-                'label' => $this->__('Max Quantity'),
-                'value' => $formData['list_qty_magento_value_max'],
-                'class' => 'validate-digits M2ePro-validate-conditions-between',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
             'list_qty_calculated',
             self::SELECT,
             [
                 'name' => 'synchronization[list_qty_calculated]',
-                'label' => $this->__('Calculated Quantity'),
+                'label' => $this->__('Quantity'),
                 'value' => $formData['list_qty_calculated'],
                 'values' => [
                     TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
-                    TemplateSynchronization::QTY_MODE_MORE => $this->__('More or Equal'),
-                    TemplateSynchronization::QTY_MODE_BETWEEN => $this->__('Between'),
+                    TemplateSynchronization::QTY_MODE_YES => $this->__('More or Equal'),
                 ],
                 'tooltip' => $this->__(
                     '<p><strong>Any:</strong> List Items automatically with any Quantity available.</p>
-                    <p><strong>More or Equal:</strong> List Items automatically if the calculated Quantity
+                    <p><strong>More or Equal:</strong> List Items automatically if the Quantity
                     according to the Selling Policy is at least equal to the number you set.
-                    (Recommended)</p>
-                    <p><strong>Between:</strong> List Items automatically if the Quantity according to the Selling
-                     Policy is between the minimum and maximum numbers you set. </p>'
+                    (Recommended)</p>'
                 )
             ]
-        )->addCustomAttribute('qty_type', 'calculated');
-
-        $fieldset->addField(
-            'list_qty_calculated_value',
-            'text',
-            [
-                'container_id' => 'list_qty_calculated_value_container',
-                'name' => 'synchronization[list_qty_calculated_value]',
-                'label' => $this->__('Quantity'),
-                'value' => $formData['list_qty_calculated_value'],
-                'class' => 'validate-digits',
-                'required' => true
-            ]
-        );
-
-        $fieldset->addField(
-            'list_qty_calculated_value_max',
-            'text',
-            [
-                'container_id' => 'list_qty_calculated_value_max_container',
-                'name' => 'synchronization[list_qty_calculated_value_max]',
-                'label' => $this->__('Max Quantity'),
-                'value' => $formData['list_qty_calculated_value_max'],
-                'class' => 'validate-digits M2ePro-validate-conditions-between  ',
-                'required' => true
-            ]
-        );
+        )->setAfterElementHtml(<<<HTML
+<input name="synchronization[list_qty_calculated_value]" id="list_qty_calculated_value"
+       value="{$formData['list_qty_calculated_value']}" type="text"
+       style="width: 72px; margin-left: 10px;"
+       class="input-text admin__control-text required-entry validate-digits _required" />
+HTML
+            );
 
         $fieldset = $form->addFieldset(
             'magento_block_ebay_template_synchronization_list_advanced_filters',

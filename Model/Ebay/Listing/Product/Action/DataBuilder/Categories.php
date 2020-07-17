@@ -16,8 +16,20 @@ class Categories extends AbstractModel
     /** @var \Ess\M2ePro\Model\Ebay\Template\Category */
     private $categoryTemplate;
 
-    /** @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory */
-    private $otherCategoryTemplate;
+    /**
+     * @var \Ess\M2ePro\Model\Ebay\Template\Category
+     */
+    protected $categorySecondaryTemplate = null;
+
+    /**
+     * @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    protected $storeCategoryTemplate = null;
+
+    /**
+     * @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    protected $storeCategorySecondaryTemplate = null;
 
     protected $resourceConnection;
     protected $activeRecordFactory;
@@ -72,16 +84,22 @@ class Categories extends AbstractModel
     public function getCategoriesData()
     {
         $data = [
-            'category_main_id' => $this->getCategorySource()->getMainCategory(),
-            'category_secondary_id' => 0,
-            'store_category_main_id' => 0,
+            'category_main_id'            => $this->getCategorySource()->getCategoryId(),
+            'category_secondary_id'       => 0,
+            'store_category_main_id'      => 0,
             'store_category_secondary_id' => 0
         ];
 
-        if ($this->getOtherCategoryTemplate() !== null) {
-            $data['category_secondary_id'] = $this->getOtherCategorySource()->getSecondaryCategory();
-            $data['store_category_main_id'] = $this->getOtherCategorySource()->getStoreCategoryMain();
-            $data['store_category_secondary_id'] = $this->getOtherCategorySource()->getStoreCategorySecondary();
+        if ($this->getCategorySecondaryTemplate() !== null) {
+            $data['category_secondary_id'] = $this->getCategorySecondarySource()->getCategoryId();
+        }
+
+        if ($this->getStoreCategoryTemplate() !== null) {
+            $data['store_category_main_id'] = $this->getStoreCategorySource()->getCategoryId();
+        }
+
+        if ($this->getStoreCategorySecondaryTemplate() !== null) {
+            $data['store_category_secondary_id'] = $this->getStoreCategorySecondarySource()->getCategoryId();
         }
 
         return $data;
@@ -596,7 +614,7 @@ class Categories extends AbstractModel
 
     protected function getEbayMotorsEpidsAttributes()
     {
-        $categoryId = $this->getCategorySource()->getMainCategory();
+        $categoryId = $this->getCategorySource()->getCategoryId();
         $categoryData = $this->getEbayMarketplace()->getCategory($categoryId);
 
         $features = !empty($categoryData['features']) ?
@@ -617,25 +635,50 @@ class Categories extends AbstractModel
     {
         if ($this->categoryTemplate === null) {
             $this->categoryTemplate = $this->getListingProduct()
-                ->getChildObject()
-                ->getCategoryTemplate();
+                                           ->getChildObject()
+                                           ->getCategoryTemplate();
         }
 
         return $this->categoryTemplate;
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Ebay\Template\OtherCategory
+     * @return \Ess\M2ePro\Model\Ebay\Template\Category
      */
-    protected function getOtherCategoryTemplate()
+    protected function getCategorySecondaryTemplate()
     {
-        if ($this->otherCategoryTemplate === null) {
-            $this->otherCategoryTemplate = $this->getListingProduct()
-                ->getChildObject()
-                ->getOtherCategoryTemplate();
+        if ($this->categorySecondaryTemplate === null) {
+            $this->categorySecondaryTemplate = $this->getListingProduct()->getChildObject()
+                ->getCategorySecondaryTemplate();
         }
 
-        return $this->otherCategoryTemplate;
+        return $this->categorySecondaryTemplate;
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    protected function getStoreCategoryTemplate()
+    {
+        if ($this->storeCategoryTemplate === null) {
+            $this->storeCategoryTemplate = $this->getListingProduct()->getChildObject()
+                ->getStoreCategoryTemplate();
+        }
+
+        return $this->storeCategoryTemplate;
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Template\StoreCategory
+     */
+    protected function getStoreCategorySecondaryTemplate()
+    {
+        if ($this->storeCategorySecondaryTemplate === null) {
+            $this->storeCategorySecondaryTemplate = $this->getListingProduct()->getChildObject()
+                ->getStoreCategorySecondaryTemplate();
+        }
+
+        return $this->storeCategorySecondaryTemplate;
     }
 
     //########################################
@@ -664,11 +707,27 @@ class Categories extends AbstractModel
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Ebay\Template\OtherCategory\Source
+     * @return \Ess\M2ePro\Model\Ebay\Template\Category\Source
      */
-    protected function getOtherCategorySource()
+    protected function getCategorySecondarySource()
     {
-        return $this->getEbayListingProduct()->getOtherCategoryTemplateSource();
+        return $this->getEbayListingProduct()->getCategorySecondaryTemplateSource();
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Template\StoreCategory\Source
+     */
+    protected function getStoreCategorySource()
+    {
+        return $this->getEbayListingProduct()->getStoreCategoryTemplateSource();
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Template\StoreCategory\Source
+     */
+    protected function getStoreCategorySecondarySource()
+    {
+        return $this->getEbayListingProduct()->getStoreCategorySecondaryTemplateSource();
     }
 
     //########################################

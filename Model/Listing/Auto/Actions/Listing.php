@@ -141,8 +141,7 @@ abstract class Listing extends \Ess\M2ePro\Model\AbstractModel
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_PRODUCT_TO_MAGENTO,
             'Product was successfully Added',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
     }
 

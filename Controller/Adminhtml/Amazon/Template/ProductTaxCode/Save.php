@@ -23,24 +23,6 @@ class Save extends Template
 
         $id = $this->getRequest()->getParam('id');
 
-        // Base prepare
-        // ---------------------------------------
-        $data = [];
-
-        $keys = [
-            'title',
-
-            'product_tax_code_mode',
-            'product_tax_code_value',
-            'product_tax_code_attribute',
-        ];
-
-        foreach ($keys as $key) {
-            if (isset($post[$key])) {
-                $data[$key] = $post[$key];
-            }
-        }
-
         /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode $model */
         $model = $this->activeRecordFactory->getObjectLoaded('Amazon_Template_ProductTaxCode', $id, null, false);
 
@@ -56,7 +38,7 @@ class Save extends Template
             $oldData = $snapshotBuilder->getSnapshot();
         }
 
-        $model->addData($data)->save();
+        $this->modelFactory->getObject('Amazon_Template_ProductTaxCode_Builder')->build($model, $post->toArray());
 
         /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode\SnapshotBuilder $snapshotBuilder */
         $snapshotBuilder = $this->modelFactory->getObject('Amazon_Template_ProductTaxCode_SnapshotBuilder');

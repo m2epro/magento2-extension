@@ -8,10 +8,11 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task;
 
+use Ess\M2ePro\Helper\Component\Amazon as HelperAmazon;
+use Ess\M2ePro\Helper\Component\Ebay as HelperEbay;
+use \Ess\M2ePro\Helper\Component\Walmart as HelperWalmart;
 use Magento\InventoryApi\Api\GetSourcesAssignedToStockOrderedByPriorityInterface;
 use Magento\InventorySalesApi\Model\GetAssignedSalesChannelsForStockInterface;
-use Ess\M2ePro\Helper\Component\Ebay as HelperEbay;
-use Ess\M2ePro\Helper\Component\Amazon as HelperAmazon;
 
 // @codingStandardsIgnoreFile
 
@@ -59,7 +60,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         \Magento\Framework\Module\Manager $moduleManager,
         \Magento\Eav\Model\Config $config,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\ResourceConnection $resource,
@@ -80,7 +80,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $this->objectManager = $objectManager;
         parent::__construct(
             $config,
-            $cacheConfig,
             $storeManager,
             $modelFactory,
             $helperFactory,
@@ -107,16 +106,13 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
      */
     public function isAllowed()
     {
-        $cacheConfig = $this->cacheConfig;
-
-        $lastRun = $cacheConfig->getGroupValue('/servicing/statistic/', 'last_run');
+        $lastRun = $this->getHelper('Module')->getRegistry()->getValue('/servicing/statistic/last_run/');
 
         if ($this->getInitiator() === \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER ||
             $lastRun === null ||
             $this->getHelper('Data')->getCurrentGmtDate(true) > strtotime($lastRun) + self::RUN_INTERVAL) {
-            $cacheConfig->setGroupValue(
-                '/servicing/statistic/',
-                'last_run',
+            $this->getHelper('Module')->getRegistry()->setValue(
+                '/servicing/statistic/last_run/',
                 $this->getHelper('Data')->getCurrentGmtDate()
             );
 
@@ -507,26 +503,40 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     private function appendExtensionSettingsInfo(&$data)
     {
-        /** @var \Ess\M2ePro\Model\Config\Manager\Module $config */
+        /** @var \Ess\M2ePro\Helper\Module\Configuration $configHelper */
+        $configHelper = $this->getHelper('Module_Configuration');
         $config = $this->getHelper('Module')->getConfig();
+        $settings = [];
 
-        $data['settings']['track_direct'] = (int)$config->getGroupValue(
-            '/listing/product/inspector/',
-            'mode'
-        );
-        $data['settings']['manage_stock_backorders'] = false;
+        $settings['products_show_thumbnails']    = $configHelper->getViewShowProductsThumbnailsMode();
+        $settings['block_notices_show']          = $configHelper->getViewShowBlockNoticesMode();
+        $settings['manage_stock_backorders']     = $configHelper->getProductForceQtyMode();
+        $settings['manage_stock_backorders_qty'] = $configHelper->getProductForceQtyValue();
+        $settings['price_convert_mode']          = $configHelper->getMagentoAttributePriceTypeConvertingMode();
+        $settings['inspector_mode']              = $configHelper->getListingProductInspectorMode();
 
-        if ($config->getGroupValue('/product/force_qty/', 'mode')) {
-            $data['settings']['manage_stock_backorders'] = $config->getGroupValue('/product/force_qty/', 'value');
+        $settings['logs_clearing'] = [];
+        $settings['channels']      = [];
+
+        $logsTypes = [
+            \Ess\M2ePro\Model\Log\Clearing::LOG_LISTINGS,
+            \Ess\M2ePro\Model\Log\Clearing::LOG_SYNCHRONIZATIONS,
+            \Ess\M2ePro\Model\Log\Clearing::LOG_ORDERS
+        ];
+        foreach ($logsTypes as $logType) {
+            $settings['logs_clearing'][$logType] = [
+                'mode' => $config->getGroupValue('/logs/clearing/'.$logType.'/', 'mode'),
+                'days' => $config->getGroupValue('/logs/clearing/'.$logType.'/', 'days')
+            ];
         }
 
-        foreach ($this->getHelper('Component')->getComponents() as $componentNick) {
-            $tempInfo = [];
-
-            $tempInfo['enabled'] = $config->getGroupValue('/component/'.$componentNick.'/', 'mode');
-
-            $data['settings']['channels'][$componentNick] = $tempInfo;
+        foreach ($this->getHelper('Component')->getComponents() as $component) {
+            $settings['channels'][$component]['enabled'] = $config->getGroupValue('/component/'.$component.'/', 'mode');
         }
+
+        $settings['config'] = $config->getAllConfigData();
+
+        $data['settings'] = $settings;
     }
 
     // ---------------------------------------
@@ -744,25 +754,20 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     private function appendExtensionListingsProductsInfo(&$data)
     {
-        $tableListingProduct       = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_listing_product');
-        $tableAmazonListingProduct = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_amazon_listing_product');
-        $tableProductEntity        = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('catalog_product_entity');
+        $structureHelper = $this->getHelper('Module_Database_Structure');
 
         $queryStmt = $this->resource->getConnection()
-              ->select()
-              ->from(
-                  $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_listing'),
-                  [
-                     'component'      => 'component_mode',
-                     'marketplace_id' => 'marketplace_id',
-                     'account_id'     => 'account_id',
-                     'products_count' => 'products_total_count'
-                  ]
-              )
-              ->query();
+            ->select()
+            ->from(
+                $structureHelper->getTableNameWithPrefix('m2epro_listing'),
+                [
+                    'component'      => 'component_mode',
+                    'marketplace_id' => 'marketplace_id',
+                    'account_id'     => 'account_id',
+                    'products_count' => 'products_total_count'
+                ]
+            )
+            ->query();
 
         $productTypes = [
             \Ess\M2ePro\Model\Magento\Product::TYPE_SIMPLE_ORIGIN,
@@ -775,49 +780,54 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         $data['listings_products']['total'] = 0;
 
-        $availableComponents = $this->getHelper('Component')->getComponents();
-        foreach ($availableComponents as $nick) {
-            $data['listings_products'][$nick]['total'] = 0;
+        foreach ($this->getHelper('Component')->getComponents() as $componentName) {
+            $data['listings_products'][$componentName]['total'] = 0;
 
-            foreach ($productTypes as $type) {
-                $select = $this->resource->getConnection()->select();
-                $select->from(['lp' => $tableListingProduct], ['count(*)'])
-                    ->where('component_mode = ?', $nick)
+            foreach ($productTypes as $productType) {
+                $select = $this->resource->getConnection()
+                    ->select()
+                    ->from(
+                        ['lp' => $structureHelper->getTableNameWithPrefix('m2epro_listing_product')],
+                        ['count(*)']
+                    )
+                    ->where('component_mode = ?', $componentName)
                     ->joinLeft(
-                        ['cpe' => $tableProductEntity],
+                        ['cpe' => $structureHelper->getTableNameWithPrefix('catalog_product_entity')],
                         'lp.product_id = cpe.entity_id',
                         []
                     )
-                    ->where('type_id = ?', $type);
+                    ->where('type_id = ?', $productType);
 
-                if ($nick === \Ess\M2ePro\Helper\Component\Amazon::NICK) {
+                if ($componentName === HelperAmazon::NICK || $componentName === HelperWalmart::NICK) {
+                    $tableComponentLp = $structureHelper->getTableNameWithPrefix(
+                        'm2epro_' . $componentName . '_listing_product'
+                    );
+
                     $select->joinLeft(
-                        ['alp' => $tableAmazonListingProduct],
-                        'lp.id = alp.listing_product_id',
+                        ['clp' => $tableComponentLp],
+                        'lp.id = clp.listing_product_id',
                         []
                     )
                         ->where('variation_parent_id IS NULL');
                 }
 
-                $data['listings_products'][$nick]['products']['type'][$type] = [
+                $data['listings_products'][$componentName]['products']['type'][$productType] = [
                     'amount' => $this->resource->getConnection()->fetchOne($select)
                 ];
             }
         }
 
-        foreach ($productTypes as $type) {
+        foreach ($productTypes as $productType) {
             $amount = 0;
-            foreach ($availableComponents as $nick) {
-                $amount += $data['listings_products'][$nick]['products']['type'][$type]['amount'];
+            foreach ($this->getHelper('Component')->getComponents() as $component) {
+                $amount += $data['listings_products'][$component]['products']['type'][$productType]['amount'];
             }
 
-            $data['listings_products']['products']['type'][$type] = [
-                'amount' => $amount
-            ];
+            $data['listings_products']['products']['type'][$productType] = ['amount' => $amount];
         }
 
         while ($row = $queryStmt->fetch()) {
-            if (!in_array($row['component'], $availableComponents)) {
+            if (!in_array($row['component'], $this->getHelper('Component')->getComponents())) {
                 continue;
             }
 
@@ -903,15 +913,25 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     private function appendExtensionPoliciesInfo(&$data)
     {
-        $data = $this->_appendGeneralPolicyInfoByType('selling_format', 'm2epro_template_selling_format', $data);
-        $data = $this->_appendGeneralPolicyInfoByType('synchronization', 'm2epro_template_synchronization', $data);
-        $data = $this->_appendGeneralPolicyInfoByType('description', 'm2epro_template_description', $data);
+        $this->_appendComponentPolicyInfo('selling_format', 'amazon', $data);
+        $this->_appendComponentPolicyInfo('synchronization', 'amazon', $data);
+        $this->_appendComponentPolicyInfo('description', 'amazon', $data);
+        $this->_appendComponentPolicyInfo('product_tax_code', 'amazon', $data);
+        $this->_appendComponentPolicyInfo('shipping', 'amazon', $data);
 
-        $data = $this->_appendEbayPolicyInfoByType('payment', 'm2epro_ebay_template_payment', $data);
-        $data = $this->_appendEbayPolicyInfoByType('shipping', 'm2epro_ebay_template_shipping', $data);
-        $data = $this->_appendEbayPolicyInfoByType('return', 'm2epro_ebay_template_return_policy', $data);
+        $this->_appendComponentPolicyInfo('selling_format', 'ebay', $data);
+        $this->_appendComponentPolicyInfo('synchronization', 'ebay', $data);
+        $this->_appendComponentPolicyInfo('description', 'ebay', $data);
+        $this->_appendComponentPolicyInfo('payment', 'ebay', $data);
+        $this->_appendComponentPolicyInfo('shipping', 'ebay', $data);
+        $this->_appendComponentPolicyInfo('return_policy', 'ebay', $data);
+        $this->_appendComponentPolicyInfo('category', 'ebay', $data);
+        $this->_appendComponentPolicyInfo('store_category', 'ebay', $data);
 
-        return $data;
+        $this->_appendComponentPolicyInfo('selling_format', 'walmart', $data);
+        $this->_appendComponentPolicyInfo('synchronization', 'walmart', $data);
+        $this->_appendComponentPolicyInfo('description', 'walmart', $data);
+        $this->_appendComponentPolicyInfo('category', 'walmart', $data);
     }
 
     private function appendExtensionOrdersInfo(&$data)
@@ -1095,54 +1115,31 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         return $data;
     }
 
-    private function _appendGeneralPolicyInfoByType($type, $tableName, $data)
+    private function _appendComponentPolicyInfo($template, $component, &$data)
     {
+        $structureHelper = $this->getHelper('Module_Database_Structure');
+        $tableName = $structureHelper->getTableNameWithPrefix('m2epro_' . $component .'_template_'. $template);
+
         $queryStmt = $this->resource->getConnection()
-              ->select()
-              ->from(
-                  $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName),
-                  [
-                     'count'     => new \Zend_Db_Expr('COUNT(*)'),
-                     'component' => 'component_mode'
-                  ]
-              )
-              ->group('component_mode')
-              ->query();
+            ->select()
+            ->from($tableName, ['count' => new \Zend_Db_Expr('COUNT(*)')])
+            ->query();
 
-        $data['policies'][$type]['total'] = 0;
+        $data['policies'][$component][$template]['count'] = (int)$queryStmt->fetchColumn();
 
-        $availableComponents = $this->getHelper('Component')->getComponents();
-        foreach ($availableComponents as $nick) {
-            $data['policies'][$type][$nick] = 0;
+        if ($component === HelperEbay::NICK && !in_array($template, ['category', 'store_category']))
+        {
+            $queryStmt = $this->resource->getConnection()
+                ->select()
+                ->from(
+                    $structureHelper->getTableNameWithPrefix('m2epro_ebay_listing_product'),
+                    ['count(*)']
+                )
+                ->where("template_{$template}_mode != ?", \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_PARENT)
+                ->query();
+
+            $data['policies'][$component][$template]['is_custom_for_listing_products'] = (int)$queryStmt->fetchColumn();
         }
-
-        while ($row = $queryStmt->fetch()) {
-            if (!in_array($row['component'], $availableComponents)) {
-                continue;
-            }
-
-            $data['policies'][$type]['total'] += (int)$row['count'];
-            $data['policies'][$type][$row['component']] += (int)$row['count'];
-        }
-
-        return $data;
-    }
-
-    private function _appendEbayPolicyInfoByType($type, $tableName, $data)
-    {
-        $queryStmt = $this->resource->getConnection()
-              ->select()
-              ->from(
-                  $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName),
-                  [
-                     'count' => new \Zend_Db_Expr('COUNT(*)')
-                  ]
-              )
-              ->query();
-
-        $data['policies']['ebay'][$type] = (int)$queryStmt->fetchColumn();
-
-        return $data;
     }
 
     //########################################

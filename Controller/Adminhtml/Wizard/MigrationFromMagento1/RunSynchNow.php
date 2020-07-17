@@ -39,8 +39,7 @@ class RunSynchNow extends MigrationFromMagento1
                     'Marketplaces cannot be updated now. '
                     . 'Please wait until another marketplace synchronization is completed, then try again.'
                 ),
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
             );
 
             $this->setJsonContent(['result' => 'error']);
@@ -50,11 +49,7 @@ class RunSynchNow extends MigrationFromMagento1
         try {
             $synchronization->process();
         } catch (\Exception $e) {
-            $synchronization->getlog()->addMessage(
-                $this->__($e->getMessage()),
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
-            );
+            $synchronization->getlog()->addMessageFromException($e);
 
             $synchronization->getLockItemManager()->remove();
 

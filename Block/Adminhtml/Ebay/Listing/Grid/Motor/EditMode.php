@@ -66,7 +66,7 @@ class EditMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 You are able to select one of the available modes:<br>
 <ul>
     <li>
-        <strong>ePIDS</strong> - is based on the Product Reference IDs of compatible vehicles for this eBay Site.
+        <strong>ePIDS</strong> - is based on the Product Reference IDs of compatible vehicles for this Marketplace.
     </li>
     <li>
         <strong>kTypes</strong> - is based on the common kType data, provided by eBay for all Sites.

@@ -488,12 +488,7 @@ abstract class PriceCalculator extends AbstractModel
             }
 
             if ($this->isSourceModeAttribute()) {
-                $isConversionEnabled = (bool)$this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/magento/attribute/',
-                    'price_type_converting'
-                );
-
-                if ($isConversionEnabled &&
+                if ($this->getHelper('Module_Configuration')->isEnableMagentoAttributePriceTypeConvertingMode() &&
                     ($this->getSource('attribute') == Attribute::PRICE_CODE ||
                      $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE)
                 ) {
@@ -817,12 +812,7 @@ abstract class PriceCalculator extends AbstractModel
         }
 
         if ($this->isSourceModeAttribute()) {
-            $isConvertEnabled = (bool)$this->getHelper('Module')->getConfig()->getGroupValue(
-                '/magento/attribute/',
-                'price_type_converting'
-            );
-
-            if ($isConvertEnabled &&
+            if ($this->getHelper('Module_Configuration')->isEnableMagentoAttributePriceTypeConvertingMode() &&
                 ($this->getSource('attribute') == Attribute::PRICE_CODE ||
                  $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE)
             ) {
@@ -861,12 +851,7 @@ abstract class PriceCalculator extends AbstractModel
         }
 
         if ($this->isSourceModeAttribute()) {
-            $isConvertEnabled = (bool)$this->getHelper('Module')->getConfig()->getGroupValue(
-                '/magento/attribute/',
-                'price_type_converting'
-            );
-
-            if ($isConvertEnabled &&
+            if ($this->getHelper('Module_Configuration')->isEnableMagentoAttributePriceTypeConvertingMode() &&
                 ($this->getSource('attribute') == Attribute::PRICE_CODE ||
                     $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE)
             ) {

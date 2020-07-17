@@ -260,8 +260,9 @@ HTML
 &nbsp;
 <span style="line-height: 20px;">
     <span id="edit_selling_format_template_link" style="color:#41362f">
-        <a href="javascript: void(0);" style="" onclick="WalmartListingSettingsObj.openWindow(
-            M2ePro.url.get('editSellingFormatTemplate', {id: $('template_selling_format_id').value, close_on_save: 1})
+        <a href="javascript: void(0);" style="" onclick="WalmartListingSettingsObj.editTemplate(
+            M2ePro.url.get('editSellingFormatTemplate'),
+            $('template_selling_format_id').value
         );">
             {$this->__('View')}&nbsp;/&nbsp;{$this->__('Edit')}
         </a>
@@ -274,11 +275,10 @@ HTML
         {$editPolicyTooltip}</div>
         <span>{$this->__('or')}</span>
     </span>
-    <a href="javascript: void(0);" onclick="WalmartListingSettingsObj.addNewTemplate(
-        M2ePro.url.get(
-                'addNewSellingFormatTemplate',
-                {close_on_save: 1}),
-                WalmartListingSettingsObj.newSellingFormatTemplateCallback
+    <a id="add_selling_format_template_link" href="javascript: void(0);"
+    onclick="WalmartListingSettingsObj.addNewTemplate(
+        M2ePro.url.get('addNewSellingFormatTemplate'),
+        WalmartListingSettingsObj.newSellingFormatTemplateCallback
     );">{$this->__('Add New')}</a>
 </span>
 HTML
@@ -322,12 +322,9 @@ HTML
 &nbsp;
 <span style="line-height: 20px;">
     <span id="edit_description_template_link" style="color:#41362f">
-        <a href="javascript: void(0);" onclick="WalmartListingSettingsObj.openWindow(
-            M2ePro.url.get(
-                    'editDescriptionTemplate',
-                    {id: $('template_description_id').value,
-                    close_on_save: 1}
-            )
+        <a href="javascript: void(0);" onclick="WalmartListingSettingsObj.editTemplate(
+            M2ePro.url.get('editDescriptionTemplate'),
+            $('template_description_id').value
         );">
             {$this->__('View')}&nbsp;/&nbsp;{$this->__('Edit')}
         </a>
@@ -340,11 +337,10 @@ HTML
         {$editPolicyTooltip}</div>
         <span>{$this->__('or')}</span>
     </span>
-    <a href="javascript: void(0);" onclick="WalmartListingSettingsObj.addNewTemplate(
-        M2ePro.url.get(
-                'addNewDescriptionTemplate',
-                {close_on_save: 1}),
-                WalmartListingSettingsObj.newDescriptionTemplateCallback
+    <a id="add_description_template_link" href="javascript: void(0);"
+    onclick="WalmartListingSettingsObj.addNewTemplate(
+        M2ePro.url.get('addNewDescriptionTemplate'),
+        WalmartListingSettingsObj.newDescriptionTemplateCallback
     );">{$this->__('Add New')}</a>
 </span>
 HTML
@@ -389,12 +385,9 @@ HTML
 &nbsp;
 <span style="line-height: 20px;">
     <span id="edit_synchronization_template_link" style="color:#41362f">
-        <a href="javascript: void(0);" onclick="WalmartListingSettingsObj.openWindow(
-            M2ePro.url.get(
-                    'editSynchronizationTemplate',
-                    {id: $('template_synchronization_id').value,
-                    close_on_save: 1}
-            )
+        <a href="javascript: void(0);" onclick="WalmartListingSettingsObj.editTemplate(
+            M2ePro.url.get('editSynchronizationTemplate'),
+            $('template_synchronization_id').value
         );">
             {$this->__('View')}&nbsp;/&nbsp;{$this->__('Edit')}
         </a>
@@ -407,11 +400,10 @@ HTML
         {$editPolicyTooltip}</div>
         <span>{$this->__('or')}</span>
     </span>
-    <a href="javascript: void(0);" onclick="WalmartListingSettingsObj.addNewTemplate(
-        M2ePro.url.get(
-                'addNewSynchronizationTemplate',
-                {close_on_save: 1}),
-                WalmartListingSettingsObj.newSynchronizationTemplateCallback
+    <a id="add_synchronization_template_link" href="javascript: void(0);"
+    onclick="WalmartListingSettingsObj.addNewTemplate(
+        M2ePro.url.get('addNewSynchronizationTemplate'),
+        WalmartListingSettingsObj.newSynchronizationTemplateCallback
     );">{$this->__('Add New')}</a>
 </span>
 HTML
@@ -442,33 +434,37 @@ HTML
             'wizard' => (bool)$this->getRequest()->getParam('wizard', false)
         ]), 'walmart_account/newAction');
 
+        $this->jsUrl->add($this->getUrl('*/walmart_synchronization_log/index', [
+            'wizard' => (bool)$this->getRequest()->getParam('wizard', false)
+        ]), 'logViewUrl');
+
         $this->jsUrl->add($this->getUrl(
             '*/template/checkMessages',
             ['component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK]
         ), 'templateCheckMessages');
         $this->jsUrl->add($this->getUrl(
             '*/walmart_template_sellingFormat/new',
-            ['wizard' => $this->getRequest()->getParam('wizard')]
+            ['wizard' => $this->getRequest()->getParam('wizard'), 'close_on_save' => 1]
         ), 'addNewSellingFormatTemplate');
         $this->jsUrl->add($this->getUrl(
             '*/walmart_template_description/new',
-            ['wizard' => $this->getRequest()->getParam('wizard')]
+            ['wizard' => $this->getRequest()->getParam('wizard'), 'close_on_save' => 1]
         ), 'addNewDescriptionTemplate');
         $this->jsUrl->add($this->getUrl(
             '*/walmart_template_synchronization/new',
-            ['wizard' => $this->getRequest()->getParam('wizard')]
+            ['wizard' => $this->getRequest()->getParam('wizard'), 'close_on_save' => 1]
         ), 'addNewSynchronizationTemplate');
         $this->jsUrl->add($this->getUrl(
             '*/walmart_template_sellingFormat/edit',
-            ['wizard' => $this->getRequest()->getParam('wizard')]
+            ['wizard' => $this->getRequest()->getParam('wizard'), 'close_on_save' => 1]
         ), 'editSellingFormatTemplate');
         $this->jsUrl->add($this->getUrl(
             '*/walmart_template_description/edit',
-            ['wizard' => $this->getRequest()->getParam('wizard')]
+            ['wizard' => $this->getRequest()->getParam('wizard'), 'close_on_save' => 1]
         ), 'editDescriptionTemplate');
         $this->jsUrl->add($this->getUrl(
             '*/walmart_template_synchronization/edit',
-            ['wizard' => $this->getRequest()->getParam('wizard')]
+            ['wizard' => $this->getRequest()->getParam('wizard'), 'close_on_save' => 1]
         ), 'editSynchronizationTemplate');
         $this->jsUrl->add($this->getUrl('*/general/modelGetAll', [
             'model'=>'Template_SellingFormat',
@@ -519,12 +515,12 @@ HTML
     M2ePro.formData.wizard = {$this->getRequest()->getParam('wizard', 0)};
 
 require([
-    'M2ePro/TemplateHandler',
+    'M2ePro/TemplateManager',
     'M2ePro/Walmart/Listing/Settings',
     'M2ePro/Walmart/Listing/Create/General'
 ], function(){
 
-    window.TemplateHandlerObj = new TemplateHandler();
+    window.TemplateManagerObj = new TemplateManager();
 
     window.WalmartListingSettingsObj = new WalmartListingSettings();
     window.WalmartListingCreateGeneralObj = new WalmartListingCreateGeneral();
@@ -536,7 +532,7 @@ require([
     if ($('account_id').value) {
         $('account_id').simulate('change');
     }
-    
+
     $('template_selling_format_id').observe('change', function() {
         if ($('template_selling_format_id').value) {
             $('edit_selling_format_template_link').show();

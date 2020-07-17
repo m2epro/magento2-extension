@@ -69,7 +69,9 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         ]);
 
         return
-            $helpBlock->toHtml() . parent::_toHtml();
+            '<div id="progress_bar"></div>' .
+            $helpBlock->toHtml() .
+            '<div id="content_container">' . parent::_toHtml() . '</div>';
     }
 
     //########################################

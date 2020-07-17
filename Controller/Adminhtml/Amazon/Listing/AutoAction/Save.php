@@ -25,10 +25,10 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
             return $this->getResult();
         }
 
-        // ---------------------------------------
-        $listingId = $this->getRequest()->getParam('id');
-        $listing = $this->amazonFactory->getCachedObjectLoaded('Listing', $listingId);
-        // ---------------------------------------
+        $listing = $this->amazonFactory->getCachedObjectLoaded(
+            'Listing',
+            $this->getRequest()->getParam('listing_id')
+        );
 
         $data = $this->getHelper('Data')->jsonDecode($post['auto_action_data']);
 
@@ -36,10 +36,10 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
             'auto_mode' => \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE,
             'auto_global_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'auto_global_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
+            'auto_global_adding_description_template_id'  => null,
             'auto_website_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'auto_website_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
             'auto_website_deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
-            'auto_global_adding_description_template_id' => null,
             'auto_website_adding_description_template_id' => null,
         ];
 
@@ -59,14 +59,12 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
         if ($data['auto_mode'] == \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL) {
             $listingData['auto_mode'] = \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL;
             $listingData['auto_global_adding_mode'] = $data['auto_global_adding_mode'];
-
             $listingData['auto_global_adding_description_template_id'] = $data['adding_description_template_id'];
 
             if ($listingData['auto_global_adding_mode'] != \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE) {
                 $listingData['auto_global_adding_add_not_visible'] = $data['auto_global_adding_add_not_visible'];
             }
         }
-        // ---------------------------------------
 
         // mode website
         // ---------------------------------------
@@ -80,7 +78,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
                 $listingData['auto_website_adding_add_not_visible'] = $data['auto_website_adding_add_not_visible'];
             }
         }
-        // ---------------------------------------
 
         // mode category
         // ---------------------------------------

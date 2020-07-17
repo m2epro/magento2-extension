@@ -75,11 +75,7 @@ class ListingOther extends AbstractForm
             $formData[$key] = (array)$this->getHelper('Data')->jsonDecode($formData[$key]);
         }
 
-        $defaults = [
-            'other_listings_synchronization'  => 1,
-            'other_listings_mapping_mode'     => 0,
-            'other_listings_mapping_settings' => []
-        ];
+        $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
         $formData = array_merge($defaults, $formData);
 
         $form = $this->_formFactory->create();

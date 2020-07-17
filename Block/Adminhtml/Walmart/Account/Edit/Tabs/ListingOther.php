@@ -43,15 +43,9 @@ class ListingOther extends AbstractForm
             );
         }
 
-        $defaults = [
-            'related_store_id' => 0,
-            'other_listings_synchronization' => 1,
-            'other_listings_mapping_mode' => 1,
-            'other_listings_mapping_settings' => [],
-        ];
+        $defaults = $this->modelFactory->getObject('Walmart_Account_Builder')->getDefaultData();
 
         $formData = array_merge($defaults, $formData);
-        $isEdit = !!$this->getRequest()->getParam('id');
 
         $form->addField(
             'walmart_accounts_other_listings',

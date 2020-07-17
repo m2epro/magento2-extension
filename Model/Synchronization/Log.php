@@ -13,25 +13,25 @@ namespace Ess\M2ePro\Model\Synchronization;
  */
 class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 {
-    const TASK_UNKNOWN = 0;
-    const _TASK_UNKNOWN = 'System';
+    const TYPE_FATAL_ERROR = 100;
 
-    const TASK_GENERAL = 1;
-    const _TASK_GENERAL = 'General Synchronization';
-    const TASK_LISTINGS_PRODUCTS = 2;
-    const _TASK_LISTINGS_PRODUCTS = 'Listings Products Synchronization';
-    const TASK_TEMPLATES = 3;
-    const _TASK_TEMPLATES = 'Inventory Synchronization';
-    const TASK_ORDERS = 4;
-    const _TASK_ORDERS = 'Orders Synchronization';
-    const TASK_MARKETPLACES = 5;
-    const _TASK_MARKETPLACES = 'Marketplaces Synchronization';
-    const TASK_OTHER_LISTINGS = 6;
-    const _TASK_OTHER_LISTINGS = '3rd Party Listings Synchronization';
-    const TASK_POLICIES = 7;
-    const _TASK_OTHER_POLICIES = 'Business Policies Synchronization';
-    const TASK_REPRICING = 8;
-    const _TASK_REPRICING = 'Repricing Synchronization';
+    const TASK_OTHER = 0;
+    const _TASK_OTHER = 'Other';
+
+    const TASK_LISTINGS = 2;
+    const _TASK_LISTINGS = 'M2E Pro Listings';
+
+    const TASK_OTHER_LISTINGS = 5;
+    const _TASK_OTHER_LISTINGS = '3rd Party Listings';
+
+    const TASK_ORDERS = 3;
+    const _TASK_ORDERS = 'Orders';
+
+    const TASK_MARKETPLACES = 4;
+    const _TASK_MARKETPLACES = 'Marketplaces';
+
+    const TASK_REPRICING = 6;
+    const _TASK_REPRICING = 'Repricing';
 
     /**
      * @var null|int
@@ -41,7 +41,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     /**
      * @var int
      */
-    private $task = self::TASK_UNKNOWN;
+    private $task = self::TASK_OTHER;
 
     /**
      * @var int
@@ -77,26 +77,46 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     /**
      * @param int $task
      */
-    public function setSynchronizationTask($task = self::TASK_UNKNOWN)
+    public function setSynchronizationTask($task = self::TASK_OTHER)
     {
         $this->task = (int)$task;
     }
 
     //########################################
 
-    public function addMessage($description = null, $type = null, $priority = null, array $additionalData = [])
+    public function addMessageFromException(\Exception $exception)
     {
-        $dataForAdd = $this->makeDataForAdd(
-            $description,
-            $type,
-            $priority,
-            $additionalData
+        return $this->addMessage(
+            $exception->getMessage(),
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+            [],
+            $this->getHelper('Module_Exception')->getExceptionDetailedInfo($exception)
         );
-
-        $this->createMessage($dataForAdd);
     }
 
-    //########################################
+    public function addMessage(
+        $description = null,
+        $type = null,
+        array $additionalData = [],
+        $detailedDescription = null
+    ) {
+        $dataForAdd = [
+            'description'          => $description,
+            'detailed_description' => $detailedDescription,
+            'type'                 => (int)$type,
+            'additional_data'      => $this->getHelper('Data')->jsonEncode($additionalData),
+
+            'operation_history_id' => $this->operationHistoryId,
+            'task'                 => $this->task,
+            'initiator'            => $this->initiator,
+            'component_mode'       => $this->componentMode,
+        ];
+
+        $this->activeRecordFactory->getObject('Synchronization\Log')
+            ->setData($dataForAdd)
+            ->save()
+            ->getId();
+    }
 
     public function clearMessages($task = null)
     {
@@ -114,48 +134,40 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     //########################################
 
-    protected function createMessage($dataForAdd)
+    public function setFatalErrorHandler()
     {
-        $dataForAdd['operation_history_id'] = $this->operationHistoryId;
-        $dataForAdd['task'] = $this->task;
-        $dataForAdd['initiator'] = $this->initiator;
-        $dataForAdd['component_mode'] = $this->componentMode;
-
-        $this->activeRecordFactory->getObject('Synchronization\Log')
-            ->setData($dataForAdd)
-            ->save()
-            ->getId();
-    }
-
-    protected function makeDataForAdd(
-        $description = null,
-        $type = null,
-        $priority = null,
-        array $additionalData = []
-    ) {
-        $dataForAdd = [];
-
-        if ($description !== null) {
-            $dataForAdd['description'] = $this->getHelper('Module\Translation')->__($description);
-        } else {
-            $dataForAdd['description'] = null;
+        $temp = $this->getHelper('Data_GlobalData')->getValue(__CLASS__.'-'.__METHOD__);
+        if (!empty($temp)) {
+            return;
         }
 
-        if ($type !== null) {
-            $dataForAdd['type'] = (int)$type;
-        } else {
-            $dataForAdd['type'] = self::TYPE_NOTICE;
-        }
+        $this->getHelper('Data_GlobalData')->setValue(__CLASS__.'-'.__METHOD__, true);
 
-        if ($priority !== null) {
-            $dataForAdd['priority'] = (int)$priority;
-        } else {
-            $dataForAdd['priority'] = self::PRIORITY_LOW;
-        }
+        $object = $this;
+        // @codingStandardsIgnoreLine
+        register_shutdown_function(
+            function () use ($object) {
+                $error = error_get_last();
+                if ($error === null) {
+                    return;
+                }
 
-        $dataForAdd['additional_data'] = $this->getHelper('Data')->jsonEncode($additionalData);
+                if (!in_array((int)$error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR])) {
+                    return;
+                }
 
-        return $dataForAdd;
+                // @codingStandardsIgnoreLine
+                $trace = @debug_backtrace(false);
+                $traceInfo = $this->getHelper('Module_Exception')->getFatalStackTraceInfo($trace);
+
+                $object->addMessage(
+                    $error['message'],
+                    $object::TYPE_FATAL_ERROR,
+                    [],
+                    $this->getHelper('Module_Exception')->getFatalErrorDetailedInfo($error, $traceInfo)
+                );
+            }
+        );
     }
 
     //########################################

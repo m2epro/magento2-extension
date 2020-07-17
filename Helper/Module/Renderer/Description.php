@@ -281,7 +281,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         // Convert single linebreaks to <br/>
-        $br = $this->getHelper('Module')->getConfig()->getGroupValue('/renderer/description/', 'convert_linebreaks');
+        $br = $this->getHelper('Module_Configuration')->getRendererDescriptionConvertLinebreaksMode();
         if ($br === null || (bool)(int)$br === true) {
             $str = preg_replace('~(?<!\n)\n(?!\n)~', "<br/>\n", $str);
         }

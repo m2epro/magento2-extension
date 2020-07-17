@@ -18,12 +18,12 @@
 
         <div style="text-align:center; margin: 20px auto;">
             <div>
-                <a style="font-size:140%" href="javascript:void(0);" onclick="ListingGridHandlerObj.productSearchHandler.showSearchManualPrompt();"><?php echo $block->__('Assign ASIN/ISBN Manually'); ?></a>
+                <a style="font-size:140%" href="javascript:void(0);" onclick="ListingGridObj.productSearchHandler.showSearchManualPrompt();"><?php echo $block->__('Assign ASIN/ISBN Manually'); ?></a>
                 <div style="color:#666; height:50px; margin:5px auto 10px auto;"> <?php echo $block->__('Search ASIN/ISBN by data that will be specified on the next step.'); ?></div>
             </div>
             <div>
                 <?php if (!$block->isIndividualFromBundleOrSimpleOrDownloadable()) { ?>
-                    <a style="font-size:140%" href="javascript:void(0);" onclick="ListingGridHandlerObj.productSearchHandler.showSearchGeneralIdAutoPrompt();">
+                    <a style="font-size:140%" href="javascript:void(0);" onclick="ListingGridObj.productSearchHandler.showSearchGeneralIdAutoPrompt();">
                         <?php echo $block->__('Assign ASIN/ISBN Automatically'); ?>
                     </a>
                     <div style="color:#666; height:50px; margin:5px auto 10px auto;"> <?php echo $block->__('Search ASIN/ISBN by data that have already been specified in Listing Search Settings.'); ?></div>
@@ -39,7 +39,7 @@
             <div>
                 <?php if (!$block->isIndividualFromBundleOrSimpleOrDownloadable() &&
                           !$block->isParentFromBundleOrSimpleOrDownloadable()) { ?>
-                    <a style="font-size:140%" href="javascript:void(0);" onclick="ListingGridHandlerObj.productSearchHandler.addNewGeneralId();">
+                    <a style="font-size:140%" href="javascript:void(0);" onclick="ListingGridObj.productSearchHandler.addNewGeneralId();">
                         <?php echo $block->__('Assign Settings for New ASIN/ISBN'); ?>
                     </a>
                     <div style="color:#666; height:50px; margin:5px auto 10px auto;"> <?php echo $block->__('Define Settings for New Amazon Product Creation. ASIN/ISBN will be assigned by Amazon.'); ?></div>

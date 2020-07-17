@@ -19,11 +19,7 @@ class RequirementsPopupClose extends Base
 
     public function execute()
     {
-        $this->getHelper('Module')->getCacheConfig()->setGroupValue(
-            '/view/requirements/popup/',
-            'closed',
-            1
-        );
+        $this->getHelper('Module')->getRegistry()->setValue('/view/requirements/popup/closed/', 1);
 
         $this->setJsonContent(['status' => true]);
         return $this->getResult();

@@ -69,7 +69,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
         $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData($messageText, Message::TYPE_ERROR);
 
-        $this->getLogger()->logListingProductMessage($this->listingProduct, $message, AbstractModel::PRIORITY_HIGH);
+        $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
     }
 
     public function eventAfterExecuting()

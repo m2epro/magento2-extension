@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
+
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\SaveCategoryTemplate
  */
@@ -41,38 +43,81 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             return $this->getResult();
         }
 
-        // ---------------------------------------
-        $listingId = $this->getRequest()->getParam('id');
-        $listingProductIds = $this->getRequestIds();
-        $categoryTemplateData = $post['template_category_data'];
-        $categoryTemplateData = $this->getHelper('Data')->jsonDecode($categoryTemplateData);
-        // ---------------------------------------
+        $categoryTemplatesData = $post['template_category_data'];
+        $categoryTemplatesData = $this->getHelper('Data')->jsonDecode($categoryTemplatesData);
 
-        // ---------------------------------------
-        /** @var \Ess\M2ePro\Model\Listing $listing */
-        $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId);
-        // ---------------------------------------
+        $accountId = $this->getRequest()->getParam('account_id');
+        $marketplaceId = $this->getRequest()->getParam('marketplace_id');
 
-        // ---------------------------------------
-        $this->getHelper('Component_Ebay_Category')->fillCategoriesPaths($categoryTemplateData, $listing);
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter $converter */
+        $converter = $this->modelFactory->getObject('Ebay_Template_Category_Chooser_Converter');
+        $accountId && $converter->setAccountId($accountId);
+        $marketplaceId && $converter->setMarketplaceId($marketplaceId);
+        foreach ($categoryTemplatesData as $type => $templateData) {
+            $converter->setCategoryDataFromChooser($templateData, $type);
+        }
 
-        $builderData = $categoryTemplateData;
-        $builderData['account_id'] = $listing->getAccountId();
-        $builderData['marketplace_id'] = $listing->getMarketplaceId();
-
-        // ---------------------------------------
-        $builder = $this->modelFactory->getObject('Ebay_Template_Category_Builder');
-        $categoryTemplate = $builder->build($builderData);
-        // ---------------------------------------
-        $builder = $this->modelFactory->getObject('Ebay_Template_OtherCategory_Builder');
-        $otherCategoryTemplate = $builder->build($builderData);
-        // ---------------------------------------
-
-        $this->assignTemplatesToProducts(
-            $categoryTemplate->getId(),
-            $otherCategoryTemplate->getId(),
-            $listingProductIds
+        $categoryTmpl = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build(
+            $this->activeRecordFactory->getObject('Ebay_Template_Category'),
+            $converter->getCategoryDataForTemplate(eBayCategory::TYPE_EBAY_MAIN)
         );
+        $categorySecondaryTmpl = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build(
+            $this->activeRecordFactory->getObject('Ebay_Template_Category'),
+            $converter->getCategoryDataForTemplate(eBayCategory::TYPE_EBAY_SECONDARY)
+        );
+        $storeCategoryTmpl = $this->modelFactory->getObject('Ebay_Template_StoreCategory_Builder')->build(
+            $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory'),
+            $converter->getCategoryDataForTemplate(eBayCategory::TYPE_STORE_MAIN)
+        );
+        $storeCategorySecondaryTmpl = $this->modelFactory->getObject('Ebay_Template_StoreCategory_Builder')->build(
+            $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory'),
+            $converter->getCategoryDataForTemplate(eBayCategory::TYPE_STORE_SECONDARY)
+        );
+
+        $collection = $this->ebayFactory->getObject('Listing_Product')->getCollection();
+        $collection->addFieldToFilter('id', ['in' => $this->getRequestIds('products_id')]);
+
+        $snapshots = [];
+        $transaction = $this->transactionFactory->create();
+
+        try {
+            foreach ($collection->getItems() as $listingProduct) {
+                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\SnapshotBuilder $snapshotBuilder */
+                $snapshotBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_SnapshotBuilder');
+                $snapshotBuilder->setModel($listingProduct);
+
+                $snapshots[$listingProduct->getId()] = $snapshotBuilder->getSnapshot();
+
+                $listingProduct->getChildObject()->setData(
+                    'template_category_id',
+                    $categoryTmpl->getId()
+                );
+                $listingProduct->getChildObject()->setData(
+                    'template_category_secondary_id',
+                    $categorySecondaryTmpl->getId()
+                );
+                $listingProduct->getChildObject()->setData(
+                    'template_store_category_id',
+                    $storeCategoryTmpl->getId()
+                );
+                $listingProduct->getChildObject()->setData(
+                    'template_store_category_secondary_id',
+                    $storeCategorySecondaryTmpl->getId()
+                );
+
+                $transaction->addObject($listingProduct);
+            }
+
+            $transaction->save();
+        } catch (\Exception $exception) {
+            $this->getHelper('Module\Exception')->process($exception);
+            $transaction->rollback();
+
+            $this->setAjaxContent('0', false);
+            return $this->getResult();
+        }
+
+        $this->updateProcessChanges($collection->getItems(), $snapshots);
 
         $this->setAjaxContent('1', false);
         return $this->getResult();
@@ -80,221 +125,22 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
     //########################################
 
-    private function assignTemplatesToProducts($categoryTemplateId, $otherCategoryTemplateId, $productsIds)
+    protected function updateProcessChanges($listingProducts, $oldSnapshot)
     {
-        if (empty($productsIds)) {
-            return;
-        }
+        /** @var \Ess\M2ePro\Model\Ebay\Template\AffectedListingsProducts\Processor $changesProcessor */
+        $changesProcessor = $this->modelFactory->getObject('Ebay_Template_AffectedListingsProducts_Processor');
 
-        $collection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
-        $collection->addFieldToFilter('id', ['in' => $productsIds]);
-        // ---------------------------------------
-
-        if ($collection->getSize() == 0) {
-            return;
-        }
-
-        $snapshots   = [];
-        $transaction = $this->transactionFactory->create();
-
-        try {
-            foreach ($collection->getItems() as $listingProduct) {
-                /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-
-                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\SnapshotBuilder $snapshotBuilder */
-                $snapshotBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_SnapshotBuilder');
-                $snapshotBuilder->setModel($listingProduct);
-
-                $snapshots[$listingProduct->getId()] = $snapshotBuilder->getSnapshot();
-
-                $listingProduct->getChildObject()->setData('template_category_id', $categoryTemplateId);
-                $listingProduct->getChildObject()->setData('template_other_category_id', $otherCategoryTemplateId);
-
-                $transaction->addObject($listingProduct);
-            }
-
-            $transaction->save();
-        } catch (\Exception $e) {
-            $snapshots = false;
-        }
-
-        if (!$snapshots) {
-            return;
-        }
-
-        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
-
-        foreach ($collection->getItems() as $listingProduct) {
+        foreach ($listingProducts as $listingProduct) {
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\SnapshotBuilder $snapshotBuilder */
             $snapshotBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_SnapshotBuilder');
             $snapshotBuilder->setModel($listingProduct);
 
-            $newData = $snapshotBuilder->getSnapshot();
-
-            $newTemplates = $templateManager->getTemplatesFromData($newData);
-            $oldTemplates = $templateManager->getTemplatesFromData($snapshots[$listingProduct->getId()]);
-
-            foreach ($templateManager->getAllTemplates() as $template) {
-                $templateManager->setTemplate($template);
-
-                /** @var \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel $snapshotBuilder */
-                if ($templateManager->isHorizontalTemplate()) {
-                    $snapshotBuilder = $this->modelFactory->getObject(
-                        'Ebay_'.$templateManager->getTemplateModelName().'_SnapshotBuilder'
-                    );
-                } else {
-                    $snapshotBuilder = $this->modelFactory->getObject(
-                        $templateManager->getTemplateModelName().'_SnapshotBuilder'
-                    );
-                }
-
-                $snapshotBuilder->setModel($newTemplates[$template]);
-
-                $newTemplateData = $snapshotBuilder->getSnapshot();
-
-                /** @var \Ess\M2ePro\Model\Template\SnapshotBuilder\AbstractModel $snapshotBuilder */
-                if ($templateManager->isHorizontalTemplate()) {
-                    $snapshotBuilder = $this->modelFactory->getObject(
-                        'Ebay_'.$templateManager->getTemplateModelName().'_SnapshotBuilder'
-                    );
-                } else {
-                    $snapshotBuilder = $this->modelFactory->getObject(
-                        $templateManager->getTemplateModelName().'_SnapshotBuilder'
-                    );
-                }
-
-                $snapshotBuilder->setModel($oldTemplates[$template]);
-
-                $oldTemplateData = $snapshotBuilder->getSnapshot();
-
-                /** @var \Ess\M2ePro\Model\Template\Diff\AbstractModel $diff */
-                if ($templateManager->isHorizontalTemplate()) {
-                    $diff = $this->modelFactory->getObject('Ebay_'.$templateManager->getTemplateModelName().'_Diff');
-                } else {
-                    $diff = $this->modelFactory->getObject(''.$templateManager->getTemplateModelName().'_Diff');
-                }
-
-                $diff->setNewSnapshot($newTemplateData);
-                $diff->setOldSnapshot($oldTemplateData);
-
-                /** @var \Ess\M2ePro\Model\Template\ChangeProcessor\AbstractModel $changeProcessor */
-                if ($templateManager->isHorizontalTemplate()) {
-                    $changeProcessor = $this->modelFactory->getObject(
-                        'Ebay_'.$templateManager->getTemplateModelName().'_ChangeProcessor'
-                    );
-                } else {
-                    $changeProcessor = $this->modelFactory->getObject(
-                        $templateManager->getTemplateModelName().'_ChangeProcessor'
-                    );
-                }
-
-                $changeProcessor->process(
-                    $diff,
-                    [['id' => $listingProduct->getId(), 'status' => $listingProduct->getStatus()]]
-                );
-            }
-
-            $this->processCategoryTemplateChange($listingProduct, $newData, $snapshots[$listingProduct->getId()]);
-            $this->processOtherCategoryTemplateChange($listingProduct, $newData, $snapshots[$listingProduct->getId()]);
+            $changesProcessor->setListingProduct($listingProduct);
+            $changesProcessor->processChanges(
+                $snapshotBuilder->getSnapshot(),
+                $oldSnapshot[$listingProduct->getId()]
+            );
         }
-    }
-
-    private function processCategoryTemplateChange($listingProduct, array $newData, array $oldData)
-    {
-        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-
-        $newTemplateSnapshot = [];
-
-        try {
-            /** @var \Ess\M2ePro\Model\Ebay\Template\Category\SnapshotBuilder $snapshotBuilder */
-            $snapshotBuilder = $this->modelFactory->getObject('Ebay_Template_Category_SnapshotBuilder');
-
-            $newTemplate = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Ebay_Template_Category',
-                $newData['template_category_id']
-            );
-            $snapshotBuilder->setModel($newTemplate);
-
-            $newTemplateSnapshot = $snapshotBuilder->getSnapshot();
-            // @codingStandardsIgnoreLine
-        } catch (\Exception $exception) {}
-
-        $oldTemplateSnapshot = [];
-
-        try {
-            /** @var \Ess\M2ePro\Model\Ebay\Template\Category\SnapshotBuilder $snapshotBuilder */
-            $snapshotBuilder = $this->modelFactory->getObject('Ebay_Template_Category_SnapshotBuilder');
-
-            $oldTemplate = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Ebay_Template_Category',
-                $oldData['template_category_id']
-            );
-            $snapshotBuilder->setModel($oldTemplate);
-
-            $oldTemplateSnapshot = $snapshotBuilder->getSnapshot();
-            // @codingStandardsIgnoreLine
-        } catch (\Exception $exception) {}
-
-        /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Diff $diff */
-        $diff = $this->modelFactory->getObject('Ebay_Template_Category_Diff');
-        $diff->setNewSnapshot($newTemplateSnapshot);
-        $diff->setOldSnapshot($oldTemplateSnapshot);
-
-        /** @var \Ess\M2ePro\Model\Ebay\Template\Category\ChangeProcessor $changeProcessor */
-        $changeProcessor = $this->modelFactory->getObject('Ebay_Template_Category_ChangeProcessor');
-        $changeProcessor->process(
-            $diff,
-            [['id' => $listingProduct->getId(), 'status' => $listingProduct->getStatus()]]
-        );
-    }
-
-    private function processOtherCategoryTemplateChange($listingProduct, array $newData, array $oldData)
-    {
-        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-
-        $newTemplateSnapshot = [];
-
-        try {
-            /** @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory\SnapshotBuilder $snapshotBuilder */
-            $snapshotBuilder = $this->modelFactory->getObject('Ebay_Template_OtherCategory_SnapshotBuilder');
-
-            $newTemplate = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Ebay_Template_OtherCategory',
-                $newData['template_other_category_id']
-            );
-            $snapshotBuilder->setModel($newTemplate);
-
-            $newTemplateSnapshot = $snapshotBuilder->getSnapshot();
-            // @codingStandardsIgnoreLine
-        } catch (\Exception $exception) {}
-
-        $oldTemplateSnapshot = [];
-
-        try {
-            /** @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory\SnapshotBuilder $snapshotBuilder */
-            $snapshotBuilder = $this->modelFactory->getObject('Ebay_Template_OtherCategory_SnapshotBuilder');
-
-            $oldTemplate = $this->activeRecordFactory->getCachedObjectLoaded(
-                'Ebay_Template_OtherCategory',
-                $oldData['template_other_category_id']
-            );
-            $snapshotBuilder->setModel($oldTemplate);
-
-            $oldTemplateSnapshot = $snapshotBuilder->getSnapshot();
-            // @codingStandardsIgnoreLine
-        } catch (\Exception $exception) {}
-
-        /** @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory\Diff $diff */
-        $diff = $this->modelFactory->getObject('Ebay_Template_OtherCategory_Diff');
-        $diff->setNewSnapshot($newTemplateSnapshot);
-        $diff->setOldSnapshot($oldTemplateSnapshot);
-
-        /** @var \Ess\M2ePro\Model\Ebay\Template\OtherCategory\ChangeProcessor $changeProcessor */
-        $changeProcessor = $this->modelFactory->getObject('Ebay_Template_OtherCategory_ChangeProcessor');
-        $changeProcessor->process(
-            $diff,
-            [['id' => $listingProduct->getId(), 'status' => $listingProduct->getStatus()]]
-        );
     }
 
     //########################################

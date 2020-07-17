@@ -532,6 +532,16 @@ class Data extends AbstractHelper
         return $this->serializerInterface->unserialize($data);
     }
 
+    public function phpUnserialize($data)
+    {
+        return $this->phpSerialize->unserialize($data);
+    }
+
+    public function phpSerialize($data)
+    {
+        return $this->phpSerialize->serialize($data);
+    }
+
     //########################################
 
     public function getClassConstants($class)

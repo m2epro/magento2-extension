@@ -16,18 +16,15 @@ use Magento\Framework\DB\Ddl\Table as DdlTable;
 class Repair extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $resourceConnection;
-    protected $cacheConfig;
 
     //########################################
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
         $this->resourceConnection = $resourceConnection;
-        $this->cacheConfig = $cacheConfig;
         parent::__construct($helperFactory, $context);
     }
 
@@ -263,23 +260,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
             $logData[] = "Table: {$table} ## Amount: ".count($brokenIds);
         }
 
-        $this->cacheConfig->setGroupValue('/database/repair/', 'log_data', implode('', $logData));
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @param $tableName
-     * @return string <p> OK if repair was successfully or Error Message if not. </p>
-     */
-    public function repairCrashedTable($tableName)
-    {
-        $connWrite = $this->resourceConnection->getConnection();
-
-        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($tableName);
-
-        $result = $connWrite->query("REPAIR TABLE `{$tableName}`")->fetch();
-        return $result['Msg_text'];
+        $this->getHelper('Module')->getRegistry()->setValue('/database/repair/log_data/', implode('', $logData));
     }
 
     // ---------------------------------------

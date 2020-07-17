@@ -18,7 +18,7 @@ use Magento\Framework\Config\ConfigOptionsListConstants;
  */
 class Runner
 {
-    const SUPPORTED_MIGRATION_VERSION = '1.2.0';
+    const SUPPORTED_MIGRATION_VERSION = '6.7.*';
 
     private $mapper;
     private $helperFactory;
@@ -54,6 +54,35 @@ class Runner
 
     //########################################
 
+    public function prepare()
+    {
+        $structureHelper = $this->helperFactory->getObject('Module_Database_Structure');
+        $this->helperFactory->getObject('Module\Maintenance')->enable();
+
+        $allTables  = $structureHelper->getModuleTables();
+        $skipTables = [
+            'm2epro_setup',
+            'm2epro_config',
+        ];
+
+        foreach ($allTables as $tableName) {
+            if (in_array($tableName, $skipTables)) {
+                continue;
+            }
+
+            $this->resourceConnection->getConnection()->dropTable(
+                $structureHelper->getTableNameWithPrefix($tableName)
+            );
+        }
+
+        $this->resourceConnection->getConnection()->renameTable(
+            $structureHelper->getTableNameWithPrefix('m2epro_config'),
+            $structureHelper->getTableNameWithPrefix('m2epro_config_m2_original')
+        );
+
+        $this->helperFactory->getObject('Magento')->clearCache();
+    }
+
     /**
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -66,6 +95,16 @@ class Runner
         $dbModifier->process();
 
         $this->mapper->map();
+
+        $this->cleanUp();
+    }
+
+    protected function cleanUp()
+    {
+        $structureHelper = $this->helperFactory->getObject('Module_Database_Structure');
+        $this->resourceConnection->getConnection()->dropTable(
+            $structureHelper->getTableNameWithPrefix('m2epro_config_m2_original')
+        );
     }
 
     //----------------------------------------
@@ -75,10 +114,10 @@ class Runner
      */
     private function checkPreconditions()
     {
-        $primaryConfigTableName = $this->getOldTablesPrefix() . 'm2epro_primary_config';
+        $configTableName = $this->getOldTablesPrefix() . 'm2epro_config';
 
         if (!$this->helperFactory->getObject('Module\Maintenance')->isEnabled() ||
-            !$this->resourceConnection->getConnection()->isTableExists($primaryConfigTableName)) {
+            !$this->resourceConnection->getConnection()->isTableExists($configTableName)) {
             throw new \Exception(
                 $this->helperFactory->getObject('Module\Translation')->translate([
                     'It seems that M2E Pro MySQL tables dump from Magento v1.x has not been copied into the database
@@ -90,7 +129,7 @@ class Runner
 
         $select = $this->resourceConnection->getConnection()
                                            ->select()
-                                           ->from($primaryConfigTableName)
+                                           ->from($configTableName)
                                            ->where('`group` LIKE ?', '/migrationtomagento2/source/%');
 
         $sourceParams = [];
@@ -100,7 +139,7 @@ class Runner
         }
 
         if (empty($sourceParams['/migrationtomagento2/source/']['is_prepared_for_migration']) ||
-            empty($sourceParams['/migrationtomagento2/source/m2epro/']['version'])
+            empty($sourceParams['/migrationtomagento2/source/']['version'])
         ) {
             throw new \Exception(
                 $this->helperFactory->getObject('Module\Translation')->translate([
@@ -114,16 +153,40 @@ class Runner
             );
         }
 
-        if ($sourceParams['/migrationtomagento2/source/']['version'] != self::SUPPORTED_MIGRATION_VERSION) {
+        if (!$this->compareVersions($sourceParams['/migrationtomagento2/source/']['version'])) {
             throw new \Exception(
                 $this->helperFactory->getObject('Module\Translation')->translate([
-                    'Your current Module version <b>%v%</b> for Magento v1.x does not support Data Migration. 
+                    'Your current Module version <b>%v%</b> for Magento v1.x does not support Data Migration.
                     Please read our <a href="%url%" target="_blank">Migration Guide</a> for more details.',
-                    $sourceParams['/migrationtomagento2/source/m2epro/']['version'],
+                    $sourceParams['/migrationtomagento2/source/']['version'],
                     $this->helperFactory->getObject('Module\Support')->getDocumentationArticleUrl('x/EgA9AQ')
                 ])
             );
         }
+    }
+
+    /**
+     * Example: v6.0.0 and v6.0.10 will pass 6.0.*
+     */
+    private function compareVersions($version)
+    {
+        $pattern = explode('.', self::SUPPORTED_MIGRATION_VERSION);
+
+        foreach (explode('.', $version) as $vIndex => $vPart) {
+            if (!isset($pattern[$vIndex])) {
+                return false;
+            }
+
+            if ($pattern[$vIndex] === '*') {
+                return true;
+            }
+
+            if ($pattern[$vIndex] != $vPart) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -155,8 +218,8 @@ class Runner
      */
     private function getDbModifierObject()
     {
-        $className = 'Ess\M2ePro\Setup\MigrationFromMagento1\\v'
-                     . str_replace('.', '_', self::SUPPORTED_MIGRATION_VERSION) . '\Modifier';
+        $pattern = str_replace('.*', '', self::SUPPORTED_MIGRATION_VERSION);
+        $className = 'Ess\M2ePro\Setup\MigrationFromMagento1\\v' . str_replace('.', '_', $pattern) . '\Modifier';
 
         if (!class_exists($className)) {
             throw new \Exception(
@@ -187,12 +250,12 @@ class Runner
     private function getOldTablesPrefix()
     {
         $prefix = false;
-        $primaryConfigTables = $this->installer->getConnection()->getTables('%m2epro_primary_config');
+        $configTables = $this->installer->getConnection()->getTables('%m2epro_config');
 
-        if (count($primaryConfigTables) === 1) {
+        if (count($configTables) === 1) {
             $prefix = $this->installer->getConnection()
                                       ->select()
-                                      ->from(reset($primaryConfigTables), ['value'])
+                                      ->from(reset($configTables), ['value'])
                                       ->where('`group` = ?', '/migrationToMagento2/source/magento/')
                                       ->where('`key` = ?', 'tables_prefix')
                                       ->query()->fetchColumn();

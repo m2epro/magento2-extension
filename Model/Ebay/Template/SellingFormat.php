@@ -1126,10 +1126,8 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function usesConvertiblePrices()
     {
-        $isPriceConvertEnabled = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/magento/attribute/',
-            'price_type_converting'
-        );
+        $isPriceConvertEnabled = $this->getHelper('Module_Configuration')
+            ->isEnableMagentoAttributePriceTypeConvertingMode();
 
         $attributeHelper = $this->getHelper('Magento\Attribute');
 
@@ -1379,86 +1377,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     public function isIgnoreVariationsEnabled()
     {
         return (bool)$this->getData('ignore_variations');
-    }
-
-    //########################################
-
-    /**
-     * @return array
-     */
-    public function getDefaultSettings()
-    {
-        return [
-
-            'listing_type' => self::LISTING_TYPE_FIXED,
-            'listing_type_attribute' => '',
-
-            'listing_is_private' => self::LISTING_IS_PRIVATE_NO,
-
-            'duration_mode' => 3,
-            'duration_attribute' => '',
-
-            'qty_mode' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT,
-            'qty_custom_value' => 1,
-            'qty_custom_attribute' => '',
-            'qty_percentage' => 100,
-            'qty_modification_mode' => self::QTY_MODIFICATION_MODE_OFF,
-            'qty_min_posted_value' => self::QTY_MIN_POSTED_DEFAULT_VALUE,
-            'qty_max_posted_value' => self::QTY_MAX_POSTED_DEFAULT_VALUE,
-
-            'vat_percent' => 0,
-            'tax_table_mode' => 0,
-
-            'restricted_to_business' => self::RESTRICTED_TO_BUSINESS_DISABLED,
-
-            'tax_category_mode' => 0,
-            'tax_category_value' => '',
-            'tax_category_attribute' => '',
-
-            'price_increase_vat_percent' => 0,
-            'price_variation_mode' => self::PRICE_VARIATION_MODE_PARENT,
-
-            'fixed_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
-            'fixed_price_coefficient' => '',
-            'fixed_price_custom_attribute' => '',
-
-            'start_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
-            'start_price_coefficient' => '',
-            'start_price_custom_attribute' => '',
-
-            'reserve_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
-            'reserve_price_coefficient' => '',
-            'reserve_price_custom_attribute' => '',
-
-            'buyitnow_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
-            'buyitnow_price_coefficient' => '',
-            'buyitnow_price_custom_attribute' => '',
-
-            'price_discount_stp_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
-            'price_discount_stp_attribute' => '',
-            'price_discount_stp_type' => self::PRICE_DISCOUNT_STP_TYPE_RRP,
-
-            'price_discount_map_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
-            'price_discount_map_attribute' => '',
-            'price_discount_map_exposure_type' => self::PRICE_DISCOUNT_MAP_EXPOSURE_NONE,
-
-            'best_offer_mode' => self::BEST_OFFER_MODE_NO,
-
-            'best_offer_accept_mode' => self::BEST_OFFER_ACCEPT_MODE_NO,
-            'best_offer_accept_value' => '',
-            'best_offer_accept_attribute' => '',
-
-            'best_offer_reject_mode' => self::BEST_OFFER_REJECT_MODE_NO,
-            'best_offer_reject_value' => '',
-            'best_offer_reject_attribute' => '',
-
-            'charity' => '',
-            'ignore_variations' => 0,
-
-            'lot_size_mode' => 0,
-            'lot_size_custom_value' => '',
-            'lot_size_attribute' => ''
-        ];
     }
 
     //########################################

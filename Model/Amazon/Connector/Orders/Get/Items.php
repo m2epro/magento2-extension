@@ -17,21 +17,6 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
     const TIMEOUT_RISE_ON_ERROR        = 30;
     const TIMEOUT_RISE_MAX_VALUE       = 1500;
 
-    protected $cacheConfig;
-
-    //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        $account,
-        \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
-        array $params
-    ) {
-        $this->cacheConfig = $cacheConfig;
-        parent::__construct($helperFactory, $modelFactory, $account, $params);
-    }
-
     //########################################
 
     public function getCommand()
@@ -47,10 +32,18 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
         }
 
         $data = [
-            'accounts'         => $accountsAccessTokens,
-            'from_update_date' => $this->params['from_update_date'],
-            'to_update_date'   => $this->params['to_update_date']
+            'accounts' => $accountsAccessTokens,
         ];
+
+        if (!empty($this->params['from_update_date']) && !empty($this->params['to_update_date'])) {
+            $data['from_update_date'] = $this->params['from_update_date'];
+            $data['to_update_date']   = $this->params['to_update_date'];
+        }
+
+        if (!empty($this->params['from_create_date']) && !empty($this->params['to_create_date'])) {
+            $data['from_create_date'] = $this->params['from_create_date'];
+            $data['to_create_date']   = $this->params['to_create_date'];
+        }
 
         if (!empty($this->params['job_token'])) {
             $data['job_token'] = $this->params['job_token'];
@@ -63,30 +56,38 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 
     public function process()
     {
-        $cacheConfigGroup = '/amazon/synchronization/orders/receive/timeout';
-
         try {
             parent::process();
         } catch (\Ess\M2ePro\Model\Exception\Connection $exception) {
             $data = $exception->getAdditionalData();
             if (!empty($data['curl_error_number']) && $data['curl_error_number'] == CURLE_OPERATION_TIMEOUTED) {
-                $fails = (int)$this->cacheConfig->getGroupValue($cacheConfigGroup, 'fails');
+                $fails = (int)$this->getHelper('Module')->getRegistry()->getValue(
+                    '/amazon/orders/receive/timeout_fails/'
+                );
                 $fails++;
 
-                $rise = (int)$this->cacheConfig->getGroupValue($cacheConfigGroup, 'rise');
+                $rise = (int)$this->getHelper('Module')->getRegistry()->getValue(
+                    '/amazon/orders/receive/timeout_rise/'
+                );
                 $rise += self::TIMEOUT_RISE_ON_ERROR;
 
                 if ($fails >= self::TIMEOUT_ERRORS_COUNT_TO_RISE && $rise <= self::TIMEOUT_RISE_MAX_VALUE) {
                     $fails = 0;
-                    $this->cacheConfig->setGroupValue($cacheConfigGroup, 'rise', $rise);
+                    $this->getHelper('Module')->getRegistry()->setValue(
+                        '/amazon/orders/receive/timeout_rise/',
+                        $rise
+                    );
                 }
-                $this->cacheConfig->setGroupValue($cacheConfigGroup, 'fails', $fails);
+                $this->getHelper('Module')->getRegistry()->setValue(
+                    '/amazon/orders/receive/timeout_fails/',
+                    $fails
+                );
             }
 
             throw $exception;
         }
 
-        $this->cacheConfig->setGroupValue($cacheConfigGroup, 'fails', 0);
+        $this->getHelper('Module')->getRegistry()->setValue('/amazon/orders/receive/timeout_fails/', 0);
     }
 
     protected function buildConnectionInstance()
@@ -101,9 +102,9 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 
     protected function getRequestTimeOut()
     {
-        $cacheConfigGroup = '/amazon/synchronization/orders/receive/timeout';
-
-        $rise = (int)$this->cacheConfig->getGroupValue($cacheConfigGroup, 'rise');
+        $rise = (int)$this->getHelper('Module')->getRegistry()->getValue(
+            '/amazon/orders/receive/timeout_rise/'
+        );
         $rise > self::TIMEOUT_RISE_MAX_VALUE && $rise = self::TIMEOUT_RISE_MAX_VALUE;
 
         return 300 + $rise;
@@ -211,9 +212,16 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
         }
 
         $this->responseData = [
-            'items'          => $preparedOrders,
-            'to_update_date' => $responseData['to_update_date']
+            'items' => $preparedOrders,
         ];
+
+        if (!empty($responseData['to_update_date'])) {
+            $this->responseData['to_update_date'] = $responseData['to_update_date'];
+        }
+
+        if (!empty($responseData['to_create_date'])) {
+            $this->responseData['to_create_date'] = $responseData['to_create_date'];
+        }
 
         if (!empty($responseData['job_token'])) {
             $this->responseData['job_token']= $responseData['job_token'];

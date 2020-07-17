@@ -19,38 +19,14 @@ class Save extends Settings
 
     public function execute()
     {
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/view/ebay/feedbacks/notification/',
-            'mode',
-            (int)$this->getRequest()->getParam('view_ebay_feedbacks_notification_mode')
-        );
+        $post = $this->getRequest()->getPostValue();
+        if (!$post) {
+            $this->setJsonContent(['success' => false]);
+            return $this->getResult();
+        }
 
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/view/ebay/template/category/',
-            'use_last_specifics',
-            (int)$this->getRequest()->getParam('use_last_specifics_mode')
-        );
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/ebay/connector/listing/',
-            'check_the_same_product_already_listed',
-            (int)$this->getRequest()->getParam('check_the_same_product_already_listed_mode')
-        );
-
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/ebay/description/',
-            'upload_images_mode',
-            (int)$this->getRequest()->getParam('upload_images_mode')
-        );
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/ebay/description/',
-            'should_be_ulrs_secure',
-            (int)$this->getRequest()->getParam('should_be_ulrs_secure')
-        );
-
-        $this->setAjaxContent($this->getHelper('Data')->jsonEncode([
-            'success' => true
-        ]), false);
-
+        $this->getHelper('Component_Ebay_Configuration')->setConfigValues($this->getRequest()->getParams());
+        $this->setJsonContent(['success' => true]);
         return $this->getResult();
     }
 

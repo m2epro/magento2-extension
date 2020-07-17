@@ -48,7 +48,7 @@ class SynchronizeChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $itemsProcessor = $this->modelFactory->getObject('Cron_Task_Ebay_Channel_SynchronizeChanges_ItemsProcessor');
 
         $synchronizationLog = $this->getSynchronizationLog();
-        $synchronizationLog->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_GENERAL);
+        $synchronizationLog->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_OTHER);
 
         $itemsProcessor->setSynchronizationLog($synchronizationLog);
 

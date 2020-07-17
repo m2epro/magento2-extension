@@ -411,36 +411,37 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
     ) {
         $reservationMarkPath = "reservation_msi_used/{$magentoProduct->getProductId()}";
 
-        if ($action === self::ACTION_ADD) {
-            if (!$item->getSetting('product_details', $reservationMarkPath, false)) {
-                return $this->changeProductQty($item, $magentoProduct, $magentoStockItem, $action, $qty, $transaction);
+        try {
+
+            if ($action === self::ACTION_ADD) {
+                if (!$item->getSetting('product_details', $reservationMarkPath, false)) {
+                    return $this->changeProductQty($item, $magentoProduct, $magentoStockItem, $action, $qty, $transaction);
+                }
+                $item->setSetting('product_details', $reservationMarkPath, null);
             }
-            $item->setSetting('product_details', $reservationMarkPath, null);
-        }
 
-        if ($action === self::ACTION_SUB) {
+            $stockByWebsiteIdResolver = $this->objectManager->get(StockByWebsiteIdResolverInterface::class);
+            $websiteId = (int)$item->getOrder()->getStore()->getWebsiteId();
+            $stockId   = (int)$stockByWebsiteIdResolver->execute($websiteId)->getStockId();
 
-            try {
-
-                $stockByWebsiteIdResolver = $this->objectManager->get(StockByWebsiteIdResolverInterface::class);
-                $websiteId = (int)$item->getOrder()->getStore()->getWebsiteId();
-                $stockId   = (int)$stockByWebsiteIdResolver->execute($websiteId)->getStockId();
-
+            if ($action === self::ACTION_SUB) {
                 $checkItemsQty = $this->objectManager->get(\Magento\InventorySales\Model\CheckItemsQuantity::class);
                 $checkItemsQty->execute([$magentoProduct->getSku() => $qty], $stockId);
 
                 $item->setSetting('product_details', $reservationMarkPath, true);
-
-            } catch (\Exception $e) {
-                $this->order->addErrorLog(
-                    'QTY for Product "%name%" cannot be reserved. Reason: %msg%',
-                    [
-                        '!name' => $magentoProduct->getName(),
-                        '!msg' => $e->getMessage()
-                    ]
-                );
-                return false;
             }
+        } catch (\Exception $e) {
+            $message = $action === self::ACTION_SUB
+                ? 'QTY for Product "%name%" cannot be reserved. Reason: %msg%'
+                : 'QTY reservation for Product "%name%" cannot be released. Reason: %msg%';
+            $this->order->addErrorLog(
+                $message,
+                [
+                    '!name' => $magentoProduct->getName(),
+                    '!msg' => $e->getMessage()
+                ]
+            );
+            return false;
         }
 
         $reservation = $this->objectManager->get(\Ess\M2ePro\Model\MSI\Order\Reserve::class);
@@ -457,6 +458,11 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
                 'objectId'   => (string)$this->order->getId()
             ]
         );
+
+        $key = 'released_reservation_product_' . $magentoProduct->getSku() . '_' . $stockId;
+        if ($action === self::ACTION_ADD && !$this->getHelper('Data\GlobalData')->getValue($key)) {
+            $this->getHelper('Data\GlobalData')->setValue($key, true);
+        }
 
         return true;
     }

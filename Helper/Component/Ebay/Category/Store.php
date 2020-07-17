@@ -35,8 +35,9 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getPath($categoryId, $accountId, $delimiter = ' > ')
+    public function getPath($categoryId, $accountId, $delimiter = '>')
     {
+        /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->ebayParentFactory->getCachedObjectLoaded('Account', $accountId);
         $categories = $account->getChildObject()->getEbayStoreCategories();
 
@@ -71,66 +72,37 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getSameTemplatesData($ids)
-    {
-        return $this->getHelper('Component_Ebay_Category')->getSameTemplatesData(
-            $ids,
-            $this->activeRecordFactory->getObject('Ebay_Template_OtherCategory')->getResource()->getMainTable(),
-            ['category_secondary','store_category_main','store_category_secondary']
-        );
-    }
-
     public function isExistDeletedCategories()
     {
-        /** @var $connection \Magento\Framework\DB\Adapter\AdapterInterface */
-        $connection = $this->resourceConnection->getConnection();
-
-        $etocTable = $this->activeRecordFactory->getObject('Ebay_Template_OtherCategory')
-            ->getResource()->getMainTable();
-        $eascTable = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
-
-        $primarySelect = $connection->select();
-        $primarySelect->from(
-            ['primary_table' => $etocTable]
-        )
-            ->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns([
-                'store_category_main_id as category_id',
-                'account_id',
-            ])
-            ->where('store_category_main_mode = ?', \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY)
-            ->group(['category_id', 'account_id']);
-
-        $secondarySelect = $connection->select();
-        $secondarySelect->from(
-            ['secondary_table' => $etocTable]
-        )
-            ->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns([
-                'store_category_secondary_id as category_id',
-                'account_id',
-            ])
-            ->where('store_category_secondary_mode = ?', \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY)
-            ->group(['category_id', 'account_id']);
-
-        $unionSelect = $connection->select();
-        $unionSelect->union([
-            $primarySelect,
-            $secondarySelect,
-        ]);
-
-        $mainSelect = $connection->select();
-        $mainSelect->reset()
-            ->from(['main_table' => $unionSelect])
-            ->joinLeft(
-                ['easc' => $eascTable],
-                'easc.account_id = main_table.account_id
-                    AND easc.category_id = main_table.category_id'
+        $stmt = $this->resourceConnection->getConnection()
+            ->select()
+            ->from(
+                ['etsc' => $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory')->getResource()
+                                                                                               ->getMainTable()
+                ]
             )
-            ->where('easc.category_id IS NULL');
+            ->joinLeft(
+                [
+                    'edc' => $this->getHelper('Module_Database_Structure')
+                        ->getTableNameWithPrefix('m2epro_ebay_account_store_category')
+                ],
+                'edc.account_id = etsc.account_id AND edc.category_id = etsc.category_id'
+            )
+            ->reset(\Zend_Db_Select::COLUMNS)
+            ->columns(
+                [
+                    'category_id',
+                    'account_id',
+                ]
+            )
+            ->where('etsc.category_mode = ?', \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY)
+            ->where('edc.category_id IS NULL')
+            ->group(
+                ['etsc.category_id', 'etsc.account_id']
+            )
+            ->query();
 
-        return $connection->query($mainSelect)->fetchColumn() !== false;
+        return $stmt->fetchColumn() !== false;
     }
 
     //########################################

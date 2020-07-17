@@ -462,7 +462,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             );
 
             if ($tempPath) {
-                $data['online_main_category'] = $tempPath.' ('.$this->getRequestData()->getPrimaryCategory().')';
+                $data['online_main_category'] = $tempPath . ' (' . $this->getRequestData()->getPrimaryCategory() . ')';
             } else {
                 $data['online_main_category'] = $this->getRequestData()->getPrimaryCategory();
             }

@@ -24,10 +24,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\AbstractMode
     const TYPE_WARNING  = 3;
     const TYPE_ERROR    = 4;
 
-    const PRIORITY_HIGH    = 1;
-    const PRIORITY_MEDIUM  = 2;
-    const PRIORITY_LOW     = 3;
-
     protected $componentMode = null;
 
     protected $parentFactory;

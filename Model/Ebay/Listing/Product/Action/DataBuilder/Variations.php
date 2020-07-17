@@ -243,7 +243,7 @@ class Variations extends AbstractModel
             $this->addWarningMessage(
                 $this->getHelper('Module\Translation')->__(
                     'The Product was Listed as a Simple Product as it has limitation for Multi-Variation Items. ' .
-                    'Reason: eBay Site allows to list only Simple Items.'
+                    'Reason: Marketplace allows to list only Simple Items.'
                 )
             );
             return;
@@ -251,7 +251,7 @@ class Variations extends AbstractModel
 
         $isVariationEnabled = $this->getHelper('Component_Ebay_Category_Ebay')
             ->isVariationEnabled(
-                (int)$this->getCategorySource()->getMainCategory(),
+                (int)$this->getCategorySource()->getCategoryId(),
                 $this->getMarketplace()->getId()
             );
 
@@ -366,10 +366,8 @@ class Variations extends AbstractModel
             if ($tempType == 'mpn' && !empty($additionalData['online_product_details']['mpn'])) {
                 $data['mpn'] = $additionalData['online_product_details']['mpn'];
 
-                $isMpnCanBeChanged = $this->getHelper('Module')->getConfig()->getGroupValue(
-                    '/component/ebay/variation/',
-                    'mpn_can_be_changed'
-                );
+                $isMpnCanBeChanged = $this->getHelper('Component_Ebay_Configuration')
+                    ->getVariationMpnCanBeChanged();
 
                 if (!$isMpnCanBeChanged) {
                     continue;
@@ -442,7 +440,7 @@ class Variations extends AbstractModel
             return $data;
         }
 
-        $categoryId = $this->getCategorySource()->getMainCategory();
+        $categoryId = $this->getCategorySource()->getCategoryId();
         $marketplaceId = $this->getMarketplace()->getId();
         $categoryFeatures = $this->getHelper('Component_Ebay_Category_Ebay')
             ->getFeatures($categoryId, $marketplaceId);

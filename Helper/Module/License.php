@@ -14,20 +14,17 @@ namespace Ess\M2ePro\Helper\Module;
 class License extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $modelFactory;
-    protected $primaryConfig;
     protected $country;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\Config\Manager\Primary $primaryConfig,
         \Magento\Config\Model\Config\Source\Locale\Country $country,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
         $this->modelFactory = $modelFactory;
-        $this->primaryConfig = $primaryConfig;
         $this->country = $country;
 
         parent::__construct($helperFactory, $context);
@@ -37,47 +34,49 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getKey()
     {
-        return (string)$this->primaryConfig->getGroupValue('/license/', 'key');
+        return (string)$this->getHelper('Module')->getConfig()->getGroupValue('/license/', 'key');
     }
-
-    // ---------------------------------------
 
     public function getStatus()
     {
-        return (bool)$this->primaryConfig->getGroupValue('/license/', 'status');
+        return (bool)$this->getHelper('Module')->getConfig()->getGroupValue('/license/', 'status');
     }
-
-    // ---------------------------------------
 
     public function getDomain()
     {
-        return (string)$this->primaryConfig->getGroupValue('/license/', 'domain');
+        return (string)$this->getHelper('Module')->getConfig()->getGroupValue('/license/domain/', 'valid');
     }
 
     public function getIp()
     {
-        return (string)$this->primaryConfig->getGroupValue('/license/', 'ip');
+        return (string)$this->getHelper('Module')->getConfig()->getGroupValue('/license/ip/', 'valid');
     }
-
-    // ---------------------------------------
 
     public function getEmail()
     {
-        return (string)$this->primaryConfig->getGroupValue('/license/info/', 'email');
+        return (string)$this->getHelper('Module')->getConfig()->getGroupValue('/license/info/', 'email');
     }
-
-    // ---------------------------------------
 
     public function isValidDomain()
     {
-        $isValid = $this->primaryConfig->getGroupValue('/license/valid/', 'domain');
+        $isValid = $this->getHelper('Module')->getConfig()->getGroupValue('/license/ip/', 'is_valid');
         return $isValid === null || (bool)$isValid;
     }
 
     public function isValidIp()
     {
-        $isValid = $this->primaryConfig->getGroupValue('/license/valid/', 'ip');
+        $isValid = $this->getHelper('Module')->getConfig()->getGroupValue('/license/domain/', 'is_valid');
         return $isValid === null || (bool)$isValid;
+    }
+
+    public function getRealDomain()
+    {
+        return (string)$this->getHelper('Module')->getConfig()->getGroupValue('/license/domain/', 'real');
+    }
+
+    public function getRealIp()
+    {
+        return (string)$this->getHelper('Module')->getConfig()->getGroupValue('/license/ip/', 'real');
     }
 
     //########################################
@@ -96,7 +95,7 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $requestParams = [
-            'domain' => $this->getHelper('Client')->getDomain(),
+            'domain'    => $this->getHelper('Client')->getDomain(),
             'directory' => $this->getHelper('Client')->getBaseDirectory()
         ];
 
@@ -117,13 +116,79 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
             return false;
         }
 
-        $this->primaryConfig->setGroupValue('/license/', 'key', (string)$response['key']);
+        $this->getHelper('Module')->getConfig()->setGroupValue('/license/', 'key', (string)$response['key']);
 
         $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
             $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
         );
 
         return true;
+    }
+
+    public function updateLicenseUserInfo(
+        $email = null,
+        $firstName = null,
+        $lastName = null,
+        $country = null,
+        $city = null,
+        $postalCode = null,
+        $phone = null
+    ) {
+        if ($this->getHelper('Server_Maintenance')->isNow()) {
+            return false;
+        }
+
+        $requestParams['key'] = $this->getKey();
+
+        $data = [
+            'email'       => $email,
+            'first_name'  => $firstName,
+            'last_name'   => $lastName,
+            'phone'       => $phone,
+            'country'     => $country,
+            'city'        => $city,
+            'postal_code' => $postalCode
+        ];
+
+        foreach ($data as $key => $value) {
+            if ($value === null) {
+                continue;
+            }
+
+            $requestParams[$key] = $value;
+        }
+
+        $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
+        $connectorObj = $dispatcherObject->getVirtualConnector('license', 'update', 'record', $requestParams);
+        $dispatcherObject->process($connectorObj);
+
+        return true;
+    }
+
+    //########################################
+
+    public function getUserInfo()
+    {}
+
+    public function getData()
+    {
+        return [
+            'key'        => $this->getKey(),
+            'status'     => $this->getStatus(),
+            'domain'     => $this->getDomain(),
+            'ip'         => $this->getIp(),
+            'info'       => [
+                'email' => $this->getEmail()
+            ],
+            'valid'      => [
+                'domain' => $this->isValidDomain(),
+                'ip'     => $this->isValidIp()
+            ],
+            'connection' => [
+                'domain'    => $this->getRealDomain(),
+                'ip'        => $this->getRealIp()
+            ]
+        ];
     }
 
     //########################################

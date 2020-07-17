@@ -3,9 +3,7 @@ define([
     'M2ePro/Plugin/Messages',
     'M2ePro/Common'
 ], function (modal, MessageObj) {
-
-    window.AmazonListingProductVariation = Class.create();
-    AmazonListingProductVariation.prototype = Object.extend(new Common(), {
+    window.AmazonListingProductVariation = Class.create(Common, {
 
         // ---------------------------------------
 
@@ -149,7 +147,7 @@ define([
                         var response = transport.responseText.evalJSON();
 
                         if (response.type == 'error') {
-                            MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](response.message);
+                            MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1)](response.message);
                             return;
                         }
 
@@ -198,7 +196,7 @@ define([
 
                     } catch (e) {
                         this.editPopup.modal('closeModal');
-                        MessageObj.addErrorMessage('Internal Error.');
+                        MessageObj.addError('Internal Error.');
                     }
                 }).bind(this)
             });
@@ -262,12 +260,12 @@ define([
                     try {
                         var response = transport.responseText.evalJSON();
 
-                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](response.message);
+                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1)](response.message);
 
                         this.gridHandler.unselectAllAndReload();
                     } catch (e) {
                         this.editPopup.modal('closeModal');
-                        MessageObj.addErrorMessage('Internal Error.');
+                        MessageObj.addError('Internal Error.');
                     }
                 }).bind(this)
             });
@@ -291,7 +289,7 @@ define([
                         var response = transport.responseText.evalJSON();
 
                         if (response.type == 'error') {
-                            MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](response.message);
+                            MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1)](response.message);
                             return;
                         }
 
@@ -348,7 +346,7 @@ define([
 
                     } catch (e) {
                         self.managePopup.modal('closeModal');
-                        MessageObj.addErrorMessage('Internal Error.');
+                        MessageObj.addError('Internal Error.');
                     }
                 })
             });
@@ -531,7 +529,7 @@ define([
 
                         var response = transport.responseText.evalJSON();
 
-                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](response.message);
+                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1)](response.message);
 
                         if (response.type == 'error') {
                             this.scrollPageToTop();
@@ -543,7 +541,7 @@ define([
                         console.log(e.stack);
                         this.scrollPageToTop();
                         this.editPopup.modal('closeModal');
-                        MessageObj.addErrorMessage('Internal Error.');
+                        MessageObj.addError('Internal Error.');
                     }
                 }).bind(this)
             });
@@ -571,7 +569,7 @@ define([
 
                         var response = transport.responseText.evalJSON();
 
-                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](response.message);
+                        MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1)](response.message);
 
                         if (response.type == 'error') {
                             this.scrollPageToTop();
@@ -582,7 +580,7 @@ define([
                     } catch (e) {
                         this.scrollPageToTop();
                         this.managePopup.modal('closeModal');
-                        MessageObj.addErrorMessage('Internal Error.');
+                        MessageObj.addError('Internal Error.');
                     }
                 }).bind(this)
             });
@@ -610,7 +608,7 @@ define([
                         var response = transport.responseText.evalJSON();
 
                         if (response.type == 'error') {
-                            MessageObj.addErrorMessage(response.message);
+                            MessageObj.addError(response.message);
                             self.managePopup.modal('closeModal');
                             return self.scrollPageToTop();
                         }
@@ -644,7 +642,7 @@ define([
                     } catch (e) {
                         self.scrollPageToTop();
                         self.managePopup.modal('closeModal');
-                        MessageObj.addErrorMessage('Internal Error.');
+                        MessageObj.addError('Internal Error.');
                     }
                 }
             });

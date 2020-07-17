@@ -11,18 +11,16 @@ define([
 
         // ---------------------------------------
 
-        showFullText: function(element, title)
+        showFullText: function(element)
         {
             var content = '<div class="log-description-full">' +
                 element.next().innerHTML +
                 '</div>';
 
-            title = title || M2ePro.translator.translate('Message');
-
             modal({
-                title: title,
+                title: M2ePro.translator.translate('Message'),
                 type: 'popup',
-                modalClass: 'width-800',
+                modalClass: 'width-1000',
                 buttons: [{
                     text: M2ePro.translator.translate('Close'),
                     class: 'action-secondary',

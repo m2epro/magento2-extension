@@ -285,7 +285,7 @@ HTML
                         type: 'slide',
                         buttons: [{
                             text: '{$this->__('Add New Category Policy')}',
-                            class: 'action primary ',
+                            class: 'action primary add_new_category_policy',
                             click: function () {
                                 createTemplateCategoryInNewTab(M2ePro.url.get('newTemplateCategoryUrl'))
                             }
