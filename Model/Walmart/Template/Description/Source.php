@@ -255,12 +255,12 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
         switch ($src['mode']) {
             case \Ess\M2ePro\Model\Walmart\Template\Description::DESCRIPTION_MODE_PRODUCT:
-                $description = $this->getMagentoProduct()->getProduct()->getDescription();
+                $description = (string)$this->getMagentoProduct()->getProduct()->getDescription();
                 $description = $this->emailTemplateFilter->filter($description);
                 break;
 
             case \Ess\M2ePro\Model\Walmart\Template\Description::DESCRIPTION_MODE_SHORT:
-                $description = $this->getMagentoProduct()->getProduct()->getShortDescription();
+                $description = (string)$this->getMagentoProduct()->getProduct()->getShortDescription();
                 $description = $this->emailTemplateFilter->filter($description);
                 break;
 

@@ -1,6 +1,14 @@
-* 1.7.0 (r3968) (17/07/2020) 
+* 1.7.1 (r4015) (30/07/2020) 
 
-Common: [Added] Automatically set maintenance mode if the server connection fails
+Common: [Fixed] Inspect direct changes does not work
+eBay: [Fixed] Uncaught TypeError: Argument 2 passed to Magento\PageBuilder\Plugin\Filter\TemplatePlugin::afterFilter() must be of the type string, (compatibility with Magento Page Builder)
+eBay: [Fixed] In-Store Pickup region retrieving does not work
+Amazon: [Fixed] Partially Shipped does not work
+Walmart: [Fixed] Magento orders are not created automatically for Walmart orders
+
+* 1.7.0 (r3698) (17/07/2020)
+
+Common: [Added] Postpone server requests by a few minutes if the first connection attempt fails
 Common: [Added] New Active Record engine
 Common: [Added] Ability to reimport Orders
 Common: [Added] Analytics from M1

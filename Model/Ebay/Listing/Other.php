@@ -16,42 +16,12 @@ namespace Ess\M2ePro\Model\Ebay\Listing;
  */
 class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
-    protected $emailFilter;
-
     //########################################
 
     public function _construct()
     {
         parent::_construct();
         $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other');
-    }
-
-    //########################################
-
-    public function __construct(
-        \Magento\Email\Model\Template\Filter $emailFilter,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = []
-    ) {
-        $this->emailFilter = $emailFilter;
-        parent::__construct(
-            $parentFactory,
-            $modelFactory,
-            $activeRecordFactory,
-            $helperFactory,
-            $context,
-            $registry,
-            $resource,
-            $resourceCollection,
-            $data
-        );
     }
 
     //########################################

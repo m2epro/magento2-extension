@@ -340,6 +340,11 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->translatedLists->getCountryTranslation($countryId);
     }
 
+    /**
+     * @param $countryCode
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function getRegionsByCountryCode($countryCode)
     {
         $result = [];
@@ -347,6 +352,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         try {
             $country = $this->countryFactory->create()->loadByCode($countryCode);
         } catch (\Exception $e) {
+            $this->getHelper('Module_Exception')->process($e);
             return $result;
         }
 
@@ -357,7 +363,11 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         $result = [];
         foreach ($country->getRegions() as $region) {
             /** @var \Magento\Directory\Model\Region $region */
-            $result[] = $region->toArray(['region_id', 'code', 'name']);
+            $result[] = [
+                'region_id' => $region->getRegionId(),
+                'code'      => $region->getCode(),
+                'name'      => $region->getName()
+            ];
         }
 
         if (empty($result) && $countryCode == 'AU') {

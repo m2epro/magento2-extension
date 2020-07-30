@@ -152,6 +152,8 @@ class UpgradeData implements UpgradeDataInterface
 
                 $this->setMagentoResourceVersion($versionTo);
             }
+
+            $this->setMagentoResourceVersion($this->getConfigVersion());
         } catch (\Exception $exception) {
             $this->logger->error($exception, ['source' => 'UpgradeData']);
             $this->helperFactory->getObject('Data\GlobalData')->setValue('is_setup_failed', true);

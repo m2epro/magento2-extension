@@ -61,7 +61,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
 
             /*
              * Extension stores Shipped QTY for each item starting from v1.5.0
-            */
+             */
             $itemQtyShipped = isset($data['shipped_qty'][$orderItemId]) ? $data['shipped_qty'][$orderItemId] : 0;
             $itemQty = $item->getChildObject()->getQty();
 
@@ -73,7 +73,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
                 $itemQty = $qtyAvailable;
             }
 
-            $items[] = [
+            $shipmentItems[] = [
                 'amazon_order_item_id' => $orderItemId,
                 'qty'                  => $itemQty
             ];
@@ -81,7 +81,6 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
             $qtyAvailable -= $itemQty;
             $data['shipped_qty'][$orderItemId] = $itemQty;
         }
-
         unset($data);
 
         $additionalData[DataHelper::CUSTOM_IDENTIFIER]['shipments'][$shipmentItem->getId()] = $shipmentItems;

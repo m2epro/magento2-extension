@@ -62,7 +62,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
 
         // the CMS static block replacement i.e. {{media url=’image.jpg’}}
         $this->filter->setVariables(['product'=>$magentoProduct->getProduct()]);
-        $text = $this->filter->filter($text);
+        $text = $this->filter->filter((string)$text);
 
         //-- Stop store emulation process
         $this->appEmulation->stopEnvironmentEmulation();

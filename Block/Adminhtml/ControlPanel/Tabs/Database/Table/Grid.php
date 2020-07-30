@@ -496,8 +496,8 @@ HTML;
         }
 
         if (isset($value['from'], $value['to']) &&
-            strpos($value['from'], '!=') === 0 &&
-            strpos($value['to'], '!=') === 0
+            is_string($value['from']) && strpos($value['from'], '!=') === 0 &&
+            is_string($value['to']) && strpos($value['to'], '!=') === 0
         ) {
             return true;
         }
@@ -512,8 +512,8 @@ HTML;
         }
 
         if (isset($value['from'], $value['to']) &&
-            strpos($value['from'], '!%') === 0 &&
-            strpos($value['to'], '!%') === 0
+            is_string($value['from']) && strpos($value['from'], '!%') === 0 &&
+            is_string($value['to']) && strpos($value['to'], '!%') === 0
         ) {
             return true;
         }

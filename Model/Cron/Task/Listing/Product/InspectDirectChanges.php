@@ -23,12 +23,20 @@ class InspectDirectChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     //########################################
 
+    protected function isModeEnabled()
+    {
+        if (!parent::isModeEnabled()) {
+            return false;
+        }
+
+        return $this->getHelper('Module_Configuration')->isEnableListingProductInspectorMode();
+    }
+
+    //########################################
+
     protected function performActions()
     {
         foreach ($this->getHelper('Component')->getEnabledComponents() as $component) {
-            if (!$this->isEnabled()) {
-                continue;
-            }
 
             $allowedListingsProductsCount = $this->calculateAllowedListingsProductsCount($component);
             if ($allowedListingsProductsCount <= 0) {
@@ -93,13 +101,6 @@ class InspectDirectChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     }
 
     //########################################
-
-    protected function isEnabled()
-    {
-        return (bool)$this->getHelper('Module')->getConfig()->getGroupValue(self::KEY_PREFIX.'/', 'mode');
-    }
-
-    // ---------------------------------------
 
     protected function getLastListingProductId($component)
     {

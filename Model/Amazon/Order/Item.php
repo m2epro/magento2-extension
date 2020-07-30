@@ -158,6 +158,16 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     }
 
     /**
+     * Compatibility with Walmart
+     *
+     * @return int
+     */
+    public function getQty()
+    {
+        return $this->getQtyPurchased();
+    }
+
+    /**
      * @return int
      */
     public function getQtyPurchased()
