@@ -604,7 +604,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             $tags = array_keys($tags);
 
-            $additionalData['configurator'] = $existedConfigurator->getData();
+            $additionalData['configurator'] = $existedConfigurator->getSerializedData();
             $scheduledAction->setSettings('additional_data', $additionalData);
 
             if (empty($existedConfigurator->getAllowedDataTypes())) {

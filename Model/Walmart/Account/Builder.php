@@ -94,56 +94,57 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID,
         ];
 
-        if (isset($tempData['mapping_sku_mode']) && in_array($tempData['mapping_sku_mode'], $temp)) {
+        if (isset($tempData['mapping_sku_mode'])) {
             $mappingSettings['sku']['mode'] = (int)$tempData['mapping_sku_mode'];
-            $mappingSettings['sku']['priority'] = (int)$tempData['mapping_sku_priority'];
+
+            if (in_array($tempData['mapping_sku_mode'], $temp)) {
+                $mappingSettings['sku']['priority'] = (int)$tempData['mapping_sku_priority'];
+            }
 
             if ($tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE) {
                 $mappingSettings['sku']['attribute'] = (string)$tempData['mapping_sku_attribute'];
             }
         }
 
-        if (isset($tempData['mapping_upc_mode']) &&
-            $tempData['mapping_upc_mode'] == Account::OTHER_LISTINGS_MAPPING_UPC_MODE_CUSTOM_ATTRIBUTE
-        ) {
+        if (isset($tempData['mapping_upc_mode']) ) {
             $mappingSettings['upc']['mode'] = (int)$tempData['mapping_upc_mode'];
-            $mappingSettings['upc']['priority'] = (int)$tempData['mapping_upc_priority'];
 
-            $temp = Account::OTHER_LISTINGS_MAPPING_UPC_MODE_CUSTOM_ATTRIBUTE;
-            if ($tempData['mapping_upc_mode'] == $temp) {
+            if ($tempData['mapping_upc_mode'] == Account::OTHER_LISTINGS_MAPPING_UPC_MODE_CUSTOM_ATTRIBUTE) {
+                $mappingSettings['upc']['priority'] = (int)$tempData['mapping_upc_priority'];
                 $mappingSettings['upc']['attribute'] = (string)$tempData['mapping_upc_attribute'];
             }
         }
 
-        if (isset($tempData['mapping_gtin_mode']) &&
-            $tempData['mapping_gtin_mode'] == Account::OTHER_LISTINGS_MAPPING_GTIN_MODE_CUSTOM_ATTRIBUTE
-        ) {
+        if (isset($tempData['mapping_gtin_mode'])) {
             $mappingSettings['gtin']['mode'] = (int)$tempData['mapping_gtin_mode'];
-            $mappingSettings['gtin']['priority'] = (int)$tempData['mapping_gtin_priority'];
 
             if ($tempData['mapping_gtin_mode'] == Account::OTHER_LISTINGS_MAPPING_GTIN_MODE_CUSTOM_ATTRIBUTE) {
+                $mappingSettings['gtin']['priority'] = (int)$tempData['mapping_gtin_priority'];
                 $mappingSettings['gtin']['attribute'] = (string)$tempData['mapping_gtin_attribute'];
             }
         }
 
-        if (isset($tempData['mapping_wpid_mode']) &&
-            $tempData['mapping_wpid_mode'] == Account::OTHER_LISTINGS_MAPPING_WPID_MODE_CUSTOM_ATTRIBUTE
-        ) {
+        if (isset($tempData['mapping_wpid_mode'])) {
             $mappingSettings['wpid']['mode'] = (int)$tempData['mapping_wpid_mode'];
-            $mappingSettings['wpid']['priority'] = (int)$tempData['mapping_wpid_priority'];
 
             if ($tempData['mapping_wpid_mode'] == Account::OTHER_LISTINGS_MAPPING_WPID_MODE_CUSTOM_ATTRIBUTE) {
+                $mappingSettings['wpid']['priority'] = (int)$tempData['mapping_wpid_priority'];
                 $mappingSettings['wpid']['attribute'] = (string)$tempData['mapping_wpid_attribute'];
             }
         }
 
-        if (isset($tempData['mapping_title_mode']) &&
-            ($tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT ||
-                $tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE)
-        ) {
+        if (isset($tempData['mapping_title_mode'])) {
             $mappingSettings['title']['mode'] = (int)$tempData['mapping_title_mode'];
-            $mappingSettings['title']['priority'] = (int)$tempData['mapping_title_priority'];
-            $mappingSettings['title']['attribute'] = (string)$tempData['mapping_title_attribute'];
+
+            if ($tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT ||
+                $tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE
+            ) {
+                $mappingSettings['title']['priority'] = (int)$tempData['mapping_title_priority'];
+            }
+
+            if ($tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE) {
+                $mappingSettings['title']['attribute'] = (string)$tempData['mapping_title_attribute'];
+            }
         }
 
         $data['other_listings_mapping_settings'] = $this->getHelper('Data')->jsonEncode($mappingSettings);

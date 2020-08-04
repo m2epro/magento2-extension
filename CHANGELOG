@@ -1,4 +1,12 @@
-* 1.7.1 (r4015) (30/07/2020) 
+* 1.7.2 (r4035) (04/08/2020) 
+
+Common: [Fixed] 3rd party mapping settings are not being changed after Save action
+eBay: [Fixed] Listing is not available on Settings View mode
+eBay: [Fixed] Uncaught Error: Call to a member function getId() on null in Block/Adminhtml/Ebay/Listing/Template/Switcher.php
+eBay: [Fixed] Parse error in case of one of api tokens is expired
+Amazon: [Fixed] Automatic revise does not trigger after manual revise
+
+* 1.7.1 (r4009) (30/07/2020)
 
 Common: [Fixed] Inspect direct changes does not work
 eBay: [Fixed] Uncaught TypeError: Argument 2 passed to Magento\PageBuilder\Plugin\Filter\TemplatePlugin::afterFilter() must be of the type string, (compatibility with Magento Page Builder)
@@ -43,6 +51,7 @@ eBay: [Improved] Assign Category when importing 3rd party item from eBay
 eBay: [Improved] Transaction table display improvement
 Amazon: [Fixed] Notice: Undefined index: SKU in Model/Cron/Task/Amazon/Listing/Product/Channel/SynchronizeData/Responser.php on line 225
 Amazon: [Improved] Prevent oversell in special cases (skip qty change on background synchronization)
+Amazon: [Improved] Amazon cancel/refund reason - send default reason 'CustomerReturn' if order is Shipped
 Walmart: [Fixed] Wrong input type for attributes in some fields of selling policy
 Walmart: [Fixed] Exception on adding a listing on Canada Marketplace
 Walmart: [Fixed] No button "Show Sales Tax Codes" in Selling Policy for Canada Marketplace

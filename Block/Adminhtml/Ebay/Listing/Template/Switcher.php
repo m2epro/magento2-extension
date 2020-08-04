@@ -262,7 +262,7 @@ HTML;
         $this->templates = $collection->getItems();
 
         $currentTemplateOfListing = $this->getTemplateObject();
-        if (!$this->isExistTemplate($currentTemplateOfListing->getId())) {
+        if (!empty($currentTemplateOfListing) && !$this->isExistTemplate($currentTemplateOfListing->getId())) {
             $this->templates[$currentTemplateOfListing->getId()] = $currentTemplateOfListing;
         }
 

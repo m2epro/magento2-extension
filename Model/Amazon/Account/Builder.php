@@ -78,34 +78,44 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             );
         }
 
-        if (isset($tempData['mapping_general_id_mode']) &&
-            $tempData['mapping_general_id_mode'] == Account::OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_CUSTOM_ATTRIBUTE
-        ) {
+        if (isset($tempData['mapping_general_id_mode'])) {
             $mappingSettings['general_id']['mode'] = (int)$tempData['mapping_general_id_mode'];
-            $mappingSettings['general_id']['priority'] = (int)$tempData['mapping_general_id_priority'];
-            $mappingSettings['general_id']['attribute'] = (string)$tempData['mapping_general_id_attribute'];
+
+            if ($tempData['mapping_general_id_mode'] ==
+                Account::OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_CUSTOM_ATTRIBUTE
+            ) {
+                $mappingSettings['general_id']['priority'] = (int)$tempData['mapping_general_id_priority'];
+                $mappingSettings['general_id']['attribute'] = (string)$tempData['mapping_general_id_attribute'];
+            }
         }
 
-        if (isset($tempData['mapping_sku_mode']) &&
-            ($tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT ||
-                $tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE ||
-                $tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID)
-        ) {
+        if (isset($tempData['mapping_sku_mode'])) {
             $mappingSettings['sku']['mode'] = (int)$tempData['mapping_sku_mode'];
-            $mappingSettings['sku']['priority'] = (int)$tempData['mapping_sku_priority'];
+
+            if ($tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT ||
+                $tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE ||
+                $tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID
+            ) {
+                $mappingSettings['sku']['priority'] = (int)$tempData['mapping_sku_priority'];
+            }
 
             if ($tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE) {
                 $mappingSettings['sku']['attribute'] = (string)$tempData['mapping_sku_attribute'];
             }
         }
 
-        if (isset($tempData['mapping_title_mode']) &&
-            ($tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT ||
-                $tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE)
-        ) {
+        if (isset($tempData['mapping_title_mode'])) {
             $mappingSettings['title']['mode'] = (int)$tempData['mapping_title_mode'];
-            $mappingSettings['title']['priority'] = (int)$tempData['mapping_title_priority'];
-            $mappingSettings['title']['attribute'] = (string)$tempData['mapping_title_attribute'];
+
+            if ($tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT ||
+                $tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE
+            ) {
+                $mappingSettings['title']['priority'] = (int)$tempData['mapping_title_priority'];
+            }
+
+            if ($tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE) {
+                $mappingSettings['title']['attribute'] = (string)$tempData['mapping_title_attribute'];
+            }
         }
 
         $data['other_listings_mapping_settings'] = $this->getHelper('Data')->jsonEncode($mappingSettings);

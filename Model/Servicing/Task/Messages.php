@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task;
 
+use Ess\M2ePro\Model\Issue\DataObject as Issue;
+
 /**
  * Class \Ess\M2ePro\Model\Servicing\Task\Messages
  */
@@ -47,23 +49,18 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
             return isset($message['is_global']) && (bool)$message['is_global'];
         });
 
-        $magentoTypes = [
-            \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_NOTICE =>
-                \Magento\Framework\Notification\MessageInterface::SEVERITY_NOTICE,
-            \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_SUCCESS =>
-                \Magento\Framework\Notification\MessageInterface::SEVERITY_NOTICE,
-            \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_WARNING =>
-                \Magento\Framework\Notification\MessageInterface::SEVERITY_MINOR,
-            \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_ERROR =>
-                \Magento\Framework\Notification\MessageInterface::SEVERITY_CRITICAL
-        ];
+        /** @var \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\GlobalMessage $notificationChannel */
+        $notificationChannel = $this->modelFactory->getObject('Issue_Notification_Channel_Magento_GlobalMessage');
 
-        foreach ($messages as $message) {
-            $this->getHelper('Magento')->addGlobalNotification(
-                $message['title'],
-                $message['text'],
-                $magentoTypes[$message['type']]
-            );
+        foreach ($messages as $messageData) {
+            /** @var \Ess\M2ePro\Model\Issue\DataObject $issue */
+            $issue = $this->modelFactory->getObject('Issue_DataObject', [
+                Issue::KEY_TYPE  => (int)$messageData['type'],
+                Issue::KEY_TITLE => isset($messageData['title']) ? $messageData['title'] : 'M2E Pro Notification',
+                Issue::KEY_TEXT  => isset($messageData['text'])  ? $messageData['text'] : null,
+                Issue::KEY_URL   => isset($messageData['url'])   ? $messageData['url'] : null
+            ]);
+            $notificationChannel->addMessage($issue);
         }
     }
 

@@ -128,7 +128,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'template_shipping_mode' => 'template_shipping_mode',
                 'template_description_mode' => 'template_description_mode',
                 'template_selling_format_mode' => 'template_selling_format_mode',
-                'template_synchronization_mode' => 'template_synchronization_mode'
+                'template_synchronization_mode' => 'template_synchronization_mode',
+
+                'template_return_policy_id' => 'template_return_policy_id',
+                'template_payment_id' => 'template_payment_id',
+                'template_shipping_id' => 'template_shipping_id',
+                'template_description_id' => 'template_description_id',
+                'template_selling_format_id' => 'template_selling_format_id',
+                'template_synchronization_id' => 'template_synchronization_id'
             ]
         );
         $eiTable = $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable();

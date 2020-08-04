@@ -60,6 +60,7 @@ class AccessTokens extends \Ess\M2ePro\Model\Issue\Locator\AbstractModel
             $messagesData = [];
             foreach ($accounts->getItems() as $account) {
                 /** @var \Ess\M2ePro\Model\Account $account */
+                // @codingStandardsIgnoreLine
                 $messagesData = array_merge(
                     $messagesData,
                     $this->getTradingApiTokenMessages($account),
@@ -91,44 +92,14 @@ class AccessTokens extends \Ess\M2ePro\Model\Issue\Locator\AbstractModel
         $tokenExpirationTimeStamp = strtotime($account->getChildObject()->getTokenExpiredDate());
 
         if ($tokenExpirationTimeStamp < $currentTimeStamp) {
-            $textToTranslate = <<<TEXT
-Attention! The API token for "%account_title%" eBay Account is expired. The inventory and order synchronization
-with eBay marketplace cannot be maintained until you grant M2E Pro the access token.<br>
-
-Please, go to <i>%menu_label% > Configuration > Accounts > eBay Account > 
-<a href="%url%" target="_blank">General TAB</a></i>,
-click Get Token. After you are redirected to the eBay website, sign into your seller account,
-then click Agree to generate a new access token.<br>
-
-<b>Note:</b> After the new eBay token is obtained, click <b>Save and Continue Edit</b> to apply the changes to your
-Account Configuration.
-TEXT;
-            if ($account->getChildObject()->getSellApiTokenSession()) {
-                $textToTranslate = <<<TEXT
-Attention! The Trading API token for "%account_title%" eBay Account is expired. The inventory and order synchronization
-with eBay marketplace cannot be maintained until you grant M2E Pro the access token.<br>
-
-Please go to <i>%menu_label% > Configuration > Accounts > eBay Account > General >&nbsp
-<a href="%url%" target="_blank">Trading API Details</a></i> and click Get Token. After you are redirected to the
-eBay website, sign into your seller account, then click Agree to generate a new access token.<br>
-
-<b>Note:</b> After the new eBay token is obtained, click <b>Save and Continue Edit</b> to apply the changes to your
-Account Configuration.
-TEXT;
-            }
-
-            $tempTitle = $this->getHelper('Module\Translation')->__(
-                'Attention! M2E Pro needs to be reauthorized: the API token for "%account_title%" eBay Account is
-                expired. Please generate a new access token.',
-                $this->getHelper('Data')->escapeHtml($account->getTitle())
-            );
             $tempMessage = $this->getHelper('Module\Translation')->__(
-                $textToTranslate,
-                $this->getHelper('Data')->escapeHtml($account->getTitle()),
-                $this->getHelper('View\Ebay')->getMenuRootNodeLabel(),
-                $this->urlBuilder->getUrl('m2epro/ebay_account/edit', [
-                    'id' => $account->getId()
-                ])
+                <<<TEXT
+Attention! The Trading API token for <a href="%url%" target="_blank">"%name%"</a> eBay account has expired.
+You need to generate a new access token to reauthorize M2E Pro.
+TEXT
+                ,
+                $this->urlBuilder->getUrl('m2epro/ebay_account/edit', ['id' => $account->getId()]),
+                $this->getHelper('Data')->escapeHtml($account->getTitle())
             );
 
             $editHash = sha1(
@@ -136,59 +107,33 @@ TEXT;
                 Message::TYPE_ERROR.__METHOD__
             );
 
-            $messageUrl = $this->urlBuilder->getUrl('m2epro/ebay_account/edit', [
-                'id' => $account->getId(), '_query' => ['hash' => $editHash]
-            ]);
-
             return [[
                 Issue::KEY_TYPE  => Message::TYPE_ERROR,
-                Issue::KEY_TITLE => $tempTitle,
+                Issue::KEY_TITLE => $this->getHelper('Module\Translation')->__(
+                    'Attention! The Trading API token for "%name%" eBay account has expired.
+                    You need to generate a new access token to reauthorize M2E Pro.',
+                    $this->getHelper('Data')->escapeHtml($account->getTitle())
+                ),
                 Issue::KEY_TEXT  => $tempMessage,
-                Issue::KEY_URL   => $messageUrl
+                Issue::KEY_URL   => $this->getHelper('Module_Support')->getSupportUrl('error-guide/1584346') .'/?'.
+                                    $editHash
             ]];
         }
 
         if (($currentTimeStamp + 60*60*24*10) >= $tokenExpirationTimeStamp) {
-            $textToTranslate = <<<TEXT
-Attention! The API token for "%account_title%" eBay Account expires on %date%.
-It needs to be renewed to maintain the inventory and order synchronization with eBay marketplace.<br>
-
-Please, go to <i>%menu_label% > Configuration > Accounts > eBay Account > 
-<a href="%url%" target="_blank">General TAB</a></i>,
-click Get Token. After you are redirected to the eBay website, sign into your seller account,
-then click Agree to generate a new access token.<br>
-
-<b>Note:</b> After the new eBay token is obtained, click <b>Save and Continue Edit</b> to apply the changes to your
-Account Configuration.
-TEXT;
-            if ($account->getChildObject()->getSellApiTokenSession()) {
-                $textToTranslate = <<<TEXT
-Attention! The Trading API token for "%account_title%" eBay Account expires on %date%.
-It needs to be renewed to maintain the inventory and order synchronization with eBay marketplace.<br>
-
-Please go to <i>%menu_label% > Configuration > Accounts > eBay Account > General >&nbsp
-<a href="%url%" target="_blank">Trading API Details</a></i> and click Get Token. After you are redirected to the
-eBay website, sign into your seller account, then click Agree to generate a new access token.<br>
-
-<b>Note:</b> After the new eBay token is obtained, click <b>Save and Continue Edit</b> to apply the changes to your
-Account Configuration.
-TEXT;
-            }
-
-            $tempTitle = $this->getHelper('Module\Translation')->__(
-                'Attention! M2E Pro needs to be reauthorized: the API token for "%account_title%" eBay Account
-                is to expire. Please generate a new access token.',
-                $this->getHelper('Data')->escapeHtml($account->getTitle())
-            );
-
             $tempMessage = $this->getHelper('Module\Translation')->__(
-                $textToTranslate,
+                <<<TEXT
+Attention! The Trading API token for <a href="%url%" target="_blank">"%name%"</a> eBay Account expires on %date%.
+You need to generate a new access token to reauthorize M2E Pro.
+TEXT
+                ,
+                $this->urlBuilder->getUrl('m2epro/ebay_account/edit', ['id' => $account->getId()]),
                 $this->getHelper('Data')->escapeHtml($account->getTitle()),
-                $this->_localeDate->formatDate($tokenExpirationTimeStamp, \IntlDateFormatter::MEDIUM, true),
-                $this->getHelper('View\Ebay')->getMenuRootNodeLabel(),
-                $this->urlBuilder->getUrl('m2epro/ebay_account/edit', [
-                    'id' => $account->getId()
-                ])
+                $this->_localeDate->formatDate(
+                    $account->getChildObject()->getTokenExpiredDate(),
+                    \IntlDateFormatter::MEDIUM,
+                    true
+                )
             );
 
             $editHash = sha1(
@@ -196,15 +141,16 @@ TEXT;
                 Message::TYPE_NOTICE.__METHOD__
             );
 
-            $messageUrl = $this->urlBuilder->getUrl('m2epro/ebay_account/edit', [
-                'id' => $account->getId(), '_query' => ['hash' => $editHash]
-            ]);
-
             return [[
                 Issue::KEY_TYPE  => Message::TYPE_NOTICE,
-                Issue::KEY_TITLE => $tempTitle,
+                Issue::KEY_TITLE => $this->getHelper('Module\Translation')->__(
+                    'Attention! The Trading API token for "%name%" eBay account is to expire.
+                    You need to generate a new access token to reauthorize M2E Pro.',
+                    $this->getHelper('Data')->escapeHtml($account->getTitle())
+                ),
                 Issue::KEY_TEXT  => $tempMessage,
-                Issue::KEY_URL   => $messageUrl
+                Issue::KEY_URL   => $this->getHelper('Module_Support')->getSupportUrl('error-guide/1584346') .'/?'.
+                                    $editHash
             ]];
         }
 
@@ -221,30 +167,14 @@ TEXT;
         }
 
         if ($tokenExpirationTimeStamp < $currentTimeStamp) {
-            $textToTranslate = <<<TEXT
-Attention! The Sell API token for "%account_title%" eBay Account is expired. The inventory and order synchronization
-with eBay marketplace cannot be maintained until you grant M2E Pro the access token.<br>
-
-Please go to <i>%menu_label% > Configuration > Accounts > eBay Account > General >&nbsp
-<a href="%url%" target="_blank">Sell API Details</a></i> and click Get Token. After you are redirected to the
-eBay website, sign into your seller account, then click Agree to generate a new access token.<br>
-
-<b>Note:</b> After the new eBay token is obtained, click <b>Save and Continue Edit</b> to apply the changes to your
-Account Configuration.
-TEXT;
-
-            $tempTitle = $this->getHelper('Module\Translation')->__(
-                'Attention! M2E Pro needs to be reauthorized: the API token for "%account_title%" eBay Account is
-                expired. Please generate a new access token.',
-                $this->getHelper('Data')->escapeHtml($account->getTitle())
-            );
             $tempMessage = $this->getHelper('Module\Translation')->__(
-                $textToTranslate,
-                $this->getHelper('Data')->escapeHtml($account->getTitle()),
-                $this->getHelper('View\Ebay')->getMenuRootNodeLabel(),
-                $this->urlBuilder->getUrl('m2epro/ebay_account/edit', [
-                    'id' => $account->getId()
-                ])
+                <<<TEXT
+Attention! The Sell API token for <a href="%url%" target="_blank">"%name%"</a> eBay account has expired.
+You need to generate a new access token to reauthorize M2E Pro.
+TEXT
+                ,
+                $this->urlBuilder->getUrl('m2epro/ebay_account/edit', ['id' => $account->getId()]),
+                $this->getHelper('Data')->escapeHtml($account->getTitle())
             );
 
             $editHash = sha1(
@@ -252,44 +182,33 @@ TEXT;
                 Message::TYPE_ERROR.__METHOD__
             );
 
-            $messageUrl = $this->urlBuilder->getUrl('m2epro/ebay_account/edit', [
-                'id' => $account->getId(), '_query' => ['hash' => $editHash]
-            ]);
-
             return [[
                 Issue::KEY_TYPE  => Message::TYPE_ERROR,
-                Issue::KEY_TITLE => $tempTitle,
+                Issue::KEY_TITLE => $this->getHelper('Module\Translation')->__(
+                    'Attention! The Sell API token for "%name%" eBay account has expired.
+                    You need to generate a new access token to reauthorize M2E Pro.',
+                    $this->getHelper('Data')->escapeHtml($account->getTitle())
+                ),
                 Issue::KEY_TEXT  => $tempMessage,
-                Issue::KEY_URL   => $messageUrl
+                Issue::KEY_URL   => $this->getHelper('Module_Support')->getSupportUrl('error-guide/1584346') .'/?'.
+                                    $editHash
             ]];
         }
 
         if (($currentTimeStamp + 60*60*24*10) >= $tokenExpirationTimeStamp) {
-            $textToTranslate = <<<TEXT
-Attention! The Sell API token for "%account_title%" eBay Account expires on %date%.
-It needs to be renewed to maintain the inventory and order synchronization with eBay marketplace.<br>
-
-Please go to <i>%menu_label% > Configuration > Accounts > eBay Account > General >&nbsp
-<a href="%url%" target="_blank">Sell API Details</a></i> and click Get Token. After you are redirected to the
-eBay website, sign into your seller account, then click Agree to generate a new access token.<br>
-
-<b>Note:</b> After the new eBay token is obtained, click <b>Save and Continue Edit</b> to apply the changes to your
-Account Configuration.
-TEXT;
-            $tempTitle = $this->getHelper('Module\Translation')->__(
-                'Attention! M2E Pro needs to be reauthorized: the API token for "%account_title%" eBay Account
-                is to expire. Please generate a new access token.',
-                $this->getHelper('Data')->escapeHtml($account->getTitle())
-            );
-
             $tempMessage = $this->getHelper('Module\Translation')->__(
-                $textToTranslate,
+                <<<TEXT
+Attention! The Sell API token for <a href="%url%" target="_blank">"%name%"</a> eBay Account expires on %date%.
+You need to generate a new access token to reauthorize M2E Pro.
+TEXT
+                ,
+                $this->urlBuilder->getUrl('m2epro/ebay_account/edit', ['id' => $account->getId()]),
                 $this->getHelper('Data')->escapeHtml($account->getTitle()),
-                $this->_localeDate->formatDate($tokenExpirationTimeStamp, \IntlDateFormatter::MEDIUM, true),
-                $this->getHelper('View\Ebay')->getMenuRootNodeLabel(),
-                $this->urlBuilder->getUrl('m2epro/ebay_account/edit', [
-                    'id' => $account->getId()
-                ])
+                $this->_localeDate->formatDate(
+                    $account->getChildObject()->getSellApiTokenExpiredDate(),
+                    \IntlDateFormatter::MEDIUM,
+                    true
+                )
             );
 
             $editHash = sha1(
@@ -297,15 +216,16 @@ TEXT;
                 Message::TYPE_NOTICE.__METHOD__
             );
 
-            $messageUrl = $this->urlBuilder->getUrl('m2epro/ebay_account/edit', [
-                'id' => $account->getId(), '_query' => ['hash' => $editHash]
-            ]);
-
             return [[
                 Issue::KEY_TYPE  => Message::TYPE_NOTICE,
-                Issue::KEY_TITLE => $tempTitle,
+                Issue::KEY_TITLE => $this->getHelper('Module\Translation')->__(
+                    'Attention! The Sell API token for "%name%" eBay account is to expire.
+                    You need to generate a new access token to reauthorize M2E Pro.',
+                    $this->getHelper('Data')->escapeHtml($account->getTitle())
+                ),
                 Issue::KEY_TEXT  => $tempMessage,
-                Issue::KEY_URL   => $messageUrl
+                Issue::KEY_URL   => $this->getHelper('Module_Support')->getSupportUrl('error-guide/1584346') .'/?'.
+                                    $editHash
             ]];
         }
 
@@ -317,7 +237,7 @@ TEXT;
     public function isNeedProcess()
     {
         return $this->getHelper('View\Ebay')->isInstallationWizardFinished() &&
-            $this->getHelper('Component\Ebay')->isEnabled();
+               $this->getHelper('Component\Ebay')->isEnabled();
     }
 
     //########################################
